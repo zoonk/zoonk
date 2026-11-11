@@ -4018,11 +4018,6 @@ msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "Schwerpunkte ändern"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jBB-HZ"
-msgid "Your next sessions ask a few more questions, starting with subjects not asked yet."
-msgstr "In deinen nächsten Lerneinheiten bekommst du noch ein paar Fragen, zuerst zu Fächern, die noch nicht dran waren."
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "JmND9E"
@@ -4225,6 +4220,12 @@ msgstr "Dieses Fach zählt besonders viel. Dein Vorwissen in diesem Fach wurde n
 msgctxt "8nVO91"
 msgid "This subject counts heavily."
 msgstr "Dieses Fach zählt besonders viel."
+
+#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sd5daO"
+msgid "Your next sessions ask a few more test questions."
+msgstr "In deinen nächsten Lerneinheiten bekommst du ein paar zusätzliche Testfragen."
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -11434,11 +11435,6 @@ msgstr "Prüfen, wo du mehr üben solltest · Etwa {time}"
 msgctxt "pUYvFh"
 msgid "Test questions in your sessions are paused."
 msgstr "Testfragen in deinen Lerneinheiten sind pausiert."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "_4KSK-"
-msgid "Your sessions ask a few test questions until every subject has an answer."
-msgstr "In deinen Lerneinheiten stellen wir ein paar Testfragen, bis du zu jedem Fach eine Frage beantwortet hast."
 
 #: src/plan/plan-focus-test.tsx
 msgctxt "dchZ4e"

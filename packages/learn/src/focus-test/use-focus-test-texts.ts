@@ -70,6 +70,16 @@ export function useFocusReasonText() {
   };
 }
 
+export function useSessionQuestionsNote(): string {
+  const t = useExtracted();
+
+  return t({
+    description:
+      "“Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.",
+    message: "Your next sessions ask a few more test questions.",
+  });
+}
+
 export function useSittingFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

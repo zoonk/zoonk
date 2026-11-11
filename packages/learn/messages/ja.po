@@ -4018,11 +4018,6 @@ msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "重点科目を変える"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jBB-HZ"
-msgid "Your next sessions ask a few more questions, starting with subjects not asked yet."
-msgstr "次回以降の学習で、まだ出題していない科目から少しずつ問題を出します。"
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "JmND9E"
@@ -4225,6 +4220,12 @@ msgstr "この科目は配点が高いです。今の理解度はまだ診断し
 msgctxt "8nVO91"
 msgid "This subject counts heavily."
 msgstr "この科目は配点が高いです。"
+
+#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sd5daO"
+msgid "Your next sessions ask a few more test questions."
+msgstr "次回以降の学習では、重点診断の問題を少し多めに出します。"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -11434,11 +11435,6 @@ msgstr "重点的に学ぶ分野を診断する・約{time}"
 msgctxt "pUYvFh"
 msgid "Test questions in your sessions are paused."
 msgstr "学習中のテスト問題の出題を一時停止しています。"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "_4KSK-"
-msgid "Your sessions ask a few test questions until every subject has an answer."
-msgstr "全科目の回答がそろうまで、学習中にテスト問題を少しずつ出題します。"
 
 #: src/plan/plan-focus-test.tsx
 msgctxt "dchZ4e"

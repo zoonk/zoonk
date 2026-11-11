@@ -4018,11 +4018,6 @@ msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "집중 과목 바꾸기"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jBB-HZ"
-msgid "Your next sessions ask a few more questions, starting with subjects not asked yet."
-msgstr "다음 학습에서는 아직 문제가 나오지 않은 과목부터 문제를 조금씩 더 풀어요."
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "JmND9E"
@@ -4225,6 +4220,12 @@ msgstr "이 과목은 시험에서 비중이 커요. 아직 어느 정도 아는
 msgctxt "8nVO91"
 msgid "This subject counts heavily."
 msgstr "이 과목은 시험에서 비중이 커요."
+
+#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sd5daO"
+msgid "Your next sessions ask a few more test questions."
+msgstr "다음 학습에서는 진단 문제가 조금 더 나와요."
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -11434,11 +11435,6 @@ msgstr "중점 과목 확인하기 · 약 {time}"
 msgctxt "pUYvFh"
 msgid "Test questions in your sessions are paused."
 msgstr "학습 중 진단 문제 출제가 일시 중지됐어요."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "_4KSK-"
-msgid "Your sessions ask a few test questions until every subject has an answer."
-msgstr "모든 과목에서 한 문제씩 풀 때까지 학습 중에 진단 문제가 몇 개씩 나와요."
 
 #: src/plan/plan-focus-test.tsx
 msgctxt "dchZ4e"

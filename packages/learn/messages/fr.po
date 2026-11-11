@@ -4018,11 +4018,6 @@ msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "Changer les priorités"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jBB-HZ"
-msgid "Your next sessions ask a few more questions, starting with subjects not asked yet."
-msgstr "Quelques questions supplémentaires te seront posées lors de tes prochaines séances, d’abord sur les matières pas encore abordées."
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "JmND9E"
@@ -4225,6 +4220,12 @@ msgstr "Cette matière compte pour beaucoup. Ton niveau de départ n’a pas enc
 msgctxt "8nVO91"
 msgid "This subject counts heavily."
 msgstr "Cette matière compte pour beaucoup."
+
+#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sd5daO"
+msgid "Your next sessions ask a few more test questions."
+msgstr "Tu auras quelques questions du test en plus dans tes prochaines séances."
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -11434,11 +11435,6 @@ msgstr "Identifier tes priorités · Environ {time}"
 msgctxt "pUYvFh"
 msgid "Test questions in your sessions are paused."
 msgstr "Les questions du test sont en pause dans tes séances."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "_4KSK-"
-msgid "Your sessions ask a few test questions until every subject has an answer."
-msgstr "Tes séances incluent quelques questions du test jusqu’à ce que tu aies répondu à une question par matière."
 
 #: src/plan/plan-focus-test.tsx
 msgctxt "dchZ4e"

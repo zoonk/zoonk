@@ -17,7 +17,10 @@ import { ChangeSaveError } from "../_components/save-error";
 import { FactSegments } from "../_components/task-meta";
 import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
-import { useFocusTestStateFacts } from "../focus-test/use-focus-test-texts";
+import {
+  useFocusTestStateFacts,
+  useSessionQuestionsNote,
+} from "../focus-test/use-focus-test-texts";
 import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage } from "./plan-coverage";
 
@@ -58,6 +61,7 @@ function TestQuestionsSwitch({
 }) {
   const t = useExtracted();
   const space = useSentenceSpace();
+  const sessionQuestionsNote = useSessionQuestionsNote();
   const paused = sessionQuestions === "paused";
 
   if (sessionQuestions === "off") {
@@ -66,9 +70,7 @@ function TestQuestionsSwitch({
 
   return (
     <p className="text-muted-foreground ps-7 text-xs text-pretty">
-      {paused
-        ? t("Test questions in your sessions are paused.")
-        : t("Your sessions ask a few test questions until every subject has an answer.")}
+      {paused ? t("Test questions in your sessions are paused.") : sessionQuestionsNote}
       {space}
       <Button onClick={() => onChange(paused ? "on" : "paused")} variant="link">
         {paused ? t("Ask them again") : t("Pause test questions")}

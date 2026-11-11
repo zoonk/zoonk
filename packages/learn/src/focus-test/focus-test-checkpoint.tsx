@@ -21,7 +21,11 @@ import { LearnLink } from "../learn-link";
 import { type SittingEnd } from "./focus-test-phase";
 import { FocusProposal, type FocusTestPlanActions } from "./focus-test-proposal";
 import { FocusTestSubjectsSheet } from "./focus-test-subjects";
-import { getSubjectName, useFocusReasonText } from "./use-focus-test-texts";
+import {
+  getSubjectName,
+  useFocusReasonText,
+  useSessionQuestionsNote,
+} from "./use-focus-test-texts";
 
 const SECTION_TEXT_CLASS = "text-sm text-pretty";
 const SECTION_NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
@@ -195,8 +199,8 @@ export function FocusTestResult({
   onProposalAnswered?: () => void;
   plan?: FocusTestPlanActions | null;
 }) {
-  const t = useExtracted();
-  const { checkpoint, counts, sessionQuestions, subjects } = focusTest;
+  const sessionQuestionsNote = useSessionQuestionsNote();
+  const { checkpoint, sessionQuestions, subjects } = focusTest;
 
   if (!checkpoint) {
     return null;
@@ -216,13 +220,7 @@ export function FocusTestResult({
       <div className="flex flex-col items-start gap-2">
         <FocusTestSubjectsSheet answered subjects={subjects} />
 
-        {sessionQuestions === "on" && counts.asked < counts.quick && (
-          <p className={SECTION_NOTE_CLASS}>
-            {t(
-              "Your next sessions ask a few more questions, starting with subjects not asked yet.",
-            )}
-          </p>
-        )}
+        {sessionQuestions === "on" && <p className={SECTION_NOTE_CLASS}>{sessionQuestionsNote}</p>}
       </div>
     </>
   );

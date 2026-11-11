@@ -4018,11 +4018,6 @@ msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "Mudar o foco"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jBB-HZ"
-msgid "Your next sessions ask a few more questions, starting with subjects not asked yet."
-msgstr "As próximas sessões vão trazer mais algumas perguntas, começando pelas matérias que ainda não apareceram."
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "JmND9E"
@@ -4225,6 +4220,12 @@ msgstr "Essa matéria tem bastante peso. A gente ainda não avaliou o que você 
 msgctxt "8nVO91"
 msgid "This subject counts heavily."
 msgstr "Essa matéria tem bastante peso."
+
+#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sd5daO"
+msgid "Your next sessions ask a few more test questions."
+msgstr "Suas próximas sessões vão ter mais algumas perguntas do teste."
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -11434,11 +11435,6 @@ msgstr "Veja onde focar · Cerca de {time}"
 msgctxt "pUYvFh"
 msgid "Test questions in your sessions are paused."
 msgstr "As perguntas do teste nas suas sessões estão em pausa."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "_4KSK-"
-msgid "Your sessions ask a few test questions until every subject has an answer."
-msgstr "Suas sessões incluem algumas perguntas do teste até você responder uma de cada matéria."
 
 #: src/plan/plan-focus-test.tsx
 msgctxt "dchZ4e"
