@@ -1,0 +1,42 @@
+{
+ "pair-1": {
+  "case": "en-no-install-terminal-version-1",
+  "X": "meta-muse-ember",
+  "Y": "google-gemini-3.8-flash:low"
+ },
+ "pair-2": {
+  "case": "en-tool-python-round-tie-1",
+  "X": "google-gemini-3.8-flash:low",
+  "Y": "meta-muse-ember"
+ },
+ "pair-3": {
+  "case": "en-tool-spreadsheet-mean-1",
+  "X": "meta-muse-ember",
+  "Y": "google-gemini-3.8-flash:low"
+ },
+ "pair-4": {
+  "case": "en-tool-sql-count-check-1",
+  "X": "meta-muse-ember",
+  "Y": "google-gemini-3.8-flash:low"
+ },
+ "pair-5": {
+  "case": "pt-no-install-excel-check-1",
+  "X": "google-gemini-3.8-flash:low",
+  "Y": "meta-muse-ember"
+ },
+ "pair-6": {
+  "case": "pt-no-install-sheets-chart-1",
+  "X": "google-gemini-3.8-flash:low",
+  "Y": "meta-muse-ember"
+ },
+ "pair-7": {
+  "case": "pt-tool-python-percent-change-1",
+  "X": "meta-muse-ember",
+  "Y": "google-gemini-3.8-flash:low"
+ },
+ "pair-8": {
+  "case": "pt-tool-spreadsheet-discount-1",
+  "X": "google-gemini-3.8-flash:low",
+  "Y": "meta-muse-ember"
+ }
+}

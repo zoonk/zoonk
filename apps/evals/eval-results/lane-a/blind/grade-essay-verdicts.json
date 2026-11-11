@@ -1,0 +1,77 @@
+{
+  "reader": "gpt-6.1-sol",
+  "pairs": {
+    "pair-1": {
+      "verdict": "tie",
+      "reason": "Both correctly award 3/6, identify the missing denaturation and competitive-binding explanations, and give essentially the same useful next step."
+    },
+    "pair-2": {
+      "verdict": "X",
+      "reason": "Both score appropriately, but X catches the shift between a classroom ban and a school-day ban and avoids supplying an unsupported precise study citation."
+    },
+    "pair-3": {
+      "verdict": "X",
+      "reason": "X credits the multiple explained economic effects allowed by the supplied rubric, whereas Y discounts causal connections the essay actually makes and adds requirements to explain or rank those effects."
+    },
+    "pair-4": {
+      "verdict": "X",
+      "reason": "X correctly isolates the incorrect secrecy periods, whereas Y adds unwarranted deductions elsewhere and teaches an overbroad rule allowing every secrecy period to be extended once."
+    },
+    "pair-5": {
+      "verdict": "Y",
+      "reason": "Both apply the expected conditional-proposal penalty, but Y avoids X’s unsupported additional deductions for otherwise effective references, argument development, and cohesion."
+    },
+    "pair-6": {
+      "verdict": "tie",
+      "reason": "Both give the expected zero for the rights-violating intervention and a useful lawful replacement, while both also wrongly criticize the grammatical phrase “quem pode compra”."
+    },
+    "pair-7": {
+      "verdict": "X",
+      "reason": "X gives more proportionate language scoring and targets underdeveloped argumentation, whereas Y overpenalizes ordinary wording and directs the next step away from the expected weak criteria."
+    },
+    "pair-8": {
+      "verdict": "Y",
+      "reason": "Y gives more defensible argument and cohesion scores, whereas X penalizes the paragraph beginning “Além disso” for supposedly lacking a linking marker, although both choose the wrong next-step criterion."
+    },
+    "pair-9": {
+      "verdict": "X",
+      "reason": "X correctly identifies the absent intervention while recognizing strong cohesion, whereas Y invents connective repetition and says the family-buying argument lacks a cause despite its explicit reference to promotions."
+    },
+    "pair-10": {
+      "verdict": "X",
+      "reason": "Both correctly return zero for complete topic avoidance, but X directly asks for a new mobility-focused essay while Y distracts the learner with unnecessary connective substitutions and reference hunting."
+    },
+    "pair-11": {
+      "verdict": "X",
+      "reason": "X’s high scores fit the developed argument and complete intervention, whereas Y deducts for a supposedly unconnected Bauman reference that the following sentence explicitly connects to vaccine rumors and for harmless topic-word repetition."
+    },
+    "pair-12": {
+      "verdict": "Y",
+      "reason": "Y correctly recognizes sound formal Portuguese while identifying topic tangency and the limited intervention score, whereas X invents an infinitive-agreement error and penalizes acceptable “chegar até”."
+    },
+    "pair-13": {
+      "verdict": "tie",
+      "reason": "The outputs are identical, correctly return zero for insufficient length, and equally fail to provide an explanatory comment or actionable next step."
+    },
+    "pair-14": {
+      "verdict": "Y",
+      "reason": "Y accurately credits cohesive organization and targets the generic intervention, whereas X claims the argument ignores fares and crowding even though the essay mentions expensive transport and crowded buses."
+    },
+    "pair-15": {
+      "verdict": "X",
+      "reason": "Both give the same defensible scores and prioritize formal-language revision, but X acknowledges the essay’s causal development whereas Y incorrectly says the arguments are merely listed without explanation."
+    },
+    "pair-16": {
+      "verdict": "X",
+      "reason": "X’s 22/36 fits the expected band and the mostly intelligible mixed sentence structures, whereas Y’s 17/36 excessively depresses language scores, although neither mentions the 250-word requirement."
+    },
+    "pair-17": {
+      "verdict": "X",
+      "reason": "X’s 30/36 better fits the strong essay and offers useful development advice despite wrongly penalizing British spelling, whereas Y falls below the expected band and demands real studies for each point without rubric support."
+    },
+    "pair-18": {
+      "verdict": "tie",
+      "reason": "Both give similar in-band estimates, correctly identify the mistaken product-liability basis and missing procedural requests, and direct the learner to rebuild the legal reasoning around the supplied CDC provisions."
+    }
+  }
+}
