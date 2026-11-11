@@ -48,8 +48,8 @@ struct QuestionStep: View {
       }
     case .buddy:
       BuddyQuestion(onAnswer: onAnswer)
-    case .work, .tools, .studies, .watch, .listen, .play, .read, .activities, .conditions,
-      .learningSupport:
+    case .addressForm, .work, .tools, .studies, .watch, .listen, .play, .read, .activities,
+      .conditions, .learningSupport:
       EmptyView()
     case .schedule, .placement, .plan:
       EmptyView()

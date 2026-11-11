@@ -45,7 +45,7 @@ struct AboutYouView: View {
           Text(
             "How you learn", tableName: "AboutYou",
             comment: "About you group: conditions and what helps the learner learn"),
-          [.conditions, .learningSupport], in: profile)
+          [.addressForm, .conditions, .learningSupport], in: profile)
       }
     }
     .navigationTitle(aboutYouTitle)
@@ -171,6 +171,12 @@ struct AboutYouQuestionView: View {
 private enum AboutYouCopy {
   static func rowName(_ question: ProfileQuestion) -> Text {
     switch question {
+    case .addressForm:
+      Text(
+        "How we address you", tableName: "AboutYou",
+        comment:
+          "About you row: which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner"
+      )
     case .work:
       Text("What you do now", tableName: "AboutYou", comment: "About you row: work or study")
     case .tools:
@@ -199,7 +205,8 @@ private enum AboutYouCopy {
     }
   }
 
-  /// Conditions show only how many, never which, so the list is safe on a shared screen.
+  /// Conditions show only how many and the address form only that it's saved, never which, so the
+  /// list is safe on a shared screen.
   static func summary(_ view: ProfileQuestionView) -> Text {
     if view.status == .declined {
       return Text(
@@ -221,7 +228,7 @@ private enum AboutYouCopy {
           saved.studies.map { $0.subject ?? label($0.field) }.formatted(
             .list(type: .and, width: .narrow))
         ]
-      case .conditions:
+      case .addressForm, .conditions:
         []
       case .learningSupport:
         saved.picks.isEmpty
@@ -231,6 +238,12 @@ private enum AboutYouCopy {
           $0.formatted(.list(type: .and, width: .narrow))
         }
       }
+
+    if view.id == .addressForm, !saved.picks.isEmpty {
+      return Text(
+        "Saved", tableName: "AboutYou",
+        comment: "About you row value: how to address the learner is saved, without showing it")
+    }
 
     if view.id == .conditions, !saved.picks.isEmpty {
       return Text(
