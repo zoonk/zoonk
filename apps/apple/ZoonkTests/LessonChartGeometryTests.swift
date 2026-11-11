@@ -32,6 +32,11 @@ final class LessonChartGeometryTests: XCTestCase {
       LessonChartNames.fitUnderBars(["Seg", "Ter", "Qua", "Qui", "Sex"], band: 21, width: width))
   }
 
+  func testBarsLieSidewaysOnceTooManySeriesWouldThinThemToSlivers() {
+    XCTAssertTrue(LessonChartBars.fitSideBySide(band: 70, series: 7))
+    XCTAssertFalse(LessonChartBars.fitSideBySide(band: 70, series: 8))
+  }
+
   func testTickNumbersThinUntilNoneTouch() {
     XCTAssertEqual(LessonChartTicks.labeled([(0, 10), (20, 30), (40, 50)]), [0, 1, 2])
     XCTAssertEqual(
