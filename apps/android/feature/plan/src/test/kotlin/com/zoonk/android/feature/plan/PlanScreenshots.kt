@@ -766,9 +766,12 @@ class PlanScreenshots {
     }
 }
 
-private const val NOT_STARTED = """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
-private const val SITTING = """{"state":"sitting","offer":{"questions":9,"minutes":9},"subjects":{"asked":6,"total":19},"sessionQuestions":"off","setsFocus":false}"""
-private const val CHECKED = """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
+private const val NOT_STARTED =
+    """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
+private const val SITTING =
+    """{"state":"sitting","offer":{"questions":9,"minutes":9},"subjects":{"asked":6,"total":19},"sessionQuestions":"off","setsFocus":false}"""
+private const val CHECKED =
+    """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
 
 private fun focusTest(json: String) = ApiJson.decodeFromString<com.zoonk.api.models.FocusTestSummary>(json)
 

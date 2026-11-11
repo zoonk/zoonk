@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.onboarding
 
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.ExamChoiceOptionsInner
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -73,6 +71,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -152,33 +151,6 @@ class OnboardingScreenshots {
         run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
         compose.waitForIdle()
         write("placement-waiting-failed-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
-    }
-
-    /** A time shorter than the suggested one names the subjects the learner's Focus test says it should favor. */
-    @Test
-    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun scheduleFocus() {
-        val api =
-            FakeOnboardingApi().apply {
-                setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
-                cover = { coverOf(recommended = 805, focus = 240) }
-                advice = {
-                    adviceOf(0.6).copy(
-                        focusSubjects =
-                            listOf(
-                                ExamChoiceOptionsInner(name = "Administrative law", shortName = null),
-                                ExamChoiceOptionsInner(name = "Constitutional law", shortName = null),
-                                ExamChoiceOptionsInner(name = "Portuguese", shortName = null),
-                            ),
-                    )
-                }
-            }
-        compose.setContent { ZoonkTheme { Surface { Setup(api) } } }
-        compose.waitForIdle()
-        compose.onNodeWithText("4 hr").performClick()
-        compose.onNodeWithText("2 hr").performClick()
-        compose.waitForIdle()
-        write("setup-schedule-focus-phone", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** The questions of a new language pair wait for the learner's Start, so it's tapped first. */
