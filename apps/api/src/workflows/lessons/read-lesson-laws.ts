@@ -79,10 +79,5 @@ export async function readLessonLaws(input: {
   const lookups = await Promise.allSettled(laws.map((law) => lookUpLaw(law)));
   const found = toFound({ laws, lookups });
 
-  await linkLessonLawsStep({
-    found,
-    lessonId: input.lessonId,
-    prompt,
-    unavailable: found.length < laws.length,
-  });
+  await linkLessonLawsStep({ found, lessonId: input.lessonId, prompt });
 }

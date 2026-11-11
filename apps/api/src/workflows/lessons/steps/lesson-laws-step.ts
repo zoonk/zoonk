@@ -46,18 +46,13 @@ export async function linkLessonLawsStep({
   found,
   lessonId,
   prompt,
-  unavailable,
 }: {
   found: FoundLessonLaw[];
   lessonId: string;
   prompt: LessonLawsPrompt;
-  unavailable: boolean;
 }): Promise<void> {
   "use step";
 
   await linkLessonLaws({ laws: found, lessonId, prompt });
-
-  if (unavailable) {
-    await replanUnsourcedLesson(lessonId);
-  }
+  await replanUnsourcedLesson(lessonId);
 }

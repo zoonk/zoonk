@@ -130,6 +130,27 @@ describe(readLessonLaws, () => {
     expect(writtenSources()).toStrictEqual([expect.stringContaining(ARTICLE_4)]);
   });
 
+  it("plans a lesson planned from memory again once, from its law's official text", async () => {
+    const [lesson, source] = await Promise.all([
+      plannedLesson(recordedSpec.lessons[0] ?? {}),
+      lawSource(),
+    ]);
+
+    const law = conflictOfInterestLaw();
+    nameLaws([law]);
+    await recordLawLookup({ law, sourceId: source.id });
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+
+    expect(vi.mocked(generateLessonSpec).mock.calls[0]?.[0]).toMatchObject({
+      sources: expect.stringContaining(ARTICLE_4),
+    });
+  });
+
   it("plans a lesson planned from memory again once when its law has no official text", async () => {
     const lesson = await plannedLesson(recordedSpec.lessons[0] ?? {});
     const law = conflictOfInterestLaw();

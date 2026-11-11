@@ -134,8 +134,9 @@ export async function linkLessonLaws({
 
 /**
  * Internal workflow bridge: a plan saved before plans named provisions only from official text can
- * hold provision numbers from memory, so when the lesson's laws can't be read it's planned again,
- * once, before anything is written from it. True when it will be.
+ * hold provision numbers from memory, and later writing and review read it. A law lesson's plan is
+ * planned again, once, before anything is written from it: from its laws' text when they were
+ * found, without provision numbers when not. True when it will be.
  */
 export async function replanUnsourcedLesson(lessonId: string): Promise<boolean> {
   const updated = await prisma.$executeRaw`
