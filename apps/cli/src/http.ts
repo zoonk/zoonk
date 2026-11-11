@@ -10,6 +10,10 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+export function unexpectedResponse(result: HttpResult): CliError {
+  return new CliError(`The server answered with an unexpected response (HTTP ${result.status}).`);
+}
+
 function parseJson(text: string): unknown {
   try {
     return JSON.parse(text);

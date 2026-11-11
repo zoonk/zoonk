@@ -1,6 +1,5 @@
 import { type StoredLogin, isPlainToken } from "./credentials.ts";
-import { CliError } from "./errors.ts";
-import { type HttpResult, isRecord, postForm } from "./http.ts";
+import { type HttpResult, isRecord, postForm, unexpectedResponse } from "./http.ts";
 
 const CLIENT_ID = "zoonk-cli";
 const SCOPE = "staff:read offline_access";
@@ -26,10 +25,6 @@ export type DeviceCode = {
 };
 
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
-
-function unexpectedResponse(result: HttpResult): CliError {
-  return new CliError(`The server answered with an unexpected response (HTTP ${result.status}).`);
-}
 
 function oauthError(result: HttpResult): string | null {
   const error = isRecord(result.body) ? result.body.error : null;
