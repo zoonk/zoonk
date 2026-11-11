@@ -237,7 +237,8 @@ struct ProfileDraft: Equatable {
   }
 
   /// Onboarding's Skip leaves a question for the next goal, but declines conditions, so a learner
-  /// who skips them isn't asked about their health at every new goal.
+  /// who skips them isn't asked about their health at every new goal, and the address form, whose
+  /// Skip reads "I'd rather not say".
   var skipInput: [String: Any] {
     switch question {
     case .conditions, .addressForm: declining(.ratherNotSay).input

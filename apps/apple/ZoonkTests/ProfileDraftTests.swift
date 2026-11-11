@@ -66,14 +66,14 @@ final class ProfileDraftTests: XCTestCase {
     draft.toggle("neutral")
 
     XCTAssertEqual(
-      try sent(draft),
+      try sent(draft.input),
       try decode(#"{"question":"addressForm","answer":{"declined":false,"form":"neutral"}}"#))
 
     let declined = try XCTUnwrap(
       Self.fixtures.first { $0.view.id == .addressForm && $0.view.status == .declined })
-    XCTAssertEqual(try sent(draft.declining(.ratherNotSay)), declined.answer)
+    XCTAssertEqual(try sent(draft.skipInput), declined.answer)
     XCTAssertEqual(
-      try sent(ProfileDraft(declined.view).declining(.ratherNotSay)), declined.answer)
+      try sent(ProfileDraft(declined.view).declining(.ratherNotSay).input), declined.answer)
   }
 
   func testAboutYouScreensAreNeverSetupLeft() {
