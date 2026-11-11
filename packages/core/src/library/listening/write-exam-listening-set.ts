@@ -8,7 +8,7 @@ import {
 } from "@zoonk/ai/tasks/listening/schema";
 import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { logError } from "@zoonk/utils/logger";
-import { createItemSet } from "../items/create-item-set";
+import { type ItemSetToStore, type WrittenSetItem } from "../items/create-item-set";
 import { toListeningContent } from "./listening-content";
 
 type ListeningSetPart = { count: number; plays: 1 | 2; task: string };
@@ -26,7 +26,7 @@ function getSkillId({
 }
 
 /** Internal workflow bridge for shared Library content; contains no learner's words. */
-export async function createListeningSet({
+export async function writeExamListeningSet({
   analytics,
   exam,
   language,
@@ -42,7 +42,7 @@ export async function createListeningSet({
   scriptLanguage: string;
   serviceTier?: ServiceTier;
   skills: readonly ListeningSetSkill[];
-}): Promise<string | null> {
+}): Promise<ItemSetToStore<WrittenSetItem> | null> {
   const [firstSkill, ...otherSkills] = skills;
 
   if (!firstSkill) {
@@ -73,7 +73,7 @@ export async function createListeningSet({
 
   const listed = [firstSkill, ...otherSkills] as const;
 
-  const { set: stored } = await createItemSet({
+  return {
     content: toListeningContent({ plays: part.plays, scriptLanguage, set, task: part.task }),
     examBlueprintId: exam.blueprintId,
     items: set.questions.map((question) => ({
@@ -85,7 +85,5 @@ export async function createListeningSet({
     language,
     optionLanguage: scriptLanguage,
     provenance: written.provenance,
-  });
-
-  return stored?.id ?? null;
+  };
 }

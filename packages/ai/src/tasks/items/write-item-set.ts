@@ -125,8 +125,8 @@ ${formatSkills(skills)}
 }
 
 /**
- * Shared Library content: the prompt never holds a learner's words. Callers run the set's checks
- * and the item checks in `@zoonk/core` before storing.
+ * Shared Library content: the prompt never holds a learner's words. Callers run the set's checks,
+ * the item checks and the key check in `@zoonk/core` before storing.
  */
 export async function writeItemSet(params: WriteItemSetParams) {
   const {

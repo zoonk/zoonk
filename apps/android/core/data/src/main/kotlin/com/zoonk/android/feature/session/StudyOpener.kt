@@ -66,11 +66,12 @@ interface StudyApi {
         timeZone: String,
     ): StudySessionSummary
 
-    /** A "10 more minutes" block after the day's session. */
+    /** A "10 more minutes" block after the day's session; null when its day is over, so the time goes to today's. */
     suspend fun addExtraBlock(
         session: AuthenticatedSession,
         sessionId: UUID,
-    ): StudyBlock
+        timeZone: String,
+    ): StudyBlock?
 
     /** Moves the lessons left to catch up into today. */
     suspend fun catchUp(
@@ -162,8 +163,8 @@ class StudyOpener(
     ): MutationResult<AppRoute?> =
         cache.mutate(invalidating = OPENING) { session ->
             val sessionId = day.sessionId ?: keep(session, day, goalId)
-            val added = api.addExtraBlock(session, sessionId)
-            follow(session, openBlock(session, blockTarget(added.id)))
+            val added = api.addExtraBlock(session, sessionId, timeZone())
+            if (added == null) AppRoute.Today else follow(session, openBlock(session, blockTarget(added.id)))
         }
 
     /** Saves an unopened day first, keeping it even with nothing in it. */

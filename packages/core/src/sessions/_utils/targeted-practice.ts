@@ -89,7 +89,7 @@ async function addToLockedSession({
     };
   }
 
-  const extraTime = getExtraTime({ anytime: true, blocks: session.blocks });
+  const extraTime = getExtraTime({ anytime: true, blocks: session.blocks, current: true });
 
   if (!extraTime.available) {
     return { reason: extraTime.reason, status: "unavailable" };

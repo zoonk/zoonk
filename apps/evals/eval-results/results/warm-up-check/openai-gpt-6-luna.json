@@ -1667,6 +1667,211 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 0 of 1 planted errors; kept 7 of 7 clean cards. Missed planted card 1.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Caught 0 of 1 planted errors; kept 7 of 7 clean cards. Missed planted card 1.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Caught 0 of 1 planted errors; kept 7 of 7 clean cards. Missed planted card 1.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "id": "en-spanish-reveal-names-the-wrong-language-1",
+        "expected": {
+          "planted": [
+            "1"
+          ]
+        },
+        "userInput": {
+          "goal": "Spanish",
+          "kind": "language",
+          "language": "en",
+          "cards": [
+            {
+              "id": "1",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "They're embarrassed"
+                },
+                {
+                  "correct": true,
+                  "id": "b",
+                  "text": "They're pregnant"
+                },
+                {
+                  "correct": false,
+                  "id": "c",
+                  "text": "They're tired"
+                }
+              ],
+              "question": "In Mexican Spanish, what does 'embarazada' tell you about someone?",
+              "reveal": "They're pregnant. \"Embarazada\" looks like \"embarrassed,\" but the English word for that feeling is \"avergonzada\"."
+            },
+            {
+              "id": "2",
+              "options": [
+                {
+                  "correct": true,
+                  "id": "a",
+                  "text": "Success"
+                },
+                {
+                  "correct": false,
+                  "id": "b",
+                  "text": "Exit"
+                },
+                {
+                  "correct": false,
+                  "id": "c",
+                  "text": "Excitement"
+                }
+              ],
+              "question": "What does Spanish \"éxito\" mean?",
+              "reveal": "Success. An exit is \"salida\", the word on exit signs."
+            },
+            {
+              "id": "3",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "Borrow books"
+                },
+                {
+                  "correct": true,
+                  "id": "b",
+                  "text": "Buy books"
+                },
+                {
+                  "correct": false,
+                  "id": "c",
+                  "text": "Read the news"
+                }
+              ],
+              "question": "In Spanish, a \"librería\" is where you go to…",
+              "reveal": "Buy books: it's a bookstore. A library is \"biblioteca\"."
+            },
+            {
+              "id": "4",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "\"I make 20 years\""
+                },
+                {
+                  "correct": true,
+                  "id": "b",
+                  "text": "\"I have 20 years\""
+                },
+                {
+                  "correct": false,
+                  "id": "c",
+                  "text": "\"I am 20 years\""
+                }
+              ],
+              "question": "To say \"I'm 20 years old\" in Spanish, you literally say…",
+              "reveal": "\"I have 20 years\": \"Tengo 20 años\". Spanish uses \"tener\", to have, for age."
+            },
+            {
+              "id": "5",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "The \"ng\" in \"sing\""
+                },
+                {
+                  "correct": false,
+                  "id": "b",
+                  "text": "The \"n\" in \"no\""
+                },
+                {
+                  "correct": true,
+                  "id": "c",
+                  "text": "The \"ny\" in \"canyon\""
+                }
+              ],
+              "question": "The \"ñ\" in \"año\" sounds like…",
+              "reveal": "Like the \"ny\" in \"canyon\". It's its own letter in the Spanish alphabet, right after \"n\"."
+            },
+            {
+              "id": "6",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "Real"
+                },
+                {
+                  "correct": false,
+                  "id": "b",
+                  "text": "Exact"
+                },
+                {
+                  "correct": true,
+                  "id": "c",
+                  "text": "Current"
+                }
+              ],
+              "question": "In Spanish, \"actual\" means…",
+              "reveal": "Current, as in \"el presidente actual\", the current president. For real, Spanish says \"real\" or \"verdadero\"."
+            },
+            {
+              "id": "7",
+              "options": [
+                {
+                  "correct": true,
+                  "id": "a",
+                  "text": "At the start and the end"
+                },
+                {
+                  "correct": false,
+                  "id": "b",
+                  "text": "Only at the end"
+                }
+              ],
+              "question": "Where do the question marks go in a written Spanish question?",
+              "reveal": "At both ends: \"¿Cómo estás?\" opens with an upside-down mark, so readers know a question is coming."
+            },
+            {
+              "id": "8",
+              "options": [
+                {
+                  "correct": false,
+                  "id": "a",
+                  "text": "Rope"
+                },
+                {
+                  "correct": true,
+                  "id": "b",
+                  "text": "Clothes"
+                },
+                {
+                  "correct": false,
+                  "id": "c",
+                  "text": "Robe"
+                }
+              ],
+              "question": "What does \"ropa\" mean in Spanish?",
+              "reveal": "Clothes, as in \"ropa sucia\", dirty laundry. A rope is \"cuerda\"."
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "warm-up-check"

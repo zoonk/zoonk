@@ -56,7 +56,6 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, one {{done, number} leçon terminée sur #} other {{done, number} leçons terminées sur #}}"
 
 #: src/_components/chapter-mark.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "Sauté"
@@ -550,6 +549,16 @@ msgstr "Retour"
 msgctxt "FgydNe"
 msgid "View"
 msgstr "Voir"
+
+#: src/_components/task-header.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "Développer la barre latérale"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Réduire la barre latérale"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -11500,6 +11509,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, one {Un jour d’avance} other {# jours d’avance}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, one {# leçon à rattraper} other {# leçons à rattraper}}"
@@ -13367,6 +13377,50 @@ msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "Enregistrement de ta progression…"
 
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {<number>#</number> à faire aujourd’hui} other {<number>#</number> à faire aujourd’hui}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> terminé aujourd’hui} one {<number>#</number> terminé aujourd’hui} other {<number>#</number> terminés aujourd’hui}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> sur {total} terminé aujourd’hui} one {<number>#</number> sur {total} terminé aujourd’hui} other {<number>#</number> sur {total} terminés aujourd’hui}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {# sur {total} terminés} one {# terminé sur {total}} other {# terminés sur {total}}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "D’autres à mesure que tu avances"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, one {# leçon reportée} other {# leçons reportées}} à un autre jour pour ne pas dépasser {time} d’étude aujourd’hui."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "Aucune leçon à rattraper."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, one {<gain># leçon rattrapée aujourd’hui</gain>} other {<gain># leçons rattrapées aujourd’hui</gain>}} · {left, plural, other {# à rattraper}}"
+
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
 msgid "This lesson is being written for you. It's usually ready in a few minutes."
@@ -13673,11 +13727,6 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {# sur {total} terminés} one {# terminé sur {total}} other {# terminés sur {total}}} · d’autres arrivent au fil de ta progression"
 
 #: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {# sur {total} terminés} one {# terminé sur {total}} other {# terminés sur {total}}}"
-
-#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-screen.tsx
@@ -13689,11 +13738,6 @@ msgstr "Séance du jour"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "Score net {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, one {# leçon reportée} other {# leçons reportées}} à un autre jour pour ne pas dépasser {time} d’étude aujourd’hui."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -14782,6 +14826,18 @@ msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, one {# terminé} other {# terminés}}"
 
+#. Counts blocks of today's study session the learner skipped.
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, one {# sauté} other {# sautés}}"
+
+#. Counts blocks of today's study session the learner finished and skipped.
+#: src/today/today-session-card.tsx
+msgctxt "DIDXQf"
+msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
+msgstr "{completed, plural, one {# terminé} other {# terminés}} · {skipped, plural, one {# sauté} other {# sautés}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"
@@ -14876,16 +14932,6 @@ msgstr "{studied} d’étude sur {planned}"
 msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "Durée prévue : {time}"
-
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "{studied} sur {planned} étudiées cette semaine"
-
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number} sur {total, plural, one {# jour} other {# jours}}"
 
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts

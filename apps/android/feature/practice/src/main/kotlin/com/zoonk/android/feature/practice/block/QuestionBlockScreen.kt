@@ -42,7 +42,9 @@ import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.CatchUpLine
 import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.SessionDayProgress
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.feature.session.toDayStep
@@ -219,6 +221,8 @@ internal fun BlockFinished(
         ) {
             completion?.let {
                 MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt()))
+                CatchUpLine(it.dayProgress.catchUp)
+                SessionDayProgress(it)
                 DayMoment(it, buddy.look, buddy.name)
                 it.finishedChapter?.let { finished -> FinishedChapterMoment(finished, app, navigate) }
             }

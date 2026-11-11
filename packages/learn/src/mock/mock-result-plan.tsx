@@ -226,15 +226,17 @@ export function MockPlanChange({
 
       {!change.settled && (
         <div className="flex flex-wrap gap-2">
-          <Button
-            busy={change.isPending}
-            icon={<CheckIcon aria-hidden="true" />}
-            onClick={change.apply}
-            size="sm"
-            variant="outline"
-          >
-            {t("Apply")}
-          </Button>
+          <form action={() => change.apply()} className="contents">
+            <Button
+              busy={change.isPending}
+              icon={<CheckIcon aria-hidden="true" />}
+              size="sm"
+              type="submit"
+              variant="outline"
+            >
+              {t("Apply")}
+            </Button>
+          </form>
           <Button
             disabled={change.isPending}
             focusableWhenDisabled

@@ -78,7 +78,7 @@ type LessonPlayerConfig = {
 
 type LessonPlayerRuntime = {
   actions: LessonPlayerActions;
-  /** Every screen's own attempt, for the screens kept out of view (`state` shows the one in view). */
+  /** Every attempt in the lesson, which says the screens it can still show (`state` shows the one in view). */
   played: LessonPlayerState;
   screen: LessonScreen;
   state: LessonPlayerState;

@@ -27,11 +27,19 @@
   "session_block_weekly_challenge": "a71f3801eec48936670e3cce9f0fd9a6ae3e70a38097a9dd5d33eddf6af4975b",
   "session_block_what_you_know": "29d769ef1d128879ac05973a5a2fbe6fbd656be928a1040aa77421b7776b19cc",
   "session_block_writing_practice": "3bd2dd51defbf7d2da778c54a775eb5fb1bdc5dac45c64826ec0569034c7bae5",
+  "session_catch_up_to_go": "4672672081d0158bf0aa23c5cbc975a05f5e4b39d4ce5ac3a2a024c84c83be5d",
+  "session_caught_up_today": "0c21eacd6a89ec02eff852316f418b5183cda3b8815879eebaa058a29ccaf7ef",
+  "session_day_done": "9c964af730eee8a40eb52e33ab2d51f0650fa19a4a8ff83e94cb5a9e974afdab",
+  "session_day_done_caption": "315447dd045326d37b9f9e46f35bcbba773a18973784538b6112aef31b0449a6",
+  "session_day_left": "025a9f4f474912778aa3b2fde5c8f1f519ed55a8e99fc8a673b30a10fb69dccc",
+  "session_day_more_coming": "601f7f89cd71a2318cc5af17d9fc16f8f9a65da677a15f5219254f9f0d684fea",
+  "session_day_open": "5d0b45d7b9e7751e6267cecc078135627f290138e7e3b73500f3c7b0749ad72a",
   "session_energy_at": "a53be1f5367c4bc53d7a380f4e3a0fefd4022cb960dc7efe0045b2a415cd3a53",
   "session_energy_detail": "7397304767b53c19cc1b7188810a8f23d680e34fc8b0e4978f2c008c02370664",
   "session_energy_glowing": "ecb28e590546977e4d258d8c8826cc204c7a67d789e7ccd61a0a5fa7cfeb553f",
   "session_energy_glowing_brightest": "af47c1ee29e5e2f948e878746f15c95b9fbd7f1cffd2de04980bc04fbf753e95",
   "session_energy_max": "f5a8582a80ae25784d7a319428fbacaea37a0f7e3ab8ff0a9b5d4f556894b3f7",
+  "session_lessons_deferred": "e191ef1bc328b73618b94f033f5108a08e2b3d2da8ea09ec39a05ec9e8563110",
   "session_level_up": "9ebf40b654dcc8315b07de863dc883ae0e2f0726b70d1988d232a3daa6e9b66e",
   "session_next_continue": "7a9fa061c18068c3a1ff2d144812949a01fed3626f2bb5b9ac9b9174e9cc5543",
   "session_next_eyebrow": "f6c59bc49295e97b030ed9537c19a95f7be2ec2544b16be13d58f8dd8a721d48",
@@ -42,6 +50,7 @@
   "session_next_stop_failed": "adc1245d17b6c593dc9f8b4c33ff6326fa0c318bde6cf759b9a83e13023e9b5f",
   "session_next_while_waiting": "c1f91a69ee395cc8b092ec94afbbe0e2920c170cdf18f7214d8a3c9aea8a6c5f",
   "session_next_writing_note": "2ec9722d0fbb57d8c32c3a2aa7d47cb4d60f0a25fe05aaa0f9d494eac6bb483a",
+  "session_no_catch_up_left": "dc9e05f747153053433791d64c06f4534250941d1322a46f8e93b25cce78a997",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
   "session_review_intro_first_week": "1e4541d89c2b3485aefe6749486afe61cf2cf771621148f1d2cef64d0a7a2423",
@@ -233,4 +242,50 @@
     <string name="session_next_while_waiting">En attendant : %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
     <string name="session_next_instead">À la place : %1$s</string>
+    <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
+    <plurals name="session_day_done">
+        <item quantity="one">%1$s sur %2$s terminé aujourd’hui</item>
+        <item quantity="many">%1$s sur %2$s terminés aujourd’hui</item>
+        <item quantity="other">%1$s sur %2$s terminés aujourd’hui</item>
+    </plurals>
+    <!-- A finished block's line about today's session, past its midpoint. %1$s is how many of the day's blocks are left, shown larger. -->
+    <plurals name="session_day_left">
+        <item quantity="one">%1$s à faire aujourd’hui</item>
+        <item quantity="many">%1$s à faire aujourd’hui</item>
+        <item quantity="other">%1$s à faire aujourd’hui</item>
+    </plurals>
+    <!-- Under "3 left today": %1$s of the session's %2$s blocks are done. -->
+    <plurals name="session_day_done_caption">
+        <item quantity="one">%1$s sur %2$s terminé</item>
+        <item quantity="many">%1$s sur %2$s terminés</item>
+        <item quantity="other">%1$s sur %2$s terminés</item>
+    </plurals>
+    <!-- A finished block's line about today's session while the day still holds time for lessons not on the list yet, so it has no total. %1$s is how many blocks are done, shown larger. -->
+    <plurals name="session_day_open">
+        <item quantity="one">%1$s terminé aujourd’hui</item>
+        <item quantity="many">%1$s terminés aujourd’hui</item>
+        <item quantity="other">%1$s terminés aujourd’hui</item>
+    </plurals>
+    <!-- Under "3 done today": more lessons are being written and join today's session on their own. -->
+    <string name="session_day_more_coming">La suite arrive</string>
+    <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
+    <plurals name="session_caught_up_today">
+        <item quantity="one">%1$s rattrapée aujourd’hui</item>
+        <item quantity="many">%1$s rattrapées aujourd’hui</item>
+        <item quantity="other">%1$s rattrapées aujourd’hui</item>
+    </plurals>
+    <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
+    <plurals name="session_catch_up_to_go">
+        <item quantity="one">%1$s à rattraper</item>
+        <item quantity="many">%1$s à rattraper</item>
+        <item quantity="other">%1$s à rattraper</item>
+    </plurals>
+    <!-- At a finished block's end, once every lesson earlier days left is done. -->
+    <string name="session_no_catch_up_left">Plus aucune leçon à rattraper.</string>
+    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="session_lessons_deferred">
+        <item quantity="one">%1$s leçon reportée à un autre jour pour ne pas dépasser %2$s d’étude aujourd’hui.</item>
+        <item quantity="many">%1$s leçons reportées à un autre jour pour ne pas dépasser %2$s d’étude aujourd’hui.</item>
+        <item quantity="other">%1$s leçons reportées à un autre jour pour ne pas dépasser %2$s d’étude aujourd’hui.</item>
+    </plurals>
 </resources>

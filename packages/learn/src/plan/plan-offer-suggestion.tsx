@@ -62,11 +62,7 @@ export function PlanOfferSuggestion({
 
       <SuggestionActions>
         {offer && canApply && (
-          <SuggestionAction
-            busy={isPending}
-            icon={<CheckIcon aria-hidden="true" />}
-            onClick={apply}
-          >
+          <SuggestionAction action={apply} busy={isPending} icon={<CheckIcon aria-hidden="true" />}>
             {t("Apply")}
           </SuggestionAction>
         )}

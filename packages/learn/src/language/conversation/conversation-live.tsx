@@ -167,7 +167,7 @@ function CallBody({
             talking={Boolean(call.turn?.characterSpeaking)}
           />
 
-          <div className="lg:hidden">
+          <div className="with-aside:hidden">
             <CallObjectives conversation={conversation} met={call.metLabels} />
           </div>
 

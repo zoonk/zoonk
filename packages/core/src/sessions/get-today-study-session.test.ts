@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -38,6 +39,12 @@ async function setup() {
     }),
     learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
     dailyProgressFixtureMany([{ date: daysAgo(1), timeSpentSeconds: 1200, userId: user.id }]),
+    learningEventFixture({
+      goalId: fixture.goal.id,
+      localDate: daysAgo(1),
+      seconds: 1200,
+      userId: user.id,
+    }),
   ]);
 
   mockSession(user.id);
@@ -317,7 +324,12 @@ describe(getTodayStudySession, () => {
         plannedMinutes: 45,
         userId: user.id,
       }),
-      dailyProgressFixtureMany([{ date: daysAgo(2), timeSpentSeconds: 2700, userId: user.id }]),
+      learningEventFixture({
+        goalId: goal.id,
+        localDate: daysAgo(2),
+        seconds: 2700,
+        userId: user.id,
+      }),
       prisma.goal.update({ data: { dailyMinutes: 180 }, where: { id: goal.id } }),
     ]);
 
@@ -337,7 +349,7 @@ describe(getTodayStudySession, () => {
     expect(result.session.week.days.find((day) => day.isToday)?.goalMinutes).toBe(180);
   });
 
-  it("meets a day only once every active goal that asked for time finished its session", async () => {
+  it("shows only the goal's own sessions and time, never another goal's", async () => {
     const user = await userFixture();
 
     const [short, long, paused] = await Promise.all([
@@ -345,6 +357,22 @@ describe(getTodayStudySession, () => {
       sessionGoalFixture({ goal: { createdAt: daysAgo(7), dailyMinutes: 120 }, userId: user.id }),
       sessionGoalFixture({ goal: { createdAt: daysAgo(7), status: "paused" }, userId: user.id }),
     ]);
+
+    const studied = ({
+      days,
+      goal,
+      minutes,
+    }: {
+      days: number;
+      goal: typeof short.goal;
+      minutes: number;
+    }) =>
+      learningEventFixture({
+        goalId: goal.id,
+        localDate: daysAgo(days),
+        seconds: minutes * 60,
+        userId: user.id,
+      });
 
     const finish = ({ days, goal }: { days: number; goal: typeof short.goal }) =>
       studySessionFixture({
@@ -361,11 +389,10 @@ describe(getTodayStudySession, () => {
       finish({ days: 1, goal: short.goal }),
       finish({ days: 1, goal: long.goal }),
       finish({ days: 0, goal: paused.goal }),
-      dailyProgressFixtureMany([
-        { date: daysAgo(2), timeSpentSeconds: 15 * 60, userId: user.id },
-        { date: daysAgo(1), timeSpentSeconds: 90 * 60, userId: user.id },
-        { date: daysAgo(0), timeSpentSeconds: 45 * 60, userId: user.id },
-      ]),
+      studied({ days: 2, goal: short.goal, minutes: 15 }),
+      studied({ days: 1, goal: short.goal, minutes: 15 }),
+      studied({ days: 1, goal: long.goal, minutes: 75 }),
+      studied({ days: 0, goal: paused.goal, minutes: 45 }),
     ]);
 
     mockSession(user.id);
@@ -376,9 +403,9 @@ describe(getTodayStudySession, () => {
     }
 
     expect(result.session.week.days.slice(0, 3)).toMatchObject([
-      { goalMinutes: 135, hitGoal: false, minutes: 15, studied: true },
-      { goalMinutes: 135, hitGoal: true, minutes: 90, studied: true },
-      { goalMinutes: 135, hitGoal: false, isToday: true, minutes: 45, studied: true },
+      { goalMinutes: 120, hitGoal: false, minutes: 0, studied: false },
+      { goalMinutes: 120, hitGoal: true, minutes: 75, studied: true },
+      { goalMinutes: 120, hitGoal: false, isToday: true, minutes: 0, studied: false },
     ]);
   });
 

@@ -116,6 +116,37 @@ describe(createItemSet, () => {
     ]);
   });
 
+  it("reads a language exam's options in the practiced language, storing them under the learner's", async () => {
+    const skill = await skillFixture({ language: "pt", targetLanguage: "en" });
+
+    const dollars = generatedMultipleChoice({
+      options: [
+        { isCorrect: true, misconception: null, reason: "Ele diz mil dólares.", text: "$1,000" },
+        {
+          isCorrect: false,
+          misconception: "Lê a vírgula como decimal",
+          reason: "Isso é um dólar.",
+          text: "$1",
+        },
+      ],
+    });
+
+    const { rejected, set } = await createItemSet({
+      content: listeningContent(),
+      items: [{ format: "multipleChoice", item: dollars, skillId: skill.id }],
+      kind: "audio",
+      language: "pt",
+      optionLanguage: "en",
+      provenance: generatedProvenance(),
+    });
+
+    expect(rejected).toStrictEqual([]);
+
+    await expect(
+      prisma.item.findMany({ select: { language: true }, where: { setId: set?.id ?? "" } }),
+    ).resolves.toStrictEqual([{ language: "pt" }]);
+  });
+
   it("returns the set a retried step already stored instead of storing a copy", async () => {
     const { blueprint, items } = await setInputs();
     const provenance = generatedProvenance();

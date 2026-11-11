@@ -22,6 +22,7 @@ import { getGoalPreparation } from "../preparation/get-goal-preparation";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
+  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -203,10 +204,26 @@ describe("a free exam plan past its first week", () => {
       reason: "plusRequired",
     });
 
-    await expect(addExtraStudyBlock({ sessionId: day.id })).resolves.toStrictEqual({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: day.id })).resolves.toStrictEqual({
       reason: "plusRequired",
       status: "unavailable",
     });
+  });
+
+  it("sends a tap from a day that's over to Today, not to Plus", async () => {
+    const { goal } = await examPastFreeWeek();
+    const day = await openToday(goal.id);
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), startedAt: new Date(), status: "completed" },
+      where: { sessionId: day.id },
+    });
+
+    vi.setSystemTime(SESSION_NOW.getTime() + DAY_MS);
+
+    await expect(
+      addExtraStudyBlock({ input: { timeZone: TIME_ZONE }, sessionId: day.id }),
+    ).resolves.toStrictEqual({ reason: "dayOver", status: "unavailable" });
   });
 
   it("ends the day without promising tomorrow's new lesson, while Plus keeps it", async () => {

@@ -98,7 +98,6 @@
   "player_lesson_map_nested": "fa2a73edda5aeea6fbef9a49488aa8fe7a17ac3888f179a80ff3c242415ffd2a",
   "player_lesson_not_saved": "2cb2532b7a45f0ad4848d52a73d18512052a23ef21aa8feb44485a18b67fd244",
   "player_lesson_of": "f2e3f32fe7f41ea048e072aa5be6c39c5b4c618baa05a8e4b9b95d6999aee175",
-  "player_lessons_deferred": "0636eda4d8ac1da54abc210aba8f35d51162d507a6c942cdad59b9ff7bb2e665",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
   "player_microphone_blocked": "121eeff15f157528639dfe3185e4550f8dd5beeb3cca11a54f30c8a4cff14cc3",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
@@ -414,10 +413,6 @@
     <string name="player_time_studied">%1$s 학습</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$s에 복습</string>
-    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="player_lessons_deferred">
-        <item quantity="other">레슨 %1$s개를 다른 날로 옮겨 오늘 학습 시간을 %2$s에 맞췄어요.</item>
-    </plurals>
     <string name="player_next_lesson">다음 레슨</string>
     <string name="player_stop_for_today">오늘 학습 마치기</string>
     <string name="player_see_todays_summary">오늘의 요약 보기</string>

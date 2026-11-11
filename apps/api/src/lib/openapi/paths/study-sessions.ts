@@ -247,13 +247,14 @@ export const studySessionPaths = {
       description:
         "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
       operationId: "createStudyExtraBlock",
+      requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
         "201": jsonResponse(studyBlockSchema, "The first block added, where the learner goes on"),
         ...readErrors,
         "409": {
           ...conflictResponse,
-          description: `Not available now; details.reason says why. Error code: ${studySessionErrorCodes.extraTimeUnavailable}.`,
+          description: `Not available now; details.reason says why. \`dayOver\` means the session's day is over (a screen left open past midnight): go to Today, where the learner can add time to today. Error code: ${studySessionErrorCodes.extraTimeUnavailable}.`,
         },
         "422": {
           ...unprocessableEntityResponse,

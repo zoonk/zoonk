@@ -1,5 +1,6 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
 import { type LanguageModelCallOptions } from "ai";
+import { getModelFamily } from "./_utils/model-family";
 
 export type Reasoning = NonNullable<LanguageModelCallOptions["reasoning"]>;
 export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
@@ -18,34 +19,95 @@ type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
  */
 export type ServedSpeed = "fast";
 
+/** A bare id reasons like the model it backs up. */
+export type FallbackModel =
+  | string
+  | { model: string; reasoning: Exclude<Reasoning, "provider-default"> };
+
+/**
+ * The gateway sends the call's `reasoning` to every model in a chain. A provider's own reasoning
+ * option overrides it, but a provider without one takes another's (an `openai` effort reaches
+ * Claude too), so a chain whose models reason differently names every provider's level.
+ */
+const reasoningOptionByProvider = {
+  anthropic: (effort: Reasoning) => ({ effort }),
+  openai: (reasoningEffort: Reasoning) => ({ reasoningEffort }),
+};
+
+type ReasoningProvider = keyof typeof reasoningOptionByProvider;
+
 type ProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models" | "order" | "serviceTier"> & {
     speed?: ServedSpeed;
   };
-};
+} & Partial<Record<ReasoningProvider, Record<string, Reasoning>>>;
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models">;
   openai: { background?: "transparent"; output_format: "webp"; quality: ImageGenerationQuality };
 };
 
-function buildGatewayProviderOptions({
+type ChainModel = { model: string; reasoning?: Reasoning };
+
+function getChain({
   fallbackModels,
   model,
+  reasoning,
   useFallback,
 }: {
-  fallbackModels: readonly string[];
+  fallbackModels: readonly FallbackModel[];
   model: string;
+  reasoning?: Reasoning;
   useFallback: boolean;
-}): ProviderOptionsResult["gateway"] {
-  const order = getGatewayProviderOrder(model);
-  const models = useFallback ? fallbackModels.filter((candidate) => candidate !== model) : [];
+}): [ChainModel, ...ChainModel[]] {
+  const fallbacks = useFallback
+    ? fallbackModels
+        .map((entry) => (typeof entry === "string" ? { model: entry, reasoning } : entry))
+        .filter((entry) => entry.model !== model)
+    : [];
 
-  return { models, ...(order ? { order } : {}) };
+  return [{ model, reasoning }, ...fallbacks];
+}
+
+function isReasoningProvider(value: string): value is ReasoningProvider {
+  return value in reasoningOptionByProvider;
+}
+
+function buildReasoningOptions(
+  chain: readonly [ChainModel, ...ChainModel[]],
+): Partial<Record<ReasoningProvider, Record<string, Reasoning>>> {
+  const [main] = chain;
+
+  if (chain.every((entry) => entry.reasoning === main.reasoning)) {
+    return {};
+  }
+
+  const levels = new Map<ReasoningProvider, Reasoning>();
+
+  for (const { model, reasoning } of chain) {
+    const provider = getModelFamily(model);
+
+    if (!isReasoningProvider(provider) || !reasoning || reasoning === "provider-default") {
+      throw new Error(`The gateway can't set ${model}'s reasoning apart from its chain`);
+    }
+
+    if ((levels.get(provider) ?? reasoning) !== reasoning) {
+      throw new Error(`The gateway gives every ${provider} model in a chain one reasoning level`);
+    }
+
+    levels.set(provider, reasoning);
+  }
+
+  return Object.fromEntries(
+    [...levels].map(([provider, reasoning]) => [
+      provider,
+      reasoningOptionByProvider[provider](reasoning),
+    ]),
+  );
 }
 
 function getGatewayProviderOrder(model: string): GatewayProviderOptions["order"] {
-  const modelPrefix = model.split("/")[0] ?? "";
+  const modelPrefix = getModelFamily(model);
 
   if (!isSupportedModelPrefix(modelPrefix)) {
     return undefined;
@@ -146,26 +208,37 @@ export function chooseServiceTier({ wait }: { wait: CallWait }): ServiceTier | u
 }
 
 /**
- * Every model in a chain gets the same settings, so tasks leave sampling settings at the defaults:
+ * Every model in a chain gets the same sampling settings, so tasks leave them at the defaults:
  * Anthropic's models from Opus 4.7 and OpenAI's reasoning models drop them, and Google advises
- * against lowering Gemini 3's temperature.
+ * against lowering Gemini 3's temperature. Pass the call's `reasoning` when a fallback names its
+ * own.
  */
 export function buildProviderOptions({
   model,
+  reasoning,
   serviceTier,
   speed,
   useFallback,
   fallbackModels,
 }: {
   model: string;
+  reasoning?: Reasoning;
   serviceTier?: ServiceTier;
   speed?: ServedSpeed;
   useFallback: boolean;
-  fallbackModels: readonly string[];
+  fallbackModels: readonly FallbackModel[];
 }): ProviderOptionsResult {
-  const gateway = buildGatewayProviderOptions({ fallbackModels, model, useFallback });
+  const chain = getChain({ fallbackModels, model, reasoning, useFallback });
+  const [, ...fallbacks] = chain;
+  const order = getGatewayProviderOrder(model);
 
   return {
-    gateway: { ...gateway, ...(serviceTier ? { serviceTier } : {}), ...(speed ? { speed } : {}) },
+    ...buildReasoningOptions(chain),
+    gateway: {
+      models: fallbacks.map((entry) => entry.model),
+      ...(order ? { order } : {}),
+      ...(serviceTier ? { serviceTier } : {}),
+      ...(speed ? { speed } : {}),
+    },
   };
 }

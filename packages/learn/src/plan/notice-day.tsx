@@ -78,18 +78,19 @@ export function UseDateButton({
   const t = useExtracted();
 
   return (
-    <Button
-      busy={busy}
-      disabled={disabled}
-      focusableWhenDisabled
-      icon={<CalendarCheckIcon aria-hidden="true" />}
-      onClick={onUse}
-      size="sm"
-      type="button"
-      variant={variant}
-    >
-      {t("Use this date")}
-    </Button>
+    <form action={() => onUse()} className="contents">
+      <Button
+        busy={busy}
+        disabled={disabled}
+        focusableWhenDisabled
+        icon={<CalendarCheckIcon aria-hidden="true" />}
+        size="sm"
+        type="submit"
+        variant={variant}
+      >
+        {t("Use this date")}
+      </Button>
+    </form>
   );
 }
 
@@ -174,21 +175,23 @@ function NoSittingCard({
           )}
         </NoticeCardDescription>
 
-        <NoticeCardActions>
-          {noSitting.closest.map((date) => (
-            <Button
-              disabled={isPending}
-              focusableWhenDisabled
-              key={date}
-              onClick={() => use(date)}
-              size="sm"
-              type="button"
-              variant="secondary"
-            >
-              {t("Use {date}", { date: formatDate(date, "long") })}
-            </Button>
-          ))}
-        </NoticeCardActions>
+        <form className="contents">
+          <NoticeCardActions>
+            {noSitting.closest.map((date) => (
+              <Button
+                disabled={isPending}
+                focusableWhenDisabled
+                formAction={() => use(date)}
+                key={date}
+                size="sm"
+                type="submit"
+                variant="secondary"
+              >
+                {t("Use {date}", { date: formatDate(date, "long") })}
+              </Button>
+            ))}
+          </NoticeCardActions>
+        </form>
 
         {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>

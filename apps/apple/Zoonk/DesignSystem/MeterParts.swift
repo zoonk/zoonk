@@ -22,8 +22,8 @@ struct MeterParts: View {
   private let minimumWidth = 4.0
   private let ringWidth = 1.5
 
-  /// Where each part sits across a bar this wide, so a caller can lay a control over each one.
-  func spans(width: Double) -> [(x: Double, width: Double)] {
+  /// Where each part sits across a bar this wide.
+  private func spans(width: Double) -> [(x: Double, width: Double)] {
     let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
     let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
     let sharedWidth = max(width - fixedWidth, 0)
