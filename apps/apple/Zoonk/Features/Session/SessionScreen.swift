@@ -93,8 +93,9 @@ private struct SessionContent: View {
     let stopped = playback.stoppedSessionID == sessionID
 
     Group {
-      switch session.state {
-      case .loaded(let day):
+      // One branch for Today's day and the session's own, so the read landing keeps this screen
+      // and a Start already tapped on it.
+      if let day = shownDay(session, moment: playback.moment) {
         if stopped || day.nextBlock == nil {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
@@ -102,7 +103,7 @@ private struct SessionContent: View {
             day: day, sessionID: sessionID, goalID: day.goalId ?? today.day?.goal.id,
             moment: playback.moment)
         }
-      case .failed(let error) where error != .unauthorized:
+      } else if case .failed(let error) = session.state, error != .unauthorized {
         ContentUnavailableView {
           Label {
             Text("The session didn't load", tableName: "Session", comment: "Load failed")
@@ -118,27 +119,25 @@ private struct SessionContent: View {
           .buttonStyle(.outline)
         }
         .lonePage()
-      default:
-        if let moment = playback.moment {
-          ZoonkList {
-            Section {
-              MomentSummary(moment: moment, title: nil)
-            }
-
-            // The buddy acts once, on the next stop's screen.
-            DayMomentSections(result: moment.day)
-              .environment(\.celebrates, false)
-
-            Section {
-              ProgressView()
-                .frame(maxWidth: .infinity)
-            }
-            .listRowBackground(Color.clear)
+      } else if let moment = playback.moment {
+        ZoonkList {
+          Section {
+            MomentSummary(moment: moment, title: nil)
           }
-        } else {
-          ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+          // The buddy acts once, on the next stop's screen.
+          DayMomentSections(result: moment.day)
+            .environment(\.celebrates, false)
+
+          Section {
+            ProgressView()
+              .frame(maxWidth: .infinity)
+          }
+          .listRowBackground(Color.clear)
         }
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
     .loads(session)
@@ -149,6 +148,23 @@ private struct SessionContent: View {
       }
     }
     .completionMoments(playback.moment?.day)
+  }
+
+  /// Until the session's first read lands, the day as Today holds it, where the tap came from. A
+  /// block just finished waits for the read, since Today's day may not show it done.
+  private func shownDay(_ session: Resource<StudyDay>, moment: BlockMoment?) -> StudyDay? {
+    switch session.state {
+    case .loaded(let day):
+      return day
+    case .idle, .loading:
+      guard moment == nil, let held = today.day?.session, held.id == sessionID else {
+        return nil
+      }
+
+      return held
+    case .empty, .failed:
+      return nil
+    }
   }
 }
 
