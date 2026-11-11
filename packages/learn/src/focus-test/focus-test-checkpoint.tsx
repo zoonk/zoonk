@@ -121,7 +121,7 @@ function useFocusIntro() {
       case "current":
         return t({
           description:
-            "Shown above a short list of exam subjects the Focus test suggests giving more study time. It says the learner's study plan already does what the list suggests.",
+            "Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.",
           message: "Your plan already follows this focus.",
         });
       case "handPicked":

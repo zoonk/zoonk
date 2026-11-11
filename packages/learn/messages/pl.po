@@ -3986,11 +3986,11 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "Nie wystarczy ci czasu na wszystko. Twój plan może przeznaczyć więcej czasu na te przedmioty."
 
-#. Shown above a short list of exam subjects the Focus test suggests giving more study time. It says the learner's study plan already does what the list suggests.
+#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "l_lxS0"
 msgid "Your plan already follows this focus."
-msgstr "Twój plan już uwzględnia te priorytety."
+msgstr "Twój plan jest już zgodny z tymi zaleceniami."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
