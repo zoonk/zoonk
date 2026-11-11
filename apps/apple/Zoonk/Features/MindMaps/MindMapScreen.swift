@@ -131,6 +131,7 @@ struct MindMapOutlineView<Leading: View>: View {
             .foregroundStyle(.mutedForeground)
         }
       }
+      .listRowSeparator(.hidden)
 
       ForEach(outline.branches, id: \.self) { branch in
         Section {
@@ -150,6 +151,7 @@ struct MindMapOutlineView<Leading: View>: View {
         } header: {
           SectionTitle(Text(branch.title))
         }
+        .listRowSeparator(.hidden)
       }
     }
   }
