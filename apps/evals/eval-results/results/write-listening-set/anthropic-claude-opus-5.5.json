@@ -278,21 +278,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All five keys are supported by the recording: Fairbrook is spelled explicitly; Thursday is the final group choice; the applicable fee is £85; an apron is required; and the caller corrects radio to a leaflet. None of the answers can be established from the question alone, and the rejected alternatives are clearly excluded.",
+          "reasoning": "All five keys follow directly from the recording: Fairbrook, Thursday, £85, apron and leaflet. The alternatives mentioned in the conversation are clearly rejected or superseded. Each question requires listening, and the accepted answers respect the word limit, including the spelled surname and a digit-based price.",
           "score": 10,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The two-person registration call, five ordered form-completion questions, word limits, spelling, rejected alternatives and self-correction are appropriate for IELTS Listening Part 1. However, the approximately 565-word recording misses the required minimum, and two answers fall outside the specifically requested detail types. The repeated standalone question presentation is also less authentic than a single form.",
+          "reasoning": "The two-person registration call, form-completion format, question order, accent assignments and plausible distractors fit IELTS Listening Part 1. However, the approximately 560-word script misses the explicit 600-word minimum, and apron and leaflet do not meet the requested answer-type restriction. The self-correction therefore tests a source of information rather than one of the specified factual detail types.",
           "score": 7,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "The conversation uses natural contractions, brief reactions, plausible negotiation and a clear opening and closing. Expressions such as 'put me down', 'I wouldn't hold your breath' and 'No, hang on' fit conversational speech. Both requested accents are assigned, the turns contain only spoken language, and the English explanations accurately reference the conversation.",
+          "reasoning": "The dialogue consistently sounds conversational, with contractions, brief reactions, a natural booking sequence and an idiomatic closing. Expressions such as 'pop you on the form' and 'put me down' suit the assigned varieties. The turns contain only spoken language, and the English explanations accurately identify the relevant evidence and rejected alternatives.",
           "score": 10,
           "label": "Natural speech & language",
           "weight": 30
@@ -312,16 +312,16 @@
           "cacheReadTokens": 1136,
           "cacheWriteTokens": 0,
           "inputTokens": 4031,
-          "outputTokens": 1008,
+          "outputTokens": 1012,
           "reasoningTokens": 516
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "The script contains approximately 565 spoken words, below the explicit 600-word minimum. The answer selection also departs from the requested detail types: 'apron' and 'leaflet' are neither names, numbers, dates, prices nor addresses. Although the leaflet answer follows a genuine self-correction, it does not meet that answer-type requirement.",
+          "conclusion": "The script is approximately 560 words, below the explicit minimum of 600. Two tested answers, 'apron' and 'leaflet', also fall outside the requested names, numbers, dates, prices or addresses. Although the leaflet answer follows a genuine self-correction, that correction does not test one of the specified detail types.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
           "conclusion": "None",
@@ -329,9 +329,9 @@
           "score": 10
         },
         {
-          "conclusion": "Present the five blanks together on one registration form rather than repeating the form heading and completion instructions for each question. This would more closely resemble an IELTS question sheet.",
+          "conclusion": "Use the existing contact number as a tested detail and add an address or corrected date in place of the apron and leaflet questions. Extend the booking conversation naturally beyond 600 words while keeping the five questions in recording order.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -369,21 +369,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All six keys follow directly from the recording, fit their gaps and word limits, and reflect the speaker's corrections. The accepted variants are legitimate rather than competing answers. The geographical error does not change which accommodation answer the script supplies. No wrong-key or multiple-answer cap applies.",
+          "reasoning": "All six accepted-answer sets match what the speaker actually says and fit their gaps and word limits. The corrections clearly distinguish the intended details, and none of the questions can reliably be answered without listening. The accommodation’s external factual error does not make its key incorrect from the script alone.",
           "score": 10,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The single-speaker experience narrative, approximately four-minute length, six sentence-completion questions, chronological ordering and short spoken answers fit the requested adaptation. Several corrections provide useful listening distractors. However, the final question closely repeats the recording and its teaching/business distractors do not compete with the required workplace answer. The inaccurate Skomer accommodation also weakens the setting's authenticity, and twice-play delivery is not indicated. The set is not sufficiently out of place to trigger the score-7 cap.",
+          "reasoning": "The single-speaker account of volunteering, exactly six typed sentence completions, chronological question order and nearby rejected alternatives fit the requested adaptation of Part 2. However, the script is long enough to risk exceeding the specified duration, two plays are not stated, and the final question has a comparatively weak distractor. The set is otherwise recognisably exam-like, so the out-of-place cap is not triggered.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "The monologue sounds like an informal British English talk, using contractions, conversational transitions, personal reactions and a natural opening and closing. Expressions such as 'mum', 'fortnight' and 'good waterproofs' support the requested variety. There are no stage directions or unspoken narrator passages, and the English key points identify the relevant contrasts. No prose-like-script or wrong-language cap applies.",
+          "reasoning": "The script uses convincing spoken British English, including contractions, conversational questions, personal reactions and expressions such as 'mum', 'fortnight' and 'waterproofs'. It contains only spoken content, with a natural opening and closing. Supporting key points are in English and identify the relevant contrasts.",
           "score": 9,
           "label": "Natural speech & language",
           "weight": 30
@@ -403,8 +403,8 @@
           "cacheReadTokens": 1142,
           "cacheWriteTokens": 0,
           "inputTokens": 3653,
-          "outputTokens": 1152,
-          "reasoningTokens": 516
+          "outputTokens": 1427,
+          "reasoningTokens": 816
         }
       },
       "keyFlaws": [
@@ -412,22 +412,22 @@
           "itemLocator": "set.questions[1]",
           "keyedAnswer": "lighthouse; old lighthouse",
           "kind": "factualError",
-          "workedAnswer": "The script explicitly supplies 'old lighthouse', so the answer is internally keyed correctly. However, Skomer has no lighthouse converted into accommodation; accommodation there uses former farm buildings. The lighthouse premise is geographically inaccurate."
+          "workedAnswer": "The script explicitly supplies 'old lighthouse', so the completion is internally supported. However, it locates the experience on Skomer, whose visitor accommodation is in the old farmhouse; Skomer does not have the converted lighthouse described. The shared stimulus therefore supplies a false factual premise for this item."
         }
       ],
       "steps": [
         {
-          "conclusion": "The accommodation detail introduces a factual error about the named location: Skomer does not have an old lighthouse converted into volunteer accommodation. Its accommodation is associated with former farm buildings. This makes question 2 teach an inaccurate detail, although its key correctly matches the script.",
+          "conclusion": "The accommodation detail is factually inaccurate for the named island: Skomer’s visitor accommodation is in its old farmhouse, not a converted lighthouse. Question 2 reinforces this geographical error, although its answer matches the script.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "There is no indication that the recording should be played twice. Some distractors are also weak competitors for their gaps: teaching and business cannot plausibly complete the final question's workplace location.",
+          "conclusion": "The roughly 670-word script risks exceeding four minutes at a clear listening-test pace. The result also does not specify that the recording is played twice.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the final question less verbatim and give it a nearby, rejected workplace alternative. Add an explicit instruction to listen twice, and replace the lighthouse with geographically accurate accommodation while preserving the tent distractor.",
+          "conclusion": "Trim and time the recording to ensure a three-to-four-minute delivery, and state the two-play instruction. Strengthen the final question’s distractor: business studies and teaching are less plausible alternatives to a workplace than another explicitly rejected workplace would be.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -462,21 +462,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All six accepted answers occur in the recording and produce grammatical completed sentences. The December key correctly follows the speaker's correction. Notebook and flask correctly omit the article already supplied before their gaps. Every answer requires information from the recording, and none has a competing defensible answer.",
+          "reasoning": "All six accepted answers occur in the recording and produce grammatical completed sentences: notebook, Crabbe, cutting reeds, December, first aid and flask. December correctly reflects the speaker's correction. Each answer requires information from the recording, and no competing answer is supported for the same gap.",
           "score": 10,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The single-speaker talk, approximate 3–4-minute length, ordered sentence-completion questions and correction/rejected-alternative distractors fit the task. Six questions match the requested count. Most stems paraphrase appropriately, but the explicitly spelled surname is a modest departure from the usual B2 Part 2 listening demand; the set as a whole remains exam-like.",
+          "reasoning": "The single-speaker talk, plausible volunteering setting, roughly 550-word length and ordered sentence-completion questions fit the requested task. Six questions match the requested count. Corrections and rejected alternatives provide appropriate listening distractors, and most stems paraphrase the recording. The explicitly spelled surname is a weaker fit for B2 comprehension difficulty, but the set overall does not look out of place in the exam.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "The script consistently sounds like an informal British English talk, with contractions, conversational transitions, a natural self-correction and suitable opening and closing remarks. It contains spoken words rather than stage directions. The English key points match the learner language and accurately identify the relevant evidence and distractors.",
+          "reasoning": "The script consistently sounds like a British English speaker addressing an audience, with natural contractions, conversational transitions, a believable self-correction and appropriate opening and closing remarks. It contains spoken words rather than stage directions. All explanatory key points are in English, the learner's language, and accurately identify the relevant evidence.",
           "score": 10,
           "label": "Natural speech & language",
           "weight": 30
@@ -496,8 +496,8 @@
           "cacheReadTokens": 1142,
           "cacheWriteTokens": 0,
           "inputTokens": 3675,
-          "outputTokens": 698,
-          "reasoningTokens": 260
+          "outputTokens": 971,
+          "reasoningTokens": 516
         }
       },
       "keyFlaws": [],
@@ -508,12 +508,12 @@
           "score": 10
         },
         {
-          "conclusion": "Question 2 tests an explicitly spelled surname, making it closer to basic form-filling than the contextual information retrieval typically expected in B2 First Part 2.",
+          "conclusion": "The explicitly spelled surname in question 2 mainly tests spelling recognition, offering less B2-level listening challenge than the other items. This is a small exam-realism weakness, not a key error.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Replace the spelled-surname gap with a short phrase about the fisherman's contribution to the reserve, using a paraphrased sentence stem to increase B2-level listening demand.",
+          "conclusion": "Replace the spelled-surname item with a detail requiring recognition of a paraphrased idea, while preserving the clear answer, recording order and grammatical gap.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -548,21 +548,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The six intended answers are supported by the recording, follow its order, and require listening. Every accepted alternative fits its gap grammatically. However, question 4 additionally accepts 'dyed cotton': the recording says 'cotton, which we dyed', not 'dyed cotton'. This invalid accepted alternative triggers the maximum score of 6 for a wrong key.",
+          "reasoning": "All six primary answers are supported by the recording, require listening, and fit their gaps grammatically. However, question 4 also accepts “dyed cotton”, which is not a phrase heard in the transcript. This invalid accepted alternative triggers the cap of 6 for a wrong key.",
           "score": 6,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The single-speaker career talk, approximate length, sentence-completion format, and rejected alternatives such as silk and Velcro broadly suit B2 First Part 2. Six questions match the requested count. The spelled-surname item is less representative of the intended B2 information-extraction challenge, and several question frames could paraphrase the recording more effectively.",
+          "reasoning": "The sustained single-speaker talk, approximate duration, ordered sentence completions, and plausible rejected alternatives fit the requested task. Six questions match the requested count. The explicitly spelled surname is a weaker B2 First item, and some stems closely repeat the recording rather than paraphrasing it.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "The script uses natural contractions, conversational transitions, a plausible opening and closing, and British expressions such as 'placement' and 'zips'. It contains spoken words rather than stage directions. However, every key-point explanation is in English instead of Portuguese, triggering the explicit maximum score of 7.",
+          "reasoning": "The script has natural contractions, conversational transitions, a suitable opening and closing, and consistent British usage, without stage directions. However, every explanatory keyPoint is in English rather than Portuguese, triggering the wrong-language cap of 7.",
           "score": 7,
           "label": "Natural speech & language",
           "weight": 30
@@ -582,8 +582,8 @@
           "cacheReadTokens": 1142,
           "cacheWriteTokens": 0,
           "inputTokens": 3646,
-          "outputTokens": 963,
-          "reasoningTokens": 344
+          "outputTokens": 933,
+          "reasoningTokens": 365
         }
       },
       "keyFlaws": [
@@ -591,24 +591,24 @@
           "itemLocator": "set.questions[3]",
           "keyedAnswer": "cotton; dyed cotton",
           "kind": "wrongKey",
-          "workedAnswer": "The speaker says 'we went for cotton, which we dyed'. 'Cotton' is a grammatical, directly spoken answer. Although 'dyed cotton' describes the material accurately, that phrase is not heard and therefore is not a valid accepted alternative under the stated sentence-completion requirement."
+          "workedAnswer": "The speaker says “we went for cotton, which we dyed”. “Cotton” is heard and correctly completes the sentence. “Dyed cotton” is grammatical and describes the material accurately, but the phrase itself is not in the transcript and therefore cannot be accepted under the stated requirement."
         }
       ],
       "steps": [
         {
-          "conclusion": "Question 4 accepts 'dyed cotton', although that phrase is not spoken in the transcript; only 'cotton' satisfies the requirement to write words heard. All accepted answers produce grammatical completed sentences. Additionally, all six key-point explanations are in English rather than the learner's Portuguese.",
+          "conclusion": "Question 4 accepts “dyed cotton”, but that phrase is not spoken: the transcript says “cotton, which we dyed”. Although grammatical and semantically accurate, this alternative violates the requirement to write words heard in the recording. All six explanatory keyPoints are also in English rather than the learner’s language, Portuguese.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The explicitly spelled surname provides relatively elementary spelling practice rather than a strong B2 listening challenge. Some questions also closely reproduce the recording's wording, particularly the final advice question, reducing the intended paraphrase demand.",
+          "conclusion": "Question 2 tests a surname explicitly spelled out by the speaker. This is less representative of B2 First Part 2 than extracting meaningful factual information from the monologue.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the surname item with a substantive detail requiring B2-level comprehension, and paraphrase more of the sentence frames while preserving grammatical compatibility with the exact spoken answers.",
+          "conclusion": "Put the repeated word-limit instruction in shared task instructions to make the sentence-completion set easier to scan.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -641,21 +641,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All ten selected options or accepted-answer lists agree with the recording, including the corrected date and departure time. No competing option is equally supported, and the questions require recording-specific information. However, the invalid sample answers for questions 4 and 6 undermine answer guidance despite the correct accepted-answer lists. The wrong-key cap is not triggered by the accepted keys.",
-          "score": 8,
+          "reasoning": "All ten keys match the recording, including the corrected date, revised departure time and replacement locations. The multiple-choice alternatives are ruled out by the conversation. Every typed item supplies its own word limit, and all accepted answers fit their gaps and limits. No question supplies its exact answer without listening.",
+          "score": 10,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The two-speaker booking conversation, ten questions, substantial script exceeding 600 words, spelling, prices, dates, and correction-based distractors fit IELTS Part 1 well. Questions follow recording order, multiple-choice items have three options, and each typed item carries its own IELTS-style limit. The two over-limit model answers weaken exam fidelity, and only the date provides an unmistakable spontaneous self-correction; other corrections update previously published arrangements.",
-          "score": 8,
+          "reasoning": "The two-speaker travel-booking conversation, ten ordered questions, predominantly form-completion format and three-option multiple-choice items suit IELTS Listening Part 1. The script exceeds 600 words and is compatible with approximately four to five minutes of delivery. Spelling, dates, times, prices, corrections and rejected alternatives provide appropriate listening demands. Only optional form-label and model-answer presentation refinements remain.",
+          "score": 9,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "The conversation uses natural contractions, brief reactions, polite booking language, and plausible conversational transitions. British and Australian English are named appropriately, and the vocabulary suits those varieties. Turns contain spoken language without stage directions. Reasons, misconceptions, and key points are in Brazilian Portuguese and accurately connect answers to the recording.",
+          "reasoning": "The dialogue uses natural contractions, brief reactions, conversational transitions and a plausible opening and closing. It contains spoken words rather than stage directions. British English and Australian English are appropriate named varieties, and the vocabulary is compatible with the setting. Explanations and misconceptions are in Brazilian Portuguese and accurately reference the conversation.",
           "score": 10,
           "label": "Natural speech & language",
           "weight": 30
@@ -674,9 +674,9 @@
         "usage": {
           "cacheReadTokens": 1166,
           "cacheWriteTokens": 0,
-          "inputTokens": 5425,
-          "outputTokens": 1555,
-          "reasoningTokens": 1034
+          "inputTokens": 5423,
+          "outputTokens": 1141,
+          "reasoningTokens": 690
         }
       },
       "keyFlaws": [],
@@ -687,12 +687,12 @@
           "score": 10
         },
         {
-          "conclusion": "Two model answers violate their questions' explicit one-word-and/or-a-number limits: question 4 gives 'the fourteenth' and question 6 gives 'quarter to eight'. Their acceptedAnswers lists are correct, but these sample answers would teach learners to submit responses outside the stated limits. Use '14' and '7:45' instead.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Include another genuine speaker self-correction, such as correcting a price or spelled name. The date has a clear self-correction, while the other distractors mainly concern changed arrangements or outdated information rather than speakers correcting themselves.",
+          "conclusion": "Polish the first form label to read \"Customer's name: Ryan ______\" or \"Customer's surname: ______\". Using \"38\" as the model answer for the price would also make the numeric presentation more consistent; the accepted alternative \"thirty-eight\" still satisfies IELTS's one-word counting convention.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -735,21 +735,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All ten keyed options or accepted typed answers are supported by the recording, including the corrected weekend opening time and minimum climbing age. No competing option is also correct. However, Question 5 can largely be solved from its wording: only the keyed option describes something potentially new. Question 8's over-limit sample answer also makes the answer guidance inconsistent, despite its correct accepted answers.",
+          "reasoning": "All ten keyed answers agree with the recording, including the corrected weekend opening time and minimum climbing age. No competing option is also correct. However, Question 5's wording reveals its answer without listening, and Question 7 omits valid age expressions from its accepted answers. Only one item clearly permits answering without listening, so the cap for several such questions does not apply.",
           "score": 8,
           "label": "Right, fair keys",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The substantial single-speaker talk about a local leisure centre fits Part 2's everyday social setting and approximately four-to-five-minute duration. There are ten sequential questions combining three-option multiple choice with word-limited note completion, and several realistic corrections and rejected alternatives. Weaknesses are the giveaway construction of Question 5, occasional near-verbatim answer wording, and Question 8's sample answer violating the stated word limit.",
+          "reasoning": "The roughly 740-word, single-speaker leisure-centre announcement fits Part 2's everyday social setting and approximately four-to-five-minute duration. There are ten questions in recording order, using three-option multiple choice and word-limited note completion. Corrections, competing prices and times, and rejected alternatives provide realistic distractors. Question 5 is weaker than an authentic listening item because its distractors can be eliminated from the wording alone, and some answer wording closely echoes the script. The set is not broadly out of place, so the out-of-place cap is not triggered.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "naturalSpeech",
-          "reasoning": "Hannah's British English monologue sounds natural, with contractions, conversational transitions, an appropriate opening and closing, and no stage directions. The multiple-choice reasons and misconceptions are useful Brazilian Portuguese. However, all five typed-answer keyPoints provide their explanatory feedback in English, triggering the maximum score of 7 for reasons in the wrong language.",
+          "reasoning": "Hannah's talk uses natural contractions, transitions, a credible greeting and closing, and expressions consistent with the named British English variety. There are no stage directions. Multiple-choice reasons and misconceptions are clear Brazilian Portuguese and grounded in the recording. However, all five typed items provide their explanatory keyPoints in English, including explanations distinguishing corrected or rejected details. This triggers the maximum score of 7 for explanations in the wrong language.",
           "score": 7,
           "label": "Natural speech & language",
           "weight": 30
@@ -769,26 +769,26 @@
           "cacheReadTokens": 1166,
           "cacheWriteTokens": 0,
           "inputTokens": 5261,
-          "outputTokens": 1021,
-          "reasoningTokens": 497
+          "outputTokens": 1101,
+          "reasoningTokens": 516
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Question 5 can be answered without listening: its stem asks what is new, while the two distractors explicitly describe things staying the same. Also, the typed items' explanatory keyPoints are in English rather than Brazilian Portuguese, so learner-facing explanations do not consistently meet the language requirement.",
           "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The five typed-answer explanations in keyPoints are in English rather than Brazilian Portuguese. Question 8's sample answer, 'one pound fifty', exceeds its two-word limit, although the accepted numeric answers are correct. Question 5 also gives away its answer: the two incorrect options explicitly describe unchanged features, whereas the question asks what is new.",
-          "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use more paraphrasing in the multiple-choice answers, particularly Question 1, which closely repeats the recording. For Question 5, make all three options plausible changes so that identifying the answer requires listening.",
-          "kind": "potentialImprovements",
+          "conclusion": "The first four multiple-choice questions all have the second option keyed, creating an avoidably predictable answer pattern.",
+          "kind": "minorErrors",
           "score": 9
+        },
+        {
+          "conclusion": "Expand Question 7's accepted answers to include 'eight years' and '8 years', which correctly complete the note and satisfy its word limit. Replace Question 5's distractors with plausible alternative changes so that the recording is necessary.",
+          "kind": "potentialImprovements",
+          "score": 8
         }
       ],
       "testCase": {
