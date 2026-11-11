@@ -159,6 +159,20 @@ extension ProgressDaypart {
     }
   }
 
+  /// The closest symbols to main's Sunrise, Sun, Sunset and Moon.
+  var symbolName: String {
+    switch self {
+    case .night:
+      "moon"
+    case .morning:
+      "sunrise"
+    case .afternoon:
+      "sun.max"
+    case .evening:
+      "sunset"
+    }
+  }
+
   func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
     let (start, end) = hours
     let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
@@ -202,9 +216,18 @@ extension ProgressDaypart {
 extension ProgressWeekday {
   /// Capitalized, as a name on its own reads ("Quinta-feira").
   func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
+    capitalized(\.standaloneWeekdaySymbols, locale: locale)
+  }
+
+  /// Under a chart's column ("Qui.").
+  func localizedShortTitle(locale: Locale = .autoupdatingCurrent) -> String {
+    capitalized(\.shortStandaloneWeekdaySymbols, locale: locale)
+  }
+
+  private func capitalized(_ symbols: KeyPath<Calendar, [String]>, locale: Locale) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
-    let name = calendar.standaloneWeekdaySymbols[sundayIndex]
+    let name = calendar[keyPath: symbols][sundayIndex]
     return name.prefix(1).uppercased(with: locale) + name.dropFirst()
   }
 
