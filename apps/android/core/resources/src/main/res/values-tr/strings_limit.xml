@@ -20,6 +20,7 @@
   "limit_mind_maps_free_month": "deccbbf6141db7a867dd35a5395112a52faa9c3447b99e7706d1475ac00f4301",
   "limit_mind_maps_guest": "a06640eba7ebf3f764230941a07948d13f573157e41d2921e74f780f37321301",
   "limit_mind_maps_plus": "5eb5b14bfe4cf603fde4053ad7c5be28b6a295ad59fb61ecbe9ff5b69a3a3b56",
+  "limit_mind_maps_plus_month": "6385548e348411c3cbf74e09db6c154bb529b0c6494ec4d3b96e444daa85f89a",
   "limit_outlines_free_day": "88912b3aee8c1fd4ccdca83507c44ec7b7ba747027991407f10a1ee8c0a28359",
   "limit_outlines_free_month": "73ddd773f6bf3606ba90a4bd503bc2ea0929de87d51297e2d6532c5227e01ca3",
   "limit_outlines_guest": "9e42e782f1d28f2cc8a89dc5abf13557313be85fd5918d9206d051f44fa1a4ca",
@@ -45,6 +46,7 @@
     <string name="limit_lessons_free_day">Bugünkü yeni ders hakkını kullandın. Yarın yeni dersler açılacak. Hemen devam etmek istersen Plus’a geç.</string>
     <string name="limit_mind_maps_guest">Hesap açmadan deneyebileceğin zihin haritasını oluşturdun. Daha fazlası için ücretsiz bir hesap oluştur.</string>
     <string name="limit_mind_maps_plus">Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin.</string>
+    <string name="limit_mind_maps_plus_month">Bu ayki yeni zihin haritası hakkını kullandın. Gelecek ay yenilerini oluşturabilirsin.</string>
     <string name="limit_mind_maps_free_month">Bu ayki zihin haritası oluşturma hakkını kullandın. Gelecek ay daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç.</string>
     <string name="limit_mind_maps_free_day">Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç.</string>
     <string name="limit_outlines_guest">Hesap açmadan bir konuya önceden göz atma hakkını kullandın. Daha fazla konu görmek için ücretsiz bir hesap oluştur.</string>

@@ -119,7 +119,7 @@ private fun reachedMessage(
                     }
 
                     LimitTier.Plus -> {
-                        R.string.limit_mind_maps_plus
+                        if (period == LimitPeriod.Month) R.string.limit_mind_maps_plus_month else R.string.limit_mind_maps_plus
                     }
 
                     LimitTier.Free -> {

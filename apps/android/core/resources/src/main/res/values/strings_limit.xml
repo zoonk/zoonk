@@ -15,6 +15,7 @@
     <string name="limit_lessons_free_day">That\'s all the new lessons for today. They open again tomorrow, or get Plus to keep going now.</string>
     <string name="limit_mind_maps_guest">You\'ve made the mind map you can try without an account. Create a free account to make more.</string>
     <string name="limit_mind_maps_plus">That\'s all the new mind maps for today. You can make more tomorrow.</string>
+    <string name="limit_mind_maps_plus_month">That\'s all the new mind maps for this month. You can make more next month.</string>
     <string name="limit_mind_maps_free_month">That\'s all the new mind maps for this month. You can make more next month, or get Plus to keep going now.</string>
     <string name="limit_mind_maps_free_day">That\'s all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.</string>
     <string name="limit_outlines_guest">You\'ve seen the topic you can see ahead of time without an account. Create a free account to see more.</string>
