@@ -150,29 +150,52 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var showsDayProgress: Bool { !blocks.isEmpty && meterParts.count >= 2 }
 
-  var meterParts: [MeterParts.Part] {
-    var parts = blocks.map { block in
-      let weight = Double(max(block.estimatedMinutes, 1))
-
-      if block.isFinished {
-        return MeterParts.Part(weight: weight, fill: .color(.success))
-      }
-
-      if block.position == nextPosition {
-        return MeterParts.Part(weight: weight, fill: .current)
-      }
-
-      let kind = block.learnKind
-      return MeterParts.Part(
-        weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
+  /// Mirrors main's `DayProgress`: each block, then the time the day holds for lessons not
+  /// written yet.
+  var daySegments: [DaySegment] {
+    var segments = blocks.map { block -> DaySegment in
+      if block.status == .completed { return .block(block, .done) }
+      if block.status == .skipped { return .block(block, .skipped) }
+      return .block(block, block.position == nextPosition ? .current : .ahead)
     }
 
-    if lessonsComing || lessonsToPrepare {
+    if let comingLessons {
       let held = foldedMinutes(showing: blocks)
-      if held > 0 { parts.append(.init(weight: held, fill: .track)) }
+      if held > 0 { segments.append(.held(minutes: held, comingLessons)) }
     }
 
-    return parts
+    return segments
+  }
+
+  var meterParts: [MeterParts.Part] { daySegments.map(\.meterPart) }
+}
+
+enum DaySegment {
+  enum State {
+    case ahead
+    case current
+    case done
+    case skipped
+  }
+
+  case block(StudyBlock, State)
+  case held(minutes: Double, ComingLessons)
+
+  var meterPart: MeterParts.Part {
+    switch self {
+    case .block(let block, let state):
+      let weight = Double(max(block.estimatedMinutes, 1))
+      let kind = block.learnKind
+
+      return switch state {
+      case .done, .skipped: .init(weight: weight, fill: .color(.success))
+      case .current: .init(weight: weight, fill: .current)
+      case .ahead:
+        .init(weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
+      }
+    case .held(let minutes, _):
+      return .init(weight: minutes, fill: .track)
+    }
   }
 }
 
@@ -235,6 +258,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
 
   /// The saved block's id; nil on a day not opened yet.
   let id: String?
+  let answered: Int
   let areaId: String?
   let areas: [String]
   let brainPower: Int

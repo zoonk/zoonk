@@ -204,8 +204,7 @@ extension ProgressWeekday {
   func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
-    let name = calendar.standaloneWeekdaySymbols[sundayIndex]
-    return name.prefix(1).uppercased(with: locale) + name.dropFirst()
+    return calendar.standaloneWeekdaySymbols[sundayIndex].labelCased(locale)
   }
 
   private var sundayIndex: Int {
