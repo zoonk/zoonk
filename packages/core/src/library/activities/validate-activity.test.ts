@@ -219,6 +219,21 @@ describe(validateActivity, () => {
     expect(validateActivity(longLabel).ok).toBe(true);
   });
 
+  it("keeps a list past its target as written", () => {
+    const longProcess = structuredClone(fixtures.processOrder);
+
+    longProcess.fields.steps = Array.from({ length: 9 }, (_, index) => ({
+      icon: DEFAULT_PROCESS_ICON,
+      id: `step-${index}`,
+      text: `Step ${index + 1}`,
+      why: `It needs step ${index}.`,
+    }));
+
+    const result = validateActivity(longProcess);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([]);
+  });
+
   it("rejects inconsistent template data", () => {
     const partsOff = structuredClone(fixtures.areaModel);
 
@@ -343,18 +358,10 @@ describe(validateActivity, () => {
     const sameTwice = structuredClone(fixtures.labeledDiagram);
     sameTwice.fields.parts = [...sameTwice.fields.parts, { label: "Septum", part: "Aorta" }];
 
-    const tooMany = structuredClone(fixtures.labeledDiagram);
-
-    tooMany.fields.parts = ["a", "b", "c", "d", "e", "f", "g"].map((part) => ({
-      label: part.toUpperCase(),
-      part,
-    }));
-
     const unknownMixUp = structuredClone(fixtures.labeledDiagram);
     unknownMixUp.fields.mixUps = [{ feedback: "Why.", labels: ["Aorta", "Vena cava"] }];
 
     expect(issueCodes(sameTwice)).toContain("inconsistentFields");
-    expect(issueCodes(tooMany)).toContain("invalidSchema");
     expect(issueCodes(unknownMixUp)).toContain("inconsistentFields");
   });
 

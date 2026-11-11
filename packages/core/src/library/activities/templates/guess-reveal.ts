@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { explanationSchema, labelSchema } from "../../steps/contract/content-schemas";
-import { expressionSchema, unitSchema } from "../activity-schemas";
+import { aimForItems, expressionSchema, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { evaluateOrNull, guessScaleIssues, isClose, issue } from "./_utils/template-helpers";
 
-const MAX_WORKINGS = 5;
+const WORKINGS_TARGET = 5;
 
 const truthSchema = z.discriminatedUnion("kind", [
   z
@@ -14,7 +14,7 @@ const truthSchema = z.discriminatedUnion("kind", [
       workings: z
         .array(z.object({ expression: expressionSchema, label: labelSchema }).strict())
         .min(1)
-        .max(MAX_WORKINGS),
+        .describe(aimForItems(WORKINGS_TARGET)),
     })
     .strict(),
   z.object({ kind: z.literal("cited"), value: z.number() }).strict(),
