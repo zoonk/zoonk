@@ -79,11 +79,11 @@ export function choiceOptionsSchema<TOption extends z.ZodType<{ id: string; isCo
 
 export function uniqueIdsSchema<TItem extends z.ZodType<{ id: string }>>(
   item: TItem,
-  bounds: { max: number; min: number },
+  bounds: { max?: number; min: number },
 ) {
-  return z
-    .array(item)
-    .min(bounds.min)
-    .max(bounds.max)
-    .refine(hasUniqueIds, { message: "Ids must be unique" });
+  const items = z.array(item).min(bounds.min);
+
+  return (bounds.max === undefined ? items : items.max(bounds.max)).refine(hasUniqueIds, {
+    message: "Ids must be unique",
+  });
 }
