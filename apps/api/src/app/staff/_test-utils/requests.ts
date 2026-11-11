@@ -1,5 +1,6 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { cliTokenFixture, sendStaffAuthorization } from "./cli-tokens";
+import { cliTokenFixture } from "../../../../../../packages/auth/src/_test-utils/cli-tokens";
+import { sendStaffAuthorization } from "./staff-authorization";
 
 export function staffRequest({ path, body }: { path: string; body: unknown }) {
   return new Request(`http://localhost${path}`, {
