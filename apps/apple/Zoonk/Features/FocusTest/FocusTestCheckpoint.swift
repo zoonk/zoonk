@@ -76,6 +76,7 @@ struct FocusTestCheckpoint: View {
           : Text(
             "Done", tableName: "FocusTest",
             comment: "Leaves the Focus test's result for the plan"),
+        continueIcon: host == .onboarding ? .forward : .check,
         skipLabel: next.map {
           Text(
             "Continue the test\u{00A0}· \(FocusTestCopy.about(minutes: $0.minutes))",
