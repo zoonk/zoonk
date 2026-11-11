@@ -18,6 +18,7 @@ import {
   getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
+import { isPastPlusOnlyMock } from "../plus-only-mock";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
 
 const WEEK_DAYS = 7;
@@ -31,24 +32,6 @@ export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
 }
 
 type WeeklyItem = Pick<PlanItem, "kind" | "scheduledFor" | "status">;
-
-/** A mock the learner can't take stands for its own day only, as a full review, so it is over once that day passes. */
-function isPastPlusOnlyMock({
-  includesMockExams,
-  item,
-  today,
-}: {
-  includesMockExams: boolean;
-  item: WeeklyItem;
-  today: Date;
-}): boolean {
-  return (
-    !includesMockExams &&
-    item.kind === "mock" &&
-    item.scheduledFor !== null &&
-    item.scheduledFor < today
-  );
-}
 
 export function findNextWeeklyItem<Item extends WeeklyItem>({
   includesMockExams,
