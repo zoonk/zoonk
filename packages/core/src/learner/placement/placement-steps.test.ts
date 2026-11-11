@@ -437,6 +437,17 @@ function nextForHeavyHistory({
   });
 }
 
+function nextForOwnMaterial(evidence: PlacementEvidence[]) {
+  return chooseNextPlacementSkill({
+    answeredOnly: true,
+    areaOrder: ["History", "Math"],
+    askableSkillIds: EXAM_ASKABLE,
+    evidence,
+    skills: EXAM,
+    statuses: place(evidence, EXAM).statuses,
+  });
+}
+
 function targetFor(evidence: PlacementEvidence[], skillId = "m2") {
   return getTargetDifficulty({ evidence, ownLevel: "basic", skillId, skills: EXAM });
 }
@@ -467,19 +478,9 @@ describe("placement across an exam's areas", () => {
   });
 
   it("asks a Focus test from the learner's own material in its subject order", () => {
-    const next = (evidence: PlacementEvidence[]) =>
-      chooseNextPlacementSkill({
-        answeredOnly: true,
-        areaOrder: ["History", "Math"],
-        askableSkillIds: EXAM_ASKABLE,
-        evidence,
-        skills: EXAM,
-        statuses: place(evidence, EXAM).statuses,
-      });
-
-    expect(next([])).toBe("h1");
-    expect(next([answer("m1", "correct")])).toBe("h1");
-    expect(next([answer("h1", "correct")])).toBe("h2");
+    expect(nextForOwnMaterial([])).toBe("h1");
+    expect(nextForOwnMaterial([answer("m1", "correct")])).toBe("h1");
+    expect(nextForOwnMaterial([answer("h1", "correct")])).toBe("h2");
   });
 
   it("starts each area where the learner's own level points", () => {
