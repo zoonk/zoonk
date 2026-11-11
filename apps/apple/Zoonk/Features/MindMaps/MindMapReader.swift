@@ -101,7 +101,7 @@ struct MindMapReader: View {
       .scrollIndicators(.hidden)
       // The chapter of the map shown and the next one, read ahead.
       .loads(lessonResources(cards, around: index, goalId: goalId), refreshable: false)
-      .onChange(of: current) { _, card in
+      .onChange(of: current, initial: true) { _, card in
         if let card {
           store.remember(MindMapPosition(card), goalId: goalId, tab: tab)
         }
