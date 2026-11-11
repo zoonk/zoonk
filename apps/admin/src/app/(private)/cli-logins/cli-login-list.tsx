@@ -11,9 +11,7 @@ import { RevokeCliLoginForm } from "./revoke-cli-login-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "Person" },
-  { label: "Client" },
-  { label: "Last renewed" },
-  { label: "Ends if unused" },
+  { label: "Login" },
   { align: "right", label: "" },
 ];
 
@@ -28,17 +26,21 @@ export async function CliLoginList() {
     >
       {logins.map((login) => (
         <TableRow key={login.id}>
-          <TableCell>
+          <TableCell className="whitespace-normal">
             <Link className="font-medium hover:underline" href={`/users/${login.user.id}`} prefetch>
               {login.user.name}
             </Link>
-            <div className="text-muted-foreground text-xs">{login.user.email}</div>
+            <div className="text-muted-foreground text-xs break-all">{login.user.email}</div>
           </TableCell>
-          <TableCell className="text-muted-foreground">
-            {login.client.name ?? login.client.clientId}
+          <TableCell className="whitespace-normal">
+            <div>{login.client.name ?? login.client.clientId}</div>
+            <div className="text-muted-foreground text-xs">
+              Renewed {formatDateTime(login.createdAt)}
+            </div>
+            <div className="text-muted-foreground text-xs">
+              Ends {formatDateTime(login.expiresAt)} if unused
+            </div>
           </TableCell>
-          <TableCell className="text-muted-foreground">{formatDateTime(login.createdAt)}</TableCell>
-          <TableCell className="text-muted-foreground">{formatDateTime(login.expiresAt)}</TableCell>
           <TableCell className="text-right">
             <RevokeCliLoginForm loginId={login.id} />
           </TableCell>
