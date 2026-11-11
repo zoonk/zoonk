@@ -129,14 +129,14 @@ final class OnboardingStore {
     }
   }
 
-  /// The answer holds the learner's change, but a read that landed while the write ran may have a
-  /// newer room for goals, so the card then reads its draft again.
+  /// The answer holds the learner's change, but a read that landed, or was owed, while the write ran
+  /// may have a newer room for goals, so the card then reads its draft again.
   private func show(_ written: OnboardingDraft, since revision: Int) {
     let card = draft(id: written.id)
-    let wasReadMeanwhile = card.revision != revision
+    let isOutdated = card.revision != revision || card.isInvalidated
     card.update { _ in written }
 
-    if wasReadMeanwhile {
+    if isOutdated {
       card.invalidate()
     }
   }

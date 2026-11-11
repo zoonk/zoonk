@@ -71,6 +71,34 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(card.freshState, .loading)
   }
 
+  func testAnEditSavedWhileTheShownCardWasBeingReadReadsItAgain() async throws {
+    let server = DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    card.beginViewing()
+    defer { card.endViewing() }
+    await card.load()
+
+    await server.holdNextEdit(answering: Self.draft(prompt: "Spanish, fixed", goalsLeft: 2))
+    let saving = Task {
+      try await store.revise(draftID: Self.draftID, field: .displayName, goal: 0, value: "Fixed")
+    }
+    await server.waitForHeldEdit()
+    // Meanwhile another goal took a free slot, and the shown card started reading its draft again.
+    await server.serve(Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+    await server.holdNextRead()
+    card.invalidate()
+    await server.waitForHeldRead()
+    await server.releaseHeldEdit()
+    try await saving.value
+    let readAgain = await server.waitForReadAfterEdit()
+    await server.releaseHeldRead()
+    await card.load()
+
+    XCTAssertTrue(readAgain, "The edit doesn't drop the read it replaced")
+    XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -129,13 +157,17 @@ private struct DeckEventTransport: ClientTransport {
   }
 }
 
-/// Answers draft reads with the draft it serves now. A held edit waits to answer until released, so
-/// a read can land meanwhile.
+/// Answers draft reads with the draft it serves now. A held edit or read waits to answer until
+/// released, so another request can land meanwhile.
 private actor DraftServer: ClientTransport {
   private var served: OnboardingDraft
   private var editAnswer: OnboardingDraft?
   private var heldEdit: CheckedContinuation<Void, Never>?
   private var editsFail = false
+  private var holdsRead = false
+  private var heldRead: CheckedContinuation<Void, Never>?
+  private var editAnswered = false
+  private var readsAfterEdit = 0
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -145,6 +177,17 @@ private actor DraftServer: ClientTransport {
     _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var answer = served
+
+    if operationID == "getGoalUnderstanding" {
+      if editAnswered {
+        readsAfterEdit += 1
+      }
+
+      if holdsRead {
+        holdsRead = false
+        await withCheckedContinuation { heldRead = $0 }
+      }
+    }
 
     if operationID == "reviseGoalUnderstanding" {
       if editsFail {
@@ -178,8 +221,33 @@ private actor DraftServer: ClientTransport {
   }
 
   func releaseHeldEdit() {
+    editAnswered = true
     heldEdit?.resume()
     heldEdit = nil
+  }
+
+  func holdNextRead() {
+    holdsRead = true
+  }
+
+  func waitForHeldRead() async {
+    while heldRead == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldRead() {
+    heldRead?.resume()
+    heldRead = nil
+  }
+
+  /// False when no read starts within two seconds of the held edit's answer.
+  func waitForReadAfterEdit() async -> Bool {
+    for _ in 0..<200 where readsAfterEdit == 0 {
+      try? await Task.sleep(for: .milliseconds(10))
+    }
+
+    return readsAfterEdit > 0
   }
 
   func failEdits() {
