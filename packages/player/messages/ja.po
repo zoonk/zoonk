@@ -3159,11 +3159,6 @@ msgid "Take a short break"
 msgstr "ひと休みしましょう"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "{date}に復習"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "sgeE0r"
 msgid "Back to unit"
 msgstr "ユニットに戻る"
@@ -3303,21 +3298,10 @@ msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "間違いノートに保存しました"
 
-#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "L33Kca"
-msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "間違いノートに保存しました · {when, select, today {今日このあとの復習でまた出題されます} tomorrow {明日の復習でまた出題されます} weekday {{day}の復習でまた出題されます} other {{day}の復習でまた出題されます}}"
-
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
 msgid "This question comes back at the end of the lesson"
 msgstr "この問題はレッスンの最後にもう一度出題されます"
-
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "r6_UUR"
-msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "この内容は{when, select, today {今日このあとの復習でまた出てきます} tomorrow {明日の復習でまた出てきます} weekday {{day}の復習でまた出てきます} other {{day}の復習でまた出てきます}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"

@@ -45,7 +45,6 @@
   "questions_right": "a6de96fdc470204f67467381174840309f3834b80e36ed6459f8f034fc2a59cf",
   "questions_right_answer": "44756f617ee7425ab2b09266192fb9e9e4c4772de73276fefc3f2f70252bd08c",
   "questions_saved": "d73f0f361cac5edc7bba0b15266147fcc9031d1d87e612e8a8f66cc35ca42b92",
-  "questions_saved_tomorrow": "5e66a03e42210df41f059697c97a9834bf98a0de9d58dd888bc4f13dc43d44e2",
   "questions_set_place_audio": "23d0fa482b9e41a6178a8f14344c3206e24962242e9ff7f78e5929e19e2acd0f",
   "questions_set_place_case": "e04b2f692f8ae21ef3f8f0276ca935c0b5c45ee3804acfa1b4e9872902557977",
   "questions_set_place_chart": "5a1d7eda7f16a846a2214e4e6f999cb1d42164c2739464ce2ad9d163d84d1435",
@@ -116,7 +115,6 @@
         <item quantity="other">%d errores corregidos. Ya no están en tu cuaderno.</item>
     </plurals>
     <string name="questions_saved">Guardado en tu cuaderno de errores</string>
-    <string name="questions_saved_tomorrow">Guardado en tu cuaderno de errores · vuelve mañana</string>
     <string name="questions_show_less">Mostrar menos</string>
     <string name="questions_read_again">Volver a leer todo</string>
     <string name="questions_set_place_audio">Pregunta %1$d de %2$d sobre esta grabación</string>

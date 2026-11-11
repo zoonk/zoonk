@@ -69,9 +69,7 @@ import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -82,10 +80,8 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.delay
-import java.time.ZoneId
 import kotlin.math.roundToLong
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaInstant
 
 /** The notes under a screen that draws its own result: the streak and where the question goes next. */
 @Composable
@@ -392,13 +388,7 @@ internal fun LessonReadouts(
             stringResource(R.string.player_time_studied, formatDuration(seconds, locale))
         }
 
-    val review =
-        result.nextReviewAt?.takeIf { withFacts }?.let { reviewAt ->
-            val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-            stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
-        }
-
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review))
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied))
 }
 
 /**

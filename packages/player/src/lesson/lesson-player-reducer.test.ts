@@ -1696,21 +1696,17 @@ describe(lessonPlayerReducer, () => {
     expect(ignored.answers).toStrictEqual({});
   });
 
-  it("adds the server's review date to a verdict given on the device", () => {
-    const state = play([checkStep("quiz")], answerCheck("quiz", true));
+  it("adds the server's saved mistake to a verdict given on the device", () => {
+    const state = play([checkStep("quiz")], answerCheck("quiz", false));
 
     const confirmed = lessonPlayerReducer(state, {
       attemptId: "quiz-attempt",
-      result: {
-        ...stepResult(true),
-        nextReviewAt: "2026-10-02T00:00:00.000Z",
-        savedMistake: false,
-      },
+      result: { ...stepResult(false), savedMistake: true },
       stepId: "quiz",
       type: "checkConfirmed",
     });
 
-    expect(confirmed.results.quiz?.nextReviewAt).toBe("2026-10-02T00:00:00.000Z");
+    expect(confirmed.results.quiz?.savedMistake).toBe(true);
   });
 
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
@@ -1723,11 +1719,7 @@ describe(lessonPlayerReducer, () => {
 
     const late = lessonPlayerReducer(again, {
       attemptId: "first",
-      result: {
-        ...stepResult(false),
-        nextReviewAt: "2026-10-02T00:00:00.000Z",
-        savedMistake: true,
-      },
+      result: { ...stepResult(false), savedMistake: true },
       stepId: "quiz",
       type: "checkConfirmed",
     });

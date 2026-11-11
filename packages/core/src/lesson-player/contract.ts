@@ -129,10 +129,6 @@ export const lessonStepCheckResultSchema = z
         description:
           "Each key point of a typed answer and whether the answer stated it, judged by meaning",
       }),
-    nextReviewAt: z.iso
-      .datetime()
-      .nullable()
-      .meta({ description: "When the skill behind the screen comes back for review" }),
     savedMistake: z.boolean().meta({ description: "A wrong answer went to the mistakes notebook" }),
     score: z
       .number()
@@ -166,7 +162,7 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   })
   .meta({
     description:
-      "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+      "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
     id: "LessonRunAnswerResult",
   });
 
@@ -261,10 +257,6 @@ export const libraryLessonCompletionSchema = z
       .meta({
         description: "False for a replay: it completes, but doesn't count as a new lesson learned",
       }),
-    nextReviewAt: z.iso
-      .datetime()
-      .nullable()
-      .meta({ description: "When the lesson's skills come back for review, the earliest first" }),
     planReveal: z
       .object({
         goalId: uuidSchema(),

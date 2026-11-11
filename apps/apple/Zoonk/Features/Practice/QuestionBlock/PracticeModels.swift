@@ -226,13 +226,6 @@ struct PracticeDrill: Hashable, Sendable, Decodable {
 
 }
 
-/// The learner's last answer to this question before today; its text only when it was wrong.
-struct PracticeTimeMachine: Hashable, Sendable, Decodable {
-  let answer: String?
-  let answeredAt: Date
-  let isCorrect: Bool
-}
-
 /// What was already answered on an earlier visit: a blank counts as neither right nor wrong.
 struct PracticeAnsweredMark: Hashable, Sendable, Decodable {
   let blank: Bool
@@ -277,7 +270,6 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   var select: PracticeSelect
   var set: PracticeItemSet?
   var skillId: String?
-  var timeMachine: PracticeTimeMachine?
   var unit: PracticeNumericUnit?
   var visual: PracticeVisual?
 
@@ -285,8 +277,7 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
 
   private enum CodingKeys: String, CodingKey {
     case answered, area, capsuleKey, citation, context, drill, entry, format, image, itemId, left
-    case mistakeId, options, placement, question, quoted, right, select, set, skillId, timeMachine
-    case unit, visual
+    case mistakeId, options, placement, question, quoted, right, select, set, skillId, unit, visual
   }
 
   init(
@@ -326,7 +317,6 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
     select = try container.decodeIfPresent(PracticeSelect.self, forKey: .select) ?? .one
     set = try container.decodeIfPresent(PracticeItemSet.self, forKey: .set)
     skillId = try container.decodeIfPresent(String.self, forKey: .skillId)
-    timeMachine = try container.decodeIfPresent(PracticeTimeMachine.self, forKey: .timeMachine)
     unit = try container.decodeIfPresent(PracticeNumericUnit.self, forKey: .unit)
     visual = try container.decodeIfPresent(PracticeVisual.self, forKey: .visual)
   }

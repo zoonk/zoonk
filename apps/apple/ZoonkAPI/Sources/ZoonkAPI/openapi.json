@@ -36567,31 +36567,6 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                "timeMachine": {
-                  "nullable": true,
-                  "description": "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-                  "type": "object",
-                  "properties": {
-                    "answer": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "answeredAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "isCorrect": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "answer",
-                    "answeredAt",
-                    "isCorrect"
-                  ],
-                  "additionalProperties": false
-                },
                 "unit": {
                   "nullable": true,
                   "description": "A math problem's unit, shown next to the answer field",
@@ -36644,7 +36619,6 @@
                 "select",
                 "set",
                 "skillId",
-                "timeMachine",
                 "unit",
                 "visual"
               ],
@@ -40994,13 +40968,6 @@
               "additionalProperties": false
             }
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the skill behind the screen comes back for review",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "savedMistake": {
             "type": "boolean",
             "description": "A wrong answer went to the mistakes notebook"
@@ -41026,7 +40993,6 @@
           "feedback",
           "isCorrect",
           "keyPoints",
-          "nextReviewAt",
           "savedMistake",
           "score",
           "spelling"
@@ -44972,13 +44938,6 @@
             "type": "boolean",
             "description": "The word was heard as expected"
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the word comes back; null once it's learned",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "transcript": {
             "type": "string",
             "description": "What we heard"
@@ -44987,7 +44946,6 @@
         "required": [
           "attemptId",
           "isCorrect",
-          "nextReviewAt",
           "transcript"
         ],
         "additionalProperties": false
@@ -75160,13 +75118,6 @@
             "type": "boolean",
             "description": "False for a replay: it completes, but doesn't count as a new lesson learned"
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the lesson's skills come back for review, the earliest first",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "planReveal": {
             "nullable": true,
             "description": "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
@@ -75221,7 +75172,6 @@
           "finishedChapter",
           "incorrectCount",
           "isFirstCompletion",
-          "nextReviewAt",
           "planReveal",
           "seconds",
           "studyBlock",
@@ -75424,13 +75374,6 @@
               "total"
             ],
             "additionalProperties": false
-          },
-          "comesBackOn": {
-            "nullable": true,
-            "description": "The learner-local day a lesson's capsule opens",
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "completedMissions": {
             "type": "array",
@@ -75648,7 +75591,6 @@
           "ceremony",
           "certificates",
           "checkpoint",
-          "comesBackOn",
           "completedMissions",
           "correct",
           "finishedChapter",
@@ -76922,13 +76864,6 @@
               "additionalProperties": false
             }
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the skill behind the screen comes back for review",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "savedMistake": {
             "type": "boolean",
             "description": "A wrong answer went to the mistakes notebook"
@@ -76959,14 +76894,13 @@
           "feedback",
           "isCorrect",
           "keyPoints",
-          "nextReviewAt",
           "savedMistake",
           "score",
           "spelling",
           "answerText"
         ],
         "additionalProperties": false,
-        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -95060,31 +94994,6 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                "timeMachine": {
-                  "nullable": true,
-                  "description": "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-                  "type": "object",
-                  "properties": {
-                    "answer": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "answeredAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "isCorrect": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "answer",
-                    "answeredAt",
-                    "isCorrect"
-                  ],
-                  "additionalProperties": false
-                },
                 "unit": {
                   "nullable": true,
                   "description": "A math problem's unit, shown next to the answer field",
@@ -95137,7 +95046,6 @@
                 "select",
                 "set",
                 "skillId",
-                "timeMachine",
                 "unit",
                 "visual"
               ],

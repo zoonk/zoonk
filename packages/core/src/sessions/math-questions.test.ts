@@ -133,7 +133,6 @@ describe("math problems in sessions", () => {
       format: "numeric",
       itemId: item.id,
       options: null,
-      timeMachine: null,
       unit: { position: "prefix", symbol: "R$" },
     });
 
@@ -187,7 +186,7 @@ describe("math problems in sessions", () => {
 
     const fresh = later.find((laterQuestion) => laterQuestion?.question !== asked);
 
-    expect(fresh?.timeMachine).toMatchObject({ answer: null, isCorrect: true });
+    expect(fresh).toBeDefined();
   });
 
   it("keeps a wrong number that matches a common mistake in the notebook with the numbers shown", async () => {

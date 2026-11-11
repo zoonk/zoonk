@@ -59,10 +59,6 @@ export const pronunciationAnswerGradeSchema = z
   .object({
     attemptId: uuidSchema(),
     isCorrect: z.boolean().meta({ description: "The word was heard as expected" }),
-    nextReviewAt: z.iso
-      .datetime()
-      .nullable()
-      .meta({ description: "When the word comes back; null once it's learned" }),
     transcript: z.string().meta({ description: "What we heard" }),
   })
   .meta({ id: "PronunciationAnswerGrade" });
