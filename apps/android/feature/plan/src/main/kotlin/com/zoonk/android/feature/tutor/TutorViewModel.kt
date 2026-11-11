@@ -55,7 +55,7 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
-    /** A variety card's Apply, by its turn. */
+    /** A variety card's Apply in flight or failed, by its turn; whether it's saved is the goal's country. */
     val varieties: Map<String, VarietySave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
     val loadingEarlier: Boolean = false,
@@ -303,15 +303,29 @@ class TutorViewModel internal constructor(
         if (state.value.varieties[turnId] == VarietySave.Saving) return
         mutableState.update { it.copy(varieties = it.varieties + (turnId to VarietySave.Saving)) }
         viewModelScope.launch {
-            val save =
-                when (store.setRegion(goalId, region)) {
-                    is MutationResult.Done -> VarietySave.Saved
-                    is MutationResult.Failed -> VarietySave.Failed
-                    MutationResult.Obsolete -> null
-                }
-            mutableState.update { it.copy(varieties = if (save == null) it.varieties - turnId else it.varieties + (turnId to save)) }
+            val result = store.setRegion(goalId, region)
+            // Ahead of the summary's own update, so the card never shows Apply between the save and it.
+            if (result is MutationResult.Done) goalRegions = goalRegions + (goalId to region)
+            mutableState.update {
+                it.copy(
+                    varieties =
+                        if (result is MutationResult.Failed) {
+                            it.varieties + (turnId to VarietySave.Failed)
+                        } else {
+                            it.varieties -
+                                turnId
+                        },
+                )
+            }
         }
     }
+
+    /** A variety card reads saved exactly while its goal has the country it offers, so a later card's country takes over. */
+    fun varietySave(
+        turnId: String,
+        goalId: UUID,
+        region: String,
+    ): VarietySave? = VarietySave.Saved.takeIf { goalRegions[goalId] == region } ?: state.value.varieties[turnId]
 
     fun loadEarlier() {
         val page = thread.state.value.value ?: return

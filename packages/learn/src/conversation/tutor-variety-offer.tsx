@@ -26,8 +26,9 @@ function VarietyTile({ flag }: { flag: string | null }) {
 }
 
 /**
- * Nothing is saved before the tap. `saved` is the goal already having this country. Apply is a
- * form, so React sends a tap made before the page hydrates once it does.
+ * Nothing is saved before the tap. `saved` is the goal having this country, so a later card's
+ * country takes over; the tap's own success shows only until the refreshed goal says it. Apply is
+ * a form, so React sends a tap made before the page hydrates once it does.
  */
 export function VarietyOffer({
   offer,
@@ -46,6 +47,11 @@ export function VarietyOffer({
   const [isPending, startTransition] = useTransition();
   const [outcome, setOutcome] = useState<"failed" | "saved" | null>(null);
   const { targetLanguage: language, targetRegion: region, taughtRegion } = offer;
+
+  if (saved && outcome === "saved") {
+    setOutcome(null);
+  }
+
   const isSaved = saved || outcome === "saved";
 
   const apply = () => {

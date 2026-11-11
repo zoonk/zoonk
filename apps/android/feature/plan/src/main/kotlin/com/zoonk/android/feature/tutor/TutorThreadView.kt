@@ -325,12 +325,14 @@ private fun TurnView(
                 )
             }
             turn.toolOffer?.let { offer ->
-                val applied =
+                val variety =
                     (offer as? TutorToolOffer.TutorToolOfferOneOf8Value)?.value?.let {
-                        vm.goalRegions[it.goalId] ==
-                            it.targetRegion
+                        vm.varietySave(
+                            turn.id,
+                            it.goalId,
+                            it.targetRegion,
+                        )
                     }
-                val variety = state.varieties[turn.id] ?: VarietySave.Saved.takeIf { applied == true }
                 TutorOffer(offer, routes, variety, onApplyVariety = { vm.applyVariety(turn.id, it.goalId, it.targetRegion) })
             }
         }

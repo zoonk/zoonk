@@ -17,6 +17,8 @@ function readChangeStatus(changeId: string) {
     .then((change) => change.status);
 }
 
+const SAVED = "Saved. You can change it in your plan.";
+
 type BuddyAnswer = { answer: string; planChange?: PlanChangeView; toolOffer?: TutorToolOffer };
 
 async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
@@ -113,7 +115,7 @@ test.describe("Buddy tab", () => {
     });
   });
 
-  test("the buddy offers the country a learner asked for, which saves only on their tap", async ({
+  test("the buddy offers the country a learner asked for, which saves only on their tap and gives way to the next one", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
@@ -122,18 +124,24 @@ test.describe("Buddy tab", () => {
         return goal.targetRegion;
       };
 
+      const englishOffer = (region: string): TutorToolOffer => ({
+        goalId: user.goalId,
+        kind: "variety",
+        languageFlag: region.toLowerCase(),
+        targetLanguage: "en",
+        targetRegion: region,
+        taughtRegion: "US",
+      });
+
       await stubBuddy({
         answers: [
           {
             answer: "Your lessons stay the same. Tap Apply and I'll use Canadian English.",
-            toolOffer: {
-              goalId: user.goalId,
-              kind: "variety",
-              languageFlag: "ca",
-              targetLanguage: "en",
-              targetRegion: "CA",
-              taughtRegion: "US",
-            },
+            toolOffer: englishOffer("CA"),
+          },
+          {
+            answer: "Your lessons stay the same. Tap Apply and I'll use Australian English.",
+            toolOffer: englishOffer("AU"),
           },
         ],
         page,
@@ -144,22 +152,34 @@ test.describe("Buddy tab", () => {
       const conversation = page.getByRole("region", { name: /^Conversation with /u });
       const composer = conversation.getByRole("textbox", { name: /^Message /u });
 
-      await composer.fill("Can I practice Canadian English?");
-      await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
-      await composer.press("Enter");
+      const ask = async (question: string) => {
+        await composer.fill(question);
+        await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
+        await composer.press("Enter");
+      };
 
-      const card = conversation.getByRole("region", { name: "English (Canada)" });
-      const apply = card.getByRole("button", { name: "Apply" });
-      const status = card.getByRole("status");
-      await expect(apply).toBeVisible();
+      await ask("Can I practice Canadian English?");
+
+      const canada = conversation.getByRole("region", { name: "English (Canada)" });
+      const status = canada.getByRole("status");
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect(status).toBeEmpty();
       expect(await readCountry()).toBeNull();
 
-      await apply.click();
-      await expect(status).toHaveText("Saved. You can change it in your plan.");
-      await expect(card).toBeFocused();
-      await expect(apply).toBeHidden();
+      await canada.getByRole("button", { name: "Apply" }).click();
+      await expect(status).toHaveText(SAVED);
+      await expect(canada).toBeFocused();
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeHidden();
       await expect.poll(readCountry).toBe("CA");
+
+      await ask("Actually, Australian English?");
+
+      const australia = conversation.getByRole("region", { name: "English (Australia)" });
+      await australia.getByRole("button", { name: "Apply" }).click();
+      await expect(australia.getByRole("status")).toHaveText(SAVED);
+      await expect.poll(readCountry).toBe("AU");
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(status).toBeEmpty();
     });
   });
 });
