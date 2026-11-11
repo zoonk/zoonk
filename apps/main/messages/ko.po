@@ -1622,10 +1622,11 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "많음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "-eNLo_"
-msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {학습 없음} other {활동 #개}}"
+msgctxt "FjcEak"
+msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{count, plural, =0 {학습 없음} other {활동 #개}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1684,15 +1685,17 @@ msgctxt "AxMhQr"
 msgid "High"
 msgstr "높음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "5ZmEgv"
-msgid "{date} · No Energy recorded"
-msgstr "{date} · 에너지 기록 없음"
+msgctxt "VmQeBl"
+msgid "No Energy recorded"
+msgstr "에너지 기록 없음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "beOKv0"
-msgid "{date} · {percentage} Energy"
-msgstr "{date} · 에너지 {percentage}"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
+msgstr "에너지 {percentage}"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1822,6 +1825,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "최근 90일 동안 정답률이 가장 높았던 때예요."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, other {응답 #개}}, 패턴 파악에 {minimum, number}개 필요"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "정답률이 가장 높은 요일"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "요일별"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "가장 잘하는 시간대"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "시간대별"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1841,21 +1879,6 @@ msgstr "오후"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "저녁"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "요일별"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "시간대별"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1896,18 +1919,6 @@ msgstr "아직 답변이 부족해요"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "정답률이 가장 높은 요일"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "가장 잘하는 시간대"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"

@@ -4,8 +4,10 @@ import { pickReviewers } from "../../_utils/model-family";
  * On the 26 shared lessons Opus wrote on 8 Nov 2026, two blind judges confirmed 6 errors. Astra
  * found all 6 with no false flag at $0.037 a review on flex, Sol 4 and Opus 2. Gemini 4 Argon found
  * none and flagged a correct legal citation as wrong because the lesson plan had it wrong, and
- * Gemini 3.8 Flash, the reviewer before, passed 24 of those lessons. So an Opus-written lesson has
- * no fallback outside OpenAI: no other evaluated reviewer helped.
+ * Gemini 3.8 Flash, the reviewer before, passed 24 of those lessons. On those 6 errors among 18
+ * cases (11 Nov 2026), Fable caught 2 and Gemini 4 Carbon 5, but Carbon also flagged a clean
+ * lesson. So an Opus-written lesson has no fallback outside OpenAI: no other evaluated reviewer
+ * helped.
  */
 const WRITTEN_REVIEWERS = [
   "openai/gpt-6-astra",

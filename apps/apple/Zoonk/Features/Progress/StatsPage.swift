@@ -14,6 +14,7 @@ struct StatsPage<Content: View>: View {
       .frame(maxWidth: .infinity)
     }
     .background(Color(.systemBackground))
+    .inspectsCharts()
   }
 }
 

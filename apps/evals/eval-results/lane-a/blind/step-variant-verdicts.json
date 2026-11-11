@@ -1,0 +1,9 @@
+{"reader": "Claude Opus 5.5 (lane A), blind",
+ "pair-1": "tie (both show the command and its output without asking the learner to run it)",
+ "pair-2": "Y (keeps the ones-digit rule and 45 -> 50 with correct half-up code; X drops the rule and the tie, though its round() values are right; Y's 'if it is 5 or more, you add 5' misdescribes its own code slightly)",
+ "pair-3": "tie",
+ "pair-4": "Y (shows the orders table and a valid query; X never shows a table)",
+ "pair-5": "tie",
+ "pair-6": "tie (both draw the chart and name April)",
+ "pair-7": "X (each step is a line of real Python; Y's first step shows no code)",
+ "pair-8": "X (cells and cell formulas the way a spreadsheet is used; Y hard-codes numbers)"}

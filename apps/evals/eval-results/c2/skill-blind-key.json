@@ -1,0 +1,87 @@
+{
+  "p1": {
+    "id": "p1",
+    "case": "en-en-ielts-foundations-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna"
+  },
+  "p2": {
+    "id": "p2",
+    "case": "en-en-ielts-academic-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember"
+  },
+  "p3": {
+    "id": "p3",
+    "case": "pt-en-moving-and-interviews-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna"
+  },
+  "p4": {
+    "id": "p4",
+    "case": "pt-es-dele-foundations-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember"
+  },
+  "p5": { "id": "p5", "case": "pt-es-dele-b2-1", "A": "openai-gpt-6-luna", "B": "meta-muse-ember" },
+  "p6": {
+    "id": "p6",
+    "case": "en-en-ielts-foundations-1",
+    "A": "google-gemini-4-carbon",
+    "B": "openai-gpt-6-luna"
+  },
+  "p7": {
+    "id": "p7",
+    "case": "en-en-ielts-academic-1",
+    "A": "google-gemini-4-carbon",
+    "B": "openai-gpt-6-luna"
+  },
+  "p8": {
+    "id": "p8",
+    "case": "pt-en-moving-and-interviews-1",
+    "A": "google-gemini-4-carbon",
+    "B": "openai-gpt-6-luna"
+  },
+  "p9": {
+    "id": "p9",
+    "case": "pt-es-dele-foundations-1",
+    "A": "openai-gpt-6-luna",
+    "B": "google-gemini-4-carbon"
+  },
+  "p10": {
+    "id": "p10",
+    "case": "pt-es-dele-b2-1",
+    "A": "google-gemini-4-carbon",
+    "B": "openai-gpt-6-luna"
+  },
+  "p11": {
+    "id": "p11",
+    "case": "en-en-ielts-foundations-1",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  },
+  "p12": {
+    "id": "p12",
+    "case": "en-en-ielts-academic-1",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  },
+  "p13": {
+    "id": "p13",
+    "case": "pt-en-moving-and-interviews-1",
+    "A": "google-gemini-4-carbon",
+    "B": "google-gemini-4-argon"
+  },
+  "p14": {
+    "id": "p14",
+    "case": "pt-es-dele-foundations-1",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  },
+  "p15": {
+    "id": "p15",
+    "case": "pt-es-dele-b2-1",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  }
+}

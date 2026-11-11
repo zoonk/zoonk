@@ -100,18 +100,6 @@ fun MissionsCard(
     val allDone = missions.all(DayMission::done)
     val won = allDone && bonusEarned
 
-    if (bonusEarned && !allDone) {
-        MissionsLine(modifier) {
-            Text(
-                text = stringResource(R.string.missions_already_earned, points),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        return
-    }
-
     if (won && collapseWhenDone) {
         val names = missions.map { missionName(it, buddyName) }
         val title = stringResource(R.string.missions_done)

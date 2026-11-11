@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
@@ -7,7 +8,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
-import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
+import { findActivityGoal, saveDayBeforeActivity } from "../../sessions/ensure-study-session";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
 import { settleLearnerMissions } from "../../sessions/missions/settle-learner-missions";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -24,6 +25,34 @@ const DRILL_SECONDS = 180;
 export type PracticeMistakePatternResult =
   | { result: MistakePatternPracticeResult; status: "ready" }
   | { status: "invalid" | "notFound" | "unauthorized" };
+
+/**
+ * The goal a drill counts for: the one that noticed its pattern, or the goal Today shows once that
+ * one is paused, finished or removed, so one drill completes one goal's mission.
+ */
+async function findDrillGoalId({
+  language,
+  ownerId,
+  userId,
+}: {
+  language: string;
+  ownerId: string | null;
+  userId: string;
+}): Promise<string | null> {
+  const owner = ownerId
+    ? await prisma.goal.findFirst({
+        select: { id: true },
+        where: { id: ownerId, status: "active" },
+      })
+    : null;
+
+  if (owner) {
+    return owner.id;
+  }
+
+  const goal = await findActivityGoal({ language, userId });
+  return goal?.id ?? ownerId;
+}
 
 /** Reusing a `requestId` replays the already-counted drill. */
 export async function practiceMistakePattern({
@@ -67,7 +96,10 @@ export async function practiceMistakePattern({
     })),
   });
 
-  await saveDayBeforeActivity({ language: row.language, timeZone: input.timeZone, userId });
+  const [goalId] = await Promise.all([
+    findDrillGoalId({ language: row.language, ownerId: row.goalId, userId }),
+    saveDayBeforeActivity({ language: row.language, timeZone: input.timeZone, userId }),
+  ]);
 
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;
@@ -110,7 +142,7 @@ export async function practiceMistakePattern({
       correctAnswers: correct,
       endedAt: lock.completedAt,
       energyDelta,
-      goalId: row.goalId,
+      goalId,
       incorrectAnswers: incorrect,
       kind: "questions",
       lessonKind: "patternDrill",

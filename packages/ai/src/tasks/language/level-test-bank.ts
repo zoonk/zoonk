@@ -15,13 +15,20 @@ import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
 
 /**
- * Written once per pair and shared, so quality wins: on 11 banks (8 Nov 2026), blind Argon judging
- * preferred Opus to Sonnet 5.5 by 0.58 and to Terra at high reasoning in all 11 by 1.06 (PT 1.36),
- * at $615 per 1k banks against $461 and $98. Terra runs at its default reasoning here, below the PT
- * floor (7.36), so it's only an outage route. A second review call didn't help.
+ * Written once per pair and shared, so quality wins. On 8 banks (11 Nov 2026), a blind GPT-6.1 Sol
+ * read preferred Fable to Opus on 6, Opus on 1 and tied 1; Fable keyed one German afternoon time as
+ * 3:15 and Opus left two keys ambiguous. Judges scored them 8.96 to 8.67, at $2,126 against $652
+ * per 1k banks. On 11 banks (8 Nov 2026), blind Argon judging preferred Opus to Sonnet 5.5 by 0.58
+ * and to Terra at high reasoning by 1.06 (PT 1.36). Terra runs at its default reasoning here, below
+ * the PT floor (7.36), so it's only an outage route. A second review call didn't help.
  */
-const defaultModel = "anthropic/claude-opus-5.5";
-const fallbackModels = ["anthropic/claude-sonnet-5.5", "openai/gpt-6.1-terra"] as const;
+const defaultModel = "anthropic/claude-fable-5.2";
+
+const fallbackModels = [
+  "anthropic/claude-opus-5.5",
+  "anthropic/claude-sonnet-5.5",
+  "openai/gpt-6.1-terra",
+] as const;
 
 /** C2 isn't placed by a three-minute test. */
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const satisfies readonly CefrLevel[];

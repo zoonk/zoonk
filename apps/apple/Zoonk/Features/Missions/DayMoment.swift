@@ -203,15 +203,9 @@ private struct DayMomentContent: View {
         comment: "Missions still to do today, then the bonus finishing them earns")
     }
 
-    if moment.fullMeal.paid {
-      return Text(
-        "You earned +\(bonus) Brain Power.", tableName: "Session",
-        comment: "The bonus for every mission done")
-    }
-
     return Text(
-      "Today's +\(bonus) Brain Power is already earned.", tableName: "Session",
-      comment: "Another goal already earned the day's missions bonus")
+      "You earned +\(bonus) Brain Power.", tableName: "Session",
+      comment: "The bonus for every mission done")
   }
 
   private func bonus(_ points: Int) -> some View {

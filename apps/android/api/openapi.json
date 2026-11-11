@@ -75368,7 +75368,7 @@
               "paid"
             ],
             "additionalProperties": false,
-            "description": "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Payment remains once per learner-local day across goals."
+            "description": "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts this goal's work from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Each goal's day pays once."
           },
           "milestones": {
             "type": "array",
@@ -85655,7 +85655,7 @@
           },
           "today": {
             "nullable": true,
-            "description": "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned when any goal paid it for that session's learner-local date.",
+            "description": "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned once that session paid it; each goal's day pays its own.",
             "type": "object",
             "properties": {
               "fullMeal": {
@@ -90976,7 +90976,7 @@
               "ready"
             ],
             "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting this goal's completions from any supported source. Earned means this day already paid the bonus. Each goal's day pays its own bonus once."
           },
           "goalId": {
             "nullable": true,
@@ -91370,7 +91370,7 @@
               "ready"
             ],
             "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting this goal's completions from any supported source. Earned means this day already paid the bonus. Each goal's day pays its own bonus once."
           },
           "goalId": {
             "nullable": true,
@@ -95732,7 +95732,7 @@
           },
           "pattern": {
             "nullable": true,
-            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
+            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
             "type": "object",
             "properties": {
               "id": {

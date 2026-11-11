@@ -7678,12 +7678,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "두뇌력 +{points} 보상을 받았어요."
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "오늘의 두뇌력 +{points} 보상은 이미 받았어요."
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "방금 완료"

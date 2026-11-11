@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The explanation gives a concrete cell range, valid =AVERAGE(A1:A5) syntax, and the correct displayed result of 85. The instructions work in both Google Sheets and Excel without tool-exclusive features.",
+          "reasoning": "The screen gives a concrete spreadsheet workflow with the valid range formula =AVERAGE(A1:A5) and its correct result, 85. The syntax and instructions work in both Google Sheets and Excel, with no exclusive features.",
           "score": 10,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The five scores, formula, and result are correct, and the screen stays focused on the mean. However, the requested explanation of adding the values is only implicit in “the total.”",
-          "score": 8,
+          "reasoning": "It preserves the mean lesson, all five original scores, their total of 425, and division by 5 yielding 85. It remains an explanation screen, retains the title and text fields, and keeps image null. The arithmetic conveys the original rule accurately, although explicitly identifying 5 as the number of scores would strengthen the conceptual connection.",
+          "score": 9,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen is short, beginner-friendly, and written in US English. Direct instructions address the learner naturally, with no introduction, filler, or unnecessary expansion.",
+          "reasoning": "The wording is concise, beginner-friendly US English. Direct instructions address the learner without an introduction, filler, or promises. Its length is close to the original and appropriate for one screen.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -30,9 +30,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2038,
-          "outputTokens": 807,
-          "reasoningTokens": 449
+          "inputTokens": 2073,
+          "outputTokens": 739,
+          "reasoningTokens": 366
         }
       },
       "steps": [
@@ -42,18 +42,18 @@
           "score": 10
         },
         {
-          "conclusion": "The definition says “the total divided by the number of values,” but does not explicitly say to add the values, as requested. The addition step is implied rather than stated.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 9
+          "score": 10
         },
         {
-          "conclusion": "Briefly connect the spreadsheet result to the original calculation: the five scores add up to 425, and 425 ÷ 5 = 85.",
+          "conclusion": "Make the general rule slightly more explicit by saying that you add the scores and divide by the number of scores. The current wording conveys this through the example but leaves why you divide by 5 implicit.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-tool-spreadsheet-mean-1",
         "userInput": {
           "key": "Spreadsheet (Google Sheets or Excel)",
@@ -74,21 +74,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Python is central, and the assignments are valid when executed sequentially. However, the required printed output is only described as a calculated value: there is no print call. The original calculation fields are also unfilled. The wrong-syntax/output cap is not triggered because the stated intermediate values are correct and are not explicitly labeled as printed output.",
-          "score": 7,
+          "reasoning": "Python is central to the example, with appropriate variables, arithmetic and print(). However, the literal backslash-n sequences make two snippets invalid Python as delivered, triggering the maximum score of 6 for wrong tool syntax. This concerns executable code, not JSON formatting.",
+          "score": 6,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The ticket still increases from R$ 80 to R$ 100. The difference is 20, division by the starting price gives 0.25, and multiplication by 100 gives 25.0, correctly interpreted as a 25% increase. No unrelated lesson content or factual errors appear.",
-          "score": 10,
+          "reasoning": "The example preserves the ticket price change from R$ 80 to R$ 100, divides by the starting price, and correctly concludes a 25% increase. It retains every populated original field and keeps image null. Nevertheless, the executable-code error triggers this category's cap of 6 for any error.",
+          "score": 6,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen uses natural Brazilian Portuguese, concise instructions directed to the learner, and four short steps. It has no introductory filler, promises, or wall of text. Decimal points occur appropriately inside Python values.",
+          "reasoning": "The screen uses concise, natural Brazilian Portuguese and direct instructions suitable for a beginner. Its length remains close to the original, without an introduction, filler or promises.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -99,30 +99,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2241,
-          "outputTokens": 715,
-          "reasoningTokens": 275
+          "inputTokens": 2251,
+          "outputTokens": 714,
+          "reasoningTokens": 300
         }
       },
       "steps": [
         {
-          "conclusion": "The example never uses print(percentual), so it does not demonstrate Python printing 25.0 as required; assignments alone print nothing. Also, every original step's math field is left null rather than filled, although the calculations appear in text.",
+          "conclusion": "The Python snippets in steps 1 and 4 contain literal backslash-n sequences rather than actual line breaks. After decoding the JSON, these snippets are not executable Python as written. Replace those sequences with real line breaks. The intended calculation correctly produces 25.0.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "The final step combines two moves: converting the fraction to a percentage and printing it. Split these into separate short steps to meet the one-move-per-step requirement.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Present the calculations as a short, sequential Python example ending with print(percentual), followed by the displayed output 25.0. Put the calculation content in the existing step fields rather than leaving them empty.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-tool-python-percent-change-1",
         "userInput": {
           "key": "Python",
@@ -158,21 +158,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Converts the device action into an imagined example rather than asking the learner to open or run anything. Shows the exact command and a valid example output, connects the output to Python being installed and its version, and never suggests the learner is missing out.",
+          "reasoning": "Successfully converts the device-based task into an imagined example. It shows the exact command `python3 --version`, a concrete output of `Python 3.13.1`, and explains the installed version. It never asks the learner to open, install, download, or run anything, and never suggests they are missing out.",
           "score": 10,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "Preserves the explanation screen, its title, and its focus on checking the Python version. Both original content fields are filled, and the command, example output, and explanation are accurate without introducing another lesson's ideas.",
+          "reasoning": "Preserves the original lesson idea and title with accurate command syntax and example output. The conditional wording appropriately connects the output to Python being installed. It remains an explanation screen, retains both original fields, keeps image null, and introduces no unrelated concepts.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "Uses concise US English, addresses the learner as 'you,' and stays close to the original length. There is no introductory framing, filler, or promise of results.",
+          "reasoning": "Uses concise, beginner-friendly US English and addresses the reader as 'you.' It is comparable to the original in length, with no introduction, filler, or promises.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -183,9 +183,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1934,
-          "outputTokens": 547,
-          "reasoningTokens": 236
+          "inputTokens": 1958,
+          "outputTokens": 465,
+          "reasoningTokens": 133
         }
       },
       "steps": [
@@ -206,7 +206,7 @@
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-no-install-terminal-version-1",
         "userInput": {
           "key": "no-install",
@@ -227,21 +227,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "This remains a check about spreadsheet output, with the requested cells and formula. “Imagine” makes it a read-only scenario rather than an actual instruction to operate a device, so the no-install cap is not triggered. However, the typing language is less direct than the requested already-present formula, and several fields remain unfilled.",
+          "reasoning": "This remains a check with the specified cells, formula, exactly one correct answer, and explanations for plausible mistakes. The image is null. “Imagine” frames the typing as hypothetical rather than an instruction to use the learner’s device, so the device-action cap is not triggered. However, the formula should be presented as already entered, and the original option ids are missing despite the field-retention requirement.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The original idea is preserved without unrelated material. SOMA(A1:A3) correctly returns 60 for 10, 20, and 30. Exactly one option is marked correct, every option has a reason, and both distractors reflect plausible mistakes: summing only two cells and treating the formula as displayed text.",
+          "reasoning": "The original concept is preserved without unrelated material. SOMA(A1:A3) correctly totals 10, 20, and 30 as 60; 30 represents adding only the first two cells, and the formula-text distractor has an accurate explanation in the ordinary spreadsheet context.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen uses natural Brazilian Portuguese, addresses the learner as “você,” and stays concise and beginner-friendly. There is no introductory filler, promise of results, or excessive length.",
+          "reasoning": "The screen uses natural Brazilian Portuguese and addresses the learner as você. It remains short, with clear explanations and no introduction, filler, or promises. The modest expansion over the original does not make it substantially longer.",
           "score": 10,
           "label": "Short, plain writing",
           "weight": 25
@@ -252,9 +252,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2192,
-          "outputTokens": 786,
-          "reasoningTokens": 321
+          "inputTokens": 2233,
+          "outputTokens": 974,
+          "reasoningTokens": 516
         }
       },
       "steps": [
@@ -264,18 +264,18 @@
           "score": 10
         },
         {
-          "conclusion": "The question frames the example as imaginary, but “Em A4, você digita” still describes learner typing instead of simply showing the formula already in A4. Also, context, image, visual, and option picture fields are null, so the requirement that every field be filled is not fully met.",
+          "conclusion": "The options omit the original populated id fields: sixty, thirty, and formula. Also, “Em A4, você digita” leaves an avoidable ambiguity: the opening “Imagine” makes this a hypothetical scenario, but the requested version should present the formula as already in A4.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use a fully static question: “A planilha tem 10 em A1, 20 em A2 e 30 em A3. A4 contém a fórmula =SOMA(A1:A3). O que essa célula mostra?” Preserve the three options and their explanations.",
+          "conclusion": "Use “Em A4 está a fórmula =SOMA(A1:A3). O que essa célula mostra?” to make the read-only exercise unmistakable, and restore each option’s original id.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-no-install-excel-check-1",
         "userInput": {
           "key": "no-install",
@@ -307,6 +307,312 @@
               "question": "Abra o Excel, digite 10, 20 e 30 em A1, A2 e A3 e, em A4, digite =SOMA(A1:A3). O que aparece em A4?"
             },
             "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The screen asks what a valid SQL COUNT query returns for the specified table and amounts. The table and column names match the query, and the WHERE condition correctly selects 45 and 80. SQL is central rather than incidental.",
+          "score": 10,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The amounts, threshold, correct answer, and filtering concept are preserved. Exactly one option is correct, every option has an accurate reason, and the distractors represent plausible slips. However, the original option id fields are missing, violating explicit field preservation. This faithfulness error triggers the category's at-most-6 cap.",
+          "score": 6,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen uses clear US English, remains short, and has no introduction, filler, or promises. The explanations are beginner-friendly. The small weakness is that it does not use the requested direct address, \"you.\"",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2231,
+          "outputTokens": 765,
+          "reasoningTokens": 386
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All three options omit their original populated id fields: two, four, and one. This violates the requirement to retain every field the original fills. The wording also does not directly address the learner as \"you.\"",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The same question (orders of 20, 45, 80 and 15; how many are over 30) asked through SQL: the four amounts in a table and a query such as `SELECT COUNT(*) FROM orders WHERE amount > 30;`, asking what it returns\n      - Still exactly one right option (2) and a reason on every option, with the wrong options from real slips (such as counting every row, or counting the amounts under 30)\n      - Real SQL that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-sql-count-check-1",
+        "userInput": {
+          "key": "SQL",
+          "language": "en",
+          "lessonTitle": "Filtering rows",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "options": [
+                {
+                  "id": "two",
+                  "isCorrect": true,
+                  "reason": "Only 45 and 80 are over 30.",
+                  "text": "2"
+                },
+                {
+                  "id": "four",
+                  "isCorrect": false,
+                  "reason": "That counts every order.",
+                  "text": "4"
+                },
+                {
+                  "id": "one",
+                  "isCorrect": false,
+                  "reason": "45 is over 30 too.",
+                  "text": "1"
+                }
+              ],
+              "question": "Four orders came in: $20, $45, $80 and $15. How many are over $30?"
+            },
+            "kind": "check"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The Python expression is valid and produces all three stated results: 47 becomes 50, 43 becomes 40, and 45 becomes 50. Its nonnegative-whole-number scope is explicit, and the explanation of // is correct within that scope. Python is central rather than incidental.",
+          "score": 9,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The screen preserves nearest-ten rounding, the original examples, and half-up behavior without making a false claim about Python's round function. Both original content fields are present, and image remains null. However, it shifts the teaching emphasis to an arithmetic procedure and only indirectly conveys the original instruction to look at the ones digit.",
+          "score": 8,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text is compact US English with no introduction, filler, or promises. The added length serves the Python explanation. It does not address the learner as \"you,\" and the final example has an unclosed inline-code delimiter.",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2116,
+          "outputTokens": 680,
+          "reasoningTokens": 247
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ones-digit rule is only implicit: saying that adding 5 makes the ones digit decide is less clear than telling beginners to look at that digit. The text also lacks direct address with \"you\" and leaves the final inline-code backtick unclosed.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the original ones-digit title and explicitly state that digits 0–4 round down and 5–9 round up, then connect that rule to the Python expression.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Shows rounding to the nearest ten in Python code, with 47 giving 50 and 43 giving 40\n      - Every value it says Python returns is what Python really returns. Python's `round(45, -1)` gives 40, not 50, because it rounds a tie to the even ten: a version that uses `round` says so or leaves the tie out. Code that rounds half up, such as `int(x / 10 + 0.5) * 10`, keeps the original's \"45 becomes 50\" and is just as right\n      - Still teaches the rule from the original: look at the ones digit\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-python-round-tie-1",
+        "userInput": {
+          "key": "Python",
+          "language": "en",
+          "lessonTitle": "Rounding to the nearest ten",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "To round to the nearest ten, look at the ones digit. 47 becomes 50 and 43 becomes 40. A 5 rounds up, so 45 becomes 50.",
+              "title": "Look at the ones digit"
+            },
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The example genuinely uses a spreadsheet: both formulas work in Google Sheets and Excel, and the stated outputs are correct. It retains the worked-example fields and keeps image null. However, the second step bundles multiple actions instead of following the required one-move-per-step structure.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "It preserves the jacket, original price of R$ 200, 15% discount, and final price of R$ 170. The discount calculation produces 30, and the subtraction produces 170. There is no factual error or drift into another lesson.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text is concise Brazilian Portuguese with direct instructions to the learner. It remains a short screen without an introduction, filler, or promises. The title could be more compact, but there is no meaningful writing weakness.",
+          "score": 9,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2172,
+          "outputTokens": 799,
+          "reasoningTokens": 409
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Step 2 combines pressing Enter to display the discount with calculating the final price in another cell. This violates the requirement that each step contain just one move.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show explicitly that the first formula displays 30 before using that number in the subtraction. Separate entering the final formula and displaying 170 into short steps.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (15% off a R$ 200 jacket) done in a spreadsheet with a formula that works the same in Google Sheets and Excel, such as `=200*(1-15%)` or `=A1*(1-B1)`, and what the cell shows (170)\n      - Keeps 2 to 8 short steps, each one move, and the result is still R$ 170\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-tool-spreadsheet-discount-1",
+        "userInput": {
+          "key": "Planilha (Google Sheets ou Excel)",
+          "language": "pt",
+          "lessonTitle": "Descontos",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "problem": "Uma jaqueta de R$ 200 está com 15% de desconto. Quanto ela custa?",
+              "result": "A jaqueta custa R$ 170.",
+              "steps": [
+                {
+                  "math": "200 \\times 0{,}15 = 30",
+                  "text": "Calcule o desconto."
+                },
+                {
+                  "math": "200 - 30 = 170",
+                  "text": "Tire o desconto do preço."
+                }
+              ],
+              "title": "15% de R$ 200"
+            },
+            "kind": "workedExample"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Successfully converts the device-based instructions into an example to read. It describes one column per month, explains what column height represents, and identifies the tallest column. It never asks the learner to open software, select cells, use menus, or create anything, and never suggests they are missing out. The explanation retains the title and text, with image and optional fields null as permitted.",
+          "score": 10,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "Preserves the column-chart concept and all five monthly sales figures in their original order. April correctly has the highest sales at 22. There are no factual errors, contradictions, or unrelated lesson concepts.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Uses natural Brazilian Portuguese and a concise, beginner-friendly explanation comparable to the original's length. The direct invitation to imagine the example addresses the learner without filler, an introductory preamble, or promises.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1996,
+          "outputTokens": 654,
+          "reasoningTokens": 315
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Never asks the learner to open Google Sheets, select cells, click a menu or make the chart\n      - Shows what the column chart of the five monthly sales would look like and what it tells you (which month sold most), instead of the steps to make it\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-no-install-sheets-chart-1",
+        "userInput": {
+          "key": "no-install",
+          "language": "pt",
+          "lessonTitle": "Gráficos de colunas",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Abra o Google Planilhas e digite as vendas de janeiro a maio em A1:A5: 12, 18, 9, 22 e 15. Selecione A1:A5 e clique em Inserir > Gráfico. Escolha colunas e veja qual mês vendeu mais.",
+              "title": "Faça seu gráfico"
+            },
+            "kind": "explanation"
           }
         }
       }

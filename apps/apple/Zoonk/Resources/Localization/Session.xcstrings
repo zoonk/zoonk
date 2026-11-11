@@ -7121,65 +7121,6 @@
         }
       }
     },
-    "Today's +%lld Brain Power is already earned." : {
-      "comment" : "Another goal already earned the day's missions bonus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die heutigen +%lld Brain Power hast du schon verdient."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya ganaste los +%lld de Poder Mental de hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as déjà gagné les +%lld de Puissance Mentale des missions du jour."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai già guadagnato i +%lld punti di Potenza Mentale di oggi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の脳力+%lldは獲得済みです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 +%lld 두뇌력은 이미 받았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzisiejszy bonus +%lld pkt Mocy Umysłu jest już zdobyty."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já conquistou os +%lld de Poder Mental de hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü +%lld Beyin Gücü ödülünü zaten kazandın."
-          }
-        }
-      }
-    },
     "Today's missions" : {
       "comment" : "The missions' header",
       "localizations" : {

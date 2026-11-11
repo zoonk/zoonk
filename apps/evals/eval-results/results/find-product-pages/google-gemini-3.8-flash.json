@@ -22,142 +22,6 @@
       "testCase": {
         "expected": {
           "brandUrl": [
-            "vercel.com"
-          ],
-          "docsUrl": [
-            "nextjs.org/docs"
-          ],
-          "productUrl": [
-            "nextjs.org"
-          ],
-          "releasesUrl": [
-            "nextjs.org/blog",
-            "github.com/vercel/next.js/releases"
-          ]
-        },
-        "id": "nextjs-1",
-        "language": "en",
-        "userInput": {
-          "hints": {
-            "brand": "Vercel",
-            "name": "Next.js",
-            "release": null
-          },
-          "officialDomains": [
-            "nextjs.org",
-            "vercel.com"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "brandUrl": [
-            "linear.app"
-          ],
-          "docsUrl": [
-            "linear.app/docs"
-          ],
-          "productUrl": [
-            "linear.app"
-          ]
-        },
-        "id": "linear-1",
-        "language": "en",
-        "userInput": {
-          "hints": {
-            "brand": "Linear",
-            "name": "Linear",
-            "release": null
-          },
-          "officialDomains": [
-            "linear.app"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "brandUrl": [
-            "nubank.com.br",
-            "nu.com.br"
-          ],
-          "productUrl": [
-            "nubank.com.br",
-            "nu.com.br"
-          ]
-        },
-        "id": "nubank-1",
-        "language": "pt",
-        "userInput": {
-          "hints": {
-            "brand": "Nubank",
-            "name": "Nubank",
-            "release": null
-          },
-          "officialDomains": [
-            "nubank.com.br"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "brandUrl": [
             "totvs.com"
           ],
           "docsUrl": [
@@ -478,6 +342,101 @@
       "testCase": {
         "expected": {
           "brandUrl": [
+            "rdstation.com"
+          ],
+          "docsUrl": [
+            "ajuda.rdstation.com",
+            "developers.rdstation.com"
+          ],
+          "productUrl": [
+            "rdstation.com/produtos/marketing",
+            "rdstation.com/marketing"
+          ]
+        },
+        "id": "rd-station-marketing-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "RD Station",
+            "name": "RD Station Marketing",
+            "release": null
+          },
+          "officialDomains": [
+            "rdstation.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "vercel.com"
+          ],
+          "docsUrl": [
+            "nextjs.org/docs"
+          ],
+          "productUrl": [
+            "nextjs.org"
+          ],
+          "releasesUrl": [
+            "nextjs.org/blog",
+            "github.com/vercel/next.js/releases"
+          ]
+        },
+        "id": "nextjs-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Vercel",
+            "name": "Next.js",
+            "release": null
+          },
+          "officialDomains": [
+            "nextjs.org",
+            "vercel.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
             "apple.com"
           ],
           "docsUrl": [
@@ -531,27 +490,68 @@
       "testCase": {
         "expected": {
           "brandUrl": [
-            "rdstation.com"
+            "linear.app"
           ],
           "docsUrl": [
-            "ajuda.rdstation.com",
-            "developers.rdstation.com"
+            "linear.app/docs"
           ],
           "productUrl": [
-            "rdstation.com/produtos/marketing",
-            "rdstation.com/marketing"
+            "linear.app"
           ]
         },
-        "id": "rd-station-marketing-1",
-        "language": "pt",
+        "id": "linear-1",
+        "language": "en",
         "userInput": {
           "hints": {
-            "brand": "RD Station",
-            "name": "RD Station Marketing",
+            "brand": "Linear",
+            "name": "Linear",
             "release": null
           },
           "officialDomains": [
-            "rdstation.com"
+            "linear.app"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "nubank.com.br",
+            "nu.com.br"
+          ],
+          "productUrl": [
+            "nubank.com.br",
+            "nu.com.br"
+          ]
+        },
+        "id": "nubank-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "Nubank",
+            "name": "Nubank",
+            "release": null
+          },
+          "officialDomains": [
+            "nubank.com.br"
           ]
         }
       }

@@ -1,0 +1,216 @@
+{
+  "modelId": "google/gemini-4-carbon",
+  "results": [
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /neɪm/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /neɪm/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /neɪm/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "ˈnaːmə",
+          "english": "neɪm"
+        },
+        "id": "de-name-1",
+        "userInput": {
+          "language": "de",
+          "word": "Name"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "kɪnt",
+          "english": "kaɪnd"
+        },
+        "id": "de-kind-1",
+        "userInput": {
+          "language": "de",
+          "word": "Kind"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "hant",
+          "english": "hænd"
+        },
+        "id": "de-hand-1",
+        "userInput": {
+          "language": "de",
+          "word": "Hand"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈbaŋk/ (expected /baŋk/) and English /ˈbæŋk/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈbaŋk/ (expected /baŋk/) and English /ˈbæŋk/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈbaŋk/ (expected /baŋk/) and English /ˈbæŋk/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "baŋk",
+          "english": "bæŋk"
+        },
+        "id": "de-bank-1",
+        "userInput": {
+          "language": "de",
+          "word": "Bank"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /wɪnd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /wɪnd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /wɪnd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "vɪnt",
+          "english": "wɪnd"
+        },
+        "id": "de-wind-1",
+        "userInput": {
+          "language": "de",
+          "word": "Wind"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "look-alike",
+        "predicted": "look-alike"
+      },
+      "steps": [
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isLookAlike": true,
+          "native": "frœyt",
+          "english": "fruːt"
+        },
+        "id": "nl-fruit-1",
+        "userInput": {
+          "language": "nl",
+          "word": "fruit"
+        }
+      }
+    }
+  ],
+  "taskId": "word-ipa"
+}

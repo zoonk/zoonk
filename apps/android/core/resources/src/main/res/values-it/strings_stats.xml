@@ -7,6 +7,7 @@
   "stats_all_goals": "f256eeb1750f14c2b92f0c2986edd74820c60242a9af141b84de73183085d723",
   "stats_answer_count": "0479ac3e60973c465209d0972fb6ed0e947d63dcab426fe92f596abe4934a457",
   "stats_answers": "d80d25764addd3bfe57cd5698df154a6645ea2cb936a88109e0d276765db0aae",
+  "stats_answers_to_count": "652a3a346609c3939a198e0a00fd5a3074622990498dddbfba5bb20d31d834ac",
   "stats_any_day": "0d0ed7f8570703020d4f2c5b2c4c69bf0e547a8daa67131e9ccc24cb9f486545",
   "stats_any_day_studied": "b33a46ec9752247958820ffd2cb80f1e3113447eb0500970f71646defd29eaeb",
   "stats_any_time": "ee6b43c94978f5da684994b7dbc4799e6952fa31fbca344910be35b9e9121568",
@@ -23,15 +24,12 @@
   "stats_calendar_activity_summary": "1165588d3af1d0c49d5f7b2a38f1a52abaad938a5be86e4131b54efaa0e4774e",
   "stats_calendar_energy_summary": "2387fad1ffadfbdee87d7de82242b96c5a591137083dfd3fadd00e65b3563597",
   "stats_correct_of_total": "ded9086fec9cc6f23fa3447dd472807b58125e79c0805822c243ef845a5a6ad4",
-  "stats_day_activities": "e53b87f4fbfa06572ef8be9acbd1b673667dfc9d292526719e78e71943b2bff0",
-  "stats_day_energy": "08badf2c33e7a9bc9f83b5822bba897d89f9d32304d80daa2e724df67aa57d67",
-  "stats_day_no_energy": "b7e16bced3e7327f6ed1846d6bbddd6fd68a4f683851bbba37b7887c93350557",
-  "stats_day_no_study": "d2d842c06374d58e0d5e268e34236773ce1b04fa4618eb647b7bca967520a86f",
   "stats_days": "e5e020bbe6808712ce5c2cd63d69b2c3e4d002025045ce9a8f96675df9715917",
   "stats_days_even": "bbdc2f6fc182407599e9055139c1824f72e172a888a97005a852021b9bc24d54",
   "stats_days_studied": "afc1a3314bae79fda7a49f1bbeb3ddae0061c78fdc668313dc2cf9686d3320c3",
   "stats_empty_title": "190d58633ec1baa4c2f63498bd7cd25886b72967bcedf70f6fec1e384bfb4bc4",
   "stats_energy": "707d417bfe2eaa6097fe208434e8d86a12a658f2d8f5f42995768b17bf80ec82",
+  "stats_energy_amount": "e21a7e21dc055775d57eaa1d9b0efb0d81a3c94494020838ee612610ed0a54bb",
   "stats_energy_average": "23dcac7f227037e24d37c1d8868a7e2f1a0c4c74e6b13322c34a14245ac38406",
   "stats_energy_line": "e5004ceaaf4f5284278d7f05b4c7a540540d0c8e23849737d10094d5f4784a43",
   "stats_evening": "10502d9329660fecceb7237e262ba5c48549868bdff3af290330acbbed2ece14",
@@ -58,6 +56,8 @@
   "stats_next_level": "8300e4fbab8586afe214c081f934d96d34fc55ac3b361b3df2863b6b323c9784",
   "stats_night": "9efe02b03534846f712cfc904df6d8a9c55a30c4ef91b8564984f2e25b8c4119",
   "stats_no_answers": "48440deefa6f61f650e669cf28427b2031bb282c08518f8c25f5819b019154df",
+  "stats_no_energy": "1e8e868934f3f519ac4db2b449c325ab88a8e11bef6a13ad2f265e7178c5fcbc",
+  "stats_no_study": "08c4d25e2ef6f6f6d0fd2b3581d079d1746404725aca432afd28034a4b795837",
   "stats_not_enough": "4c92906be728588c9a987739691dacab895b6583f3d2a4d9aef75f3e0cec777b",
   "stats_not_yet": "152675764b7139752af6f6e52a023897861964761cb3ba1993a096031c431a44",
   "stats_of_all_answers": "d0f5322c9abf1737cc7773be430d456bfaca98f7d7dbafb732c5c6d4f4af0962",
@@ -172,15 +172,12 @@
         <item quantity="many">%1$s attività</item>
         <item quantity="other">%1$s attività</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · Non hai studiato</string>
-    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
-    <plurals name="stats_day_activities">
-        <item quantity="one">%1$s · %2$s attività</item>
-        <item quantity="many">%1$s · %2$s attività</item>
-        <item quantity="other">%1$s · %2$s attività</item>
-    </plurals>
-    <string name="stats_day_no_energy">%1$s · Nessuna Energia registrata</string>
-    <string name="stats_day_energy">%1$s · %2$s Energia</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
+    <string name="stats_no_study">Nessuna attività</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
+    <string name="stats_no_energy">Energia non registrata</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
+    <string name="stats_energy_amount">%1$s di Energia</string>
     <string name="stats_calendar_energy_summary">Energia negli ultimi 12 mesi: %1$s oggi, %2$s in media da quando hai iniziato</string>
     <string name="stats_right_answers">Risposte corrette</string>
     <string name="stats_right">Corrette</string>
@@ -226,6 +223,12 @@
         <item quantity="other">%1$s risposte</item>
     </plurals>
     <string name="stats_no_answers">Nessuna risposta</string>
+    <!-- A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, as in "7 answers, needs 10 to count". -->
+    <plurals name="stats_answers_to_count">
+        <item quantity="one">%1$s risposta, ne servono %2$s per individuare una tendenza</item>
+        <item quantity="many">%1$s risposte, ne servono %2$s per individuare una tendenza</item>
+        <item quantity="other">%1$s risposte, ne servono %2$s per individuare una tendenza</item>
+    </plurals>
     <string name="stats_throughout_week">Durante la settimana</string>
     <string name="stats_throughout_day">Durante la giornata</string>
     <string name="stats_any_day">Qualsiasi giorno</string>

@@ -10,6 +10,7 @@ type FormatFact = {
   description?: RegExp;
   kind: QuestionFormat["kind"];
   options?: number;
+  partialCredit?: QuestionFormat["partialCredit"];
   passage?: RegExp;
   section?: RegExp | null;
   select?: OptionSelect | null;
@@ -42,6 +43,7 @@ function matches({
   return (
     format.kind === fact.kind &&
     (fact.options === undefined || format.options === fact.options) &&
+    (fact.partialCredit === undefined || format.partialCredit === fact.partialCredit) &&
     (fact.select === undefined || format.select === fact.select) &&
     (!fact.passage || fact.passage.test(format.passage)) &&
     (!fact.description || fact.description.test(format.description)) &&

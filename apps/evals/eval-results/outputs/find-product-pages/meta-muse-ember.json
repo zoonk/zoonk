@@ -1,0 +1,88 @@
+{
+  "failedRuns": [
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.011508524
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 3956,
+            "inputTokens": 12018,
+            "outputTokens": 1373,
+            "reasoningTokens": 1001
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "linear-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.011503968
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 5992,
+            "inputTokens": 13262,
+            "outputTokens": 1506,
+            "reasoningTokens": 1088
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "nubank-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.017636712
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 10728,
+            "inputTokens": 21551,
+            "outputTokens": 3023,
+            "reasoningTokens": 2451
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "nextjs-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.030007404
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 6376,
+            "inputTokens": 32825,
+            "outputTokens": 4674,
+            "reasoningTokens": 3762
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "iphone-13-1"
+    }
+  ],
+  "generatedAt": "2026-11-11T02:34:35.723Z",
+  "modelId": "meta/muse-ember",
+  "outputs": [],
+  "taskId": "find-product-pages"
+}

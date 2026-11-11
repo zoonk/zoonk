@@ -1,4 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { type CSSProperties, type ComponentProps, type ReactNode } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
@@ -108,20 +107,4 @@ export function ProgressChartTooltip<DataPoint>({
       isAnimationActive={false}
     />
   );
-}
-
-export function ProgressChartTooltipContent({ children }: { children: ReactNode }) {
-  return (
-    <div className="bg-popover text-popover-foreground ring-border flex flex-col gap-0.5 rounded-md px-3 py-2 shadow-md ring-1">
-      {children}
-    </div>
-  );
-}
-
-export function ProgressChartTooltipLabel({ children }: { children: ReactNode }) {
-  return <p className="text-muted-foreground font-mono text-xs">{children}</p>;
-}
-
-export function ProgressChartTooltipValue({ children, className }: ComponentProps<"p">) {
-  return <p className={cn("font-mono text-sm font-medium tabular-nums", className)}>{children}</p>;
 }

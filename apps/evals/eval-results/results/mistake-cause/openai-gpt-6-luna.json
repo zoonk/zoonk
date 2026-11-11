@@ -2,14 +2,31 @@
   "modelId": "openai/gpt-6-luna",
   "results": [
     {
-      "classification": { "expected": "trap", "predicted": "trap" },
+      "classification": {
+        "expected": "trap",
+        "predicted": "trap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "trap" },
+        "expected": {
+          "cause": "trap"
+        },
         "id": "en-trap-raise-then-discount-1",
         "userInput": {
           "correctAnswer": "$99",
@@ -22,14 +39,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "en-gap-percent-of-wrong-base-1",
         "userInput": {
           "correctAnswer": "25%",
@@ -42,14 +76,31 @@
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "misread" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "en-misread-not-question-1",
         "userInput": {
           "correctAnswer": "Mercury",
@@ -62,14 +113,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "en-gap-photosynthesis-inputs-1",
         "userInput": {
           "correctAnswer": "Carbon dioxide and water",
@@ -82,14 +150,31 @@
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "misread" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "en-misread-units-1",
         "userInput": {
           "correctAnswer": "1.5 hours",
@@ -102,14 +187,31 @@
       }
     },
     {
-      "classification": { "expected": "trap", "predicted": "trap" },
+      "classification": {
+        "expected": "trap",
+        "predicted": "trap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "trap" },
+        "expected": {
+          "cause": "trap"
+        },
         "id": "en-trap-partial-step-1",
         "userInput": {
           "correctAnswer": "x = 4",
@@ -122,14 +224,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "en-gap-affect-effect-1",
         "userInput": {
           "correctAnswer": "affect",
@@ -142,7 +261,10 @@
       }
     },
     {
-      "classification": { "expected": "trap", "predicted": "gap" },
+      "classification": {
+        "expected": "trap",
+        "predicted": "gap"
+      },
       "steps": [
         {
           "conclusion": "Expected cause `trap`. Generated cause `gap`.",
@@ -161,7 +283,9 @@
         }
       ],
       "testCase": {
-        "expected": { "cause": "trap" },
+        "expected": {
+          "cause": "trap"
+        },
         "id": "en-trap-median-vs-mean-1",
         "userInput": {
           "correctAnswer": "4",
@@ -174,14 +298,31 @@
       }
     },
     {
-      "classification": { "expected": "trap", "predicted": "trap" },
+      "classification": {
+        "expected": "trap",
+        "predicted": "trap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "trap" },
+        "expected": {
+          "cause": "trap"
+        },
         "id": "pt-trap-desconto-sobre-desconto-1",
         "userInput": {
           "correctAnswer": "R$ 72",
@@ -194,14 +335,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-gap-regra-de-tres-inversa-1",
         "userInput": {
           "correctAnswer": "3 dias",
@@ -214,14 +372,31 @@
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "misread" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "pt-misread-exceto-1",
         "userInput": {
           "correctAnswer": "Fotossíntese",
@@ -234,14 +409,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-gap-crase-1",
         "userInput": {
           "correctAnswer": "Vou à escola",
@@ -254,14 +446,31 @@
       }
     },
     {
-      "classification": { "expected": "trap", "predicted": "trap" },
+      "classification": {
+        "expected": "trap",
+        "predicted": "trap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "trap" },
+        "expected": {
+          "cause": "trap"
+        },
         "id": "pt-trap-porcentagem-de-porcentagem-1",
         "userInput": {
           "correctAnswer": "Aumentou 21%",
@@ -274,26 +483,31 @@
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "gap" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
         {
-          "conclusion": "Expected cause `misread`. Generated cause `gap`.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected cause `misread`. Generated cause `gap`.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected cause `misread`. Generated cause `gap`.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "pt-misread-unidade-pedida-1",
         "userInput": {
           "correctAnswer": "2,5 km",
@@ -306,14 +520,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-gap-mitose-meiose-1",
         "userInput": {
           "correctAnswer": "Meiose",
@@ -326,14 +557,31 @@
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "misread" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "en-misread-least-likely-1",
         "userInput": {
           "correctAnswer": "Rolling a 7 with one die",
@@ -346,14 +594,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "en-persona-maya-negative-power-1",
         "userInput": {
           "correctAnswer": "0.001",
@@ -366,14 +631,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "en-persona-guest-cloud-spins-fast-1",
         "userInput": {
           "correctAnswer": "It's already in the lowest energy state there is",
@@ -386,14 +668,31 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-persona-ana-circuit-one-resistor-1",
         "userInput": {
           "correctAnswer": "1,0 A",
@@ -406,74 +705,142 @@
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-persona-lucas-brighter-photons-1",
         "userInput": {
           "correctAnswer": "Falso",
           "learnerAnswer": "Verdadeiro",
           "misconception": "Acha que o brilho define a energia do fóton",
           "question": "Uma luz vermelha mais forte é feita de fótons com mais energia cada um.",
-          "recentAccuracy": "0 of 1 right",
+          "recentAccuracy": "2 of 3 right",
           "language": "pt"
         }
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-persona-pedro-bankruptcy-order-1",
         "userInput": {
           "correctAnswer": "Eles são os últimos da fila e muitas vezes não recebem nada",
           "learnerAnswer": "Eles são pagos primeiro",
           "misconception": "",
           "question": "A rede de padarias vai à falência. O que acontece com os acionistas?",
-          "recentAccuracy": "1 of 2 right",
+          "recentAccuracy": "0 of 1 right",
           "language": "pt"
         }
       }
     },
     {
-      "classification": { "expected": "gap", "predicted": "gap" },
+      "classification": {
+        "expected": "gap",
+        "predicted": "gap"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "gap" },
+        "expected": {
+          "cause": "gap"
+        },
         "id": "pt-persona-marcos-how-many-deposit-1",
         "userInput": {
           "correctAnswer": "How much is the deposit?",
           "learnerAnswer": "How many is the deposit?",
           "misconception": "Usou how many para preço",
           "question": "How [BLANK] is the deposit?",
-          "recentAccuracy": "1 of 2 right",
+          "recentAccuracy": "0 of 1 right",
           "language": "pt"
         }
       }
     },
     {
-      "classification": { "expected": "misread", "predicted": "misread" },
+      "classification": {
+        "expected": "misread",
+        "predicted": "misread"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "cause": "misread" },
+        "expected": {
+          "cause": "misread"
+        },
         "id": "pt-persona-marcos-first-last-rent-1",
         "userInput": {
           "correctAnswer": "O primeiro e o último mês de aluguel, pagos adiantado",

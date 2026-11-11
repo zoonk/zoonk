@@ -22,7 +22,6 @@ export type DayViewFieldsInput = {
   dayEndsAt?: number;
   dayMinutes: number;
   examAccess: ExamPrepAccess;
-  fullMealEarned?: boolean;
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
@@ -59,7 +58,6 @@ export function toDayViewFields({
   dayEndsAt,
   dayMinutes,
   examAccess,
-  fullMealEarned,
   lessonRoom = false,
   missions,
   outlines = null,
@@ -98,7 +96,7 @@ export function toDayViewFields({
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),
-      earned: fullMealEarned ?? session.fullMealAt !== null,
+      earned: session.fullMealAt !== null,
       ready: isFullMeal(missions),
     },
     goalId: session.goalId,

@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "e7cf0d420eff1f366ef7d1d7120e24daa95e01a90526894d99061836e98e5cae",
-  "missions_already_earned": "cad7984fac644a178964e91ccb9fc3adc8dc04d51f71868822fcd419a8caf315",
   "missions_ask_anything": "3a164d225c862d9b785c2e8aada7661af8fd56e976298f9b00a09080f8a837f8",
   "missions_ask_buddy": "c1be1b6158ac25ef7f5d636a35079b17b780e4311fdb420d944cd341d8bc8981",
   "missions_brain_power": "a52d954584632cefadbaf2ff28fb99e9b7088bcc6d821c32ed9b1b962be0afad",
@@ -66,7 +65,6 @@
     <string name="missions_done">미션 완료</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">두뇌력이 +%1$s 늘었어요.</string>
-    <string name="missions_already_earned">오늘의 두뇌력 +%1$s 보상은 이미 받았어요.</string>
     <plurals name="missions_count">
         <item quantity="other">미션 %d개</item>
     </plurals>
