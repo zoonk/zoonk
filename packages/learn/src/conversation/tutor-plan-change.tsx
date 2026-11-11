@@ -14,6 +14,7 @@ import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
+  leadsWithGains,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaStartTexts,
@@ -47,10 +48,15 @@ function useChangeFootnote() {
   const reviewFirstText = useReviewFirstText();
   const space = useSentenceSpace();
 
-  return function changeFootnote(effect: PlanChangeView["effect"]): string | null {
+  return function changeFootnote({
+    effect,
+    operations,
+  }: Pick<PlanChangeView, "effect" | "operations">): string | null {
     if (!effect) {
       return null;
     }
+
+    const gainsFirst = leadsWithGains(operations);
 
     const ends: ChangeEffect["areaEnds"] = effect.areaEnds ?? [];
 
@@ -60,10 +66,19 @@ function useChangeFootnote() {
         (!effect.reviewFirst && !ends.some((areaEnd) => areaEnd.area === start.area)),
     );
 
+    const startTexts = areaStartTexts(starts);
+
+    // An end that moves is in the diff; one that stays says why, and a focus says what it gains.
+    const endTexts = areaEndTexts(
+      ends.filter(
+        ({ after, before, lessonsGained = 0 }) =>
+          after === before || (gainsFirst && lessonsGained > 0 && after > before),
+      ),
+      { estimated: effect.lessonsAddedEstimated },
+    );
+
     const sentences = [
-      ...areaStartTexts(starts),
-      // An end that moves is in the diff; one that stays says why.
-      ...areaEndTexts(ends.filter((areaEnd) => areaEnd.after === areaEnd.before)),
+      ...(gainsFirst ? [...endTexts, ...startTexts] : [...startTexts, ...endTexts]),
       reviewFirstText(effect),
       lessonsText(effect, { named: true }),
       addedTopicsStartText(effect),
@@ -230,7 +245,7 @@ export function TutorPlanChange({
   const statusLine = useStatusLine(change);
   const { answer, failed, isPending } = useAnswer({ cardRef, change, decide, onAnswered });
   const proposed = change.status === "proposed";
-  const footnote = proposed ? changeFootnote(change.effect) : null;
+  const footnote = proposed ? changeFootnote(change) : null;
 
   return (
     <section

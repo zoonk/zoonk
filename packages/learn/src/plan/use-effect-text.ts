@@ -8,6 +8,7 @@ import { useSentenceSpace } from "../_utils/locale";
 import { getShownEndMove } from "../plan-diff/end-move";
 import { useFormatPlanDate } from "./plan-date-text";
 import {
+  leadsWithGains,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaLessonTexts,
@@ -198,12 +199,10 @@ function useEffectSentences() {
       ...areaLessonTexts(change.effect?.areaLessons ?? []),
     ];
 
-    // A focus gives its subjects more lessons, so what they gain leads: opening on a later start
-    // read as the focus costing them time.
-    const focuses = change.operations?.some((operation) => operation.kind === "focusAreas");
-
     const sentences = [
-      ...(focuses ? [...lessonTexts, ...startTexts] : [...startTexts, ...lessonTexts]),
+      ...(leadsWithGains(change.operations)
+        ? [...lessonTexts, ...startTexts]
+        : [...startTexts, ...lessonTexts]),
       reviewFirstText(change.effect),
       weeklyEventsText(change.effect),
       nextMockText(change.effect),

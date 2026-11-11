@@ -1,5 +1,6 @@
 "use client";
 
+import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -7,6 +8,14 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 type AreaStarts = NonNullable<NonNullable<PlanChangeView["effect"]>["areaStarts"]>;
 type AreaEnds = NonNullable<NonNullable<PlanChangeView["effect"]>["areaEnds"]>;
 type AreaLessons = NonNullable<NonNullable<PlanChangeView["effect"]>["areaLessons"]>;
+
+/**
+ * A focus gives its subjects more lessons, so its effect says what they gain before when they
+ * start: opening on a later start read as the focus costing them time.
+ */
+export function leadsWithGains(operations: readonly PlanOperation[] = []): boolean {
+  return operations.some((operation) => operation.kind === "focusAreas");
+}
 
 /** The learner is the subject, so an area's name never needs a verb to agree with it. */
 export function useAreaStartTexts() {
