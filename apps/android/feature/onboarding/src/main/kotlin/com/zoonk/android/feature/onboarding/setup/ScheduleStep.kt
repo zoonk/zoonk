@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import com.zoonk.android.ui.components.textInset
-import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -54,8 +52,10 @@ import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.textInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate

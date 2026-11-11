@@ -1,11 +1,10 @@
 package com.zoonk.android.feature.focustest
 
-import com.zoonk.android.ui.components.textInset
-import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -37,11 +36,14 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.leadingIconInset
+import com.zoonk.android.ui.components.textInset
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
@@ -178,7 +180,11 @@ private fun SuggestedFocus(
         }
         if (plan != null && proposal != null) Proposal(proposal, plan)
         if (plan != null && changesFocus) {
-            TextButton(onClick = plan.onChangeFocus, leadingIcon = { ButtonIcon(R.drawable.ic_my_location) }) {
+            TextButton(
+                onClick = plan.onChangeFocus,
+                modifier = Modifier.offset(x = -LocalButtonSize.current.leadingIconInset),
+                leadingIcon = { ButtonIcon(R.drawable.ic_my_location) },
+            ) {
                 Text(stringResource(R.string.focustest_change_focus))
             }
         }

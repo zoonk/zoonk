@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import com.zoonk.android.ui.components.textInset
-import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -27,9 +25,11 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowWordsStart
+import com.zoonk.android.ui.components.textInset
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -132,7 +132,11 @@ private fun TestQuestionsSwitch(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
         )
-        TextButton(onClick = { model.setQuestions(on = paused) }, busy = model.saving, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) {
+        TextButton(
+            onClick = { model.setQuestions(on = paused) },
+            busy = model.saving,
+            modifier = Modifier.bleed(LocalButtonSize.current.textInset),
+        ) {
             Text(stringResource(if (paused) R.string.focustest_ask_again else R.string.focustest_pause_questions))
         }
         if (model.failed) {
