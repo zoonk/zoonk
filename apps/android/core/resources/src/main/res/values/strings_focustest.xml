@@ -146,5 +146,5 @@
     <string name="focustest_suggestion_dismissed">Noted. You can take the test from your plan.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">Not today</string>
-    <string name="focustest_not_today_failed">Couldn\'t skip them. Try again.</string>
+    <string name="focustest_not_today_failed">That didn\'t save. Try again.</string>
 </resources>
