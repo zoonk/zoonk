@@ -37,6 +37,7 @@ import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { readDaySession } from "./_utils/day-session";
 import { listEarlierWork } from "./_utils/earlier-work";
 import { loadAroundSession } from "./_utils/load-around-session";
+import { loadFocusTestSuggestion } from "./_utils/load-focus-test-suggestion";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
 import { type TodayNoticeKind, pickTodayNotice } from "./today-notice";
@@ -258,6 +259,7 @@ async function readAdmittedToday({
     noticedPattern,
     sourceChange,
     pronunciationDue,
+    focusTest,
   ] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
     loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
@@ -268,6 +270,7 @@ async function readAdmittedToday({
     loadNoticedPattern({ goal: owned.goal, userId }),
     loadSourceChange(id),
     hasPronunciationDue(owned.goal),
+    loadFocusTestSuggestion({ goal: owned.goal, localDate: day.session.localDate, timeZone }),
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
@@ -296,7 +299,7 @@ async function readAdmittedToday({
     today: {
       exam,
       examChoice,
-      focusTest: null,
+      focusTest,
       insight: shownInsight,
       planChange: shownChange,
       session: studySession,
@@ -311,7 +314,7 @@ async function readAdmittedToday({
       earlierWork: listEarlierWork({ day, session: studySession }),
       exam,
       examChoice,
-      focusTest: null,
+      focusTest,
       goal: {
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),

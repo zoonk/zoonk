@@ -2,7 +2,9 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { parsePlanSettings } from "../planner/plan-state";
+import { keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
+import { getDailyTimeFocus } from "../../learner/placement/focus-test-summary";
+import { type PlanSettings, parsePlanSettings } from "../planner/plan-state";
 import { toRecommendedBaseChoices } from "../planner/recommended-base-choices";
 import { refreshGoalPlan } from "../refresh-goal-plan";
 import { isPlanReady } from "./apply-plan-change";
@@ -44,6 +46,22 @@ async function hasChosenBases(planId: string, tx: TransactionClient): Promise<bo
   return chosen !== null;
 }
 
+function withFocus({ focus, settings }: { focus: string[] | null; settings: PlanSettings }) {
+  return focus
+    ? {
+        ...settings,
+        focusAreas: focus,
+        focusParts: settings.focusParts.filter((part) => focus.includes(part.area)),
+        reducedAreas: settings.reducedAreas.filter((area) => !focus.includes(area)),
+      }
+    : settings;
+}
+
+/**
+ * Settles the plan the daily time was just saved for: its recommended basics, its listening
+ * starts, and on an exam goal the focus its Focus test suggests while the time doesn't cover
+ * everything by the date.
+ */
 export async function settleNewPlan({ goalId }: { goalId: string }): Promise<void> {
   const context = await loadPlanAtToken(goalId);
 
@@ -60,11 +78,12 @@ export async function settleNewPlan({ goalId }: { goalId: string }): Promise<voi
   const state = withPastBasicsAreas({ areas: levelStarts, state: context.state });
   const computed = await computePlan({ context, mode: "forced", state });
   const baseChoices = toRecommendedBaseChoices(computed.bases);
+  const timeShort = computed.feasibility.deadline !== null && !computed.feasibility.fits;
 
   const settings = await writeLearnerChange(
     { goalIds: [goalId], planInputs: true, userId: context.goal.userId },
     async (tx) => {
-      const plan = await tx.plan.findUnique({ where: { goalId } });
+      const plan = await tx.plan.findUnique({ include: { goal: true }, where: { goalId } });
 
       if (!plan) {
         return unchanged(null);
@@ -72,11 +91,17 @@ export async function settleNewPlan({ goalId }: { goalId: string }): Promise<voi
 
       const current = parsePlanSettings(plan.settings);
 
+      const focus = getDailyTimeFocus({
+        focusAreas: current.focusAreas,
+        goal: plan.goal,
+        timeShort,
+      });
+
       const chosenStarts =
         levelStarts.length > 0 ? await listChosenStartAreas(plan.id, tx) : new Set<string>();
 
       const selected = {
-        ...current,
+        ...withFocus({ focus, settings: current }),
         ...(!(await hasChosenBases(plan.id, tx)) && { baseChoices }),
         pastBasicsAreas: [
           ...new Set([
@@ -91,6 +116,11 @@ export async function settleNewPlan({ goalId }: { goalId: string }): Promise<voi
       }
 
       await tx.plan.update({ data: { settings: selected }, where: { id: plan.id } });
+
+      if (focus) {
+        await keepTestFocus({ areas: focus, goalId, tx, userId: plan.goal.userId });
+      }
+
       return selected;
     },
   );

@@ -11,6 +11,7 @@ import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
+import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -144,6 +145,15 @@ function buildSteeringView({
 }
 
 type PlanViewInput = { context: PlanContext; now: Date };
+
+function readPlanFocusTest({ goal, state, timeZone, today }: PlanContext) {
+  return readFocusTestSummary({
+    focusAreas: state.settings.focusAreas,
+    goal,
+    localDate: today,
+    timeZone,
+  });
+}
 
 function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
   return arePhaseChallengesRequired({
@@ -280,7 +290,7 @@ export async function buildPlanView({
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,
     },
-    focusTest: null,
+    focusTest: readPlanFocusTest(context),
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)
