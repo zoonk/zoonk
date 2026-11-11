@@ -174,6 +174,41 @@ describe("lesson visuals", () => {
     });
   });
 
+  it("names every bar of a chart in full on a narrow phone, with no text outside the card", async () => {
+    const regions: LessonVisual = {
+      ...lettersChart,
+      categories: ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"],
+      series: [{ name: "Ofícios respondidos", values: [18, 42, 64, 30, 22] }],
+      title: "Ofícios respondidos por região",
+    };
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check({ visual: regions })]) });
+
+      const chart = page.getByRole("figure", { name: regions.title });
+      await expect.element(chart).toBeVisible();
+
+      const textsOutsideCard = () => {
+        const card = chart.element().getBoundingClientRect();
+
+        return [...chart.element().querySelectorAll("svg text")]
+          .filter((text) => {
+            const box = text.getBoundingClientRect();
+            return box.left < card.left || box.right > card.right;
+          })
+          .map((text) => text.textContent);
+      };
+
+      await expect.poll(textsOutsideCard).toStrictEqual([]);
+
+      const labels = [...chart.element().querySelectorAll("svg text")].map(
+        (text) => text.textContent,
+      );
+
+      expect(labels).toStrictEqual(expect.arrayContaining(regions.categories));
+    });
+  });
+
   it("starts a chart's axis where a screen about a cropped axis says", async () => {
     const cropped: LessonVisual = {
       ...lettersChart,

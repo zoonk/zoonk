@@ -1,6 +1,7 @@
 /** About how wide one character of a 12px label is, to keep category labels from overlapping. */
 const LABEL_CHAR_WIDTH = 6.6;
 const LABEL_GAP = 6;
+const MAX_LINES_UNDER_BAR = 2;
 
 export type CategoryLabelLayout = { lines: string[][]; step: number };
 
@@ -12,7 +13,7 @@ function splitWords(label: string): string[] {
   return label.split(/(?<=[\s-])/u);
 }
 
-function wrapLabel({ label, room }: { label: string; room: number }): string[] {
+export function wrapLabel({ label, room }: { label: string; room: number }): string[] {
   const lines = [""];
 
   for (const word of splitWords(label)) {
@@ -30,7 +31,8 @@ function wrapLabel({ label, room }: { label: string; room: number }): string[] {
 
 /**
  * Each name wraps at a space or hyphen to fit under its bar. A word wider than a bar can't, so only
- * every few names show, each with the room of the ones it skips.
+ * every few names show, each with the room of the ones it skips: fine for a line chart's ordered
+ * axis, while a bar chart whose names don't fit lies on its side instead (`fitsUnderBars`).
  */
 export function getCategoryLabels({
   band,
@@ -48,4 +50,21 @@ export function getCategoryLabels({
   const step = Math.max(Math.ceil(widestWord / band), 1);
 
   return { lines: categories.map((label) => wrapLabel({ label, room: band * step })), step };
+}
+
+export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
+  return step === 1 && lines.every((name) => name.length <= MAX_LINES_UNDER_BAR);
+}
+
+export function clampLabelCenter({
+  lines,
+  width,
+  x,
+}: {
+  lines: string[];
+  width: number;
+  x: number;
+}): number {
+  const half = Math.max(...lines.map((line) => getLabelWidth(line))) / 2;
+  return Math.min(Math.max(x, half), width - half);
 }
