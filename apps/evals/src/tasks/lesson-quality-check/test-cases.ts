@@ -57,6 +57,70 @@ function screenOf(base: BaseLesson, screen: number): WrittenScreen {
 const { doorways, eletron, regra, temperature } = BASE_LESSONS;
 const { estabilidade, taxDeadlines } = SOURCED_BASE_LESSONS;
 
+const MOBILITY_EXAMPLE_RULE =
+  "Aqui, abrir mais vagas no topo aumentou as subidas sem tirar o peso da origem.";
+
+function mobilityExampleScreen(opening: string): WrittenScreen {
+  return {
+    exampleLineIdea:
+      "uma notícia sobre mais jovens de famílias pobres entrando na universidade ou no serviço público",
+    explore: null,
+    image: null,
+    kind: "explanation",
+    text: `${opening} Dividir as fatias que chegam ao topo daria 5 e depois 3, mas aqui essa queda vem só das vagas a mais no topo. Nas odds, a vantagem seguiu em nove vezes. ${MOBILITY_EXAMPLE_RULE}`,
+    title: "Mais subidas, mesma vantagem",
+    visual: null,
+  };
+}
+
+const mobilityRuleCheck = MOBILITY_BASE_LESSON.lesson.screens[8] as Extract<
+  WrittenScreen,
+  { kind: "check" }
+>;
+
+const mobilityResolvedScreens = plant(
+  plant(
+    plant(MOBILITY_BASE_LESSON, 3, {
+      image: null,
+      kind: "hookGuess",
+      options: [
+        { isCorrect: false, text: "Diminui" },
+        { isCorrect: true, text: "Permanece igual" },
+      ],
+      question:
+        "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?",
+      reveal:
+        "Pela medida que as próximas telas usam, a vantagem da origem alta permanece igual nos dois períodos.",
+      visual: null,
+    }),
+    8,
+    mobilityExampleScreen(
+      "De A para B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25.",
+    ),
+  ),
+  9,
+  { ...mobilityRuleCheck, basis: { quote: MOBILITY_EXAMPLE_RULE, screen: 8 } },
+);
+
+/** The real guess with its reading resolved, and the example's rule kept to the example, so nothing in it is wrong. */
+const mobilityGuessResolved: LessonQualityCheckInput = {
+  ...mobilityResolvedScreens,
+  lesson: {
+    ...mobilityResolvedScreens.lesson,
+    summary: {
+      ...mobilityResolvedScreens.lesson.summary,
+      ideas: mobilityResolvedScreens.lesson.summary.ideas.map((idea) =>
+        idea.label === "Mais subidas, mesma vantagem"
+          ? {
+              ...idea,
+              text: "Abrir mais vagas no topo pode aumentar as subidas sem tirar o peso da origem, como de A para B, quando a vantagem da origem alta seguiu em nove vezes.",
+            }
+          : idea,
+      ),
+    },
+  },
+};
+
 export const TEST_CASES: TestCase<
   LessonQualityCheckExpected,
   AlphabetCheckInput | LessonQualityCheckInput
@@ -124,31 +188,17 @@ export const TEST_CASES: TestCase<
   {
     expected: { verdict: "pass" },
     id: "pt-mobilidade-guess-resolved",
+    userInput: mobilityGuessResolved,
+  },
+  {
+    expected: { screen: 8, verdict: "fail" },
+    id: "pt-mobilidade-absolute-claim-contradicts-figures",
     userInput: plant(
-      plant(MOBILITY_BASE_LESSON, 3, {
-        image: null,
-        kind: "hookGuess",
-        options: [
-          { isCorrect: false, text: "Diminui" },
-          { isCorrect: true, text: "Permanece igual" },
-        ],
-        question:
-          "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?",
-        reveal:
-          "Pela medida que as próximas telas usam, a vantagem da origem alta permanece igual nos dois períodos.",
-        visual: null,
-      }),
+      mobilityGuessResolved,
       8,
-      {
-        exampleLineIdea:
-          "uma notícia sobre mais jovens de famílias pobres entrando na universidade ou no serviço público",
-        explore: null,
-        image: null,
-        kind: "explanation",
-        text: "De A para B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25. Dividir as fatias que chegam ao topo daria 5 e depois 3, mas essa queda só mostra que mais gente de toda origem subiu. Nas odds, a vantagem seguiu em nove vezes. Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem.",
-        title: "Mais subidas, mesma vantagem",
-        visual: null,
-      },
+      mobilityExampleScreen(
+        "De A para B, a mobilidade absoluta cresceu: os filhos de origem baixa que chegaram ao topo passaram de 10 para 25.",
+      ),
     ),
   },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
