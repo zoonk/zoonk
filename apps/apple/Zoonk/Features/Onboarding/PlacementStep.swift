@@ -7,8 +7,6 @@ struct PlacementStep: View {
   let subject: String
   let onDone: () async throws -> Void
 
-  @Environment(AppRouter.self) private var router
-  @Environment(ExamStore.self) private var exam
   @Environment(OnboardingStore.self) private var onboarding
   @State private var phase = Phase.loading
   @State private var shownAt = ContinuousClock.now
@@ -31,14 +29,6 @@ struct PlacementStep: View {
     case question(PracticeQuestion, labels: PracticeTrueFalseLabels)
     case done(forToday: Bool)
     case unavailable
-
-    var isSettled: Bool {
-      if case .loading = self {
-        return false
-      }
-
-      return true
-    }
 
     var isWaiting: Bool {
       if case .waiting = self {
@@ -75,34 +65,9 @@ struct PlacementStep: View {
   }
 
   var body: some View {
-    Group {
-      if let mock = placementMock, phase.isSettled {
-        switch mock.status {
-        case .running:
-          mockRunning(mock.id)
-        case .finished:
-          outcome(
-            title: Text(
-              "Your mock exam set your starting point", tableName: "Onboarding",
-              comment: "Placement ended with a mock exam"),
-            description: Text(
-              "Based on your \(shown.answered) answers. It gets more accurate every day.",
-              tableName: "Onboarding", comment: "Under placement ended with a mock exam"))
-        }
-      } else {
-        steps
-      }
-    }
-    .task { await resume() }
-    .onChange(of: isMockOpen) { _, isOpen in
-      // Back from the mock: placement's answers are read again; the mock's state follows its read.
-      if !isOpen {
-        phase = .loading
-        Task { await resume() }
-      }
-    }
-    .modifier(PlacementMockLoading(goalId: view.goal.id, isExam: view.goal.kind == .exam))
-    .feedbackSheet(
+    steps
+      .task { await resume() }
+      .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
       isReport: true)
@@ -115,7 +80,8 @@ struct PlacementStep: View {
       ready
     } else {
       WaitHold(
-        surface: .placementWait, isReady: !phase.isWaiting, announcement: Self.questionsReady
+        surface: .placementWait, isReady: !phase.isWaiting,
+        announcement: PlacementWaitScreen.questionsReady
       ) { stage in
         switch stage {
         case .waiting(let holding): waiting(holding: holding)
@@ -171,41 +137,6 @@ struct PlacementStep: View {
     }
   }
 
-  private var placementMock: MockOptions.Placement.Mock? {
-    guard view.goal.kind == .exam else {
-      return nil
-    }
-
-    return exam.mockOptions(goalId: view.goal.id).value?.placement?.mock
-  }
-
-  private func mockRunning(_ mockID: String) -> some View {
-    ZoonkList {
-      StepHeader(
-        title: Text(
-          "Your mock exam is waiting", tableName: "Onboarding",
-          comment: "A placement mock left running"),
-        description: Text(
-          "Go on where you left it, or stop now: your plan starts from the questions you answered.",
-          tableName: "Onboarding", comment: "Under a placement mock left running"))
-
-      saveFailure
-
-      StepButtons(
-        continueLabel: Text(
-          "Continue the mock exam", tableName: "Mock", comment: "A running placement mock"),
-        continueIcon: .play,
-        skipLabel: Text(
-          "Stop and see my plan", tableName: "Onboarding",
-          comment: "Stops a placement mock; its answers set the starting point"),
-        skipIcon: .stop,
-        onContinue: { router.open(.mock(blockId: mockID)) },
-        onSkip: { stopMock(mockID) })
-    }
-    .onboardingColumn()
-    .environment(\.isSavingAnswer, isSaving)
-  }
-
   @ViewBuilder private var saveFailure: some View {
     if finishFailed, !isSaving {
       Section {
@@ -218,15 +149,6 @@ struct PlacementStep: View {
     "That didn't save. Try again.", table: "Onboarding",
     comment: "A change couldn't be saved")
 
-  private var isMockOpen: Bool {
-    router.tasks.contains { route in
-      switch route {
-      case .placementMock, .mock: true
-      default: false
-      }
-    }
-  }
-
   private var intro: some View {
     ZoonkList {
       StepHeader(
@@ -234,18 +156,9 @@ struct PlacementStep: View {
         title: Text(
           "Let's see what you already know", tableName: "Onboarding",
           comment: "Title of placement's start"),
-        description: view.examSubjects.isEmpty
-          ? Text(
-            "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-            tableName: "Onboarding", comment: "What placement is")
-          : Text(
-            "A few quick questions about the \(view.examSubjects.count) areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-            tableName: "Onboarding", comment: "What placement is for an exam with several areas"))
-
-      if view.goal.kind == .exam {
-        PlacementMockOffer(goalId: view.goal.id)
-          .disabled(isSaving || isStarting)
-      }
+        description: Text(
+          "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
+          tableName: "Onboarding", comment: "What placement is"))
 
       saveFailure
 
@@ -266,85 +179,24 @@ struct PlacementStep: View {
     .environment(\.isSavingAnswer, isStarting || isSaving)
   }
 
-  private static let questionsReady = LocalizedStringResource(
-    "Your questions are ready", table: "Onboarding",
-    comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
-
   private func waiting(holding: WaitHolding?) -> some View {
-    let failure: GenerationFailure? =
-      if case .waiting(let failure) = phase, holding == nil { failure } else { nil }
-    let shown = holding == nil ? run : run.finished
-    let title =
-      holding == nil
-      ? Text(
-        "Getting your questions ready", tableName: "Onboarding",
-        comment: "Title while placement questions are written")
-      : Text(Self.questionsReady)
+    let failure: GenerationFailure? = if case .waiting(let failure) = phase { failure } else { nil }
 
-    return WaitScreen(
-      deck: onboarding.waitDeck(for: view), goalID: view.goal.id,
-      progressTitle: title,
-      ready: holding.map { holding in
-        WaitReady(
-          label: Text(
-            "Continue", tableName: "Onboarding",
-            comment: "Leaves placement's wait, once its questions are ready, for the questions"),
-          action: holding.moveOn)
-      }
-    ) {
-      if let failure {
-        GenerationFailureNotice(failure: failure, isActing: isSaving || isStarting) {
-          retry(failure)
-        }
-      } else {
-        WaitStatusStrip(label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
-      }
-    } progress: {
-      WaitHeading(
-        title: title,
-        description: holding == nil
-          ? Text(
-            "They come from the skills your goal needs. It usually takes a minute or two.",
-            tableName: "Onboarding", comment: "Why placement questions take a moment")
-          : Text(
-            "Start them whenever you're ready.", tableName: "Onboarding",
-            comment: "Under \"Your questions are ready\" on placement's wait"))
-
-      Section {
-        GenerationTimeline(wait: shown, failure: failure)
-      }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
-    } extra: {
-      VStack(spacing: 6) {
-        if finishFailed, !isSaving {
-          FailureLine(message: Self.saveFailureMessage)
-            .multilineTextAlignment(.center)
-        }
-
-        BusyButton(isBusy: isSaving, icon: .skip) {
-          finish(fromScratch: false)
-        } label: {
-          Text(
-            "Skip for now", tableName: "Onboarding",
-            comment: "Skips placement while its questions are written")
-        }
-        .buttonStyle(.outline)
-        .buttonSizing(.flexible)
-        .disabled(isStarting)
-
-        Text(
+    return PlacementWaitScreen(
+      onboarding: view, goalID: view.goal.id, run: run, failure: failure, holding: holding,
+      isActing: isStarting,
+      skip: .init(
+        label: Text(
+          "Skip for now", tableName: "Onboarding",
+          comment: "Skips placement while its questions are written"),
+        note: Text(
           "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-          comment: "Under Skip for now"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .multilineTextAlignment(.center)
-      }
-    }
-    .measuresWait(
-      surface: "placementWait", contentKind: "curriculum", goalID: view.goal.id,
-      onboardingID: view.onboardingID
+          comment: "Under Skip for now"),
+        isBusy: isSaving, failed: finishFailed
+      ) {
+        finish(fromScratch: false)
+      },
+      onRetry: retry
     )
     .taskThroughPush(id: waitRound) { await waitForQuestions() }
   }
@@ -375,9 +227,6 @@ struct PlacementStep: View {
       phase = .intro
       return
     }
-
-    // A mock's answers count too, for the line under its outcome.
-    shown.answered = max(shown.answered, placement.answered)
 
     if placement.started {
       show(placement)
@@ -423,44 +272,18 @@ struct PlacementStep: View {
       return
     }
 
-    await read()
-
-    guard case .waiting = phase else {
-      return
-    }
-
-    if let generationID = view.generationId {
-      do {
-        for try await event in onboarding.events(generationID: generationID) {
-          if let id = event.warmUpID {
-            onboarding.found(deckID: id, generationID: generationID)
-          }
-
-          run.apply(event)
-
-          await read()
-
-          guard case .waiting = phase else {
-            return
-          }
-        }
-      } catch {
-        // A dropped stream falls back to reading again below.
-      }
-    }
-
-    // The questions come from a run of their own once the skills are saved: read again a few times, more slowly each time.
-    for delay in [3, 5, 8, 13, 21, 34] {
-      try? await Task.sleep(for: .seconds(delay))
-
-      guard !Task.isCancelled, case .waiting = phase else {
-        return
+    let followed = await PlacementWaitScreen.follow(
+      generationID: view.generationId, store: onboarding, apply: { run.apply($0) }
+    ) {
+      guard case .waiting = phase else {
+        return false
       }
 
       await read()
+      return phase.isWaiting
     }
 
-    if !Task.isCancelled, case .waiting = phase {
+    if !followed, case .waiting = phase {
       phase = .waiting(failure: .connection)
     }
   }
@@ -507,41 +330,6 @@ struct PlacementStep: View {
     }
   }
 
-  private func stopMock(_ mockID: String) {
-    guard !isSaving else {
-      return
-    }
-
-    isSaving = true
-    finishFailed = false
-
-    Task {
-      defer { isSaving = false }
-
-      do {
-        // Stopping the mock keeps its answers, which set where the plan starts.
-        let stopped = await exam.write(
-          invalidating: [.goals, .learnerModel, .userProgress, .userSession]
-        ) { api, token in
-          try await api.finish(token: token, blockId: mockID)
-        }
-
-        switch stopped {
-        case .done:
-          try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: false)
-          try await onDone()
-        case .failed:
-          finishFailed = true
-        case .obsolete:
-          break
-        }
-      } catch is CancellationError {
-      } catch {
-        finishFailed = true
-      }
-    }
-  }
-
   private func finish(fromScratch: Bool) {
     guard !isSaving else {
       return
@@ -576,6 +364,8 @@ struct PlacementStep: View {
 struct PlacementQuestionScreen<Media: View>: View {
   var subject: String?
   let number: Int
+  /// The count promised up front, when the test has one.
+  var total: Int?
   /// From 0 to 1.
   let progress: Double
   let question: PracticeQuestion
@@ -586,6 +376,10 @@ struct PlacementQuestionScreen<Media: View>: View {
   let isSaving: Bool
   let failures: Int
   var saveFailure: LocalizedStringResource?
+  var stopLabel = LocalizedStringResource(
+    "Stop here and see my plan", table: "Onboarding", comment: "Ends placement early")
+  /// Said right above Stop, when stopping is worth suggesting.
+  var stopHint: LocalizedStringResource?
   let onReport: () -> Void
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
@@ -605,10 +399,17 @@ struct PlacementQuestionScreen<Media: View>: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        Text(
-          "Question \(number)", tableName: "Onboarding",
-          comment: "Which placement question this is"
-        )
+        Group {
+          if let total {
+            Text(
+              "Question \(number) of \(total)", tableName: "Onboarding",
+              comment: "Which question of a test with a promised count this is")
+          } else {
+            Text(
+              "Question \(number)", tableName: "Onboarding",
+              comment: "Which placement question this is")
+          }
+        }
         .typeStyle(.body.weight(.semibold))
       }
 
@@ -649,11 +450,19 @@ struct PlacementQuestionScreen<Media: View>: View {
         onAnswer(.dontKnow)
       }
 
+      if let stopHint {
+        Text(stopHint)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .multilineTextAlignment(.center)
+          .frame(maxWidth: .infinity)
+      }
+
       BusyButton(isBusy: isSaving && submission == .stop) {
         submission = .stop
         onStop()
       } label: {
-        Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
+        Text(stopLabel)
       }
       .disabled(isSaving && submission != .stop)
     }
@@ -672,21 +481,28 @@ extension PlacementQuestionScreen where Media == EmptyView {
   init(
     subject: String?,
     number: Int,
+    total: Int? = nil,
     progress: Double,
     question: PracticeQuestion,
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
     failures: Int,
     saveFailure: LocalizedStringResource? = nil,
+    stopLabel: LocalizedStringResource? = nil,
+    stopHint: LocalizedStringResource? = nil,
     onReport: @escaping () -> Void,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
-      subject: subject, number: number, progress: progress, question: question, labels: labels,
-      isSaving: isSaving, failures: failures, saveFailure: saveFailure, onReport: onReport,
-      onAnswer: onAnswer, onStop: onStop,
+      subject: subject, number: number, total: total, progress: progress, question: question,
+      labels: labels, isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )
+
+    if let stopLabel {
+      self.stopLabel = stopLabel
+    }
   }
 }

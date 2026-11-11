@@ -141,8 +141,6 @@ extension AppRoute {
       EssayScreen(blockId: blockId)
     case .mock(let blockId, let sessionId):
       MockScreen(blockId: blockId, sessionId: sessionId)
-    case .placementMock(let goalId):
-      PlacementMockScreen(goalId: goalId)
     case .mindMap(let chapterId):
       MindMapScreen(chapterId: chapterId)
     case .pronunciation(let goalId):

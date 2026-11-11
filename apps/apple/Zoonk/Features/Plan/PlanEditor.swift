@@ -107,7 +107,8 @@ final class PlanEditor {
 
     let goalId = goalId
     let undone = await store.write { api, token in
-      try await api.undo(token: token, goalId: goalId, changeId: change.id)
+      try await api.decide(
+        token: token, goalId: goalId, changeId: change.id, decision: .undone)
     } changed: {
       $0
     }

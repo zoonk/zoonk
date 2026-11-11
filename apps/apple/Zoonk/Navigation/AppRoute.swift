@@ -35,7 +35,6 @@ enum AppRoute: Hashable, Identifiable {
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)
   case mock(blockId: String, sessionId: String? = nil)
-  case placementMock(goalId: String)
   case mindMap(chapterId: String)
   case pronunciation(goalId: String? = nil)
   case conversation(conversationId: String)

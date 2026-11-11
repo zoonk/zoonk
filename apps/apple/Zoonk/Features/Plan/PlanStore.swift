@@ -175,6 +175,29 @@ final class PlanStore {
     }
   }
 
+  /// The learner's switches on an exam goal's Focus test, from the plan, Today or a session: what
+  /// sessions ask comes from them, so the day is read again.
+  func updateFocusTest(goalId: String, _ controls: FocusTestControls) async -> MutationResult<
+    FocusTestSummary
+  > {
+    let api = api
+    return await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+      try await api.updateFocusTest(
+        token: identity.bearerToken, goalId: goalId, controls: controls)
+    }
+  }
+
+  /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.
+  func decide(goalId: String, changeId: String, decision: PlanChangeDecision) async
+    -> MutationResult<Bool>
+  {
+    let api = api
+    return await cache.mutate(invalidating: [.goals, .learnerModel, .userSession]) { identity in
+      try await api.decide(
+        token: identity.bearerToken, goalId: goalId, changeId: changeId, decision: decision)
+    }
+  }
+
   /// Only saves: `PlanEditor` says what a change did and undoes it.
   func change(goalId: String, edits: [PlanEdit]) async -> MutationResult<PlanChangeOutcome> {
     await change { api, token in

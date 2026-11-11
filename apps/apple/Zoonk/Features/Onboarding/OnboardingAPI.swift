@@ -222,6 +222,8 @@ struct TimeAdvice: PlanAnswer, Decodable {
   let coveredShare: Double?
   /// When a goal without a date finishes at this time; nil when the time can't hold it all.
   let endDate: String?
+  /// The subjects this time would give more of it, from the learner's Focus test answers.
+  let focusSubjects: [FocusTest.SubjectLabel]?
   /// For an exam studying everything: when everything ends at this time, once the plan holds it.
   let fullCourseEndDate: String?
   let readingNotice: Bool
@@ -646,8 +648,28 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Ends placement: what was answered sets where each phase starts, or every phase starts at its beginning.
-  func completePlacement(goalID: String, fromScratch: Bool, token: String) async throws {
+  /// Opens an exam goal's next Focus test sitting; asked again, it answers with the one open.
+  func startPlacementSitting(goalID: String, token: String) async throws -> GoalPlacement {
+    let output = try await clients.perform(token: token) { client in
+      try await client.createPlacementSitting(
+        path: .init(goalId: goalID), body: .json(.init(timeZone: TimeZone.current.identifier)))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// Ends placement: what was answered sets where each phase starts, or every phase starts at its
+  /// beginning. An exam goal's answer is its Focus test as it stands after it.
+  func completePlacement(goalID: String, fromScratch: Bool, token: String) async throws
+    -> FocusTest?
+  {
     let output = try await clients.perform(token: token) { client in
       try await client.completeGoalPlacement(
         path: .init(goalId: goalID),
@@ -655,8 +677,8 @@ struct OnboardingAPI: Sendable {
     }
 
     switch output {
-    case .ok:
-      return
+    case .ok(let response):
+      return try response.body.json.focusTest.map { try PracticeJSON.recode($0) }
     case .unauthorized:
       throw APIError.unauthorized
     default:

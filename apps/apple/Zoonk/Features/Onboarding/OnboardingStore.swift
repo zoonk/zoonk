@@ -326,11 +326,20 @@ final class OnboardingStore {
     }
   }
 
-  func finishPlacement(goalID: String, fromScratch: Bool) async throws {
+  /// An exam goal's answer is its Focus test as it stands after it.
+  @discardableResult
+  func finishPlacement(goalID: String, fromScratch: Bool = false) async throws -> FocusTest? {
     try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
       [api] identity in
       try await api.completePlacement(
         goalID: goalID, fromScratch: fromScratch, token: identity.bearerToken)
+    }
+  }
+
+  /// Start or Continue the test: opens its next sitting, which turns its session questions on.
+  func startPlacementSitting(goalID: String) async throws -> GoalPlacement {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.startPlacementSitting(goalID: goalID, token: identity.bearerToken)
     }
   }
 

@@ -59,79 +59,9 @@ private struct MockChooserContent: View {
       }
       .lonePage()
     case .loaded(let view):
-      MockChooser(goalId: goalId, view: view, placement: false) { id in
+      MockChooser(goalId: goalId, view: view) { id in
         router.open(.mock(blockId: id))
       }
-    }
-  }
-}
-
-/// Its answers set where the plan starts; stopping midway keeps them.
-struct PlacementMockScreen: View {
-  @Environment(ExamStore.self) private var exam
-  @Environment(\.dismiss) private var dismiss
-  @State private var startedId: String?
-
-  let goalId: String
-
-  var body: some View {
-    let options = exam.mockOptions(goalId: goalId)
-
-    Group {
-      if let id = startedId
-        ?? options.value?.placement?.mock.flatMap({ $0.status == .running ? $0.id : nil })
-      {
-        MockScreen(blockId: id)
-      } else {
-        NavigationStack {
-          placement(options)
-            .navigationTitle(
-              Text(
-                "A mock exam to find your level", tableName: "Mock",
-                comment: "Placement mock title")
-            )
-            .barTitleAfterHero(
-              String(
-                localized: "A mock exam to find your level", table: "Mock",
-                comment: "Placement mock title")
-            )
-            .taskClose {
-              Button(role: .close) { dismiss() }
-            }
-        }
-        .loads(options, refreshable: false)
-      }
-    }
-  }
-
-  @ViewBuilder
-  private func placement(_ options: Resource<MockOptions>) -> some View {
-    switch options.state {
-    case .idle, .loading:
-      ProgressView()
-    case .failed(let error) where error != .notFound:
-      ContentUnavailableView {
-        Label {
-          Text("Mock exams didn't load", tableName: "Mock", comment: "Loading failed")
-        } icon: {
-          Image(systemName: "wifi.exclamationmark")
-        }
-      } actions: {
-        Button {
-          Task { await options.refresh() }
-        } label: {
-          Text("Try again", tableName: "Mock", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
-      }
-    case .loaded(let view) where view.placement != nil && view.placement?.mock == nil:
-      MockChooser(goalId: goalId, view: view, placement: true) { id in
-        startedId = id
-      }
-    default:
-      // A goal that isn't an exam, or one already past it: back to onboarding's quick placement.
-      ProgressView()
-        .task { dismiss() }
     }
   }
 }
@@ -153,7 +83,6 @@ private struct MockChooser: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var picked: String?
-  @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
   @State private var isOnScreen = false
@@ -161,16 +90,12 @@ private struct MockChooser: View {
 
   let goalId: String
   let view: MockOptions
-  let placement: Bool
   let onStarted: (String) -> Void
 
   private var isOpen: Bool { view.access == .open }
   private var severalDays: Bool { view.options.filter { $0.kind == .full }.count > 1 }
   private var pickedOption: MockOption? {
     view.options.first { $0.id == (picked ?? view.options.first?.id) }
-  }
-  private var pickedLength: PlacementMockOption.Length? {
-    length ?? view.placement?.recommended
   }
 
   /// Main's choice rows put the size under the words on a phone.
@@ -212,10 +137,7 @@ private struct MockChooser: View {
   private var intro: some View {
     Section {
       PageHeader(
-        placement
-          ? Text(
-            "A mock exam to find your level", tableName: "Mock", comment: "Placement mock title")
-          : Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
+        Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
         eyebrow: Text(view.examName), supporting: line
       )
       .announcesAlert(failure)
@@ -233,7 +155,7 @@ private struct MockChooser: View {
       }
     }
 
-    if let running = view.running, !placement {
+    if let running = view.running {
       Section {
         Button {
           onStarted(running.id)
@@ -256,50 +178,24 @@ private struct MockChooser: View {
 
   @ViewBuilder
   private func choices(notesUnder: Bool) -> some View {
-    if placement, let lengths = view.placement {
-      Section {
-        ForEach(lengths.options) { option in
-          choiceRow(
-            isPicked: option.length == pickedLength,
-            title: lengthName(option, recommended: lengths.recommended),
-            detail: precision(option),
-            trailing: String(
-              localized: "\(option.questions) q", table: "Mock",
-              comment: "A mock's number of questions; q is short for questions"),
-            spokenTrailing: String(
-              localized: "\(option.questions) questions", table: "Mock",
-              comment: "Spoken: a placement length's questions")
-          ) {
-            length = option.length
-          }
-        }
-      } footer: {
-        SectionFooter {
-          Text(
-            "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
-            tableName: "Mock", comment: "Under the placement lengths")
+    let examOptions = view.options.filter { $0.kind != .area }
+    let subjects = view.options.filter { $0.kind == .area }
+
+    Section {
+      ForEach(examOptions) { optionRow($0) }
+    } footer: {
+      SectionFooter {
+        if notesUnder {
+          pickedNotes
         }
       }
-    } else {
-      let examOptions = view.options.filter { $0.kind != .area }
-      let subjects = view.options.filter { $0.kind == .area }
+    }
 
+    if !subjects.isEmpty {
       Section {
-        ForEach(examOptions) { optionRow($0) }
-      } footer: {
-        SectionFooter {
-          if notesUnder {
-            pickedNotes
-          }
-        }
-      }
-
-      if !subjects.isEmpty {
-        Section {
-          ForEach(subjects) { optionRow($0) }
-        } header: {
-          SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
-        }
+        ForEach(subjects) { optionRow($0) }
+      } header: {
+        SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
       }
     }
   }
@@ -309,13 +205,9 @@ private struct MockChooser: View {
     if !isOpen {
       Section {
         PlusNotice(
-          description: placement
-            ? Text(
-              "Mock exams come with Plus. Without it, the quick questions find your starting point.",
-              tableName: "Mock", comment: "Placement mock without Plus")
-            : Text(
-              "Mock exams come with Plus: whenever you want, and every week in your plan.",
-              tableName: "Mock", comment: "Mocks without Plus"),
+          description: Text(
+            "Mock exams come with Plus: whenever you want, and every week in your plan.",
+            tableName: "Mock", comment: "Mocks without Plus"),
           showsSeePlus: false
         )
         .accessibilityElement(children: .combine)
@@ -326,7 +218,7 @@ private struct MockChooser: View {
 
   @ViewBuilder
   private var lastMockSection: some View {
-    if let last = view.lastMock, !placement, let blockId = last.blockId {
+    if let last = view.lastMock, let blockId = last.blockId {
       Section {
         MockSummaryRow(mock: last, blockId: blockId)
       } header: {
@@ -347,7 +239,7 @@ private struct MockChooser: View {
         }
         .buttonStyle(.mainAction)
         .buttonSizing(.flexible)
-        .disabled(!placement && pickedOption == nil)
+        .disabled(pickedOption == nil)
         .keyboardShortcut(.defaultAction)
       } else {
         SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
@@ -358,13 +250,7 @@ private struct MockChooser: View {
   }
 
   private var detail: Text {
-    if placement {
-      return Text(
-        "In the exam's format. Your plan starts from your answers.", tableName: "Mock",
-        comment: "What the placement mock is")
-    }
-
-    return isOpen
+    isOpen
       ? Text(
         "Your result only shows at the end, like on exam day.", tableName: "Mock",
         comment: "The mock's one rule")
@@ -378,9 +264,7 @@ private struct MockChooser: View {
         comment: "Starts a mock with fewer questions")
     }
 
-    return placement
-      ? Text("Start the mock exam", tableName: "Mock", comment: "Starts the placement mock")
-      : Text("Start", tableName: "Mock", comment: "Starts the picked mock")
+    return Text("Start", tableName: "Mock", comment: "Starts the picked mock")
   }
 
   /// A short bank's note is about the mock it was asked for: another pick starts another mock.
@@ -476,17 +360,7 @@ private struct MockChooser: View {
   /// Main's `PickedMock`: what Start starts.
   @ViewBuilder
   private var pickedSections: some View {
-    if placement, let lengths = view.placement,
-      let option = lengths.options.first(where: { $0.length == pickedLength })
-    {
-      pickedSize(
-        title: lengthName(option, recommended: lengths.recommended), questions: option.questions,
-        minutes: option.minutes, estimatedMinutes: option.estimatedMinutes)
-      pickedAsks(
-        option.areas,
-        title: Text("Subjects", tableName: "Mock", comment: "The subjects a picked mock asks"),
-        written: [])
-    } else if !placement, let option = pickedOption {
+    if let option = pickedOption {
       pickedSize(
         title: MockLabels.optionName(option, severalDays: severalDays),
         questions: option.questions, minutes: option.minutes,
@@ -568,18 +442,6 @@ private struct MockChooser: View {
         ) { Text($0) }
       }
     }
-  }
-
-  private func lengthName(
-    _ option: PlacementMockOption, recommended: PlacementMockOption.Length
-  ) -> String {
-    option.length == recommended
-      ? String(
-        localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes)) (recommended)",
-        table: "Mock", comment: "The recommended placement length")
-      : String(
-        localized: "About \(MockLabels.duration(minutes: option.estimatedMinutes))",
-        table: "Mock", comment: "A placement length")
   }
 
   private func optionRow(_ option: MockOption) -> some View {
@@ -664,44 +526,12 @@ private struct MockChooser: View {
     return [covers, subjects, written, objective].compactMap { $0 }.joinedFacts()
   }
 
-  private func precision(_ option: PlacementMockOption) -> String {
-    if !option.coversAllAreas {
-      return String(
-        localized:
-          "The \(option.areas.count) subjects worth most. Your first days ask about the rest.",
-        table: "Mock", comment: "A short placement mock")
-    }
-
-    switch option.length {
-    case .short:
-      return String(
-        localized: "A quick check. Your first days fine-tune it.", table: "Mock",
-        comment: "The short placement mock")
-    case .medium:
-      return String(
-        localized: "Every subject. A good starting point.", table: "Mock",
-        comment: "The medium placement mock")
-    case .long:
-      return String(
-        localized: "The most precise starting point.", table: "Mock",
-        comment: "The long placement mock")
-    }
-  }
-
   private func start() async {
-    let choice: MockChoice
-
-    if placement {
-      guard let pickedLength else { return }
-      choice = .placement(pickedLength)
-    } else {
-      guard let pickedOption else { return }
-      choice = .practice(pickedOption.shape)
-    }
+    guard let pickedOption else { return }
 
     // Start again on a mock the screen said is short takes it as it is.
     var acceptFewer = false
-    if case .short(let optionId, _, _, _, _) = status, optionId == pickedOption?.id {
+    if case .short(let optionId, _, _, _, _) = status, optionId == pickedOption.id {
       acceptFewer = true
     }
 
@@ -710,14 +540,14 @@ private struct MockChooser: View {
     defer { busy = false }
 
     switch await exam.startMock(
-      goalId: goalId, choice: choice, acceptFewer: acceptFewer, onWriting: { status = .writing })
+      goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer, onWriting: { status = .writing })
     {
     case .done(.started(let id)):
       status = .choosing
       onStarted(id)
     case .done(.short(let examQuestions, let limit, let minutes, let questions)):
       status = .short(
-        optionId: pickedOption?.id ?? "", examQuestions: examQuestions, limit: limit,
+        optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
         minutes: minutes, questions: questions)
     case .done(.notEnoughQuestions):
       status = .notEnoughQuestions
@@ -785,76 +615,6 @@ struct MockSummaryRow: View {
       String(
         localized: "\(MockLabels.number(mock.correct)) of \(mock.total) right", table: "Mock",
         comment: "Right answers")
-    }
-  }
-}
-
-struct PlacementMockOffer: View {
-  @Environment(ExamStore.self) private var exam
-  @Environment(AppRouter.self) private var router
-  let goalId: String
-
-  var body: some View {
-    let options = exam.mockOptions(goalId: goalId)
-
-    Group {
-      if let view = options.value, let placement = view.placement,
-        let shortest = placement.options.first, let longest = placement.options.last
-      {
-        Section {
-          Button {
-            router.open(.placementMock(goalId: goalId))
-          } label: {
-            HStack {
-              Label {
-                VStack(alignment: .leading, spacing: 2) {
-                  if placement.mock?.status == .running {
-                    Text(
-                      "Continue the mock exam", tableName: "Mock",
-                      comment: "A running placement mock")
-                  } else {
-                    Text("Or take a mock exam", tableName: "Mock", comment: "Placement mock offer")
-                  }
-                  Group {
-                    if shortest.estimatedMinutes == longest.estimatedMinutes {
-                      Text(
-                        "In the exam's format, about \(MockLabels.duration(minutes: longest.estimatedMinutes)).",
-                        tableName: "Mock", comment: "The placement mock's length")
-                    } else {
-                      Text(
-                        "In the exam's format, from \(MockLabels.duration(minutes: shortest.estimatedMinutes)) to \(MockLabels.duration(minutes: longest.estimatedMinutes)). You pick how long.",
-                        tableName: "Mock", comment: "The placement mock's lengths")
-                    }
-                  }
-                  .typeStyle(.note)
-                  .foregroundStyle(.mutedForeground)
-                }
-              } icon: {
-                KindDot(kind: .mock)
-              }
-              Spacer()
-              if view.access == .plusRequired {
-                PlusMark()
-              }
-            }
-          }
-          .foregroundStyle(.primary)
-        }
-      }
-    }
-  }
-}
-
-struct PlacementMockLoading: ViewModifier {
-  @Environment(ExamStore.self) private var exam
-  let goalId: String
-  let isExam: Bool
-
-  func body(content: Content) -> some View {
-    if isExam {
-      content.loads(exam.mockOptions(goalId: goalId), refreshable: false)
-    } else {
-      content
     }
   }
 }

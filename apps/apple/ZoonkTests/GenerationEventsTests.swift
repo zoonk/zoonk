@@ -241,18 +241,18 @@ final class GenerationEventsTests: XCTestCase {
       events: [
         "/v1/generations/run-1/events?startIndex=0": [
           "",
-          #"data: {"entityId":"run-2","status":"started","step":"joinFocusTestQuestions"}"#
+          #"data: {"entityId":"run-2","status":"started","step":"joinTestOutQuestions"}"#
             + "\n\n",
         ],
         "/v1/generations/run-2/events?startIndex=0": [
-          #"data: {"status":"completed","step":"focusTestQuestionsReady"}"# + "\n\n"
+          #"data: {"status":"completed","step":"testOutQuestionsReady"}"# + "\n\n"
         ],
       ],
       statuses: ["/v1/generations/run-1": ["completed"]])
 
     let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
 
-    XCTAssertEqual(events.map(\.step), ["focusTestQuestionsReady"])
+    XCTAssertEqual(events.map(\.step), ["testOutQuestionsReady"])
     let requests = await transport.requests
     XCTAssertEqual(
       requests,
@@ -283,7 +283,7 @@ final class GenerationEventsTests: XCTestCase {
     let transport = RunsTransport(
       events: [
         "/v1/generations/run-1/events?startIndex=0": [
-          #"data: {"status":"started","step":"writeFocusTestQuestions"}"# + "\n\n"
+          #"data: {"status":"started","step":"writeTestOutQuestions"}"# + "\n\n"
         ]
       ],
       statuses: ["/v1/generations/run-1": ["failed"]])

@@ -22,7 +22,6 @@ final class AppNavigationTests: XCTestCase {
       ),
       ("https://www.zoonk.com/content/chapters/c1", .route(.chapter(chapterId: "c1"))),
       ("https://www.zoonk.com/mock/new", .route(.mockChooser)),
-      ("https://www.zoonk.com/mock/placement/g1", .route(.placementMock(goalId: "g1"))),
       ("https://www.zoonk.com/mock/b1?session=s1", .route(.mock(blockId: "b1", sessionId: "s1"))),
       (
         "https://www.zoonk.com/learn/l1?session=s1",

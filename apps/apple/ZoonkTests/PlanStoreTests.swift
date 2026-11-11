@@ -258,9 +258,17 @@ private actor PlanAPIStub: PlanAPIClient {
     return changeOutcome
   }
 
-  func undo(token: String, goalId: String, changeId: String) async throws -> Bool {
+  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
+    async throws -> Bool
+  {
     calls.undone.append(changeId)
     return undoes
+  }
+
+  func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
+    -> FocusTestSummary
+  {
+    throw APIError.notFound
   }
 
   func syllabus(token: String, goalId: String) async throws -> GoalSyllabus {
