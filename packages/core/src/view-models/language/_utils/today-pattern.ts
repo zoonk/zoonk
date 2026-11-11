@@ -28,12 +28,16 @@ export async function loadNoticedPattern({ goal, userId }: { goal: Goal; userId:
     return null;
   }
 
-  return findFreshMistakePattern({ language: goal.targetLanguage, userId });
+  return findFreshMistakePattern({ goalId: goal.id, language: goal.targetLanguage, userId });
 }
 
 /** Read-only; composes the saved day's missions without building it. */
 export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: string }) {
-  const pattern = await findFreshMistakePattern({ language: goal.targetLanguage ?? "", userId });
+  const pattern = await findFreshMistakePattern({
+    goalId: goal.id,
+    language: goal.targetLanguage ?? "",
+    userId,
+  });
 
   if (!pattern || goal.status !== "active") {
     return pattern;
