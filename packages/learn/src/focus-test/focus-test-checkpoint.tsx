@@ -165,7 +165,7 @@ function SuggestedFocus({
       ? t("For now, this follows mainly what counts most in your exam.")
       : null;
 
-  const note = [proposalAnswered ? null : intro(focus.state), basis].filter(Boolean);
+  const note = proposalAnswered ? [] : [intro(focus.state), basis].filter(Boolean);
 
   if (focus.rows.length === 0) {
     return null;
