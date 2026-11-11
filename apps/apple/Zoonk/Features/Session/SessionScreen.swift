@@ -35,6 +35,11 @@ struct SessionScreen: View {
           Group {
             if let sessionID = today.sessionID {
               SessionContent(sessionID: sessionID)
+            } else if let view = today.day, view.session.nextBlock != nil {
+              // A day not opened yet shows its next step as Today read it; Start opens the day.
+              NextStopView(
+                day: view.session, sessionID: nil, goalID: view.session.goalId ?? view.goal.id,
+                moment: nil)
             } else {
               ContentUnavailableView {
                 Label {
@@ -75,6 +80,7 @@ struct SessionScreen: View {
 private struct SessionContent: View {
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
+  @Environment(TodayStore.self) private var today
 
   let sessionID: String
 
@@ -89,7 +95,9 @@ private struct SessionContent: View {
         if stopped || day.nextBlock == nil {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
-          NextStopView(day: day, sessionID: sessionID, moment: playback.moment)
+          NextStopView(
+            day: day, sessionID: sessionID, goalID: day.goalId ?? today.day?.goal.id,
+            moment: playback.moment)
         }
       case .failed(let error) where error != .unauthorized:
         ContentUnavailableView {
@@ -147,7 +155,9 @@ private struct NextStopView: View {
   @Environment(TodayStore.self) private var today
 
   let day: StudyDay
-  let sessionID: String
+  /// Nil while the day isn't opened.
+  let sessionID: String?
+  let goalID: String?
   let moment: BlockMoment?
 
   @State private var action: Task<Void, Never>?
@@ -161,13 +171,21 @@ private struct NextStopView: View {
   @State private var waitedFor: String?
   /// The goal's warm-up deck, while the lesson written is its first.
   @State private var warmUp: FirstLessonWarmUp?
-  @State private var isReviewIntroOpen = ReviewIntro.opensAtFirst
+  @State private var isReviewIntroOpen: Bool
   @AccessibilityFocusState private var isStartFocused: Bool
 
-  private var next: StudyBlock? { day.nextBlock }
+  init(day: StudyDay, sessionID: String?, goalID: String?, moment: BlockMoment?) {
+    self.day = day
+    self.sessionID = sessionID
+    self.goalID = goalID
+    self.moment = moment
+    _isReviewIntroOpen = State(initialValue: ReviewIntro.opensAtFirst(goalID: goalID))
+  }
 
-  private var isHeld: Bool {
-    next?.id != nil && next?.id == router.playback.heldBlockID
+  /// The step a tap on another screen asked for, until it's done; else the day's next.
+  private var next: StudyBlock? {
+    day.blocks.first { $0.id != nil && $0.id == router.playback.shownBlockID && !$0.isFinished }
+      ?? day.nextBlock
   }
 
   var body: some View {
@@ -191,11 +209,6 @@ private struct NextStopView: View {
     .onChange(of: isWrittenWhileWaiting) { _, written in
       if written {
         offerWrittenLesson()
-      }
-    }
-    .onChange(of: isHeld, initial: true) { _, held in
-      if held {
-        isStartFocused = true
       }
     }
     .announcesStatus(notWrittenLine)
@@ -326,15 +339,18 @@ private struct NextStopView: View {
             .accessibilityFocused($isStartFocused)
         }
 
-        BusyButton(isBusy: isStopping, icon: .stop) {
-          stop()
-        } label: {
-          Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+        // Main's `canStop`: a day with nothing done has nothing to stop.
+        if let sessionID, day.blocks.contains(where: \.isFinished) {
+          BusyButton(isBusy: isStopping, icon: .stop) {
+            stop(sessionID: sessionID)
+          } label: {
+            Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
+          .disabled(isOpening)
         }
-        .buttonStyle(.outline)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
-        .disabled(isOpening)
 
         if failed {
           FailureLine(
@@ -400,7 +416,7 @@ private struct NextStopView: View {
         "Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
     }
 
-    return next?.status == .active && !isHeld
+    return next?.status == .active
       ? Text("Continue", tableName: "Session", comment: "Opens the session's next block")
       : Text(
         "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
@@ -471,20 +487,12 @@ private struct NextStopView: View {
   }
 
   private func open(_ block: StudyBlock) {
-    ReviewIntro.noteStart(of: block)
-
-    // The tap that held it already opened it.
-    if let blockID = block.id, blockID == router.playback.heldBlockID {
-      router.playback.play(blockID: blockID)
-      return
-    }
-
+    ReviewIntro.noteStart(of: block, goalID: goalID)
     isOpening = true
     failed = false
 
     action = Task {
-      let result = await today.open(
-        block, as: block.id == next?.id ? .next : .block, sessionID: sessionID)
+      let result = await opening(block)
       isOpening = false
 
       switch result {
@@ -505,6 +513,20 @@ private struct NextStopView: View {
     }
   }
 
+  /// A day not opened yet opens with its next step, as Today's Start session does.
+  private func opening(_ block: StudyBlock) async -> MutationResult<StudyDestination> {
+    guard let sessionID else {
+      guard let view = today.day else {
+        return .obsolete
+      }
+
+      return await today.open(block, as: .next, in: view)
+    }
+
+    return await today.open(
+      block, as: block.id == day.nextBlock?.id ? .next : .block, sessionID: sessionID)
+  }
+
   /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner
   /// still on the card can't open the lesson with a tap meant for an answer.
   private func offerWrittenLesson() {
@@ -516,7 +538,7 @@ private struct NextStopView: View {
     AccessibilityNotification.Announcement(announcement).post()
   }
 
-  private func stop() {
+  private func stop(sessionID: String) {
     isStopping = true
     failed = false
 
@@ -565,7 +587,10 @@ private struct NextStopView: View {
         }
       } else {
         lessonStatus = nil
-        await store.session(id: sessionID).refresh()
+
+        if let sessionID {
+          await store.session(id: sessionID).refresh()
+        }
       }
 
       guard writing == .preparing, lessonStatus != "failed" else {

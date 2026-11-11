@@ -6,17 +6,21 @@ struct ReviewIntro: View {
   let block: StudyBlock
   @Binding var isOpen: Bool
 
-  private static let startsKey = "reviewIntroStarts"
-
-  /// A daily learner reads it open a few times, then it folds to one row they can reopen.
-  static var opensAtFirst: Bool {
-    UserDefaults.standard.integer(forKey: startsKey) < 3
+  /// Counted per goal, so another learner or goal on the device starts with it open.
+  private static func startsKey(goalID: String?) -> String {
+    "review-intro-starts:\(goalID ?? "")"
   }
 
-  static func noteStart(of block: StudyBlock) {
+  /// A daily learner reads it open a few times, then it folds to one row they can reopen.
+  static func opensAtFirst(goalID: String?) -> Bool {
+    UserDefaults.standard.integer(forKey: startsKey(goalID: goalID)) < 3
+  }
+
+  static func noteStart(of block: StudyBlock, goalID: String?) {
+    let key = startsKey(goalID: goalID)
+
     if block.kind == .review, !block.capsules.isEmpty {
-      UserDefaults.standard.set(
-        UserDefaults.standard.integer(forKey: startsKey) + 1, forKey: startsKey)
+      UserDefaults.standard.set(UserDefaults.standard.integer(forKey: key) + 1, forKey: key)
     }
   }
 

@@ -320,28 +320,52 @@ struct TodayDayView: View {
     return parts.isEmpty ? nil : Text(parts.joinedFacts())
   }
 
-  /// A question block not started yet opens on the session and waits there for Start, so the
-  /// learner reads what it is first; one already under way goes on.
   private func open(_ block: StudyBlock, next: Bool) {
+    if waitsForStart(block) {
+      showIntro(of: block)
+      return
+    }
+
     let tap: Tap = next ? .main : .block(block.position)
 
-    run(tap, waitsForStart: block.status != .active) {
+    run(tap) {
       await store.open(block, as: next ? .next : .block, in: view)
     }
   }
 
   private func openMission(_ block: StudyBlock) {
-    run(.mission(block.position), waitsForStart: block.status != .active) {
+    if waitsForStart(block) {
+      showIntro(of: block)
+      return
+    }
+
+    run(.mission(block.position)) {
       await store.open(block, as: .mission, in: view)
     }
   }
 
+  /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
+  /// Start there, so the learner reads what it is before it starts. An unopened day's session shows
+  /// only its next step.
+  private func waitsForStart(_ block: StudyBlock) -> Bool {
+    block.screen == .session && block.kind != .learn && block.status != .active
+      && (block.id != nil || block.position == view.session.nextPosition)
+  }
+
+  /// Opens nothing on the server: the intro's Start does.
+  private func showIntro(of block: StudyBlock) {
+    guard busy == nil else {
+      return
+    }
+
+    failed = nil
+    router.playback.show(blockID: block.id)
+    router.openStudy(.session)
+  }
+
   /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
   /// cancelled: it opens nothing and says nothing.
-  private func run(
-    _ tap: Tap, waitsForStart: Bool = false,
-    _ action: @escaping () async -> MutationResult<StudyDestination>
-  ) {
+  private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
     }
@@ -355,7 +379,7 @@ struct TodayDayView: View {
 
       switch result {
       case .done(let destination) where !Task.isCancelled:
-        router.openStudy(destination, waitsForStart: waitsForStart)
+        router.openStudy(destination)
       case .failed:
         failed = tap
       case .done, .obsolete:
@@ -470,12 +494,10 @@ extension AppRouter {
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
-  /// the day; a question block plays in the session, which comes to the front, or waits there for
-  /// the learner's Start. `changed` opens nothing: the screen the learner tapped on reads again.
-  func openStudy(_ destination: StudyDestination, waitsForStart: Bool = false) {
+  /// the day; a question block plays in the session, which comes to the front. `changed` opens
+  /// nothing: the screen the learner tapped on reads again.
+  func openStudy(_ destination: StudyDestination) {
     switch destination {
-    case .questionBlock(let blockID) where waitsForStart:
-      playback.hold(blockID: blockID)
     case .questionBlock(let blockID):
       playback.play(blockID: blockID)
     case .today:

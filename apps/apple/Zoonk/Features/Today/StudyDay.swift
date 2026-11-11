@@ -213,6 +213,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case lessons
   }
 
+  /// Where a tap on the block opens it, as core decides.
+  enum Screen: String, Decodable, Sendable {
+    case challenge
+    case essay
+    case lesson
+    case session
+    case unknown
+  }
+
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
@@ -257,6 +266,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
+  let screen: Screen
   var status: Status
   let subject: String?
   let title: String?
