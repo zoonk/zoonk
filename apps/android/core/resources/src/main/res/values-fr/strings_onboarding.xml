@@ -176,23 +176,12 @@
   "onboarding_placement_answer_failed": "b97a0d588515833eda87682dde49d30e78d19f6630d4a9b0c045dce5b5db9070",
   "onboarding_placement_answered": "df70760024b2219b467b4fe544d9d3ee051d6ca12c1f55203270ef5eba2cb166",
   "onboarding_placement_confirm": "262a6a0249caed36c29650e25890ff2284442f5271a6b7d769d66ef8ef11f660",
-  "onboarding_placement_continue_mock": "814ced2b5d87c40936ca037802b9d53032a526abb074ac4152cd580f96e75a49",
   "onboarding_placement_description": "19361dd188708e6fcbf139e19374f3e78b2cbf03f930589bc73063fe5eb31739",
   "onboarding_placement_description_areas": "ef5db00a1191301f146bc4c5e5d5e7b0ee8ca86087c55a6189e5bf763fdc7654",
   "onboarding_placement_dont_know": "8c848bfbb1acf9bfdc9e0977aa88bd195396febe4ad5da17972bc2ba4672922d",
   "onboarding_placement_enough_description": "f0f562725ca71e8c787947a59862c44f176db6e64ae5a80c9cb0b8e68dc73d7e",
   "onboarding_placement_enough_title": "005c5df9b35a1d3bdffd4543e080752d51c691ee6367af0fca3681a93b38fd78",
   "onboarding_placement_false": "6812164c5f8973a31be62f59aed123edd831a765512f273dc45237488bd0d3fa",
-  "onboarding_placement_mock_about": "e423a3a51cbdaabc2d4136d0cc41e54e8748c0ebe655c8ab8243a04892e97eba",
-  "onboarding_placement_mock_done": "0be42e8dc9955dab4159b93337a6ffb699f97067e0f9ee0dc02904088dda08e8",
-  "onboarding_placement_mock_range": "707cb689e3292d25e7177198c61e22da62acaa7feca6b813ef2b305bb9454aa3",
-  "onboarding_placement_mock_set_description": "d64c634d62113f17c5eb0d6dd605dc52b4f983c7ad6d7affab726c203e1d86fd",
-  "onboarding_placement_mock_set_title": "72a85505efc865adf131530bf6f59487f3114b54283dede172a032c379aad8f1",
-  "onboarding_placement_mock_title": "0bd3b2edab021785753397409ef3fd8987de531945977b12c3749948f9dfa3d6",
-  "onboarding_placement_mock_waiting_description": "167fe458925bfea529e4d3db5c62d9bf31a4168c3f8b54bc66866dd3196baee7",
-  "onboarding_placement_mock_waiting_title": "9d04ed308bae897996c09032aa027f79bbe355e460a2f6fcd90e8b0f212eca92",
-  "onboarding_placement_plus": "396b2ec31e2967d4c97ea01e5da0af994f7e7d7bd97d64a69e5ca356df7e58e8",
-  "onboarding_placement_plus_description": "6fe1eae2f37c425f85b5f283f3e453c292aa3751e5c77c1de2ca9b113f89e50a",
   "onboarding_placement_progress": "b195391c3a82e06b591c66f33f76e4d4a4385ea412ee7b795bf4ff4ddd5f0103",
   "onboarding_placement_question_number": "5e0f14885271be05b2970453e0f1bbb5a9a2fc8f3dfe55642d1f7eb4b20aeb41",
   "onboarding_placement_right": "904da1fbf7403dceb412c2c92ff9624041d84227b68bf7a232a8d4c6827f6660",
@@ -204,7 +193,6 @@
   "onboarding_placement_skip_note": "f922ee981621536f62f7f1ea80b950f48ba5903cd0f6f5818a49173e2e121bdd",
   "onboarding_placement_start": "75ca2af1f84fdffc5690fb6c41d338ae6344789e4cd3b9510ec63e35309c98c5",
   "onboarding_placement_stop": "d322c25441b98d9c665ba24e9e2ed886e17e0497d44c82084e3cedb0cf40268b",
-  "onboarding_placement_stop_mock": "c6cf0b9ec1d0ce74568ff31e4a1d85b643fe59fd0594b55e28e210dbf253416b",
   "onboarding_placement_title": "7aacb3e39346c16f692b66ace2bf170bcd143ed96d6a5b5771f87af9b48e2309",
   "onboarding_placement_true": "c03569b504568c13acbf4a0da565e6510a1f323c7a393434200160fa993c2a8f",
   "onboarding_placement_unavailable_description": "539be697336e58cb3f38e6606b7d72849820f85ec950384a23f6de74d771630b",
@@ -671,14 +659,6 @@
         <item quantity="other">Quelques questions rapides sur %d domaines pour que ton plan passe ce que tu connais déjà. Il n’y a pas de score et tu peux tout à fait répondre « Je ne sais pas encore ».</item>
     </plurals>
     <string name="onboarding_placement_description">Quelques questions rapides pour que ton plan passe ce que tu connais déjà. Il n’y a pas de score et tu peux tout à fait répondre « Je ne sais pas encore ».</string>
-    <string name="onboarding_placement_mock_title">Ou passe un examen blanc</string>
-    <!-- %1$s is a duration, such as "45 min". -->
-    <string name="onboarding_placement_mock_about">Au format de l’examen, environ %1$s.</string>
-    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
-    <string name="onboarding_placement_mock_range">Au format de l’examen, de %1$s à %2$s. Tu choisis la durée.</string>
-    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
-    <string name="onboarding_placement_plus">Plus</string>
-    <string name="onboarding_placement_plus_description">Disponible avec Plus</string>
     <string name="onboarding_placement_start">Commencer</string>
     <string name="onboarding_placement_skip_basics">Passer et commencer par les bases</string>
     <string name="onboarding_placement_waiting_title">Préparation de tes questions</string>
@@ -707,14 +687,6 @@
         <item quantity="many">%d questions répondues</item>
         <item quantity="other">%d questions répondues</item>
     </plurals>
-    <string name="onboarding_placement_mock_done">Examen blanc terminé</string>
-    <string name="onboarding_placement_mock_set_title">Ton examen blanc a défini ton point de départ</string>
-    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
-    <plurals name="onboarding_placement_mock_set_description">
-        <item quantity="one">Estimation basée sur %d réponse. Elle se précise chaque jour.</item>
-        <item quantity="many">Estimation basée sur %d réponses. Elle se précise chaque jour.</item>
-        <item quantity="other">Estimation basée sur %d réponses. Elle se précise chaque jour.</item>
-    </plurals>
     <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
     <string name="onboarding_placement_enough_title">On a assez de réponses pour aujourd’hui</string>
     <string name="onboarding_placement_enough_description">Quelques questions te seront posées pendant tes premières séances pour affiner ton plan.</string>
@@ -723,10 +695,6 @@
     <string name="onboarding_placement_set_description">Cette estimation se précise chaque jour.</string>
     <string name="onboarding_placement_unavailable_title">Passons les questions</string>
     <string name="onboarding_placement_unavailable_description">Nous n’avons pas pu préparer de questions pour cet objectif. Tes premières séances permettront de définir ton point de départ.</string>
-    <string name="onboarding_placement_mock_waiting_title">Ton examen blanc t’attend</string>
-    <string name="onboarding_placement_mock_waiting_description">Reprends là où tu t’es arrêté ou arrête-toi maintenant : ton plan partira des questions auxquelles tu as répondu.</string>
-    <string name="onboarding_placement_continue_mock">Continuer l’examen blanc</string>
-    <string name="onboarding_placement_stop_mock">M’arrêter et voir mon plan</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Découvrons ton niveau en %1$s</string>

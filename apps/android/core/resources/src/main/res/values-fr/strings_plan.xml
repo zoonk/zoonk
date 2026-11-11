@@ -98,6 +98,7 @@
   "plan_change_finish_area_instead": "05257853d7a1a301ea5de3906e1ad52f716d477b9cafc22bbad450ff2cb27b4e",
   "plan_change_finish_around": "147a6d2c6a5f958501126efba0b5e96b095af5faf5cb2b4c804daf13cd8d48c3",
   "plan_change_fit_lessons": "430391e92d705f69493ab330ff26d9df68817b87805916d24be9b54b717af195",
+  "plan_change_focus_test": "9c022eea24eb8c663f599f16b9dd853b13b91226f3d6c31f7e7f14eb80c2945b",
   "plan_change_follows_guide": "ebdcb508999783fdf723b02e0ad884e957b5477e9770d06171a978b56b8a4b7f",
   "plan_change_follows_notice": "79fe18ab8c49594c33ef0af87f2006b2046d13acfd121ef5b7c6353641d5ca54",
   "plan_change_from_now_on": "69f6e90f582e6911a1a7f56bb6cf8ed590ffb62e94c0090d86f132e35cda6199",
@@ -134,6 +135,7 @@
   "plan_change_next_mock": "6468d8c93ab1e778e7e62299ced4ed6843628a9c1a7c2ee6790e9191b97ddca2",
   "plan_change_next_mock_moves": "d43bdcfe5b487cc97bf191637c4c587ab7f0633e9f0b058a81044d820b0d6745",
   "plan_change_no_deadline": "bd7c7a2ca4942283729ab8dab4a42a72b982cf047ad8eee270dbc840574ccee1",
+  "plan_change_no_focus": "f7504ddab2bc091352921b8c2cb49be242c05a9415c6e27fd11c61170a410128",
   "plan_change_no_longer_fit": "9b2143b4b2fd0d9bf2e37521f16a41966083c539852853f1960ed2ccfe8651ec",
   "plan_change_notice_says": "8b2ce60834a07cde16edd6deca33bfb01b897359e02e5a125f0640579f5562f6",
   "plan_change_notice_sets_date": "c5e17475e96f55a8da9bacdaf19ac82fc1e5d1a73b97005823dfe4ec1352b773",
@@ -417,6 +419,7 @@
   "plan_recommendation_failed": "18e6fc9618efaf082af73bd9d579ba1edc161f6bbbf4c2e1959ee815a1177192",
   "plan_recommendation_followed": "8472ea39772eeeddb95c2314f544e238ef76142f53929051a0c77f169e8cf0b0",
   "plan_recommended": "c7e26fab81306e24caaf383b993967012e4c022549605b26071fe60fcea6d7c9",
+  "plan_remove_focus": "9f20d967aca50b6af73cde424d5773e1d7b718ffa2f355bc083fa5fdc41c6826",
   "plan_rename_description": "5f705a9eda80bb6df81dde1c5cc604d1802d9afb6747897702fe672b2bade47f",
   "plan_rename_goal": "d318a1a8fa11f3d9734bdd771c9f574460912a6012b37f1b0d466bd390cfdddb",
   "plan_rename_label": "2fa43c8f0dd95e6ecc0d3b56d5febd3e1f6e8387bbfa2284cb61faf3c4a30366",
@@ -481,12 +484,10 @@
   "plan_suggestion_previous": "067cd8c5a4ad495293b467935e6caac8e13bb958da732e93a4a2f38ae23f7ea5",
   "plan_sundays": "813e782a3b69aa7c21c25f5454c72de207fcf3d5e6f5849e199fec9629c09409",
   "plan_system_phone": "2b9f07a0063fbfdc514fa9f832d99d6ea7da292dfb3c849d901910ffcb637947",
-  "plan_take_short_test": "1d62ba8b72738e06d50ecf2a933f597ecff5612b4fbc1c3b404c929daaaeab67",
   "plan_talk_to": "9dc4738b10d35d70ab21a979222ff2437e4d399e88dc8401348c0279f4bd4412",
   "plan_tell_buddy": "37351483cb879b51b0eef654806b518d4cbe25c4b33e2521764a7cd16b61cd35",
   "plan_tell_buddy_description": "7722eff2517b6b350403f0279ab34b258a72d2a670914f5f2b950802ff61771e",
   "plan_tell_buddy_description_modules": "a5153d3aa71661126f8ce5480fb717a2ef3f189389b31b1b707169732ad80fb0",
-  "plan_test_chooses_for_you": "d02911770c2c760eeefd6bac76c56f0b437a3a7bda9d41055fd87581f197914a",
   "plan_then_covers_everything": "b72c65b12cb4cad0a4c1d294dfb4a267b49f7c91ab52694b8ceac4a81a7b20d4",
   "plan_this_week": "a3512fd6bdfead371ca436414e70b002a04d4f189eb47d69b96b92f392291d6d",
   "plan_thursdays": "6ddfde5f4812a2dbe87b9b40b740aa44c94a65fc8e3fdf88a9270343323fe859",
@@ -1015,6 +1016,8 @@
     <string name="plan_change_changed">Ton plan a changé.</string>
     <string name="plan_change_own_level_first">Pour ton nouveau niveau, voici les priorités : %1$s.</string>
     <string name="plan_change_rebalance">Plus de temps pour %1$s, là où tu en as le plus besoin.</string>
+    <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
+    <string name="plan_change_focus_test">Ton Test de priorités suggère de consacrer plus de temps à %1$s.</string>
     <string name="plan_change_follows_notice">Ton plan suit l’avis d’examen.</string>
     <string name="plan_change_follows_guide">Ton plan suit le guide officiel de l’examen.</string>
     <string name="plan_change_read_notice_around">Nous avons lu l’avis d’examen : ton plan peut suivre les domaines qui y figurent, avec un examen prévu vers %1$s.</string>
@@ -1097,6 +1100,8 @@
         <item quantity="other">%d prérequis sont sautés.</item>
     </plurals>
     <string name="plan_change_more_time_for">Plus de temps pour %1$s.</string>
+    <!-- A change that removed the plan's focus: no subject gets more time now. -->
+    <string name="plan_change_no_focus">Ton plan ne privilégie aucune matière.</string>
     <string name="plan_change_less_time_for">Moins de temps pour %1$s.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">Le plan laisse de côté %1$s.</string>
@@ -1590,8 +1595,6 @@
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Matières prioritaires</string>
     <string name="plan_where_to_focus_description">Les sujets que tu choisis passent en premier et sont étudiés plus en profondeur.</string>
-    <string name="plan_take_short_test">Passer un test rapide</string>
-    <string name="plan_test_chooses_for_you">Tes réponses déterminent tes priorités</string>
     <string name="plan_choose_focus_yourself">Ou choisis-les toi-même</string>
     <string name="plan_focus_includes">Comprend %1$s</string>
     <string name="plan_focus_only">%1$s uniquement</string>
@@ -1599,6 +1602,8 @@
     <string name="plan_focus_cant_move">Rien n’a changé : les leçons de %1$s commencent déjà dès que les notions préalables le permettent, et ton temps disponible ne permet pas d’en ajouter. Avec plus de temps par jour, tu pourras en inclure davantage.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Privilégier ces matières</string>
+    <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
+    <string name="plan_remove_focus">Supprimer les priorités</string>
     <string name="plan_couldnt_check_changes">Impossible de vérifier ce qui change.</string>
     <string name="plan_then_covers_everything">Ton plan couvrira alors tout en profondeur.</string>
     <string name="plan_apply">Appliquer</string>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "focustest_about": "2091d5757b972582d12e9f8ae33d1687c4c31b8ee0791b602ae01415579c2f0f",
+  "focustest_answers_in_plan": "7cf0e9c199f9c57f054f3d9d43bca6d45272bafb513988301c837914b908059e",
+  "focustest_answers_saved": "30bdfcadd1e7ef458cc06807973f3dc94b3e4bf60ce0cbc54d09ced6359a5406",
+  "focustest_answers_saved_title": "1998147f2e85ea68f73af5255873a58221fe61ce848acd1126b241a7fe0db8d2",
+  "focustest_ask_again": "114eb8010bffb1d099498c9ac9935c800534442acc53a8ecf546167b066e13b4",
+  "focustest_change_focus": "e1deb3cb4f492ed68894571504c386e7459b2b428c85a5f853daf2bd574128a1",
+  "focustest_check_where_to_focus": "b2a8a837a9bbfc90db06472b3b8187a94ddbfa9a9e205360da5de666d1282b03",
+  "focustest_checkpoint_title": "5b13eedcad02d39ed2ad6c70857797a3e50620a9add11e86af321856f64417eb",
+  "focustest_continue": "bfff87e95340357255b5b4f7609b4f2e8eab9dc8dd0399574f8b1c59a2273453",
+  "focustest_continue_test": "23e8697cacdf84284087b9c279cec78e7e716b679d8c8afee96555ef15a8d63d",
+  "focustest_continue_to_daily_time": "fec45f486ca5d56b3aa52b4efa9e9d6796ca788305d835c46aac2d0dc4b4e1f2",
+  "focustest_done": "2b3bf5de3696c09fecf982fc394d267277640edc5a1b9d30fcf143ec0e976381",
+  "focustest_end_no_questions": "4dcb5fffb0790a4ab25e9441f83c23b314a1ba68fcb5345eacc0f7a660b7b44c",
+  "focustest_end_settled": "37da398ee5c831a11ffc30e8a59fdd8f53c65377c70768b9f524695455992646",
+  "focustest_evidence": "dab207b0c7dee1b26054442ce8a3a0c8e477fee5a8770acdce758a735e1af7c7",
+  "focustest_focus_current": "636ab609699bc54aa792053be12bb76d5c34edd4e294f68721fce76a470fb65f",
+  "focustest_focus_hand_picked": "f6a18e0b38e61cb0c5f2d18a008dbf8a4af4bc19cbad52164e105e36dee87a89",
+  "focustest_focus_if_short": "ec00dac0b7f30fa642a9be9b6fdc9dc2308d4ce938082e3f03c606e74c1ccaa2",
+  "focustest_focus_importance": "2abdd51bb17be20904f2581d0c7a9c9f3c112e03450933f55c3114aebcce14e5",
+  "focustest_focus_proposed": "94b8e5f53e9a0cc859ec6adf237ce4358722d9f80ff98ab263896fe59d292b6b",
+  "focustest_from_basics": "7729d5ee5dc0b154e27da3e55cd818417eb082d08d44b73f3ddbf5e7d1a21684",
+  "focustest_invitation_description": "b17da3ef2b672e4f09d9384dc63d6d6d594f3012384c88549d3008d01826b266",
+  "focustest_invitation_description_focus": "4c1498dbb7086178938c6c1c0e55430650c4f2d30396c66d85ab312016a6be03",
+  "focustest_invitation_title": "a36c887c9b97cf1bb3e00b8007cbe8bd41f40a4a35c779d021d75f98b3c2475e",
+  "focustest_invitation_title_dated": "1a144d432fd668e7711f6bce1037d48de892656ce5c9f7958bdd8b4ac09df6fd",
+  "focustest_lessons_skipped": "ffffa75cb1342a846e7f9207b7ef7100b41b042be9c0dc361deffc9e2ee641ab",
+  "focustest_listening_not_checked": "51ffc8a4fbf85317cc87cdb47f56124233be1326a6e06cd6bb72d7731e7b6e20",
+  "focustest_many_unknown": "fa91d80ca31d45e08e8857004de84392bbb47b889ee977f555319f58c71a0f86",
+  "focustest_more_questions": "0ef22e4e85cf1400865340b081a395daf559eee8018c6bf7fd66ad1768bf9587",
+  "focustest_no_grade": "c661a3d8f3502245cc11799d31be16f9cb76436f0dea6a2c306352ba51be1c8f",
+  "focustest_not_asked_yet": "550a27d0a0f830eed61ec212b5220399f109de237d8daa541228b656632fca54",
+  "focustest_not_now": "003888cb9ff9d9675fcc399f6cf7001520c245bd7af7e0aeb27ab50636475527",
+  "focustest_not_started": "78266e88406c0571ebbceb0e5c97642544b30aacddb34722d4f86a11268e0a8e",
+  "focustest_not_today": "6e72371923c2de4a1dc880af9e56b16c9affe46f8703b6aa6a0f25609e3dac47",
+  "focustest_not_today_failed": "f38b25c0abdb6c645cb59d680203e53e4ab2b77d0276408014f8658963290f11",
+  "focustest_optional": "a4405317bb49bcd8da27688a0c1cdba10ffaacdd0f83c5083e99f11ba7f6b1fe",
+  "focustest_past_ceiling_questions": "acd52bf8479dac8cd48a93689bdd363d783a7dbd991a78fe33892bb9e6dd338b",
+  "focustest_past_ceiling_subjects": "6fc6b278ebe603d73f9c884eb751efbdc23f7a0ccd633ad658f318c331a1985c",
+  "focustest_pause_questions": "9e1558446b36bf793da907faf761ba94e91d9ab11c4b4bd696202a004d5914ae",
+  "focustest_practical_not_checked": "5d3127026924c135292a99862baf86501198db463de5ee1177f432e3fb6a8028",
+  "focustest_proposal_applied": "789d06c5626dfcb8cd61fd4cce7813e583a6d86da0d5dd2a9e7fe84160a624be",
+  "focustest_proposal_declined": "03ff9a84105ebbedc7e2bdc214ac05a79e8ee66cb7806d8f29c5f419452cebfa",
+  "focustest_proposal_undone": "dc88b7a0a2643cb0e0538296297b45c2c5def3178d8065587a100d658578e8be",
+  "focustest_question_number": "140a5a52be6c36fbd184ba03695eb9b4bb046d6dbfe9d690820d5fe425c46d3d",
+  "focustest_questions_left": "3a5c03d79b27873c305aa6dbe3512682decdb163f706a0ccb9df64bd2ccb20ba",
+  "focustest_reason_answers": "a15c98793c30ae115099a67b895d4fd307a87431bf4e2794e6907d82d5707fff",
+  "focustest_reason_listening": "cefe2093c2a5242ef24cf01b5a8b296769a98c157296e89baa060153f0449900",
+  "focustest_reason_minimum_score": "c0511c89a9f19a0912d64228ae1869200e7bfa2b5c7cea1f26afa4ee42be10c9",
+  "focustest_reason_not_asked": "38bc2002f64b7a1bda6a4467220329e7fc75f4b69bc2d8a39f07139f0e8c2e52",
+  "focustest_reason_practical": "861ca6e204e98f9b394b30eebe408a7f6a6bbc1bf61661d4606e1d9356625862",
+  "focustest_reason_speaking": "1577fb1b1b8bda8d580f19f3a5e6b51cb5fef8d4664fcd16ef927a4c9ef97087",
+  "focustest_reason_weight": "4d8bf5960eeb5642a69235740926f61c0b3b9600c188d1a126a332102c3d6f18",
+  "focustest_reason_written": "3160eea6818a26d824895a039d920d91085a1163ffb91bfcf28c3b62ff37221a",
+  "focustest_result_subjects": "e553bb5a98c4d33e2ab4343cc000f6117296b63800c11377dba9bd180b14cde5",
+  "focustest_resume_title": "ff7103eb04da7373250ed9ef8d865e795544b0330e8c76e30ce9e798462c5816",
+  "focustest_reveal_trade_off": "d736483a20d5f6b109f972c86109485e72b88711632b9dd04d059b84c0ede53d",
+  "focustest_schedule_focus": "a25dbe2e86d5b6885389b259af88068b26c65d62cd1b4eaa3c15d58c419d4c69",
+  "focustest_see_starting_plan": "2cd4340c2fbbe846c94a408d6a5994efa4779fe2e16c91c90181ac141d2aeb7c",
+  "focustest_session_questions_on": "f4ffd501359f4eae7d074b5ffd7d69cde5de88449a4bb7987aa6a727c435647a",
+  "focustest_session_questions_paused": "6714ca81ad6daee273575e4187458eb0897261495e821cb2c05d31d987e2bead",
+  "focustest_sessions_note": "e4eeaf90873f883cb1134120da5c5bb5faf2e097cb02442bf5e39452565ece2e",
+  "focustest_skip_for_now": "b1ce75cf9a86580dfa75fb95b010ad15d21069bfb1988e253c5fc245b1a227e0",
+  "focustest_skip_note": "e1a62f3d9c24824e7da21abab3b0d1c75b254d99ad76d437293dc0c458f13b2b",
+  "focustest_speaking_not_checked": "4b6a6c5e3dbbb253b728976bfe61e9f21e9222b74d2ca5a7a4badad7afcbf540",
+  "focustest_start": "0a2d2097609f7ce4f007ddb701e73806a70b2164ddcae6252df2397a442b173e",
+  "focustest_stop": "d341e8605ef943d02bf690c585d1d6c55a361742350423e15549f92c5aa89d37",
+  "focustest_stop_any_time": "d5ef7045fe13230fc10715acf80a6488c1099a56142686ac33db93373e634bc8",
+  "focustest_subject_right": "836d4a7bb768ec5d074fa272c779e1be8a3e28a6f731093eddacdf33c672511d",
+  "focustest_subjects": "b2c25ce454efe0fa29d3b0c6c91b6d9a0886078f032da2effa48884d94378744",
+  "focustest_subjects_count": "0bec9d26a4a2017628b0c9f1dcdddf999476b0978098b66b7e93dcaf5aefe12b",
+  "focustest_suggested_focus": "774fec99773f71617d0e901b082069ab3d3333370f9cc3a68f2ef6562e0a76ab",
+  "focustest_suggestion_description": "46ca5d31857beec821de1e0fac113bf08880aa0cc45b985a98e78a83fa743ffe",
+  "focustest_suggestion_dismissed": "0a12e09df9bac437591d29e0c52d4e18c8834a7242ce302a58ccbd439230aa80",
+  "focustest_suggestion_summary": "e8cc52718a40d4b71915b59210fcebeb999442228da359b695829d797e58c1bb",
+  "focustest_suggestion_title": "b617557ba380a9c8fbab15f803343a4fd4ae328c097cb87697549bbbda3903d0",
+  "focustest_title": "ee5b69aacf00887fbd98e1b7a9e0bfc79e98429ee63bbd7e70cf6a8da77fe798",
+  "focustest_undo": "bd2dc11bd7bd0b207dbc2fd68707531ccddc728ffac85317e31fc7404632e80d",
+  "focustest_up_to_questions": "78d16f0e6735b474c1fe7090bc55161c8b42402537db3787eb776ea5415e1f56",
+  "focustest_up_to_questions_left": "9de3fb552d23522347a95400f4465df3e98901db7982468ec4a461d0d90d2249",
+  "focustest_update_plan": "fff25cadbd54a43074b4baf28166f5d0bab6dd1924a63e18ff337f8dfdac6ad3",
+  "focustest_use_my_answers": "05bac9880df11eec2453d8780564e39cdf2fcce43c7028210c93fd853f9c1c4c",
+  "focustest_view_all_subjects": "1ece04826c3baae13616010d1f0a6203d4d871a082d377c4206295e01088f7c4",
+  "focustest_view_subjects": "9b11a7a518d84be19a899b2fd2cfa4ea284235435782d58b6f4697b6751e9861",
+  "focustest_what_test_changed": "cc9d8123a52993d90d86046c01042c6ea6b38d3867d732863ac0bc67d1628845",
+  "focustest_where_you_start": "5012055fd21bec405ec7c81595f1ed9bf6316143b07f51ec866ec782124c813d",
+  "focustest_written_not_checked": "ec3c15b5ff8a1f849cd6d519ad74d97b4d7937de4d95f8d6465a1a6644557e6e"
+}
+-->
+<resources>
+    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
+    <string name="focustest_title">Test de priorités</string>
+    <string name="focustest_invitation_title_dated">Voyons comment répartir ton temps d’étude</string>
+    <!-- The test's title for an exam goal without a date. -->
+    <string name="focustest_invitation_title">Trouve par où commencer</string>
+    <string name="focustest_invitation_description_focus">Des questions rapides sur tes matières, en commençant par celles qui comptent le plus. Tes réponses permettent à ton plan de sauter ce que tu connais déjà et de te proposer des priorités.</string>
+    <string name="focustest_invitation_description">Des questions rapides sur tes matières, en commençant par celles qui comptent le plus. Tes réponses permettent à ton plan de sauter ce que tu connais déjà.</string>
+    <!-- %1$s is a duration, such as "15 min". -->
+    <string name="focustest_about">Environ %1$s</string>
+    <!-- The test is optional: the learner can skip it. -->
+    <string name="focustest_optional">Facultatif</string>
+    <plurals name="focustest_up_to_questions">
+        <item quantity="one">Jusqu’à %d question</item>
+        <item quantity="many">Jusqu’à %d questions</item>
+        <item quantity="other">Jusqu’à %d questions</item>
+    </plurals>
+    <plurals name="focustest_subjects_count">
+        <item quantity="one">%d matière</item>
+        <item quantity="many">%d matières</item>
+        <item quantity="other">%d matières</item>
+    </plurals>
+    <string name="focustest_no_grade">Ce test n’est pas noté. « Je ne sais pas encore » est une réponse utile.</string>
+    <string name="focustest_stop_any_time">Tu peux t’arrêter quand tu en as besoin. Chaque réponse est enregistrée.</string>
+    <!-- Said when the exam has more subjects than one sitting can ask about; the next sentence says how many questions the sitting has. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”. -->
+    <plurals name="focustest_past_ceiling_subjects">
+        <item quantity="one">Ton plan prend en compte %d matière au total.</item>
+        <item quantity="many">Ton plan prend en compte %d matières au total.</item>
+        <item quantity="other">Ton plan prend en compte %d matières au total.</item>
+    </plurals>
+    <!-- “This sitting” is one go at the Focus test, not a study session: use another word, or say “this test” or “this time”. -->
+    <plurals name="focustest_past_ceiling_questions">
+        <item quantity="one">Ce test comporte jusqu’à %d question : certaines matières ne seront peut-être pas évaluées.</item>
+        <item quantity="many">Ce test comporte jusqu’à %d questions : certaines matières ne seront peut-être pas évaluées.</item>
+        <item quantity="other">Ce test comporte jusqu’à %d questions : certaines matières ne seront peut-être pas évaluées.</item>
+    </plurals>
+    <string name="focustest_view_subjects">Voir les matières</string>
+    <string name="focustest_view_all_subjects">Voir toutes les matières</string>
+    <string name="focustest_subjects">Matières</string>
+    <string name="focustest_start">Commencer le test</string>
+    <string name="focustest_skip_for_now">Sauter pour l’instant</string>
+    <string name="focustest_skip_note">Tu peux faire le test plus tard, depuis ton plan.</string>
+    <string name="focustest_not_now">Pas maintenant</string>
+    <string name="focustest_resume_title">Continuer ton test</string>
+    <plurals name="focustest_answers_saved">
+        <item quantity="one">%d réponse enregistrée</item>
+        <item quantity="many">%d réponses enregistrées</item>
+        <item quantity="other">%d réponses enregistrées</item>
+    </plurals>
+    <plurals name="focustest_up_to_questions_left">
+        <item quantity="one">Il reste jusqu’à %d question</item>
+        <item quantity="many">Il reste jusqu’à %d questions</item>
+        <item quantity="other">Il reste jusqu’à %d questions</item>
+    </plurals>
+    <string name="focustest_continue">Continuer</string>
+    <string name="focustest_use_my_answers">Utiliser mes réponses</string>
+    <!-- Over a test question: its number and the count promised when the sitting started. -->
+    <string name="focustest_question_number">Question %1$d sur %2$d</string>
+    <string name="focustest_stop">Arrêter et utiliser mes réponses</string>
+    <!-- Shown after several "I don't know yet" answers in a row. -->
+    <string name="focustest_many_unknown">Tu n’as pas encore étudié la plupart de ces notions ? Ce n’est pas grave. Tu peux t’arrêter ici et commencer à apprendre.</string>
+    <string name="focustest_answers_saved_title">Tes réponses sont enregistrées</string>
+    <string name="focustest_end_settled">Tes points de départ sont définis.</string>
+    <string name="focustest_end_no_questions">Il n’y a pas d’autres questions disponibles pour l’instant. Les autres te seront posées lors de tes prochaines séances.</string>
+    <string name="focustest_see_starting_plan">Voir ton plan de départ</string>
+    <!-- The test's result: where the plan starts and which subjects it gives more time. -->
+    <string name="focustest_checkpoint_title">Ton plan de départ</string>
+    <!-- %1$d subjects of the exam's %2$d have a test answer. -->
+    <plurals name="focustest_evidence">
+        <item quantity="one">Questions sur %1$d matière sur %2$d jusqu’ici</item>
+        <item quantity="many">Questions sur %1$d des %2$d matières jusqu’ici</item>
+        <item quantity="other">Questions sur %1$d des %2$d matières jusqu’ici</item>
+    </plurals>
+    <string name="focustest_where_you_start">Par où tu vas commencer</string>
+    <plurals name="focustest_lessons_skipped">
+        <item quantity="one">Ton plan saute %d leçon que tu connais déjà.</item>
+        <item quantity="many">Ton plan saute %d leçons que tu connais déjà.</item>
+        <item quantity="other">Ton plan saute %d leçons que tu connais déjà.</item>
+    </plurals>
+    <string name="focustest_from_basics">Pour l’instant, tu commences par les bases dans chaque matière.</string>
+    <string name="focustest_suggested_focus">Priorités suggérées</string>
+    <string name="focustest_focus_if_short">Si tu n’as pas le temps de tout étudier, ton plan accorde plus de temps à ces matières.</string>
+    <string name="focustest_focus_proposed">Tu n’as pas le temps de tout étudier. Ton plan peut accorder plus de temps à ces matières.</string>
+    <string name="focustest_focus_current">Ton plan accorde plus de temps à ces matières.</string>
+    <string name="focustest_focus_hand_picked">Tu as choisi tes propres priorités, et ton plan les conserve. Voici ce que le test te propose.</string>
+    <!-- Said when few answers back the suggested focus. -->
+    <string name="focustest_focus_importance">Pour l’instant, les priorités se basent surtout sur ce qui compte le plus à ton examen.</string>
+    <!-- %1$s is the exam subject, such as "Administrative law". -->
+    <string name="focustest_reason_answers">Tes réponses suggèrent de réviser %1$s.</string>
+    <string name="focustest_reason_minimum_score">Cette partie exige un Score minimum.</string>
+    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
+    <string name="focustest_reason_written">L’expression écrite compte beaucoup ; elle n’est pas évaluée ici.</string>
+    <string name="focustest_reason_listening">L’écoute compte beaucoup ; elle n’est pas évaluée ici.</string>
+    <string name="focustest_reason_speaking">L’expression orale compte beaucoup ; elle n’est pas évaluée ici.</string>
+    <string name="focustest_reason_practical">Cette partie compte beaucoup ; elle n’est pas évaluée ici.</string>
+    <string name="focustest_reason_not_asked">Cette matière compte pour beaucoup. Ton niveau de départ n’a pas encore été évalué.</string>
+    <string name="focustest_reason_weight">Cette matière compte pour beaucoup.</string>
+    <string name="focustest_update_plan">Mettre à jour mon plan</string>
+    <string name="focustest_proposal_applied">C’est fait. Ton plan accorde maintenant plus de temps à ces matières.</string>
+    <string name="focustest_proposal_declined">Ton plan reste inchangé.</string>
+    <string name="focustest_proposal_undone">Modification annulée. Ton plan est revenu à son état précédent.</string>
+    <string name="focustest_undo">Annuler</string>
+    <string name="focustest_change_focus">Changer les priorités</string>
+    <string name="focustest_sessions_note">Quelques questions supplémentaires te seront posées lors de tes prochaines séances, d’abord sur les matières pas encore abordées.</string>
+    <string name="focustest_continue_to_daily_time">Passer à la durée quotidienne</string>
+    <string name="focustest_done">Atteint</string>
+    <!-- %1$s is a duration, such as "10 min". -->
+    <string name="focustest_continue_test">Continuer le test · Environ %1$s</string>
+    <!-- %1$d answers right of %2$d asked on one subject. -->
+    <plurals name="focustest_subject_right">
+        <item quantity="one">%1$d bonne réponse sur %2$d</item>
+        <item quantity="many">%1$d bonnes réponses sur %2$d</item>
+        <item quantity="other">%1$d bonnes réponses sur %2$d</item>
+    </plurals>
+    <!-- A subject the test hasn't asked a question about yet. -->
+    <string name="focustest_not_asked_yet">Pas encore abordée</string>
+    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
+    <string name="focustest_written_not_checked">Expression écrite : non évaluée ici</string>
+    <string name="focustest_listening_not_checked">Écoute : non évaluée ici</string>
+    <string name="focustest_speaking_not_checked">Expression orale : non évaluée ici</string>
+    <string name="focustest_practical_not_checked">Partie pratique : non évaluée ici</string>
+    <!-- The test's state on the plan: not started yet. -->
+    <string name="focustest_not_started">Pas commencé</string>
+    <plurals name="focustest_questions_left">
+        <item quantity="one">%d question restante</item>
+        <item quantity="many">%d questions restantes</item>
+        <item quantity="other">%d questions restantes</item>
+    </plurals>
+    <!-- The test's last result on the plan: %1$d subjects of %2$d have an answer. -->
+    <plurals name="focustest_result_subjects">
+        <item quantity="one">Questions sur %1$d matière sur %2$d</item>
+        <item quantity="many">Questions sur %1$d des %2$d matières</item>
+        <item quantity="other">Questions sur %1$d des %2$d matières</item>
+    </plurals>
+    <string name="focustest_answers_in_plan">Ton plan tient compte de tes réponses</string>
+    <plurals name="focustest_more_questions">
+        <item quantity="one">Jusqu’à %d question de plus</item>
+        <item quantity="many">Jusqu’à %d questions de plus</item>
+        <item quantity="other">Jusqu’à %d questions de plus</item>
+    </plurals>
+    <string name="focustest_session_questions_on">Tes séances incluent quelques questions du test jusqu’à ce que tu aies répondu à une question par matière.</string>
+    <string name="focustest_session_questions_paused">Les questions du test sont en pause dans tes séances.</string>
+    <string name="focustest_pause_questions">Mettre les questions du test en pause</string>
+    <string name="focustest_ask_again">Reprendre les questions</string>
+    <!-- A link to the test for a learner whose time doesn't cover everything; %1$s is a duration, such as "15 min". -->
+    <string name="focustest_check_where_to_focus">Voir tes priorités · Environ %1$s</string>
+    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
+    <string name="focustest_schedule_focus">Vu le temps disponible, nous te conseillons de privilégier %1$s.</string>
+    <!-- On the plan reveal: %1$s is a daily study time, such as "4 hr"; %2$s a date, such as "Dec 10"; %3$s lists up to three exam subjects. -->
+    <string name="focustest_reveal_trade_off">Avec %1$s par jour, tu n’auras pas le temps d’étudier tous les sujets avant le %2$s. Ce plan accorde plus de temps à %3$s.</string>
+    <string name="focustest_what_test_changed">Ce que ton test a changé</string>
+    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
+    <string name="focustest_suggestion_summary">Un test rapide peut t’indiquer à quoi consacrer ton temps d’étude.</string>
+    <string name="focustest_suggestion_title">Découvre quoi étudier en priorité</string>
+    <string name="focustest_suggestion_description">Tu n’as pas assez de temps pour tout étudier avant ton examen. Des questions rapides sur tes matières t’aident à choisir tes priorités.</string>
+    <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
+    <string name="focustest_suggestion_dismissed">C’est noté. Tu peux faire le test depuis ton plan.</string>
+    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
+    <string name="focustest_not_today">Pas aujourd’hui</string>
+    <string name="focustest_not_today_failed">L’enregistrement a échoué. Réessaie.</string>
+</resources>

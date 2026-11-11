@@ -176,23 +176,12 @@
   "onboarding_placement_answer_failed": "1792b676282d66dd8575b0ab22940ac925d5d1f0f2c343263f0f15f90918a450",
   "onboarding_placement_answered": "76c945e9354a0e00b59fb4500665f0bb05c86483b95af503526e91e18481dbaa",
   "onboarding_placement_confirm": "2c9ce11e78dd1a8a6f684c75ea0aad25b39e1b705723695d45af0f0dd6029c46",
-  "onboarding_placement_continue_mock": "a9d59d02d844513f4c96ce75b57703888d3cee1be76a1a54fcea52f87ce44435",
   "onboarding_placement_description": "f112a0fcdb6c175a9a3d050a51eea7ff85edb77268c4a374a66e75673dbb43a5",
   "onboarding_placement_description_areas": "bb9d150e4e60bd6e66d0ecca5053329032c86b59ca726ff38253483cbca89b51",
   "onboarding_placement_dont_know": "c2f1f1adcd8931ed770570b8040263ba510c89df099194928f2460b23cdc1e56",
   "onboarding_placement_enough_description": "38af8b4fc82d4f583c185b2227d79f45eca0acee8e8bcfbad61f265851951aad",
   "onboarding_placement_enough_title": "6beb60762bc8161697e87f1cba0bbc56cc0cd4686b92b45fd29a5a920259d7ff",
   "onboarding_placement_false": "ac5caed6a92458242d68e76ce6316124c182c4c6448d672cee25e23f585ad644",
-  "onboarding_placement_mock_about": "aefa17602674de91a602d4263fd50bdfb37848c1534412112684ee05a37b4ab1",
-  "onboarding_placement_mock_done": "b75818da6c6e2de1f1f1ee679a2aba0531e830ee26ae61fd46d8d2e321a969fa",
-  "onboarding_placement_mock_range": "c84ede56389c5d12dc675a86fa8ea6dc9d142455662e2133d767b01addc46c77",
-  "onboarding_placement_mock_set_description": "ee393eb482f5298084e1ed73504259c0d7a7a9b31136b48924fb0f7f7f4ad053",
-  "onboarding_placement_mock_set_title": "1867d3ec31f5a919ead5bf98532bb36b73e8d36bec42f5bce051a6ae613daad4",
-  "onboarding_placement_mock_title": "c90885d343c1f0dd4e18b26af6e7261ddf76fd0ccad9bcf72068068c7fc81216",
-  "onboarding_placement_mock_waiting_description": "efc23c29ce7d9691a34ab95c10ef4e2dd62833812fcc01b753ed807a974a58ff",
-  "onboarding_placement_mock_waiting_title": "a84f204b973db946428942595308ddd275b1a8df0885f5e0e9668f337bbd6be6",
-  "onboarding_placement_plus": "58fe04eb2cefaae9bfa93d1f0cb3fcc0d21f5508c02d0bfc592a1c9eac737472",
-  "onboarding_placement_plus_description": "7745362461d74625d317da7617043da2304679257ee0746b2874016df27e61f6",
   "onboarding_placement_progress": "99067341bbd69e815af97526e9d8b66826f65c128aee36b1b909da05c5719fc5",
   "onboarding_placement_question_number": "dfd9886f88c4803b84b7a46203796f3e7a234a94db8b88b49d1be22693ef3784",
   "onboarding_placement_right": "ac264ec61c94109946f5de9be6dfd9129ae85977ebaa3234074248ad1bd663ed",
@@ -204,7 +193,6 @@
   "onboarding_placement_skip_note": "4a980ac3997d4302b936bacb14c4afbe168bd5b5d76e870e4e52b8bb7d713774",
   "onboarding_placement_start": "5302ca8795d1b52f330739621bf8716ec342ae7d64497db749929642bb5229c3",
   "onboarding_placement_stop": "4ce4e4c6dc38e1c811cc45829a0d00414b23c3941e0cc83a6e6e62794ff776e9",
-  "onboarding_placement_stop_mock": "005d5ef079856dc9770cb0dadcf3582bd0ffe74bccee597ef03758c8d5432d79",
   "onboarding_placement_title": "3d3a120c9728af46948c79e5821cf7340ac229603972e8853ae8e8ab270fcf7a",
   "onboarding_placement_true": "fc0c09f61fe8a5e8ebbbcf7cdc02520db1b68427a95016f924768d4ec35f60c5",
   "onboarding_placement_unavailable_description": "d3d647022713fa1032826d5c331b1da22c7963834b42e9c89b39415fae65a00f",
@@ -674,14 +662,6 @@
         <item quantity="other">Kilka krótkich pytań z %d obszarów, żeby twój plan pominął to, co już wiesz. Nie liczymy punktów, a „Jeszcze nie wiem” to dobra odpowiedź.</item>
     </plurals>
     <string name="onboarding_placement_description">Kilka krótkich pytań, dzięki którym twój plan pominie to, co już wiesz. Nie liczymy wyniku, a odpowiedź „Jeszcze nie wiem” jest w porządku.</string>
-    <string name="onboarding_placement_mock_title">Albo podejdź do egzaminu próbnego</string>
-    <!-- %1$s is a duration, such as "45 min". -->
-    <string name="onboarding_placement_mock_about">Około %1$s w formacie egzaminu.</string>
-    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
-    <string name="onboarding_placement_mock_range">Od %1$s do %2$s w formacie egzaminu. Ty wybierasz czas.</string>
-    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
-    <string name="onboarding_placement_plus">Plus</string>
-    <string name="onboarding_placement_plus_description">Dostępne w pakiecie Plus</string>
     <string name="onboarding_placement_start">Zacznij</string>
     <string name="onboarding_placement_skip_basics">Pomiń i zacznij od podstaw</string>
     <string name="onboarding_placement_waiting_title">Przygotowujemy dla ciebie pytania</string>
@@ -711,15 +691,6 @@
         <item quantity="many">Odpowiedziano na %d pytań</item>
         <item quantity="other">Odpowiedziano na %d pytania</item>
     </plurals>
-    <string name="onboarding_placement_mock_done">Egzamin próbny ukończony</string>
-    <string name="onboarding_placement_mock_set_title">Egzamin próbny określił twój punkt wyjścia</string>
-    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
-    <plurals name="onboarding_placement_mock_set_description">
-        <item quantity="one">Na podstawie %d odpowiedzi. Z każdym dniem coraz dokładniej określamy twój poziom.</item>
-        <item quantity="few">Na podstawie %d odpowiedzi. Z każdym dniem coraz dokładniej określamy twój poziom.</item>
-        <item quantity="many">Na podstawie %d odpowiedzi. Z każdym dniem coraz dokładniej określamy twój poziom.</item>
-        <item quantity="other">Na podstawie %d odpowiedzi. Z każdym dniem coraz dokładniej określamy twój poziom.</item>
-    </plurals>
     <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
     <string name="onboarding_placement_enough_title">Na dziś to już wszystkie pytania</string>
     <string name="onboarding_placement_enough_description">Na początku nauki zadamy jeszcze kilka pytań, żeby lepiej dopasować twój plan.</string>
@@ -728,10 +699,6 @@
     <string name="onboarding_placement_set_description">Z każdym dniem coraz dokładniej określamy twój poziom.</string>
     <string name="onboarding_placement_unavailable_title">Pomińmy pytania</string>
     <string name="onboarding_placement_unavailable_description">Nie udało nam się przygotować pytań dotyczących tego celu. Twój punkt wyjścia określimy na początku nauki.</string>
-    <string name="onboarding_placement_mock_waiting_title">Twój egzamin próbny czeka</string>
-    <string name="onboarding_placement_mock_waiting_description">Kontynuuj od miejsca przerwania albo zakończ teraz: twój plan oprzemy na dotychczasowych odpowiedziach.</string>
-    <string name="onboarding_placement_continue_mock">Kontynuuj egzamin próbny</string>
-    <string name="onboarding_placement_stop_mock">Zakończ i zobacz swój plan</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Sprawdźmy twój poziom: %1$s</string>

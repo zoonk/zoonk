@@ -98,6 +98,7 @@
   "plan_change_finish_area_instead": "418ab33212c038d743d8bb1ee4aede8aa006e9822687dfe9561023c5640d8b8a",
   "plan_change_finish_around": "81c4c0310459b3f72a3e008de2584d86f6cefb205adc13873fa70a00f89dd9e4",
   "plan_change_fit_lessons": "e214d9a6dbb5721448487b9aa17f5f9a859b91f05fbab025ed6eba7ecd0a6c92",
+  "plan_change_focus_test": "3027afc8ad55e0133300dcd6a9853abb2e6519ff245af7048055d7e8e6833fa9",
   "plan_change_follows_guide": "039b5b26c2081fe5aa8880fe7bb6d401e59acff32d3cb2da34975a33987aec15",
   "plan_change_follows_notice": "dd2cf32ee3fdd4d805c2b36cfcc09b888f0f9414fae8c02cfc7540c898a922e6",
   "plan_change_from_now_on": "e87149870607372ad948f539fb8f6f1ae9a68ca6580e2afd22a33a262b7b916b",
@@ -134,6 +135,7 @@
   "plan_change_next_mock": "c335a8d6bd2e36a78996f97467248d278d79313333cd49ce652dec110b53fc79",
   "plan_change_next_mock_moves": "d0f41b5aa5c0b1e8c98e94b379d5d27bbe06bebd4c125f8b2effa3267ca1a5f9",
   "plan_change_no_deadline": "202d14a3ab6c462c50bf5ba77453cec73d2991f5c99b7a649e98e736c3f523de",
+  "plan_change_no_focus": "62b744806d1543b1b25b07a2851a87beb1fa1dcadc5e8810385c5f67ef34d129",
   "plan_change_no_longer_fit": "09e7ac5a12d2180298521ac07bb7cc0fd0fd98aed1482120be622b11ad6b0124",
   "plan_change_notice_says": "870ea292ee45cff23fd718cc932c918a46190521aa341b103f442891489c7477",
   "plan_change_notice_sets_date": "c66b0bbbccf658ff5ba6e8f847075274c738fdd7f817a56c32a7bd0137e1aeed",
@@ -417,6 +419,7 @@
   "plan_recommendation_failed": "9d9dafce44e5fe66a93ca380ab0b1a0c27ab6c5f5142815a85f6375ad78c7712",
   "plan_recommendation_followed": "ba1a1486cbf187b09c4884b29369335c7a268e843fb4e51d06dabbb43373356f",
   "plan_recommended": "2b16065cca2a5a8fdca9cd7dbe0fed02a3ae6bf9d36573f6d501a07f778e6499",
+  "plan_remove_focus": "e149e9d6074426d14dd2b1715c9165e504ce4e51af3fac5fa5f9de93d506c3b4",
   "plan_rename_description": "92934eabf919a00fcd1da4d63980ba50bae15c94e655a761e14835e81c0de89d",
   "plan_rename_goal": "eaef4aebe4f8736583b33b4b903b0a1a68ce99120f43cb5651641af1a59b1ed5",
   "plan_rename_label": "344108653883c8990376d82a5e1d82b0355d228f7c61e3b453c443b74f5b28ea",
@@ -481,12 +484,10 @@
   "plan_suggestion_previous": "84b0df4b06f2169a156e76af3de03514816ab8b791a7e8b67ebe40da2052cce9",
   "plan_sundays": "4d49abcb48f4c00e72a5bf7aff6cd31f563b792a7935e6e809b5bee867d99c80",
   "plan_system_phone": "7e3b38a90abcfedcb41c48c409b38710bcdb4ddcd592e128ffcaffe4fe32deac",
-  "plan_take_short_test": "945d19a4441e0628d2916e1bfef5f13cdc4b977c7ef5c22f8c53071b63f8d84e",
   "plan_talk_to": "fffa716aec4dceec44665eaac1184677bd117c98b137722bc32d76cb18745613",
   "plan_tell_buddy": "8d9843e07a5721a00e564f9544e94affedda0f51e2103d935d5b340c747f1996",
   "plan_tell_buddy_description": "84018b30c035eb52faaa7bb4e274106cb5ab01e285408737c9e4f706a6aa6f20",
   "plan_tell_buddy_description_modules": "0df7a5fccde0195d5c5cc7ef1aa8c1c5a5df7d89046e9ac44c2c0e13e04a6276",
-  "plan_test_chooses_for_you": "e5444480da5c0bf06995a652989ed3ff30813fa23d78e543df17dee01b3286a8",
   "plan_then_covers_everything": "e8f69234d26520976badbfa74171559210b5a71dcd7b5de0a8a6b4c8690cb4ce",
   "plan_this_week": "6b3248b5aaf88f25cda7f1e29cd13c4c7e5c895ec133f81d0d92e69378a4ce84",
   "plan_thursdays": "ca20816cd4241142996da02cc24d568a5b509726b8be74ffc5131d542673e8ed",
@@ -945,6 +946,8 @@
     <string name="plan_change_changed">계획이 바뀌었어요.</string>
     <string name="plan_change_own_level_first">새로운 수준에 맞춰 %1$s부터 학습해요.</string>
     <string name="plan_change_rebalance">가장 연습이 필요한 %1$s 영역에 시간을 더 써요.</string>
+    <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
+    <string name="plan_change_focus_test">집중 진단 결과, %1$s에 시간을 더 쓰는 걸 추천해요.</string>
     <string name="plan_change_follows_notice">계획은 시험 공고를 기준으로 해요.</string>
     <string name="plan_change_follows_guide">계획은 시험 공식 안내서를 기준으로 해요.</string>
     <string name="plan_change_read_notice_around">시험 공고를 확인했어요. 공고에 나온 과목과 %1$s 무렵의 시험 일정을 계획에 반영할 수 있어요.</string>
@@ -1017,6 +1020,8 @@
         <item quantity="other">사전 지식 %d가지를 건너뛰어요.</item>
     </plurals>
     <string name="plan_change_more_time_for">%1$s에 쓰는 시간을 늘려요.</string>
+    <!-- A change that removed the plan's focus: no subject gets more time now. -->
+    <string name="plan_change_no_focus">이 계획은 특정 과목에 시간을 더 배정하지 않아요.</string>
     <string name="plan_change_less_time_for">%1$s에 쓰는 시간을 줄여요.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">%1$s을(를) 계획에서 제외해요.</string>
@@ -1426,8 +1431,6 @@
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">집중할 과목</string>
     <string name="plan_where_to_focus_description">선택한 과목부터 더 깊이 배워요.</string>
-    <string name="plan_take_short_test">짧은 테스트 보기</string>
-    <string name="plan_test_chooses_for_you">답에 따라 집중할 과목을 골라 드려요</string>
     <string name="plan_choose_focus_yourself">또는 직접 선택하기</string>
     <string name="plan_focus_includes">%1$s 포함</string>
     <string name="plan_focus_only">%1$s만</string>
@@ -1435,6 +1438,8 @@
     <string name="plan_focus_cant_move">바뀐 내용이 없어요. %1$s의 레슨은 사전 지식을 익히는 대로 시작하도록 이미 배치되어 있고, 지금 학습 시간으로는 더 넣을 수 없어요. 하루 학습 시간을 늘리면 더 넣을 수 있어요.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">선택한 과목에 집중하기</string>
+    <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
+    <string name="plan_remove_focus">집중 과목 해제하기</string>
     <string name="plan_couldnt_check_changes">변경 사항을 확인하지 못했어요.</string>
     <string name="plan_then_covers_everything">이렇게 조정한 계획은 모든 내용을 깊이 있게 다뤄요.</string>
     <string name="plan_apply">적용</string>

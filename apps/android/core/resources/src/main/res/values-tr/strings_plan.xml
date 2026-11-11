@@ -98,6 +98,7 @@
   "plan_change_finish_area_instead": "3ba0f8bb3c429908236faefb4675b4f73b626a4a379c68ffd945f07ab87e9e3a",
   "plan_change_finish_around": "aa6228c504c8f5a8394dfbe27019c3b34e5af4cd1cbe13b3bbdf172c29e1f1bd",
   "plan_change_fit_lessons": "5bd8976130f75840e79ddee5045e3d1951fd912c2d8e657e6399b94df5e017d4",
+  "plan_change_focus_test": "641946920ae9e549677a8a21ea922c92c3ddf578370ba8b97b67f86433a8315c",
   "plan_change_follows_guide": "f6a4adab8689fbdafae80cb37f186edda5549596018fa83600320ab5a8b6aa51",
   "plan_change_follows_notice": "51754241d37dd4ad37c8b9b59a1daffbde8f36ef139727288b23278a8a073f25",
   "plan_change_from_now_on": "3c8c9523533b9086f9248aea88261120c1efebf38cb08819e48f82aeec0d7e62",
@@ -134,6 +135,7 @@
   "plan_change_next_mock": "5aa03027b5bdee16ada312c4fab9ff4bf0b018cf62845d556e7daeeb6e396738",
   "plan_change_next_mock_moves": "321e4d1a1d7ebac15a64eb32a596d473ca0956a5e4e4db56e22bbadd7b35068b",
   "plan_change_no_deadline": "53473a7637cfd80e579a7d10e2a178d435449d1c7647f9a9aaeee9406d26778c",
+  "plan_change_no_focus": "c31c3bb6cf4a43fe14b1a1f4775658dcff0d25393ce2f5355e1171751eb3f539",
   "plan_change_no_longer_fit": "d4fda501a6e054f906c57fc064cdcdb3fa233acb9f2225fbc00f4552a43013b2",
   "plan_change_notice_says": "745b5a8b3b69563c49a4676a22b5b969a282d646413ed359010af89ed7e8656b",
   "plan_change_notice_sets_date": "be260b4ff8b8d8da9bb4dc338d22781da17f40ce50f83adfcb40e3ba468120fa",
@@ -417,6 +419,7 @@
   "plan_recommendation_failed": "079d531ca73aad0bde8a29e67ae31cb4bce61d36fd9c9156755202ea493c7a47",
   "plan_recommendation_followed": "97eb09c91b7d737e6048adbe4acc4e51412f8af610e4815b5f94b7158548903a",
   "plan_recommended": "ce985759e2fec347864c1ac85f34c88f657434c6ff54749d68c4b33198bcf7f1",
+  "plan_remove_focus": "f813dbbe1140e81abbb32f0306a355ce4d1f5db5d853840fc1a7b8fb9e77967f",
   "plan_rename_description": "76f20da5d432cb83c7ec2b781228c1300d47c2828b72500263d267bb1fb3f511",
   "plan_rename_goal": "fc17ba50250498068834de418ba6894a77eb2561d9d44c9f2e7ae5f44ca37cbd",
   "plan_rename_label": "b584c76429eff2f4e01afb2adee1bf29aa1799a16930c8a26e3cc6415fe345ef",
@@ -481,12 +484,10 @@
   "plan_suggestion_previous": "f78b9d5614c192345c11a4c0057c8d6bf8ffc758d723b4affca8e70f757e3479",
   "plan_sundays": "c9b4c635df3f9ec7d80eababcdcd09cd94968a9b063c50c1323f5cbb2f5eb3c1",
   "plan_system_phone": "5a45c58e0b4dd5531591940871e38a83f12370c0e50fca1c30e9cc341a24853a",
-  "plan_take_short_test": "3e39081843066785d78916735b0431492018b51a00bf5fe3820749e6e380ecd7",
   "plan_talk_to": "fc253fabdc3b223c879f22a272ec990e8906bcf376bfe56f43d1447584044138",
   "plan_tell_buddy": "838c3a50c96b93a8607894c0830378b156120c12bd360e1e055838dc8de76399",
   "plan_tell_buddy_description": "d9b0f3ee381a6d4a2f52078f3678da727c43a7b49de0f431ad1786ca1edd8c63",
   "plan_tell_buddy_description_modules": "8b60caaaa34a0bc4268890871e5a0b62767311f6e1d7d66bb87a160af5e16b76",
-  "plan_test_chooses_for_you": "7a7b91b25f5567aac297ba194e7dd48882b292cccf7ee9bebafed2f936e09703",
   "plan_then_covers_everything": "f392dd272095e3fd0139527c69ca75bcf1c31b8c8e3d7b367cad479e04ac9a83",
   "plan_this_week": "2e54fbc27fc9a1b9e90f0b099d78f7ee01418248ac7826095b4680530047a789",
   "plan_thursdays": "3f23c4a01e21bf27547e341271ed55cf0da340f0e50d7337be6948e037a9bc25",
@@ -980,6 +981,8 @@
     <string name="plan_change_changed">Planın değişti.</string>
     <string name="plan_change_own_level_first">Yeni seviyen için öncelik bu becerilerde: %1$s.</string>
     <string name="plan_change_rebalance">En çok ihtiyaç duyduğun %1$s alanlarına daha fazla zaman ayrılır.</string>
+    <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
+    <string name="plan_change_focus_test">Odak testine göre %1$s için daha fazla zaman ayırman iyi olur.</string>
     <string name="plan_change_follows_notice">Planın sınav ilanını temel alır.</string>
     <string name="plan_change_follows_guide">Planın sınavın resmî kılavuzunu temel alır.</string>
     <string name="plan_change_read_notice_around">Sınav ilanını inceledik: planın ilandaki branşlara göre düzenlenebilir. Sınav %1$s civarında yapılacak.</string>
@@ -1057,6 +1060,8 @@
         <item quantity="other">%d ön bilgi konusu atlanıyor.</item>
     </plurals>
     <string name="plan_change_more_time_for">%1$s için daha fazla zaman.</string>
+    <!-- A change that removed the plan's focus: no subject gets more time now. -->
+    <string name="plan_change_no_focus">Planın hiçbir branşa daha fazla zaman ayırmıyor.</string>
     <string name="plan_change_less_time_for">%1$s için daha az zaman.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">%1$s planın dışında kalıyor.</string>
@@ -1508,8 +1513,6 @@
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Odaklanacağın konular</string>
     <string name="plan_where_to_focus_description">Seçtiğin branşlar öne alınır ve daha ayrıntılı işlenir.</string>
-    <string name="plan_take_short_test">Kısa bir test çöz</string>
-    <string name="plan_test_chooses_for_you">Seçimi cevapların yapar</string>
     <string name="plan_choose_focus_yourself">Ya da kendin seç</string>
     <string name="plan_focus_includes">%1$s dahil</string>
     <string name="plan_focus_only">Yalnızca %1$s</string>
@@ -1517,6 +1520,8 @@
     <string name="plan_focus_cant_move">Değişiklik olmadı: %1$s için dersler, önce öğrenmen gereken konuların ardından mümkün olan en erken zamanda başlıyor ve çalışma sürene daha fazlası sığmıyor. Günlük çalışma süreni artırırsan daha fazla ders eklenir.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Bunlara odaklan</string>
+    <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
+    <string name="plan_remove_focus">Odağı kaldır</string>
     <string name="plan_couldnt_check_changes">Nelerin değişeceğini kontrol edemedik.</string>
     <string name="plan_then_covers_everything">Bu değişiklikle planın her şeyi ayrıntılı olarak işler.</string>
     <string name="plan_apply">Uygula</string>

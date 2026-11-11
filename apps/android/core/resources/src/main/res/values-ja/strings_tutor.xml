@@ -56,7 +56,7 @@
   "tutor_offer_chapter_test_lessons": "64fba76c5b64bd751cda8898e8fbcbb4da4118c817e01d69a4f323fd54962f1d",
   "tutor_offer_choose": "85bb1c8ce8a0fdb191544ac248a0d22377b2441d7d315e546dbe0b9a3507a873",
   "tutor_offer_choose_focus": "2a6dd5bfcc807dc6a538bee2f666b7c426f5fd8dae33e8c5d054dfc895ba7e5e",
-  "tutor_offer_choose_focus_description": "d0ce0fda9a53ebd1b8841ba69fcfc481fa6af51e716ca5792f6727afbd2ba509",
+  "tutor_offer_choose_focus_description": "719b952aa6001848fc2a73132236637d0e9265a4cfe5dd2c5df7ebadc9129548",
   "tutor_offer_essay_biweekly": "7f6331ed8deb99d9ec28448ac4cbad78b8ee1af7b82056cd30d8b42d833b0e66",
   "tutor_offer_essay_final_weeks": "4685541d4a0d24de7e3240b3864e1d8ca8c31e78d6431cb14e7290e1c6b0b1ae",
   "tutor_offer_essay_plus": "7ab300a6dcc16ddefed424514764fd692085aa632fbbeada7eb0abe37469bdde",
@@ -221,7 +221,7 @@
     </plurals>
     <string name="tutor_offer_take_test">テストを受ける</string>
     <string name="tutor_offer_choose_focus">重点的に学ぶ科目を選ぶ</string>
-    <string name="tutor_offer_choose_focus_description">詳しく学ぶ科目は、自分で選ぶことも、短いテストで決めることもできます。</string>
+    <string name="tutor_offer_choose_focus_description">どの科目にもっと時間をかけるとよいかがわかります。</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">%1$sさん（%2$s）と声に出して短く会話します。</string>
     <string name="tutor_offer_call">レベルに合った短い会話を声に出して練習します。</string>
