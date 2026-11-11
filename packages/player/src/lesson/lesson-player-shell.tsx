@@ -86,22 +86,21 @@ function LessonContent() {
     return <LessonCompletion />;
   }
 
-  if (state.phase === "map") {
-    return <LessonMapScreen />;
-  }
-
-  if (!shown) {
-    return null;
-  }
-
-  return [shown, ...kept].map(({ key, stepId }) => {
+  const screens = [...(shown ? [shown] : []), ...kept].map(({ key, stepId }) => {
     const step = state.steps[stepId];
-    const isShown = key === shown.key;
+    const isShown = key === shown?.key;
 
     return (
       step && <LessonScreen isShown={isShown} key={key} step={step} turn={isShown ? turn : null} />
     );
   });
+
+  return (
+    <>
+      {state.phase === "map" && <LessonMapScreen />}
+      {screens}
+    </>
+  );
 }
 
 /**

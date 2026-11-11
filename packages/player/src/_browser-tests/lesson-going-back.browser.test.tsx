@@ -1,3 +1,4 @@
+import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import {
   activityContentFixtures,
   engineModeFixtures,
@@ -13,6 +14,7 @@ import {
   sortCard,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import {
@@ -74,6 +76,11 @@ function letter({ audioUrl, symbol }: { audioUrl: string | null; symbol: string 
   });
 }
 
+const SINE_MAP: LessonMap = {
+  ideas: [{ label: "Sine", text: "Sine is the height." }],
+  shape: "nested",
+};
+
 const DOUBLED_LINE = "const doubled = numbers.map((n) => n + n);";
 
 const javascriptRunner = {
@@ -97,6 +104,15 @@ function playLesson(steps: Parameters<typeof buildLesson>[0]) {
 
 function activity(content: ActivityContent = activityContentFixtures.categorize) {
   return activityStep({ content });
+}
+
+function unitCircle() {
+  return activity(activityContentFixtures.unitCircle);
+}
+
+async function turnToThirtyDegrees() {
+  await pressOnSlider("Point on the circle", "ArrowRight", 6);
+  await expect.element(valueInput()).toHaveValue("0.5");
 }
 
 async function goBackAndReturn() {
@@ -182,6 +198,37 @@ describe("going back to reread", () => {
 
     await expectVerdict("Not quite");
     await expect.element(slider).toHaveAttribute("aria-valuenow", "100");
+  });
+
+  it("brings a checked canvas back as the learner left it from the lesson map", async () => {
+    renderLessonPlayer({ lesson: buildLesson([unitCircle()], { summary: SINE_MAP }) });
+    await turnToThirtyDegrees();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Point on the circle" }))
+      .toHaveAttribute("aria-valuenow", "30");
+  });
+
+  it("scrolls to each verdict while earlier checked screens stay kept", async () => {
+    await atViewport({ height: 700, width: 1368 }, async () => {
+      playLesson([unitCircle(), unitCircle()]);
+      await turnToThirtyDegrees();
+      await checkActivity();
+      await expectVerdict("Correct!");
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await turnToThirtyDegrees();
+      await checkActivity();
+
+      await expect
+        .element(page.getByRole("region", { name: "Answer feedback" }))
+        .toBeInViewport({ ratio: 1 });
+    });
   });
 
   it("shows a finished match board with each word beside its match", async () => {
