@@ -1,11 +1,12 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateLevelTestBank } from "@zoonk/ai/tasks/language/level-test-bank";
+import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
 import { FatalError } from "workflow";
 import { start } from "workflow/api";
+import { writtenLevel } from "../_test-utils/level-test-bank";
 import { readStreamToEnd } from "../_test-utils/read-run-stream";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
@@ -14,9 +15,14 @@ vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
   generateLanguageAudio: vi.fn(),
 }));
 
+vi.mock("@zoonk/ai/tasks/language/check-level-test-questions", async (importOriginal) => {
+  const { checkLikeTheKeys } = await import("../_test-utils/level-test-bank");
+  return { ...(await importOriginal<object>()), checkLevelTestQuestions: vi.fn(checkLikeTheKeys) };
+});
+
 vi.mock("@zoonk/ai/tasks/language/level-test-bank", async (importOriginal) => ({
   ...(await importOriginal<object>()),
-  generateLevelTestBank: vi.fn(),
+  generateLevelTestBankLevel: vi.fn(),
 }));
 
 // Steps upload to Vercel Blob, which has no store in tests.
@@ -25,43 +31,10 @@ vi.mock("@vercel/blob", async (importOriginal) => ({
   put: vi.fn(async (pathname: string) => ({ pathname, url: `https://blob.test/${pathname}` })),
 }));
 
-const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
-
-const PROVENANCE = {
-  generatedAt: new Date().toISOString(),
-  latencyMs: 1,
-  model: "anthropic/claude-opus-5.5",
-  promptVersion: "test-prompt",
-  provider: "anthropic",
-  requestedModel: "anthropic/claude-opus-5.5",
-  runId: "run-test",
-  usage: {},
-};
-
-function bankOf(passage: string): Awaited<ReturnType<typeof generateLevelTestBank>> {
-  return {
-    data: {
-      questions: TEST_LEVELS.flatMap((level) =>
-        (["reading", "listening"] as const).map((skill) => ({
-          answerIndex: 0,
-          level,
-          options: ["a", "b", "c", "d"],
-          passage: `${passage} ${level}`,
-          question: "O que diz?",
-          skill,
-        })),
-      ),
-      speaking: TEST_LEVELS.map((level) => ({
-        level,
-        sentence: `Say ${level}`,
-        translation: "Diga",
-      })),
-    },
-    provenance: PROVENANCE,
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
-  };
+function mockWriter(passage: string) {
+  vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
+    writtenLevel({ level, passage }),
+  );
 }
 
 function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
@@ -70,7 +43,7 @@ function voiced(): Awaited<ReturnType<typeof generateLanguageAudio>> {
       audio: new Uint8Array([1, 2, 3]),
       durationMs: 2400,
       format: "mp3",
-      provenance: PROVENANCE,
+      provenance: writtenLevel({ level: "A1", passage: "voice" }).provenance,
     },
     error: null,
   };
@@ -82,7 +55,7 @@ function uniquePair() {
 
 describe(levelTestBankWorkflow, () => {
   it("ends the run's stream once the bank is ready", async () => {
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankOf(crypto.randomUUID()));
+    mockWriter(crypto.randomUUID());
     vi.mocked(generateLanguageAudio).mockResolvedValue(voiced());
 
     const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
@@ -95,7 +68,7 @@ describe(levelTestBankWorkflow, () => {
   });
 
   it("ends the run's stream when the bank can't be written", async () => {
-    vi.mocked(generateLevelTestBank).mockRejectedValue(new FatalError("No model answered"));
+    vi.mocked(generateLevelTestBankLevel).mockRejectedValue(new FatalError("No model answered"));
 
     const run = await start(levelTestBankWorkflow, [{ pair: uniquePair() }]);
 
@@ -114,7 +87,7 @@ describe(levelTestBankWorkflow, () => {
     const failed = { data: null, error: new Error("Voice unavailable") };
     const tries = new Map<string, number>();
 
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankOf(passage));
+    mockWriter(passage);
 
     vi.mocked(generateLanguageAudio).mockImplementation(async ({ text }) => {
       const attempt = (tries.get(text) ?? 0) + 1;
@@ -126,7 +99,7 @@ describe(levelTestBankWorkflow, () => {
     const run = await start(levelTestBankWorkflow, [{ pair }]);
 
     await expect(run.returnValue).resolves.toStrictEqual({ status: "written" });
-    expect(generateLevelTestBank).toHaveBeenCalledOnce();
+    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(5);
 
     expect(Object.fromEntries(tries)).toStrictEqual({
       [`${passage} A1`]: 1,

@@ -240,7 +240,10 @@ describe("language level test", () => {
       input: { answerIndex: 1, questionId: "listening-C1-0" },
     });
 
-    expect(wrongQuestion).toStrictEqual({ status: "invalid" });
+    expect(wrongQuestion).toMatchObject({
+      status: "ready",
+      test: { answered: 0, next: { kind: "question", question: { id: "reading-A2-0" } } },
+    });
 
     const answered = await answerLanguageLevelTest({
       goalId: goal.id,
@@ -590,7 +593,7 @@ describe("language level test", () => {
 
     await expect(
       answerLanguageLevelTest({ goalId: goal.id, input: { answerIndex: 1, questionId } }),
-    ).resolves.toStrictEqual({ status: "invalid" });
+    ).resolves.toMatchObject({ status: "ready", test: { answered: 1, next: { kind: "done" } } });
 
     await expect(finishLanguageLevelTest(goal.id)).resolves.toStrictEqual(finished);
   });
