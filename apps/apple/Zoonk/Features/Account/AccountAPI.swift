@@ -5,7 +5,6 @@ enum AccountAPIError: Error, Equatable {
   case accountDisabled
   case accountMismatch
   case appleCredentialMismatch
-  case botDetected
   case disposableEmail
   case invalidCode
   case invalidEmail
@@ -26,7 +25,7 @@ protocol AccountAPIClient {
     emailCredentials: EmailReauthenticationCredentials?
   ) async throws -> AccountDeletionResponse
   func getCurrentAccount(token: String) async throws -> CurrentAccount
-  func sendEmailCode(email: String, token: String?) async throws
+  func sendEmailCode(email: String) async throws
   /// The server moves `guestToken`'s plan and progress to the account.
   func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
     -> String
@@ -47,10 +46,6 @@ protocol AccountAPIClient {
 }
 
 extension AccountAPIClient {
-  func sendEmailCode(email: String) async throws {
-    try await sendEmailCode(email: email, token: nil)
-  }
-
   func deleteAccount(token: String) async throws -> AccountDeletionResponse {
     try await deleteAccount(token: token, appleCredentials: nil, emailCredentials: nil)
   }
@@ -77,11 +72,9 @@ extension AccountAPIClient {
 }
 
 struct AccountAPI {
-  private let appAttest: any AppAttestProving
   private let clients: APIClientFactory
 
-  init(clients: APIClientFactory, appAttest: (any AppAttestProving)? = nil) {
-    self.appAttest = appAttest ?? AppAttestClient(api: AppAttestAPI(clients: clients))
+  init(clients: APIClientFactory) {
     self.clients = clients
   }
 
@@ -100,18 +93,9 @@ struct AccountAPI {
     }
   }
 
-  /// An anonymous request can create an account, so it carries App Attest proof; an account's own
-  /// bearer is proof enough.
-  func sendEmailCode(email: String, token: String?) async throws {
-    let proof = token == nil ? await appAttest.proof(for: .emailCode(email: email)) : nil
-    let output = try await perform(token: token) { client in
-      try await client.createEmailSignInCode(
-        .init(
-          headers: .init(
-            xAppAttestAssertion: proof?.assertion,
-            xAppAttestChallenge: proof?.challenge,
-            xAppAttestKeyId: proof?.keyID),
-          body: .json(.init(email: email))))
+  func sendEmailCode(email: String) async throws {
+    let output = try await perform { client in
+      try await client.createEmailSignInCode(.init(body: .json(.init(email: email))))
     }
 
     switch output {
@@ -131,15 +115,8 @@ struct AccountAPI {
 
   func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
   {
-    let proof = await appAttest.proof(for: .emailSession(email: email, code: code))
     let output = try await perform(token: guestToken) { client in
-      try await client.createEmailCodeSession(
-        .init(
-          headers: .init(
-            xAppAttestAssertion: proof?.assertion,
-            xAppAttestChallenge: proof?.challenge,
-            xAppAttestKeyId: proof?.keyID),
-          body: .json(.init(code: code, email: email))))
+      try await client.createEmailCodeSession(.init(body: .json(.init(code: code, email: email))))
     }
 
     switch output {
@@ -156,22 +133,14 @@ struct AccountAPI {
     }
   }
 
-  /// Needs the same bot proof as email sign-up.
   func signInAsGuest() async throws -> String {
-    let proof = await appAttest.proof(for: .guest)
     let output = try await perform { client in
-      try await client.createGuestSession(
-        headers: .init(
-          xAppAttestAssertion: proof?.assertion,
-          xAppAttestChallenge: proof?.challenge,
-          xAppAttestKeyId: proof?.keyID))
+      try await client.createGuestSession(.init())
     }
 
     switch output {
     case .created(let response):
       return try response.body.json.token
-    case .forbidden(let response):
-      throw getAPIError(statusCode: 403, payload: try response.body.json)
     case .tooManyRequests:
       throw AccountAPIError.rateLimited
     case .conflict, .internalServerError, .undocumented:
@@ -417,10 +386,6 @@ struct AccountAPI {
       "EMAIL_SIGN_IN_CODE_LOCKED",
     ].contains(code) {
       return .invalidCode
-    }
-
-    if code == "BOT_DETECTED" {
-      return .botDetected
     }
 
     if statusCode == 401 {
