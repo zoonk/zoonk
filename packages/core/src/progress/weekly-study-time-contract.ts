@@ -1,2 +1,2 @@
-/** Round studied minutes only after summing the week; targets are shared across active goals. */
+/** One goal's week; round studied minutes only after summing it. */
 export type WeeklyStudyTime = { studiedMinutes: number; targetMinutes: number };

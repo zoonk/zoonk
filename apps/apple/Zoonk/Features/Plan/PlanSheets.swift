@@ -9,6 +9,7 @@ enum PlanSheet: Identifiable, Hashable {
   case farTopic(skillId: String, title: String)
   case certificate(code: String)
   case suggestion(PlanSlotItem)
+  case language
 
   var id: Self { self }
 }
@@ -25,6 +26,7 @@ extension View {
 
 private struct PlanSheets: ViewModifier {
   @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var store
   @State private var then: Then?
 
@@ -72,6 +74,12 @@ private struct PlanSheets: ViewModifier {
           case .suggestion(let item):
             SuggestionSheet {
               PlanSuggestionSection(context: handingOff, answer: $slotAnswer, sheetItem: item)
+            }
+          case .language:
+            if let variety = context.goal.variety {
+              LanguageVarietySheet(variety: variety) { region in
+                await learner.setTargetRegion(region, goalID: context.goal.id)
+              }
             }
           }
         }

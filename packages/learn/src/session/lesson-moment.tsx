@@ -3,7 +3,7 @@
 import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { FORWARD_ICON } from "@zoonk/ui/components/button";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
@@ -29,7 +29,6 @@ type LessonMomentCompletion = {
     | (ProgressCelebration & {
         brainPower: number;
         finishedChapter: FinishedChapter | null;
-        nextReviewAt: string | null;
         seconds: number;
         studyBlock: StudyMomentView | null;
       })
@@ -92,7 +91,6 @@ function OutsideSession({
   title: string;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const studied = useStudyTimeFact(result?.seconds ?? 0);
   const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
 
@@ -100,21 +98,7 @@ function OutsideSession({
     <>
       <TaskBody>
         <MomentHeader title={title}>
-          {result && (
-            <MomentReadouts
-              brainPower={result.brainPower}
-              facts={[
-                studied,
-                result.nextReviewAt &&
-                  t("Review on {date}", {
-                    date: format.dateTime(new Date(result.nextReviewAt), {
-                      day: "numeric",
-                      month: "short",
-                    }),
-                  }),
-              ]}
-            />
-          )}
+          {result && <MomentReadouts brainPower={result.brainPower} facts={[studied]} />}
         </MomentHeader>
 
         {result && (
@@ -156,13 +140,11 @@ export function LessonMomentHeader({
   exitHref: string;
   menu?: ReactNode;
 }) {
-  const moment = completion.result?.studyBlock ?? null;
-
-  if (!moment) {
+  if (!completion.result?.studyBlock) {
     return null;
   }
 
-  return <SessionHeader exitHref={exitHref} menu={menu} sessionBar={moment.sessionBar} />;
+  return <SessionHeader exitHref={exitHref} menu={menu} />;
 }
 
 export function LessonMoment({

@@ -63,7 +63,6 @@ import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
 import { memoryReconcileTask } from "./memory-reconcile/task";
 import { memoryRelevanceTask } from "./memory-relevance/task";
-import { memorySearchTermsTask } from "./memory-search-terms/task";
 import { memorySessionPatternsTask } from "./memory-session-patterns/task";
 import { mindMapImageTask } from "./mind-map-image/task";
 import { mistakeCauseTask } from "./mistake-cause/task";
@@ -175,7 +174,6 @@ export const TASKS: readonly RegisteredTask[] = [
   memoryExtractionTask,
   memoryGateTask,
   memoryReconcileTask,
-  memorySearchTermsTask,
   memoryRelevanceTask,
   memoryInsightTask,
   memorySessionPatternsTask,

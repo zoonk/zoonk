@@ -12,7 +12,8 @@ import {
 } from "./_utils/onboarding-draft";
 import { reviseUnderstanding } from "./_utils/revise-understanding";
 import { getLearnerToday } from "./_utils/understanding-view";
-import { type OnboardingDraftEdit, type OnboardingDraftView } from "./onboarding-contract";
+import { type OnboardingDraftView } from "./onboarding-contract";
+import { type OnboardingDraftEdit } from "./onboarding-draft-edit-contract";
 
 export type ReviseOnboardingDraftResult =
   | { draft: OnboardingDraftView; status: "revised" }
@@ -103,7 +104,10 @@ async function applyEdit({
     : { status: "conflict" };
 }
 
-/** Requires ownership; returns conflict during generation or after goal creation, and invalid for an inapplicable edit. */
+/**
+ * Requires ownership; returns conflict during generation or after goal creation, and invalid for an
+ * inapplicable edit. Expires no cache tag: rerendering /start would remount the card being fixed.
+ */
 export async function reviseOnboardingDraft({
   draftId,
   edit,

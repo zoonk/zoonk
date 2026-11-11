@@ -12,7 +12,7 @@ export function getCourseStartRemedy(failure: CourseStartFailure): CourseStartRe
     return "signUp";
   }
 
-  return failure.reason === "oneActiveGoal" ? "upgrade" : null;
+  return failure.reason === "activeGoals" ? "upgrade" : null;
 }
 
 /** Then the page offers that in place of a start that would be refused again. */

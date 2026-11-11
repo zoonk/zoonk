@@ -14,8 +14,8 @@ import { type CatchUpView } from "./session-view";
 /** Bound optional catch-up to roughly one extra study day so returning learners do not create enormous queues. */
 const CATCH_UP_DAY_SHARE = 1.25;
 
-/** Excludes unoutlined stand-ins and resumed-pause work: returning from a pause is not falling behind. */
-export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[]> {
+/** Returning from a pause is not falling behind: a later resume clears what missed days carried. */
+export async function loadCarriedItemIds(goalId: string | null): Promise<string[]> {
   if (!goalId) {
     return [];
   }
@@ -25,25 +25,29 @@ export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[
     where: { kind: { in: ["missedDays", "resumed"] }, plan: { goalId } },
   });
 
-  if (settled?.kind !== "missedDays") {
-    return [];
-  }
+  return settled?.kind === "missedDays"
+    ? parsePlanChangePayload(settled.payload).carriedItemIds
+    : [];
+}
 
-  const { carriedItemIds } = parsePlanChangePayload(settled.payload);
+/** Unoutlined stand-ins aren't lessons to catch up yet. */
+export function isCatchUpItem(item: Pick<PlanItem, "chapterId" | "kind" | "lessonId">): boolean {
+  return LEARN_KINDS.has(item.kind) && (item.lessonId !== null || item.chapterId !== null);
+}
+
+export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[]> {
+  const carriedItemIds = await loadCarriedItemIds(goalId);
 
   if (carriedItemIds.length === 0) {
     return [];
   }
 
-  return prisma.planItem.findMany({
+  const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
-    where: {
-      OR: [{ lessonId: { not: null } }, { chapterId: { not: null } }],
-      id: { in: carriedItemIds },
-      kind: { in: [...LEARN_KINDS] },
-      status: "todo",
-    },
+    where: { id: { in: carriedItemIds }, status: "todo" },
   });
+
+  return items.filter((item) => isCatchUpItem(item));
 }
 
 export function isCatchingUp({

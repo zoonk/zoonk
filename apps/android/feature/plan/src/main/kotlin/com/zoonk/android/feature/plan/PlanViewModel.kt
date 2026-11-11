@@ -9,7 +9,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.value
-import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
@@ -38,7 +38,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Aim, Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
+enum class PlanPart { Aim, Region, Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
 
 /** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
 enum class NextLevelStart { Idle, Starting, Started, Failed }
@@ -141,13 +141,13 @@ class PlanViewModel(
         }
     }
 
-    fun setStatus(status: GoalUpdateInput.Status) {
+    fun setStatus(status: LearnerSummaryGoal.Status) {
         if (saving.value) return
         saving.value = true
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
                 is MutationResult.Done -> {
-                    if (status == GoalUpdateInput.Status.ARCHIVED) notices.send(PlanEvent.Archived)
+                    if (status == LearnerSummaryGoal.Status.ARCHIVED) notices.send(PlanEvent.Archived)
                 }
 
                 is MutationResult.Failed -> {
@@ -157,6 +157,31 @@ class PlanViewModel(
                 MutationResult.Obsolete -> {}
             }
             saving.value = false
+        }
+    }
+
+    /** A language goal's country: the plan stays as it is, so [saved] runs once the server has it. */
+    fun setRegion(
+        region: String?,
+        saved: () -> Unit,
+    ) {
+        val part = PlanPart.Region
+        if (part in savingParts.value) return
+        savingParts.update { it + part }
+        failedParts.update { it - part }
+        viewModelScope.launch {
+            when (store.setRegion(goalId, region)) {
+                is MutationResult.Done -> {
+                    saved()
+                }
+
+                is MutationResult.Failed -> {
+                    failedParts.update { it + part }
+                }
+
+                MutationResult.Obsolete -> {}
+            }
+            savingParts.update { it - part }
         }
     }
 

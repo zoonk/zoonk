@@ -44,7 +44,6 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
 import java.time.temporal.ChronoUnit
@@ -55,7 +54,7 @@ internal fun PlanHeader(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     modifier: Modifier = Modifier,
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
@@ -113,35 +112,57 @@ private fun PlanMenu(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     rename: GoalRename?,
     report: FeedbackSheet?,
 ) {
+    GoalMenu(page.goal, resume, isSaving, onSetStatus, rename) { closing ->
+        PlanItems(page, links, report, closing)
+        HorizontalDivider()
+    }
+}
+
+/**
+ * The goal's own actions (rename, pause or resume, archive), which the Plan offers before its plan
+ * shows too: a goal still in setup holds one of the free plan's goals until it's paused or archived.
+ * [planItems] come first; `closing` wraps an item's action so it closes the menu.
+ */
+@Composable
+internal fun GoalMenu(
+    goal: LearnerSummaryGoal,
+    resume: Resume,
+    isSaving: Boolean,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
+    rename: GoalRename?,
+    planItems: @Composable (closing: (() -> Unit) -> () -> Unit) -> Unit = {},
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var dialog by rememberSaveable { mutableStateOf<GoalDialog?>(null) }
-    val context = LocalContext.current
-    val shareTitle = stringResource(R.string.plan_share)
-    val shareUrl = sharePlanUrl(page, currentLocale().language)
-    val buddy = page.summary.buddy
+    val closing: (() -> Unit) -> () -> Unit = { action ->
+        {
+            expanded = false
+            action()
+        }
+    }
 
     Box {
         OptionsButton(onClick = { expanded = true }, contentDescription = stringResource(R.string.plan_options))
-        MenuItems(
-            expanded,
-            page,
-            links,
-            resume,
-            isSaving,
-            onSetStatus,
-            rename?.takeIf { page.goal.kind != LearnerSummaryGoal.Kind.EXPLAIN }?.onOpen,
-            report,
-            onDismiss = { expanded = false },
-            onDialog = { dialog = it },
-        )
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            planItems(closing)
+            GoalItems(
+                goal = goal,
+                resume = resume,
+                isSaving = isSaving,
+                onSetStatus = onSetStatus,
+                onRename = rename?.takeIf { goal.kind != LearnerSummaryGoal.Kind.EXPLAIN }?.onOpen,
+                closing = closing,
+                onDialog = { dialog = it },
+            )
+        }
     }
 
-    dialog?.let { GoalStatusDialog(it, page, onSetStatus, onDismiss = { dialog = null }) }
-    rename?.dialog?.let { RenameGoalDialog(page.goal.displayName, it, rename) }
+    dialog?.let { GoalStatusDialog(it, goal, onSetStatus, onDismiss = { dialog = null }) }
+    rename?.dialog?.let { RenameGoalDialog(goal.displayName, it, rename) }
 }
 
 internal class GoalRename(
@@ -193,17 +214,11 @@ private fun RenameGoalDialog(
 private const val MAX_GOAL_NAME_LENGTH = 120
 
 @Composable
-private fun MenuItems(
-    expanded: Boolean,
+private fun PlanItems(
     page: PlanPageState,
     links: PlanLinks,
-    resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
-    onRename: (() -> Unit)?,
     report: FeedbackSheet?,
-    onDismiss: () -> Unit,
-    onDialog: (GoalDialog) -> Unit,
+    closing: (() -> Unit) -> () -> Unit,
 ) {
     val context = LocalContext.current
     val shareTitle = stringResource(R.string.plan_share)
@@ -211,69 +226,71 @@ private fun MenuItems(
     val libraryCourse = page.libraryCourse
     val buddy = page.summary.buddy
 
-    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
-        fun close(action: () -> Unit): () -> Unit =
-            {
-                onDismiss()
-                action()
-            }
-
-        if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), close(links::exam))
-        libraryCourse?.let { course ->
-            MenuItem(
-                R.drawable.ic_local_library,
-                stringResource(R.string.plan_full_course),
-                close { links.course(course.courseId.toString()) },
-            )
-        }
-        if (links.hasExam || libraryCourse != null) HorizontalDivider()
-
+    if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
+    libraryCourse?.let { course ->
         MenuItem(
-            R.drawable.ic_share,
-            shareTitle,
-            close {
-                val send =
-                    Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TITLE, page.goal.displayName)
-                        putExtra(Intent.EXTRA_TEXT, shareUrl)
-                    }
-                context.startActivity(Intent.createChooser(send, shareTitle))
-            },
-        )
-        MenuItem(
-            R.drawable.ic_contact_support,
-            stringResource(R.string.plan_talk_to, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
-            close(links::buddy),
-        )
-        report?.let { ReportProblemItem(it, onClick = onDismiss) }
-
-        HorizontalDivider()
-        onRename?.let { MenuItem(R.drawable.ic_edit, stringResource(R.string.plan_rename_goal), close(it)) }
-        if (page.goal.status != LearnerSummaryGoal.Status.COMPLETED) {
-            if (page.isPaused) {
-                MenuItem(
-                    R.drawable.ic_play_arrow,
-                    stringResource(R.string.plan_resume_goal),
-                    close { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(GoalUpdateInput.Status.ACTIVE) },
-                    enabled = !isSaving && resume != Resume.Pending,
-                )
-            } else {
-                MenuItem(
-                    R.drawable.ic_pause,
-                    stringResource(R.string.plan_pause_goal),
-                    close { onSetStatus(GoalUpdateInput.Status.PAUSED) },
-                    enabled = !isSaving,
-                )
-            }
-        }
-        MenuItem(
-            R.drawable.ic_archive,
-            stringResource(R.string.plan_archive_goal),
-            close { onDialog(GoalDialog.Archive) },
-            enabled = !isSaving,
+            R.drawable.ic_local_library,
+            stringResource(R.string.plan_full_course),
+            closing { links.course(course.courseId.toString()) },
         )
     }
+    if (links.hasExam || libraryCourse != null) HorizontalDivider()
+
+    MenuItem(
+        R.drawable.ic_share,
+        shareTitle,
+        closing {
+            val send =
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TITLE, page.goal.displayName)
+                    putExtra(Intent.EXTRA_TEXT, shareUrl)
+                }
+            context.startActivity(Intent.createChooser(send, shareTitle))
+        },
+    )
+    MenuItem(
+        R.drawable.ic_contact_support,
+        stringResource(R.string.plan_talk_to, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
+        closing(links::buddy),
+    )
+    report?.let { ReportProblemItem(it, onClick = closing {}) }
+}
+
+@Composable
+private fun GoalItems(
+    goal: LearnerSummaryGoal,
+    resume: Resume,
+    isSaving: Boolean,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
+    onRename: (() -> Unit)?,
+    closing: (() -> Unit) -> () -> Unit,
+    onDialog: (GoalDialog) -> Unit,
+) {
+    onRename?.let { MenuItem(R.drawable.ic_edit, stringResource(R.string.plan_rename_goal), closing(it)) }
+    if (goal.status != LearnerSummaryGoal.Status.COMPLETED) {
+        if (goal.status == LearnerSummaryGoal.Status.PAUSED) {
+            MenuItem(
+                R.drawable.ic_play_arrow,
+                stringResource(R.string.plan_resume_goal),
+                closing { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
+                enabled = !isSaving && resume != Resume.Pending,
+            )
+        } else {
+            MenuItem(
+                R.drawable.ic_pause,
+                stringResource(R.string.plan_pause_goal),
+                closing { onSetStatus(LearnerSummaryGoal.Status.PAUSED) },
+                enabled = !isSaving,
+            )
+        }
+    }
+    MenuItem(
+        R.drawable.ic_archive,
+        stringResource(R.string.plan_archive_goal),
+        closing { onDialog(GoalDialog.Archive) },
+        enabled = !isSaving,
+    )
 }
 
 private enum class GoalDialog { Archive, Resume }
@@ -281,20 +298,20 @@ private enum class GoalDialog { Archive, Resume }
 @Composable
 private fun GoalStatusDialog(
     dialog: GoalDialog,
-    page: PlanPageState,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    goal: LearnerSummaryGoal,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val archive = dialog == GoalDialog.Archive
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, page.goal.displayName)) },
+        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, goal.displayName)) },
         text = { Text(stringResource(if (archive) R.string.plan_archive_description else R.string.plan_resume_effect)) },
         confirmButton = {
             TextButton(
                 onClick = {
                     onDismiss()
-                    onSetStatus(if (archive) GoalUpdateInput.Status.ARCHIVED else GoalUpdateInput.Status.ACTIVE)
+                    onSetStatus(if (archive) LearnerSummaryGoal.Status.ARCHIVED else LearnerSummaryGoal.Status.ACTIVE)
                 },
             ) { Text(stringResource(if (archive) R.string.plan_archive else R.string.plan_resume)) }
         },

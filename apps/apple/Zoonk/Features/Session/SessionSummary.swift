@@ -13,7 +13,6 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   }
 
   struct ComesBack: Decodable, Equatable, Sendable {
-    let date: String
     let skills: Int
   }
 
@@ -80,6 +79,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
     let opensInPlayer: Bool
   }
   let blocks: [StudyBlock]
+  let dayProgress: DayProgress
   let deferredLessonsCount: Int
   let minutes: StudyDay.Minutes
   let sessionId: String
@@ -96,8 +96,6 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let brainPower: Int
   let ceremony: Milestone?
   let certificates: [CertificateFacts]
-  /// `YYYY-MM-DD`.
-  let comesBackOn: String?
   let completedMissions: [StudyMission.Kind]
   let correct: Int
   let finishedChapter: Components.Schemas.FinishedChapter?
@@ -107,6 +105,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let nextBlockId: String?
   let reached: DayResult.Reached?
   let reminderOffer: ReminderOffer?
+  let sessionBar: SessionBar
   let sessionCompleted: Bool
   let total: Int
 

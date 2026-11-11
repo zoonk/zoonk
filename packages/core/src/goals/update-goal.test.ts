@@ -201,6 +201,64 @@ describe(updateGoal, () => {
     expect(saved.inputsKey).not.toBe(before.inputsKey);
   });
 
+  it("saves a language goal's country without re-planning, and refuses one its language doesn't list", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ lessons: 4 }] }),
+    ]);
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      kind: "language",
+      settings: { startDate: "2020-09-28" },
+      targetLanguage: "es",
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const renew = vi.spyOn(refresh, "refreshGoalPlan");
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { targetRegion: "AR" } }),
+    ).resolves.toMatchObject({
+      change: null,
+      goal: { languageFlag: "ar", targetLanguage: "es", targetRegion: "AR" },
+      status: "updated",
+    });
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { targetRegion: "PT" } }),
+    ).resolves.toStrictEqual({ status: "regionNotOffered" });
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { targetRegion: null } }),
+    ).resolves.toMatchObject({
+      goal: { languageFlag: "mx", targetRegion: null },
+      status: "updated",
+    });
+
+    expect(renew).not.toHaveBeenCalled();
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+  });
+
+  it("refuses a country on a goal that isn't a language goal", async () => {
+    const { goal } = await setup();
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { targetRegion: "AR" } }),
+    ).resolves.toStrictEqual({ status: "regionNotOffered" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      targetRegion: null,
+    });
+  });
+
   it("refuses a past target date", async () => {
     const { goal } = await setup();
 
@@ -209,16 +267,25 @@ describe(updateGoal, () => {
     ).resolves.toStrictEqual({ error: "pastDate", status: "invalid" });
   });
 
-  it("pauses and resumes from today, counting the free plan's one active goal", async () => {
+  it("pauses and resumes from today, counting the free plan's three active goals", async () => {
     const { goal, plan, user } = await setup();
 
     await expect(
       updateGoal({ goalId: goal.id, input: { status: "paused" } }),
     ).resolves.toMatchObject({ goal: { status: "paused" } });
 
-    const other = await goalFixture({ userId: user.id });
+    const [other] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
     const blocked = await updateGoal({ goalId: goal.id, input: { status: "active" } });
-    expect(blocked).toMatchObject({ limit: { resource: "activeGoals" }, status: "limitReached" });
+
+    expect(blocked).toMatchObject({
+      limit: { limit: 3, resource: "activeGoals" },
+      status: "limitReached",
+    });
 
     await prisma.goal.update({ data: { status: "paused" }, where: { id: other.id } });
     vi.setSystemTime(new Date("2020-10-06T12:00:00Z"));

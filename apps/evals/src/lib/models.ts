@@ -29,6 +29,7 @@ export const REASONING_OPTIONS = [
 
 const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "anthropic/claude-opus-5.5", name: "claude-opus-5.5" },
+  { id: "anthropic/claude-fable-5.2", name: "claude-fable-5.2" },
   { id: "anthropic/claude-fable-5.1", name: "claude-fable-5.1" },
   { id: "anthropic/claude-sonnet-5.5", name: "claude-sonnet-5.5" },
   { id: "anthropic/claude-sonnet-5", name: "claude-sonnet-5" },
@@ -36,6 +37,7 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "anthropic/claude-haiku-4.5", name: "claude-haiku-4.5" },
   { id: "deepseek/deepseek-v4-pro", name: "deepseek-v4-pro" },
   { id: "deepseek/deepseek-v4-flash", name: "deepseek-v4-flash" },
+  { id: "google/gemini-4-carbon", name: "gemini-4-carbon" },
   { id: "google/gemini-4-argon", name: "gemini-4-argon" },
   { id: "google/gemini-3.8-flash", name: "gemini-3.8-flash" },
   { id: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite" },
@@ -52,6 +54,7 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.6-luna", name: "gpt-5.6-luna" },
   { id: "openai/gpt-5.5", name: "gpt-5.5" },
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
+  { id: "meta/muse-ember", name: "muse-ember" },
   { id: "xiaomi/mimo-v2.6-pro", name: "mimo-v2.6-pro" },
   { id: "moonshotai/kimi-k3.1-pro", name: "kimi-k3.1-pro" },
   { id: "spacexai/grok-4.7", name: "grok-4.7" },

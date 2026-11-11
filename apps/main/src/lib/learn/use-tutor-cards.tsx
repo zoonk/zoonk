@@ -1,7 +1,9 @@
 "use client";
 
+import { setGoalCountryAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
@@ -29,6 +31,8 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
   const router = useRouter();
   const startTestOut = useStartTestOut();
   const startConversation = useStartLanguageConversation();
+  const learner = useFrameLearner();
+  const goals = learner.status === "ready" ? learner.summary.goals : null;
 
   return useMemo(
     () => ({
@@ -46,13 +50,23 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
         return answered;
       },
       tools: {
+        getGoalRegion: (id) => goals?.find((goal) => goal.id === id)?.targetRegion ?? null,
         hrefs: TOOL_HREFS,
+        setGoalRegion: async ({ goalId: id, region }) => {
+          const saved = await setGoalCountryAction(id, region);
+
+          if (saved) {
+            router.refresh();
+          }
+
+          return saved;
+        },
         startConversation: ({ chapterId, goalId: callGoalId, minutes }) =>
           startConversation({ chapterId, goalId: callGoalId, kind: "practice", minutes }),
         startTestOut,
       },
     }),
-    [goalId, router, startConversation, startTestOut],
+    [goalId, goals, router, startConversation, startTestOut],
   );
 }
 

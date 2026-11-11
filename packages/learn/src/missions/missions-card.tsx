@@ -153,7 +153,6 @@ export function MissionsCard({
   today: MissionsDay | null;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const missionName = useMissionName(buddy);
   const titleId = useId();
 
@@ -174,16 +173,6 @@ export function MissionsCard({
   const points = today.fullMeal.bonus;
   const allDone = isFullMeal(missions);
   const won = allDone && today.fullMeal.earned;
-
-  if (today.fullMeal.earned && !allDone) {
-    return (
-      <MissionsLine className={className}>
-        <span className="text-muted-foreground flex-1">
-          {t("Today's +{points} Brain Power is already earned.", { points: format.number(points) })}
-        </span>
-      </MissionsLine>
-    );
-  }
 
   if (won && collapseWhenDone) {
     return (

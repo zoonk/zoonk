@@ -97,7 +97,7 @@ export const studySessionPaths = {
   "/study-block-openings": {
     post: {
       description:
-        "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
       operationId: "openStudyBlock",
       requestBody: {
         content: { "application/json": { schema: openStudyBlockInputSchema } },
@@ -247,13 +247,14 @@ export const studySessionPaths = {
       description:
         "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
       operationId: "createStudyExtraBlock",
+      requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
         "201": jsonResponse(studyBlockSchema, "The first block added, where the learner goes on"),
         ...readErrors,
         "409": {
           ...conflictResponse,
-          description: `Not available now; details.reason says why. Error code: ${studySessionErrorCodes.extraTimeUnavailable}.`,
+          description: `Not available now; details.reason says why. \`dayOver\` means the session's day is over (a screen left open past midnight): go to Today, where the learner can add time to today. Error code: ${studySessionErrorCodes.extraTimeUnavailable}.`,
         },
         "422": {
           ...unprocessableEntityResponse,

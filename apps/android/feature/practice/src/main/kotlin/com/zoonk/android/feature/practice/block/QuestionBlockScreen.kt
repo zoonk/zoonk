@@ -42,11 +42,12 @@ import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.CatchUpLine
 import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.SessionDayProgress
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.feature.session.toDayStep
-import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
@@ -66,14 +67,6 @@ fun QuestionBlockScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    // The session's own day says whether the exam is tomorrow; Today has it read already.
-    val examTomorrow =
-        remember(route) {
-            ((app.today.today.state.value as? LoadState.Loaded)?.value as? TodayRead.Day)
-                ?.day
-                ?.takeIf { it.sessionId?.toString() == route.sessionId }
-                ?.examTomorrow == true
-        }
     QuestionBlock(
         route.sessionId,
         route.blockId,
@@ -81,7 +74,6 @@ fun QuestionBlockScreen(
         navigator,
         onClose = navigator::closeTask,
         onLeave = navigator::leaveTaskFor,
-        examTomorrow = examTomorrow,
     )
 }
 
@@ -98,7 +90,6 @@ fun QuestionBlock(
     navigator: AppNavigator,
     onClose: () -> Unit,
     onLeave: (AppRoute) -> Unit,
-    examTomorrow: Boolean = false,
     finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
 ) {
     val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
@@ -111,7 +102,7 @@ fun QuestionBlock(
         viewModel(
             key = "block:$blockId:${runAccount(app)}",
         ) { QuestionBlockViewModel(key, app.questionBlocks, app.studyOpener, app.focusTests) }
-    QuestionBlockContent(viewModel, app, navigator, onClose, onLeave, examTomorrow, finished)
+    QuestionBlockContent(viewModel, app, navigator, onClose, onLeave, finished)
 }
 
 @Composable
@@ -121,7 +112,6 @@ internal fun QuestionBlockContent(
     navigator: AppNavigator,
     onClose: () -> Unit,
     onLeave: (AppRoute) -> Unit,
-    examTomorrow: Boolean = false,
     finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
 ) {
     val loaded by viewModel.block.collectShown()
@@ -142,7 +132,7 @@ internal fun QuestionBlockContent(
                 val phase = shown.phase
                 when {
                     phase !is RunPhase.Finished -> {
-                        Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
+                        Runner(read, shown, viewModel, app, navigator, close)
                     }
 
                     finished != null -> {
@@ -221,6 +211,8 @@ internal fun BlockFinished(
         ) {
             completion?.let {
                 MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt()))
+                CatchUpLine(it.dayProgress.catchUp)
+                SessionDayProgress(it)
                 DayMoment(it, buddy.look, buddy.name)
                 it.finishedChapter?.let { finished -> FinishedChapterMoment(finished, app, navigate) }
             }
@@ -238,7 +230,6 @@ internal fun Runner(
     app: AppContainer,
     navigator: AppNavigator,
     onClose: () -> Unit,
-    examTomorrow: Boolean = false,
 ) {
     val saveReport = rememberSaveFailureReport(app, "question-block")
     val detail = read.detail
@@ -285,7 +276,6 @@ internal fun Runner(
                     draft = draft,
                     onDraft = { answer -> saved = Draft(run.index, question.itemId, answer) },
                     netScored = isNetScored(question, detail),
-                    examTomorrow = examTomorrow,
                 ) { if ((run.phase as? RunPhase.Checked)?.feedback?.pauseSuggested == true) PauseSuggestion(viewModel) }
             }
         }

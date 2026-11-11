@@ -108,12 +108,7 @@ export function SessionBlockClient({
       exitHref={EXIT_HREF}
       key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
       lessonHref={lessonHref}
-      session={{
-        blocks: session.blocks,
-        examTomorrow: session.examTomorrow,
-        id: session.id,
-        minutes: session.minutes,
-      }}
+      session={{ blocks: session.blocks, id: session.id, minutes: session.minutes }}
       tutor={questionTutor}
     />
   );

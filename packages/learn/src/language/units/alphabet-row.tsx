@@ -62,15 +62,17 @@ export function AlphabetRow({
 
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            busy={isPending}
-            icon={<SkipForwardIcon aria-hidden="true" />}
-            onClick={skip}
-            size="sm"
-            variant="outline"
-          >
-            {t("I can already read it")}
-          </Button>
+          <form action={() => skip()} className="contents">
+            <Button
+              busy={isPending}
+              icon={<SkipForwardIcon aria-hidden="true" />}
+              size="sm"
+              type="submit"
+              variant="outline"
+            >
+              {t("I can already read it")}
+            </Button>
+          </form>
           {failed && <ChangeSaveError />}
         </div>
       )}

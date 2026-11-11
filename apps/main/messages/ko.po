@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -47,7 +48,6 @@ msgstr "홈"
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/footer-explore-links.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "코스 둘러보기"
@@ -207,7 +207,6 @@ msgstr "오늘"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
@@ -949,21 +948,6 @@ msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
 msgstr "목표를 이룰 때까지 매일 무엇을 공부할지, 어떤 내용을 다룰지 확인해요."
 
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "NIpBgv"
-msgid "Your plan comes after a few questions"
-msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "mMlLhC"
-msgid "Answer them and we'll plan every day until you reach your goal."
-msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "계속하기"
-
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
@@ -1014,10 +998,11 @@ msgctxt "h6bnZW"
 msgid "Switch to this goal"
 msgstr "이 목표로 전환하기"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 일시 중지해 이 목표를 다시 진행하거나, Plus를 구독해 여러 목표를 함께 진행해 보세요."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1098,6 +1083,16 @@ msgstr "{goal} 계획을 세우려면 몇 가지 답변이 더 필요해요."
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "설정 중"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "작성한 내용"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
 msgctxt "-3M8u-"
@@ -1625,10 +1620,11 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "많음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "-eNLo_"
-msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {학습 없음} other {활동 #개}}"
+msgctxt "FjcEak"
+msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{count, plural, =0 {학습 없음} other {활동 #개}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1687,15 +1683,17 @@ msgctxt "AxMhQr"
 msgid "High"
 msgstr "높음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "5ZmEgv"
-msgid "{date} · No Energy recorded"
-msgstr "{date} · 에너지 기록 없음"
+msgctxt "VmQeBl"
+msgid "No Energy recorded"
+msgstr "에너지 기록 없음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "beOKv0"
-msgid "{date} · {percentage} Energy"
-msgstr "{date} · 에너지 {percentage}"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
+msgstr "에너지 {percentage}"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1825,6 +1823,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "최근 90일 동안 정답률이 가장 높았던 때예요."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, other {응답 #개}}, 패턴 파악에 {minimum, number}개 필요"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "정답률이 가장 높은 요일"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "요일별"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "가장 잘하는 시간대"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "시간대별"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1844,21 +1877,6 @@ msgstr "오후"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "저녁"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "요일별"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "시간대별"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1899,18 +1917,6 @@ msgstr "아직 답변이 부족해요"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "정답률이 가장 높은 요일"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "가장 잘하는 시간대"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"
@@ -2171,11 +2177,11 @@ msgctxt "Fvi-xC"
 msgid "Tests and exams"
 msgstr "시험 준비"
 
-#. {exams} lists the exams people in your country study for, such as “Enem, vestibular, concurso ou OAB”, and opens the sentence. In Brazilian Portuguese: “{exams}: o plano segue as matérias e os tópicos da sua prova. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola: o plano segue as matérias e os tópicos dela. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "V41OCV"
-msgid "{exams}: your plan follows your exam's subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
-msgstr "{exams}: 시험 과목과 주제에 맞춰 계획을 짜요. 시험이 가까워지면 실제 시험 형식과 제한 시간에 맞춘 모의고사로 예상 점수와 부족한 부분을 확인해요."
+msgctxt "3tM-ty"
+msgid "Any exam, such as {exams}: your plan follows its subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
+msgstr "{exams} 등 어떤 시험이든 과목과 주제에 맞춰 계획을 세워요. 시험이 가까워지면 실제 시험과 같은 형식과 제한 시간으로 모의고사를 보며 예상 점수와 아직 부족한 부분을 확인할 수 있어요."
 
 #. In Brazilian Portuguese: “Tudo o que cai, dividido até o dia da prova.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2266,11 +2272,11 @@ msgctxt "Jd18jf"
 msgid "What if I miss a day?"
 msgstr "하루 공부를 못 하면 어떻게 되나요?"
 
-#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "qxT1fv"
-msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
-msgstr "거의 무엇이든 배울 수 있어요. {exam} 같은 시험, 대학 입시, 공무원 시험과 변호사 시험 준비부터 외국어, 새로운 직업에 필요한 공부, 배우고 싶은 주제까지 모두 가능해요. 목표를 나만의 말로 자유롭게 적어 보세요."
+msgctxt "r4pGG1"
+msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "{exams} 등 어떤 시험이든 좋아요. 언어 공부나 새로운 진로 준비는 물론, 배우고 싶은 어떤 주제든 좋아요. 목표를 자유롭게 적어 보세요."
 
 #. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2288,7 +2294,7 @@ msgctxt "kxCNVz"
 msgid "Still have questions? Write to <email></email>."
 msgstr "더 궁금한 점이 있나요? <email></email>로 문의해 주세요."
 
-#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no Enem” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
+#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
@@ -2513,6 +2519,117 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "챌린지"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "터미널에 표시된 코드와 같은지 확인해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "터미널에 표시된 코드"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "승인하면"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "CLI는 {email} 계정으로 계정, 계획, 답안 등 실제 서비스 데이터를 조회해요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "아무것도 변경할 수 없어요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "그 컴퓨터에서 로그아웃하기 전까지 로그인 상태가 유지돼요. 다만 30일 동안 사용하지 않으면 자동으로 로그아웃돼요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "승인"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "거부"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "이 코드는 만료됐어요. 새 코드를 받으려면 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "이 네트워크에서 너무 많이 시도했어요. 30분 후에 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "이미 사용된 코드예요. 새 코드를 받으려면 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "이 코드로 승인을 기다리는 로그인 요청이 없어요. 터미널에 표시된 코드와 같은지 확인하거나 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "터미널로 돌아가세요. 이제 CLI를 사용할 수 있어요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "로그인했어요"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLI 접근이 허용되지 않았어요. 이 페이지를 닫아도 돼요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "로그인 거부됨"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "{email} 계정은 직원 계정이 아니어서 CLI에 접근 권한이 부여되지 않았어요. 직원 계정으로 로그인한 다음 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "로그인하려면 Zoonk 직원 계정이 필요해요"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "직접 시작한 로그인만 승인하세요. 다른 사람이 보낸 링크라면 거부하세요."
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Zoonk CLI 로그인"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "먼저 Zoonk 직원 계정으로 로그인하세요. 로그인하면 이 페이지로 돌아와 CLI 로그인을 승인할 수 있어요."
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2664,11 +2781,6 @@ msgstr "하루에 얼마나 공부할까요?"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 완료하거나 일시 중지하세요."
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
@@ -3217,11 +3329,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "무료로 시작하세요. <rest>모든 기능이 필요할 땐 Plus를 선택하세요.</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "무료 요금제는 한 번에 목표 하나를 지원해요. Plus는 중요한 날까지 모든 목표를 지원해요."
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "무료 요금제로는 한 번에 {goals, plural, other {최대 #개의 목표}}를 관리할 수 있어요. Plus는 중요한 날까지 모든 목표를 함께 준비해요."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3418,16 +3530,6 @@ msgstr "이 코스를 시작하지 못했어요."
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {#개 완료(전체 {total, number}개)} other {#개 완료(전체 {total, number}개)}}"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "3snD6d"
-msgid "Popular courses"
-msgstr "인기 코스"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "VKb1MS"
-msgid "Categories"
-msgstr "분야"
 
 #: src/components/public/goal-example.ts
 msgctxt "IWESF6"

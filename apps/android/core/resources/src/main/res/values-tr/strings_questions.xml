@@ -3,15 +3,11 @@
 {
   "questions_correct": "e39c9bb83c9986afaddb5371323d2db858bd39d6fa039ee700eabf61ec3d5337",
   "questions_dont_know_yet": "6f1850eccdb7e49f6bf24cc441ed161ddc8ba688aaa10f38f0e7aa42193bf3d9",
-  "questions_drill_last_answer": "f45a03c3a065258b31cf956c08cafb4a94e51fe041561b7112b25d974ef58504",
   "questions_drill_no_guessing": "2e04c0020080db749a73a0283132419512058f8ea7facf048ba80c5885257fb7",
   "questions_drill_not_sure": "941f729f6be17382c7da16fc180cb6365abf714de2a808b988aad5e9a13ff356",
   "questions_drill_not_sure_praise": "cf5515ad003cb8962830b64675caef57a292b5c157221b1c421d0908b799510a",
   "questions_drill_open_lesson": "819a3e71e6a6f34d36c06b775c283eab7a5fbf7b2d1806842f3c5d4bd8fa1bea",
-  "questions_drill_read_carefully": "6d2a692aac43c430c25f45f3d6698ceaa21b3f6f275c4a2c09028e03b4d970c0",
-  "questions_drill_reteach": "fedbba2cff24f048cc20f37346ea72d912d1a2980fe1f79738d6ad76d51ef81e",
   "questions_drill_reteach_ideas": "ed98465de4c64427a004309787937e3a35b1e8726967ce077fe6c17827803020",
-  "questions_drill_retry": "9f4fc7575843c994bfd607f98baecdafffd905aa1ba6b8cdb4b46ccc1d0c3abf",
   "questions_drill_seconds_left": "910fca07ccfb73ff358ab54c19fec5a6a65d2bc1bef9df26d779df0ce6136406",
   "questions_drill_spot_the_trap": "fb83bb3dc739516254165106a632c1cf45bfd21bfd6a8f1924f3e3a41c1d34bb",
   "questions_drill_start": "bbe316ef29a81cefa29a5168a576ef8b91f4d122916b6dac9339b3a5569c549a",
@@ -49,7 +45,6 @@
   "questions_right": "1e3c407b6ace6503bf082bbfb70206b014fb72077ce04d5c9cdc1f02dc1714b0",
   "questions_right_answer": "55435b8a3886ea9caed7c09d88879bda07a6bba22c3a52e7d1b70528b5da08c9",
   "questions_saved": "464d9fc72b75f9fcb6fa942d2fce644496f6fcb644bc4520685fcf50901056d2",
-  "questions_saved_tomorrow": "0b39460525e15deab4276c89e0bd1bd7d4c077abf78d205be0d4a5b0fd317520",
   "questions_set_place_audio": "2c1a7442f1e1aafda92ec96c87062eaea317d2de70f6149adb5bc7d981165dfb",
   "questions_set_place_case": "5d8e66fcbfc06d670417cf53db81e40472020c20ccb7ec10a610c7cf50c190b8",
   "questions_set_place_chart": "e4d04c0f8083e9ceacc071d2ee85eaf00888410c688b366bfe590db999691415",
@@ -116,7 +111,6 @@
         <item quantity="other">%d yanlış düzeltildi. Artık defterinde değiller.</item>
     </plurals>
     <string name="questions_saved">Yanlış defterine kaydedildi</string>
-    <string name="questions_saved_tomorrow">Yanlış defterine kaydedildi · yarın tekrar gelecek</string>
     <string name="questions_show_less">Daha az göster</string>
     <string name="questions_read_again">Tamamını tekrar oku</string>
     <string name="questions_set_place_audio">Bu ses kaydındaki %1$d. soru (toplam %2$d)</string>
@@ -127,18 +121,13 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Çıkmış sınav sorusu · %1$s</string>
     <string name="questions_drill_reteach_ideas">Önce kavramı öğren, sonra uygula.</string>
-    <string name="questions_drill_reteach">Gözden kaçırdığın bir kavrama geri dönelim.</string>
-    <string name="questions_drill_read_carefully">Cevaplamadan önce her kelimeyi oku.</string>
     <string name="questions_drill_spot_the_trap">Burada bir tuzak var. Cevaplamadan önce onu bul.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">Sınavda olduğu gibi, soru başına %d saniye.</item>
         <item quantity="other">Sınavda olduğu gibi, soru başına %d saniye.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil.</string>
-    <string name="questions_drill_retry">Tekrar dene.</string>
     <string name="questions_drill_start">Sorulara başla</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">Geçen seferki cevabın: %1$s</string>
     <string name="questions_drill_timed_out">Süre doldu. Bu soru yanlış sayıldığı için daha sonra tekrar karşına çıkacak.</string>
     <string name="questions_drill_not_sure_praise">İyi yaptın. Emin olmadığını söylemek tahmin etmekten daha iyi.</string>
     <string name="questions_drill_trap">Tuzak:</string>

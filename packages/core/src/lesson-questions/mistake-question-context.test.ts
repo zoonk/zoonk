@@ -16,6 +16,8 @@ import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
+const YESTERDAY = new Date(Date.now() - 86_400_000);
+
 async function setup() {
   const [user, { lesson, steps }] = await Promise.all([
     userFixture(),
@@ -220,6 +222,7 @@ describe("Original notebook questions", () => {
     });
 
     const mistake = await mistakeFixture({
+      createdAt: YESTERDAY,
       itemId: item.id,
       skillId: item.skillId,
       userId: user.id,
@@ -287,6 +290,7 @@ describe("Original notebook questions", () => {
     });
 
     const mistake = await mistakeFixture({
+      createdAt: YESTERDAY,
       itemId: item.id,
       skillId: skill.id,
       snapshot: { question: "Original numeric question", replay: { item, kind: "item", math } },

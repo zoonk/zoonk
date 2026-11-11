@@ -1,5 +1,6 @@
 "use client";
 
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -37,9 +38,11 @@ export function useGoalCreation() {
 
   const create = ({
     onCreated,
+    onLimit,
     run,
   }: {
     onCreated: (goalId: string) => void;
+    onLimit?: () => void;
     run: () => Promise<CreateGoalsOutcome>;
   }) =>
     startCreating(async () => {
@@ -64,7 +67,17 @@ export function useGoalCreation() {
         message: createError(outcome),
         needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
       });
+
+      if (outcome.status === "limitReached") {
+        onLimit?.();
+      }
     });
 
-  return { clearError: () => setError(null), create, error, isCreating };
+  const clearActiveGoalsError = (draft: OnboardingDraftView) => {
+    if (draft.activeGoalsLeft !== 0) {
+      setError((current) => (current?.limit === "activeGoals" ? null : current));
+    }
+  };
+
+  return { clearActiveGoalsError, clearError: () => setError(null), create, error, isCreating };
 }

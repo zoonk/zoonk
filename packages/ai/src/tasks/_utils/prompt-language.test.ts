@@ -10,6 +10,21 @@ describe(getPromptLanguageName, () => {
     expect(getPromptLanguageName({ language: "ar", userLanguage: "en" })).toBe("Arabic");
     expect(getPromptLanguageName({ language: "ar", userLanguage: "pt" })).toBe("Árabe");
   });
+
+  it("names a country's variety in its own language", () => {
+    expect(getPromptLanguageName({ language: "es", region: "AR" })).toBe("Español (Argentina)");
+    expect(getPromptLanguageName({ language: "pt", region: "PT" })).toBe("Português (Portugal)");
+
+    expect(getPromptLanguageName({ language: "en", region: "GB" })).toBe(
+      "English (United Kingdom)",
+    );
+  });
+
+  it("keeps the language's name without a country or for the one lessons teach", () => {
+    expect(getPromptLanguageName({ language: "es", region: null })).toBe("Español de México");
+    expect(getPromptLanguageName({ language: "es", region: "MX" })).toBe("Español de México");
+    expect(getPromptLanguageName({ language: "en", region: "US" })).toBe("US English");
+  });
 });
 
 describe(getLanguagePromptContext, () => {

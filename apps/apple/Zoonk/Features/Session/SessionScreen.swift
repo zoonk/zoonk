@@ -54,6 +54,14 @@ struct SessionScreen: View {
           Group {
             if let sessionID = today.sessionID {
               SessionContent(sessionID: sessionID)
+            } else if let view = today.day, view.session.nextBlock != nil {
+              // A day not opened yet shows its next step as Today read it; Start opens the day.
+              NextStopView(
+                day: view.session, sessionID: nil, goalID: view.session.goalId ?? view.goal.id,
+                moment: nil
+              )
+              // Covering Today, it holds Today's read itself, so a Start the day refused reads it again.
+              .loads(today.today)
             } else {
               ContentUnavailableView {
                 Label {
@@ -94,6 +102,7 @@ struct SessionScreen: View {
 private struct SessionContent: View {
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
+  @Environment(TodayStore.self) private var today
 
   let sessionID: String
 
@@ -101,16 +110,21 @@ private struct SessionContent: View {
     let session = store.session(id: sessionID)
     let playback = router.playback
     let stopped = playback.stoppedSessionID == sessionID
+    let endsSession =
+      playback.moment.map { $0.sessionId == sessionID && $0.sessionCompleted } ?? false
 
     Group {
-      switch session.state {
-      case .loaded(let day):
-        if stopped || day.nextBlock == nil {
+      // One branch for Today's day and the session's own, so the read landing keeps this screen
+      // and a Start already tapped on it.
+      if let day = shownDay(session, moment: playback.moment) {
+        if stopped || (day.nextBlock == nil && !endsSession) {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
-          NextStopView(day: day, sessionID: sessionID, moment: playback.moment)
+          NextStopView(
+            day: day, sessionID: sessionID, goalID: day.goalId ?? today.day?.goal.id,
+            moment: playback.moment)
         }
-      case .failed(let error) where error != .unauthorized:
+      } else if case .failed(let error) = session.state, error != .unauthorized {
         ContentUnavailableView {
           Label {
             Text("The session didn't load", tableName: "Session", comment: "Load failed")
@@ -126,27 +140,31 @@ private struct SessionContent: View {
           .buttonStyle(.outline)
         }
         .lonePage()
-      default:
-        if let moment = playback.moment {
-          ZoonkList {
-            Section {
-              MomentSummary(moment: moment, title: nil)
-            }
-
-            // The buddy acts once, on the next stop's screen.
-            DayMomentSections(result: moment.day)
-              .environment(\.celebrates, false)
-
-            Section {
-              ProgressView()
-                .frame(maxWidth: .infinity)
-            }
-            .listRowBackground(Color.clear)
+      } else if let moment = playback.moment {
+        ZoonkList {
+          Section {
+            MomentSummary(moment: moment, title: nil)
           }
-        } else {
-          ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+          // The buddy acts once, on the next stop's screen.
+          Group {
+            Section {
+              DayProgressBlock(moment: moment)
+            }
+
+            DayMomentSections(result: moment.day)
+          }
+          .environment(\.celebrates, false)
+
+          Section {
+            ProgressView()
+              .frame(maxWidth: .infinity)
+          }
+          .listRowBackground(Color.clear)
         }
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
     .loads(session)
@@ -158,6 +176,23 @@ private struct SessionContent: View {
     }
     .completionMoments(playback.moment?.day)
   }
+
+  /// Until the session's first read lands, the day as Today holds it, where the tap came from. A
+  /// block just finished waits for the read, since Today's day may not show it done.
+  private func shownDay(_ session: Resource<StudyDay>, moment: BlockMoment?) -> StudyDay? {
+    switch session.state {
+    case .loaded(let day):
+      return day
+    case .idle, .loading:
+      guard moment == nil, let held = today.day?.session, held.id == sessionID else {
+        return nil
+      }
+
+      return held
+    case .empty, .failed:
+      return nil
+    }
+  }
 }
 
 private struct NextStopView: View {
@@ -166,7 +201,9 @@ private struct NextStopView: View {
   @Environment(TodayStore.self) private var today
 
   let day: StudyDay
-  let sessionID: String
+  /// Nil while the day isn't opened.
+  let sessionID: String?
+  let goalID: String?
   let moment: BlockMoment?
 
   @State private var action: Task<Void, Never>?
@@ -180,9 +217,22 @@ private struct NextStopView: View {
   @State private var waitedFor: String?
   /// The goal's warm-up deck, while the lesson written is its first.
   @State private var warmUp: FirstLessonWarmUp?
+  @State private var isReviewIntroOpen: Bool
   @AccessibilityFocusState private var isStartFocused: Bool
 
-  private var next: StudyBlock? { day.nextBlock }
+  init(day: StudyDay, sessionID: String?, goalID: String?, moment: BlockMoment?) {
+    self.day = day
+    self.sessionID = sessionID
+    self.goalID = goalID
+    self.moment = moment
+    _isReviewIntroOpen = State(initialValue: ReviewIntro.opensAtFirst(goalID: goalID))
+  }
+
+  /// The step a tap on another screen asked for, until it's done; else the day's next.
+  private var next: StudyBlock? {
+    day.blocks.first { $0.id != nil && $0.id == router.playback.shownBlockID && !$0.isFinished }
+      ?? day.nextBlock
+  }
 
   var body: some View {
     // The session never opens the lesson on its own: moving on only takes the card away. It says
@@ -262,23 +312,28 @@ private struct NextStopView: View {
         MomentSummary(moment: moment, title: title(of: moment))
       }
 
+      Section {
+        DayProgressBlock(moment: moment)
+          .celebratesOnce(id: moment)
+      }
+
       DayMomentSections(result: moment.day)
 
       if let chapter = moment.finishedChapter {
         FinishedChapterSection(chapter: chapter)
       }
-    }
+    } else {
+      Section {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "\(day.sessionBar.completed) of \(day.sessionBar.total) done",
+            tableName: "Session", comment: "How far the day's session is"
+          )
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
 
-    Section {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
-          tableName: "Session", comment: "How far the day's session is"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-
-        MeterParts(parts: day.meterParts)
+          DaySegments(segments: day.daySegments.map(\.mark))
+        }
       }
     }
   }
@@ -292,6 +347,10 @@ private struct NextStopView: View {
 
         if let lessonLine {
           lessonLine
+        }
+
+        if next.kind == .review {
+          ReviewIntro(block: next, isOpen: $isReviewIntroOpen)
         }
       } header: {
         SectionTitle(Text("Up next", tableName: "Session", comment: "The session's next block"))
@@ -323,31 +382,47 @@ private struct NextStopView: View {
   private func actions(isHeld: Bool) -> some View {
     Section {
       VStack(spacing: 12) {
-        if let alternative, isLessonWorkRunning || isLessonUnavailable {
-          mainButton(alternativeTitle(alternative), block: alternative)
-        } else if let next, !isLessonUnavailable, !isHeld {
-          mainButton(continueTitle, block: next)
-            .disabled(isLessonWorkRunning)
-            .accessibilityFocused($isStartFocused)
-        }
+        if moment?.sessionCompleted == true {
+          BusyButton(isBusy: false, icon: .forward) {
+            router.playback.seeSummary()
+          } label: {
+            Text(
+              "See today's summary", tableName: "Session",
+              comment: "Moves on from the block that completed today's session")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
+        } else {
+          if let alternative, isLessonWorkRunning || isLessonUnavailable {
+            mainButton(alternativeTitle(alternative), block: alternative)
+          } else if let next, !isLessonUnavailable, !isHeld {
+            mainButton(continueTitle, block: next)
+              .disabled(isLessonWorkRunning)
+              .accessibilityFocused($isStartFocused)
+          }
 
-        BusyButton(isBusy: isStopping, icon: .stop) {
-          stop()
-        } label: {
-          Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-        }
-        .buttonStyle(.outline)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
-        .disabled(isOpening)
+          // Main's `canStop`: a day with nothing done has nothing to stop.
+          if let sessionID, day.blocks.contains(where: \.isFinished) {
+            BusyButton(isBusy: isStopping, icon: .stop) {
+              stop(sessionID: sessionID)
+            } label: {
+              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            }
+            .buttonStyle(.outline)
+            .controlSize(.large)
+            .buttonSizing(.flexible)
+            .disabled(isOpening)
+          }
 
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't open the next step. Try again.", table: "Session",
-              comment: "Opening or stopping failed")
-          )
-          .typeStyle(.note)
+          if failed {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open the next step. Try again.", table: "Session",
+                comment: "Opening or stopping failed")
+            )
+            .typeStyle(.note)
+          }
         }
       }
     }
@@ -476,12 +551,12 @@ private struct NextStopView: View {
   }
 
   private func open(_ block: StudyBlock) {
+    ReviewIntro.noteStart(of: block, goalID: goalID)
     isOpening = true
     failed = false
 
     action = Task {
-      let result = await today.open(
-        block, as: block.id == next?.id ? .next : .block, sessionID: sessionID)
+      let result = await opening(block)
       isOpening = false
 
       switch result {
@@ -502,6 +577,21 @@ private struct NextStopView: View {
     }
   }
 
+  /// A day not opened yet opens with its next step, as Today's Start session does. A saved day opens
+  /// the block shown, which may be drawn from Today's older read: a block finished elsewhere comes
+  /// back to this screen instead of starting the one after it unseen.
+  private func opening(_ block: StudyBlock) async -> MutationResult<StudyDestination> {
+    guard let sessionID else {
+      guard let view = today.day else {
+        return .obsolete
+      }
+
+      return await today.open(block, as: .next, in: view)
+    }
+
+    return await today.open(block, as: .block, sessionID: sessionID)
+  }
+
   /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner
   /// still on the card can't open the lesson with a tap meant for an answer.
   private func offerWrittenLesson() {
@@ -513,7 +603,7 @@ private struct NextStopView: View {
     AccessibilityNotification.Announcement(announcement).post()
   }
 
-  private func stop() {
+  private func stop(sessionID: String) {
     isStopping = true
     failed = false
 
@@ -562,7 +652,10 @@ private struct NextStopView: View {
         }
       } else {
         lessonStatus = nil
-        await store.session(id: sessionID).refresh()
+
+        if let sessionID {
+          await store.session(id: sessionID).refresh()
+        }
       }
 
       guard writing == .preparing, lessonStatus != "failed" else {
@@ -721,12 +814,9 @@ private struct MomentSummary: View {
         .foregroundStyle(.mutedForeground)
       }
 
-      if let date = moment.comesBackOn.flatMap(studyDate) {
-        Text(
-          "Review on \(date.formatted(.studyDay.month(.abbreviated).day()))", tableName: "Session",
-          comment: "When the block's lesson comes back"
-        )
-        .foregroundStyle(.mutedForeground)
+      if let catchUp = moment.dayProgress.catchUp {
+        CatchUpLine(catchUp: catchUp)
+          .padding(.top, 8)
       }
     }
   }

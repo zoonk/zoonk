@@ -5,12 +5,17 @@ import {
   shouldRefillAfterEntitlementLapse,
   withoutLockedPhaseChallenges,
 } from "../../checkpoints/_utils/phase-challenge-access";
+import { getStartOfLocalDay } from "../../learner/_utils/local-time";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
 import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
+import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
+import { getDayCatchUp, getDayProgress } from "./day-progress";
 import { loadSessionBlockViews } from "./load-session-block-views";
+import { getDayOutlines } from "./outlining-stand-ins";
 import { loadExamPrepAccess } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { getNextBlockId, getSessionBar } from "./session-view";
@@ -82,7 +87,30 @@ export async function loadSessionTime({
     reserved,
   });
 
-  return { minutes, plan, session };
+  return { minutes, plan, reserved, session, trialEnded: access?.trialEnded ?? false };
+}
+
+/** Whether the lessons the day holds time for are being written now, as Today says it. */
+async function areLessonsComing({
+  plan,
+  reserved,
+  session,
+}: {
+  plan: { graph: unknown } | null;
+  reserved: boolean;
+  session: StudySessionRow;
+}): Promise<boolean> {
+  if (!reserved || !session.goal) {
+    return false;
+  }
+
+  const outlines = await getDayOutlines({
+    goal: session.goal,
+    graph: plan?.graph,
+    localDate: session.localDate,
+  });
+
+  return outlines === "awaiting";
 }
 
 /** Read after settlement: a concurrent append must appear in both the queue and its next step. */
@@ -102,14 +130,39 @@ export async function loadCompletionQueue({
     where: { id: sessionId, userId },
   });
 
-  const { minutes, plan, session } = await loadSessionTime({ stored, timeZone, userId });
+  const [{ minutes, plan, reserved, session, trialEnded }, carriedItemIds] = await Promise.all([
+    loadSessionTime({ stored, timeZone, userId }),
+    loadCarriedItemIds(stored.goalId),
+  ]);
 
-  const projection = await loadSessionBlockViews({ plan, session, timeZone, userId });
+  const [projection, lessonsComing] = await Promise.all([
+    loadSessionBlockViews({ plan, session, timeZone, userId }),
+    areLessonsComing({ plan, reserved, session }),
+  ]);
+
   const nextBlockId = getNextBlockId(session.blocks);
   const nextBlock = projection.blocks.find((block) => block.id === nextBlockId) ?? null;
+  const sessionBar = getSessionBar(session.blocks);
+  const sessionCompleted = session.status === "completed" && nextBlockId === null;
 
   return {
     blocks: projection.blocks,
+    dayProgress: getDayProgress({
+      catchUp: getDayCatchUp({
+        carriedItemIds,
+        dayStart: getStartOfLocalDay({
+          localDate: session.localDate,
+          timeZone: getAnswerTimeZone({ goal: session.goal, timeZone }),
+        }),
+        freshStart: session.freshStart,
+        items: plan?.items ?? [],
+        trialEnded,
+      }),
+      complete: sessionCompleted,
+      lessonsComing,
+      reserved,
+      sessionBar,
+    }),
     deferredLessonsCount: readBlockPayload(
       session.blocks.find((block) => block.id === blockId) ?? { payload: {} },
     ).deferredLessonsCount,
@@ -124,8 +177,8 @@ export async function loadCompletionQueue({
         }
       : null,
     nextBlockId,
-    sessionBar: getSessionBar(session.blocks),
-    sessionCompleted: session.status === "completed" && nextBlockId === null,
+    sessionBar,
+    sessionCompleted,
     sessionId,
   };
 }

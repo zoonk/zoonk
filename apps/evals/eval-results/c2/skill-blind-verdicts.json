@@ -1,0 +1,731 @@
+{
+  "method": "Blind read of 15 anonymous A/B pairs against packages/ai/src/tasks/language/skill-levels.prompt.md: earliest CEFR level at which the learner can handle the situation as named and described, judged by complexity (predictability, how much to understand/say/explain/adapt, language demands) rather than topic, and skills compared with each other so an easier situation never sits above a harder one in the same band. Only the skills where A and B disagree were judged. A disagreement counts as an error only where the CEFR global scale in the prompt, a well-known CEFR descriptor, or an inversion against another skill in the same output shows it; otherwise it is recorded as defensible either way. Every placement on both sides fell inside its band, and both sides return concrete levels (A1/B2...) rather than lower/upper, so neither of those separates the sides.",
+  "pairs": [
+    {
+      "id": "p1",
+      "winner": "B",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 1,
+          "name": "Answer familiar questions in English",
+          "A": "A1",
+          "B": "A2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "Identity and everyday activities are the A1 global descriptor ('asks and answers simple questions about where they live, people they know'); 'familiar experiences' nudges toward A2 but does not require it."
+        },
+        {
+          "skill": 7,
+          "name": "Distinguish spoken English sounds",
+          "A": "A1",
+          "B": "A2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "B places hearing a sound distinction (A2) above producing the same distinctions (#2 Articulate English sounds, A1 in B). Perceiving a contrast is not harder than producing it, so B inverts an easier skill above a harder one."
+        },
+        {
+          "skill": 17,
+          "name": "Complete IELTS reading gaps",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Summary completion needs paraphrase recognition (B2-ish) but sentence/note completion is detail location (B1). Either is sound."
+        },
+        {
+          "skill": 18,
+          "name": "Connect clauses accurately",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "Coordination and subordination for clear meaning is the B1 'simple connected text' threshold."
+        },
+        {
+          "skill": 19,
+          "name": "Deliver an IELTS Part 2 talk",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "Part 2 cue cards are familiar-topic descriptions; the B1 sustained-monologue descriptor ('sustain a straightforward description as a linear sequence of points') covers it."
+        },
+        {
+          "skill": 27,
+          "name": "Explain opinions aloud",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "strong",
+          "reason": "'Express a view and make its supporting reasons easy to follow' is the B1 global line ('briefly giving reasons and explanations'). B2's distinguishing line (viewpoint with advantages and disadvantages) is #15 Compare alternatives, which both put at B2. A overplaces."
+        },
+        {
+          "skill": 32,
+          "name": "Infer word meanings from context",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "CEFR inferring descriptor at B1: 'can extrapolate the meaning of occasional unknown words from the context'. Nothing in the description asks for more."
+        },
+        {
+          "skill": 39,
+          "name": "Manage IELTS listening questions",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "A matches the other two 'Manage IELTS' skills (B2); B matches #16 listening gaps (B1). Neither is shown wrong."
+        }
+      ],
+      "errors_A": [
+        "#27 Explain opinions aloud at B2 overplaces a B1 global-scale task",
+        "#32 Infer word meanings at B2 is above the B1 CEFR descriptor"
+      ],
+      "errors_B": [
+        "#7 Distinguish spoken sounds at A2 sits above #2 Articulate sounds at A1 (inversion)"
+      ],
+      "reason": "Close. A's clearest miss (#27) contradicts the rubric's own B1 wording, and #32 is also above its CEFR descriptor; B's clearest miss is the #7/#2 inversion. Leans otherwise split. B edges it on the stronger, rubric-backed calls."
+    },
+    {
+      "id": "p2",
+      "winner": "A",
+      "confidence": "high",
+      "disagreements": [
+        {
+          "skill": 6,
+          "name": "Recognize paraphrases in texts",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Text paraphrase below audio paraphrase (#5, B2 in both) is coherent; B2 is also sound."
+        },
+        {
+          "skill": 7,
+          "name": "Repair unclear spoken responses",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "CEFR B1 repair/compensation ('correct mix-ups', 'use a simple word meaning something similar') already covers rephrasing and recovering."
+        },
+        {
+          "skill": 10,
+          "name": "Select key features of visuals",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Mostly analytical selection feeding #19 (B2 in both); either level is arguable."
+        },
+        {
+          "skill": 11,
+          "name": "Support claims with reasons and examples",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "Reasons plus concrete examples is the B1 'briefly giving reasons and explanations' line; it does not ask for weighing alternatives."
+        },
+        {
+          "skill": 25,
+          "name": "Follow arguments in academic texts",
+          "A": "C1",
+          "B": "C2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "Following claims, reasons and counterpoints in demanding texts is C1 ('understands a wide range of demanding, longer texts'). C2 is 'virtually everything with ease'."
+        },
+        {
+          "skill": 26,
+          "name": "Identify a writer's stance",
+          "A": "C1",
+          "B": "C2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "Telling assertion from reported or hedged claims is C1 'recognizes implicit meaning'."
+        },
+        {
+          "skill": 31,
+          "name": "Qualify and defend spoken views",
+          "A": "C1",
+          "B": "C2",
+          "favored": "A",
+          "strength": "strong",
+          "reason": "Near-duplicate of #22 'Develop and defend answers to Part 3 questions', which B itself puts at C1. B splits the same situation across levels."
+        },
+        {
+          "skill": 32,
+          "name": "Revise IELTS writing responses",
+          "A": "C1",
+          "B": "C2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "Checking one's own report/essay against criteria is not harder than writing it (#34 Task 2 essays, C1 in B); C2 inverts revision above production."
+        },
+        {
+          "skill": 33,
+          "name": "Weigh arguments and concessions",
+          "A": "C1",
+          "B": "C2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "Comparing views with concessions while holding a position is C1 well-structured argument; B places it above #34 writing the argument essay (C1)."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": [
+        "#31 at C2 while near-duplicate #22 is C1",
+        "#32 and #33 at C2 above #34 Write Task 2 essays at C1",
+        "#25 and #26 overplaced at C2",
+        "pushes 5 of 15 C-band skills to C2 for ordinary academic-IELTS tasks"
+      ],
+      "reason": "Same B-band disagreements are mild leans, but B's C2 placements contradict its own C1 placements of near-identical or harder skills. A is internally consistent."
+    },
+    {
+      "id": "p3",
+      "winner": "tie",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 8,
+          "name": "Perguntar quanto é o aluguel",
+          "A": "A1",
+          "B": "A2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "'How much is...?' is A1; understanding what the rent includes leans A2. Both stay below #3 lease comprehension (A2)."
+        },
+        {
+          "skill": 30,
+          "name": "Perguntar sobre a vaga e a equipe",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "Prepared questions and answers about concrete work matters fit B1 ('main points of clear standard speech on familiar matters at work')."
+        },
+        {
+          "skill": 32,
+          "name": "Relacionar suas habilidades à vaga",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "Close to #12 'connect your experience to the job' (B1 in both); A splits two similar situations, though #32 does add adapting to what the interviewer said."
+        }
+      ],
+      "errors_A": ["#32 at B2 while similar #12 is B1 (weak)"],
+      "errors_B": ["#30 at B2 is a likely overplacement (weak)"],
+      "reason": "One weak lean each, no substantiated error on either side."
+    },
+    {
+      "id": "p4",
+      "winner": "B",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 7,
+          "name": "Reconhecer sons da fala espanhola",
+          "A": "A2",
+          "B": "A1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Sound recognition is foundational (A1) but segmenting the speech flow can be A2."
+        },
+        {
+          "skill": 13,
+          "name": "Adequar o registro escrito",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "CEFR sociolinguistic B2 is confident formal/informal register; adjusting greeting and tú/usted is B1-level convention. Either fits the description."
+        },
+        {
+          "skill": 15,
+          "name": "Analisar argumentos na fala",
+          "A": "B1",
+          "B": "B2",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "Separating thesis from justifications and examples in interviews and talks is B2 ('complex lines of argument'). A puts it below #14, the same analysis in writing (B2), though real-time speech is not easier than text."
+        }
+      ],
+      "errors_A": ["#15 spoken argument analysis at B1 below written argument analysis #14 at B2"],
+      "errors_B": [],
+      "reason": "Only #15 separates them, in B's favor."
+    },
+    {
+      "id": "p5",
+      "winner": "tie",
+      "confidence": "medium",
+      "disagreements": [
+        {
+          "skill": 6,
+          "name": "Interpretar imagens oralmente no B2",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Describing a situation beyond a list of objects is B1 description; interpreting and speculating leans B2. The exam name in the title should not decide it."
+        },
+        {
+          "skill": 17,
+          "name": "Reformular ideias oralmente",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "B1 compensation (simple substitute word) vs B2 circumlocution and self-correction of ambiguity; the description sits between them."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": [],
+      "reason": "Two borderline skills, each defensible on both sides."
+    },
+    {
+      "id": "p6",
+      "winner": "B",
+      "confidence": "medium",
+      "disagreements": [
+        {
+          "skill": 3,
+          "name": "Catch numbers and spelled details",
+          "A": "A1",
+          "B": "A2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "A1 listening covers numbers, prices and times spoken slowly; 'accurately' and spelled names push slightly but not clearly to A2."
+        },
+        {
+          "skill": 7,
+          "name": "Distinguish spoken English sounds",
+          "A": "A1",
+          "B": "A2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "B again puts hearing a distinction (A2) above producing it (#2, A1 in B)."
+        },
+        {
+          "skill": 18,
+          "name": "Connect clauses accurately",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Mirrors #36: each side places one of clause-linking/sentence-linking at B2. Neither pairing is clearly wrong."
+        },
+        {
+          "skill": 19,
+          "name": "Deliver an IELTS Part 2 talk",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "B1 sustained description of a familiar topic."
+        },
+        {
+          "skill": 27,
+          "name": "Explain opinions aloud",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "strong",
+          "reason": "B1 global-scale wording; A overplaces."
+        },
+        {
+          "skill": 29,
+          "name": "Follow connected English speech",
+          "A": "B1",
+          "B": "B2",
+          "favored": "B",
+          "strength": "strong",
+          "reason": "B1 is 'clear, standard speech'; reduced sounds at natural speed is the B2 native-speaker conversation line."
+        },
+        {
+          "skill": 34,
+          "name": "Label diagrams from passages",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "Matching labels to stated information is detail location, like #37 (B1 in both)."
+        },
+        {
+          "skill": 36,
+          "name": "Link ideas across sentences",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "See #18."
+        },
+        {
+          "skill": 39,
+          "name": "Manage IELTS listening questions",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p1."
+        }
+      ],
+      "errors_A": [
+        "#27 Explain opinions at B2 overplaces",
+        "#29 Follow natural-speed reduced speech at B1 underplaces"
+      ],
+      "errors_B": ["#7 at A2 above #2 at A1 (inversion)"],
+      "reason": "A has two well-supported errors in opposite directions (#27 up, #29 down) plus leans against it on #19 and #34; B's main miss is the #7 inversion."
+    },
+    {
+      "id": "p7",
+      "winner": "B",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 5,
+          "name": "Recognize paraphrases in audio",
+          "A": "B1",
+          "B": "B2",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "Matching question wording to different words heard once at speed is harder than the text version (#6, B1 in both); A flattens them, B separates them and matches #9 listening answers (B2)."
+        },
+        {
+          "skill": 7,
+          "name": "Repair unclear spoken responses",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "B1 repair/compensation."
+        },
+        {
+          "skill": 11,
+          "name": "Support claims with reasons and examples",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "lean",
+          "reason": "B1 'giving reasons and explanations'."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": [],
+      "reason": "Three leans, all toward B; no hard error either side."
+    },
+    {
+      "id": "p8",
+      "winner": "B",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 4,
+          "name": "Explicar o motivo da viagem na imigração",
+          "A": "A1",
+          "B": "A2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "Purpose and length of stay is a highly predictable, formulaic exchange (A1); A2 is also reasonable."
+        },
+        {
+          "skill": 8,
+          "name": "Perguntar quanto é o aluguel",
+          "A": "A1",
+          "B": "A2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p3."
+        },
+        {
+          "skill": 19,
+          "name": "Descrever um desacordo profissional",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "Narrating what happened and how it was discussed is B1 'describes experiences, events... briefly giving reasons', like #20 and #35 (B1 in both)."
+        },
+        {
+          "skill": 30,
+          "name": "Perguntar sobre a vaga e a equipe",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "As in p3."
+        },
+        {
+          "skill": 32,
+          "name": "Relacionar suas habilidades à vaga",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p3."
+        },
+        {
+          "skill": 34,
+          "name": "Relatar um erro e um aprendizado",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "Same B1 narrative-with-reasons task as #20 and #35, which A places at B1."
+        }
+      ],
+      "errors_A": ["#19 and #34 at B2 while equivalent work narratives #20 and #35 are B1"],
+      "errors_B": [],
+      "reason": "A's two narrative overplacements are inconsistent with its own B1 placements of equivalent narratives; B's differing calls are leans."
+    },
+    {
+      "id": "p9",
+      "winner": "B",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 7,
+          "name": "Reconhecer sons da fala espanhola",
+          "A": "A2",
+          "B": "A1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p4."
+        },
+        {
+          "skill": 15,
+          "name": "Analisar argumentos na fala",
+          "A": "B1",
+          "B": "B2",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "As in p4: A places spoken argument analysis below the written version (#14, B2)."
+        },
+        {
+          "skill": 23,
+          "name": "Distinguir indicativo e subjuntivo",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Recognizing the mood contrast (B1 in B) below producing nuance with it (#25, B2 in B) is coherent, and subjunctive transfers from Portuguese; B2 for the full range including hypotheses is also sound."
+        }
+      ],
+      "errors_A": ["#15 spoken argument analysis at B1 below written #14 at B2"],
+      "errors_B": [],
+      "reason": "Only #15 separates them, in B's favor."
+    },
+    {
+      "id": "p10",
+      "winner": "A",
+      "confidence": "low",
+      "disagreements": [
+        {
+          "skill": 6,
+          "name": "Interpretar imagens oralmente no B2",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p5."
+        },
+        {
+          "skill": 18,
+          "name": "Relacionar falantes e opiniões",
+          "A": "B1",
+          "B": "B2",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "B1 'follow main points of extended discussion' vs B2 'keep up with animated discussion'; matching viewpoints to voices fits either."
+        },
+        {
+          "skill": 19,
+          "name": "Relacionar textos e informações",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "CEFR B1 reading for information: 'gather information from different parts of a text, or from different texts, in order to fulfil a specific task'."
+        },
+        {
+          "skill": 21,
+          "name": "Revisar a precisão de textos",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "Self-revision of agreement, tenses and accents is B1 accuracy work; B2 self-correction is also arguable."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": [
+        "#19 at B2 is above the B1 CEFR descriptor for gathering information across texts"
+      ],
+      "reason": "Only #19 has descriptor support, in A's favor."
+    },
+    {
+      "id": "p11",
+      "winner": "A",
+      "confidence": "medium",
+      "disagreements": [
+        {
+          "skill": 19,
+          "name": "Deliver an IELTS Part 2 talk",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "B1 sustained description of a familiar topic."
+        },
+        {
+          "skill": 27,
+          "name": "Explain opinions aloud",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "strong",
+          "reason": "B1 global-scale wording; B overplaces."
+        },
+        {
+          "skill": 32,
+          "name": "Infer word meanings from context",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "B1 CEFR inferring descriptor."
+        },
+        {
+          "skill": 36,
+          "name": "Link ideas across sentences",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "B1 cohesion ('link a series of shorter elements into a connected sequence'), matching #18 (B1 in both)."
+        }
+      ],
+      "errors_A": ["#32 Infer word meanings at B2 is above the B1 descriptor"],
+      "errors_B": ["#27 Explain opinions at B2 overplaces a B1 global-scale task"],
+      "reason": "Each has one supported miss; A also holds two leans (#19, #36)."
+    },
+    {
+      "id": "p12",
+      "winner": "A",
+      "confidence": "medium",
+      "disagreements": [
+        {
+          "skill": 11,
+          "name": "Support claims with reasons and examples",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "B1 'giving reasons and explanations'."
+        },
+        {
+          "skill": 15,
+          "name": "Use English rhythm and intonation",
+          "A": "B2",
+          "B": "B1",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "CEFR phonological control: using stress, intonation and rhythm to support the intended message is the B2 descriptor; B1 is intelligible despite L1 prosody. A's split from #17 word stress (B1 in both) is principled."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": ["#15 at B1 below the CEFR B2 prosody descriptor it matches"],
+      "reason": "Both disagreements favor A, one with descriptor support."
+    },
+    {
+      "id": "p13",
+      "winner": "A",
+      "confidence": "high",
+      "disagreements": [
+        {
+          "skill": 20,
+          "name": "Descrever um projeto profissional",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "strong",
+          "reason": "Goal, contribution and result is a B1 narrative; B puts it above #35 colaboração and #33 trajetória (B1 in B), which ask the same kind of account."
+        },
+        {
+          "skill": 28,
+          "name": "Explicar uma transição profissional",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "moderate",
+          "reason": "Dates and clear reasons is the B1 'briefly giving reasons and explanations' line."
+        },
+        {
+          "skill": 30,
+          "name": "Perguntar sobre a vaga e a equipe",
+          "A": "B1",
+          "B": "B2",
+          "favored": "A",
+          "strength": "lean",
+          "reason": "As in p3."
+        }
+      ],
+      "errors_A": [],
+      "errors_B": [
+        "#20 at B2 while equivalent narratives #33 and #35 are B1",
+        "#28 overplaced at B2"
+      ],
+      "reason": "All three disagreements favor A; B overplaces plain work narratives."
+    },
+    {
+      "id": "p14",
+      "winner": "tie",
+      "confidence": "high",
+      "disagreements": [],
+      "errors_A": [],
+      "errors_B": [],
+      "reason": "Identical placements for all 30 skills."
+    },
+    {
+      "id": "p15",
+      "winner": "B",
+      "confidence": "medium",
+      "disagreements": [
+        {
+          "skill": 3,
+          "name": "Interpretar conectores argumentativos",
+          "A": "B2",
+          "B": "B1",
+          "favored": "B",
+          "strength": "moderate",
+          "reason": "Recognizing cause, contrast, purpose and consequence connectors is B1. A puts recognizing connectors (B2) above producing cohesive paragraphs with them (#10, B1 in A): a receptive skill above its productive counterpart."
+        },
+        {
+          "skill": 18,
+          "name": "Relacionar falantes e opiniões",
+          "A": "B2",
+          "B": "B1",
+          "favored": null,
+          "strength": "defensible",
+          "reason": "As in p10."
+        }
+      ],
+      "errors_A": [
+        "#3 connector recognition at B2 above #10 cohesive paragraph writing at B1 (inversion)"
+      ],
+      "errors_B": [],
+      "reason": "Only #3 is substantiated, in B's favor."
+    }
+  ],
+  "counts": { "A": 5, "B": 7, "tie": 3, "differing_skill_placements": 61 },
+  "caveats": [
+    "The 15 pairs are 5 distinct inputs each run three times (p1/p6/p11, p2/p7/p12, p3/p8/p13, p4/p9/p14, p5/p10/p15). Labels A and B were not checked for a stable mapping to any model, so the A/B counts should be unblinded per pair before aggregating.",
+    "Only 61 of 492 placements differ; most verdicts rest on 2 to 4 borderline skills, and 9 of the 15 verdicts are low or medium confidence.",
+    "Many disagreements are genuinely borderline (receptive vs productive, prepared vs adaptive); those are marked 'defensible' and did not decide a verdict.",
+    "Judgments use the prompt's CEFR global scale and my recall of CEFR Companion Volume descriptors; no native-speaker or examiner check.",
+    "Both sides emit concrete CEFR levels rather than the prompt's lower/upper output, identically, so that did not affect any verdict."
+  ]
+}

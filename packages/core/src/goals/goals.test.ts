@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createGoals } from "./create-goals";
 import { getGoal } from "./get-goal";
-import { type GoalDraft } from "./goal-contract";
+import { type GoalDraft, goalCreateInputSchema } from "./goal-contract";
 import { listCurrentUserGoals } from "./list-current-user-goals";
 
 /** Before other tests' learning events, so their pace never changes these plans. */
@@ -148,6 +148,35 @@ describe(createGoals, () => {
     expect(plan.settings).toMatchObject({ stopsAtAim: true });
   });
 
+  it("keeps a language goal's language bare, with the country its tag names", async () => {
+    await useLearner();
+
+    const input = goalCreateInputSchema.parse({
+      dailyMinutes: 30,
+      goals: [
+        draft({
+          kind: "language",
+          prompt: "Quiero hablar como en Buenos Aires",
+          targetLanguage: "es-AR",
+          title: "Spanish",
+        }),
+      ],
+    });
+
+    const result = await createGoals(input);
+
+    expect(result).toMatchObject({
+      goals: [{ languageFlag: "ar", targetLanguage: "es", targetRegion: "AR" }],
+      status: "created",
+    });
+
+    expect(result.status === "created" && result.goals[0]?.regionChoices).toContainEqual({
+      code: "MX",
+      name: "Mexico",
+      taught: true,
+    });
+  });
+
   it("gives a language certificate's exam goal the language it tests when onboarding leaves it out", async () => {
     await useLearner();
 
@@ -234,24 +263,37 @@ describe(createGoals, () => {
     ]);
   });
 
-  it("creates what the free plan allows and says why the rest wasn't created", async () => {
+  it("creates the three goals the free plan follows and says why the rest wasn't created", async () => {
     await useLearner();
 
     const result = await createGoals({
-      dailyMinutes: 30,
-      goals: [draft(), draft({ title: "Chemistry" })],
+      dailyMinutes: 40,
+      goals: [
+        draft(),
+        draft({ title: "Chemistry" }),
+        draft({ title: "Statistics" }),
+        draft({ title: "Guitar" }),
+      ],
     });
 
     expect(result).toMatchObject({
-      goals: [{ title: "Understand AI" }],
+      goals: [{ title: "Understand AI" }, { title: "Chemistry" }, { title: "Statistics" }],
       refused: [
-        { decision: { limit: { resource: "activeGoals" }, status: "limitReached" }, index: 1 },
+        {
+          decision: { limit: { limit: 3, resource: "activeGoals" }, status: "limitReached" },
+          index: 3,
+        },
       ],
       status: "created",
     });
 
+    const [first] = result.status === "created" ? result.goals : [];
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: first?.id } });
+
     await expect(createGoals({ dailyMinutes: 30, goals: [draft()] })).resolves.toMatchObject({
-      refused: [{ index: 0 }],
+      refused: [
+        { decision: { limit: { period: "day", resource: "goal" }, status: "limitReached" } },
+      ],
       status: "refused",
     });
   });
@@ -321,7 +363,7 @@ describe(listCurrentUserGoals, () => {
     });
   });
 
-  it("marks only a language goal with its language's flag, not an exam in that language", async () => {
+  it("marks only a language goal with its country's or language's flag, not an exam in that language", async () => {
     const user = await useLearner({ plus: true });
 
     await goalFixture({
@@ -332,6 +374,15 @@ describe(listCurrentUserGoals, () => {
     });
 
     await goalFixture({ kind: "language", targetLanguage: "ar", title: "Arabic", userId: user.id });
+
+    await goalFixture({
+      kind: "language",
+      targetLanguage: "es",
+      targetRegion: "AR",
+      title: "Spanish",
+      userId: user.id,
+    });
+
     await goalFixture({ kind: "exam", targetLanguage: "es", title: "DELE B2", userId: user.id });
     await goalFixture({ title: "Physics", userId: user.id });
 
@@ -339,7 +390,13 @@ describe(listCurrentUserGoals, () => {
 
     expect(
       Object.fromEntries(list?.goals.map((goal) => [goal.title, goal.languageFlag]) ?? []),
-    ).toStrictEqual({ Arabic: "arab", "DELE B2": null, Physics: null, Portuguese: "br" });
+    ).toStrictEqual({
+      Arabic: "arab",
+      "DELE B2": null,
+      Physics: null,
+      Portuguese: "br",
+      Spanish: "ar",
+    });
   });
 
   it("places a test days away on its first day while that day's lessons are still being written", async () => {

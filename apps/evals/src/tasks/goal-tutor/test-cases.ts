@@ -358,6 +358,37 @@ const INTERVIEW_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
+const SPANISH_PLAN = {
+  ...INTERVIEW_PLAN,
+  goal: { ...INTERVIEW_PLAN.goal, title: "Learn Spanish" },
+  language: "en",
+  phase: {
+    ...INTERVIEW_PLAN.phase,
+    chapters: [
+      { lessonsDone: 1, lessonsTotal: 5, state: "current", title: "Introducing yourself" },
+    ],
+    name: "First steps",
+  },
+  today: { date: "2026-11-08", items: [], source: "session" },
+} satisfies PlanScopeContext;
+
+const ARGENTINE_SPANISH_PLAN = {
+  ...SPANISH_PLAN,
+  goal: {
+    ...SPANISH_PLAN.goal,
+    title: "Espanhol para morar em Buenos Aires",
+    variety: { chosen: "Spanish (Argentina)", lessons: "Spanish (Mexico)" },
+  },
+  language: "pt",
+  phase: {
+    ...SPANISH_PLAN.phase,
+    chapters: [
+      { lessonsDone: 2, lessonsTotal: 5, state: "current", title: "Moverse por la ciudad" },
+    ],
+    name: "En la ciudad",
+  },
+} satisfies PlanScopeContext;
+
 const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
     fittingDate: null,
@@ -1211,10 +1242,42 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "quero estudar para o concurso da polícia federal também",
   }),
   goalCase({
+    appTools: { variety: { country: "GB" } },
+    context: INTERVIEW_PLAN,
+    expectations:
+      "She wants British English instead of the American English her lessons teach. offeredTools has variety, offered, with GB as the country; the answer says in a sentence or two that the card switches her buddy and practice calls to British English while lessons and their audio stay as they are, and that it changes when she taps the card's button. Proposing a plan change that adds lessons for British English, or saying the app can't do it, is a major error (cap 5.0). proposedChange is null.",
+    id: "pt-interview-british-english",
+    question: "dá pra eu aprender inglês britânico em vez do americano? sem pagar nada a mais",
+  }),
+  goalCase({
+    appTools: { variety: { country: "AR" } },
+    context: SPANISH_PLAN,
+    expectations:
+      "A free learner of Spanish wants Argentine Spanish, which their lessons don't teach, without paying or adding a plan. offeredTools has variety, offered, with AR as the country; the answer says the card switches their buddy and practice calls to Argentine Spanish at no cost, while their lessons and their audio stay as they are, and that it changes when they tap the card's button. Proposing a plan change that adds Argentine Spanish lessons or topics, saying it needs Plus or another plan, or saying the app can't do it, is a major error (cap 5.0). proposedChange is null.",
+    id: "en-spanish-argentine-variety-free",
+    question:
+      "Do you teach Argentine Spanish? Can I change to it in this free plan without adding another plan or paying for a premium feature?",
+  }),
+  goalCase({
+    appTools: { variety: "alreadySet" },
+    context: ARGENTINE_SPANISH_PLAN,
+    expectations:
+      'Their buddy and practice calls use Spanish (Argentina) and their lessons teach Spanish (Mexico). The answer, in Portuguese, says plainly that lessons and their audio use Mexican Spanish while the buddy and practice calls use Argentine Spanish, that both words are correct ("camión" in Mexico, "colectivo" in Argentina for a city bus), and that the lessons don\'t change. Calling either word wrong, saying the lessons will switch, or proposing a plan change is a major error (cap 5.0). proposedChange is null; offering the variety card is a minor error.',
+    id: "pt-argentine-spanish-lesson-word",
+    question: "por que a aula falou camión pra ônibus se você sempre escreve colectivo?",
+  }),
+  goalCase({
+    context: ARGENTINE_SPANISH_PLAN,
+    expectations:
+      'They chose Argentine Spanish. The answer, in Portuguese, gives the invitation in Argentine Spanish, with vos and its verb forms (such as "¿Querés tomar un café conmigo?"). Giving only tú or usted forms is a major error (cap 5.0). proposedChange is null and no tool is offered.',
+    id: "pt-argentine-spanish-invitation",
+    question: "como eu chamo alguém pra tomar um café comigo em espanhol?",
+  }),
+  goalCase({
     appTools: { startGoal: { plusRequired: true } },
     context: CONCURSO_PLAN,
     expectations:
-      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that the free plan follows one goal at a time: she can pause this goal from the Journey's menu to start the new one, or follow both with Plus. Saying she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
+      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that starting another goal right now comes with Plus and that she can keep going with her current goals. Saying how many goals she follows, that pausing one makes room, or that she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
     id: "pt-concurso-second-exam-free",
     question: "dá pra estudar pro concurso do INSS junto com esse?",
   }),

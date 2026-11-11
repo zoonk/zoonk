@@ -24,7 +24,7 @@ import { recordSkippedWritingSteps } from "./completion-steps";
 import { trackLessonCompleted } from "./lesson-events";
 import { hasFinishedLessonBefore } from "./lesson-runs";
 import { completeRunBlock, lockRunBlock } from "./lesson-study-block";
-import { reviewFinishedLesson } from "./plan-skill-review";
+import { reviewLessonPlanSkills } from "./plan-skill-review";
 import { getLessonCompletionSeconds } from "./session-lesson-duration";
 
 type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
@@ -55,7 +55,6 @@ export async function finishLessonRun({
   lessonId,
   planSkillIds,
   run,
-  skillIds,
   skippedWritingStepIds,
   tally,
   timeZone,
@@ -63,11 +62,10 @@ export async function finishLessonRun({
 }: {
   answerPoints: number;
   answeredCount: number;
-  answers: Parameters<typeof reviewFinishedLesson>[0]["answers"];
+  answers: Parameters<typeof reviewLessonPlanSkills>[0]["answers"];
   lessonId: string;
   planSkillIds: readonly string[];
   run: LearningEvent;
-  skillIds: string[];
   skippedWritingStepIds: string[];
   tally: LessonRunTally;
   timeZone: string;
@@ -150,11 +148,10 @@ export async function finishLessonRun({
       userId,
     });
 
-    const { changed, nextReviewAt } = await reviewFinishedLesson({
+    const changed = await reviewLessonPlanSkills({
       answers,
       planSkillIds,
       reviewedAt: completedAt,
-      skillIds,
       timeZone,
       transaction: tx,
       userId,
@@ -202,7 +199,6 @@ export async function finishLessonRun({
         correctCount: tally.correctCount,
         incorrectCount: tally.incorrectCount,
         isFirstCompletion: !isReplay,
-        nextReviewAt,
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },

@@ -23,7 +23,6 @@ import com.zoonk.api.models.SpokenAnswerGrade
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
 import kotlinx.serialization.Serializable
-import kotlin.time.Instant
 
 typealias AnswerCorrection = LessonStepCheckResultCorrectionsInner
 typealias AnswerKeyPoint = LessonStepCheckResultKeyPointsInner
@@ -233,7 +232,7 @@ data class SpokenHeard(
 /**
  * A screen's verdict. [checked] is false for a typed answer the server didn't grade (shown with the
  * sample answer, not as wrong); [attemptId] ties a verdict given on the device to the server's word
- * on it, which adds [nextReviewAt] and [savedMistake] later.
+ * on it, which adds [savedMistake] later.
  */
 @Immutable
 data class StepResult(
@@ -245,7 +244,6 @@ data class StepResult(
     val corrections: List<AnswerCorrection> = emptyList(),
     val keyPoints: List<AnswerKeyPoint>? = null,
     val expected: ActivityExpected? = null,
-    val nextReviewAt: Instant? = null,
     val savedMistake: Boolean = false,
     val score: Double? = null,
     val spelling: String? = null,
@@ -263,7 +261,6 @@ fun LessonStepCheckResult.toStepResult(answerText: String?): StepResult =
         corrections = corrections,
         keyPoints = keyPoints,
         expected = expected,
-        nextReviewAt = nextReviewAt,
         savedMistake = savedMistake,
         score = score,
         spelling = spelling,
@@ -279,7 +276,6 @@ fun LessonRunAnswerResult.toStepResult(isRecording: Boolean): StepResult =
         feedback = feedback,
         isCorrect = isCorrect,
         keyPoints = keyPoints,
-        nextReviewAt = nextReviewAt,
         savedMistake = savedMistake,
         score = score,
         spelling = spelling,

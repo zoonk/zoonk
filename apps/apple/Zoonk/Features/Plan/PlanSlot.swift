@@ -808,8 +808,11 @@ private struct PlanPausedSlot: View {
       case .limitReached:
         FailureLine(
           message: LocalizedStringResource(
-            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-            table: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+            "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
+            table: "Plan",
+            comment:
+              "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
+          )
         )
         .typeStyle(.note)
       case .failed:

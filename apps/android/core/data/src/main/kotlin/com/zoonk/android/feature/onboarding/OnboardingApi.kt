@@ -16,18 +16,19 @@ import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
@@ -47,6 +48,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
@@ -78,6 +81,8 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         id: String,
     ): OnboardingDraft
+
+    suspend fun resume(session: AuthenticatedSession): OnboardingResume
 
     suspend fun readAgain(
         session: AuthenticatedSession,
@@ -270,6 +275,8 @@ class LiveOnboardingApi(
         id: String,
     ) = perform { api.clients(session).onboarding.getGoalUnderstanding(UUID.fromString(id)) }
 
+    override suspend fun resume(session: AuthenticatedSession) = perform { api.clients(session).onboarding.getOnboardingResume() }
+
     override suspend fun readAgain(
         session: AuthenticatedSession,
         id: String,
@@ -367,7 +374,7 @@ class LiveOnboardingApi(
                 .clients(
                     session,
                 ).goals
-                .updateGoal(UUID.fromString(goalId), GoalUpdateInput(status = GoalUpdateInput.Status.ARCHIVED))
+                .updateGoal(UUID.fromString(goalId), buildJsonObject { put("status", LearnerSummaryGoal.Status.ARCHIVED.value) })
         }
     }
 

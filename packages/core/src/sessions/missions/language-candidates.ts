@@ -3,6 +3,7 @@ import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type UsageTotals, getUsageCounts } from "../../entitlements/_utils/usage-counts";
 import { type EntitlementTier } from "../../entitlements/contract";
+import { offeredToGoal } from "../../language/patterns/find-fresh-pattern";
 import { mistakePatternContentSchema } from "../../language/patterns/pattern-contract";
 import { MAX_PRONUNCIATION_ROUND_WORDS } from "../../language/pronunciation/pronunciation-rules";
 import { type SessionPlanItem } from "../_utils/session-plan-item";
@@ -40,6 +41,7 @@ export async function languageCandidates({
       where: {
         createdAt: { gte: new Date(now.getTime() - FRESH_PATTERN_DAYS * MS_PER_DAY), lte: now },
         dismissedAt: null,
+        ...offeredToGoal(goal.id),
         kind: "pattern",
         language: goal.targetLanguage,
         practicedAt: null,

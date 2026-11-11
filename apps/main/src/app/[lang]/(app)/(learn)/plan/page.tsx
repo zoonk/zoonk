@@ -23,6 +23,7 @@ import { getExtracted } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
+import { setGoalCountryAction } from "../_components/goal-status-action";
 import {
   changePlanAction,
   chooseExamOptionAction,
@@ -31,8 +32,7 @@ import {
   decidePlanChangeAction,
   previewPlanChangeAction,
 } from "./journey-actions";
-import { JourneyBuildingClient, JourneyClient } from "./journey-client";
-import { JourneySetup } from "./journey-setup";
+import { JourneyBuildingClient, JourneyClient, JourneySetupClient } from "./journey-client";
 import { PlanNoGoal } from "./plan-no-goal";
 import { PlanSkeleton } from "./plan-skeleton";
 
@@ -74,6 +74,17 @@ function findActiveGoal(list: Awaited<ReturnType<typeof listCurrentUserGoals>>) 
   return list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
 }
 
+function getGoalCountry(goal: ReturnType<typeof findActiveGoal>) {
+  return goal?.targetLanguage && goal.regionChoices.length > 0
+    ? {
+        choices: goal.regionChoices,
+        language: goal.targetLanguage,
+        onSave: setGoalCountryAction.bind(null, goal.id),
+        region: goal.targetRegion,
+      }
+    : null;
+}
+
 /** Kept with the page's prefetch, so the tab opens on the right screen; goal and profile writes expire it. */
 async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" | null> {
   "use cache: private";
@@ -92,18 +103,22 @@ async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" |
   return hasOnboardingQuestions(steps) ? "setup" : "building";
 }
 
-async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
-  const stage = await loadPlanlessStage(goalId);
+async function JourneyWithoutPlan({
+  goal,
+}: {
+  goal: { displayName: string; id: string; status: string };
+}) {
+  const stage = await loadPlanlessStage(goal.id);
 
   if (!stage) {
     return <PlanNoGoal />;
   }
 
-  if (stage === "setup") {
-    return <JourneySetup goalId={goalId} goalTitle={goalTitle} />;
-  }
+  const Planless = stage === "setup" ? JourneySetupClient : JourneyBuildingClient;
 
-  return <JourneyBuildingClient goalId={goalId} goalTitle={goalTitle} />;
+  return (
+    <Planless goalId={goal.id} goalStatus={getGoalStatus(goal)} goalTitle={goal.displayName} />
+  );
 }
 
 async function JourneyContent() {
@@ -133,11 +148,7 @@ async function JourneyContent() {
   }
 
   if (result.status !== "ready" || !result.view.plan.ready) {
-    return activeGoal ? (
-      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.displayName} />
-    ) : (
-      <PlanNoGoal />
-    );
+    return activeGoal ? <JourneyWithoutPlan goal={activeGoal} /> : <PlanNoGoal />;
   }
 
   const { goal, plan } = result.view;
@@ -176,7 +187,7 @@ async function JourneyContent() {
       buddy={buddy}
       certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
-      goal={{ displayName: goal.displayName, kind: goal.kind }}
+      goal={{ country: getGoalCountry(activeGoal), displayName: goal.displayName, kind: goal.kind }}
       goalId={goal.id}
       goalStatus={goalStatus}
       hasMindMaps={hasMindMapsPage(goal.kind)}

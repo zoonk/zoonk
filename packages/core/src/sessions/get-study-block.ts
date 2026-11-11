@@ -16,20 +16,14 @@ import { ITEM_IMAGE_INCLUDE, isStillAsked } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { citedSourceSelect, toItemCitation } from "../library/sources/source-citation";
 import { loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
-import { loadCapsuleHistory } from "./_utils/capsule-history";
 import { loadExamStructure } from "./_utils/exam-structure";
 import { isLeftBlank } from "./_utils/net-score";
-import {
-  type SessionItem,
-  describeEarlierAnswer,
-  parseSessionItem,
-  toSessionQuestion,
-} from "./_utils/session-items";
+import { parseSessionItem, toSessionQuestion } from "./_utils/session-items";
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import { type OwnedStudyBlock, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { withoutReviewedSkills } from "./_utils/without-reviewed-skills";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
-import { type StudyBlockQuestion, type TimeMachine } from "./study-block-question";
+import { type StudyBlockQuestion } from "./study-block-question";
 
 type StudyBlockDetail = {
   /** Includes verdicts whose question content was removed. */
@@ -45,45 +39,6 @@ export type StudyBlockResult =
   | { detail: StudyBlockDetail; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-async function loadTimeMachines({
-  blockId,
-  items,
-  payload,
-  sessionId,
-  userId,
-}: {
-  blockId: string;
-  items: readonly SessionItem[];
-  payload: BlockPayload;
-  sessionId: string;
-  userId: string;
-}): Promise<Map<string, TimeMachine>> {
-  const capsuleItemIds = payload.capsules.flatMap((capsule) => capsule.itemIds);
-
-  const earlier = await loadCapsuleHistory({ itemIds: capsuleItemIds, sessionId, userId });
-
-  return new Map(
-    earlier.flatMap((attempt) => {
-      const item = items.find((candidate) => candidate.id === attempt.itemId);
-
-      return item
-        ? [
-            [
-              item.id,
-              {
-                answer: attempt.isCorrect
-                  ? null
-                  : describeEarlierAnswer({ answer: attempt.answer, blockId, item }),
-                answeredAt: attempt.answeredAt,
-                isCorrect: attempt.isCorrect,
-              },
-            ] as const,
-          ]
-        : [];
-    }),
-  );
-}
 
 /** Started checkpoints shrink to remaining askable questions; unopened ones retain their planned size. */
 function toAskableBlock({
@@ -201,14 +156,6 @@ export async function loadStudyBlock(
     .filter((item) => item !== null)
     .filter((item) => isStillAsked({ answered: answered.has(item.id), item }));
 
-  const timeMachines = await loadTimeMachines({
-    blockId,
-    items,
-    payload,
-    sessionId,
-    userId: owned.userId,
-  });
-
   // A decided duel ends even when some questions remain unasked.
   const questionCount = payload.checkpoint
     ? getCheckpointQuestionCount({
@@ -241,7 +188,6 @@ export async function loadStudyBlock(
             placement: payload.placementItemIds.includes(itemId),
             quoted: row ? isQuotedItem(row.content) : false,
             set: row ? toItemSetView({ item: row, reveal: isSetAnswered(row.setId) }) : null,
-            timeMachine: timeMachines.get(itemId) ?? null,
           },
         ]
       : [];

@@ -1,0 +1,234 @@
+[
+  {
+    "task": "lesson-writer",
+    "model": "anthropic/claude-fable-5.2",
+    "cases": 4,
+    "quality": {
+      "pt": 8.6,
+      "en": 8.45
+    },
+    "p50": 102.24,
+    "p95": 200.38,
+    "costPer1k": 704.29
+  },
+  {
+    "task": "lesson-writer",
+    "model": "anthropic/claude-opus-5.5",
+    "cases": 4,
+    "quality": {
+      "pt": 8.35,
+      "en": 8.91
+    },
+    "p50": 40.54,
+    "p95": 54.23,
+    "costPer1k": 154.75
+  },
+  {
+    "task": "lesson-writer",
+    "model": "google/gemini-4-carbon",
+    "cases": 4,
+    "quality": {
+      "pt": 7.39,
+      "en": 7.95
+    },
+    "p50": 123.96,
+    "p95": 240.88,
+    "costPer1k": 155.79
+  },
+  {
+    "task": "lesson-writer",
+    "model": "google/gemini-4-argon",
+    "cases": 4,
+    "quality": {
+      "pt": 7.71,
+      "en": 8.23
+    },
+    "p50": 19.63,
+    "p95": 31.62,
+    "costPer1k": 37.61
+  },
+  {
+    "task": "lesson-quality-check",
+    "model": "anthropic/claude-fable-5.2",
+    "cases": 18,
+    "quality": {
+      "pt": 76.92,
+      "en": 100.0
+    },
+    "p50": 10.94,
+    "p95": 25.57,
+    "costPer1k": 105.62
+  },
+  {
+    "task": "lesson-quality-check",
+    "model": "google/gemini-4-carbon",
+    "cases": 18,
+    "quality": {
+      "pt": 92.31,
+      "en": 80.0
+    },
+    "p50": 42.63,
+    "p95": 128.32,
+    "costPer1k": 62.37
+  },
+  {
+    "task": "lesson-quality-check",
+    "model": "openai/gpt-6-astra",
+    "cases": 18,
+    "quality": {
+      "pt": 100.0,
+      "en": 100.0
+    },
+    "p50": 5.62,
+    "p95": 19.79,
+    "costPer1k": 65.66
+  },
+  {
+    "task": "lesson-fix",
+    "model": "anthropic/claude-fable-5.2",
+    "cases": 6,
+    "quality": {
+      "pt": 10.0,
+      "en": 10.0
+    },
+    "p50": 11.14,
+    "p95": 24.36,
+    "costPer1k": 179.16
+  },
+  {
+    "task": "lesson-fix",
+    "model": "google/gemini-4-carbon",
+    "cases": 6,
+    "quality": {
+      "pt": 10.0,
+      "en": 10.0
+    },
+    "p50": 48.96,
+    "p95": 114.61,
+    "costPer1k": 41.74
+  },
+  {
+    "task": "lesson-fix",
+    "model": "anthropic/claude-opus-5.5",
+    "cases": 6,
+    "quality": {
+      "pt": 10.0,
+      "en": 10.0
+    },
+    "p50": 9.63,
+    "p95": 16.04,
+    "costPer1k": 76.08
+  },
+  {
+    "task": "lesson-fix",
+    "model": "openai/gpt-6.1-terra",
+    "cases": 6,
+    "quality": {
+      "pt": 10.0,
+      "en": 10.0
+    },
+    "p50": 7.86,
+    "p95": 22.4,
+    "costPer1k": 11.87
+  },
+  {
+    "task": "lesson-spec",
+    "model": "google/gemini-4-carbon",
+    "cases": 4,
+    "quality": {
+      "en": 9.08,
+      "pt": 8.0,
+      "es": 6.88
+    },
+    "p50": 267.35,
+    "p95": 1121.91,
+    "costPer1k": 268.16
+  },
+  {
+    "task": "lesson-spec",
+    "model": "openai/gpt-6.1-sol",
+    "cases": 4,
+    "quality": {
+      "en": 9.62,
+      "pt": 9.27,
+      "es": 8.73
+    },
+    "p50": 102.34,
+    "p95": 213.66,
+    "costPer1k": 81.79
+  },
+  {
+    "task": "lesson-spec",
+    "model": "openai/gpt-6.1-terra",
+    "cases": 4,
+    "quality": {
+      "en": 9.46,
+      "pt": 8.87,
+      "es": 9.38
+    },
+    "p50": 33.51,
+    "p95": 41.12,
+    "costPer1k": 24.76
+  },
+  {
+    "task": "lesson-spec",
+    "model": "anthropic/claude-opus-5.5",
+    "cases": 4,
+    "quality": {
+      "en": 9.08,
+      "pt": 8.35,
+      "es": 6.0
+    },
+    "p50": 119.0,
+    "p95": 200.19,
+    "costPer1k": 365.14
+  },
+  {
+    "task": "challenge-case",
+    "model": "google/gemini-4-carbon",
+    "cases": 6,
+    "quality": {
+      "en": 7.83,
+      "pt": 7.38
+    },
+    "p50": 218.34,
+    "p95": 505.97,
+    "costPer1k": 199.17
+  },
+  {
+    "task": "challenge-case",
+    "model": "google/gemini-4-argon",
+    "cases": 6,
+    "quality": {
+      "en": 7.76,
+      "pt": 7.44
+    },
+    "p50": 72.35,
+    "p95": 77.4,
+    "costPer1k": 65.81
+  },
+  {
+    "task": "challenge-case",
+    "model": "openai/gpt-6.1-sol",
+    "cases": 6,
+    "quality": {
+      "en": 8.82,
+      "pt": 8.67
+    },
+    "p50": 86.25,
+    "p95": 99.1,
+    "costPer1k": 50.31
+  },
+  {
+    "task": "challenge-case",
+    "model": "openai/gpt-6.1-terra",
+    "cases": 6,
+    "quality": {
+      "en": 8.45,
+      "pt": 8.37
+    },
+    "p50": 48.7,
+    "p95": 55.45,
+    "costPer1k": 22.89
+  }
+]

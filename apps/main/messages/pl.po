@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -47,7 +48,6 @@ msgstr "Strona główna"
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/footer-explore-links.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Przeglądaj kursy"
@@ -207,7 +207,6 @@ msgstr "Dziś"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
@@ -949,21 +948,6 @@ msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
 msgstr "Czego będziesz się uczyć każdego dnia aż do osiągnięcia celu i co obejmuje twój plan."
 
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "NIpBgv"
-msgid "Your plan comes after a few questions"
-msgstr "Najpierw kilka pytań, potem twój plan"
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "mMlLhC"
-msgid "Answer them and we'll plan every day until you reach your goal."
-msgstr "Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz cel."
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Kontynuuj"
-
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
@@ -1014,10 +998,11 @@ msgctxt "h6bnZW"
 msgid "Switch to this goal"
 msgstr "Przełącz się na ten cel"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "W pakiecie Free możesz realizować jeden cel naraz. Wstrzymaj drugi cel, aby wznowić ten, lub przejdź na Plus, by realizować więcej celów."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1098,6 +1083,16 @@ msgstr "Twój plan czeka na jeszcze kilka odpowiedzi: {goal}."
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "W trakcie konfiguracji"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "Twój tekst"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Kontynuuj"
 
 #: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
 msgctxt "-3M8u-"
@@ -1625,10 +1620,11 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "Więcej"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "-eNLo_"
-msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {Bez nauki} one {# aktywność} other {# aktywności}}"
+msgctxt "FjcEak"
+msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{count, plural, =0 {Bez nauki} one {# aktywność} other {# aktywności}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1687,15 +1683,17 @@ msgctxt "AxMhQr"
 msgid "High"
 msgstr "Wysoka"
 
+#. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "5ZmEgv"
-msgid "{date} · No Energy recorded"
-msgstr "{date} · Brak danych o Energii"
+msgctxt "VmQeBl"
+msgid "No Energy recorded"
+msgstr "Brak danych o Energii"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "beOKv0"
-msgid "{date} · {percentage} Energy"
-msgstr "{date} · {percentage} Energii"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
+msgstr "{percentage} Energii"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1825,6 +1823,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "Kiedy najlepiej ci szło w ostatnich 90 dniach."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {Brak odpowiedzi} one {# odpowiedź} other {# odpowiedzi}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, one {# odpowiedź} other {# odpowiedzi}}, potrzeba {minimum, number}, by uwzględnić wynik"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "Najlepszy dzień"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "W ciągu tygodnia"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "Najlepsza pora"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "W ciągu dnia"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1844,21 +1877,6 @@ msgstr "Popołudnie"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Wieczór"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {Brak odpowiedzi} one {# odpowiedź} other {# odpowiedzi}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "W ciągu tygodnia"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "W ciągu dnia"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1899,18 +1917,6 @@ msgstr "Na razie za mało odpowiedzi"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, one {# odpowiedź} other {# odpowiedzi}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "Najlepszy dzień"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "Najlepsza pora"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"
@@ -2171,11 +2177,11 @@ msgctxt "Fvi-xC"
 msgid "Tests and exams"
 msgstr "Testy i egzaminy"
 
-#. {exams} lists the exams people in your country study for, such as “Enem, vestibular, concurso ou OAB”, and opens the sentence. In Brazilian Portuguese: “{exams}: o plano segue as matérias e os tópicos da sua prova. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola: o plano segue as matérias e os tópicos dela. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "V41OCV"
-msgid "{exams}: your plan follows your exam's subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
-msgstr "{exams}: plan obejmuje przedmioty i tematy z twojego egzaminu. Na ostatniej prostej egzaminy próbne w formacie właściwego egzaminu i z takim samym limitem czasu pokazują przybliżony wynik i to, co jeszcze trzeba opanować."
+msgctxt "3tM-ty"
+msgid "Any exam, such as {exams}: your plan follows its subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
+msgstr "Każdy egzamin, na przykład {exams}: twój plan uwzględnia jego przedmioty i tematy. Na ostatniej prostej egzaminy próbne w formacie prawdziwego egzaminu i z takim samym limitem czasu pokazują szacunkowy wynik i to, nad czym trzeba jeszcze popracować."
 
 #. In Brazilian Portuguese: “Tudo o que cai, dividido até o dia da prova.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2266,11 +2272,11 @@ msgctxt "Jd18jf"
 msgid "What if I miss a day?"
 msgstr "Co, jeśli opuszczę dzień nauki?"
 
-#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "qxT1fv"
-msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
-msgstr "Praktycznie wszystkiego. Egzaminy takie jak {exam}, egzaminy wstępne na studia, egzaminy do służby cywilnej i egzamin adwokacki, języki obce, nowy zawód czy dowolny temat, który chcesz poznać. Opisz swój cel własnymi słowami."
+msgctxt "r4pGG1"
+msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "Każdy egzamin, na przykład {exams}. A także języki, nowy zawód lub dowolny temat, który chcesz poznać. Opisz swój cel własnymi słowami."
 
 #. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2288,7 +2294,7 @@ msgctxt "kxCNVz"
 msgid "Still have questions? Write to <email></email>."
 msgstr "Masz jeszcze pytania? Napisz na <email></email>."
 
-#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no Enem” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
+#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
@@ -2513,6 +2519,117 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "Wyzwanie"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "Sprawdź, czy zgadza się z kodem w terminalu."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "Kod z terminala"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "Jeśli zatwierdzisz"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "CLI korzysta z konta {email}, by odczytywać dane produkcyjne, takie jak konta, plany i odpowiedzi."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "Nie może niczego zmieniać."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "CLI pozostaje zalogowane na tym komputerze, dopóki się tam nie wylogujesz lub nie minie 30 dni bez korzystania z CLI."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Zatwierdź"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "Odrzuć"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "Ten kod wygasł. Uruchom ponownie {command}, aby otrzymać nowy kod."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "Nie udało się. Spróbuj ponownie za chwilę."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "Zbyt wiele prób z tej sieci. Odczekaj 30 minut, a potem ponownie uruchom {command}."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "Ten kod został już użyty. Uruchom ponownie {command}, aby otrzymać nowy kod."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "Ten kod nie pasuje do żadnej oczekującej próby logowania. Porównaj go z kodem w terminalu lub uruchom ponownie {command}."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Wróć do terminala. Możesz już korzystać z CLI."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "Zalogowano"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLI nie uzyskało dostępu. Możesz zamknąć tę stronę."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "Logowanie odrzucone"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "Narzędzie CLI nie uzyskało dostępu, ponieważ {email} nie jest kontem pracownika. Zaloguj się na swoje konto pracownika, a potem ponownie uruchom {command}."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Do tego logowania potrzebne jest konto pracownika Zoonka"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "Zatwierdzaj tylko próby logowania rozpoczęte przez ciebie. Jeśli ktoś wysłał ci ten link, odrzuć logowanie."
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Zaloguj się do CLI Zoonka"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "Najpierw zaloguj się na swoje konto pracownika Zoonka. Potem wrócisz tutaj, aby zatwierdzić logowanie."
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2664,11 +2781,6 @@ msgstr "Ile czasu dziennie?"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "Nie możesz teraz zacząć pracy nad kolejnym celem. Najpierw zrealizuj jeden z obecnych lub go wstrzymaj."
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "Nie udało się. Spróbuj ponownie za chwilę."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
@@ -3217,11 +3329,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "Zacznij za darmo. <rest>Przejdź na Plus, gdy chcesz mieć wszystko.</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "Pakiet Free obejmuje jeden cel naraz. Plus obejmuje każdy cel aż do wielkiego dnia."
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "Pakiet Free pomaga realizować {goals, plural, one {jeden cel} other {do # celów}} naraz. Plus pomaga realizować każdy cel aż do wielkiego dnia."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3418,16 +3530,6 @@ msgstr "Nie udało się rozpocząć tego kursu."
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# z {total, number} ukończono} other {Ukończono # z {total, number}}}"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "3snD6d"
-msgid "Popular courses"
-msgstr "Popularne kursy"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "VKb1MS"
-msgid "Categories"
-msgstr "Kategorie"
 
 #: src/components/public/goal-example.ts
 msgctxt "IWESF6"

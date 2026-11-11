@@ -54,7 +54,6 @@
         <item quantity="other">%d mistakes fixed. They leave your notebook.</item>
     </plurals>
     <string name="questions_saved">Saved to your mistakes</string>
-    <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
     <string name="questions_show_less">Show less</string>
     <string name="questions_read_again">Read it all again</string>
     <string name="questions_set_place_audio">Question %1$d of %2$d on this recording</string>
@@ -65,18 +64,13 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Past exam question · %1$s</string>
     <string name="questions_drill_reteach_ideas">The idea first, then put it to use.</string>
-    <string name="questions_drill_reteach">Back to an idea you missed.</string>
-    <string name="questions_drill_read_carefully">Read every word before you answer.</string>
     <string name="questions_drill_spot_the_trap">There\'s a trap in here. Find it before you answer.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">%d second a question, like on the day.</item>
         <item quantity="other">%d seconds a question, like on the day.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Only answer when you\'re sure. Saying you\'re not sure is fine.</string>
-    <string name="questions_drill_retry">Try it again.</string>
     <string name="questions_drill_start">Start the questions</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">Last time you answered: %1$s</string>
     <string name="questions_drill_timed_out">Time\'s up. It counts as a miss, so it comes back.</string>
     <string name="questions_drill_not_sure_praise">Good call. Saying you\'re not sure beats a guess.</string>
     <string name="questions_drill_trap">The trap:</string>

@@ -41,6 +41,31 @@ fun languageName(
         .getInstance(ULocale.forLocale(locale), LocaleDisplayNames.DialectHandling.DIALECT_NAMES)
         .localeDisplayName(ULocale.forLanguageTag(tag))
 
+/**
+ * As main's `getVarietyNameInSentence`: "Spanish (Argentina)" with the country the learner chose, the
+ * language's own name without one, in the case a sentence needs ("espanhol (Argentina)" in Portuguese).
+ * Never named from a flag, which shows the taught country when none was chosen.
+ */
+fun varietyNameInSentence(
+    language: String,
+    region: String?,
+    locale: Locale,
+): String =
+    if (region == null) {
+        languageName(language, locale)
+    } else {
+        LocaleDisplayNames
+            .getInstance(ULocale.forLocale(locale), LocaleDisplayNames.DialectHandling.STANDARD_NAMES)
+            .localeDisplayName(ULocale.forLanguageTag("$language-$region"))
+    }
+
+/** As main's `getVarietyName`, for a label or a title. */
+fun varietyName(
+    language: String,
+    region: String?,
+    locale: Locale,
+): String = varietyNameInSentence(language, region, locale).replaceFirstChar { it.titlecase(locale) }
+
 /** Zoonk writes Spanish the Mexican way (1,234.56), as main does. */
 fun formattingLocale(language: String): Locale = Locale.forLanguageTag(if (language == "es") "es-MX" else language)
 

@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
-import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -143,16 +142,11 @@ describe(getStepExampleLine, () => {
       userId: learner.id,
     });
 
-    vi.mocked(generateMemorySearchTerms).mockResolvedValueOnce({
-      data: { terms: ["numbers", "discounts"] },
-    } as Awaited<ReturnType<typeof generateMemorySearchTerms>>);
-
     vi.mocked(selectRelevantMemoryFacts).mockImplementationOnce(async ({ facts }) =>
       facts.filter((fact) => fact.statement === ordinary.statement),
     );
 
     await getStepExampleLine({ stepId: step.id });
-    expect(generateMemorySearchTerms).not.toHaveBeenCalled();
     expect(selectRelevantMemoryFacts).not.toHaveBeenCalled();
 
     vi.mocked(generateExampleLines).mockImplementationOnce(async () => {
@@ -165,7 +159,7 @@ describe(getStepExampleLine, () => {
 
     await requestStepExampleLine({ stepId: step.id });
 
-    expect(generateMemorySearchTerms).toHaveBeenCalledWith(
+    expect(selectRelevantMemoryFacts).toHaveBeenCalledWith(
       expect.objectContaining({ analytics: { contentScope: "personal", distinctId: learner.id } }),
     );
 

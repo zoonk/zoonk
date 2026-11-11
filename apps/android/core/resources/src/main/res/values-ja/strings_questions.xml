@@ -3,15 +3,11 @@
 {
   "questions_correct": "7bd1eec35b36841853dc9c6f0bef225e61d2ad574e0cd5baceb64bb6b1294aac",
   "questions_dont_know_yet": "286d2d2cc2dc390328ba9f83dde15c693c4fb56d6edf854fb6167634412f417a",
-  "questions_drill_last_answer": "31350ed538b121efc5580de6c42bae700075ffce216657ca76c66eb7a5e4c79d",
   "questions_drill_no_guessing": "5302abc1d9f68b4b85b1a3743cd0b6a370531bff5921ffd52a7756a69ad8d5f8",
   "questions_drill_not_sure": "b2cfdf96738aa7e68645bbfbcd9ddd1eae986680df12eea5538decefd24e616e",
   "questions_drill_not_sure_praise": "5a6b9c0b546b998959ea3b06968fb8fc6ac5ebf627bbfbddfef19d0a9c8f9f17",
   "questions_drill_open_lesson": "9a7c055ec459d31377fec63f182f9296dcdd321a16a658546a185252659bd7df",
-  "questions_drill_read_carefully": "408eb2e038bdf39a7a58ee085ce2a21551fc89d48b6f759e113e9ae2889fe0cb",
-  "questions_drill_reteach": "3a5a09fb7ac729d579eaf55f6967d38221fdfc5314753bde0218e0869439aedc",
   "questions_drill_reteach_ideas": "d6121c3172ad6356b265a5ab641e1ad30036a31f12d8c70082ebbee442df0a0b",
-  "questions_drill_retry": "d42843940e12910a2034922932f4e55ff0a03d9b62139d8e578b4a16545fe0fa",
   "questions_drill_seconds_left": "20b4509eefea5d95024b61a6e97b463ac5c27da451c2fd60703e96995b3797e9",
   "questions_drill_spot_the_trap": "a8c0350ea559b3755503564b1bdc1fae56451588eb46f13c468ce1ee96e1a550",
   "questions_drill_start": "98932062454bf626b93124b4c41671b651152147df74011505e5079f0eb5ca85",
@@ -49,7 +45,6 @@
   "questions_right": "62a40bcddb8d456520e2cf539b0b27a2a18d1aa741dca3c10fdbf0bda3a0f69b",
   "questions_right_answer": "8b60dc780199ae0b45632baf05f2a9245e2a858cf9e5126241a847296f0609f3",
   "questions_saved": "1f61e64c95e98651ad209c08719064910d8b3956bac15a8019a683afa2dd45ca",
-  "questions_saved_tomorrow": "e8c970e9d7cfa48b88947ae3bad4427ba395251e8f5172a1efa1eca6b3665209",
   "questions_set_place_audio": "c694af5ca16ed3498efe639492ccced139e137b0c8a3ac7cc68d6ddc136d58e9",
   "questions_set_place_case": "e10b7bab0b9c6b829955eb6b66bf0a34b5f4a7c76a6deb1ce7dee635299d135c",
   "questions_set_place_chart": "1e38c682e85f54927176ba84676bff904c7684162e372da1f3e623d497adf36f",
@@ -112,7 +107,6 @@
         <item quantity="other">%d件の間違いを克服しました。間違いノートから削除されます。</item>
     </plurals>
     <string name="questions_saved">間違いノートに保存しました</string>
-    <string name="questions_saved_tomorrow">間違いノートに保存しました · 明日また出てきます</string>
     <string name="questions_show_less">折りたたむ</string>
     <string name="questions_read_again">全文をもう一度読む</string>
     <string name="questions_set_place_audio">この音声の%1$d問目／全%2$d問</string>
@@ -123,17 +117,12 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">過去問 · %1$s</string>
     <string name="questions_drill_reteach_ideas">まずポイントを学んでから、実際に使ってみます。</string>
-    <string name="questions_drill_reteach">つまずいたポイントに戻ります。</string>
-    <string name="questions_drill_read_carefully">一語一語よく読んでから答えましょう。</string>
     <string name="questions_drill_spot_the_trap">ひっかけがあります。見つけてから答えましょう。</string>
     <plurals name="questions_drill_timed">
         <item quantity="other">本番と同じく、1問あたり%d秒です。</item>
     </plurals>
     <string name="questions_drill_no_guessing">自信があるときだけ答えましょう。自信がないと言っても大丈夫です。</string>
-    <string name="questions_drill_retry">もう一度やってみましょう。</string>
     <string name="questions_drill_start">問題を始める</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">前回の回答：%1$s</string>
     <string name="questions_drill_timed_out">時間切れです。この問題は不正解として記録され、後の練習でもう一度出てきます。</string>
     <string name="questions_drill_not_sure_praise">いい判断です。当てずっぽうで答えるより、自信がないと伝えるほうがいいです。</string>
     <string name="questions_drill_trap">ひっかけ：</string>

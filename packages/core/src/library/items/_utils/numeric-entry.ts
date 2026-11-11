@@ -46,6 +46,10 @@ export function matchesEntry({
   }
 }
 
+export function isWholeNumber(value: number): boolean {
+  return isClose(value, Math.round(value));
+}
+
 export function fitsEntry({ entry, value }: { entry: NumericEntry; value: number }): boolean {
-  return entry.kind !== "integer" || isClose(value, Math.round(value));
+  return entry.kind !== "integer" || isWholeNumber(value);
 }

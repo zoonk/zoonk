@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -20,6 +21,11 @@ function learnGoal({ targetDate, title }: { targetDate: string; title: string })
     },
     examDates: [],
   };
+}
+
+async function readActiveGoalsLeft(draftId: string) {
+  const result = await getOnboardingDraft({ draftId });
+  return result.status === "ready" ? result.draft.activeGoalsLeft : undefined;
 }
 
 describe(getOnboardingDraft, () => {
@@ -44,7 +50,7 @@ describe(getOnboardingDraft, () => {
 
     await expect(getOnboardingDraft({ draftId: draft.id })).resolves.toStrictEqual({
       draft: {
-        activeGoalLimit: 1,
+        activeGoalsLeft: 1,
         generationId: "understanding-run",
         goalId: null,
         id: draft.id,
@@ -55,6 +61,44 @@ describe(getOnboardingDraft, () => {
       },
       status: "ready",
     });
+  });
+
+  it("says how many more goals a free learner's plan follows now, counting only goals they follow", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const draft = await onboardingDraftFixture({ userId: user.id });
+
+    await Promise.all([
+      goalFixture({ status: "paused", userId: user.id }),
+      goalFixture({ status: "archived", userId: user.id }),
+      goalFixture({ kind: "explain", status: "active", userId: user.id }),
+    ]);
+
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(3);
+    await goalFixture({ status: "active", userId: user.id });
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(2);
+    await goalFixture({ status: "active", userId: user.id });
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(1);
+    await goalFixture({ status: "active", userId: user.id });
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(0);
+    await goalFixture({ status: "active", userId: user.id });
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(0);
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
+
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBeNull();
+  });
+
+  it("leaves a guest one goal until they follow it", async () => {
+    const user = await userFixture();
+    mockGuestSession(user.id);
+    const draft = await onboardingDraftFixture({ userId: user.id });
+
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(1);
+    await goalFixture({ status: "active", userId: user.id });
+    await expect(readActiveGoalsLeft(draft.id)).resolves.toBe(0);
   });
 
   it("shows the card once understood, and the goal confirmed from it", async () => {

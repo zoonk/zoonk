@@ -1,4 +1,3 @@
-import Charts
 import SwiftUI
 
 struct LessonRichText: View {
@@ -380,76 +379,6 @@ struct LessonVisualView: View {
       LessonChartView(chart: chart)
     case .timeline(let timeline):
       LessonTimelineView(timeline: timeline)
-    }
-  }
-}
-
-private struct LessonChartView: View {
-  let chart: LessonChart
-
-  private struct Point: Identifiable {
-    let series: String
-    let category: String
-    let value: Double
-    var id: String { "\(series)-\(category)" }
-  }
-
-  private var points: [Point] {
-    chart.series.flatMap { series in
-      zip(chart.categories, series.values).map {
-        Point(series: series.name, category: $0, value: $1)
-      }
-    }
-  }
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(chart.title)
-        .typeStyle(.body.weight(.semibold))
-
-      Chart(points) { point in
-        if chart.chart == .bar {
-          BarMark(
-            x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
-          )
-          .foregroundStyle(by: .value(verbatim: "Series", point.series))
-          .position(by: .value(verbatim: "Series", point.series))
-        } else {
-          LineMark(
-            x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
-          )
-          .foregroundStyle(by: .value(verbatim: "Series", point.series))
-          .symbol(by: .value(verbatim: "Series", point.series))
-        }
-      }
-      .chartYScale(domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))
-      .lessonValueAxis()
-      .chartYAxisLabel(chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel)
-      .chartXAxisLabel(chart.categoryLabel)
-      .chartLegend(chart.series.count > 1 ? .visible : .hidden)
-      .frame(minHeight: 200)
-
-      if let source = chart.source {
-        Text(source)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-      }
-    }
-  }
-}
-
-extension View {
-  func lessonValueAxis() -> some View {
-    chartYAxis {
-      AxisMarks { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisTick().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
-          }
-        }
-      }
     }
   }
 }

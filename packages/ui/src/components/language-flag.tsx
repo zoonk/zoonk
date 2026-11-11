@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
-import { FLAG_IMAGES } from "./_flags/flag-images";
+import { FLAG_IMAGES, type FlagCode } from "./_flags/flag-images";
 
 /** flag-icons' 4x3 set; CSS sets the rendered size. */
 const FLAG_WIDTH = 640;
@@ -10,21 +10,19 @@ export function hasLanguageFlag(language: string | null | undefined): language i
   return Boolean(language && getLanguageFlagCode(language));
 }
 
-export function LanguageFlag({
+export function isFlagCode(code: string | null | undefined): code is FlagCode {
+  return Boolean(code && Object.hasOwn(FLAG_IMAGES, code));
+}
+
+export function Flag({
   alt = "",
   className,
-  language,
+  code,
 }: {
   alt?: string;
   className?: string;
-  language: string;
+  code: FlagCode;
 }) {
-  const code = getLanguageFlagCode(language);
-
-  if (!code) {
-    return null;
-  }
-
   const flag = FLAG_IMAGES[code];
   const src = typeof flag === "string" ? flag : flag.src;
 
@@ -42,4 +40,16 @@ export function LanguageFlag({
       width={FLAG_WIDTH}
     />
   );
+}
+
+export function LanguageFlag({
+  language,
+  ...props
+}: {
+  alt?: string;
+  className?: string;
+  language: string;
+}) {
+  const code = getLanguageFlagCode(language);
+  return code ? <Flag code={code} {...props} /> : null;
 }

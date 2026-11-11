@@ -2,6 +2,7 @@ import SwiftUI
 
 /// One job: start or continue today's session.
 struct TodayScreen: View {
+  @Environment(OnboardingStore.self) private var onboarding
   @Environment(SessionStore.self) private var session
   @Environment(TodayStore.self) private var store
 
@@ -30,7 +31,7 @@ struct TodayScreen: View {
         }
     } else {
       signedIn
-        .loads(store.today)
+        .loads(store.today, onboarding.resume)
     }
   }
 
@@ -52,8 +53,11 @@ struct TodayScreen: View {
       TodayPreparing(goalID: goalID, displayName: displayName)
         .lonePage()
     case .loaded(.goalNotActive):
-      TodayGoalPaused()
-        .lonePage()
+      VStack(spacing: 0) {
+        UnfinishedGoalPanel()
+        TodayGoalPaused()
+      }
+      .lonePage()
     case .failed(let error) where error != .unauthorized:
       ContentUnavailableView {
         Label {
@@ -135,23 +139,71 @@ private struct TodayStartGoal: View {
       }
     }
 
+    UnfinishedGoalSection()
+  }
+}
+
+/// A goal card typed after the learner's newest goal and not confirmed yet, offered back where it
+/// was left, so a learner who paused a goal to make room for it doesn't type it again.
+struct UnfinishedGoalSection: View {
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
     if let draft = onboarding.resume.value?.draft {
       Section {
         Text(draft.prompt)
-
-        Button {
-          router.open(.startGoal(draftId: draft.draftId))
-        } label: {
-          Text(
-            "Continue", tableName: "Today",
-            comment: "Opens the goal the learner typed and hasn't confirmed yet")
-        }
+        ContinueDraftButton(draft: draft)
       } header: {
-        SectionTitle(
-          Text(
-            "What you wrote", tableName: "Onboarding",
-            comment: "Header over the learner's typed goal"))
+        UnfinishedGoalTitle()
       }
+    }
+  }
+}
+
+/// The same offer outside a list, leading a screen that has no day to show.
+private struct UnfinishedGoalPanel: View {
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
+    if let draft = onboarding.resume.value?.draft {
+      GroupBox {
+        Text(draft.prompt)
+          .lineLimit(3)
+          .foregroundStyle(.mutedForeground)
+
+        ContinueDraftButton(draft: draft)
+          .buttonStyle(.outline)
+          .controlSize(.small)
+      } label: {
+        UnfinishedGoalTitle()
+      }
+      .groupBoxStyle(.panel)
+      .padding(.horizontal, 16)
+      .padding(.top, 8)
+    }
+  }
+}
+
+private struct UnfinishedGoalTitle: View {
+  var body: some View {
+    SectionTitle(
+      Text(
+        "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"))
+  }
+}
+
+private struct ContinueDraftButton: View {
+  @Environment(AppRouter.self) private var router
+
+  let draft: OnboardingResume.Draft
+
+  var body: some View {
+    Button {
+      router.open(.startGoal(draftId: draft.draftId))
+    } label: {
+      Text(
+        "Continue", tableName: "Today",
+        comment: "Opens the goal the learner typed and hasn't confirmed yet")
     }
   }
 }
@@ -370,8 +422,11 @@ private struct TodayGoalPaused: View {
         if failure == .limitReached {
           FailureLine(
             message: LocalizedStringResource(
-              "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-              table: "Today", comment: "Why resuming the goal failed on the free plan"))
+              "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
+              table: "Today",
+              comment:
+                "Why resuming the goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
+            ))
         } else if failure != nil {
           FailureLine(
             message: LocalizedStringResource(

@@ -59,6 +59,7 @@ private struct ScoreTiles: View {
 struct ScoreTrendChart: View {
   let score: ScoreProgress
 
+  @Environment(ChartInspection.self) private var inspection
   @State private var selectedDate: Date?
 
   private var points: [ScoreWeek] {
@@ -111,25 +112,14 @@ struct ScoreTrendChart: View {
         )
         .foregroundStyle(Color.border)
         .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(weekLabel(selected.date))
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
-            Text(metricPercent(selected.point.performance.score))
-              .typeStyle(.note.weight(.medium).monospaced())
-              .foregroundStyle(.successText)
-            Text(
-              "\(selected.point.performance.totalAnswers) answers", tableName: "Progress",
-              comment: "A count of answers"
-            )
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
-          }
-          .padding(.horizontal, 12)
-          .padding(.vertical, 8)
-          .background(.background, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-          .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.border))
-          .accessibilityHidden(true)
+          ChartTooltip(
+            detail: ChartPointDetail(
+              label: weekLabel(selected.date),
+              value: metricPercent(selected.point.performance.score),
+              note: String(
+                localized: "\(selected.point.performance.totalAnswers) answers", table: "Progress",
+                comment: "A count of answers")),
+            valueColor: .successText)
         }
       }
     }
@@ -155,6 +145,11 @@ struct ScoreTrendChart: View {
       }
     }
     .chartXSelection(value: $selectedDate)
+    .onChange(of: selectedDate == nil) { _, isIdle in
+      if !isIdle {
+        inspection.close()
+      }
+    }
     .frame(height: 220)
     .accessibilityLabel(
       Text("Weekly score trend", tableName: "Progress", comment: "Spoken name of the Score chart")

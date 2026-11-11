@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true
+  },
+  "extends": "@zoonk/tsconfig/base.json",
+  "include": ["src", "vitest.config.mts"]
+}

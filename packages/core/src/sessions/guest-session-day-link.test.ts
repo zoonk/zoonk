@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -25,11 +26,12 @@ vi.mock("../../../auth/node_modules/botid/server", () => ({
 }));
 
 async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly") {
-  const skill = await skillFixture();
+  const [skill, goal] = await Promise.all([skillFixture(), goalFixture({ userId })]);
   const planItemId = crypto.randomUUID();
 
   const [session, item] = await Promise.all([
     studySessionFixture({
+      goalId: goal.id,
       missions: {
         picks: [
           { anchor: { blockKind: "review" }, kind: "review", total: 1 },
@@ -42,6 +44,7 @@ async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly")
       userId,
     }),
     itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+    planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } }),
   ]);
 
   const [block, ledger] = await Promise.all([
@@ -95,7 +98,7 @@ async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly")
       sessionId: session.id,
       status: "completed",
     }),
-    mistakeFixture({ fixedAt: new Date(), status: "fixed", userId }),
+    mistakeFixture({ fixedAt: new Date(), skillId: skill.id, status: "fixed", userId }),
     attemptFixture({ itemId: item.id, studySessionId: session.id, userId }),
   ]);
 

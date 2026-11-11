@@ -140,7 +140,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
         {...props}
       >
         <SuggestionMark />
-        <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-2")}>{children}</div>
+        <form className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-2")}>{children}</form>
       </div>
     </PresentationContext>
   );
@@ -281,11 +281,11 @@ const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
     "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
 };
 
-export function SuggestionActions({ className, ...props }: React.ComponentProps<"div">) {
+export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {
   const presentation = use(PresentationContext);
 
   return (
-    <div
+    <form
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
       {...props}
@@ -297,9 +297,27 @@ function useActionSize(): "lg" | "sm" {
   return use(PresentationContext) === "sheet" ? "lg" : "sm";
 }
 
-export function SuggestionAction(props: Omit<React.ComponentProps<typeof Button>, "size">) {
+/**
+ * An `action` submits the `SuggestionLine` or `SuggestionActions` form around it, so React holds a press made before
+ * the page hydrates and sends it once it does, where a press on `onClick` is lost.
+ */
+export function SuggestionAction({
+  action,
+  ...props
+}: Omit<React.ComponentProps<typeof Button>, "formAction" | "size" | "type"> & {
+  action?: () => void;
+}) {
   const size = useActionSize();
-  return <Button focusableWhenDisabled size={size} {...props} />;
+
+  return (
+    <Button
+      focusableWhenDisabled
+      formAction={action && (() => action())}
+      size={size}
+      type={action ? "submit" : "button"}
+      {...props}
+    />
+  );
 }
 
 export function SuggestionLinkAction({

@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "fcc70cae9ce18eaa86ca37a26e80ff87d12f031139e69c1910f12e9b02592e6e",
   "tutor_offer_essay_weekly": "de83316b0cda3691d18871ac08f4b9bafde6d6cfb4f950f836492a0ad803c713",
   "tutor_offer_goal": "f3b12b93174567311d66308058903b723985effb2b2053570c49d8e32aa6dd18",
+  "tutor_offer_goal_limit": "d12349765e107173a1fcd86019fd4e7afbee9e0ba782285f5845834429ef60c8",
   "tutor_offer_logbook": "9edd1ef149ed0976a2ebb56f79475a4955320c451ffe1eb55ab32670c8f69cf8",
   "tutor_offer_logbook_description": "1e653811a081dc546ba1a90e64ede14c4a24a4009e560b13243ff014501f9279",
   "tutor_offer_manage": "de797e742950fbebbfd64c927389ee43d88b3a0fb5407d2bd9157df831c8f304",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "3124b8dc0184d20ef4ba6de53de17f6c74b82c78ab57bbf5c14e7e90c1429462",
   "tutor_offer_mock_description": "4228fce78507ab4d1d62373e7ba32c13db12614c31a33ddc4cf63c0b20807847",
   "tutor_offer_mock_plus": "86682bc8a6e85675643590057b90b8c47f895f4c8bfea7325f3e0bb2428caf56",
-  "tutor_offer_one_goal": "397a8950ea07109faaf8b2ec2d545cbaa728128af60c7a3c03e03986be2bbe14",
   "tutor_offer_open": "9e46f3734002e9c01cc2d57764dadbdd954ec664c20bb888b948d1cef2cb5ebd",
   "tutor_offer_plus": "76cd942b4b44fd18d38e2624782806c91a33d20e1000871cdfcdffeb79159f14",
   "tutor_offer_plus_description": "e59fbb2b339dcd4a37b8bc67a512087087060fd6e07b118dab303e4427d8e011",
@@ -86,6 +86,8 @@
   "tutor_offer_stats": "f52f3730929dc1e166cb155dda2ac911665c20de43cf1027b42b6780f8d32288",
   "tutor_offer_stats_description": "1454bfae2745eaca61f5c5bcbe768724b49279cecefbf1d26d592e88c79976f2",
   "tutor_offer_take_test": "4ad2cac9c66f7f9e86b33ae22e350b7a580b7971e66bd0ad10581edefeab3d0a",
+  "tutor_offer_variety_applied": "19931206484a79fa8722ae654cb98addc0c43288efab6b8aa68a0e538577d219",
+  "tutor_offer_variety_description": "0f90ea439abd2d132eb43bf2a5d3c0825ad4e810aae776ad9ba0f1c04dab0b77",
   "tutor_page_sign_up": "b21cf9fdcce86db8fb7fdcc78b8af677020d2a760a8b4791e963debb0931b5c0",
   "tutor_placeholder_answer": "bb897194ac19037e38c4e46a833476b79ec820121b80434ba856b388bb157677",
   "tutor_placeholder_chapter": "982b1980eeb66fd78c5fbb7c5672c380d68f666c0f5a960cc4c0b03860a58565",
@@ -213,7 +215,8 @@
     <string name="tutor_offer_start_goal">Yeni bir hedefe başla</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">Ücretsiz pakette aynı anda tek bir hedef üzerinde çalışabilirsin: mevcut hedefini menüsünden duraklat ya da Plus ile birden fazla hedef üzerinde çalış.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">Şu anda başka bir hedefe başlamak için Plus gerekiyor. Şimdilik mevcut hedeflerine devam et.</string>
     <string name="tutor_offer_catalog_course">Katalogda hazır bir kurs</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -254,6 +257,10 @@
     <string name="tutor_offer_memory_description">Arkadaşının senin hakkında hatırladıklarını gör, düzelt veya sil.</string>
     <string name="tutor_offer_stats">İstatistikler</string>
     <string name="tutor_offer_stats_description">Enerjin, seviyen, doğru cevapların ve en verimli çalıştığın zamanlar.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">Ders arkadaşınla ve pratik sohbetlerinde %1$s kullanılır.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">Kaydedildi. Planında değiştirebilirsin.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Plus’ın sundukları ve fiyatı.</string>
     <string name="tutor_offer_plus_subscribed">Paketin ve ödeme bilgilerin.</string>

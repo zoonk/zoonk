@@ -52,10 +52,6 @@
   "player_citation_from_material": "0456a24d2a7b802d29bfe89232d826c7ec8afb27dfc1c59aac91e682262a142c",
   "player_citation_not_in_material": "9939b848acf135dae33d836682b00c3ba873a13fa505877f451e8dfef94dc3ce",
   "player_comes_back_at_end": "d66be09136242b1279eb46aca7a145863ccec8863a4cfc794e8695e0ca37b4c5",
-  "player_comes_back_date": "ce4dd8e30f928d4ef12a75048eae6513c1de2b2d2977dcf16b3827920b67604a",
-  "player_comes_back_today": "92585132e1fd305a24a236ab328bbf53c9a62d2b9f7d788574b35fded3a96f46",
-  "player_comes_back_tomorrow": "6cd95a23613db4442daf5095028f66f9de040e806303caa24468a8fb14ae926e",
-  "player_comes_back_weekday": "56efd780795fbec43681e89c60d1321440e8fb844e2e423a20214793e84c122f",
   "player_correct_answer_label": "e36d076e21e2a26a7db6659b0d6d32bfa6e75ed2e76fb14e022cdad7ae89299f",
   "player_correction_right": "6e0314dabcaee7c7e6ccc8bdc2da1edfccaee2063c9667bcb2d712bb2684ca8a",
   "player_correction_yours": "3921d9544b29f929383cea7424558a98a4d87efb48658c93e5e21fbee840524a",
@@ -98,7 +94,6 @@
   "player_lesson_map_nested": "2acaa10214e0acede3a6a24c29bc7d1507f8a787a8e17c040789246649e2bfdc",
   "player_lesson_not_saved": "860f6b25e3bd40e4414787a7ea9c64560ffcc6d7a212ff57c43f5dbf8ff21279",
   "player_lesson_of": "efcedf1fe6d89dc646ff522b46eccd75d22285cd57f78a0953af976f8278acfc",
-  "player_lessons_deferred": "560c2f3fd5f7e3585116e4e72832e69751d0e5143d2c69fcda4e6f394c15d962",
   "player_listen": "d9dad9e7c623905d3013c143263066b9f6f0e26fd187df1695b182293095f454",
   "player_microphone_blocked": "13b897da575ea51ff3e3820f5ccf8f78f7f337b2784bb2db76115dc2f0e9a76f",
   "player_next_lesson": "6898b6896b43bea69e2c7208782df158a7062e36bb29cee631252c38c8a9be0f",
@@ -143,14 +138,9 @@
   "player_ready_instead": "738741f191673f3cfbcf965d8a02b4670ddc720eb9ac7494523f7de8075cb88f",
   "player_ready_while_waiting": "0ecbb7b71afb10fcc71dba49d95e1aef9cf30d09be8d1e55bd144e4ba26d0877",
   "player_review_ideas": "df8162dc07f8588ce5cd440612ef430dedaa0be9180d51834a2201e601151b57",
-  "player_review_on": "2ef6238bb7fcd3e98eadb9ac265e2ab6ef40b06c71548944636131187dea958c",
   "player_save_failed": "98f18f2fbfd5c86d82eb552b2efb225544ffb184533063d31b7aaee80f0d6d45",
   "player_saved_to_mistakes": "089a072d24aff822a01e08ab497695252d99dc7cd1f41346d00402d6c49f2cfa",
   "player_saved_to_mistakes_back_at_end": "16b7fc0304107b68a3f3bde005054cb64b5fcc81545f4bbadc65357f79c821e7",
-  "player_saved_to_mistakes_back_date": "445a94d5695f978b325a2b533a168e8449ca8c1713376c9033944e368d3c5a80",
-  "player_saved_to_mistakes_back_today": "1a989f51806326c6273d719a6ff2b830b81eb75ab50770b01543aa7dc86f8c78",
-  "player_saved_to_mistakes_back_tomorrow": "d25a3c447fa3062e2a99a23621a8caef49f31e96f95bc42ebc89a0dce64e4f36",
-  "player_saved_to_mistakes_back_weekday": "6bb82f1ea594a140f5cfe7b069f9fdf42dbc4b740250051544c1a2453fee43d9",
   "player_saving_progress": "1542f60588c4fd942d13968c40801fab95936ef723f4bdcd7dc5e441bd1e941e",
   "player_say_it_instead": "ba72c6637a3848a9cc1d2bf7e6d58b67e828a0347c252dc5e9068196c71f7f2d",
   "player_screen_options": "07a9bf9118bddaf8ebcee5f09450fc4aafcd0c08e787113976a2b31ca9617c44",
@@ -274,14 +264,6 @@
     <string name="player_comes_back_at_end">Ritroverai questa domanda alla fine della lezione</string>
     <string name="player_saved_to_mistakes">Salvato nel tuo quaderno degli errori</string>
     <string name="player_saved_to_mistakes_back_at_end">Salvato nel tuo quaderno degli errori · lo ritroverai alla fine di questa lezione</string>
-    <string name="player_saved_to_mistakes_back_today">Salvato nel tuo quaderno degli errori · lo ritroverai in un ripasso più tardi oggi</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">Salvato nel tuo quaderno degli errori · lo ritroverai nel ripasso di domani</string>
-    <string name="player_saved_to_mistakes_back_weekday">Salvato nel tuo quaderno degli errori · lo ritroverai nel ripasso di %1$s</string>
-    <string name="player_saved_to_mistakes_back_date">Salvato nel tuo quaderno degli errori · lo ritroverai in un ripasso il %1$s</string>
-    <string name="player_comes_back_today">Ritroverai questo concetto in un ripasso più tardi oggi</string>
-    <string name="player_comes_back_tomorrow">Ritroverai questo concetto nel ripasso di domani</string>
-    <string name="player_comes_back_weekday">Ritroverai questo concetto nel ripasso di %1$s</string>
-    <string name="player_comes_back_date">Ritroverai questo concetto in un ripasso il %1$s</string>
     <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">È solo un’ipotesi, non fa punteggio</string>
     <string name="player_answer_options">Opzioni di risposta</string>
@@ -420,14 +402,6 @@
     <string name="player_lesson_not_saved">La tua lezione non è ancora stata salvata</string>
     <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
     <string name="player_time_studied">%1$s di studio</string>
-    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
-    <string name="player_review_on">Ripasso il %1$s</string>
-    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="player_lessons_deferred">
-        <item quantity="one">%1$s lezione spostata a un altro giorno per non superare %2$s di studio oggi.</item>
-        <item quantity="many">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
-        <item quantity="other">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
-    </plurals>
     <string name="player_next_lesson">Vai alla prossima lezione</string>
     <string name="player_stop_for_today">Fermati per oggi</string>
     <string name="player_see_todays_summary">Vedi il riepilogo di oggi</string>

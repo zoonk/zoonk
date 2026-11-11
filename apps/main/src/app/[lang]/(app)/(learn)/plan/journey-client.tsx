@@ -22,7 +22,6 @@ import { type LanguageProgressView } from "@zoonk/core/view-models/language/cont
 import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import {
   type GoalStatusControl,
-  JourneyBuilding,
   type JourneyLinks,
   JourneyScreen,
   type JourneyStanding,
@@ -31,20 +30,55 @@ import {
   type PlanTutor,
   type StudyNext,
 } from "@zoonk/learn/journey";
+import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useSyncExternalStore } from "react";
 
-/** "Try again" starts the run only on the learner's tap. */
-export function JourneyBuildingClient({
+function useGoalStatus({
   goalId,
-  goalTitle,
+  resume,
+  status,
 }: {
   goalId: string;
-  goalTitle: string;
-}) {
+  resume: GoalStatusControl["resume"];
+  status: GoalStatusControl["status"];
+}): GoalStatusControl {
   const router = useRouter();
+
+  return {
+    onRename: (displayName) => renameGoalAction(goalId, displayName),
+    onSetStatus: async (next) => {
+      const outcome = await setGoalStatusAction(goalId, next);
+
+      if (outcome === "saved" && next === "archived") {
+        router.push("/today");
+      } else if (outcome === "saved") {
+        router.refresh();
+      }
+
+      return outcome;
+    },
+    resume,
+    status,
+  };
+}
+
+type PlanlessGoal = { goalId: string; goalStatus: GoalStatusControl["status"]; goalTitle: string };
+
+export function JourneySetupClient({ goalId, goalStatus, goalTitle }: PlanlessGoal) {
+  const status = useGoalStatus({ goalId, resume: false, status: goalStatus });
+
+  return (
+    <JourneySetup continueHref={`/start/${goalId}`} goalStatus={status} goalTitle={goalTitle} />
+  );
+}
+
+/** "Try again" starts the run only on the learner's tap. */
+export function JourneyBuildingClient({ goalId, goalStatus, goalTitle }: PlanlessGoal) {
+  const router = useRouter();
+  const status = useGoalStatus({ goalId, resume: false, status: goalStatus });
 
   const run = useWorkflowRun({
     generationId: null,
@@ -54,7 +88,14 @@ export function JourneyBuildingClient({
     restart: () => retryGenerationAction(goalId),
   });
 
-  return <JourneyBuilding goalTitle={goalTitle} onRefresh={() => router.refresh()} run={run} />;
+  return (
+    <JourneyBuilding
+      goalStatus={status}
+      goalTitle={goalTitle}
+      onRefresh={() => router.refresh()}
+      run={run}
+    />
+  );
 }
 
 type JourneyScreenProps = React.ComponentProps<typeof JourneyScreen>;
@@ -134,35 +175,6 @@ type JourneyClientProps = Omit<
   readAt: number;
   resume: GoalStatusControl["resume"];
 };
-
-function useGoalStatus({
-  goalId,
-  resume,
-  status,
-}: {
-  goalId: string;
-  resume: GoalStatusControl["resume"];
-  status: GoalStatusControl["status"];
-}): GoalStatusControl {
-  const router = useRouter();
-
-  return {
-    onRename: (displayName) => renameGoalAction(goalId, displayName),
-    onSetStatus: async (next) => {
-      const outcome = await setGoalStatusAction(goalId, next);
-
-      if (outcome === "saved" && next === "archived") {
-        router.push("/today");
-      } else if (outcome === "saved") {
-        router.refresh();
-      }
-
-      return outcome;
-    },
-    resume,
-    status,
-  };
-}
 
 /** One opens its page; several open Certificates, marked for Plus while any is locked. */
 function getCertificatesView(

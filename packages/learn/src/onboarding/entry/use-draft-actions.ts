@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  type OnboardingDraftEdit,
-  type OnboardingDraftView,
-} from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, useStartError } from "../goal-errors";

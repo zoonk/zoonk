@@ -34,22 +34,40 @@ export async function getBestTimeName(
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
 }
 
-export async function PatternsNote({ patterns }: { patterns: ScorePatternsData }) {
+export async function getEvenDaysNote(
+  verdict: ScorePatternsData["dayVerdict"],
+): Promise<string | null> {
+  const t = await getExtracted();
+
+  return verdict.kind === "even"
+    ? t(
+        "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works.",
+        { points: verdict.points },
+      )
+    : null;
+}
+
+export async function getEvenTimesNote(
+  verdict: ScorePatternsData["timeVerdict"],
+): Promise<string | null> {
+  const t = await getExtracted();
+
+  return verdict.kind === "even"
+    ? t(
+        "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works.",
+        { points: verdict.points },
+      )
+    : null;
+}
+
+/** Without `patterns` it leaves out what each chart says under itself. */
+export async function PatternsNote({ patterns }: { patterns?: ScorePatternsData }) {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
-  const { dayVerdict: days, timeVerdict: times } = patterns;
 
   const sentences = [
-    days.kind === "even" &&
-      t(
-        "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works.",
-        { points: days.points },
-      ),
-    times.kind === "even" &&
-      t(
-        "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works.",
-        { points: times.points },
-      ),
+    patterns && (await getEvenDaysNote(patterns.dayVerdict)),
+    patterns && (await getEvenTimesNote(patterns.timeVerdict)),
     t(
       "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern.",
       { count: MIN_PATTERN_ANSWERS },

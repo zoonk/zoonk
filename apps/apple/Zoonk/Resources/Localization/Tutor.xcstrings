@@ -5039,6 +5039,65 @@
         }
       }
     },
+    "Saved. You can change it in your plan." : {
+      "comment" : "The learner saved the country the buddy offered; the plan is the Plan tab",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert. Du kannst das in deinem Plan ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardó. Puedes cambiar esta preferencia en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré. Tu peux modifier ce choix dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scelta salvata. Puoi cambiarla nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。学習計画から変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요. 계획에서 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Możesz to zmienić w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo. Você pode mudar isso no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi. Planında değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Say %lld words again" : {
       "comment" : "The buddy offers pronunciation practice",
       "localizations" : {
@@ -5625,6 +5684,65 @@
         }
       }
     },
+    "Starting another goal right now comes with Plus. Until then, keep going with your current goals." : {
+      "comment" : "Why a free learner can't start another goal now: either they follow as many goals at once as the free plan allows or they started as many new goals as it allows recently, so it names neither. Plus is the subscription's name, not \"more\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um jetzt ein weiteres Ziel zu starten, brauchst du Plus. Mach bis dahin mit deinen aktuellen Zielen weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para crear otro objetivo ahora necesitas Plus. Mientras tanto, sigue con tus objetivos actuales."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Plus, tu peux commencer un autre objectif dès maintenant. En attendant, continue avec tes objectifs actuels."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per iniziare un altro obiettivo adesso serve Plus. Nel frattempo, continua con i tuoi obiettivi attuali."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ別の目標を始めるには、Plusへの登録が必要です。それまでは、今取り組んでいる目標を続けましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 목표를 하나 더 시작하려면 Plus가 필요해요. 그동안 진행 중인 목표를 이어 가세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z pakietem Plus możesz już teraz rozpocząć kolejny cel. Na razie pracuj dalej nad obecnymi celami."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Plus, você pode começar outro objetivo agora. Até lá, continue com seus objetivos atuais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu anda başka bir hedefe başlamak için Plus gerekiyor. Şimdilik mevcut hedeflerine devam et."
+          }
+        }
+      }
+    },
     "Statistics" : {
       "comment" : "The buddy offers the statistics",
       "localizations" : {
@@ -6038,61 +6156,61 @@
         }
       }
     },
-    "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus." : {
-      "comment" : "Why a free learner can't start another goal",
+    "That didn't save. Try again." : {
+      "comment" : "Applying the country the buddy offered failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Free-Tarif kannst du ein Ziel auf einmal verfolgen: Pausiere dein aktuelles Ziel über sein Menü oder verfolge mit Plus mehrere Ziele gleichzeitig."
+            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El plan gratis permite seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus."
+            "value" : "No se guardó. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La formule gratuite permet de suivre un objectif à la fois : mets ton objectif actuel en pause depuis son menu, ou suis plusieurs objectifs avec Plus."
+            "value" : "Ce choix n’a pas été enregistré. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con la formula Free puoi seguire un obiettivo alla volta: metti in pausa quello attuale dal suo menu oppure segui più obiettivi con Plus."
+            "value" : "Salvataggio non riuscito. Riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無料プランでは、一度に1つの目標を進められます。今の目標はメニューから一時停止できます。Plusなら複数の目標を同時に進められます。"
+            "value" : "保存できませんでした。もう一度試してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 현재 목표의 메뉴에서 일시 중지를 선택하거나, Plus로 여러 목표를 함께 진행해 보세요."
+            "value" : "저장되지 않았어요. 다시 시도해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W pakiecie Free możesz realizować jeden cel naraz: wstrzymaj obecny cel w jego menu lub realizuj kilka celów w pakiecie Plus."
+            "value" : "Nie udało się zapisać. Spróbuj ponownie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No plano Grátis, você acompanha um objetivo por vez: pause seu objetivo atual no menu dele ou acompanhe mais de um com o Plus."
+            "value" : "Não deu para salvar. Tente de novo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsiz paketle aynı anda tek bir hedefi takip edebilirsin: mevcut hedefini menüsünden duraklat ya da Plus ile birden fazla hedefi takip et."
+            "value" : "Kaydedilemedi. Tekrar dene."
           }
         }
       }
@@ -7987,6 +8105,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü yardım hakkını kullandın. Hakkın yarın yenilenir."
+          }
+        }
+      }
+    },
+    "Your buddy and practice calls use %@." : {
+      "comment" : "The buddy offers the language as the country lessons already teach speaks it; the argument is like 'Spanish (Mexico)'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compañero y las llamadas de práctica usan %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compagnon et tes appels d’entraînement utilisent %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo compagno e le conversazioni di allenamento usano %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相棒とのやり取りや会話練習では%@を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짝꿍과 대화 연습에는 %@을(를) 사용해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro e as conversas de prática usam %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %@ kullanılır."
           }
         }
       }

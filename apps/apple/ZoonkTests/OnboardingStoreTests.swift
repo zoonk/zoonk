@@ -28,6 +28,93 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertFalse(store.waitDeck(for: try view(status: "writing")).isComing)
   }
 
+  func testAnEditSavedWhileTheCardWasReadShowsTheEditAndReadsTheCardAgain() async throws {
+    let server = DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+
+    await server.holdNextEdit(answering: Self.draft(prompt: "Spanish, fixed", goalsLeft: 2))
+    let saving = Task {
+      try await store.revise(draftID: Self.draftID, field: .displayName, goal: 0, value: "Fixed")
+    }
+    await server.waitForHeldEdit()
+    // Meanwhile another goal took a free slot, and a read without the fix landed.
+    await server.serve(Self.draft(prompt: "Spanish", goalsLeft: 1))
+    await card.refresh()
+    await server.serve(Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+    await server.releaseHeldEdit()
+    try await saving.value
+
+    XCTAssertEqual(card.value?.prompt, "Spanish, fixed", "The read doesn't hide the fix")
+    XCTAssertEqual(card.freshState, .loading, "The edit's room may be older than the read's")
+
+    await card.load()
+
+    XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+  }
+
+  func testAnEditThatFailedReadsTheCardAgainInCaseItLanded() async {
+    let server = DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    await server.failEdits()
+
+    do {
+      try await store.revise(draftID: Self.draftID, field: .displayName, goal: 0, value: "Fixed")
+      XCTFail("The failed save is thrown")
+    } catch {
+      XCTAssertEqual(error as? OnboardingError, .failed(.unavailable))
+    }
+
+    XCTAssertEqual(card.freshState, .loading)
+  }
+
+  func testAnEditSavedWhileTheShownCardWasBeingReadReadsItAgain() async throws {
+    let server = DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    card.beginViewing()
+    defer { card.endViewing() }
+    await card.load()
+
+    await server.holdNextEdit(answering: Self.draft(prompt: "Spanish, fixed", goalsLeft: 2))
+    let saving = Task {
+      try await store.revise(draftID: Self.draftID, field: .displayName, goal: 0, value: "Fixed")
+    }
+    await server.waitForHeldEdit()
+    // Meanwhile another goal took a free slot, and the shown card started reading its draft again.
+    await server.serve(Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+    await server.holdNextRead()
+    card.invalidate()
+    await server.waitForHeldRead()
+    await server.releaseHeldEdit()
+    try await saving.value
+    let readAgain = await server.waitForReadAfterEdit()
+    await server.releaseHeldRead()
+    await card.load()
+
+    XCTAssertTrue(readAgain, "The edit doesn't drop the read it replaced")
+    XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
+  }
+
+  private func makeStore(transport: some ClientTransport) -> OnboardingStore {
+    let session = SessionStore.preview(account: .onboardingStoreTest)
+    return OnboardingStore(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport),
+      cache: AppCache(session: session), session: session)
+  }
+
+  private static let draftID = "00000000-0000-4000-8000-0000000000d1"
+
+  private static func draft(prompt: String, goalsLeft: Int) -> OnboardingDraft {
+    OnboardingDraft(
+      activeGoalsLeft: goalsLeft, generationId: nil, goalId: nil, id: draftID, prompt: prompt,
+      status: .failed, timeZone: "America/Sao_Paulo", understanding: nil)
+  }
+
   private func makeStore(event: String) -> OnboardingStore {
     let session = SessionStore.preview()
     return OnboardingStore(
@@ -45,7 +132,7 @@ final class OnboardingStoreTests: XCTestCase {
       GoalOnboarding.self,
       from: Data(
         #"""
-        {"profile":{"memoryEnabled":true,"questions":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":"follower-run","goal":{"createdAt":"2026-11-08T00:00:00Z","dailyMinutes":15,"details":{},"examBlueprintId":null,"id":"00000000-0000-0000-0000-000000000001","isActive":true,"kind":"learn","language":"en","languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Vaccines","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,"timezone":null,"title":"Vaccines","displayName":"Vaccines"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":0,"recommendedMinutes":15,"startsOnRecommended":false,"steps":[],"timeChoices":[],"warmUp":{"id":"shared-deck","status":"\#(status)"}}
+        {"profile":{"memoryEnabled":true,"questions":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":"follower-run","goal":{"createdAt":"2026-11-08T00:00:00Z","dailyMinutes":15,"details":{},"examBlueprintId":null,"id":"00000000-0000-0000-0000-000000000001","isActive":true,"kind":"learn","language":"en","languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Vaccines","regionChoices":[],"status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,"targetRegion":null,"timezone":null,"title":"Vaccines","displayName":"Vaccines"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":0,"recommendedMinutes":15,"startsOnRecommended":false,"steps":[],"timeChoices":[],"warmUp":{"id":"shared-deck","status":"\#(status)"}}
         """#.utf8))
   }
 }
@@ -68,4 +155,111 @@ private struct DeckEventTransport: ClientTransport {
     headers[.contentType] = "text/event-stream"
     return (HTTPResponse(status: .ok, headerFields: headers), HTTPBody("data: \(event)\n\n"))
   }
+}
+
+/// Answers draft reads with the draft it serves now. A held edit or read waits to answer until
+/// released, so another request can land meanwhile.
+private actor DraftServer: ClientTransport {
+  private var served: OnboardingDraft
+  private var editAnswer: OnboardingDraft?
+  private var heldEdit: CheckedContinuation<Void, Never>?
+  private var editsFail = false
+  private var holdsRead = false
+  private var heldRead: CheckedContinuation<Void, Never>?
+  private var editAnswered = false
+  private var readsAfterEdit = 0
+
+  init(_ draft: OnboardingDraft) {
+    served = draft
+  }
+
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var answer = served
+
+    if operationID == "getGoalUnderstanding" {
+      if editAnswered {
+        readsAfterEdit += 1
+      }
+
+      if holdsRead {
+        holdsRead = false
+        await withCheckedContinuation { heldRead = $0 }
+      }
+    }
+
+    if operationID == "reviseGoalUnderstanding" {
+      if editsFail {
+        return (HTTPResponse(status: .internalServerError), nil)
+      }
+
+      if let editAnswer {
+        await withCheckedContinuation { heldEdit = $0 }
+        answer = editAnswer
+      }
+    }
+
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(try JSONEncoder().encode(answer))
+    )
+  }
+
+  func serve(_ draft: OnboardingDraft) {
+    served = draft
+  }
+
+  func holdNextEdit(answering draft: OnboardingDraft) {
+    editAnswer = draft
+  }
+
+  func waitForHeldEdit() async {
+    while heldEdit == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldEdit() {
+    editAnswered = true
+    heldEdit?.resume()
+    heldEdit = nil
+  }
+
+  func holdNextRead() {
+    holdsRead = true
+  }
+
+  func waitForHeldRead() async {
+    while heldRead == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldRead() {
+    heldRead?.resume()
+    heldRead = nil
+  }
+
+  /// False when no read starts within two seconds of the held edit's answer.
+  func waitForReadAfterEdit() async -> Bool {
+    for _ in 0..<200 where readsAfterEdit == 0 {
+      try? await Task.sleep(for: .milliseconds(10))
+    }
+
+    return readsAfterEdit > 0
+  }
+
+  func failEdits() {
+    editsFail = true
+  }
+}
+
+extension CurrentAccount {
+  fileprivate static let onboardingStoreTest = CurrentAccount(
+    account: AccountAccess(
+      deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
+    user: AccountUser(
+      email: "learner@zoonk.test", id: "onboarding-store-test-user",
+      image: nil, name: "Learner", username: "learner"))
 }

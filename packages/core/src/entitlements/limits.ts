@@ -115,7 +115,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
 };
 
 const ACTIVE_GOAL_LIMITS: Record<EntitlementTier, number | null> = {
-  free: 1,
+  free: 3,
   guest: 1,
   plus: null,
 };

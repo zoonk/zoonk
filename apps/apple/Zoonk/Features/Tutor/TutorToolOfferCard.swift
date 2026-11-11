@@ -70,12 +70,19 @@ struct TutorToolOfferCard: View {
               label
             }
             .buttonStyle(.outline)
+          case .chooseVariety(let goalID, let region):
+            TutorVarietyApply(goalID: goalID, region: region)
           }
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     } label: {
       HStack {
+        if let flag = content.flag {
+          Text(verbatim: flag)
+            .accessibilityHidden(true)
+        }
+
         content.title
 
         if content.locked {
@@ -128,9 +135,12 @@ struct TutorToolOfferCard: View {
   private enum Action {
     case open(Text, TutorPlace)
     case practiceCall(Text)
+    case chooseVariety(goalID: String, region: String)
   }
 
   private struct Content {
+    /// Decorative: the title names the country it shows.
+    var flag: String?
     let title: Text
     var description: Text?
     let action: Action?
@@ -153,8 +163,11 @@ struct TutorToolOfferCard: View {
           .startGoal(goal: start.goal)),
         locked: start.access == .plusRequired,
         lockNote: Text(
-          "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus.",
-          tableName: "Tutor", comment: "Why a free learner can't start another goal"))
+          "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
+          tableName: "Tutor",
+          comment:
+            "Why a free learner can't start another goal now: either they follow as many goals at once as the free plan allows or they started as many new goals as it allows recently, so it names neither. Plus is the subscription's name, not \"more\""
+        ))
     case .case2(let test):
       return Content(
         title: Text(
@@ -234,28 +247,47 @@ struct TutorToolOfferCard: View {
         action: .open(
           Text("Practice", tableName: "Tutor", comment: "Opens pronunciation practice"),
           .pronunciation(goalId: pronunciation.goalId)))
-    case .case9:
+    case .case9(let variety):
+      let name = Locale.current.varietyNameInSentence(
+        language: variety.targetLanguage, region: variety.targetRegion)
+
+      return Content(
+        flag: variety.languageFlag.flatMap(flagEmoji),
+        title: Text(
+          Locale.current.varietyName(
+            language: variety.targetLanguage, region: variety.targetRegion)),
+        description: varietyNote(
+          language: variety.targetLanguage, region: variety.targetRegion,
+          taughtRegion: variety.taughtRegion
+        ).map { Text($0) }
+          ?? Text(
+            "Your buddy and practice calls use \(name).", tableName: "Tutor",
+            comment:
+              "The buddy offers the language as the country lessons already teach speaks it; the argument is like 'Spanish (Mexico)'"
+          ),
+        action: .chooseVariety(goalID: variety.goalId, region: variety.targetRegion))
+    case .case10:
       return Content(
         title: Text("Statistics", tableName: "Tutor", comment: "The buddy offers the statistics"),
         description: Text(
           "Energy, level, right answers and when you study best.", tableName: "Tutor",
           comment: "What the statistics show"),
         action: .open(open, .statistics))
-    case .case10:
+    case .case11:
       return Content(
         title: Text("Logbook", tableName: "Tutor", comment: "The buddy offers the week's logbook"),
         description: Text(
           "What you did this week next to the last, and what comes next.", tableName: "Tutor",
           comment: "What the logbook shows"),
         action: .open(open, .logbook))
-    case .case11:
+    case .case12:
       return Content(
         title: Text("Memory", tableName: "Tutor", comment: "The buddy offers what it remembers"),
         description: Text(
           "See, correct or delete what your buddy remembers about you.", tableName: "Tutor",
           comment: "What the memory settings do"),
         action: .open(open, .memory))
-    case .case12(let plus):
+    case .case13(let plus):
       return Content(
         title: Text("Plus", tableName: "Tutor", comment: "The buddy offers the subscription"),
         description: plus.subscribed
@@ -289,6 +321,59 @@ struct TutorToolOfferCard: View {
       Text(
         "Practiced every week in your plan, each draft graded.", tableName: "Tutor",
         comment: "How often an exam's essay is practiced")
+    }
+  }
+}
+
+/// Applied once the goal has the country, so it stays applied when the thread opens again.
+private struct TutorVarietyApply: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @State private var isSaving = false
+  @State private var failed = false
+  @AccessibilityFocusState private var isResultFocused: Bool
+
+  let goalID: String
+  let region: String
+
+  var body: some View {
+    if isApplied {
+      Text(
+        "Saved. You can change it in your plan.", tableName: "Tutor",
+        comment: "The learner saved the country the buddy offered; the plan is the Plan tab"
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityFocused($isResultFocused)
+    } else {
+      BusyButton(isBusy: isSaving, action: apply) {
+        Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed")
+      }
+      .buttonStyle(.outline)
+
+      if failed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Tutor",
+            comment: "Applying the country the buddy offered failed")
+        )
+        .typeStyle(.note)
+      }
+    }
+  }
+
+  private var isApplied: Bool {
+    learner.summary.value?.goals.first { $0.id == goalID }?.variety?.region == region
+  }
+
+  private func apply() {
+    isSaving = true
+    failed = false
+
+    Task {
+      failed = !(await learner.setTargetRegion(region, goalID: goalID))
+      isSaving = false
+      // The button leaves once it's applied, so VoiceOver lands on what it did.
+      isResultFocused = !failed
     }
   }
 }

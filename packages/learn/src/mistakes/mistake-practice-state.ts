@@ -242,6 +242,19 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
   }
 }
 
+export type PracticeEndNote = "missed" | "missedAndUnreached" | "unreached";
+
+export function getPracticeEndNote(state: PracticeState): PracticeEndNote | null {
+  const missed = state.verdicts.some((verdict) => verdict !== "right");
+  const unreached = state.verdicts.length < state.steps.length;
+
+  if (missed) {
+    return unreached ? "missedAndUnreached" : "missed";
+  }
+
+  return unreached ? "unreached" : null;
+}
+
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   return state.steps.map((_, index) => {
     const verdict = state.verdicts[index];
@@ -252,32 +265,6 @@ export function getPracticeSegments(state: PracticeState): TaskSegment[] {
 
     return index === state.index ? "current" : "ahead";
   });
-}
-
-function squashSpaces(text: string): string {
-  return text.replaceAll(/\s+/gu, " ").trim();
-}
-
-/**
- * The notebook saves a lesson's question with its context before it, and a bank question as it's
- * asked.
- */
-export function isMistakeQuestion(step: PracticeStep): boolean {
-  if (step.lesson) {
-    return true;
-  }
-
-  if (!step.question) {
-    return false;
-  }
-
-  const saved = squashSpaces(step.entry.snapshot.question);
-  const { context, question } = step.question;
-
-  return (
-    saved === squashSpaces(question) ||
-    (Boolean(context) && saved === squashSpaces(`${context} ${question}`))
-  );
 }
 
 export function getPracticeAnswer(state: PracticeState): PracticeAnswer | null {

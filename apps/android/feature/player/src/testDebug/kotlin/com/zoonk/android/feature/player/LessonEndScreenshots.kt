@@ -23,6 +23,8 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toStepResult
+import com.zoonk.android.feature.session.blockId
+import com.zoonk.android.feature.session.studyBlocks
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -32,9 +34,15 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.StudyBlock.Kind.LEARN
+import com.zoonk.api.models.StudyBlock.Kind.PRACTICE
+import com.zoonk.api.models.StudyBlock.Kind.REVIEW
+import com.zoonk.api.models.StudyBlock.Status.COMPLETED
+import com.zoonk.api.models.StudyBlock.Status.PENDING
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonArray
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -117,6 +125,79 @@ class LessonEndScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun phonePlanReveal() = capture("lessonend-plan-reveal-phone", PLAN_REVEAL, LessonEnding(inSession = true))
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayBeforeMidpoint() = capture("mid-before-midpoint", inSession(DAY_BEFORE_MIDPOINT, completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayPastMidpoint() =
+        capture("past-midpoint", inSession(DAY_PAST_MIDPOINT, completed = 5, total = 8, deferred = 2), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayOpen() = capture("open", inSession(DAY_OPEN, completed = 3, total = 4), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayComplete() = capture("complete", inSession(DAY_COMPLETE, completed = 8, total = 8, sessionCompleted = true), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayOutOfOrder() =
+        capture(
+            "out-of-order",
+            inSession(
+                DAY_OUT_OF_ORDER,
+                completed = 1,
+                total = 4,
+                blocks = studyBlocks(LEARN to PENDING, REVIEW to COMPLETED, LEARN to PENDING, PRACTICE to PENDING),
+                finished = 1,
+                next = 0,
+            ),
+            IN_SESSION_END,
+        )
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpNoneToday() =
+        capture("catchup-none", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 24, today = 0), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpSomeToday() =
+        capture("catchup-some", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 22, today = 2), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpNoneLeft() =
+        capture("catchup-zero", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 0, today = 3), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneWelcomeBack() =
+        capture("welcome-back", inSession(DAY_BEFORE_MIDPOINT.replace("25", "16"), completed = 1, total = 6), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi", fontScale = 2f)
+    fun phoneCatchUpSomeTodayInDarkWithLargeText() =
+        capture(
+            "catchup-some-dark-font200",
+            inSession(DAY_PAST_MIDPOINT.catchUp(left = 22, today = 2), completed = 5, total = 8),
+            IN_SESSION_END,
+            moreContrast = true,
+        )
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookDayPastMidpoint() =
+        capture(
+            "past-midpoint-book",
+            inSession(DAY_PAST_MIDPOINT.catchUp(left = 22, today = 2), completed = 5, total = 8),
+            IN_SESSION_END,
+            fold = true,
+        )
 
     @Test
     @Config(qualifiers = TABLET)
@@ -225,14 +306,46 @@ private val IN_SESSION =
         """"studyBlock":null""",
         """
         "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
-         "blocks":[],"sessionId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5c",
+         "blocks":[],"dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33},"sessionId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5c",
          "minutes":{"dailyGoal":240,"left":220,"done":5,"planned":240},"deferredLessonsCount":2,
-         "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
+         "checkpoint":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},
          "reminderOffer":null,"sessionBar":{"completed":1,"total":3},"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":0,"total":3}
         """.trimIndent(),
     )
+
+private val IN_SESSION_END = LessonEnding(inSession = true)
+
+private const val DAY_BEFORE_MIDPOINT = """{"catchUp":null,"lead":"done","lessonsComing":false,"percent":25}"""
+private const val DAY_PAST_MIDPOINT = """{"catchUp":null,"lead":"left","lessonsComing":false,"percent":62}"""
+private const val DAY_OPEN = """{"catchUp":null,"lead":"open","lessonsComing":true,"percent":null}"""
+private const val DAY_OUT_OF_ORDER = """{"catchUp":null,"lead":"done","lessonsComing":false,"percent":25}"""
+private const val DAY_COMPLETE = """{"catchUp":null,"lead":"complete","lessonsComing":false,"percent":100}"""
+
+private fun String.catchUp(
+    left: Int,
+    today: Int,
+) = replace(""""catchUp":null""", """"catchUp":{"doneToday":$today,"lessonsLeft":$left}""")
+
+private fun inSession(
+    dayProgress: String,
+    completed: Int,
+    total: Int,
+    sessionCompleted: Boolean = false,
+    deferred: Int = 0,
+    blocks: JsonArray = studyBlocks(*Array(total) { LEARN to if (it < completed) COMPLETED else PENDING }),
+    finished: Int = completed - 1,
+    next: Int? = completed.takeIf { it < total },
+) = IN_SESSION
+    .replace(""""dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33}""", """"dayProgress":$dayProgress""")
+    .replace(
+        """"sessionBar":{"completed":1,"total":3},"sessionCompleted":false""",
+        """"sessionBar":{"completed":$completed,"total":$total},"sessionCompleted":$sessionCompleted""",
+    ).replace(""""deferredLessonsCount":2""", """"deferredLessonsCount":$deferred""")
+    .replace(""""blocks":[]""", """"blocks":$blocks""")
+    .replace(""""blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"""", """"blockId":"${blockId(finished)}"""")
+    .replace(""""nextBlockId":null""", """"nextBlockId":${next?.let { "\"${blockId(it)}\"" }}""")
 
 private val FIT: LessonFit =
     ApiJson.decodeFromString(

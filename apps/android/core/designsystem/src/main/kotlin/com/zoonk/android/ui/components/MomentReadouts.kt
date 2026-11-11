@@ -125,13 +125,17 @@ private fun countedUp(value: Long): Long {
     val shown = remember { Animatable(if (plays) 0f else value.toFloat()) }
 
     LaunchedEffect(value, plays) {
-        if (plays) shown.animateTo(value.toFloat(), tween(COUNT_UP_MILLIS, easing = ZoonkMotion.EaseOut)) else shown.snapTo(value.toFloat())
+        if (plays) {
+            shown.animateTo(
+                value.toFloat(),
+                tween(ZoonkMotion.FILL_MILLIS, easing = ZoonkMotion.EaseOut),
+            )
+        } else {
+            shown.snapTo(value.toFloat())
+        }
     }
 
     return ceil(shown.value).toLong().coerceIn(1, value.coerceAtLeast(1))
 }
 
 private const val MARK = "⁣"
-
-/** Main's `--transition-duration-fill`. */
-private const val COUNT_UP_MILLIS = 700

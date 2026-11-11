@@ -1,6 +1,16 @@
 {
   "codeChecks": {
+    "anthropic/claude-fable-5.2": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
     "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "google/gemini-4-carbon": {
       "passed": 11,
       "problems": [],
       "total": 11
@@ -9,87 +19,82 @@
       "passed": 11,
       "problems": [],
       "total": 11
-    },
-    "openai/gpt-6.1-terra:high": {
-      "passed": 11,
-      "problems": [],
-      "total": 11
     }
   },
   "expectations": "A bank of US English passages and sentences for Brazilian learners: questions, options and translations in Brazilian Portuguese. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
-  "judgedAt": "2026-11-08T16:10:06.718Z",
+  "judgedAt": "2026-11-11T02:33:09.421Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-5.5",
-      "rankings": [
-        {
-          "anonymousId": "Model A",
-          "categoryScores": [
-            {
-              "categoryId": "calibration",
-              "reasoning": "A1 asks for single stated facts, B1 for main point or reason, B2 for attitude and implication, and C1 for nuanced stance; speaking grows from 5 to 20 words. The A2 questions rely on tracking order or combining two conditions (e.g., 'right after the market' with the museum visited twice), which is trickier than simple stated facts.",
-              "score": 7.5,
-              "label": "Levels calibrated and increasing",
-              "weight": 40
-            },
-            {
-              "categoryId": "answers",
-              "reasoning": "All marked answers are correct and passage-supported, and the distractors are generally plausible. In the B1 main-idea item, the correct option is much shorter than the others, which hints at the answer, and option 1 is close to defensible.",
-              "score": 7.5,
-              "label": "One clearly right answer",
-              "weight": 35
-            },
-            {
-              "categoryId": "language",
-              "reasoning": "The US English is correct, and the Brazilian Portuguese questions and translations are natural. The A1/A2 texts feel unnatural ('We moved it to Thursday at ten, but now it's on Thursday at two'; distractor-laden bus and time lists), and names such as Ana, Maya and Leo repeat across items.",
-              "score": 7.5,
-              "label": "Languages and variety",
-              "weight": 25
-            }
-          ],
-          "modelId": "openai/gpt-6.1-terra:high",
-          "reasoning": "The bank shows a clear progression from stated facts to main point, attitude and nuanced implication, and every answer index checks out against its passage. However, the A2 items are contrived sequencing puzzles rather than simple stated facts. One B1 key is noticeably shorter than its distractors, and several low-level passages read as artificially stuffed with distractors.\n\nIn the reverse order: This is a well-built bank with a clear progression from A1 stated facts to C1 implication, and speaking sentences that grow neatly from 5 to 20 words. Almost all answer indexes are correct. Weaknesses: the A2 items rely on contrived sequencing and attribute-combining puzzles that read unnaturally, and the first B1 item's correct option is noticeably shorter and somewhat overlaps with a true distractor.",
-          "score": 7.5
-        }
-      ],
-      "usage": {
-        "cacheReadTokens": 2894,
-        "cacheWriteTokens": 0,
-        "inputTokens": 17986,
-        "outputTokens": 2465,
-        "reasoningTokens": 1401
-      }
-    },
-    {
-      "judgeId": "google/gemini-4-argon",
       "rankings": [
         {
           "anonymousId": "Model B",
           "categoryScores": [
             {
               "categoryId": "calibration",
-              "reasoning": "Every reading, listening, and speaking item hits its exact word-count window and cognitive demand, progressing seamlessly from basic stated facts at A1 to subtle irony and complex mixed feelings at C1.",
+              "reasoning": "Difficulty rises clearly from level to level. A1 items are price, location, gate and day facts. B1 items cover opinion and reasons, B2 items purpose and attitude in denser text, and C1 items evaluative tone and implication. Two A2 items need small inferences: cheaper means first floor, and the Jamal question requires sequencing.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "I checked all 20 marked answers against their passages and each has one defensible correct option. Distractors reuse passage details, such as the studio's better lighting and taxes in April, so a careless reader could fall for them. Option length is uneven in a few C1 items, for example index 2 in the book review is shorter than the others.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The English is natural US English and follows the local conventions ($1,200, 2:00 p.m., 401(k), SAT). Listening passages sound like real voicemails, announcements and radio talk. The Brazilian Portuguese questions, options and translations are fluent, situations vary across the bank, and no brands appear in negative contexts.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "google/gemini-4-carbon",
+          "reasoning": "A well-calibrated bank: A1 asks for single stated facts, B1 targets reasons and opinions, B2 targets purpose and attitude, and C1 uses nuanced tone and implication. Speaking sentences grow cleanly from 5 to about 20 words. Every answer index checks out against its passage. The main gaps are a couple of slightly tricky A2 sequencing and inference items and minor unevenness in option length.",
+          "score": 9
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 1447,
+        "cacheWriteTokens": 0,
+        "inputTokens": 12306,
+        "outputTokens": 1544,
+        "reasoningTokens": 982
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Every passage, question, and speaking sentence is calibrated to its CEFR level and adheres to all word-count specifications. The progression from simple stated facts at A1/A2 to main ideas at B1, implied meaning at B2, and subtle tone at C1 is clear and consistent.",
               "score": 10,
               "label": "Levels calibrated and increasing",
               "weight": 40
             },
             {
               "categoryId": "answers",
-              "reasoning": "All 20 questions have one clearly supported answer and three plausible distractors of balanced length that require careful comprehension rather than simple word-matching at higher levels.",
+              "reasoning": "Each question has a single unambiguously supported answer and three plausible distractors of uniform length that require careful reading rather than simple keyword matching.",
               "score": 10,
               "label": "One clearly right answer",
               "weight": 35
             },
             {
               "categoryId": "language",
-              "reasoning": "The US English texts read and sound like authentic real-world writing and speech, and the Brazilian Portuguese questions, options, and translations are completely idiomatic.",
+              "reasoning": "Passages and speaking sentences sound authentic in US English, while questions, options, and translations are natural Brazilian Portuguese. All required situations and local context elements are seamlessly integrated.",
               "score": 10,
               "label": "Languages and variety",
               "weight": 25
             }
           ],
-          "modelId": "anthropic/claude-opus-5.5",
-          "reasoning": "Model B delivers the highest quality across all categories. Its passages, questions, and speaking sentences scale smoothly from A1 to C1, strictly adhering to all word count targets and situational prompts while sounding completely natural in both US English and Brazilian Portuguese. Every question has an unambiguous correct answer and well-crafted distractors.\n\nIn the reverse order: Model B delivers the highest quality across all categories. Its passages and audio scripts sound remarkably natural and authentic to their genres, the CEFR progression from A1 to C1 is sharply calibrated in both comprehension and speaking, and every question has a single unambiguously correct answer.",
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model C delivers an exceptional question bank with spotless CEFR calibration across all five levels, exact adherence to word count and situation constraints, and unambiguously correct single answers. The US English passages and Brazilian Portuguese translations are natural, varied, and culturally grounded.",
           "score": 10
         },
         {
@@ -97,65 +102,64 @@
           "categoryScores": [
             {
               "categoryId": "calibration",
-              "reasoning": "Passages, questions, and speaking sentences adhere to all word-count ranges and show a clear, well-paced progression in lexical density, grammar, and cognitive complexity from A1 to C1.",
-              "score": 8.5,
-              "label": "Levels calibrated and increasing",
-              "weight": 40
-            },
-            {
-              "categoryId": "answers",
-              "reasoning": "Every question has a single defensible answer supported by the text, paired with well-proportioned distractors that test genuine comprehension.",
-              "score": 9.5,
-              "label": "One clearly right answer",
-              "weight": 35
-            },
-            {
-              "categoryId": "language",
-              "reasoning": "Brazilian Portuguese translations and options are natural and accurate. A1/A2 texts feel slightly puzzle-like, and the C1 speaking sentence uses 'finding my feet' (more common in UK English than US English), alongside a dialogue format in C1 listening 1.",
-              "score": 7.5,
-              "label": "Languages and variety",
-              "weight": 25
-            }
-          ],
-          "modelId": "openai/gpt-6.1-terra:high",
-          "reasoning": "Model A is very well calibrated across the CEFR levels and features sophisticated C1 texts, though it is slightly more formulaic at A1/A2 than Model B. All answers are accurate and unambiguous, with only minor British/Commonwealth idioms ('finding my feet') slightly softening the US English fit.\n\nIn the reverse order: Model A meets all core requirements, with accurate answer keys, good language quality, and clear CEFR progression. However, several A1 and A2 passages read like artificial logic puzzles rather than authentic everyday texts or speech, and one C1 listening passage uses a multi-speaker script ('Host: ... Guest: ...') rather than a natural single-speaker audio segment.",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model C",
-          "categoryScores": [
-            {
-              "categoryId": "calibration",
-              "reasoning": "Passage progression is strong overall, and word counts are respected. However, B1 listening 1 ('Why might the son not call again?' -> 'Because his phone is almost dead') tests a simple stated detail rather than a true B1 main point/reason, and the B2 and C1 speaking sentences both reuse 'If I had known / Had I known how [busy/hard] the job would be...'.",
-              "score": 8.5,
-              "label": "Levels calibrated and increasing",
-              "weight": 40
-            },
-            {
-              "categoryId": "answers",
-              "reasoning": "Almost all questions have one clear answer, but in C1 listening 1 the keyed option states 'lhe incomoda que só procurem seus serviços depois do erro', whereas the speaker's tone in the passage is dryly amused rather than bothered.",
-              "score": 8.5,
-              "label": "One clearly right answer",
-              "weight": 35
-            },
-            {
-              "categoryId": "language",
-              "reasoning": "Both the US English passages and the Brazilian Portuguese questions, options, and translations are natural, varied, and idiomatic, with only minor unnaturalness in A1 listening 1.",
+              "reasoning": "Passages, questions, and speaking prompts clearly increase in linguistic and cognitive difficulty from A1 to C1 while meeting all length constraints. The only minor weakness is that the B2 and C1 speaking sentences use the exact same conditional structure ('If I had known...' vs. 'Had I known...').",
               "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All 20 questions have one clearly supported correct answer, accurate answer indices, and well-balanced distractors that test genuine comprehension.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Both US English and Brazilian Portuguese are idiomatic and natural throughout, with strong voice in the upper-level passages and full adherence to the requested situations.",
+              "score": 10,
               "label": "Languages and variety",
               "weight": 25
             }
           ],
           "modelId": "anthropic/claude-sonnet-5.5",
-          "reasoning": "Model C features strong, natural writing in both US English and Brazilian Portuguese, and most of its questions are well calibrated. However, a few items have minor flaws: C1 listening 1 includes an unsupported nuance in the correct option ('lhe incomoda'), B1 listening 1 borders on A2 detail-matching, and B2/C1 speaking sentences nearly duplicate the same structure and vocabulary.\n\nIn the reverse order: Model C is very strong, with engaging, realistic passages and well-calibrated comprehension questions from A1 to C1. It ranks slightly behind Model B because its B2 and C1 speaking sentences reuse the exact same topic and opening structure ('If I had known how busy the job would be...' / 'Had I known how hard the job would be...'), reducing variety and level distinction in the speaking bank.",
-          "score": 8.625
+          "reasoning": "Model A is nearly identical in quality to Model C, featuring excellent level progression, natural US English and Brazilian Portuguese, and well-crafted distractors. Its only minor flaw is less variety between its B2 and C1 speaking sentences, which both rely on past unreal conditionals about housing and moving costs.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking sentences are well calibrated to their respective CEFR levels, meet word-count rules, and show a clear upward trajectory in complexity.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "In C1 reading 1 (question 17), the passage ends with 'I have since been back three times, which I mention in the interest of full disclosure rather than as a recommendation.' This makes option 0 ('Voltou algumas vezes, mas prefere não recomendar o restaurante') directly supported by the text alongside the marked answer (option 3), triggering the cap of at most 4 for having two defensible answers.",
+              "score": 4,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The US English texts and Brazilian Portuguese questions, options, and translations are natural and accurate, though A1 listening 1 uses 12-hour times in Portuguese without am/pm or 24-hour formatting ('Às 4:15').",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model D has strong calibration and natural language, but fails the answer-uniqueness check on C1 reading 1 (index 16), where the text explicitly supports two different options. This triggers the mandatory score cap in the answers category.",
+          "score": 7.65
         }
       ],
       "usage": {
         "cacheReadTokens": 0,
-        "cacheWriteTokens": 0,
-        "inputTokens": 29536,
-        "outputTokens": 2039,
+        "inputTokens": 16980,
+        "outputTokens": 954,
         "reasoningTokens": 0
       }
     },
@@ -163,79 +167,138 @@
       "judgeId": "openai/gpt-6-astra",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "categoryScores": [
-            {
-              "categoryId": "calibration",
-              "reasoning": "A1–A2 questions retrieve stated facts, B1 questions address reasons and opinions, and B2–C1 increasingly require interpretation. The C1 archaeology interview and farm reflection provide especially effective nuance, while speaking grows from five words to a complex inverted conditional.",
-              "score": 9,
-              "label": "Levels calibrated and increasing",
-              "weight": 40
-            },
-            {
-              "categoryId": "answers",
-              "reasoning": "Each marked answer is supported and uniquely preferable; distractors generally reuse passage details without answering the question correctly. Options are reasonably balanced in length and require passage-specific information.",
-              "score": 9,
-              "label": "One clearly right answer",
-              "weight": 35
-            },
-            {
-              "categoryId": "language",
-              "reasoning": "Written notices, personal messages, reviews, and spoken reflections have convincing register differences, with natural Brazilian Portuguese questions and translations. All requested situations are represented without brands or identifiable real people.",
-              "score": 9,
-              "label": "Languages and variety",
-              "weight": 25
-            }
-          ],
-          "modelId": "anthropic/claude-opus-5.5",
-          "reasoning": "The stronger bank overall, with a clear progression from factual retrieval to nuanced interpretation and well-differentiated speaking sentences. Answer keys are consistently supported, and the advanced passages use irony, qualification, and implication effectively.\n\nIn the reverse order: Ranks first by a narrow margin. Both banks have sound answers and clear level progression, but B offers more consistently natural listening contexts and more varied speaking prompts.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model C",
           "categoryScores": [
             {
               "categoryId": "calibration",
-              "reasoning": "Reading and listening progress appropriately from stated facts to purpose, attitude, and nuanced implication. Speaking progression is less convincing: B1 uses a relatively basic want/because construction, while B2 and C1 substantially repeat the same counterfactual job scenario, although C1 adds inversion and emphasis.",
-              "score": 8.5,
+              "reasoning": "Questions progress appropriately from stated facts to B1 reasons and opinions, B2 implications, and C1 nuanced interpretation; speaking sentences also increase appropriately. Both A2 listening passages slightly exceed the supplied 40-word maximum.",
+              "score": 8,
               "label": "Levels calibrated and increasing",
               "weight": 40
             },
             {
               "categoryId": "answers",
-              "reasoning": "The marked options are consistently the uniquely best answers, with generally plausible distractors. However, the C1 translator answer says clients seek help only after errors, overstating the passage's qualified 'most' and 'usually' and making that option less precisely supported.",
-              "score": 8.5,
+              "reasoning": "The marked answers are supported and distinguishable from their distractors throughout. Particularly effective items require interpreting the grandfather's indirect request and the former diner owner's lingering attachment without confusing those implications with unsupported conclusions.",
+              "score": 9,
               "label": "One clearly right answer",
               "weight": 35
             },
             {
               "categoryId": "language",
-              "reasoning": "English and Brazilian Portuguese are consistently appropriate, and situations cover the requested range. Some beginner listening passages sound constructed around answer choices rather than natural communication, especially the four-bus list and the message listing four successive times.",
+              "reasoning": "Written notices, personal messages, and spoken passages generally sound natural, with varied situations and appropriate language allocation. The Portuguese phrase 'fundos mais espertos' is an awkward literal rendering that should be replaced with a natural financial expression.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "The strongest overall bank, with well-supported answers and a convincing progression toward implicit attitudes, irony, and emotional nuance. Minor length overruns and an awkward Portuguese phrase keep it from being fully polished.",
+          "score": 8.35
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The cognitive progression is clear, including genuine B1 reasons and opinions, B2 implied attitudes, and C1 restrained criticism and understatement. However, the A1 family and meeting passages exceed their length limits, as do both A2 listening passages.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked options correctly answer their questions, and the upper-level alternatives generally distinguish competing interpretations well. The A1 meeting question identifies the speaker as Noah although the passage never supplies that name, introducing unnecessary unsupported information.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The bank uses appropriate English and Brazilian Portuguese across varied, recognizable situations, with convincing conversational voices at higher levels. A few formulations need polishing, particularly 'Hello, riders' and the cumbersome translation 'Se eu tivesse sabido como o aluguel era caro'.",
               "score": 8,
               "label": "Languages and variety",
               "weight": 25
             }
           ],
           "modelId": "anthropic/claude-sonnet-5.5",
-          "reasoning": "A strong, usable bank with correct answer indexes and effective advanced interpretation tasks. It falls slightly behind B because the upper-level speaking sentences are less differentiated and one advanced answer overstates the passage.\n\nIn the reverse order: A strong bank with correct answer keys and a well-developed progression into inference, irony, and nuanced tone. It falls slightly behind B in naturalness and variety rather than in substantive correctness.",
-          "score": 8.375
+          "reasoning": "A strong, usable bank with clear answer keys and effective upper-level interpretation tasks. It trails C because of an unsupported speaker attribution, several length overruns, and occasional awkward phrasing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The bank moves clearly from simple retrieval to stated opinions, implied arguments, and nuanced C1 evaluations, with appropriately expanding speaking sentences. The A2 weekend listening passage exceeds its word limit, and the admissions item's intended inference is less precisely controlled than the other C1 tasks.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers are the best-supported choices, and most distractors reuse passage information without becoming competing correct answers. The admissions answer adds that ordinary experiences have become 'raras', whereas the passage more clearly establishes appreciation for authenticity than actual rarity.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "English and Brazilian Portuguese are generally fluent, with distinct written and spoken registers and varied situations. However, the B1 traveler proposes driving from Atlanta to Seattle and arriving the next afternoon, an implausible timeline for a roughly cross-country journey that undermines the message's realism.",
+              "score": 7,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "google/gemini-4-carbon",
+          "reasoning": "The level progression and advanced prose are strong, and the answer keys are generally reliable. An implausible cross-country driving timeline noticeably weakens the realism of an otherwise useful bank.",
+          "score": 7.75
+        },
+        {
+          "anonymousId": "Model D",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Levels increase appropriately, and the C1 geology interview and career reflection require interpreting shifts in tone and understatement. The A2 weekend listening passage exceeds the supplied length range, but the speaking progression is particularly well controlled.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The C1 restaurant review explicitly presents repeat visits 'rather than as a recommendation', making 'Voltou algumas vezes, mas prefere não recomendar' defensible alongside the marked answer about enjoying the food despite its affected presentation. Enjoyment does not exclude withholding a recommendation, so the two-defensible-answers cap applies.",
+              "score": 4,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Most passages have convincing written or conversational voices, and the Portuguese questions and translations are natural. The beginner messages contain less natural formulations such as 'I am back at 6:00' for a future return and 'the doctor is sick that day' when explaining a future appointment change.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The bank has a strong instructional progression and several effective inference tasks. Its restaurant-review question falls short of the single-clearly-right-answer requirement because the purportedly wrong option about withholding a recommendation remains defensible.",
+          "score": 6.6
         }
       ],
       "usage": {
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0,
-        "inputTokens": 19030,
-        "outputTokens": 3190,
-        "reasoningTokens": 2068
+        "inputTokens": 19263,
+        "outputTokens": 2506,
+        "reasoningTokens": 1334
       }
     }
   ],
   "outputs": {
-    "anthropic/claude-opus-5.5": "5198ae9746896f11",
-    "anthropic/claude-sonnet-5.5": "a38f395e4d6d2ec9",
-    "openai/gpt-6.1-terra:high": "40f48a654ad782de"
+    "anthropic/claude-fable-5.2": "3558e26782a919f3",
+    "anthropic/claude-opus-5.5": "ebd1231e3c88e119",
+    "google/gemini-4-carbon": "4185c16b8a89a5f4",
+    "anthropic/claude-sonnet-5.5": "b1d1b813c0edbc9a"
   },
-  "swapped": true,
+  "swapped": false,
   "taskId": "level-test-bank",
   "testCaseId": "pt-en-1"
 }

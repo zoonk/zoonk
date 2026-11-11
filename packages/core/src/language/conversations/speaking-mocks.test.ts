@@ -200,6 +200,16 @@ describe("speaking mocks", () => {
     );
   });
 
+  it("speaks the exam's own English even when the learner chose another country", async () => {
+    const { goal } = await examGoalFixture("Preciso do TOEFL para o mestrado");
+    await prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } });
+    const conversationId = await startMock(goal.id);
+
+    await expect(
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
+    ).resolves.toMatchObject({ targetRegion: null });
+  });
+
   it("keeps the mock for the exam goal a language goal moved to", async () => {
     const { goal } = await languageGoalFixture();
     mockSession(goal.userId);

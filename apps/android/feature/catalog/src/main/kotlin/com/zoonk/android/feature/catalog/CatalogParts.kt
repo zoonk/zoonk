@@ -64,8 +64,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.format.spaceAfterSentence
+import com.zoonk.android.ui.format.varietyName
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -173,7 +173,7 @@ internal fun CourseMark(
 
     when {
         flag != null -> {
-            val label = targetLanguage?.let { languageFlagLabel(it, languageFlag, currentLocale()) }.orEmpty()
+            val label = targetLanguage?.let { varietyName(it, null, currentLocale()) }.orEmpty()
 
             Box(modifier.size(size).clearAndSetSemantics { contentDescription = label }, contentAlignment = Alignment.Center) {
                 Text(flag, style = MaterialTheme.typography.headlineMedium)
@@ -211,13 +211,6 @@ internal fun CourseMark(
         }
     }
 }
-
-/** As main's `getLanguageFlagLabel`: the language as the flag's country speaks it, such as "Brazilian Portuguese". */
-internal fun languageFlagLabel(
-    language: String,
-    flag: String,
-    locale: Locale,
-): String = languageName("${language.substringBefore('-')}-${flag.uppercase()}", locale).replaceFirstChar { it.titlecase(locale) }
 
 @Composable
 internal fun LineWithIcon(

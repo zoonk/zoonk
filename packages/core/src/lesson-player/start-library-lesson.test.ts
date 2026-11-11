@@ -223,7 +223,7 @@ describe(startLibraryLesson, () => {
 
     const resumed = await start(lesson.id);
     const answers = resumed.status === "started" ? resumed.run.answers : [];
-    const restored = { nextReviewAt: null, savedMistake: false };
+    const restored = { savedMistake: false };
 
     const fromSaved = {
       ...restored,
@@ -470,6 +470,29 @@ describe(startLibraryLesson, () => {
       knownStepIds: [],
       streak: 2,
     });
+  });
+
+  it("counts a lesson played in a goal's session as that goal's, whichever goal is active", async () => {
+    const { lesson, user } = await setupPlayableLesson();
+
+    const [active, other] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const session = await studySessionFixture({ goalId: other.id, userId: user.id });
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: active.id, userId: user.id }),
+      studySessionBlockFixture({ lessonId: lesson.id, sessionId: session.id }),
+    ]);
+
+    const outcome = await start(lesson.id, session.id);
+    const runId = outcome.status === "started" ? outcome.run.runId : "";
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({ goalId: other.id });
   });
 
   it("plays outside a session the lesson isn't part of, or someone else's", async () => {

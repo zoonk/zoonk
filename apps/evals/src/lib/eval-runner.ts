@@ -123,7 +123,13 @@ function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): b
   return existingResults.some((result) => result.testCase.id === testCaseId);
 }
 
-export async function runEval(task: RegisteredTask, modelId: string): Promise<TaskEvalResults> {
+export async function runEval(
+  task: RegisteredTask,
+  modelId: string,
+  runIds: ReadonlySet<string> = new Set(
+    getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+  ),
+): Promise<TaskEvalResults> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
 
   logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
@@ -143,10 +149,6 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
-
-  const runIds = new Set(
-    getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
-  );
 
   const outputsToScore = modelOutputs.outputs.filter(
     (output) =>

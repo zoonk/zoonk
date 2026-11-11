@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  {
+    "id": "2",
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  {
+    "id": "3",
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  {
+    "id": "4",
+    "A": "anthropic-claude-opus-5.5",
+    "B": "anthropic-claude-fable-5.2"
+  },
+  {
+    "id": "5",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  },
+  {
+    "id": "6",
+    "A": "google-gemini-4-argon",
+    "B": "google-gemini-4-carbon"
+  },
+  {
+    "id": "7",
+    "A": "google-gemini-4-carbon",
+    "B": "google-gemini-4-argon"
+  },
+  {
+    "id": "8",
+    "A": "google-gemini-4-carbon",
+    "B": "google-gemini-4-argon"
+  }
+]

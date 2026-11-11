@@ -163,6 +163,12 @@ function useOpenUnwrittenLesson() {
           router.push(`/learn/${lessonId}?session=${sessionId}`);
           return true;
         }
+
+        // The day ended while the lesson was written: today's session comes first.
+        if (written.answer?.kind === "today") {
+          router.push("/today");
+          return true;
+        }
       }
 
       openSession(

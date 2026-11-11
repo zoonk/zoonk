@@ -218,7 +218,7 @@ class AppContainer private constructor(
             scope = scope,
         )
 
-    val plans = PlanStore(LivePlanApi(api), cache)
+    val plans = PlanStore(LivePlanApi(api), cache, learnerSummary.summary)
     val goalContent = GoalContentStore(LiveGoalContentApi(api), cache)
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
@@ -246,7 +246,7 @@ class AppContainer private constructor(
                 },
         )
 
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::decideChange)
+    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::setRegion, plans::decideChange)
     val earlierQuestions =
         EarlierQuestionsStore(
             api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },

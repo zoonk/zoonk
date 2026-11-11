@@ -50,4 +50,17 @@ class MarkdownTableTest {
             readMarkdownTable(listOf("Rule | Means", ":--- | :---:", "a \\| b | either", "x |"), 0)?.table,
         )
     }
+
+    @Test
+    fun findsATableRightUnderASentenceWithAPipeAndNotTheSentence() {
+        val text =
+            listOf(
+                "Read P(rain | clouds) from the table below:",
+                "| Sky | Rain |",
+                "|---|---|",
+                "| Clouds | 30% |",
+            )
+
+        assertEquals(setOf(1, 2, 3), findMarkdownTableLines(text))
+    }
 }

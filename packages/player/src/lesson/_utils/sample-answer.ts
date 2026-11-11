@@ -12,7 +12,6 @@ function fromSampleAnswer(sampleAnswer: string): LessonStepResult {
     heard: null,
     isCorrect: false,
     keyPoints: null,
-    nextReviewAt: null,
     savedMistake: false,
     score: null,
     spelling: null,

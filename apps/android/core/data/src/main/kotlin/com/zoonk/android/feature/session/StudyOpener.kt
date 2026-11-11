@@ -66,11 +66,12 @@ interface StudyApi {
         timeZone: String,
     ): StudySessionSummary
 
-    /** A "10 more minutes" block after the day's session. */
+    /** A "10 more minutes" block after the day's session; null when its day is over, so the time goes to today's. */
     suspend fun addExtraBlock(
         session: AuthenticatedSession,
         sessionId: UUID,
-    ): StudyBlock
+        timeZone: String,
+    ): StudyBlock?
 
     /** Moves the lessons left to catch up into today. */
     suspend fun catchUp(
@@ -162,8 +163,8 @@ class StudyOpener(
     ): MutationResult<AppRoute?> =
         cache.mutate(invalidating = OPENING) { session ->
             val sessionId = day.sessionId ?: keep(session, day, goalId)
-            val added = api.addExtraBlock(session, sessionId)
-            follow(session, openBlock(session, blockTarget(added.id)))
+            val added = api.addExtraBlock(session, sessionId, timeZone())
+            if (added == null) AppRoute.Today else follow(session, openBlock(session, blockTarget(added.id)))
         }
 
     /** Saves an unopened day first, keeping it even with nothing in it. */
@@ -291,6 +292,26 @@ fun StudyBlockOpening.route(): AppRoute? =
 
 /** A lesson step whose lesson is picked but not written, which a tap asks [StudyOpener] to write. */
 fun DayStep.isUnwrittenLesson(): Boolean = kind == StudyBlock.Kind.LEARN && screen == StudyBlock.Screen.SESSION && lessonId != null
+
+/**
+ * Where a tap on Today leads instead of opening [step], when the session screen plays it and it
+ * hasn't started: its intro, which waits for the learner's Start, so they read what it is first. A
+ * lesson opens on its own screen, a step already under way goes on, and a day not opened yet shows
+ * only its next step there.
+ */
+fun DayView.introTo(
+    step: DayStep,
+    goalId: UUID,
+): AppRoute.Session? {
+    if (step.screen != StudyBlock.Screen.SESSION || step.kind == StudyBlock.Kind.LEARN || step.status != StudyBlock.Status.PENDING) {
+        return null
+    }
+    return when {
+        sessionId != null && step.id != null -> AppRoute.Session(blockId = step.id.toString(), sessionId = sessionId.toString())
+        step.position == nextPosition -> AppRoute.Session(goalId = (this.goalId ?: goalId).toString())
+        else -> null
+    }
+}
 
 /** Names the shown step by its work, never by position alone, so a changed day never opens other work. */
 internal fun openDayBody(

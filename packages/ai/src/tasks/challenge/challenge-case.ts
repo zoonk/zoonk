@@ -15,9 +15,11 @@ import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import systemPrompt from "./challenge-case.prompt.md";
 
 /**
- * A challenge is written once per chapter and shared, so quality outweighs cost: on 6 cases (8 Nov
- * 2026), Sol scored 8.83 (EN 8.97, PT 8.68) at $55.13/1k against Terra's 8.38 at $23.87/1k. Sonnet
- * and Opus reject this schema as too large, so Argon (7.66) is only a below-floor outage route.
+ * A challenge is written once per chapter and shared, so quality outweighs cost: on 6 cases (11 Nov
+ * 2026), Sol scored 8.74 (EN 8.82, PT 8.67) at $50/1k against Terra's 8.41 at $23/1k. Gemini 4
+ * Carbon scored 7.61 at $199/1k, no better than Argon (7.60, $66/1k); a blind read liked its richer
+ * choices on 5 of 6 but confirmed the factual errors the judge flagged. Sonnet and Opus reject this
+ * schema as too large, so Argon is only a below-floor outage route.
  */
 const defaultModel = "openai/gpt-6.1-sol";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-4-argon"] as const;

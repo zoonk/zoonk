@@ -71,6 +71,7 @@ async function writeExamFormatItemsStep({
     serviceTier: chooseServiceTier({ wait }),
     skill: { description: skill.description, name: skill.name },
     targetLanguage: skill.targetLanguage,
+    usedSituations: skill.usedSituations,
   });
 
   return { items: data.items, provenance };

@@ -1,5 +1,4 @@
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
-import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { prisma } from "@zoonk/db";
@@ -12,11 +11,6 @@ import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { goalContentWorkflow } from "./goal-content-workflow";
-
-vi.mock("@zoonk/ai/tasks/memory/search-terms", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  generateMemorySearchTerms: vi.fn(),
-}));
 
 vi.mock("@zoonk/ai/tasks/memory/relevance", async (importOriginal) => ({
   ...(await importOriginal<object>()),
@@ -66,10 +60,6 @@ describe("a new plan's routine fit", () => {
   it("makes each model call in a step of its own, so a failed call retries alone", async () => {
     const goal = await plannedGoalWithLargeMemory();
 
-    vi.mocked(generateMemorySearchTerms)
-      .mockRejectedValueOnce(new Error("The gateway is down"))
-      .mockResolvedValue(taskResult({ terms: [] }) as never);
-
     vi.mocked(selectRelevantMemoryFacts)
       .mockRejectedValueOnce(new Error("The gateway is down"))
       .mockImplementation(async ({ facts }) => facts.filter((fact) => fact.statement === TRIP));
@@ -86,7 +76,6 @@ describe("a new plan's routine fit", () => {
     const run = await start(goalContentWorkflow, [{ goalId: goal.id }]);
     await expect(run.returnValue).resolves.toMatchObject({ status: "ready" });
 
-    expect(generateMemorySearchTerms).toHaveBeenCalledTimes(2);
     expect(selectRelevantMemoryFacts).toHaveBeenCalledTimes(2);
     expect(fitPlanToRoutineFacts).toHaveBeenCalledTimes(2);
 

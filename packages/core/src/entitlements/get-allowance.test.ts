@@ -38,7 +38,7 @@ describe(getAllowance, () => {
     const allowance = await getAllowance();
 
     expect(allowance).toMatchObject({
-      activeGoals: { limit: 1, used: 1 },
+      activeGoals: { limit: 3, used: 1 },
       examPrep: { includesMockExams: false, studyDays: 7 },
       generatedLessons: null,
       resets: { day: new Date("2026-09-16T00:00:00Z"), month: new Date("2026-10-01T00:00:00Z") },

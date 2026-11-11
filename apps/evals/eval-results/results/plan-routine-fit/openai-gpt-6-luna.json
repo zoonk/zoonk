@@ -162,23 +162,23 @@
     {
       "classification": {
         "expected": "setWeekdayMinutes",
-        "predicted": "setWeekdayMinutes"
+        "predicted": "none"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Missing {\"kind\":\"setWeekdayMinutes\",\"minutes\":{\"max\":25,\"min\":0},\"weekdays\":[6]}.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Missing {\"kind\":\"setWeekdayMinutes\",\"minutes\":{\"max\":25,\"min\":0},\"weekdays\":[6]}.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Missing {\"kind\":\"setWeekdayMinutes\",\"minutes\":{\"max\":25,\"min\":0},\"weekdays\":[6]}.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {

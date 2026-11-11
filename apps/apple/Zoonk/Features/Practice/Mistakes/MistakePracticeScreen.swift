@@ -71,7 +71,9 @@ struct MistakePracticeScreen: View {
     case .ending:
       ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
     case .ended(let summary):
-      PracticeDoneView(summary: summary, fixed: state.fixedIds.count, reached: state.reached) {
+      PracticeDoneView(
+        summary: summary, fixed: state.fixedIds.count, note: state.endNote, reached: state.reached
+      ) {
         dismiss()
       }
       .completionMoments(
@@ -111,15 +113,8 @@ struct MistakePracticeScreen: View {
     if state.phase == .idea, let lesson = drill.lesson {
       DrillIdeaView(drill: drill, lesson: lesson)
     } else {
-      let lastAnswer =
-        step.isMistakeQuestion
-        ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil
-
-      if drill.isIdeaFirst ? lastAnswer != nil : step.isFirstOfEntry {
-        DrillNoteView(
-          drill: drill,
-          lastAnswer: lastAnswer,
-          isAnswered: graded != nil || drill.isIdeaFirst)
+      if step.isFirstOfEntry && !drill.isIdeaFirst {
+        DrillNoteView(drill: drill, isAnswered: graded != nil)
       }
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {
@@ -445,10 +440,11 @@ struct MistakePracticeScreen: View {
 
 }
 
-/// A run with a miss says the rest come back, so a hard day reads as "not yet".
+/// A run with a miss says those come back, so a hard day reads as "not yet".
 private struct PracticeDoneView: View {
   let summary: Components.Schemas.MistakePracticeCompletion?
   let fixed: Int
+  let note: PracticeEndNote?
   let reached: PracticeReached
   let close: () -> Void
 
@@ -457,10 +453,7 @@ private struct PracticeDoneView: View {
       PracticeResultTitle(
         title: LocalizedStringResource(
           "Practice done", table: "Practice", comment: "End of a practice run."),
-        detail: comesBack
-          ? LocalizedStringResource(
-            "The rest come back another day, when they stick better.", table: "Practice",
-            comment: "End of a mistakes practice run with a miss.") : nil)
+        detail: detail)
       PracticeResultNumbers(
         correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
         facts: fixed > 0
@@ -489,8 +482,22 @@ private struct PracticeDoneView: View {
         level: reached.level.map { DayResult.Reached.Level(color: $0.color, level: $0.level) }))
   }
 
-  private var comesBack: Bool {
-    guard let summary else { return fixed == 0 }
-    return summary.correct < summary.total
+  private var detail: LocalizedStringResource? {
+    switch note {
+    case .missed:
+      LocalizedStringResource(
+        "The ones you missed come back another day, when they stick better.", table: "Practice",
+        comment: "End of a mistakes practice run with a miss.")
+    case .missedAndUnreached:
+      LocalizedStringResource(
+        "The ones you missed come back another day. The rest are still ready to practice.",
+        table: "Practice",
+        comment: "End of a mistakes practice run stopped early after a miss.")
+    case .unreached:
+      LocalizedStringResource(
+        "The rest are still ready to practice.", table: "Practice",
+        comment: "End of a mistakes practice run stopped early, with no miss.")
+    case nil: nil
+    }
   }
 }

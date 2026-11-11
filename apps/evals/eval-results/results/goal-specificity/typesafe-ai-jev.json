@@ -42,43 +42,6 @@
     },
     {
       "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "generalKeywords": [
-            "excel"
-          ],
-          "personalKeywords": [],
-          "privateCourse": false
-        },
-        "id": "en-field-is-context-1",
-        "userInput": {
-          "goal": "Excel pivot tables for nurses",
-          "language": "en"
-        }
-      }
-    },
-    {
-      "classification": {
         "expected": "true",
         "predicted": "true"
       },
@@ -445,43 +408,6 @@
       "testCase": {
         "expected": {
           "generalKeywords": [
-            "estatistica"
-          ],
-          "personalKeywords": [],
-          "privateCourse": false
-        },
-        "id": "pt-field-is-context-1",
-        "userInput": {
-          "goal": "Estatística para enfermeiros",
-          "language": "pt"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "false",
-        "predicted": "false"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "generalKeywords": [
             "revolucao francesa"
           ],
           "personalKeywords": [
@@ -801,6 +727,82 @@
         "userInput": {
           "goal": "Ogarnąć MagPro, wewnętrzny system magazynowy, który nasz dział IT napisał tylko dla Trans-Polu",
           "language": "pl"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "excel"
+          ],
+          "noPersonalDetails": true,
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "en-field-is-context-1",
+        "userInput": {
+          "goal": "Excel pivot tables for nurses",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "estatistica"
+          ],
+          "noPersonalDetails": true,
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "pt-field-is-context-1",
+        "userInput": {
+          "goal": "Estatística para enfermeiros",
+          "language": "pt"
         }
       }
     }

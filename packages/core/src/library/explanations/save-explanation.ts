@@ -148,7 +148,7 @@ export async function saveExplanationLesson({
   });
 
   const { lesson } = await createLibraryLesson({
-    description: explanation.screens[0]?.title ?? explanation.title,
+    description: explanation.description,
     estimatedMinutes: EXPLANATION_MINUTES,
     homeChapterId: null,
     identityKey,

@@ -1,10 +1,10 @@
+import { goBack } from "./_utils/lesson-back";
 import { isAtEnd, leaveMap, setCompletionStatus } from "./_utils/lesson-end";
 import {
   advance,
   continueChallenge,
   continueReading,
   explainFirst,
-  goBack,
   resolveCheck,
   skipSteps,
   startQuickCheck,
@@ -66,10 +66,6 @@ function continueFrom(state: LessonPlayerState): LessonPlayerState {
 }
 
 function navigate(state: LessonPlayerState, action: ActionOf<"navigate">): LessonPlayerState {
-  if (state.phase !== "playing" && state.phase !== "map") {
-    return state;
-  }
-
   return action.direction === "prev" ? goBack(state) : continueFrom(state);
 }
 
@@ -83,11 +79,12 @@ function confirmCheck(
     return state;
   }
 
-  const { nextReviewAt, savedMistake } = action.result;
-
   return {
     ...state,
-    results: { ...state.results, [action.stepId]: { ...current, nextReviewAt, savedMistake } },
+    results: {
+      ...state.results,
+      [action.stepId]: { ...current, savedMistake: action.result.savedMistake },
+    },
   };
 }
 

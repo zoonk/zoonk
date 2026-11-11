@@ -226,8 +226,7 @@ export const planResponseSchema = z
       startDate: isoDateSchema,
     }),
     weekTime: weeklyStudyTimeSchema.meta({
-      description:
-        "This week's study time against the learner's weekly budget, in the goal's week: the same numbers as Today's `week.time`",
+      description: "This goal's study time this week against its weekly budget, in the goal's week",
     }),
     writtenPractice: writtenPracticeSchema
       .nullable()

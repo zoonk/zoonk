@@ -112,7 +112,7 @@ describe("new goal plan marks", () => {
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(1);
   });
 
-  it("a real creation constraint failure rolls back the early marker", async () => {
+  it("a real creation constraint failure rolls back the early marker and the claim", async () => {
     const day = await setup();
     const before = await versions(day);
 
@@ -124,10 +124,12 @@ describe("new goal plan marks", () => {
         input: { dailyMinutes: 20, goals: [draft()], timeZone: "UTC" },
         testedLanguage: null,
         userId: day.user.id,
+        viewer: { isGuest: false, tier: "free", userId: day.user.id },
       }),
     ).rejects.toMatchObject({ code: "P2002" });
 
     await expect(versions(day)).resolves.toStrictEqual(before);
+    await expect(prisma.usageRecord.count({ where: { userId: day.user.id } })).resolves.toBe(0);
 
     await expect(
       prisma.goal.findUniqueOrThrow({ where: { id: day.goal.id } }),

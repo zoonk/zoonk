@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "c661e6307f3670d1b4710fbd6c130802ab52fe7bffd65b8dfe04a12de15b2688",
-  "missions_already_earned": "31dab12857109886e158dbaf87d6ba6dc67d014c5c809779fb8f0e010c0e0fb1",
   "missions_ask_anything": "1328d084c3678faf267bb87981007aab406974cbf4a0358a98fe7ce904af9c30",
   "missions_ask_buddy": "b54129eb42dbf7e755f6d38189046ef71ef0357ef77707643a404924421b7044",
   "missions_brain_power": "593ef6bdccfb1af5d62dff51c7f18b8dea97c64c02b1828250829f8264a6061d",
@@ -66,7 +65,6 @@
     <string name="missions_done">ミッション達成</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">脳力を+%1$s獲得しました。</string>
-    <string name="missions_already_earned">今日の脳力+%1$sは獲得済みです。</string>
     <plurals name="missions_count">
         <item quantity="other">%d個のミッション</item>
     </plurals>

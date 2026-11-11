@@ -127,7 +127,7 @@ async function whileLearnerLocked<T>({
 }
 
 describe(checkLessonStep, () => {
-  it("records a right answer against the lesson's skill and says when it comes back", async () => {
+  it("records a right answer against the lesson's skill", async () => {
     const { run, skill, steps, user } = await setupRun();
     const step = stepOfKind(steps, "check");
 
@@ -155,9 +155,7 @@ describe(checkLessonStep, () => {
       skillId: skill.id,
     });
 
-    expect(outcome.status === "checked" && outcome.result.nextReviewAt).toBe(
-      learnerSkill.due?.toISOString(),
-    );
+    expect(learnerSkill.due).not.toBeNull();
   });
 
   it("doesn't record or claim a model grade for a new answer after a right answer", async () => {

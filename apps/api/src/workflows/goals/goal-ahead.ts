@@ -18,7 +18,7 @@ import {
   pickFreeResponseSkillsStep,
   prepareFreeResponseItemStep,
 } from "./steps/free-response-items-step";
-import { pickItemSetTargetsStep, prepareItemSetStep } from "./steps/item-set-step";
+import { pickItemSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import { listMockPrepWritesStep } from "./steps/mock-question-steps";
 import { importPastQuestionsStep, listPastQuestionPapersStep } from "./steps/past-questions-step";
 import { loadStatuteDrillTargetsStep, prepareLawDrills } from "./steps/statute-drills-step";
@@ -74,7 +74,7 @@ async function prepareItemSets({
   inputs: GoalCurriculumInputs;
 }) {
   const targets = inputs.isGuest ? [] : await pickItemSetTargetsStep(inputs.goal.id);
-  await Promise.allSettled(targets.map((target) => prepareItemSetStep({ ...context, target })));
+  await Promise.allSettled(targets.map((target) => prepareItemSet({ ...context, target })));
 }
 
 async function prepareStatuteDrills({

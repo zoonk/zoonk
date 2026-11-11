@@ -4,8 +4,8 @@ import {
   type MistakePracticeSummary,
   type PracticeEntry,
   createPracticeState,
+  getPracticeEndNote,
   getPracticeSegments,
-  isMistakeQuestion,
   practiceReducer,
 } from "./mistake-practice-state";
 
@@ -354,45 +354,28 @@ describe(getPracticeSegments, () => {
   });
 });
 
-describe(isMistakeQuestion, () => {
-  const mistake = entry("lesson");
+describe(getPracticeEndNote, () => {
+  it("says a miss waits for another day and the mistakes a stopped run never reached are still ready", () => {
+    const practice = [entry("first", {}, 1), entry("second", {}, 1)];
+    const answer = { selectedIndex: 1 };
 
-  function stepOn(question: { context: string | null; question: string }, saved: string) {
-    const original = mistake.questions[0]!;
+    const answered = (isCorrect: boolean) =>
+      [
+        { answer, durationMs: 4000, sender: "check", type: "check" },
+        { feedback: { ...graded(`a${isCorrect}`), isCorrect }, mistakeId: "m", type: "answered" },
+        { type: "next" },
+      ] as const;
 
-    if (original.format !== "multipleChoice") {
-      throw new Error("Expected the choice fixture");
-    }
+    const play = (...actions: ReturnType<typeof answered>[number][]) =>
+      actions.reduce(
+        (current, action) => practiceReducer(current, action),
+        createPracticeState(practice),
+      );
 
-    return {
-      entry: { ...mistake, snapshot: { ...mistake.snapshot, question: saved } },
-      firstOfEntry: true,
-      lesson: null,
-      question: { ...original, ...question },
-    };
-  }
-
-  it("knows a bank question saved as it's asked", () => {
-    expect(isMistakeQuestion(stepOn({ context: null, question: "How much?" }, "How much?"))).toBe(
-      true,
-    );
-  });
-
-  it("knows a lesson's question saved with its context before it, on any line break", () => {
-    const question = { context: "A shirt costs R$ 120.", question: "How much?" };
-
-    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120.\n\nHow much?"))).toBe(true);
-    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120. How much?"))).toBe(true);
-  });
-
-  it("tells another question on the same skill apart", () => {
-    expect(
-      isMistakeQuestion(
-        stepOn(
-          { context: "A bike costs R$ 250.", question: "How much?" },
-          "A shirt costs R$ 120.\n\nHow much?",
-        ),
-      ),
-    ).toBe(false);
+    expect(getPracticeEndNote(play())).toBe("unreached");
+    expect(getPracticeEndNote(play(...answered(false)))).toBe("missedAndUnreached");
+    expect(getPracticeEndNote(play(...answered(true)))).toBe("unreached");
+    expect(getPracticeEndNote(play(...answered(false), ...answered(true)))).toBe("missed");
+    expect(getPracticeEndNote(play(...answered(true), ...answered(true)))).toBeNull();
   });
 });

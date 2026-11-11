@@ -2,6 +2,7 @@ import { type StudyBlockKind } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type DayOutlines } from "./outlining-stand-ins";
+import { EMPTY_WEEK } from "./session-view";
 
 const TODAY = new Date("2026-10-17T00:00:00Z");
 
@@ -35,7 +36,7 @@ function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
       plannedMinutes: 8,
     },
     sessionBar: { completed: 0, total: 1 },
-    week: { days: [], nextStudyDate: null, time: { studiedMinutes: 0, targetMinutes: 0 } },
+    week: EMPTY_WEEK,
   };
 }
 

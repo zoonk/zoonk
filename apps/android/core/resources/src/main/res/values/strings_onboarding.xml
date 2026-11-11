@@ -29,7 +29,8 @@
     <string name="onboarding_limit_guest_blocked">A security check blocked starting without an account. Create a free account to keep going.</string>
     <string name="onboarding_limit_monthly_explanations">You\'ve asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
     <string name="onboarding_limit_monthly_goals">You\'ve started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
-    <string name="onboarding_limit_one_active_goal">The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">You\'re following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.</string>
     <string name="onboarding_limit_sign_up_required">Create your free account to continue.</string>
     <string name="onboarding_limit_slow_down">You\'re starting goals quickly. Try again in a few minutes.</string>
     <string name="onboarding_read_limit_guest">Without an account, you can send a few new goals a day. Create a free account to keep going.</string>
@@ -48,7 +49,8 @@
 
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">More goals at once with Plus</string>
-    <string name="onboarding_plus_more_goals_up_front">The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">You\'re following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime.</string>
     <string name="onboarding_go_to_plan">Go to your Plan</string>
     <string name="onboarding_see_plus">See Plus</string>
     <string name="onboarding_create_account">Create a free account</string>
@@ -65,10 +67,16 @@
     <string name="onboarding_understood_description">You can change all of this later.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">Following more goals at once comes with Plus. Until then, this goal waits in your goals.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.</string>
+    <string name="onboarding_understood_locked_goals">Following more goals at once comes with Plus. Until then, these goals wait in your goals.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Available with a free account</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Following more goals at once comes with a free account. Until then, this goal waits in your goals.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Following more goals at once comes with a free account. Until then, these goals wait in your goals.</string>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_fix_something">Fix something</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -90,7 +98,7 @@
     <string name="onboarding_row_language">Language</string>
     <string name="onboarding_row_you_speak">You speak</string>
     <string name="onboarding_row_course">Course</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">Where: %1$s</string>
     <string name="onboarding_row_where">Where</string>
     <!-- For someone changing careers. -->
@@ -99,7 +107,7 @@
     <string name="onboarding_row_level_aiming">Level you\'re aiming for</string>
     <string name="onboarding_row_target_score">Target score</string>
     <string name="onboarding_row_last_cutoff">Last cut-off</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s out of %2$s</string>
     <string name="onboarding_row_reason">Reason</string>
     <string name="onboarding_row_what_you_do">What you do now</string>
@@ -314,7 +322,7 @@
         <item quantity="one">%d skill you already know</item>
         <item quantity="other">%d skills you already know</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">More lessons</string>
     <string name="onboarding_reveal_usual_structure">This plan follows the exam\'s usual structure while we finish reading its official documents. If they change your plan, you\'ll decide on Today.</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -322,7 +330,7 @@
     <string name="onboarding_reveal_phase_gaps">Fill the gaps</string>
     <string name="onboarding_reveal_phase_practice">Practice</string>
     <string name="onboarding_reveal_phase_final_stretch">Final stretch</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">Phase %1$d</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">Exam map and gaps</string>
@@ -335,7 +343,7 @@
     <string name="onboarding_reveal_today">Today</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">day %1$d of %2$d</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d of %2$d</string>
     <string name="onboarding_reveal_phase_place">phase %1$d of %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -347,7 +355,7 @@
     <string name="onboarding_reveal_free_week_over_title">Your free week of exam prep is over</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s a day isn\'t enough time to cover your goal.</string>
     <string name="onboarding_reveal_covers_exam_deeper">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
     <string name="onboarding_reveal_covers_exam_lighter">%1$s a day studies every topic of the exam, some of them in less depth.</string>
@@ -386,7 +394,7 @@
         <item quantity="one">%d topic, all in your plan</item>
         <item quantity="other">%d topics, all in your plan</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="one">%1$d of %2$d topic doesn\'t fit in %3$s a day</item>
         <item quantity="other">%1$d of %2$d topics don\'t fit in %3$s a day</item>
@@ -397,7 +405,7 @@
         <item quantity="other">%1$d of %2$d topics in your plan</item>
     </plurals>
     <string name="onboarding_reveal_weights">Weight by area</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ Estimated: your material doesn\'t say how much this area weighs.</string>
     <string name="onboarding_reveal_estimated_material_areas">~ Estimated: your material doesn\'t say how much these areas weigh.</string>
@@ -638,4 +646,12 @@
     </plurals>
     <string name="onboarding_reason_choices">Why you\'re learning it</string>
     <string name="onboarding_aim_description">How far your course goes, which sets how long your plan is.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">Country</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
+    <string name="onboarding_variety_description">Your buddy and practice calls use the country you choose. Lessons and their audio use %1$s.</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">No preference</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">Your buddy and practice calls use %1$s. Lessons and their audio use %2$s.</string>
 </resources>

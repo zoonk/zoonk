@@ -4,6 +4,7 @@ import { API_URL } from "@zoonk/utils/url";
 import {
   adminClient,
   anonymousClient,
+  deviceAuthorizationClient,
   emailOTPClient,
   inferOrgAdditionalFields,
   organizationClient,
@@ -36,6 +37,7 @@ export const authClient = createAuthClient({
   plugins: [
     adminClient(),
     anonymousClient(),
+    deviceAuthorizationClient(),
     emailOTPClient(),
     organizationClient({
       ac,

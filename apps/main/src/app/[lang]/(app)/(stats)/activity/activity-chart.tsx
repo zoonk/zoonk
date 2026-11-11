@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type LearningActivityDay } from "@zoonk/core/progress/get-learning-activity";
+import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -12,7 +13,6 @@ import {
   ContributionCalendarLegendSkeleton,
   ContributionCalendarLegendSwatch,
   ContributionCalendarPeriod,
-  ContributionCalendarReadout,
   ContributionCalendarTitle,
   ContributionCalendarViewport,
   ContributionCalendarWeek,
@@ -41,7 +41,6 @@ const INTENSITY_CLASSES = [
 ] as const;
 
 type ActivityCalendarDay = LearningActivityDay & {
-  accessibleLabel: string;
   intensityClass: (typeof INTENSITY_CLASSES)[number];
   index: number;
 };
@@ -53,12 +52,10 @@ type ActivityCalendarWeek = {
 };
 
 function getActivityCalendarDay({
-  accessibleLabel,
   day,
   index,
   maximumActivitiesCompleted,
 }: {
-  accessibleLabel: string;
   day: LearningActivityDay;
   index: number;
   maximumActivitiesCompleted: number;
@@ -68,12 +65,7 @@ function getActivityCalendarDay({
     maximumActivitiesCompleted,
   });
 
-  return {
-    ...day,
-    accessibleLabel,
-    index,
-    intensityClass: INTENSITY_CLASSES.at(intensity) ?? INTENSITY_CLASSES[0],
-  };
+  return { ...day, index, intensityClass: INTENSITY_CLASSES.at(intensity) ?? INTENSITY_CLASSES[0] };
 }
 
 function getActivityCalendarWeek({
@@ -151,16 +143,18 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   });
 
   const calendarDays = days.map((day, index) =>
-    getActivityCalendarDay({
-      accessibleLabel: t(
-        "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}",
-        { count: day.activitiesCompleted, date: formatDay(day.date) },
-      ),
-      day,
-      index,
-      maximumActivitiesCompleted,
-    }),
+    getActivityCalendarDay({ day, index, maximumActivitiesCompleted }),
   );
+
+  const details = days.map((day): ChartPointDetail => [
+    formatDay(day.date),
+    t({
+      description:
+        "A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.",
+      message: "{count, plural, =0 {No study} one {# activity} other {# activities}}",
+      values: { count: day.activitiesCompleted },
+    }),
+  ]);
 
   const startIndex = days.findIndex((day) => day.date.getTime() === keyboardStartDate?.getTime());
 
@@ -172,7 +166,7 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
     <ContributionCalendar
       aria-labelledby={ACTIVITY_CHART_TITLE_ID}
       defaultIndex={Math.max(0, startIndex)}
-      labels={calendarDays.map((day) => day.accessibleLabel)}
+      details={details}
       weeks={weeks.length}
     >
       <ContributionCalendarCaption>
@@ -191,8 +185,6 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
           </ContributionCalendarGrid>
         </ContributionCalendarContent>
       </ContributionCalendarViewport>
-
-      <ContributionCalendarReadout />
     </ContributionCalendar>
   );
 }
@@ -205,7 +197,6 @@ export function ActivityChartSkeleton() {
         <ContributionCalendarLegendSkeleton />
       </ContributionCalendarCaption>
       <ContributionCalendarGridSkeleton />
-      <Skeleton className="h-5 w-40" />
     </ContributionCalendar>
   );
 }

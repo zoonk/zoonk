@@ -1,6 +1,5 @@
 import { getIsoDay } from "@zoonk/utils/calendar-day";
 import { describe, expect, it } from "vitest";
-import { en } from "./example-sets/en";
 import { getNextSitting } from "./next-sitting";
 
 const sat = ["2026-11-07", "2026-12-05", "2027-03-06"] as const;
@@ -24,8 +23,8 @@ describe(getNextSitting, () => {
 
   it("counts today in the exam's zone, so the SAT's eve in New York still shows that sitting", () => {
     const now = new Date("2027-03-06T04:30:00Z");
-    const today = getIsoDay({ now, timeZone: en.exam.timeZone });
+    const today = getIsoDay({ now, timeZone: "America/New_York" });
 
-    expect(getNextSitting({ sittings: en.exam.sittings, today })).toBe("2027-03-06");
+    expect(getNextSitting({ sittings: sat, today })).toBe("2027-03-06");
   });
 });
