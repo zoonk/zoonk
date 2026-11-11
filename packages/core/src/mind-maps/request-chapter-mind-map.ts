@@ -19,6 +19,7 @@ import {
   type ChapterMapAdmission,
   admitChapterMap,
   lockMindMapRows,
+  oweMindMapLaunches,
 } from "./_utils/admit-chapter-map";
 import { chapterMapClaims } from "./_utils/bulk-chapters";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
@@ -33,14 +34,10 @@ export type MindMapLaunch = {
   lessonIds: string[];
 };
 
-/**
- * On start, the caller must start the claimed run; an on-its-way result may lack generationId
- * until the run records it.
- */
+/** An on-its-way result lacks generationId until the run records it. */
 export type ChapterMindMapRequest =
   | { status: "ready" }
   | { generationId: string | null; status: OnItsWay }
-  | (MindMapLaunch & { status: "start" })
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
   | { status: "plusRequired" }
@@ -70,18 +67,20 @@ async function findLessonsToWrite(chapterId: string): Promise<string[]> {
   );
 }
 
-/** One chapter's admission, in its own learner write. */
+/** One chapter's admission, in its own learner write, which owes the run of a claimed map. */
 async function admitMindMap({
   chapterId,
-  lessonIds,
+  launch,
   now,
   viewer,
 }: {
   chapterId: string;
-  lessonIds: readonly string[];
+  launch: MindMapLaunch;
   now: Date;
   viewer: EntitlementViewer;
 }): Promise<ChapterMapAdmission> {
+  const { lessonIds } = launch;
+
   const admission = await writeLearnerChange<ChapterMapAdmission>(
     { userId: viewer.userId },
     async (transaction) => {
@@ -101,9 +100,17 @@ async function admitMindMap({
 
       const decided = await admitChapterMap(transaction, { chapterId, ledger, lessonIds, row });
 
-      return decided.admission.status === "claimed"
-        ? decided.admission
-        : unchanged(decided.admission);
+      if (decided.admission.status !== "claimed") {
+        return unchanged(decided.admission);
+      }
+
+      await oweMindMapLaunches(transaction, {
+        chapterIds: [chapterId],
+        launch,
+        userId: viewer.userId,
+      });
+
+      return decided.admission;
     },
   );
 
@@ -153,31 +160,28 @@ async function requestFor({
     return { status: "unauthorized" };
   }
 
-  const lessonIds = await findLessonsToWrite(chapterId);
-  const admission = await admitMindMap({ chapterId, lessonIds, now, viewer });
+  const launch: MindMapLaunch = {
+    analytics: { distinctId: goal.userId, goalId: goal.id, platform },
+    forExam: goal.kind === "exam",
+    lessonIds: await findLessonsToWrite(chapterId),
+  };
+
+  const admission = await admitMindMap({ chapterId, launch, now, viewer });
 
   if (admission.status === "ready" || admission.status === "refused") {
     return admission;
   }
 
-  if (admission.status === "joined") {
-    return {
-      generationId: await findRunId(chapterId),
-      status: lessonIds.length > 0 ? "writingLessons" : "drawing",
-    };
-  }
-
   return {
-    analytics: { distinctId: goal.userId, goalId: goal.id, platform },
-    forExam: goal.kind === "exam",
-    lessonIds,
-    status: "start",
+    generationId: admission.status === "joined" ? await findRunId(chapterId) : null,
+    status: launch.lessonIds.length > 0 ? "writingLessons" : "drawing",
   };
 }
 
 /**
  * A learner's tap only. The map and each lesson it writes first are claimed together or not at
- * all; retries are free per target and concurrent learners join the same run.
+ * all, and the claim owes the learner the map's run; retries are free per target and concurrent
+ * learners join the same run.
  */
 export async function requestChapterMindMap({
   chapterId,

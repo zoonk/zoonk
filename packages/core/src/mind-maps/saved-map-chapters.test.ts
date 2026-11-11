@@ -316,7 +316,7 @@ describe("mind maps read from the saved plan", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: beginner.id, goalId: goal.id }),
-    ).resolves.toMatchObject({ lessonIds: [], status: "start" });
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
   });
 
   it.each(["the same skill", "a duplicate merged into it"])(

@@ -103,7 +103,7 @@ describe("mind maps study page", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: beginner.id, goalId: goal.id }),
-    ).resolves.toMatchObject({ lessonIds: [], status: "start" });
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
   });
 
   it("keeps an exam goal to its plan's chapters", async () => {
