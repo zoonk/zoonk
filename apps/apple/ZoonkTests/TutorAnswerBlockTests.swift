@@ -50,7 +50,7 @@ final class TutorAnswerBlockTests: XCTestCase {
   /// Written by `tutor-math-native-fixtures.test.ts` from the web's remark-math setup.
   private struct Fixtures: Decodable {
     struct Case: Decodable {
-      struct Formula: Decodable {
+      struct Formula: Decodable, Equatable {
         let display: Bool
         let latex: String
       }
@@ -71,10 +71,25 @@ final class TutorAnswerBlockTests: XCTestCase {
     XCTAssertFalse(cases.isEmpty)
 
     for fixture in cases {
+      let (text, formulas) = try XCTUnwrap(TutorFormula.parse(fixture.text))
+      let shown = String(text.characters).matches(of: /\x{E000}(\d+)\x{E001}/).map {
+        formulas[Int($0.1) ?? 0]
+      }
+
       XCTAssertEqual(
-        TutorFormula.takeOut(fixture.text).formulas,
-        fixture.formulas.map { TutorFormula(display: $0.display, latex: $0.latex) }, fixture.text)
+        shown.map { Fixtures.Case.Formula(display: $0.display, latex: $0.latex) },
+        fixture.formulas, fixture.text)
     }
+  }
+
+  @MainActor
+  func testCodeShowsAFormulaAsWritten() {
+    let blocks = TutorAnswerBlock.blocks(
+      of: "Some code:\n\n    $$x^2$$", linksEnabled: false)
+
+    XCTAssertEqual(blocks.map(\.kind), [.paragraph, .code])
+    XCTAssertEqual(String(blocks[1].text.text.characters), "$$x^2$$")
+    XCTAssertEqual(TutorAnswerText.said(blocks, buddyName: nil), "Some code:\n$$x^2$$")
   }
 
   @MainActor

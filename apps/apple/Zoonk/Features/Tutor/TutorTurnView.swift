@@ -382,21 +382,16 @@ struct TutorAnswerBlock: Identifiable {
 
   /// Links are underlined, as main draws them, since the ink tint alone doesn't mark them.
   static func blocks(of markdown: String, linksEnabled: Bool) -> [TutorAnswerBlock] {
-    let (withoutFormulas, formulas) = TutorFormula.takeOut(markdown)
-
-    guard
-      var parsed = try? AttributedString(
-        markdown: withoutFormulas,
-        options: .init(
-          allowsExtendedAttributes: false, interpretedSyntax: .full,
-          failurePolicy: .returnPartiallyParsedIfPossible))
-    else {
+    guard let answer = TutorFormula.parse(markdown) else {
       return [
         TutorAnswerBlock(
           id: 0, kind: .paragraph, depth: 0, listID: nil, followsListItem: false,
           text: RichInline(text: AttributedString(markdown)))
       ]
     }
+
+    var parsed = answer.text
+    let formulas = answer.formulas
 
     for run in parsed.runs where run.link != nil {
       if linksEnabled {

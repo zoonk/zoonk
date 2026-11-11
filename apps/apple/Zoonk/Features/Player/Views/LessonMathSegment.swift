@@ -38,6 +38,14 @@ private struct MathSpan {
   let start: Int
   let end: Int
 
+  /// JavaScript's `\s`, which the TypeScript finder uses; `Character.isWhitespace` also takes
+  /// U+0085 and leaves out U+FEFF.
+  private static let space = CharacterSet(
+    charactersIn:
+      "\t\n\u{0B}\u{0C}\r \u{A0}\u{1680}\u{2028}\u{2029}\u{202F}\u{205F}\u{3000}\u{FEFF}"
+  )
+  .union(CharacterSet(charactersIn: "\u{2000}"..."\u{200A}"))
+
   private static let brackets: [(open: [Character], close: [Character], display: Bool)] = [
     (Array(#"\\("#), Array(#"\\)"#), false),
     (Array(#"\\["#), Array(#"\\]"#), true),
@@ -77,7 +85,7 @@ private struct MathSpan {
       }
 
       let content = String(text[(start + 2)..<close])
-        .trimmingCharacters(in: .whitespacesAndNewlines)
+        .trimmingCharacters(in: space)
 
       return content.isEmpty
         ? dollarMath(in: text, from: close + 2)
@@ -130,7 +138,7 @@ private struct MathSpan {
   }
 
   private static func isWhitespace(_ text: [Character], _ index: Int) -> Bool {
-    !text.indices.contains(index) || text[index].isWhitespace
+    !text.indices.contains(index) || text[index].unicodeScalars.allSatisfy(space.contains)
   }
 
   private static func isDigit(_ text: [Character], _ index: Int) -> Bool {
