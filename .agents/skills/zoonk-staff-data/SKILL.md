@@ -19,7 +19,7 @@ Run `pnpm zoonk whoami` from the repository root first.
 - Exit code 3, not logged in: ask the user to run `pnpm zoonk login` in their terminal and approve the code in the browser it opens. One login per machine renews itself while it's used and ends after 30 days unused. If they'd rather you start it, run it in the background, give them the URL and code it prints, and wait for it to finish.
 - HTTP 403: the account isn't a platform admin. Tell the user; don't look for another way in.
 
-Never read, print or copy `~/.config/zoonk/credentials.json` or any token.
+Never read, print or copy `~/.config/zoonk/credentials.db` or any token.
 
 ## Query
 
@@ -28,16 +28,19 @@ Data commands print JSON on stdout; messages and errors go to stderr. Exit codes
 ```sh
 pnpm zoonk staff users find <email|username|id>    # one account: role, ban, guest, plan
 pnpm zoonk staff users search <text> [--limit n]   # names, emails or usernames containing the text
-pnpm zoonk staff models                            # readable models, their fields and relations
-pnpm zoonk staff get <Model> <id>
-pnpm zoonk staff list <Model> --where "userId eq <id>" --order createdAt:desc --limit 10
+pnpm zoonk staff models                            # readable model names
+pnpm zoonk staff models Goal Plan                  # those models' fields and relations
+pnpm zoonk staff get <Model> <id> [--fields id,status]
+pnpm zoonk staff list <Model> --where "userId eq <id>" --order createdAt:desc --limit 10 --fields id,status,createdAt
 pnpm zoonk staff count <Model> --where "userId eq <id>" --where "createdAt gte 2026-11-01T00:00:00Z"
 ```
 
-- Start from the account with `staff users find`, then follow ids: there are no joins, so take a row's `userId`, `goalId` and so on to the next `get` or `list`.
-- Production can run a different schema than your branch. Take model and field names from `staff models` (Prisma's names, such as `Goal` and `createdAt`), not from the code.
-- `--where "<field> <op> [value]"` repeats, and every condition must hold. Ops: `eq ne gt gte lt lte`; `in notIn` with comma-separated values; `isNull notNull` with no value. Dates are ISO strings.
-- Keep filters narrow and limits small: 20 rows by default, 100 at most, `--offset` for the next page. A query that times out needs a narrower filter, such as one learner or a time window.
+- Start from the account with `staff users find`, then follow ids: there are no joins, so take a row's `userId`, `goalId` and so on to the next `get` or `list`. For example, a goal's plan is `staff list Plan --where "goalId eq <goal id>"`, and a session's blocks are `staff list StudySessionBlock --where "sessionId eq <session id>"`.
+- Production can run a different schema than your branch. Take model and field names from `staff models <Model>` (Prisma's names, such as `Goal` and `createdAt`), not from the code.
+- `--where "<field> <op> [value]"` repeats, and every condition must hold. Ops: `eq ne gt gte lt lte`; `in notIn` with comma-separated values; `isNull notNull` with no value (`eq null` doesn't match nulls). Dates are ISO strings; ids are UUIDs.
+- Rows can carry large JSON columns, so pass `--fields` with only what the question needs.
+- A wrong model, field, operator or value fails with a message listing the valid ones, enum values included. Correct the command from it rather than guessing.
+- Run staff commands one at a time, never in parallel or in loops: each one holds a connection to the production database next to learners' traffic. Keep filters narrow and limits small: 20 rows by default, 100 at most, `--offset` for the next page. A query that times out needs a narrower filter, such as one learner or a time window.
 
 ## Rules
 

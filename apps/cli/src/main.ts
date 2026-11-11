@@ -1,10 +1,11 @@
-import { resolveApiOrigin } from "./api-origin.ts";
+import { loginCommand, resolveApiOrigin } from "./api-origin.ts";
 import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
 import { credentialsPath } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { HELP } from "./help.ts";
-import { type HttpResult, UNAUTHORIZED, isRecord } from "./http.ts";
+import { FORBIDDEN, type HttpResult, UNAUTHORIZED, isRecord, unexpectedResponse } from "./http.ts";
 import { logIn, logOut } from "./login.ts";
+import { type OutputShape, shapeOutput } from "./output.ts";
 import { notLoggedIn, sendAuthorized } from "./session.ts";
 
 function apiError({ origin, result }: { origin: string; result: HttpResult }): CliError {
@@ -12,21 +13,33 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
     return notLoggedIn(origin);
   }
 
-  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
-  const message = typeof error?.message === "string" ? error.message : "The request failed.";
-  const details = error?.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
+  if (result.status === FORBIDDEN) {
+    return new CliError(
+      `This login to ${origin} has no staff access. Log in with a Zoonk platform admin account: ` +
+        `\`${loginCommand(origin)}\`.`,
+    );
+  }
 
-  return new CliError(`${message} (HTTP ${result.status})${details}`);
+  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
+
+  if (typeof error?.message !== "string") {
+    return unexpectedResponse(result);
+  }
+
+  const details = error.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
+  return new CliError(`${error.message} (HTTP ${result.status})${details}`);
 }
 
 async function runRequest({
   file,
   origin,
   request,
+  shape,
 }: {
   file: string;
   origin: string;
   request: ApiRequest;
+  shape?: OutputShape;
 }) {
   const result = await sendAuthorized({ file, origin, request });
 
@@ -34,7 +47,11 @@ async function runRequest({
     throw apiError({ origin, result });
   }
 
-  process.stdout.write(`${JSON.stringify(result.body, null, 2)}\n`);
+  if (!isRecord(result.body)) {
+    throw unexpectedResponse(result);
+  }
+
+  process.stdout.write(`${JSON.stringify(shapeOutput({ body: result.body, shape }), null, 2)}\n`);
 }
 
 async function run(argv: string[]) {
@@ -55,13 +72,11 @@ async function run(argv: string[]) {
 
   if (command.name === "login") {
     await logIn({ file, origin });
+    await runRequest({ file, origin, request: WHOAMI_REQUEST });
+    return;
   }
 
-  await runRequest({
-    file,
-    origin,
-    request: command.name === "login" ? WHOAMI_REQUEST : command.request,
-  });
+  await runRequest({ file, origin, request: command.request, shape: command.shape });
 }
 
 try {

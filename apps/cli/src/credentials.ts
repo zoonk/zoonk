@@ -1,90 +1,178 @@
-import { randomUUID } from "node:crypto";
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { chmodSync, closeSync, existsSync, fchmodSync, mkdirSync, openSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
+import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
 import { CliError } from "./errors.ts";
-import { isRecord } from "./http.ts";
 
 export type StoredLogin = { accessToken: string; expiresAt: number; refreshToken: string };
 
 export type LoginPlace = { file: string; origin: string };
 
-type CredentialsFile = Record<string, unknown>;
+type LoginChange<T> = { result: T; save?: StoredLogin | null };
 
+const PLAIN_TOKEN_PATTERN = /^[\w\-.~+/]+=*$/u;
 const OWNER_ONLY_DIRECTORY = 0o700;
 const OWNER_ONLY_FILE = 0o600;
+const BUSY_TIMEOUT_MS = 30_000;
+const SQLITE_BUSY = 5;
+const SQLITE_SIDE_FILE_SUFFIXES = ["-journal", "-wal", "-shm"];
+
+const CREATE_LOGINS = `
+  CREATE TABLE IF NOT EXISTS logins (
+    origin TEXT PRIMARY KEY,
+    access_token TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    expires_at INTEGER NOT NULL
+  ) STRICT`;
+
+const SELECT_LOGIN = "SELECT access_token, refresh_token, expires_at FROM logins WHERE origin = ?";
+
+const UPSERT_LOGIN = `
+  INSERT INTO logins (origin, access_token, refresh_token, expires_at) VALUES (?, ?, ?, ?)
+  ON CONFLICT (origin) DO UPDATE SET
+    access_token = excluded.access_token,
+    refresh_token = excluded.refresh_token,
+    expires_at = excluded.expires_at`;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
-  return join(configHome, "zoonk", "credentials.json");
+  return join(configHome, "zoonk", "credentials.db");
 }
 
-function isStoredLogin(value: unknown): value is StoredLogin {
-  return (
-    isRecord(value) &&
-    typeof value.accessToken === "string" &&
-    typeof value.refreshToken === "string" &&
-    typeof value.expiresAt === "number"
-  );
+/** RFC 6750's token characters, so a token can't break a header or a line of output. */
+export function isPlainToken(value: unknown): value is string {
+  return typeof value === "string" && PLAIN_TOKEN_PATTERN.test(value);
 }
 
-function readText(file: string): string | null {
+function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredLogin | null {
+  if (
+    !row ||
+    !isPlainToken(row.access_token) ||
+    !isPlainToken(row.refresh_token) ||
+    typeof row.expires_at !== "number"
+  ) {
+    return null;
+  }
+
+  return {
+    accessToken: row.access_token,
+    expiresAt: row.expires_at,
+    refreshToken: row.refresh_token,
+  };
+}
+
+/**
+ * File modes apply only when a file is created, and SQLite's side files copy the database's mode,
+ * so an older folder, database or side file with looser permissions is tightened on every open.
+ */
+function restrictToOwner(file: string) {
+  const directory = dirname(file);
+
+  mkdirSync(directory, { mode: OWNER_ONLY_DIRECTORY, recursive: true });
+  chmodSync(directory, OWNER_ONLY_DIRECTORY);
+
+  const descriptor = openSync(file, "a", OWNER_ONLY_FILE);
+  fchmodSync(descriptor, OWNER_ONLY_FILE);
+  closeSync(descriptor);
+
+  SQLITE_SIDE_FILE_SUFFIXES.map((suffix) => `${file}${suffix}`)
+    .filter((sideFile) => existsSync(sideFile))
+    .forEach((sideFile) => chmodSync(sideFile, OWNER_ONLY_FILE));
+}
+
+function openCredentials(file: string): DatabaseSync {
+  restrictToOwner(file);
+
+  const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
+  database.exec(CREATE_LOGINS);
+
+  return database;
+}
+
+function selectLogin(database: DatabaseSync, origin: string): StoredLogin | null {
+  return toStoredLogin(database.prepare(SELECT_LOGIN).get(origin));
+}
+
+function writeLogin({
+  database,
+  login,
+  origin,
+}: {
+  database: DatabaseSync;
+  login: StoredLogin | null;
+  origin: string;
+}) {
+  if (!login) {
+    database.prepare("DELETE FROM logins WHERE origin = ?").run(origin);
+    return;
+  }
+
+  database
+    .prepare(UPSERT_LOGIN)
+    .run(origin, login.accessToken, login.refreshToken, login.expiresAt);
+}
+
+function isBusy(error: unknown): boolean {
+  return error instanceof Error && "errcode" in error && error.errcode === SQLITE_BUSY;
+}
+
+function beginImmediate(database: DatabaseSync) {
   try {
-    return readFileSync(file, "utf8");
+    database.exec("BEGIN IMMEDIATE");
   } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      return null;
+    if (isBusy(error)) {
+      throw new CliError("Another zoonk command is renewing the login; try again.");
     }
 
     throw error;
   }
 }
 
-function readCredentials(file: string): CredentialsFile {
-  const text = readText(file);
-
-  if (text === null) {
-    return {};
-  }
+export function readLogin({ file, origin }: LoginPlace): StoredLogin | null {
+  const database = openCredentials(file);
 
   try {
-    const parsed: unknown = JSON.parse(text);
-    return isRecord(parsed) ? parsed : {};
-  } catch {
-    throw new CliError(`${file} isn't valid JSON. Delete it and log in again.`);
+    return selectLogin(database, origin);
+  } finally {
+    database.close();
   }
 }
 
-/** Parallel commands read this file while others write it, so a write never shows half a file. */
-function writeCredentials(file: string, credentials: CredentialsFile) {
-  const temporaryFile = `${file}.${randomUUID()}.tmp`;
-  const contents = `${JSON.stringify(credentials, null, 2)}\n`;
+/**
+ * Every read-then-write of a login, refresh or revocation included, runs in one `BEGIN IMMEDIATE`
+ * transaction, so two commands never send the same refresh token. SQLite's lock lasts as long as
+ * its holder, even a suspended one, and ends when the holder's process does. `save: null` removes
+ * the login.
+ */
+export async function changeLogin<T>({
+  change,
+  file,
+  origin,
+}: LoginPlace & { change: (stored: StoredLogin | null) => Promise<LoginChange<T>> }): Promise<T> {
+  const database = openCredentials(file);
 
-  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
-  writeFileSync(temporaryFile, contents, { flag: "wx", mode: OWNER_ONLY_FILE });
-  renameSync(temporaryFile, file);
-}
+  try {
+    beginImmediate(database);
 
-export function readLogin({ file, origin }: LoginPlace): StoredLogin | null {
-  const login = readCredentials(file)[origin];
-  return isStoredLogin(login) ? login : null;
+    const { result, save } = await change(selectLogin(database, origin));
+
+    if (save !== undefined) {
+      writeLogin({ database, login: save, origin });
+    }
+
+    database.exec("COMMIT");
+    return result;
+  } catch (error) {
+    if (database.isTransaction) {
+      database.exec("ROLLBACK");
+    }
+
+    throw error;
+  } finally {
+    database.close();
+  }
 }
 
 export function saveLogin({ file, login, origin }: LoginPlace & { login: StoredLogin }) {
-  writeCredentials(file, { ...readCredentials(file), [origin]: login });
-}
-
-/** Leaves a newer login alone, such as one saved by a `pnpm zoonk login` that ran meanwhile. */
-export function removeLogin({ file, origin, refreshToken }: LoginPlace & { refreshToken: string }) {
-  const credentials = readCredentials(file);
-  const stored = credentials[origin];
-
-  if (!isStoredLogin(stored) || stored.refreshToken !== refreshToken) {
-    return;
-  }
-
-  writeCredentials(
-    file,
-    Object.fromEntries(Object.entries(credentials).filter(([key]) => key !== origin)),
-  );
+  return changeLogin({ change: async () => ({ result: login, save: login }), file, origin });
 }

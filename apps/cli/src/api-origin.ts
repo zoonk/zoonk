@@ -4,18 +4,23 @@ const DEFAULT_API_URL = "https://api.zoonk.com";
 
 const LOCAL_HOST_PATTERN = /(?:^|\.)localhost$|^127\.0\.0\.1$|^\[::1\]$/u;
 
-function isAllowedOrigin(url: URL): boolean {
-  return (
-    url.protocol === "https:" || (url.protocol === "http:" && LOCAL_HOST_PATTERN.test(url.hostname))
-  );
+/** HTTPS, or plain HTTP to this machine for local development: tokens and codes travel no other way. */
+export function secureUrl(value: unknown): URL | null {
+  if (typeof value !== "string" || !URL.canParse(value)) {
+    return null;
+  }
+
+  const url = new URL(value);
+  const isLocal = url.protocol === "http:" && LOCAL_HOST_PATTERN.test(url.hostname);
+
+  return url.protocol === "https:" || isLocal ? url : null;
 }
 
-/** Tokens only travel over HTTPS, or plain HTTP to this machine for local development. */
 export function resolveApiOrigin(apiUrl: string | undefined): string {
   const value = apiUrl || DEFAULT_API_URL;
-  const url = URL.canParse(value) ? new URL(value) : null;
+  const url = secureUrl(value);
 
-  if (!url || !isAllowedOrigin(url)) {
+  if (!url) {
     throw usageError(`"${value}" isn't an HTTPS or local API URL.`);
   }
 

@@ -1,8 +1,10 @@
+import { spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { type IncomingMessage, type Server, type ServerResponse, createServer } from "node:http";
 import { type AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { afterEach, describe, expect, it } from "vitest";
 import { WHOAMI_REQUEST } from "./args.ts";
 import { type StoredLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
@@ -11,12 +13,13 @@ import { sendAuthorized } from "./session.ts";
 
 type FakeApiOptions = {
   acceptedToken: string;
-  beforeRejecting?: () => void;
-  refresh: { body: unknown; status: number };
+  beforeRejecting?: () => Promise<unknown>;
+  refresh: { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number };
 };
 
 const HOUR_MS = 3_600_000;
 const ME = { user: { email: "owner@zoonk.test", id: "user-1", name: "Owner", role: "admin" } };
+const MAIN = join(import.meta.dirname, "main.ts");
 const directories: string[] = [];
 const servers: Server[] = [];
 
@@ -24,6 +27,18 @@ function createCredentialsFile(): string {
   const configHome = mkdtempSync(join(tmpdir(), "zoonk-cli-"));
   directories.push(configHome);
   return credentialsPath({ XDG_CONFIG_HOME: configHome });
+}
+
+/** Each CLI command is its own process, waiting on the credentials file's lock without blocking the test. */
+function runWhoami({ file, origin }: { file: string; origin: string }): Promise<number | null> {
+  const child = spawn(process.execPath, [MAIN, "whoami", "--api", origin], {
+    env: { ...process.env, XDG_CONFIG_HOME: dirname(dirname(file)) },
+    stdio: "ignore",
+  });
+
+  return new Promise((resolve) => {
+    child.on("close", resolve);
+  });
 }
 
 function storedLogin(name: string, expiresAt: number): StoredLogin {
@@ -49,8 +64,20 @@ async function readForm(request: IncomingMessage): Promise<Record<string, string
   return Object.fromEntries(new URLSearchParams(Buffer.concat(chunks).toString()));
 }
 
-function reply(response: ServerResponse, status: number, body: unknown) {
-  response.writeHead(status, { "content-type": "application/json" }).end(JSON.stringify(body));
+function reply({
+  body,
+  headers,
+  response,
+  status,
+}: {
+  body: unknown;
+  headers?: Record<string, string>;
+  response: ServerResponse;
+  status: number;
+}) {
+  response
+    .writeHead(status, { "content-type": "application/json", ...headers })
+    .end(JSON.stringify(body));
 }
 
 async function startFakeApi(options: FakeApiOptions) {
@@ -60,7 +87,8 @@ async function startFakeApi(options: FakeApiOptions) {
   const server = createServer(async (request, response) => {
     if (request.url === "/v1/auth/oauth2/token") {
       refreshRequests.push(await readForm(request));
-      reply(response, options.refresh.status, options.refresh.body);
+      await delay(options.refresh.delayMs ?? 0);
+      reply({ response, ...options.refresh });
       return;
     }
 
@@ -68,12 +96,17 @@ async function startFakeApi(options: FakeApiOptions) {
     staffCalls.push(authorization);
 
     if (authorization === `Bearer ${options.acceptedToken}`) {
-      reply(response, 200, ME);
+      reply({ body: ME, response, status: 200 });
       return;
     }
 
-    options.beforeRejecting?.();
-    reply(response, 401, { error: { code: "UNAUTHORIZED", message: "Authentication required" } });
+    await options.beforeRejecting?.();
+
+    reply({
+      body: { error: { code: "UNAUTHORIZED", message: "Authentication required" } },
+      response,
+      status: 401,
+    });
   });
 
   servers.push(server);
@@ -110,7 +143,7 @@ describe(sendAuthorized, () => {
       refresh: { body: tokenResponse("new"), status: 200 },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() + 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() + 1000), origin: api.origin });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -128,6 +161,25 @@ describe(sendAuthorized, () => {
     });
   });
 
+  it("lets one of two parallel commands refresh and hands the other the saved pair", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), delayMs: 100, status: 200 },
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    const exitCodes = await Promise.all([
+      runWhoami({ file, origin: api.origin }),
+      runWhoami({ file, origin: api.origin }),
+    ]);
+
+    expect(exitCodes).toStrictEqual([0, 0]);
+    expect(api.refreshRequests).toHaveLength(1);
+  });
+
   it("refreshes once when the API rejects the access token, then retries", async () => {
     const file = createCredentialsFile();
 
@@ -136,7 +188,11 @@ describe(sendAuthorized, () => {
       refresh: { body: tokenResponse("new"), status: 200 },
     });
 
-    saveLogin({ file, login: storedLogin("revoked", Date.now() + HOUR_MS), origin: api.origin });
+    await saveLogin({
+      file,
+      login: storedLogin("revoked", Date.now() + HOUR_MS),
+      origin: api.origin,
+    });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -150,13 +206,12 @@ describe(sendAuthorized, () => {
 
     const api = await startFakeApi({
       acceptedToken: "access-other",
-      beforeRejecting: () => {
-        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin });
-      },
+      beforeRejecting: () =>
+        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin }),
       refresh: { body: { error: "invalid_grant" }, status: 400 },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -173,7 +228,7 @@ describe(sendAuthorized, () => {
       refresh: { body: { error: "invalid_grant" }, status: 400 },
     });
 
-    saveLogin({ file, login: storedLogin("ended", Date.now() - 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("ended", Date.now() - 1000), origin: api.origin });
 
     await expect(
       sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
@@ -184,5 +239,75 @@ describe(sendAuthorized, () => {
 
     expect(api.staffCalls).toStrictEqual([]);
     expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("never follows a redirect with the refresh token", async () => {
+    const file = createCredentialsFile();
+
+    const elsewhere = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: {
+        body: {},
+        headers: { location: `${elsewhere.origin}/v1/auth/oauth2/token` },
+        status: 307,
+      },
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(elsewhere.refreshRequests).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
+  });
+
+  it("refuses a refreshed token a header can't carry, without printing it", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: {
+        body: { ...tokenResponse("new"), access_token: "SECRET\r\nX-Injected: yes" },
+        status: 200,
+      },
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    const failure = await sendAuthorized({
+      file,
+      origin: api.origin,
+      request: WHOAMI_REQUEST,
+    }).then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(failure).toMatchObject({ exitCode: EXIT_CODES.failed });
+    expect(String(failure)).not.toContain("SECRET");
+    expect(api.staffCalls).toStrictEqual([]);
+  });
+
+  it.each([
+    [429, { error: "temporarily_unavailable" }],
+    [503, {}],
+  ])("keeps the login when a refresh fails with HTTP %i", async (status, body) => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: { body, status } });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 });

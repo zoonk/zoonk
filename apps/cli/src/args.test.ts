@@ -88,6 +88,22 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("keeps a value's spaces after the field and operator", () => {
+    expect(sentRequest(["staff", "count", "Goal", "--where", "title eq  Learn  "])).toMatchObject({
+      body: { where: [{ field: "title", op: "eq", value: " Learn  " }] },
+    });
+  });
+
+  it("keeps what to print beside the request", () => {
+    expect(parseInvocation(["staff", "models", "Goal", "Plan"]).command).toMatchObject({
+      shape: { kind: "models", names: ["Goal", "Plan"] },
+    });
+
+    expect(
+      parseInvocation(["staff", "list", "Goal", "--fields", "id, status,createdAt"]).command,
+    ).toMatchObject({ shape: { fields: ["id", "status", "createdAt"], kind: "fields" } });
+  });
+
   it("reads --api on any command", () => {
     expect(parseInvocation(["logout", "--api", "http://localhost:3001"])).toStrictEqual({
       apiUrl: "http://localhost:3001",
@@ -100,12 +116,15 @@ describe(parseInvocation, () => {
     [["staff", "list", "Goal", "--where", "archivedAt isNull yes"]],
     [["staff", "list", "Goal", "--where", "status eq"]],
     [["staff", "list", "Goal", "--limit", "ten"]],
+    [["staff", "list", "Goal", "--offset", "9007199254740993"]],
     [["staff", "list", "Goal", "--order", "createdAt:newest"]],
     [["staff", "get", "Goal", "abc", "--where", "id eq abc"]],
     [["staff", "get", "Goal"]],
     [["staff", "users", "search"]],
     [["staff", "drop", "Goal"]],
     [["staff", "list", "Goal", "--unknown"]],
+    [["staff", "count", "Goal", "--fields", "id"]],
+    [["staff", "list", "Goal", "--fields", ","]],
   ])("rejects %j as wrong usage", (argv) => {
     expect(() => parseInvocation(argv)).toThrow(
       expect.objectContaining({ exitCode: EXIT_CODES.usage }),
