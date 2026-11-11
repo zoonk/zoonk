@@ -491,7 +491,7 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("gives a word to practice the respelling and tip of the same saved guide", async () => {
-    const word = `thanks${crypto.randomUUID().slice(0, 6)}`;
+    const word = `thanks${crypto.randomUUID().replaceAll(/[^a-f]/gu, "")}`;
 
     const [organization, learner, skill, lesson] = await Promise.all([
       organizationFixture(),
