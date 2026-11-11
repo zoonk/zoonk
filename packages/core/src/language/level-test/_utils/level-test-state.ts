@@ -156,7 +156,7 @@ export async function toLevelTestView({
 
   const { start } = progress;
   const step = getNextLevelTestStep({ bank, progress, start });
-  const scores = getLevelTestScores({ bank, progress, start });
+  const scores = progress.scores ?? getLevelTestScores({ bank, progress, start });
 
   const next =
     step.kind === "question"

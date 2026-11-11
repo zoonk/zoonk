@@ -615,6 +615,37 @@ describe("checking a bank's questions", () => {
     ).resolves.toMatchObject({ correctAnswers: 0, incorrectAnswers: 0, seconds: 30 });
   });
 
+  it("keeps a finished test's levels and placement when the check later removes an answered question", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const content = uncheckedBank(crypto.randomUUID());
+
+    await prisma.languageLevelTest.create({
+      data: { ...pair, content, model: "test", promptVersion: "test", runId: "old-bank" },
+    });
+
+    await answerFirstQuestion(goalId);
+    const finished = await finishLanguageLevelTest(goalId);
+    const placedGoal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    const firstId = content.questions.find((question) => question.passage.endsWith("A2"))?.id;
+    const questions = await claimLevelTestBankCheck(pair);
+
+    const keptIds = (questions ?? []).flatMap((question) =>
+      question.id === firstId ? [] : [question.id],
+    );
+
+    await keepCheckedLevelTestQuestions({ keptIds, pair });
+
+    await expect(finishLanguageLevelTest(goalId)).resolves.toStrictEqual(finished);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
+      details: placedGoal.details,
+    });
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { levels: finished.status === "ready" ? finished.levels : [], next: { kind: "done" } },
+    });
+  });
+
   it("moves a learner on when the check removes the question on their screen", async () => {
     const { goalId, pair } = await learnerOfFreshPair();
 

@@ -137,13 +137,16 @@ export async function finishLanguageLevelTest(
       const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
 
       const currentProgress = readLevelTestProgress(current);
-      const settled = currentProgress.counted >= currentProgress.answers.length;
 
-      const currentScores = getLevelTestScores({
-        bank,
-        progress: currentProgress,
-        start: currentProgress.start,
-      });
+      const currentScores =
+        currentProgress.scores ??
+        getLevelTestScores({ bank, progress: currentProgress, start: currentProgress.start });
+
+      if (currentProgress.placement) {
+        return unchanged({ newResult: false, progress: currentProgress, scores: currentScores });
+      }
+
+      const settled = currentProgress.counted >= currentProgress.answers.length;
 
       const details = {
         ...readGoalDetails(current),
@@ -168,15 +171,17 @@ export async function finishLanguageLevelTest(
         userId,
       });
 
-      const placement = {
-        pastBasicsAreas: [],
-        unannounced: [],
-        ...currentProgress.placement,
-        placed: false,
-      };
-
       await transaction.goal.update({
-        data: { details: { ...details, levelTest: { ...details.levelTest, placement } } },
+        data: {
+          details: {
+            ...details,
+            levelTest: {
+              ...details.levelTest,
+              placement: { pastBasicsAreas: [], placed: false, unannounced: [] },
+              scores: currentScores,
+            },
+          },
+        },
         where: { id: goal.id },
       });
 
