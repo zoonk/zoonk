@@ -214,13 +214,12 @@ export function getNextLevelTestStep({
     skill,
   }));
 
-  const turn = counts
-    .filter((item) => item.count < QUESTIONS_PER_SKILL)
-    .toSorted((a, b) => a.count - b.count)[0];
-
-  const question = turn
-    ? pickQuestion({ bank, progress, score: targets[turn.skill], skill: turn.skill })
-    : null;
+  const question =
+    counts
+      .filter((item) => item.count < QUESTIONS_PER_SKILL)
+      .toSorted((a, b) => a.count - b.count)
+      .map(({ skill }) => pickQuestion({ bank, progress, score: targets[skill], skill }))
+      .find((picked) => picked !== null) ?? null;
 
   if (question) {
     return { kind: "question", question };

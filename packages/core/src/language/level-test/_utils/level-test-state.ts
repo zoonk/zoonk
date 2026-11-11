@@ -2,6 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
+import { isJsonObject } from "@zoonk/utils/json";
 import { isTTSSupportedLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips";
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
@@ -43,13 +44,34 @@ export type LevelTestContext =
     }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
+/** Tests finished before their scores were saved keep the levels their finish wrote. */
+function readFinishedLabels(skillLevels: unknown): LevelTestProgress["scores"] {
+  const labels = isJsonObject(skillLevels) ? skillLevels : {};
+  const listening = parseCefrScore(labels.listening);
+  const reading = parseCefrScore(labels.reading);
+  const speaking = parseCefrScore(labels.speaking);
+
+  if (listening === null || reading === null) {
+    return undefined;
+  }
+
+  return { listening, reading, ...(speaking !== null && { speaking }) };
+}
+
 /** The starting level must not follow a level previously set by this same test. */
 export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
   const details = readGoalDetails(goal);
   const parsed = levelTestProgressSchema.safeParse(details.levelTest);
   const stored = parsed.success ? parsed.data : levelTestProgressSchema.parse({});
 
-  return { ...stored, start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START };
+  const scores =
+    stored.scores ?? (stored.placement ? readFinishedLabels(details.skillLevels) : undefined);
+
+  return {
+    ...stored,
+    ...(scores && { scores }),
+    start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START,
+  };
 }
 
 /** Returns false if progress changed since `from`; callers must reload rather than overwrite it. */
@@ -156,7 +178,7 @@ export async function toLevelTestView({
 
   const { start } = progress;
   const step = getNextLevelTestStep({ bank, progress, start });
-  const scores = getLevelTestScores({ bank, progress, start });
+  const scores = progress.scores ?? getLevelTestScores({ bank, progress, start });
 
   const next =
     step.kind === "question"

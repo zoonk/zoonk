@@ -131,7 +131,7 @@ function ChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={title(chapter)}
-        trigger={<button className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} type="button" />}
+        trigger={<button className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} type="submit" />}
       >
         {content}
       </FarTopicSheet>

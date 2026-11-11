@@ -22,170 +22,6 @@
       "testCase": {
         "expected": {
           "counts": {
-            "1": 25,
-            "2": 25,
-            "3": 25
-          },
-          "status": "found"
-        },
-        "id": "en-jee-main-paper-1-1",
-        "userInput": {
-          "board": "NTA",
-          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
-          "subjects": [
-            "Physics",
-            "Chemistry",
-            "Mathematics"
-          ],
-          "today": "2026-10-06",
-          "total": 75
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 45,
-            "2": 45,
-            "3": 90
-          },
-          "status": "found"
-        },
-        "id": "en-neet-ug-1",
-        "userInput": {
-          "board": "NTA",
-          "exam": "NEET (UG)",
-          "subjects": [
-            "Physics",
-            "Chemistry",
-            "Biology (Botany and Zoology)"
-          ],
-          "today": "2026-10-06",
-          "total": 180
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 54,
-            "2": 44
-          },
-          "status": "found"
-        },
-        "id": "en-sat-1",
-        "userInput": {
-          "board": "College Board",
-          "exam": "SAT",
-          "subjects": [
-            "Reading and Writing",
-            "Math"
-          ],
-          "today": "2026-10-06",
-          "total": 98
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 45,
-            "2": 45,
-            "3": 45,
-            "4": 45
-          },
-          "status": "found"
-        },
-        "id": "pt-enem-1",
-        "userInput": {
-          "board": "Inep",
-          "exam": "Enem",
-          "subjects": [
-            "Linguagens, Códigos e suas Tecnologias",
-            "Ciências Humanas e suas Tecnologias",
-            "Ciências da Natureza e suas Tecnologias",
-            "Matemática e suas Tecnologias"
-          ],
-          "today": "2026-10-06",
-          "total": 180
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
             "20": 8
           },
           "status": "found"
@@ -224,19 +60,75 @@
     {
       "steps": [
         {
-          "conclusion": "Missed the published distribution",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Missed the published distribution",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Missed the published distribution",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "20": 8
+          },
+          "status": "found"
+        },
+        "id": "pt-oab-1a-fase-2",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            "Direito Administrativo",
+            "Direito Civil",
+            "Direito Processual Civil",
+            "Direito Constitucional",
+            "Direito do Trabalho",
+            "Direito Processual do Trabalho",
+            "Direito Empresarial",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Direito Tributário e Processual Tributário",
+            "Direitos Humanos",
+            "Direito do Consumidor",
+            "Direito da Criança e do Adolescente",
+            "Direito Ambiental",
+            "Direito Internacional",
+            "Filosofia do Direito",
+            "Direito Financeiro",
+            "Direito Previdenciário",
+            "Direito Eleitoral",
+            "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB"
+          ],
+          "today": "2026-10-06",
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
         }
       ],
       "testCase": {
@@ -245,6 +137,59 @@
           "status": "found"
         },
         "id": "pt-oab-1a-fase-without-ethics-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            "Direito Administrativo",
+            "Direito Civil",
+            "Direito Processual Civil",
+            "Direito Constitucional",
+            "Direito do Trabalho",
+            "Direito Processual do Trabalho",
+            "Direito Empresarial",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Direito Tributário e Processual Tributário",
+            "Direitos Humanos",
+            "Direito do Consumidor",
+            "Direito da Criança e do Adolescente",
+            "Direito Ambiental",
+            "Direito Internacional",
+            "Filosofia do Direito",
+            "Direito Financeiro",
+            "Direito Previdenciário",
+            "Direito Eleitoral"
+          ],
+          "today": "2026-10-06",
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {},
+          "status": "found"
+        },
+        "id": "pt-oab-1a-fase-without-ethics-2",
         "userInput": {
           "board": "FGV",
           "exam": "OAB Exame de Ordem Unificado, 1ª fase",
@@ -338,6 +283,49 @@
       "testCase": {
         "expected": {
           "counts": {},
+          "status": "any"
+        },
+        "id": "pt-camara-registro-redacao-2",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            "Língua Portuguesa",
+            "Língua Inglesa",
+            "Noções de Direito Administrativo e Administração Pública",
+            "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+            "Tecnologia da Informação e Dados",
+            "Linguística",
+            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+            "Processo Legislativo e Regimento Interno da Câmara dos Deputados",
+            "Ciência Política"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Counted CGU 2026 from https://yattaconcursos.com/noticias/cgu-2026-edital-auditor-60-vagas",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Counted CGU 2026 from https://yattaconcursos.com/noticias/cgu-2026-edital-auditor-60-vagas",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Counted CGU 2026 from https://yattaconcursos.com/noticias/cgu-2026-edital-auditor-60-vagas",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {},
           "status": "unknown"
         },
         "id": "pt-cgu-2026-new-board-and-syllabus-1",
@@ -362,6 +350,382 @@
           ],
           "today": "2026-10-30",
           "total": 170
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {},
+          "status": "unknown"
+        },
+        "id": "pt-cgu-2026-new-board-and-syllabus-2",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "CGU, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            "Estado, Democracia, Direitos e Ciência Política",
+            "Sociedade Brasileira, Desigualdades, Diversidade e Desenvolvimento",
+            "Ética Pública e Responsabilidade Profissional",
+            "Administração Pública e Fundamentos de Políticas Públicas",
+            "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+            "Fundamentos de Transparência, Ouvidoria e Participação Social",
+            "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+            "Fundamentos de Evidências, Dados e Inteligência Artificial",
+            "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU",
+            "Auditoria Governamental: Avaliação, Consultoria e Apuração",
+            "Finanças Públicas, Orçamento e Contabilidade Pública",
+            "Políticas Públicas e Métodos de Investigação e Avaliação",
+            "Auditoria de Contratações, Transferências e Execução de Recursos",
+            "Integridade, Transparência e Responsabilização Aplicadas ao Controle Público"
+          ],
+          "today": "2026-10-30",
+          "total": 170
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 25,
+            "2": 25,
+            "3": 25
+          },
+          "status": "found"
+        },
+        "id": "en-jee-main-paper-1-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ],
+          "today": "2026-10-06",
+          "total": 75
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 25,
+            "2": 25,
+            "3": 25
+          },
+          "status": "found"
+        },
+        "id": "en-jee-main-paper-1-2",
+        "userInput": {
+          "board": "NTA",
+          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ],
+          "today": "2026-10-06",
+          "total": 75
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 90
+          },
+          "status": "found"
+        },
+        "id": "en-neet-ug-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "NEET (UG)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Biology (Botany and Zoology)"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 90
+          },
+          "status": "found"
+        },
+        "id": "en-neet-ug-2",
+        "userInput": {
+          "board": "NTA",
+          "exam": "NEET (UG)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Biology (Botany and Zoology)"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 54,
+            "2": 44
+          },
+          "status": "found"
+        },
+        "id": "en-sat-1",
+        "userInput": {
+          "board": "College Board",
+          "exam": "SAT",
+          "subjects": [
+            "Reading and Writing",
+            "Math"
+          ],
+          "today": "2026-10-06",
+          "total": 98
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 54,
+            "2": 44
+          },
+          "status": "found"
+        },
+        "id": "en-sat-2",
+        "userInput": {
+          "board": "College Board",
+          "exam": "SAT",
+          "subjects": [
+            "Reading and Writing",
+            "Math"
+          ],
+          "today": "2026-10-06",
+          "total": 98
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 45,
+            "4": 45
+          },
+          "status": "found"
+        },
+        "id": "pt-enem-1",
+        "userInput": {
+          "board": "Inep",
+          "exam": "Enem",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 45,
+            "4": 45
+          },
+          "status": "found"
+        },
+        "id": "pt-enem-2",
+        "userInput": {
+          "board": "Inep",
+          "exam": "Enem",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ],
+          "today": "2026-10-06",
+          "total": 180
         }
       }
     }

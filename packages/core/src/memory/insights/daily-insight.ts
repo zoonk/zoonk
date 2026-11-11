@@ -96,11 +96,7 @@ async function loadCoachContext({ activity, userId }: { activity: GoalActivity; 
       orderBy: [{ localDate: "desc" }, { createdAt: "desc" }],
       where: { localDate: { gte: since }, userId },
     }),
-    getMemoryForTask({
-      categories: INSIGHT_FACT_CATEGORIES,
-      language: activity.goal.language,
-      userId,
-    }),
+    getMemoryForTask({ categories: INSIGHT_FACT_CATEGORIES, userId }),
   ]);
 
   return { facts, recent };

@@ -42,12 +42,11 @@ export const es: ExampleSet = {
         { label: "Comprensión lectora", range: "1100–1160" },
       ],
     },
-    name: "EXANI-II",
     // The UANL's sittings; each university sets its own.
     sittings: ["2026-11-07"],
     timeZone: "America/Monterrey",
   },
-  exams: "El EXANI-II, el examen de la UNAM, el del IPN o el EGEL",
+  exams: "el EXANI-II, el examen de la UNAM, el del IPN, el EGEL o un examen de la escuela",
   move: "london",
   topic: {
     chapters: [

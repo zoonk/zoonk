@@ -14,6 +14,8 @@ vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({
   default: "- Portuguese readers.\n",
 }));
 
+vi.mock("./language-lesson-fix.prompt.md", () => ({ default: "Fix the problems." }));
+
 vi.mock("./language-lesson-respelling-es.prompt.md", () => ({ default: "- Spanish readers.\n" }));
 vi.mock("./language-lesson-respelling-en.prompt.md", () => ({ default: "- English readers.\n" }));
 

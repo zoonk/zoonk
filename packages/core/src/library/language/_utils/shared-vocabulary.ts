@@ -119,13 +119,8 @@ async function saveWords({
     rows.flatMap((row) => {
       const romanization = romanizations.get(row.word);
 
-      return !row.romanization && romanization
-        ? [
-            prisma.word.updateMany({
-              data: { ...written, romanization },
-              where: { id: row.id, romanization: null },
-            }),
-          ]
+      return romanization && romanization !== row.romanization
+        ? [prisma.word.update({ data: { ...written, romanization }, where: { id: row.id } })]
         : [];
     }),
   );
@@ -146,33 +141,24 @@ async function savePronunciations({
 }) {
   const written = toProvenanceData(provenance);
 
-  const guides = content.words.flatMap((word) => {
-    const wordId = wordIdsByText.get(word.word);
-    return wordId && word.pronunciation ? [{ ...word, wordId }] : [];
-  });
-
-  await prisma.wordPronunciation.createMany({
-    data: guides.map((guide) => ({
-      ...written,
-      pronunciation: guide.pronunciation,
-      tip: guide.tip,
-      userLanguage: learnerLanguage,
-      wordId: guide.wordId,
-    })),
-    skipDuplicates: true,
-  });
-
   await Promise.all(
-    guides.flatMap((guide) =>
-      guide.tip
-        ? [
-            prisma.wordPronunciation.updateMany({
-              data: { ...written, tip: guide.tip },
-              where: { tip: null, userLanguage: learnerLanguage, wordId: guide.wordId },
-            }),
-          ]
-        : [],
-    ),
+    content.words.flatMap((word) => {
+      const wordId = wordIdsByText.get(word.word);
+
+      if (!wordId || !word.pronunciation) {
+        return [];
+      }
+
+      const guide = { ...written, pronunciation: word.pronunciation, tip: word.tip };
+
+      return [
+        prisma.wordPronunciation.upsert({
+          create: { ...guide, userLanguage: learnerLanguage, wordId },
+          update: guide,
+          where: { wordPronunciation: { userLanguage: learnerLanguage, wordId } },
+        }),
+      ];
+    }),
   );
 }
 
@@ -209,13 +195,8 @@ async function saveSentences({
     rows.flatMap((row) => {
       const romanization = romanizations.get(row.sentence);
 
-      return !row.romanization && romanization
-        ? [
-            prisma.sentence.updateMany({
-              data: { ...written, romanization },
-              where: { id: row.id, romanization: null },
-            }),
-          ]
+      return romanization && romanization !== row.romanization
+        ? [prisma.sentence.update({ data: { ...written, romanization }, where: { id: row.id } })]
         : [];
     }),
   );

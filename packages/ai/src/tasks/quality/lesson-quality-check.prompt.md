@@ -8,6 +8,7 @@ Report only these:
 4. A screen, reason or feedback that contradicts its option, the marked answer or another screen, such as a case whose figures differ between two screens, or between a screen and its table, chart or the summary.
 5. A screen that refers to something no screen shows: a case, a person, a place, an earlier example or a picture.
 6. A rule stated so broadly that it's false, for example one the lesson's own example breaks.
+7. A math check whose `newNumbers` let a fact the subject fixes change (a constant, a conversion or a quantity the lesson teaches, such as 9.8 m/s² or 60 minutes in an hour), or let a number change apart from the one it follows from (a total and its count), so practice with new numbers would teach something false.
 
 Screens often come back to the same case, such as a program, a study or a person. Follow each case through every screen that mentions it, including tables, charts and the summary: its figures must agree everywhere, and whatever a screen concludes from them must hold when you work it out.
 
@@ -17,7 +18,7 @@ Write each issue in English. Quote the exact words at fault in the lesson's lang
 
 # Input
 
-The lesson plan (course, level, skills and planned screens) and the lesson as learners will see it in `LESSON`: numbered screens with their kind and content, and the summary card. Check screens show every option; `isCorrect` marks the answer the app will accept, and `reason` is the feedback the learner reads after picking that option. An option with a `picture` is a picture the learner picks by how it looks, and its `text` shows only once they answer, so a question naming what to find doesn't give it away. A check `image` with `parts` has the app draw number 1 on the first part, 2 on the second, and so on. Activities show their template, fields and check.
+The lesson plan (course, level, skills and planned screens) and the lesson as learners will see it in `LESSON`: numbered screens with their kind and content, and the summary card. Check screens show every option; `isCorrect` marks the answer the app will accept, and `reason` is the feedback the learner reads after picking that option. An option with a `picture` is a picture the learner picks by how it looks, and its `text` shows only once they answer, so a question naming what to find doesn't give it away. A check `image` with `parts` has the app draw number 1 on the first part, 2 on the second, and so on. Activities show their template, fields and check. A math check's `newNumbers` lists each value in its question with the range (`min` to `max`, by `step`) practice draws from when it asks the question again with new numbers.
 
 When a `MATERIAL` block is given, the lesson is built from the learner's own class material and must match it: a statement that contradicts its pages is an error, even when another source says otherwise.
 

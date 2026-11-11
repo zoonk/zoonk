@@ -14,7 +14,7 @@ import { loadLearnerNames } from "./_utils/learner-names";
 import { lessonQuestionResourceOmit } from "./_utils/question-resource";
 import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
 import { findTutorMemory, markTutorMemoryUsed, rememberTutorExchange } from "./_utils/tutor-memory";
-import { type TutorSubject, findThreadSubject } from "./_utils/tutor-subject";
+import { findThreadSubject } from "./_utils/tutor-subject";
 
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
@@ -89,11 +89,9 @@ type ClaimedQuestion = Extract<AnswerClaimOutcome, { status: "ready" }>["claim"]
 /** Shared answers never read personal memory; allowance must succeed before any memory read. */
 async function claimTutorAnswer({
   question,
-  subject,
   userId,
 }: {
   question: ClaimedQuestion;
-  subject: TutorSubject;
   userId: string;
 }): Promise<
   | { learnerMemory: string[]; shareAnswer: boolean; status: "ready" }
@@ -115,11 +113,7 @@ async function claimTutorAnswer({
     return { learnerMemory: [], shareAnswer: true, status: "ready" };
   }
 
-  const facts = await findTutorMemory({
-    language: subject.language,
-    question: question.question,
-    userId,
-  });
+  const facts = await findTutorMemory({ question: question.question, userId });
 
   const learnerMemory = await markTutorMemoryUsed({ facts, userId });
 
@@ -181,7 +175,7 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
   } = claimed.claim;
 
   const [tutor, learnerNames] = await Promise.all([
-    claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
+    claimTutorAnswer({ question: claimed.claim, userId }),
     loadLearnerNames(userId),
   ]);
 

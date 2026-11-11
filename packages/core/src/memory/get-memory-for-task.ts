@@ -1,39 +1,34 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
-import {
-  type MemorySearchTermsParams,
-  generateMemorySearchTerms,
-} from "@zoonk/ai/tasks/memory/search-terms";
 import { type MemoryCategory, type MemoryFact, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { markMemoryFactsUsed } from "./_utils/mark-facts-used";
 import { isMemoryEnabled } from "./_utils/memory-access";
 import { currentFactsWhere } from "./_utils/memory-fact-view";
-import { searchMemoryFactIds } from "./_utils/search-memory-facts";
-
-type AiGenerationContext = MemorySearchTermsParams["analytics"];
 
 const FACT_LIMIT = 10;
 
-const CANDIDATE_FACTOR = 2;
+/**
+ * Every fact up to this cap reaches the relevance check, however it's worded. One check costs
+ * about $0.00001, so the cap only bounds one lookup's calls for a learner with a very long memory,
+ * whose oldest facts are then left out.
+ */
+const MAX_FACTS_CHECKED = 100;
 
 export type MemoryFactForTask = Pick<MemoryFact, "category" | "id" | "statement">;
 
 type MemoryTaskRequest = {
   userId: string;
   categories: readonly MemoryCategory[];
-  language: string;
   /** Such as "Examples for a lesson on discounts". */
   need?: string;
   /** Sensitive facts only reach tasks that help with them, such as the tutor. */
   includeSensitive?: boolean;
   analytics?: AiGenerationContext;
   candidateIds?: readonly string[];
-  markUsed?: boolean;
 };
-
-type MemorySearch = { facts: MemoryFactForTask[] } | { terms: string[] };
 
 type FactScope = {
   candidateIds?: readonly string[];
@@ -45,7 +40,7 @@ type FactScope = {
 
 type FactSearch = {
   analytics?: AiGenerationContext;
-  language: string;
+  candidates: MemoryFactForTask[];
   need: string;
   scope: FactScope;
 };
@@ -73,7 +68,6 @@ async function lookUpMemory({
   candidateIds,
   categories,
   includeSensitive = false,
-  language,
   need,
   userId,
 }: MemoryTaskRequest): Promise<{ facts: MemoryFactForTask[] } | { search: FactSearch }> {
@@ -89,52 +83,17 @@ async function lookUpMemory({
     userId,
   };
 
-  const total = await prisma.memoryFact.count({ where: scopeWhere(scope) });
+  const candidates = await findRecentFacts({ limit: need ? MAX_FACTS_CHECKED : FACT_LIMIT, scope });
 
-  if (total <= FACT_LIMIT || !need) {
-    return { facts: await findRecentFacts({ limit: FACT_LIMIT, scope }) };
+  if (!need || candidates.length <= FACT_LIMIT) {
+    return { facts: candidates };
   }
 
-  return { search: { analytics, language, need, scope } };
+  return { search: { analytics, candidates, need, scope } };
 }
 
-async function generateFactSearchTerms({
-  analytics,
-  language,
-  need,
-}: FactSearch): Promise<string[]> {
-  const { data } = await generateMemorySearchTerms({ analytics, language, need });
-  return data.terms;
-}
-
-async function searchRelevantFacts({
-  language,
-  need,
-  scope,
-  terms,
-}: FactSearch & { terms: string[] }): Promise<MemoryFactForTask[]> {
-  const candidateLimit = FACT_LIMIT * CANDIDATE_FACTOR;
-
-  const matchedIds = await searchMemoryFactIds({
-    ...scope,
-    language,
-    limit: candidateLimit,
-    terms,
-  });
-
-  const [matched, recent] = await Promise.all([
-    prisma.memoryFact.findMany({
-      select: { category: true, id: true, statement: true },
-      where: { ...scopeWhere(scope), id: { in: matchedIds } },
-    }),
-    findRecentFacts({ limit: candidateLimit, scope }),
-  ]);
-
-  const byRank = matchedIds.flatMap((id) => matched.find((fact) => fact.id === id) ?? []);
-  const others = recent.filter((fact) => !matchedIds.includes(fact.id));
-  const candidates = [...byRank, ...others].slice(0, candidateLimit);
-
-  return selectRelevantMemoryFacts({ facts: candidates, limit: FACT_LIMIT, need });
+function selectRelevantFacts({ analytics, candidates, need }: FactSearch) {
+  return selectRelevantMemoryFacts({ analytics, facts: candidates, limit: FACT_LIMIT, need });
 }
 
 async function markUsed({
@@ -156,7 +115,10 @@ export async function getMemoryForTask(request: MemoryTaskRequest): Promise<Memo
   return markUsed({ facts: await findMemoryForTask(request), userId: request.userId });
 }
 
-/** `getMemoryForTask` without marking the facts used, for a task that marks only what it uses. */
+/**
+ * `getMemoryForTask` without marking the facts used, for a task that marks only what it uses. A
+ * failed relevance check falls back to the newest facts, since a learner is waiting.
+ */
 export async function findMemoryForTask(request: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
   const lookup = await lookUpMemory(request);
 
@@ -164,47 +126,21 @@ export async function findMemoryForTask(request: MemoryTaskRequest): Promise<Mem
     return lookup.facts;
   }
 
-  const { search } = lookup;
+  const selected = await safeAsync(() => selectRelevantFacts(lookup.search));
 
-  const searched = await safeAsync(async () =>
-    searchRelevantFacts({ ...search, terms: await generateFactSearchTerms(search) }),
-  );
-
-  if (searched.error) {
-    logError("Memory search failed; using the most recent facts instead.", searched.error);
-    return findRecentFacts({ limit: FACT_LIMIT, scope: search.scope });
+  if (selected.error) {
+    logError("Memory relevance failed; using the most recent facts instead.", selected.error);
+    return lookup.search.candidates.slice(0, FACT_LIMIT);
   }
 
-  return searched.data;
+  return selected.data;
 }
 
-/**
- * `getMemoryForTask` in two calls, one model call each, so a workflow retries each alone: a failed
- * call throws instead of falling back to the most recent facts.
- */
-export async function startMemorySearch(request: MemoryTaskRequest): Promise<MemorySearch> {
+/** `getMemoryForTask` for a workflow step: a failed relevance check throws so the step retries. */
+export async function selectMemoryForTask(
+  request: MemoryTaskRequest,
+): Promise<MemoryFactForTask[]> {
   const lookup = await lookUpMemory(request);
-
-  if ("facts" in lookup) {
-    return {
-      facts:
-        request.markUsed === false
-          ? lookup.facts
-          : await markUsed({ facts: lookup.facts, userId: request.userId }),
-    };
-  }
-
-  return { terms: await generateFactSearchTerms(lookup.search) };
-}
-
-export async function selectMemoryFacts({
-  terms,
-  ...request
-}: MemoryTaskRequest & { terms: string[] }): Promise<MemoryFactForTask[]> {
-  const lookup = await lookUpMemory(request);
-
-  const facts =
-    "facts" in lookup ? lookup.facts : await searchRelevantFacts({ ...lookup.search, terms });
-
-  return request.markUsed === false ? facts : markUsed({ facts, userId: request.userId });
+  const facts = "facts" in lookup ? lookup.facts : await selectRelevantFacts(lookup.search);
+  return markUsed({ facts, userId: request.userId });
 }

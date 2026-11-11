@@ -34,6 +34,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
+import { levelTestBankCheckWorkflow } from "../language/level-test-bank-check-workflow";
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
@@ -72,6 +73,19 @@ async function missedQuestionFixture() {
 
 function languageSkillFixture(attrs: Parameters<typeof skillFixture>[0] = {}) {
   return skillFixture({ level: "beginner", targetLanguage: "en", ...attrs });
+}
+
+/** A level test bank row; an empty `model` is a claim whose bank is still being written. */
+function bankRow(checkedAt: Date | null, model = "test") {
+  return {
+    checkedAt,
+    content: {},
+    language: `x${crypto.randomUUID().slice(0, 8)}`,
+    model,
+    promptVersion: "test",
+    runId: crypto.randomUUID(),
+    targetLanguage: "es",
+  };
 }
 
 describe(dailySweepsWorkflow, () => {
@@ -239,6 +253,33 @@ describe(dailySweepsWorkflow, () => {
     expect(started).toContain(owed.id);
     expect(started).not.toContain(checked.id);
     expect(result.pictureChecks).toBe(started.length);
+  });
+
+  it("starts a token-owned check for each level test bank stored before questions were checked", async () => {
+    const [owed, checked, writing] = [bankRow(null), bankRow(new Date()), bankRow(null, "")];
+    await prisma.languageLevelTest.createMany({ data: [owed, checked, writing] });
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const runs = getStartMock().mock.calls.filter(
+      ([workflow]) => workflow === levelTestBankCheckWorkflow,
+    );
+
+    const started = runs.map(
+      ([, args]) => (args as [{ pair: { language: string } }])[0].pair.language,
+    );
+
+    expect(started).toContain(owed.language);
+    expect(started).not.toContain(checked.language);
+    expect(started).not.toContain(writing.language);
+    expect(result.levelTestBankChecks).toBe(started.length);
+
+    expect(runs.find(([, args]) => JSON.stringify(args).includes(owed.language))).toStrictEqual([
+      levelTestBankCheckWorkflow,
+      [{ pair: { language: owed.language, targetLanguage: "es" } }],
+      { experimental_hook: { token: `level-test-bank-check:${owed.language}:es` } },
+    ]);
   });
 
   it("starts a separate token-owned run for each lesson still owing word orders", async () => {

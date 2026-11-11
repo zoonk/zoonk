@@ -249,7 +249,9 @@ function isDueBy({ days, item, today }: { days: number; item: PlanItem; today: D
   return item.scheduledFor !== null && item.scheduledFor <= addDays(today, days);
 }
 
-function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; today: Date }) {
+type UpcomingInput = { includesMockExams: boolean; items: readonly PlanItem[]; today: Date };
+
+function findUpcomingChallenges({ includesMockExams, items, today }: UpcomingInput) {
   const bosses = items.filter(
     (item) =>
       item.kind === "boss" &&
@@ -257,7 +259,7 @@ function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; 
       isDueBy({ days: BOSS_AHEAD_DAYS, item, today }),
   );
 
-  const weekly = findNextWeeklyItem(items);
+  const weekly = findNextWeeklyItem({ includesMockExams, items, today });
 
   const mixed =
     weekly?.kind === "checkpoint" && isDueBy({ days: WEEKLY_AHEAD_DAYS, item: weekly, today })
@@ -305,9 +307,9 @@ export async function requestUpcomingChallengeQuestionsFor({
   const timeZone = getAnswerTimeZone({ goal, timeZone: null });
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const access = await loadExamPrepAccess({ goal, timeZone, today });
+  const { includesMockExams, trialEnded } = await loadExamPrepAccess({ goal, timeZone, today });
 
-  if (access.trialEnded) {
+  if (trialEnded) {
     return { status: "ready" };
   }
 
@@ -316,7 +318,7 @@ export async function requestUpcomingChallengeQuestionsFor({
     where: { plan: { goalId } },
   });
 
-  const upcoming = findUpcomingChallenges({ items, today });
+  const upcoming = findUpcomingChallenges({ includesMockExams, items, today });
 
   if (upcoming.length === 0) {
     return { status: "ready" };

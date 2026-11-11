@@ -169,6 +169,9 @@ model LanguageLevelTest {
   promptVersion  String   @map("prompt_version")
   runId          String   @map("run_id")
   generatedAt    DateTime @default(now()) @map("generated_at")
+  /// Set when its questions' check starts, so it runs once. Null on a bank stored before questions
+  /// were checked, which the daily sweep checks.
+  checkedAt      DateTime? @map("checked_at")
   createdAt      DateTime @default(now()) @map("created_at")
 
   @@unique([language, targetLanguage], name: "languagePair")

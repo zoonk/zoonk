@@ -8,7 +8,7 @@ const NOW = new Date("2026-10-18T04:12:18Z");
 
 describe("a full review in place of a Plus-only mock", () => {
   it.each([
-    { date: "2026-10-17", includesMockExams: false, reviewDay: true },
+    { date: "2026-10-17", includesMockExams: false, reviewDay: false },
     { date: "2026-10-18", includesMockExams: false, reviewDay: true },
     { date: "2026-10-19", includesMockExams: false, reviewDay: false },
     { date: "2026-10-18", includesMockExams: true, reviewDay: false },
@@ -25,11 +25,7 @@ describe("a full review in place of a Plus-only mock", () => {
   it("uses the next unfinished weekly challenge", () => {
     const today = new Date("2026-10-18");
 
-    const mock = {
-      kind: "mock" as const,
-      scheduledFor: new Date("2026-10-17"),
-      status: "todo" as const,
-    };
+    const mock = { kind: "mock" as const, scheduledFor: today, status: "todo" as const };
 
     const check = (items: Parameters<typeof isPlusOnlyMockDay>[0]["items"]) =>
       isPlusOnlyMockDay({ includesMockExams: false, items, today });
