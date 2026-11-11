@@ -80690,7 +80690,7 @@
         "properties": {
           "focus": {
             "nullable": true,
-            "description": "Where the plan should give more time. Null without a date, with one subject, on a shown plan whose time covers everything, when the learner has no focus and the suggestion cannot move the plan, or while a changed exam date or daily time awaits the next test settlement",
+            "description": "Where the plan should give more time. Null without a date, with one subject, or on a shown plan whose time covers everything",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FocusTestFocus"
@@ -80743,11 +80743,11 @@
               "ifTimeShort",
               "proposed",
               "current",
-              "alreadyFits",
               "handPicked",
-              "declined"
+              "declined",
+              "suggested"
             ],
-            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; valid while the exam date and daily time are unchanged, including across daily replans. `handPicked`: the learner chose their own focus. `declined`: the learner dismissed this suggestion with Not now or Undo; it stays dismissed for the same suggested subjects across replans and date or daily-time edits"
+            "description": "Read from the plan's focus and the test's own plan changes. `ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `handPicked`: the plan has a focus the learner chose. `declined`: the learner dismissed a proposal of these subjects with Not now or Undo, and the plan has no focus of their own; the test never proposes them again. `suggested`: the rows alone, with no claim about the plan"
           }
         },
         "required": [
