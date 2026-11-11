@@ -1,7 +1,11 @@
 "use client";
 
-import { setGoalCountryAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
+import {
+  setGoalContentCountryAction,
+  setGoalCountryAction,
+} from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { setHomeCountryAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getCourseHref } from "@/data/courses/course-href";
@@ -32,7 +36,9 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
   const startTestOut = useStartTestOut();
   const startConversation = useStartLanguageConversation();
   const learner = useFrameLearner();
-  const goals = learner.status === "ready" ? learner.summary.goals : null;
+  const summary = learner.status === "ready" ? learner.summary : null;
+  const goals = summary?.goals ?? null;
+  const homeCountry = summary?.homeCountry ?? null;
 
   return useMemo(
     () => ({
@@ -50,10 +56,31 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
         return answered;
       },
       tools: {
+        getGoalContentCountry: (id) =>
+          goals?.find((goal) => goal.id === id)?.contentCountry?.code ?? null,
         getGoalRegion: (id) => goals?.find((goal) => goal.id === id)?.targetRegion ?? null,
+        getHomeCountry: () => homeCountry,
         hrefs: TOOL_HREFS,
+        setGoalContentCountry: async ({ country, goalId: id }) => {
+          const saved = await setGoalContentCountryAction(id, country);
+
+          if (saved) {
+            router.refresh();
+          }
+
+          return saved;
+        },
         setGoalRegion: async ({ goalId: id, region }) => {
           const saved = await setGoalCountryAction(id, region);
+
+          if (saved) {
+            router.refresh();
+          }
+
+          return saved;
+        },
+        setHomeCountry: async (country) => {
+          const saved = await setHomeCountryAction(country);
 
           if (saved) {
             router.refresh();
@@ -66,7 +93,7 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
         startTestOut,
       },
     }),
-    [goalId, goals, router, startConversation, startTestOut],
+    [goalId, goals, homeCountry, router, startConversation, startTestOut],
   );
 }
 

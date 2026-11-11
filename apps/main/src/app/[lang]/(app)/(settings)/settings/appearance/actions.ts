@@ -30,6 +30,11 @@ export async function setSoundsEnabledAction(soundsEnabled: boolean): Promise<bo
   return saveProfile({ soundsEnabled });
 }
 
+/** Null clears it. */
+export async function setHomeCountryAction(homeCountry: unknown): Promise<boolean> {
+  return saveProfile({ homeCountry });
+}
+
 /** The browser keeps it for a visitor; a guest's or learner's account keeps it too. */
 export async function setShareUsageDataAction(shareUsageData: unknown): Promise<boolean> {
   if (typeof shareUsageData !== "boolean") {

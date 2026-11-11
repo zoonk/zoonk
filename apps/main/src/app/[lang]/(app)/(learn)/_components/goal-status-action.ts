@@ -37,6 +37,21 @@ export async function setGoalCountryAction(
   return result.status === "updated";
 }
 
+/** Null goes back to the goal language's own country. */
+export async function setGoalContentCountryAction(
+  goalId: string,
+  contentCountry: unknown,
+): Promise<boolean> {
+  const input = goalUpdateInputSchema.safeParse({ contentCountry });
+
+  if (!input.success) {
+    return false;
+  }
+
+  const result = await updateGoal({ goalId, input: input.data });
+  return result.status === "updated";
+}
+
 export async function renameGoalAction(goalId: string, displayName: unknown): Promise<boolean> {
   const input = goalUpdateInputSchema.safeParse({ displayName });
 

@@ -14,6 +14,7 @@ import {
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { PracticeCallSheet } from "../language/unit/practice-conversation";
 import { useMockEntryDescription } from "../mock/mock-entry";
+import { ContentCountryOffer, HomeCountryOffer } from "./tutor-country-offer";
 import {
   EssayOffer,
   MistakesOffer,
@@ -26,8 +27,12 @@ import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from ".
 import { VarietyOffer } from "./tutor-variety-offer";
 
 export type TutorToolActions = {
+  /** The goal's content country; null for none, or for a goal this screen hasn't loaded. */
+  getGoalContentCountry: (goalId: string) => string | null;
   /** The goal's saved country; null for none, or for a goal this screen hasn't loaded. */
   getGoalRegion: (goalId: string) => string | null;
+  /** Where the learner lives; null when they haven't said, or before this screen knows. */
+  getHomeCountry: () => string | null;
   hrefs: {
     chooseFocus: string;
     chooseMock: string;
@@ -45,8 +50,12 @@ export type TutorToolActions = {
     goalId: string;
     minutes: number;
   }) => Promise<CallStartOutcome>;
+  /** Resolves to whether the content country saved on the goal. */
+  setGoalContentCountry: (input: { country: string; goalId: string }) => Promise<boolean>;
   /** Resolves to whether the country saved on the goal. */
   setGoalRegion: (input: { goalId: string; region: string }) => Promise<boolean>;
+  /** Resolves to whether where the learner lives saved. */
+  setHomeCountry: (country: string) => Promise<boolean>;
   startTestOut: (input: { chapterId: string; goalId: string }) => Promise<TestOutStart>;
 };
 
@@ -247,6 +256,24 @@ export function TutorToolOfferCard({
             actions.setGoalRegion({ goalId: offer.goalId, region: offer.targetRegion })
           }
           saved={actions.getGoalRegion(offer.goalId) === offer.targetRegion}
+        />
+      );
+    case "contentCountry":
+      return (
+        <ContentCountryOffer
+          offer={offer}
+          onApply={() =>
+            actions.setGoalContentCountry({ country: offer.country, goalId: offer.goalId })
+          }
+          saved={actions.getGoalContentCountry(offer.goalId) === offer.country}
+        />
+      );
+    case "homeCountry":
+      return (
+        <HomeCountryOffer
+          offer={offer}
+          onApply={() => actions.setHomeCountry(offer.country)}
+          saved={actions.getHomeCountry() === offer.country}
         />
       );
     default:
