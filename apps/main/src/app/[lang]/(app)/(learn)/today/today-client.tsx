@@ -113,6 +113,15 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
   });
 }
 
+async function dismissTodayFocusTest(goalId: string): Promise<boolean> {
+  const saved = await updateFocusTestAction(goalId, {
+    suggestion: "dismissed",
+    timeZone: getLocalTimeZone(),
+  });
+
+  return saved !== null;
+}
+
 /** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
 export function TodayClient({
   banner,
@@ -231,14 +240,7 @@ export function TodayClient({
           return next ? taps.next(next) : Promise.resolve(false);
         },
         decidePlanChange,
-        dismissFocusTest: async () => {
-          const saved = await updateFocusTestAction(today.goal.id, {
-            suggestion: "dismissed",
-            timeZone: getLocalTimeZone(),
-          });
-
-          return saved !== null;
-        },
+        dismissFocusTest: () => dismissTodayFocusTest(today.goal.id),
         examHref: "/exam",
         focusTestHref: "/focus-test",
         lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
