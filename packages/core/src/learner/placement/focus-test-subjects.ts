@@ -1,10 +1,11 @@
+import { isDeepStrictEqual } from "node:util";
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { type ExamPicks, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getPaperKind, isWrittenSubject } from "../../exams/mocks/written-subject";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { isQualifyingSubject, listPlanShares } from "../../library/exams/subject-shares";
 import { getSkillArea, getWrittenTestAreas } from "../../plans/planner/graph-areas";
-import { type PlanGraph } from "../../plans/planner/plan-state";
+import { type PlanGraph, type PlanState } from "../../plans/planner/plan-state";
 import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { type UncheckedPart } from "./focus-test-contract";
 
@@ -130,6 +131,20 @@ function listAreaSubjects({
 /** Each graph skill's plan area; a skill that names none takes its phase's. */
 export function mapSkillAreas(graph: PlanGraph): Map<string, string> {
   return new Map(graph.skills.map((skill) => [skill.skillId, getSkillArea({ graph, skill })]));
+}
+
+function readSubjectInputs({ graph, settings }: PlanState) {
+  return {
+    areas: mapSkillAreas(graph),
+    examChoices: settings.examChoices,
+    examSubjects: settings.examSubjects,
+    skippedAreas: settings.skippedAreas,
+  };
+}
+
+/** Whether a plan write changes what `listTestSubjects` reads from the plan. */
+export function changesTestSubjects({ after, before }: { after: PlanState; before: PlanState }) {
+  return !isDeepStrictEqual(readSubjectInputs(before), readSubjectInputs(after));
 }
 
 /** In the notice's order, or the plan's when it doesn't follow a notice; areas the learner left out aren't listed. */

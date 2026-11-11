@@ -11,10 +11,15 @@ import {
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
+import { isGoalInPlacementWeek } from "../../lookahead/placement-week";
+import { changeGoalPlan } from "../../plans/change-goal-plan";
+import { decidePlanChange } from "../../plans/decide-plan-change";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import {
   PLAN_SHOWN,
   type TestPlacement,
   examTestGoalFixture,
+  shortPlanExamGoalFixture,
   startSitting,
 } from "../_test-utils/exam-test-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
@@ -449,6 +454,78 @@ describe("an exam goal's Focus test", () => {
 
       await expect(request).resolves.toMatchObject([{ status: "fulfilled" }]);
       await expect(readRecord(goal.id)).resolves.toMatchObject({ sitting: { id: successorId } });
+    },
+  );
+
+  it.each(["restore", "undo"] as const)(
+    "reopens a skipped subject through %s after the other subjects settle",
+    async (action) => {
+      const { goal } = await shortPlanExamGoalFixture({
+        goal: { ...PLAN_SHOWN, createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000) },
+      });
+
+      await expect(
+        changeGoalPlan({
+          goalId: goal.id,
+          input: {
+            operations: [
+              {
+                areas: ["Português", "Informática", "Raciocínio", "Atualidades", "Ética"],
+                kind: "skipAreas",
+              },
+            ],
+          },
+        }),
+      ).resolves.toMatchObject({ status: "applied" });
+
+      const first = await startSitting(goal.id);
+      await answer({ given: DONT_KNOW, goalId: goal.id, placement: first });
+      await finish(goal.id);
+
+      await expect(readRecord(goal.id)).resolves.toMatchObject({
+        summary: { complete: true, total: 1 },
+      });
+
+      await expect(
+        changeGoalPlan({
+          goalId: goal.id,
+          input: { operations: [{ areas: ["Português"], kind: "restoreAreas" }] },
+        }),
+      ).resolves.toMatchObject({ status: "applied" });
+
+      if (action === "undo") {
+        const again = await changeGoalPlan({
+          goalId: goal.id,
+          input: { operations: [{ areas: ["Português"], kind: "skipAreas" }] },
+        });
+
+        if (again.status !== "applied" || !again.change) {
+          throw new Error("Skip failed");
+        }
+
+        const undone = await decidePlanChange({
+          changeId: again.change.id,
+          goalId: goal.id,
+          input: { status: "undone" },
+        });
+
+        if (undone.status !== "updated") {
+          throw new Error(`Undo failed: ${undone.status}`);
+        }
+      }
+
+      const beforeRead = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+        plan: { focusTest: { sessionQuestions: "on", subjects: { asked: 1, total: 2 } } },
+        status: "ready",
+      });
+
+      await expect(isGoalInPlacementWeek({ goalId: goal.id, timeZone: "UTC" })).resolves.toBe(true);
+
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ).resolves.toStrictEqual(beforeRead);
     },
   );
 

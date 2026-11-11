@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import {
@@ -9,12 +9,15 @@ import {
   getUserProgressCacheTag,
 } from "../../../cache/tags";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
+import { type PlanState } from "../../../plans/planner/plan-state";
 import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
-import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
+import { readFocusTestRecord } from "../focus-test-state";
+import { changesTestSubjects } from "../focus-test-subjects";
 import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
@@ -156,16 +159,7 @@ export async function closeTestSitting({
   return closed;
 }
 
-/** Reads and keeps the summary under the learner's lock, so an earlier answer can't overwrite a later one. */
-export async function saveTestSummary({
-  goalId,
-  onlyFirst = false,
-  ownLevel,
-  plan,
-  today,
-  timeZone,
-  userId,
-}: {
+type SummaryRead = {
   goalId: string;
   onlyFirst?: boolean;
   ownLevel?: OwnLevel | null;
@@ -173,38 +167,68 @@ export async function saveTestSummary({
   today?: Date;
   timeZone?: string;
   userId: string;
-}) {
-  const saved = await writeLearnerChange({ userId }, async (tx) => {
-    const read = await loadPlacementWithSummary({
-      goalId,
-      ownLevel,
-      plan,
-      timeZone,
-      today,
+};
+
+/** Call inside a transaction that holds the learner's lock. */
+async function keepTestSummary({
+  onlyFirst = false,
+  tx,
+  ...read
+}: SummaryRead & { tx: TransactionClient }) {
+  const saved = await loadPlacementWithSummary({ ...read, tx });
+  const { focusTest, state } = saved;
+
+  if (focusTest) {
+    await changeFocusTestRecord({
+      change: (record) => ({
+        ...record,
+        sitting:
+          record.sitting && state.focusTest?.sitting
+            ? { ...record.sitting, answered: state.focusTest.sitting.answered }
+            : record.sitting,
+        summary: onlyFirst && record.summary ? record.summary : focusTest.summary,
+      }),
+      goalId: read.goalId,
       tx,
-      userId,
     });
+  }
 
-    const { focusTest, state } = read;
-
-    if (focusTest) {
-      await changeFocusTestRecord({
-        change: (record) => ({
-          ...record,
-          sitting:
-            record.sitting && state.focusTest?.sitting
-              ? { ...record.sitting, answered: state.focusTest.sitting.answered }
-              : record.sitting,
-          summary: onlyFirst && record.summary ? record.summary : focusTest.summary,
-        }),
-        goalId,
-        tx,
-      });
-    }
-
-    return read;
-  });
-
-  revalidateCacheTags([getGoalsCacheTag(userId)]);
   return saved;
+}
+
+/** Reads and keeps the summary under the learner's lock, so an earlier answer can't overwrite a later one. */
+export async function saveTestSummary(read: SummaryRead) {
+  const saved = await writeLearnerChange({ userId: read.userId }, (tx) =>
+    keepTestSummary({ ...read, tx }),
+  );
+
+  revalidateCacheTags([getGoalsCacheTag(read.userId)]);
+  return saved;
+}
+
+/**
+ * Keeps a saved summary in step with a plan write that changes the test's subjects, such as a
+ * skipped or restored subject or an Undo. Plan writes hold the learner's lock and expire the goals tag.
+ */
+export async function keepPlanTestSummary({
+  after,
+  before,
+  goal,
+  tx,
+}: {
+  after: PlanState;
+  before: PlanState;
+  goal: Pick<Goal, "details" | "id" | "userId">;
+  tx: TransactionClient;
+}): Promise<void> {
+  if (!readFocusTestRecord(goal)?.summary || !changesTestSubjects({ after, before })) {
+    return;
+  }
+
+  await keepTestSummary({
+    goalId: goal.id,
+    plan: await loadPlacementPlan(goal.id, tx),
+    tx,
+    userId: goal.userId,
+  });
 }
