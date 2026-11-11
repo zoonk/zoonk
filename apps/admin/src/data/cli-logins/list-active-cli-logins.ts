@@ -4,7 +4,10 @@ import { prisma } from "@zoonk/db";
 
 const MAX_LOGINS = 200;
 
-/** Each machine's login is its one refresh token that hasn't rotated, revoked or expired. */
+/**
+ * Each machine's login is its one refresh token that hasn't rotated or been revoked. Expired ones
+ * stay until the daily purge, at most a day, and show their end date.
+ */
 export const listActiveCliLogins = cacheAdminData(async () =>
   prisma.oauthRefreshToken.findMany({
     include: {
@@ -14,6 +17,6 @@ export const listActiveCliLogins = cacheAdminData(async () =>
     omit: { rotationReplayResponse: true, token: true },
     orderBy: [{ createdAt: "desc" }, { id: "asc" }],
     take: MAX_LOGINS,
-    where: { expiresAt: { gt: new Date() }, revoked: null },
+    where: { revoked: null },
   }),
 );
