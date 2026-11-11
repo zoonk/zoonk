@@ -34,4 +34,3 @@ export function canGoBack(state: LessonPlayerState): boolean {
     !isUnansweredEarlierCopy(state, state.position - 1)
   );
 }
-

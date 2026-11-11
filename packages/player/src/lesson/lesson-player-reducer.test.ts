@@ -165,10 +165,7 @@ describe(lessonPlayerReducer, () => {
       ...answerCheck("q2", true),
     ]);
 
-    expect([atResult.phase, getLessonScreen(atResult).canGoBack]).toStrictEqual([
-      "feedback",
-      true,
-    ]);
+    expect([atResult.phase, getLessonScreen(atResult).canGoBack]).toStrictEqual(["feedback", true]);
 
     const atTip = lessonPlayerReducer(atResult, back);
     expect([getCurrentStep(atTip)?.id, atTip.phase]).toStrictEqual(["tip", "playing"]);
@@ -280,7 +277,11 @@ describe(lessonPlayerReducer, () => {
       false,
     ]);
 
-    const returned = playOn(atFirst, [{ type: "continue" }, { type: "continue" }, { type: "continue" }]);
+    const returned = playOn(atFirst, [
+      { type: "continue" },
+      { type: "continue" },
+      { type: "continue" },
+    ]);
 
     expect(returned).toMatchObject({ phase: "playing", position: 3, reviewing: false });
     expect([returned.answers.quiz, returned.results.quiz]).toStrictEqual([picked, undefined]);

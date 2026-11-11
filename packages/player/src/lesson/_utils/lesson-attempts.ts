@@ -25,7 +25,9 @@ export function showAttemptInView(state: LessonPlayerState): LessonPlayerState {
 
   return {
     ...state,
-    answers: first.answer ? { ...state.answers, [id]: first.answer } : omitKeys(state.answers, [id]),
+    answers: first.answer
+      ? { ...state.answers, [id]: first.answer }
+      : omitKeys(state.answers, [id]),
     results: { ...state.results, [id]: first.result },
     rounds: { ...state.rounds, [id]: first.round },
   };
