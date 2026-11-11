@@ -7,8 +7,10 @@ import { getStaffActor } from "../get-staff-actor";
 import { StaffInputError, parseStaffInput } from "../input";
 import { type ContentFixView, logContentFix, toContentFixView } from "./_utils/content-fix-view";
 import { prepareContentFix } from "./_utils/prepare-content-fix";
+import { getStaffSessionUser } from "./_utils/staff-session";
 import {
   type ProposedChange,
+  type StoredChange,
   contentFixChangesSchema,
   contentFixProposalSchema,
   contentFixRevertSchema,
@@ -60,6 +62,27 @@ async function saveProposal(actor: Actor, proposal: Proposal): Promise<ProposeRe
   return { fix: toContentFixView(fix), status: "proposed" };
 }
 
+function toInverse(change: StoredChange): ProposedChange {
+  switch (change.op) {
+    case "retire":
+      return { id: change.id, model: "Item", unretire: true };
+    case "unretire":
+      return { id: change.id, model: "Item", retire: true };
+    case "detachPicture":
+      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
+    case "attachPicture":
+      return { detachPicture: true, id: change.id, model: "Step" };
+    case "set":
+      return {
+        id: change.id,
+        model: change.model,
+        set: Object.fromEntries(change.fields.map((field) => [field.field, field.before])),
+      };
+    default:
+      throw new Error("Unknown stored change");
+  }
+}
+
 async function buildRevert(input: { fixId: string; reason: string }) {
   const original = await prisma.contentFix.findUnique({ where: { id: input.fixId } });
 
@@ -74,46 +97,44 @@ async function buildRevert(input: { fixId: string; reason: string }) {
     };
   }
 
-  const changes = contentFixChangesSchema.parse(original.changes);
+  const changes = contentFixChangesSchema
+    .parse(original.changes)
+    .map((change) => toInverse(change));
 
-  if (changes.some((change) => change.op !== "set")) {
-    return {
-      message: "A retired question or a detached picture can't be reverted with a fix yet.",
-      status: "invalid" as const,
-    };
-  }
-
-  const inverse = changes.flatMap((change): ProposedChange[] =>
-    change.op === "set"
-      ? [
-          {
-            id: change.id,
-            model: change.model,
-            set: Object.fromEntries(change.fields.map((field) => [field.field, field.before])),
-          },
-        ]
-      : [],
-  );
-
-  return { proposal: { changes: inverse, reason: input.reason, revertsId: original.id } };
+  return { proposal: { changes, reason: input.reason, revertsId: original.id } };
 }
 
 type BuiltProposal = { message: string; status: "invalid" | "notFound" } | { proposal: Proposal };
 
+type Proposer =
+  | { status: "forbidden" | "missingScope" | "unauthorized"; userId?: string }
+  | (Actor & { status: "ready" });
+
+function getCliProposer(): Promise<Proposer> {
+  return getStaffActor(STAFF_PROPOSE_SCOPE);
+}
+
+/** What `ContentFix.proposerClientId` holds for a revert a staff person started in Admin. */
+const ADMIN_PROPOSER = "admin";
+
+async function getAdminProposer(): Promise<Proposer> {
+  const staff = await getStaffSessionUser();
+  return staff.status === "ready" ? { ...staff, clientId: ADMIN_PROPOSER } : staff;
+}
+
 async function runProposal({
   action,
+  getProposer = getCliProposer,
   input,
   toProposal,
 }: {
   action: "propose" | "revert";
+  getProposer?: () => Promise<Proposer>;
   input: unknown;
   toProposal: (input: unknown) => Promise<BuiltProposal>;
 }): Promise<ProposeResult> {
   const started = performance.now();
-
-  const { data: actor, error: actorError } = await safeAsync(() =>
-    getStaffActor(STAFF_PROPOSE_SCOPE),
-  );
+  const { data: actor, error: actorError } = await safeAsync(getProposer);
 
   if (actorError) {
     unstable_rethrow(actorError);
@@ -125,8 +146,8 @@ async function runProposal({
   }
 
   if (actor.status !== "ready") {
-    const actorUserId = "userId" in actor ? actor.userId : null;
-    logContentFix({ action, actorUserId, outcome: actor.status, started });
+    logContentFix({ action, actorUserId: actor.userId ?? null, outcome: actor.status, started });
+
     return { status: actor.status };
   }
 
@@ -177,6 +198,22 @@ export function proposeContentFix(input: unknown): Promise<ProposeResult> {
 export function proposeContentFixRevert(input: unknown): Promise<ProposeResult> {
   return runProposal({
     action: "revert",
+    input,
+    toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
+  });
+}
+
+/**
+ * Admin's Revert: the same reviewed proposal, from the signed-in staff person's session instead of
+ * a CLI login. It changes nothing until someone approves it with a passkey.
+ */
+export function proposeContentFixRevertInAdmin(input: {
+  fixId: string;
+  reason: string;
+}): Promise<ProposeResult> {
+  return runProposal({
+    action: "revert",
+    getProposer: getAdminProposer,
     input,
     toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
   });

@@ -248,3 +248,40 @@ export async function resolvePictureDetach(
     unit: { id: step.lessonId, kind: "lesson" },
   };
 }
+
+/** Reverts a detached picture: the same drawing goes back while the screen still has none. */
+export async function resolvePictureAttach(
+  db: TransactionClient,
+  { id, mediaAssetId }: { id: string; mediaAssetId: string },
+): Promise<ResolvedChange> {
+  const [step, asset] = await Promise.all([
+    db.step.findUnique({
+      select: { ...screenSelect, mediaAssetId: true, pictureRemovedAt: true },
+      where: { id },
+    }),
+    db.mediaAsset.findUnique({ select: { visibility: true }, where: { id: mediaAssetId } }),
+  ]);
+
+  if (!step) {
+    return refuse(`No Step with id ${id}.`);
+  }
+
+  if (step.retiredAt || step.staged) {
+    return refuse(NOT_CURRENT_SCREEN);
+  }
+
+  if (step.mediaAssetId || !step.pictureRemovedAt) {
+    return refuse("This screen's picture is no longer detached.");
+  }
+
+  if (asset?.visibility !== "public") {
+    return refuse("The picture this screen showed no longer exists.");
+  }
+
+  return {
+    effects: [],
+    ok: true,
+    stored: { id, mediaAssetId, model: "Step", op: "attachPicture" },
+    unit: { id: step.lessonId, kind: "lesson" },
+  };
+}

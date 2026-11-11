@@ -50,12 +50,12 @@ export async function lockFixRows(
   }
 }
 
-/** A retired question changes what plans can pick, so plans built from its skill are marked first. */
+/** Retiring or restoring a question changes what plans can pick, so plans built from its skill are marked first. */
 export async function lockRetiredItemPlans(
   tx: TransactionClient,
   changes: readonly StoredChange[],
 ): Promise<void> {
-  const ids = changes.filter((change) => change.op === "retire").map((change) => change.id);
+  const ids = changes.filter((change) => change.model === "Item").map((change) => change.id);
 
   if (ids.length === 0) {
     return;
@@ -116,14 +116,23 @@ async function applyChange({
 }): Promise<void> {
   const where = { id: change.id };
 
-  if (change.op === "retire") {
-    await tx.item.update({ data: { retiredAt: now }, where });
+  if (change.op === "retire" || change.op === "unretire") {
+    await tx.item.update({ data: { retiredAt: change.op === "retire" ? now : null }, where });
     return;
   }
 
   if (change.op === "detachPicture") {
     await tx.step.update({
       data: { mediaAssetId: null, pictureAvailableAt: null, pictureRemovedAt: now },
+      where,
+    });
+
+    return;
+  }
+
+  if (change.op === "attachPicture") {
+    await tx.step.update({
+      data: { mediaAssetId: change.mediaAssetId, pictureAvailableAt: now, pictureRemovedAt: null },
       where,
     });
 

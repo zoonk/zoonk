@@ -11,8 +11,6 @@ import { logError } from "@zoonk/utils/logger";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { writePlanInputs } from "../../library/_utils/plan-input-write";
-import { getSession } from "../../users/get-session";
-import { isStaffAccount } from "../staff-account";
 import {
   applyFixChanges,
   getFixCacheTags,
@@ -22,9 +20,10 @@ import {
 import { logContentFix } from "./_utils/content-fix-view";
 import { prepareContentFix, toProposedChanges } from "./_utils/prepare-content-fix";
 import { type FixUnit } from "./_utils/resolved-change";
+import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
 import { contentFixChangesSchema } from "./contract";
 
-type Refused = { status: "forbidden" | "notFound" | "unauthorized" };
+type Refused = StaffSessionRefusal | { status: "notFound" };
 
 type Decided = {
   /** Whether Main heard about the change: false means it shows the old content until its cache expires. */
@@ -40,29 +39,6 @@ export type ContentFixDecision =
 
 const STALE_CONTENT =
   "The content changed after this fix was proposed. Propose it again from what's there now.";
-
-/**
- * Deciding takes a fresh staff account behind a Better Auth session, so a CLI token, a lost admin
- * role or a ban never decides.
- */
-async function getDecider(): Promise<Refused | { status: "ready"; userId: string }> {
-  const session = await getSession();
-
-  if (!session) {
-    return { status: "unauthorized" };
-  }
-
-  const user = await prisma.user.findUnique({
-    select: { banned: true, id: true, role: true },
-    where: { id: session.user.id },
-  });
-
-  if (!user) {
-    return { status: "unauthorized" };
-  }
-
-  return isStaffAccount(user) ? { status: "ready", userId: user.id } : { status: "forbidden" };
-}
 
 async function findFix(fixId: string) {
   return isUuid(fixId)
@@ -91,7 +67,7 @@ function recorded(fix: {
 export async function getStaffPasskeyStatus(): Promise<
   Refused | { hasPasskey: boolean; status: "ready" }
 > {
-  const decider = await getDecider();
+  const decider = await getStaffSessionUser();
 
   if (decider.status !== "ready") {
     return decider;
@@ -113,7 +89,7 @@ export async function getContentFixApprovalOptions(
   | { status: "needsPasskey" }
   | { options: PasskeyApprovalOptions; status: "ready" }
 > {
-  const decider = await getDecider();
+  const decider = await getStaffSessionUser();
 
   if (decider.status !== "ready") {
     return decider;
@@ -311,7 +287,7 @@ export async function approveContentFix({
   fixId: string;
 }): Promise<ContentFixDecision> {
   const started = performance.now();
-  const decider = await getDecider();
+  const decider = await getStaffSessionUser();
 
   const result =
     decider.status === "ready"
@@ -332,7 +308,7 @@ export async function approveContentFix({
 /** Rejecting needs a staff session but no passkey, since it changes no content. */
 export async function rejectContentFix(fixId: string): Promise<ContentFixDecision> {
   const started = performance.now();
-  const decider = await getDecider();
+  const decider = await getStaffSessionUser();
 
   if (decider.status !== "ready") {
     logContentFix({ action: "reject", actorUserId: null, outcome: decider.status, started });

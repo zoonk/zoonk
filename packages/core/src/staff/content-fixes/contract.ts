@@ -49,7 +49,12 @@ const proposedChangeSchema = z.union([
   detachPictureChangeSchema,
 ]);
 
-export type ProposedChange = z.infer<typeof proposedChangeSchema>;
+/** Only reverting a retired question or a detached picture builds these; the CLI can't send them. */
+type InverseChange =
+  | { id: string; model: "Item"; unretire: true }
+  | { attachPicture: string; id: string; model: "Step" };
+
+export type ProposedChange = z.infer<typeof proposedChangeSchema> | InverseChange;
 
 export const contentFixProposalSchema = z
   .strictObject({
@@ -65,6 +70,8 @@ export const contentFixRevertSchema = z
 
 const fieldChangeSchema = z.object({ after: z.json(), before: z.json(), field: z.string() });
 
+const pictureChange = { id: idSchema, mediaAssetId: idSchema, model: z.literal("Step") };
+
 const storedChangeSchema = z.discriminatedUnion("op", [
   z.object({
     fields: z.array(fieldChangeSchema).min(1),
@@ -73,12 +80,9 @@ const storedChangeSchema = z.discriminatedUnion("op", [
     op: z.literal("set"),
   }),
   z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("retire") }),
-  z.object({
-    id: idSchema,
-    mediaAssetId: idSchema,
-    model: z.literal("Step"),
-    op: z.literal("detachPicture"),
-  }),
+  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("unretire") }),
+  z.object({ ...pictureChange, op: z.literal("detachPicture") }),
+  z.object({ ...pictureChange, op: z.literal("attachPicture") }),
 ]);
 
 export type StoredChange = z.infer<typeof storedChangeSchema>;
@@ -112,6 +116,9 @@ const effectSchema = z.discriminatedUnion("kind", [
   z
     .object({ itemId: idSchema, kind: z.literal("itemRetired") })
     .meta({ description: "New practice skips the item; what already holds it keeps it" }),
+  z
+    .object({ itemId: idSchema, kind: z.literal("itemRestored") })
+    .meta({ description: "New practice can pick the item again" }),
   z
     .object({
       id: idSchema,

@@ -125,3 +125,33 @@ export async function resolveItemRetire(
     unit: { id, kind: "item" },
   };
 }
+
+/** Reverts a retired question: it goes back to new practice only while it's still retired. */
+export async function resolveItemRestore(
+  db: TransactionClient,
+  id: string,
+): Promise<ResolvedChange> {
+  const item = await db.item.findUnique({
+    select: { retiredAt: true, skill: { select: { visibility: true } } },
+    where: { id },
+  });
+
+  if (!item) {
+    return refuse(`No Item with id ${id}.`);
+  }
+
+  if (item.skill.visibility === "private") {
+    return refuse(PRIVATE_CONTENT);
+  }
+
+  if (!item.retiredAt) {
+    return refuse(`Item ${id} is already back in practice.`);
+  }
+
+  return {
+    effects: [{ itemId: id, kind: "itemRestored" }],
+    ok: true,
+    stored: { id, model: "Item", op: "unretire" },
+    unit: { id, kind: "item" },
+  };
+}

@@ -3,8 +3,13 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { CURRENT_STEPS, readStagedLessonVersion } from "../../../library/lessons/lesson-versions";
 import { getScreenReadingTexts, holdsQuote } from "../../../library/steps/question-bases";
 import { type ContentFixEffect, type ProposedChange, type StoredChange } from "../contract";
-import { resolveExplanation, resolveItemRetire } from "./resolve-practice";
-import { resolvePictureDetach, resolveStepContent, resolveVariantContent } from "./resolve-screen";
+import { resolveExplanation, resolveItemRestore, resolveItemRetire } from "./resolve-practice";
+import {
+  resolvePictureAttach,
+  resolvePictureDetach,
+  resolveStepContent,
+  resolveVariantContent,
+} from "./resolve-screen";
 import { resolveTextRow } from "./resolve-text-row";
 import {
   type FixUnit,
@@ -22,8 +27,16 @@ function resolveChange(db: TransactionClient, change: ProposedChange): Promise<R
     return resolveItemRetire(db, change.id);
   }
 
+  if ("unretire" in change) {
+    return resolveItemRestore(db, change.id);
+  }
+
   if ("detachPicture" in change) {
     return resolvePictureDetach(db, change.id);
+  }
+
+  if ("attachPicture" in change) {
+    return resolvePictureAttach(db, { id: change.id, mediaAssetId: change.attachPicture });
   }
 
   if (change.model === "Step") {
@@ -42,7 +55,8 @@ function resolveChange(db: TransactionClient, change: ProposedChange): Promise<R
 }
 
 function changeKey(change: ProposedChange): string {
-  return `${change.model}:${change.id}:${"detachPicture" in change ? "picture" : "fields"}`;
+  const part = "detachPicture" in change || "attachPicture" in change ? "picture" : "fields";
+  return `${change.model}:${change.id}:${part}`;
 }
 
 async function lessonProblem(db: TransactionClient, lessonId: string): Promise<string | null> {
@@ -139,6 +153,29 @@ function uniqueEffects(effects: readonly ContentFixEffect[]): ContentFixEffect[]
   });
 }
 
+/** Applying a screen fix deletes that screen's answer explanations, so the same fix can't edit one. */
+async function deletedExplanationProblem(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<string | null> {
+  const explanationIds = changes
+    .filter((change) => change.model === "AnswerExplanation")
+    .map((change) => change.id);
+
+  if (explanationIds.length === 0) {
+    return null;
+  }
+
+  const deleted = await db.answerExplanation.findFirst({
+    select: { id: true },
+    where: { id: { in: explanationIds }, stepId: { in: [...screenContents(changes).keys()] } },
+  });
+
+  return deleted
+    ? `Fixing a screen deletes its saved answer explanations, AnswerExplanation ${deleted.id} among them. Leave that change out; a new one is written from the fixed screen.`
+    : null;
+}
+
 async function unitProblem(
   db: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
@@ -149,6 +186,7 @@ async function unitProblem(
 
   return (
     (await lessonProblem(db, unit.id)) ??
+    (await deletedExplanationProblem(db, changes)) ??
     quoteProblem(db, { contents: screenContents(changes), lessonId: unit.id })
   );
 }
@@ -211,8 +249,16 @@ export function toProposedChanges(changes: readonly StoredChange[]): ProposedCha
       return { id: change.id, model: "Item", retire: true };
     }
 
+    if (change.op === "unretire") {
+      return { id: change.id, model: "Item", unretire: true };
+    }
+
     if (change.op === "detachPicture") {
       return { detachPicture: true, id: change.id, model: "Step" };
+    }
+
+    if (change.op === "attachPicture") {
+      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
     }
 
     return {

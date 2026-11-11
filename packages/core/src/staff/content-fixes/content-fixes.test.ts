@@ -22,7 +22,11 @@ import {
   getContentFixApprovalOptions,
   rejectContentFix,
 } from "./decide-content-fix";
-import { proposeContentFix, proposeContentFixRevert } from "./propose-content-fix";
+import {
+  proposeContentFix,
+  proposeContentFixRevert,
+  proposeContentFixRevertInAdmin,
+} from "./propose-content-fix";
 
 const PROPOSE_SCOPES = [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, "offline_access"];
 
@@ -248,6 +252,26 @@ describe(proposeContentFix, () => {
     ]);
 
     expect(results.map((result) => result.status)).toStrictEqual(["invalid", "invalid", "invalid"]);
+  });
+
+  it("refuses to edit an answer explanation in the fix whose screen change deletes it", async () => {
+    const { check } = await publishedLesson();
+    const explanation = await answerExplanationFixture({ stepId: check.id });
+    await signInProposer();
+    const { changes, reason } = fixedQuestion(check);
+
+    await expect(
+      proposeContentFix({
+        changes: [
+          ...changes,
+          { id: explanation.id, model: "AnswerExplanation", set: { explanation: "Clearer." } },
+        ],
+        reason,
+      }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining("answer explanations"),
+      status: "invalid",
+    });
   });
 
   it("keeps a lesson map's ideas and icons, letting only their words change", async () => {
@@ -589,5 +613,129 @@ describe(proposeContentFixRevert, () => {
     await expect(
       proposeContentFixRevert({ fixId: randomUUID(), reason: "Undo." }),
     ).resolves.toMatchObject({ status: "notFound" });
+  });
+
+  it("puts a detached picture back on its screen", async () => {
+    const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+    const asset = await mediaAssetFixture();
+
+    const pictured = await libraryStepFixture({
+      content: { ...intro, image: { alt: "A heart", prompt: "A heart from the front" } },
+      lessonId: lesson.id,
+      mediaAssetId: asset.id,
+      position: 0,
+    });
+
+    await signInProposer();
+
+    const detach = await proposeFix({
+      changes: [{ detachPicture: true, id: pictured.id, model: "Step" }],
+      reason: "The picture shows the wrong organ.",
+    });
+
+    const { key } = await signInApprover();
+    await approve({ fixId: detach.id, key });
+    await signInProposer();
+
+    const revert = await proposeContentFixRevert({
+      fixId: detach.id,
+      reason: "It was the right picture.",
+    });
+
+    expect(revert).toMatchObject({
+      fix: {
+        changes: [{ id: pictured.id, mediaAssetId: asset.id, op: "attachPicture" }],
+        revertsId: detach.id,
+      },
+      status: "proposed",
+    });
+
+    const approver = await signInApprover();
+
+    await expect(
+      approve({ fixId: revert.status === "proposed" ? revert.fix.id : "", key: approver.key }),
+    ).resolves.toMatchObject({ fix: { status: "applied" } });
+
+    await expect(
+      prisma.step.findUniqueOrThrow({ where: { id: pictured.id } }),
+    ).resolves.toMatchObject({
+      mediaAssetId: asset.id,
+      pictureAvailableAt: expect.any(Date),
+      pictureRemovedAt: null,
+    });
+  });
+
+  it("puts a retired question back in practice, and ends stale once it's back already", async () => {
+    const skill = await skillFixture();
+    const item = await itemFixture({ format: "typed", skillId: skill.id });
+    await signInProposer();
+
+    const retire = await proposeFix({
+      changes: [{ id: item.id, model: "Item", retire: true }],
+      reason: "Its key is wrong.",
+    });
+
+    const { key } = await signInApprover();
+    await approve({ fixId: retire.id, key });
+    await signInProposer();
+
+    const [first, second] = await Promise.all([
+      proposeContentFixRevert({ fixId: retire.id, reason: "The key was right." }),
+      proposeContentFixRevert({ fixId: retire.id, reason: "The key was right after all." }),
+    ]);
+
+    if (first.status !== "proposed" || second.status !== "proposed") {
+      throw new Error(`Expected two reverts, got ${JSON.stringify([first, second])}`);
+    }
+
+    expect(first.fix.changes).toStrictEqual([{ id: item.id, model: "Item", op: "unretire" }]);
+
+    const approver = await signInApprover();
+
+    await expect(approve({ fixId: first.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(prisma.item.findUniqueOrThrow({ where: { id: item.id } })).resolves.toMatchObject({
+      retiredAt: null,
+    });
+
+    await expect(approve({ fixId: second.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+  });
+});
+
+describe(proposeContentFixRevertInAdmin, () => {
+  it("proposes the revert as the signed-in staff person, and refuses a learner", async () => {
+    const { check } = await publishedLesson();
+    await signInProposer();
+    const fix = await proposeFix(fixedQuestion(check));
+    const { key, user } = await signInApprover();
+    await approve({ fixId: fix.id, key });
+    vi.mocked(headers).mockResolvedValue(new Headers());
+
+    const revert = await proposeContentFixRevertInAdmin({ fixId: fix.id, reason: "Undo it." });
+
+    expect(revert).toMatchObject({ fix: { revertsId: fix.id }, status: "proposed" });
+
+    await expect(
+      prisma.contentFix.findFirstOrThrow({ where: { revertsId: fix.id } }),
+    ).resolves.toMatchObject({
+      proposerClientId: "admin",
+      proposerId: user.id,
+      status: "proposed",
+    });
+
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: check.id } })).resolves.toMatchObject(
+      { content: { question: "What is 2 plus 2?" } },
+    );
+
+    const learner = await userFixture();
+    mockSession(learner.id);
+
+    await expect(
+      proposeContentFixRevertInAdmin({ fixId: fix.id, reason: "Undo it." }),
+    ).resolves.toStrictEqual({ status: "forbidden" });
   });
 });

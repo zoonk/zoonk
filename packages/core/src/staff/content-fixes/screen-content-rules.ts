@@ -213,3 +213,46 @@ export function checkScreenContentChange({
 
   return { changesAnswerKey, changesQuestion, ok: true };
 }
+
+function valueAt(value: unknown, path: Path): unknown {
+  return path.reduce<unknown>((current, segment) => {
+    if (Array.isArray(current)) {
+      return current[Number(segment)];
+    }
+
+    return isRecord(current) ? current[segment] : undefined;
+  }, value);
+}
+
+export type ContentValueChange = {
+  after: unknown;
+  before: unknown;
+  /** Whether the value decides which answer is right. */
+  isAnswerKey: boolean;
+  path: string;
+};
+
+/**
+ * Every value that differs between two versions of a screen's content or a lesson's map, for
+ * showing a fix to its reviewer. Null when they don't share a shape, which no stored fix does.
+ */
+export function listContentValueChanges({
+  after,
+  before,
+}: {
+  after: unknown;
+  before: unknown;
+}): ContentValueChange[] | null {
+  const diff = diffValues(before, after, []);
+
+  if ("problem" in diff) {
+    return null;
+  }
+
+  return diff.changed.map((path) => ({
+    after: valueAt(after, path),
+    before: valueAt(before, path),
+    isAnswerKey: classify({ answered: false, path }) === "answerKey",
+    path: path.join("."),
+  }));
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkScreenContentChange } from "./screen-content-rules";
+import { checkScreenContentChange, listContentValueChanges } from "./screen-content-rules";
 
 const check = {
   basis: { position: 0, quote: "Two and two make four." },
@@ -115,5 +115,29 @@ describe(checkScreenContentChange, () => {
         kind: "typedAnswer",
       }),
     ).toMatchObject({ ok: false });
+  });
+});
+
+describe(listContentValueChanges, () => {
+  it("lists each changed value with its place and marks the ones that decide the answer", () => {
+    expect(
+      listContentValueChanges({
+        after: withOptions([{ isCorrect: false }, { isCorrect: true, reason: "Two and three." }]),
+        before: check,
+      }),
+    ).toStrictEqual([
+      { after: false, before: true, isAnswerKey: true, path: "options.0.isCorrect" },
+      { after: true, before: false, isAnswerKey: true, path: "options.1.isCorrect" },
+      {
+        after: "Two and three.",
+        before: "That's two and three.",
+        isAnswerKey: false,
+        path: "options.1.reason",
+      },
+    ]);
+  });
+
+  it("returns null for versions that don't share a shape", () => {
+    expect(listContentValueChanges({ after: { ...check, options: [] }, before: check })).toBeNull();
   });
 });
