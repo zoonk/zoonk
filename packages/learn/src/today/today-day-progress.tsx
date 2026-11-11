@@ -3,11 +3,10 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
-import { METER_PARTS_CLASS } from "../_components/meter";
 import { useFormatDuration } from "../_utils/time-format";
 import { getBlockKind } from "../session/block-kind";
 import { type DayStep } from "../session/session-types";
-import { DaySegment, type DaySegmentState } from "./day-segments";
+import { DayMeter, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
@@ -38,33 +37,26 @@ export function DayProgress({ className }: { className?: string }) {
   const { today } = useTodayScreen();
   const { blocks, nextPosition } = today.session;
   const done = blocks.filter((block) => isFinished(block)).length;
-  const held = getHeldMinutes(today.session);
 
   if (getDaySegmentCount(today.session) < 2) {
     return null;
   }
 
   return (
-    <div
-      aria-label={t(
+    <DayMeter
+      className={className}
+      held={getHeldMinutes(today.session) > 0}
+      label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
         { done, total: blocks.length },
       )}
-      className={cn(METER_PARTS_CLASS, className)}
-      data-slot="today-day-progress"
-      role="img"
-    >
-      {blocks.map((block) => (
-        <DaySegment
-          key={block.position}
-          kind={getBlockKind(block)}
-          minutes={block.estimatedMinutes}
-          share={block.position === nextPosition ? getBlockShare(block) : 0}
-          state={getSegmentState(block, block.position === nextPosition)}
-        />
-      ))}
-      {held > 0 && <DaySegment kind="lesson" minutes={held} state="ahead" />}
-    </div>
+      parts={blocks.map((block) => ({
+        id: block.position,
+        kind: getBlockKind(block),
+        share: block.position === nextPosition ? getBlockShare(block) : 0,
+        state: getSegmentState(block, block.position === nextPosition),
+      }))}
+    />
   );
 }
 
