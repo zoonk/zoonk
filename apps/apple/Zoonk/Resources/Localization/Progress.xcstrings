@@ -1,71 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %@ Energy" : {
-      "comment" : "An Energy calendar day: its date and its Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Energie"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@ Energy"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energía"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ d’Énergie"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ di Energia"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@・%2$@エネルギー"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · 에너지 %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Energii"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energia"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Enerji"
-          }
-        }
-      }
-    },
     "%@ · %lld answers" : {
       "comment" : "Under the best day or time: its share of right answers and its answers",
       "localizations" : {
@@ -329,65 +264,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%@ · No Energy recorded" : {
-      "comment" : "An Energy calendar day without Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Keine Energie erfasst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Sin Energía registrada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Aucune Énergie enregistrée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Nessuna Energia registrata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@・エネルギーの記録なし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · 에너지 기록 없음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Brak zapisanej Energii"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Sem Energia registrada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Enerji kaydı yok"
           }
         }
       }
@@ -714,6 +590,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ için %2$@ Beyin Gücü"
+          }
+        }
+      }
+    },
+    "%@ Energy" : {
+      "comment" : "An Energy calendar day's value, under its date: the buddy's Energy that day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ d’Énergie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ di Energia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エネルギー%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에너지 %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energii"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Enerji"
           }
         }
       }
@@ -5363,7 +5298,7 @@
       }
     },
     "Next week" : {
-      "comment" : "VoiceOver action moving a calendar's readout a week later",
+      "comment" : "VoiceOver action moving a calendar's picked day a week later",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5535,6 +5470,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevap yok"
+          }
+        }
+      }
+    },
+    "No Energy recorded" : {
+      "comment" : "An Energy calendar day's value, under its date, for a day without Energy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Energie erfasst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin registro de Energía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune Énergie enregistrée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia non registrata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エネルギーの記録なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에너지 기록 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak danych o Energii"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem registro de Energia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enerji kaydı yok"
           }
         }
       }
@@ -6189,7 +6183,7 @@
       }
     },
     "Previous week" : {
-      "comment" : "VoiceOver action moving a calendar's readout a week earlier",
+      "comment" : "VoiceOver action moving a calendar's picked day a week earlier",
       "localizations" : {
         "de" : {
           "stringUnit" : {
