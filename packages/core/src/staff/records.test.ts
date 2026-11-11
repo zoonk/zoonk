@@ -111,6 +111,7 @@ describe("staff reads", () => {
     ).not.toHaveProperty("token");
 
     await expect(getStaffRecord({ id: randomUUID(), model: "User" })).resolves.toStrictEqual({
+      message: "No User with that id.",
       status: "notFound",
     });
 
@@ -125,7 +126,7 @@ describe("staff reads", () => {
       status: "invalid",
     });
 
-    await Promise.all(
+    const unreadableMessages = await Promise.all(
       ["token", "user", "notAField"].map(async (field) => {
         const result = await listStaffRecords({
           model: "Session",
@@ -133,13 +134,19 @@ describe("staff reads", () => {
         });
 
         expect(result).toMatchObject({
-          message: expect.stringContaining("Field is not readable. Valid fields:"),
+          message: expect.stringContaining(`Field "${field}" is not readable. Valid fields:`),
           status: "invalid",
         });
 
         expect(JSON.stringify(result)).not.toContain("secret");
+
+        return result.status === "invalid"
+          ? result.message.replace(`"${field}"`, '"requestedField"')
+          : undefined;
       }),
     );
+
+    expect(new Set(unreadableMessages).size).toBe(1);
 
     await expect(
       countStaffRecords({

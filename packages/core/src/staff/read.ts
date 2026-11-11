@@ -9,11 +9,14 @@ import { StaffInputError, parseStaffInput } from "./input";
 import { readableFields, readableModels } from "./registry";
 
 type ReadFailure =
-  | { status: "unauthorized" | "forbidden" | "notFound" | "error" }
-  | { status: "invalid" | "timeout"; message: string };
+  | { status: "unauthorized" | "forbidden" | "error" }
+  | { status: "invalid" | "timeout" | "notFound"; message: string };
 export type StaffResult<T> = ({ status: "ready" } & T) | ReadFailure;
 type Call = { verb: string; model?: string; id?: unknown; where?: { field: string; op: string }[] };
-type ReadData<T> = { data: T; rows: number } | { status: "notFound"; rows: number };
+
+type ReadData<T> =
+  | { data: T; rows: number }
+  | { status: "notFound"; message: string; rows: number };
 
 type ReadOptions<T, Input extends object> = { call: Call } & (
   | { input: unknown; schema: ZodType<Input>; run: (input: Input) => Promise<ReadData<T>> }
@@ -158,5 +161,7 @@ function readResult<T extends object>({ data, error }: SafeReturn<ReadData<T>>):
     return failedRead(error);
   }
 
-  return "status" in data ? { status: data.status } : { ...data.data, status: "ready" };
+  return "status" in data
+    ? { message: data.message, status: data.status }
+    : { ...data.data, status: "ready" };
 }

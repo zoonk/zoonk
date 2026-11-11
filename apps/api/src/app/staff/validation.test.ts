@@ -7,6 +7,39 @@ import { POST as getRecord } from "./records/get/route";
 import { POST as listRecords } from "./records/list/route";
 
 describe("staff request validation", () => {
+  it.each([
+    {
+      field: "completedAt",
+      model: "StudySession",
+      where: [{ field: "completedAt", op: "isNull" }],
+    },
+    { field: "nope", model: "Goal", orderBy: { direction: "desc", field: "nope" } },
+  ])("identifies the unreadable $field field", async ({ field, ...body }) => {
+    await signInStaff();
+    const response = await listRecords(staffRequest({ body, path: "/staff/records/list" }));
+    expect(response.status).toBe(400);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: {
+        message: expect.stringContaining(`Field "${field}" is not readable. Valid fields:`),
+      },
+    });
+  });
+
+  it("identifies the model when no record has the requested id", async () => {
+    await signInStaff();
+
+    const response = await getRecord(
+      staffRequest({ body: { id: randomUUID(), model: "Goal" }, path: "/staff/records/get" }),
+    );
+
+    expect(response.status).toBe(404);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "NOT_FOUND", message: "No Goal with that id." },
+    });
+  });
+
   it("names UUID formats and points null filters to the null operations", async () => {
     await signInStaff();
 
@@ -72,7 +105,7 @@ describe("staff request validation", () => {
           model: "User",
           where: [{ field: "notAField", op: "eq", value: "sensitive-input" }],
         },
-        options: ["Field is not readable", "Valid fields:", "email"],
+        options: ["notAField", "is not readable", "Valid fields:", "email"],
       },
       {
         body: {
@@ -93,11 +126,8 @@ describe("staff request validation", () => {
         options: ["count", "Expected Int"],
       },
       {
-        body: {
-          model: "User",
-          where: [{ field: "createdAt", op: "eq", value: "sensitive-input" }],
-        },
-        options: ["createdAt", "Expected DateTime"],
+        body: { model: "User", where: [{ field: "createdAt", op: "gte", value: "yesterday" }] },
+        options: ["createdAt", "ISO 8601 date or date-time", "2026-11-10", "2026-11-10T12:00:00Z"],
       },
     ];
 

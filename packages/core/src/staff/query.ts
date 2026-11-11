@@ -45,7 +45,7 @@ function requireField({ model, name }: { model: DatabaseModel; name: string }) {
 
   if (!field) {
     throw new StaffInputError(
-      `Field is not readable. Valid fields: ${fields.map((entry) => entry.name).join(", ")}`,
+      `Field "${name}" is not readable. Valid fields: ${fields.map((entry) => entry.name).join(", ")}`,
     );
   }
 
@@ -112,8 +112,13 @@ function parseFieldValue({
     const type = field.nativeType?.[0] === "Uuid" ? "UUID" : field.type;
     const expected = isList ? `an array of ${type} values` : type;
 
+    const format =
+      field.type === "DateTime"
+        ? " Use an ISO 8601 date or date-time, for example 2026-11-10 or 2026-11-10T12:00:00Z."
+        : "";
+
     throw new StaffInputError(
-      `Invalid value for ${field.name}. Expected ${expected}.${options ? ` Valid options: ${options.join(", ")}.` : ""}`,
+      `Invalid value for ${field.name}. Expected ${expected}.${format}${options ? ` Valid options: ${options.join(", ")}.` : ""}`,
     );
   }
 
