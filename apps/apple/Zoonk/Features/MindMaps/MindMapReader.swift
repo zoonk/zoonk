@@ -311,7 +311,7 @@ struct MindMapReader: View {
   private func bottomBar(
     _ cards: [MindMapCard], index: Int, maps: GoalMindMaps, goalId: String
   ) -> some ToolbarContent {
-    ToolbarItem(placement: .bottomBar) {
+    ToolbarItemGroup(placement: .bottomBar) {
       Button {
         move(to: cards[max(0, index - 1)])
       } label: {
@@ -323,11 +323,9 @@ struct MindMapReader: View {
       }
       .disabled(index == 0)
       .keyboardShortcut(.leftArrow, modifiers: [])
-    }
 
-    ToolbarSpacer(.flexible, placement: .bottomBar)
+      Spacer()
 
-    ToolbarItem(placement: .bottomBar) {
       Text(
         "\(index + 1) of \(cards.count)", tableName: "MindMaps", comment: "Which map of the deck"
       )
@@ -335,12 +333,9 @@ struct MindMapReader: View {
       .monospacedDigit()
       .foregroundStyle(.mutedForeground)
       .fixedSize()
-    }
-    .sharedBackgroundVisibility(.hidden)
 
-    ToolbarSpacer(.flexible, placement: .bottomBar)
+      Spacer()
 
-    ToolbarItemGroup(placement: .bottomBar) {
       if let current, let target = saveTarget(current, maps: maps, goalId: goalId) {
         MindMapSaveButton(target: target.target, goalId: goalId, server: target.server)
           .keyboardShortcut("s", modifiers: [])
