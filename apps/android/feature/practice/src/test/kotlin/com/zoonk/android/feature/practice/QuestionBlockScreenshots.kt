@@ -60,15 +60,6 @@ class QuestionBlockScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
-    private val timeMachine =
-        JsonObject(
-            mapOf(
-                "answer" to JsonPrimitive("Moon"),
-                "answeredAt" to JsonPrimitive("2026-10-08T12:00:00Z"),
-                "isCorrect" to JsonPrimitive(false),
-            ),
-        )
-
     private val timed =
         JsonObject(
             mapOf(
@@ -131,13 +122,13 @@ class QuestionBlockScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phone() {
-        show("phone-answering", questions = arrayOf(planet("timeMachine" to timeMachine), next))
+        show("phone-answering", questions = arrayOf(planet(), next))
     }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneChecked() {
-        show("phone-checked", check = true, questions = arrayOf(planet("timeMachine" to timeMachine), next))
+        show("phone-checked", check = true, questions = arrayOf(planet(), next))
     }
 
     @Test
@@ -194,7 +185,7 @@ class QuestionBlockScreenshots {
     @Test
     @Config(qualifiers = "w852dp-h883dp-xxhdpi")
     fun bookSpreadChecked() {
-        show("book-checked", check = true, open = true, questions = arrayOf(planet("timeMachine" to timeMachine), next))
+        show("book-checked", check = true, open = true, questions = arrayOf(planet(), next))
     }
 
     @Test

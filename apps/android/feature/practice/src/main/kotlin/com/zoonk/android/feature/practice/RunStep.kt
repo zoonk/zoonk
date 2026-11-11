@@ -319,7 +319,6 @@ internal fun RunQuestion(
 
     if (part.showsScreen) {
         if (netScored) SwipeScore(netTally(questions, run))
-        if (checked == null) question.timeMachine?.let { TimeMachine(it, question.format, words) }
 
         if (drill != null) {
             val first = previous?.mistakeId != question.mistakeId
@@ -379,7 +378,6 @@ internal fun RunQuestion(
             timedOut = run.timedOut,
         ) {
             DrillAnswerNotes(drill, notSure = checked.answer == Answer.DontKnow, timedOut = run.timedOut, trap = checked.feedback.trap)
-            question.timeMachine?.let { TimeMachineNote(it, question.format, words, right = checked.feedback.isCorrect) }
         }
         afterFeedback()
     }
