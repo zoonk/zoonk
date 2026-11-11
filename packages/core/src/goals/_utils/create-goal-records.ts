@@ -1,7 +1,9 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { type AllowanceLimit } from "../../entitlements/contract";
+import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { claimUsagesInWrite } from "../../entitlements/claim-usage";
+import { type UsageDecision } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -9,7 +11,7 @@ import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type GoalCreateInput, type GoalDraft } from "../goal-contract";
 import { defaultDisplayName } from "./goal-display-name";
-import { findActiveGoalLimit } from "./goal-status";
+import { saveMetadataInTransaction } from "./goal-metadata";
 
 function getWeekdayMinutes({
   dailyMinutes,
@@ -99,26 +101,51 @@ export async function insertGoalWithPlan(
   });
 }
 
+async function pauseGoal(
+  tx: TransactionClient,
+  { goalId, userId }: { goalId?: string; userId: string },
+): Promise<void> {
+  const goal = goalId
+    ? await tx.goal.findFirst({
+        where: { id: goalId, kind: { not: "explain" }, status: "active", userId },
+      })
+    : null;
+
+  if (goal) {
+    await saveMetadataInTransaction(tx, { goal, input: { status: "paused" }, userId });
+  }
+}
+
 /**
- * Recounts active goals under the plan→user lock: a usage claim that passed earlier can't promise
- * the slot is still free.
+ * Claims the goal in its own write, under the plan→user lock, so the claim's active-goal count is
+ * the one the insert sees and a refused start charges nothing and leaves the goal it would have
+ * paused active.
  */
 export async function createGoal(
-  record: GoalRecord & { input: GoalCreateInput },
-): Promise<AllowanceLimit | null> {
-  const { draft, id, userId } = record;
+  record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
+): Promise<UsageDecision> {
+  const { draft, id, input, userId, viewer } = record;
+  const isExplanation = draft.kind === "explain";
 
-  return writeLearnerChange<null, AllowanceLimit>({ planInputs: true, userId }, async (tx) => {
-    if (draft.kind !== "explain") {
-      const limit = await findActiveGoalLimit({ db: tx, goalId: id, userId });
-
-      if (limit) {
-        return unchanged(limit);
-      }
+  return writeLearnerChange({ planInputs: true, userId }, async (transaction) => {
+    if (!isExplanation) {
+      await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
     }
 
-    await insertGoalWithPlan(tx, record);
-    return null;
+    const decision = await claimUsagesInWrite({
+      claims: [
+        { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
+      ],
+      transaction,
+      viewer,
+    });
+
+    if (decision.status !== "allowed") {
+      return unchanged(decision);
+    }
+
+    await insertGoalWithPlan(transaction, record);
+    return decision;
   });
 }
 

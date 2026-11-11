@@ -5,11 +5,9 @@ import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
 
 export async function findActiveGoalLimit({
-  db = prisma,
   goalId,
   userId,
 }: {
-  db?: TransactionClient;
   goalId: string;
   userId: string;
 }): Promise<AllowanceLimit | null> {
@@ -20,7 +18,7 @@ export async function findActiveGoalLimit({
     return null;
   }
 
-  const active = await db.goal.count({
+  const active = await prisma.goal.count({
     where: { id: { not: goalId }, kind: { not: "explain" }, status: "active", userId },
   });
 

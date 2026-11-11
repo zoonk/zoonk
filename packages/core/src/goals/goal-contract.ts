@@ -177,6 +177,12 @@ export const goalCreateInputSchema = z
       description: "The day's time, shared by the new goals",
     }),
     goals: z.array(goalDraftSchema).min(1).max(MAX_GOALS_AT_ONCE),
+    pauseGoalId: uuidSchema()
+      .optional()
+      .meta({
+        description:
+          "An active goal of the learner's to pause in the same write that creates these goals, freeing a slot when their active goals are at their plan's limit. It's paused only when a goal is created, so a refused start pauses nothing; an id that isn't one of the learner's active goals pauses nothing",
+      }),
     sourceIds: z
       .array(uuidSchema())
       .max(MAX_GOAL_SOURCES)
