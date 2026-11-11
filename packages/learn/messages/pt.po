@@ -13396,7 +13396,7 @@ msgstr "Nenhuma aula para colocar em dia."
 #: src/session/moment-today.tsx
 msgctxt "H0kmsQ"
 msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
-msgstr "{done, plural, other {<gain>Você colocou # em dia hoje</gain>}} · {left, plural, other {# para fazer}}"
+msgstr "{done, plural, one {<gain># colocada em dia hoje</gain>} other {<gain># colocadas em dia hoje</gain>}} · {left, plural, one {falta #} other {faltam #}}"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
