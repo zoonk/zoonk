@@ -2717,26 +2717,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2971,
-          "outputTokens": 323,
-          "reasoningTokens": 108
+          "inputTokens": 2957,
+          "outputTokens": 106,
+          "reasoningTokens": 49
         }
       },
       "steps": [
         {
-          "conclusion": "The period A calculation incorrectly uses period B's figures: (75/25)/(25/75). Period A must use (50/50)/(10/90) = 9. Although the final comparison of 9 in both periods is correct, this contradicts the lesson's worked-example details and undermines the explanation of the learner's confusion, triggering the 6.5 cap.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6.5
+          "score": 10
         },
         {
-          "conclusion": "The phrase \"B: espere\" reads like an unfinished self-correction rather than a clear explanation. It interrupts the reasoning without fixing the mislabeled period A calculation.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 10
         },
         {
-          "conclusion": "Explicitly naming the learner's calculation as a ratio of proportions and the lesson's calculation as a ratio of odds would sharpen the distinction. The response otherwise correctly confirms 5 and 3, uses Portuguese, and avoids gender agreement with the learner.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
@@ -2943,9 +2943,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2973,
-          "outputTokens": 121,
-          "reasoningTokens": 64
+          "inputTokens": 2936,
+          "outputTokens": 208,
+          "reasoningTokens": 86
         }
       },
       "steps": [
@@ -2960,9 +2960,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "For greater clarity, explicitly restate that the learner correctly obtained 5 and 3, and define odds as the ratio of those who reached the top to those who did not. The answer already correctly calculates an odds ratio of 9 in both periods, stays grounded in the lesson, and confirms the calculation without gendering the learner.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -3169,9 +3169,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2945,
-          "outputTokens": 373,
-          "reasoningTokens": 122
+          "inputTokens": 2950,
+          "outputTokens": 245,
+          "reasoningTokens": 80
         }
       },
       "steps": [
@@ -3181,12 +3181,12 @@
           "score": 10
         },
         {
-          "conclusion": "Saying the learner's calculation does not compare relative chances is imprecise. Because both origin groups contain 100 people, 50/10 and 75/25 also compare their probabilities of reaching the top. These probability ratios genuinely decrease from 5 to 3; it is the odds ratio used by the lesson that remains 9. The displayed odds calculations are correct.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 10
         },
         {
-          "conclusion": "Explicitly confirm '50 ÷ 10 = 5 e 75 ÷ 25 = 3' and name odds as the ratio of those who reached the top to those who did not. This would clarify why the learner's correct calculation and the app's revealed answer use different measures. The response otherwise stays concise, in Portuguese, and avoids gender agreement with the learner.",
+          "conclusion": "The answer correctly confirms 5 and 3, distinguishes ratios of proportions from odds ratios, and explains the lesson's unchanged advantage without gendering the learner. A small improvement would be to show period A's calculation explicitly: (50/50) ÷ (10/90) = 9, making both periods independently verifiable.",
           "kind": "potentialImprovements",
           "score": 9
         }
