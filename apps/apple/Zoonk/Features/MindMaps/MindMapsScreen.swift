@@ -304,7 +304,8 @@ private struct MindMapCreateSection: View {
       return .unreachable
     }
 
-    if offer.eligible > 0, offer.startable == 0, let stop = offer.stop {
+    // With no chapter ready to make, maps on their way come first: the learner just started them.
+    if offer.startable == 0, let stop = offer.stop, offer.eligible > 0 || onTheWay == 0 {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
