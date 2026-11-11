@@ -3,13 +3,14 @@ import {
   type RestoreKeyAuthenticator,
   encodeCoseKey,
   makeAssertionJson,
+  makeRegistrationJson,
   makeRestoreKey,
 } from "../../restore-keys/_test-utils/restore-key-authenticator";
 import { type PasskeyAssertion } from "../passkey-approval-contract";
 import { PASSKEY_APPROVAL_ORIGIN, PASSKEY_RP_ID } from "../relying-party";
 
-/** Authenticator data flags: user present, user verified, and backed up (BE + BS). */
-const FLAGS = { backedUp: 0x18, userPresent: 0x01, userVerified: 0x04 } as const;
+/** Authenticator data flags: user present, user verified, backed up (BE + BS), and credential data attached. */
+const FLAGS = { attested: 0x40, backedUp: 0x18, userPresent: 0x01, userVerified: 0x04 } as const;
 const VERIFIED_FLAGS = FLAGS.userPresent + FLAGS.userVerified + FLAGS.backedUp;
 const PRESENT_ONLY_FLAGS = FLAGS.userPresent + FLAGS.backedUp;
 
@@ -54,4 +55,25 @@ export function signApproval({
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the authenticator writes this shape
   return JSON.parse(json) as PasskeyAssertion;
+}
+
+/** What `@simplewebauthn/browser` sends Better Auth's passkey plugin after the person creates `key`. */
+export function signRegistration({
+  challenge,
+  key,
+  origin,
+}: {
+  challenge: string;
+  key: RestoreKeyAuthenticator;
+  origin: string;
+}): unknown {
+  return JSON.parse(
+    makeRegistrationJson({
+      challenge,
+      flags: VERIFIED_FLAGS + FLAGS.attested,
+      key,
+      origin,
+      rpId: PASSKEY_RP_ID,
+    }),
+  );
 }

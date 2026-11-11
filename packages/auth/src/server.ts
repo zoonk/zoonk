@@ -38,6 +38,7 @@ import { accessGuardsPlugin } from "./plugins/access-guards";
 import { appChallengePlugin } from "./plugins/app-challenge";
 import { cliLoginPlugins } from "./plugins/cli-login";
 import { guestPlugin } from "./plugins/guest";
+import { passkeyChangePlugin } from "./plugins/passkey-change";
 import { restoreKeyPlugin } from "./plugins/restore-key";
 import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
@@ -179,6 +180,7 @@ export const fullPlugins = [
     rpID: PASSKEY_RP_ID,
     rpName: "Zoonk",
   }),
+  passkeyChangePlugin(),
   ...cliLoginPlugins,
   stripePlugin(),
   trustedOriginPlugin(),

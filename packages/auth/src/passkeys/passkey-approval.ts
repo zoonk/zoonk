@@ -49,17 +49,19 @@ export async function createPasskeyApprovalOptions(
 }
 
 /**
- * True only for an assertion `userId`'s own passkey signed over `expectedChallenge` on Admin's
- * page with user verification. It records the passkey's new signature counter, and never signs
- * anyone in.
+ * True only for an assertion `userId`'s own passkey signed over `expectedChallenge` with user
+ * verification on a page of `origin`, which is Admin's unless the caller names another. It records
+ * the passkey's new signature counter, and never signs anyone in.
  */
 export async function verifyPasskeyApproval({
   assertion,
   expectedChallenge,
+  origin = PASSKEY_APPROVAL_ORIGIN,
   userId,
 }: {
   assertion: PasskeyAssertion;
   expectedChallenge: string;
+  origin?: string;
   userId: string;
 }): Promise<boolean> {
   const passkey = await prisma.passkey.findFirst({ where: { credentialID: assertion.id, userId } });
@@ -76,7 +78,7 @@ export async function verifyPasskeyApproval({
         publicKey: new Uint8Array(Buffer.from(passkey.publicKey, "base64")),
       },
       expectedChallenge,
-      expectedOrigin: PASSKEY_APPROVAL_ORIGIN,
+      expectedOrigin: origin,
       expectedRPID: PASSKEY_RP_ID,
       requireUserVerification: true,
       response: assertion,

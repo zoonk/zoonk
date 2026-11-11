@@ -108,17 +108,18 @@ type Ceremony = { challenge: string; origin: string; rpId?: string };
 /** What Credential Manager's `CreateRestoreCredentialResponse.responseJson` holds. */
 export function makeRegistrationJson({
   challenge,
+  flags = ATTESTED_BACKED_UP_FLAGS,
   key,
   origin,
   rpId = RESTORE_KEY_RP_ID,
-}: Ceremony & { key: RestoreKeyAuthenticator }) {
+}: Ceremony & { flags?: number; key: RestoreKeyAuthenticator }) {
   const credentialId = Buffer.from(key.id, "base64url");
   const credentialIdLength = Buffer.alloc(CREDENTIAL_ID_LENGTH_BYTES);
   credentialIdLength.writeUInt16BE(credentialId.length);
 
   const authData = Buffer.concat([
     sha256(rpId),
-    Buffer.from([ATTESTED_BACKED_UP_FLAGS]),
+    Buffer.from([flags]),
     Buffer.alloc(COUNTER_BYTES),
     Buffer.alloc(AAGUID_BYTES),
     credentialIdLength,
