@@ -149,6 +149,31 @@ describe("lesson visuals", () => {
     });
   });
 
+  it("tells five lines apart by color and by the shape of their points", async () => {
+    const regions: LessonVisual = {
+      ...lettersChart,
+      chart: "line",
+      series: ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"].map((name, index) => ({
+        name,
+        values: [30 + index, 36 - index, 40 + index],
+      })),
+      title: "Ofícios respondidos por região",
+    };
+
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: regions })]) });
+
+    const chart = page.getByRole("figure", { name: regions.title });
+    await expect.element(chart).toBeVisible();
+
+    const points = [...chart.element().querySelectorAll("svg[viewBox^='0 0'] path")];
+    const firstOfEachLine = points.filter((_, index) => index % regions.categories.length === 0);
+
+    expect(firstOfEachLine).toHaveLength(regions.series.length);
+    expect(new Set(firstOfEachLine.map((point) => getComputedStyle(point).color)).size).toBe(5);
+    expect(new Set(firstOfEachLine.map((point) => point.getAttribute("d"))).size).toBe(5);
+    expect(chart.element().querySelectorAll("li svg path")).toHaveLength(regions.series.length);
+  });
+
   it("labels every day of a line chart on a phone, breaking long names over two lines", async () => {
     const days: LessonVisual = {
       ...lettersChart,
