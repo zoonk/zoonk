@@ -2563,9 +2563,9 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Ça n’a pas marché. Réessaie dans un instant."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "DaD53k"
-msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Trop de tentatives depuis ce réseau. Attends 30 minutes, puis réessaie."
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "Trop de tentatives depuis ce réseau. Attends 30 minutes, puis relance {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
@@ -2598,9 +2598,9 @@ msgid "Login denied"
 msgstr "Connexion refusée"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "tNO8Ji"
-msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "L’outil CLI n’a obtenu aucun accès, car {email} n’est pas un compte de l’équipe Zoonk."
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "L’accès a été refusé à la CLI, car {email} n’est pas un compte de l’équipe. Connecte-toi avec ton compte de l’équipe, puis relance {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"

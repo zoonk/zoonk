@@ -37,6 +37,29 @@ describe("GET /staff/me", () => {
     });
   });
 
+  it("logs one line per call, refused ones included, without the token", async () => {
+    const admin = await adminFixture();
+    const { accessToken } = await cliTokenFixture({ user: admin });
+    const log = vi.spyOn(logger, "logInfo");
+
+    await whoami(`Bearer ${accessToken}`);
+    await whoami("Bearer not-a-real-token");
+
+    const lines = log.mock.calls.map(([line]) => String(line));
+
+    expect(lines.map((line): unknown => JSON.parse(line))).toStrictEqual([
+      expect.objectContaining({
+        actorUserId: admin.id,
+        event: "staff.read",
+        outcome: "ready",
+        verb: "me",
+      }),
+      expect.objectContaining({ actorUserId: null, outcome: "unauthorized", verb: "me" }),
+    ]);
+
+    expect(lines.join("\n")).not.toContain(accessToken);
+  });
+
   it.each([
     ["no token", undefined],
     ["a token that was never issued", "Bearer not-a-real-token"],

@@ -62,6 +62,8 @@ async function waitForApproval({
   switch (result.error) {
     case "authorization_pending":
       return waitForApproval({ deadline, deviceCode, intervalSeconds, origin });
+    // Better Auth's rate limiter answers 429 rather than slow_down.
+    case "HTTP 429":
     case "slow_down":
       return waitForApproval({
         deadline,

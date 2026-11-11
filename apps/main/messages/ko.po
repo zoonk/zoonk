@@ -2563,9 +2563,9 @@ msgid "That didn't work. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "DaD53k"
-msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "이 네트워크에서 너무 많은 시도가 있었어요. 30분 후에 다시 시도해 보세요."
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "이 네트워크에서 너무 많이 시도했어요. 30분 후에 {command} 명령을 다시 실행해 보세요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
@@ -2598,9 +2598,9 @@ msgid "Login denied"
 msgstr "로그인 거부됨"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "tNO8Ji"
-msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "{email} 계정은 직원 계정이 아니어서 CLI 접근이 허용되지 않았어요."
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "{email} 계정은 직원 계정이 아니어서 CLI에 접근 권한이 부여되지 않았어요. 직원 계정으로 로그인한 다음 {command} 명령을 다시 실행해 보세요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"

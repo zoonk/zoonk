@@ -16,6 +16,7 @@ const strippedFields: Readonly<Record<string, readonly string[]>> = {
   Account: ["accessToken", "refreshToken", "idToken", "password"],
   AnonymousMockAnswer: ["mockKey", "learnerKey"],
   Session: ["token"],
+  StudyReminder: ["pushToken"],
   // Google Play stores its purchase token in this shared provider field.
   Subscription: ["providerSubscriptionId"],
 };

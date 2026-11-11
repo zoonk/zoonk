@@ -2563,9 +2563,9 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "DaD53k"
-msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Bu ağdan çok fazla deneme yapıldı. 30 dakika bekleyip tekrar dene."
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "Bu ağdan çok fazla deneme yapıldı. 30 dakika bekle, ardından {command} komutunu tekrar çalıştır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
@@ -2598,9 +2598,9 @@ msgid "Login denied"
 msgstr "Giriş reddedildi"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "tNO8Ji"
-msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "{email} bir çalışan hesabı olmadığı için CLI için erişim izni verilmedi."
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "{email} bir personel hesabı olmadığı için komut satırı aracına erişim izni verilmedi. Personel hesabınla giriş yap, ardından {command} komutunu tekrar çalıştır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"

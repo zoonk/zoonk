@@ -27,5 +27,11 @@ export function describeModels() {
       ...(field.kind === "enum" ? { values: getEnumValues(field.type) } : {}),
     })),
     name: model.name,
+    relations: model.fields
+      .filter(
+        (field) =>
+          field.kind === "object" && !staffCredentialPolicy.excludedModels.includes(field.type),
+      )
+      .map((field) => field.name),
   }));
 }

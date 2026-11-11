@@ -18,16 +18,16 @@ type ReadData<T> =
   | { data: T; rows: number }
   | { status: "notFound"; message: string; rows: number };
 
-type StaffActor = { clientId: string; userId: string };
+type InputRead<T, Input extends object> = {
+  call: Call;
+  input: unknown;
+  schema: ZodType<Input>;
+  run: (input: Input) => Promise<ReadData<T>>;
+};
 
-type ReadOptions<T, Input extends object> = { call: Call } & (
-  | {
-      input: unknown;
-      schema: ZodType<Input>;
-      run: (input: Input, actor: StaffActor) => Promise<ReadData<T>>;
-    }
-  | { run: () => Promise<ReadData<T>> }
-);
+type ActorRead<T> = { call: Call; run: (actor: { userId: string }) => Promise<ReadData<T>> };
+
+type ReadOptions<T, Input extends object> = InputRead<T, Input> | ActorRead<T>;
 
 function queryErrorCode(error: unknown): string | undefined {
   if (!error || typeof error !== "object") {
@@ -115,7 +115,11 @@ function logCall({
   );
 }
 
-export async function staffRead<T extends object, Input extends object = never>(
+export function staffRead<T extends object, Input extends object>(
+  options: InputRead<T, Input>,
+): Promise<StaffResult<T>>;
+export function staffRead<T extends object>(options: ActorRead<T>): Promise<StaffResult<T>>;
+export async function staffRead<T extends object, Input extends object>(
   options: ReadOptions<T, Input>,
 ): Promise<StaffResult<T>> {
   const { call } = options;
@@ -133,8 +137,8 @@ export async function staffRead<T extends object, Input extends object = never>(
   }
 
   const { data, error } = await safeAsync(async () => {
-    const prepared = await prepareRead(options, actor);
-    return { call: prepared.call, ...(await safeAsync(prepared.run)) };
+    const prepared = await prepareRead(options);
+    return { call: prepared.call, ...(await safeAsync(() => prepared.run(actor))) };
   });
 
   const result: StaffResult<T> = error ? failedRead(error) : readResult(data);
@@ -142,17 +146,14 @@ export async function staffRead<T extends object, Input extends object = never>(
   return result;
 }
 
-async function prepareRead<T, Input extends object>(
-  options: ReadOptions<T, Input>,
-  actor: StaffActor,
-) {
+async function prepareRead<T, Input extends object>(options: ReadOptions<T, Input>) {
   if (!("schema" in options)) {
     return options;
   }
 
   const input = await parseStaffInput(options.schema, options.input);
   const call = { ...input, ...options.call };
-  return { call, run: () => options.run(input, actor) };
+  return { call, run: () => options.run(input) };
 }
 
 export function staffTransaction<T>(run: (client: TransactionClient) => Promise<T>): Promise<T> {
