@@ -92,6 +92,7 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.delay
@@ -135,7 +136,7 @@ fun SessionScreen(
 
     when {
         sessionId != null -> {
-            SavedDay(app, navigator, viewModel, route, sessionId, goal = todayDay?.today?.goal)
+            SavedDay(app, navigator, viewModel, route, sessionId, todayDay)
         }
 
         shown != null -> {
@@ -175,14 +176,22 @@ private fun SavedDay(
     viewModel: SessionViewModel,
     route: AppRoute.Session,
     sessionId: UUID,
-    goal: TodayGoal?,
+    todayDay: TodayRead.Day?,
 ) {
     val read by app.studySessions.day[sessionId].collectShown()
+    val loading = read == LoadState.Idle || read == LoadState.Loading
+    // A tap on Today names a step of the saved day Today holds: it shows at once, and the session's read replaces it.
+    val held =
+        todayDay
+            ?.today
+            ?.session
+            ?.saved()
+            ?.takeIf { loading && it.id == sessionId && it.opened(route.blockId) != null }
+    val session = read.value ?: held
 
-    when (val state = read) {
-        is LoadState.Loaded -> {
-            val session = state.value
-            val opened = session.blocks.firstOrNull { it.id.toString() == route.blockId && it.status in OPEN }
+    when {
+        session != null -> {
+            val opened = session.opened(route.blockId)
             val step = opened ?: session.blocks.firstOrNull { it.id == session.nextBlockId }
             if (route.stopped || step == null) {
                 SessionSummaryContent(
@@ -191,7 +200,12 @@ private fun SavedDay(
                     viewModel,
                     session,
                     stopped = route.stopped,
-                    goalKind = goal?.takeIf { it.id == session.goalId }?.kind,
+                    goalKind =
+                        todayDay
+                            ?.today
+                            ?.goal
+                            ?.takeIf { it.id == session.goalId }
+                            ?.kind,
                 )
             } else {
                 NextStop(
@@ -210,13 +224,13 @@ private fun SavedDay(
             }
         }
 
-        is LoadState.Failed -> {
+        read is LoadState.Failed -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
                 LoadFailedMessage(onRetry = { app.studySessions.day[sessionId].invalidate() }, modifier = Modifier.padding(padding))
             }
         }
 
-        LoadState.Empty -> {
+        read == LoadState.Empty -> {
             TaskNotFound(navigator)
         }
 
@@ -225,6 +239,16 @@ private fun SavedDay(
         }
     }
 }
+
+private fun StudyDay.saved(): StudySession? =
+    when (this) {
+        is StudyDay.ActiveWrapper -> value
+        is StudyDay.CompletedWrapper -> value
+        is StudyDay.PlannedWrapper -> value
+        is StudyDay.UnstartedWrapper -> null
+    }
+
+private fun StudySession.opened(blockId: String?): StudyBlock? = blocks.firstOrNull { it.id.toString() == blockId && it.status in OPEN }
 
 @Composable
 private fun SessionSummaryContent(
