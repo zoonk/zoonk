@@ -178,7 +178,7 @@ internal fun ColumnScope.PlanRevealStep(
                 RevealBody(
                     plan = plan,
                     reveal = preview,
-                    onOpenStep = onOpenStep,
+                    onOpenStep = onOpenStep.takeUnless { opening || (saving && openingStep == null) },
                     openingStep = openingStep,
                     failedStep = failedStep,
                     goal = goal,
