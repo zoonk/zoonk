@@ -31,6 +31,12 @@ type LessonPlayerRun =
 
 type QuickCheck = { missed: boolean; returnPosition: number; returnQueue: string[] };
 
+type LessonAttempt = {
+  answer: LessonPlayerAnswer | undefined;
+  result: LessonStepResult;
+  round: number;
+};
+
 type MissingReason = "answerNotSaved" | "pictureReady";
 
 export type LessonPlayerState = {
@@ -48,6 +54,8 @@ export type LessonPlayerState = {
     | null;
   /** The learner pressed or typed in the player on this page, so a late run start leaves them where they are. */
   engaged: boolean;
+  /** A question's attempt from before its retry started over, which its earlier copy still shows. */
+  firstAttempts: Record<string, LessonAttempt>;
   firstVerdicts: Record<string, boolean>;
   hasMap: boolean;
   helped: string[];
@@ -62,8 +70,6 @@ export type LessonPlayerState = {
   quickCheck: QuickCheck | null;
   results: Record<string, LessonStepResult>;
   retried: string[];
-  /** The questions whose retry (a later copy) the learner has reached; see `startsOver`. */
-  retriesReached: string[];
   revealed: Record<string, number>;
   /**
    * Moves on wherever a screen starts over (its answer cleared) or a fresher saved answer replaces
@@ -141,6 +147,7 @@ export function createInitialState(
     completion:
       queue.length === 0 ? { failures: 0, result: null, status: "ready", testedOut: false } : null,
     engaged: false,
+    firstAttempts: {},
     firstVerdicts: {},
     hasMap: lesson.hasMap,
     helped: [],
@@ -154,7 +161,6 @@ export function createInitialState(
     quickCheck: null,
     results: {},
     retried: [],
-    retriesReached: [],
     revealed: {},
     reviewing: false,
     rounds: {},

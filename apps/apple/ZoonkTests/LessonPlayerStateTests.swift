@@ -242,6 +242,11 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertTrue(state.reviewing)
     XCTAssertEqual(state.results["check"], retried.results["check"])
     XCTAssertEqual(state.rounds, retried.rounds)
+
+    state.goBack()
+    state.goBack()
+    XCTAssertEqual(state.position, 2)
+    XCTAssertEqual(state.showingAttemptInView().currentResult?.isCorrect, false)
   }
 
   /// What the learner did on a canvas lasts exactly as long as the screen's answer (its round).
@@ -270,7 +275,7 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentAnswer, .check(optionId: "wrong"))
   }
 
-  func testPreviousStopsBeforeTheEarlierCopyOfAQuestionThatCameBack() throws {
+  func testPreviousGoesBackPastARetryStillToAnswerShowingItsFirstAttempt() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()
     state.continueLesson()
@@ -278,10 +283,28 @@ final class LessonPlayerStateTests: XCTestCase {
     state.continueLesson()
     state.continueLesson()
     XCTAssertEqual(state.currentStep?.id, "check")
+    state.select(.check(optionId: "right"), for: "check")
+    let retry = state
 
     state.goBack()
     XCTAssertEqual(state.currentStep?.id, "summary")
-    XCTAssertFalse(state.canGoBack, "the earlier copy no longer holds the attempt")
+    XCTAssertTrue(state.canGoBack, "the earlier copy shows its first attempt")
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+    let shown = state.showingAttemptInView()
+    XCTAssertEqual(shown.currentAnswer, .check(optionId: "wrong"))
+    XCTAssertEqual(shown.currentResult?.isCorrect, false)
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.position, retry.position)
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
+    XCTAssertNil(state.currentResult)
+    XCTAssertEqual(state.rounds, retry.rounds)
+    XCTAssertEqual(state.showingAttemptInView(), state)
   }
 
   func testAPendingSelfCorrectionComesBackWithItsNotice() throws {
@@ -317,7 +340,7 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentStep?.id, "check")
     XCTAssertNotEqual(state.rounds["check"], round)
     XCTAssertNil(state.currentAnswer)
-    XCTAssertFalse(state.canGoBack, "its earlier copy no longer holds the attempt")
+    XCTAssertTrue(state.canGoBack, "its earlier copy shows the first attempt")
   }
 
   func testResumedRunOpensAfterTheReadingBeforeTheFirstOpenScreen() throws {

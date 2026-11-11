@@ -1,4 +1,5 @@
 import { type LessonPlayerState } from "../lesson-player-state";
+import { hasAttemptAt } from "./lesson-attempts";
 import { showPosition } from "./lesson-flow";
 
 export function goBack(state: LessonPlayerState): LessonPlayerState {
@@ -11,13 +12,10 @@ export function goBack(state: LessonPlayerState): LessonPlayerState {
   return showPosition(state, position);
 }
 
-/**
- * A missed question that came back holds its attempt in the later copy, so the earlier one, its
- * result cleared, would show it unanswered and let the learner answer it twice.
- */
-function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
+/** An earlier copy of a question with no attempt to show would ask it again, which its retry does. */
+function isUnansweredEarlierCopy(state: LessonPlayerState, position: number): boolean {
   const id = state.queue[position] ?? "";
-  return !(id in state.results) && state.queue.includes(id, position + 1);
+  return state.queue.includes(id, position + 1) && !hasAttemptAt(state, position);
 }
 
 export function canGoBack(state: LessonPlayerState): boolean {
@@ -33,7 +31,7 @@ export function canGoBack(state: LessonPlayerState): boolean {
     (state.phase === "playing" || state.phase === "feedback") &&
     state.position > 0 &&
     !state.quickCheck &&
-    !isEarlierCopy(state, state.position - 1)
+    !isUnansweredEarlierCopy(state, state.position - 1)
   );
 }
 
