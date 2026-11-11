@@ -19,7 +19,8 @@ export const EXAM_IDENTITY_INSTRUCTIONS: string = decisionPrompt;
 /** Never a learner's personal details. */
 export type ExamDescription = {
   board: string | null;
-  country: string;
+  /** Null when nobody knows it; never filled in from a candidate. */
+  country: string | null;
   name: string;
   role: string | null;
 };
@@ -40,6 +41,20 @@ function describeExam(exam: ExamDescription): ExamDescription {
   return { board: exam.board, country: exam.country, name: exam.name, role: exam.role };
 }
 
+/** Each side as its own data, so an unknown country stays unknown rather than the other side's. */
+export function formatExamIdentityInput({
+  candidate,
+  request,
+}: {
+  candidate: ExamDescription;
+  request: ExamDescription;
+}): { CANDIDATE: string; REQUEST: string } {
+  return {
+    CANDIDATE: JSON.stringify(describeExam(candidate)),
+    REQUEST: JSON.stringify(describeExam(request)),
+  };
+}
+
 /** Both sides are delimited data, so a name claiming "same exam" can't move the verdict. */
 export async function evaluateExamIdentityPair({
   candidate,
@@ -52,10 +67,7 @@ export async function evaluateExamIdentityPair({
 }) {
   const { answers, ...run } = await evaluateQuestions({
     fallbackModel: FALLBACK_EVALUATION_MODEL,
-    input: {
-      CANDIDATE: JSON.stringify(describeExam(candidate)),
-      REQUEST: JSON.stringify(describeExam(request)),
-    },
+    input: formatExamIdentityInput({ candidate, request }),
     // Only shared blueprints are compared, and their names are stored with them.
     keepInput: true,
     model,
