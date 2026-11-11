@@ -24,14 +24,10 @@ export type ReadStudyDay = {
   timeZone: string;
 };
 
-/** The day Today shows before Start builds it; the Plan and the challenge screen read today from it. */
-export async function previewToday(userId: string, goalId: string, timeZone: string) {
+/** The blocks Today shows before Start builds the day; the Plan and the challenge screen read today from them. */
+export async function previewTodayBlocks(userId: string, goalId: string, timeZone: string) {
   const planned = await readPlannedDay(userId, goalId, timeZone);
-
-  return {
-    blocks: toUnstartedBlocks(planned?.day.blocks ?? []),
-    plannedMinutes: planned?.day.plannedMinutes ?? 0,
-  };
+  return toUnstartedBlocks(planned?.day.blocks ?? []);
 }
 
 /** Reads never move a zone, settle a plan, stamp a queue or create the day's session. */

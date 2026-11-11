@@ -287,31 +287,33 @@ describe("weekly study time", () => {
     expect(today.today.session.week.time.studiedMinutes).toBe(1);
   });
 
-  it("counts a free exam goal's days past the free week at what their sessions hold", async () => {
+  it("counts free exam goals' days past the free week at what their sessions hold", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
     const user = await userFixture();
+    const expired = { createdAt: daysAgo(10), kind: "exam" } as const;
 
-    const { goal, planItems, skills } = await sessionGoalFixture({
-      challengesDone: true,
-      goal: { createdAt: daysAgo(10), kind: "exam" },
-      userId: user.id,
-    });
+    const [first, second] = await Promise.all([
+      sessionGoalFixture({ challengesDone: true, goal: expired, userId: user.id }),
+      sessionGoalFixture({ challengesDone: true, goal: expired, userId: user.id }),
+    ]);
 
     await Promise.all([
-      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-      dueSkillFixture({ skillId: skills[0]?.id ?? "", userId: user.id }),
-      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      ...[first, second].flatMap(({ planItems, skills }) => [
+        prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+        dueSkillFixture({ skillId: skills[0]?.id ?? "", userId: user.id }),
+      ]),
+      learningProfileFixture({ activeGoalId: first.goal.id, userId: user.id }),
       studySessionFixture({
         endedAt: daysAgo(2),
-        goalId: goal.id,
+        goalId: first.goal.id,
         localDate: new Date(SESSION_TODAY.getTime() - 2 * 86_400_000),
         plannedMinutes: 4,
         userId: user.id,
       }),
       studySessionFixture({
         endedAt: daysAgo(1),
-        goalId: goal.id,
+        goalId: first.goal.id,
         localDate: new Date(SESSION_TODAY.getTime() - 86_400_000),
         plannedMinutes: 0,
         userId: user.id,
@@ -320,36 +322,39 @@ describe("weekly study time", () => {
 
     mockSession(user.id);
 
-    const [today, planView] = await Promise.all([
-      getTodayView({ goalId: goal.id }),
-      getPlanTabView({ goalId: goal.id }),
+    const [firstToday, secondToday, planView] = await Promise.all([
+      getTodayView({ goalId: first.goal.id }),
+      getTodayView({ goalId: second.goal.id }),
+      getPlanTabView({ goalId: first.goal.id }),
     ]);
 
-    if (today.status !== "ready") {
-      throw new Error(`Expected ready Today, received ${today.status}`);
+    if (firstToday.status !== "ready" || secondToday.status !== "ready") {
+      throw new Error("Expected both goals' Today to be ready");
     }
 
-    const { minutes, status, week } = today.today.session;
+    const planned = [firstToday, secondToday].map(({ today }) => today.session.minutes.planned);
+    const todayMinutes = planned.reduce((sum, minutes) => sum + minutes, 0);
 
-    expect(status).toBe("unstarted");
-    expect(minutes.planned).toBeGreaterThan(0);
-    expect(minutes.planned).toBeLessThan(45);
+    expect(planned.every((minutes) => minutes > 0 && minutes < 45)).toBe(true);
 
-    expect(week.days.map(({ goalMinutes, kind }) => ({ goalMinutes, kind }))).toStrictEqual([
+    expect(
+      firstToday.today.session.week.days.map(({ goalMinutes, kind }) => ({ goalMinutes, kind })),
+    ).toStrictEqual([
       { goalMinutes: 4, kind: "study" },
       { goalMinutes: 0, kind: "study" },
-      { goalMinutes: minutes.planned, kind: "study" },
+      { goalMinutes: todayMinutes, kind: "study" },
       { goalMinutes: 0, kind: "study" },
       { goalMinutes: 0, kind: "study" },
       { goalMinutes: 0, kind: "study" },
       { goalMinutes: 0, kind: "study" },
     ]);
 
-    expect(week.time.targetMinutes).toBe(4 + minutes.planned);
+    expect(firstToday.today.session.week.time.targetMinutes).toBe(4 + todayMinutes);
+    expect(secondToday.today.session.week.time.targetMinutes).toBe(4 + todayMinutes);
 
     expect(planView).toMatchObject({
       status: "ready",
-      view: { plan: { weekTime: { targetMinutes: 4 + minutes.planned } } },
+      view: { plan: { weekTime: { targetMinutes: 4 + todayMinutes } } },
     });
   });
 });

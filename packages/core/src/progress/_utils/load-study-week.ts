@@ -5,6 +5,8 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess } from "../../entitlements/limits";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readPlannedDay } from "../../learner/facts/planned-day";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { getFreeWeekEnd } from "../../sessions/_utils/exam-access";
@@ -31,20 +33,17 @@ const WEEK_DAYS = 7;
 export async function loadStudyWeek({
   localDate,
   selectedPlan,
-  unbuiltDay,
   userId,
 }: {
   localDate: Date;
   selectedPlan?: { goalId: string; settings: unknown };
-  /** One goal's day today as Today plans it, before Start saves its session. */
-  unbuiltDay?: { goalId: string; plannedMinutes: number };
   userId: string;
 }): Promise<StudyWeek> {
   const weekStart = getStartOfWeek(localDate);
 
   const weekDates = { gte: weekStart, lt: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY) };
 
-  const [days, sessions, goals, viewer] = await Promise.all([
+  const [days, sessions, goals, viewer, now] = await Promise.all([
     prisma.dailyProgress.findMany({
       select: { date: true, timeSpentSeconds: true },
       where: { date: weekDates, userId },
@@ -58,6 +57,7 @@ export async function loadStudyWeek({
       where: { status: "active", userId },
     }),
     readEntitlementViewer(),
+    getRequestInstant(),
   ]);
 
   const examPrep = viewer ? getExamPrepAccess(viewer.tier) : null;
@@ -85,10 +85,31 @@ export async function loadStudyWeek({
       planSettings: selectedPlan?.goalId === goal.id ? selectedPlan.settings : goal.plan?.settings,
       startDate: getDateInTimeZone({ date: goal.createdAt, timeZone }),
       targetDate: goal.targetDate,
+      timeZone,
     };
   });
 
   type StartedGoal = (typeof started)[number];
+
+  const isPastFreeWeek = ({ freeUntil }: StartedGoal, date: Date): boolean =>
+    freeUntil !== null && date > freeUntil;
+
+  // Before Start saves today's session, the day counts what Today plans for it.
+  const unbuilt = started.filter(
+    (entry) =>
+      isPastFreeWeek(entry, localDate) &&
+      getSavedMinutes(entry.goal.id, localDate) === undefined &&
+      getDateInTimeZone({ date: now, timeZone: entry.timeZone }).getTime() === localDate.getTime(),
+  );
+
+  const plannedToday = new Map(
+    await Promise.all(
+      unbuilt.map(async ({ goal, timeZone }) => {
+        const planned = await readPlannedDay(userId, goal.id, timeZone);
+        return [goal.id, planned?.day.plannedMinutes ?? 0] as const;
+      }),
+    ),
+  );
 
   // Dates before a goal existed must not appear as missed study or chosen rest days.
   const getPlanMinutes = ({ goal, planSettings, startDate }: StartedGoal, date: Date): number =>
@@ -97,14 +118,12 @@ export async function loadStudyWeek({
       : (getPastMinutes(goal.id, date) ?? getGoalDayMinutes({ date, goal, planSettings }));
 
   const getUnbuiltMinutes = (goalId: string, date: Date): number =>
-    unbuiltDay?.goalId === goalId && date.getTime() === localDate.getTime()
-      ? unbuiltDay.plannedMinutes
-      : 0;
+    date.getTime() === localDate.getTime() ? (plannedToday.get(goalId) ?? 0) : 0;
 
   // Past the free exam week a day holds only reviews and mistakes, so the plan's time would be a
   // target the learner can't reach. A day whose session isn't planned yet holds no known time.
   const getGoalMinutes = (entry: StartedGoal, date: Date): number =>
-    entry.freeUntil && date > entry.freeUntil
+    isPastFreeWeek(entry, date)
       ? (getSavedMinutes(entry.goal.id, date) ?? getUnbuiltMinutes(entry.goal.id, date))
       : getPlanMinutes(entry, date);
 

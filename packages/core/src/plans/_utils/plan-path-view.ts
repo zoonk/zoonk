@@ -2,8 +2,7 @@ import { getChallengeTimings } from "../../checkpoints/_utils/challenge-timing";
 import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-results";
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
-import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { previewToday } from "../../sessions/_utils/read-study-day";
+import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -14,21 +13,12 @@ export async function readPlanToday({ context }: { context: PlanReadContext }) {
   const session = await readTodayPlanSession(goal.userId, goal.id, timeZone);
 
   if (session) {
-    return { blocks: session.blocks, plannedMinutes: session.plannedMinutes, session };
+    return { blocks: session.blocks, session };
   }
 
-  return { ...(await previewToday(goal.userId, goal.id, timeZone)), session };
-}
+  const blocks = await previewTodayBlocks(goal.userId, goal.id, timeZone);
 
-/** Today's day before Start counts in the week as Today plans it. */
-export async function readPlanWeek({ context }: { context: PlanReadContext }) {
-  const { plannedMinutes, session } = await readPlanToday({ context });
-
-  return loadStudyWeek({
-    localDate: context.today,
-    unbuiltDay: session ? undefined : { goalId: context.goal.id, plannedMinutes },
-    userId: context.goal.userId,
-  });
+  return { blocks, session };
 }
 
 type PathInput = Pick<
