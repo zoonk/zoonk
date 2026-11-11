@@ -54,11 +54,12 @@
   "onboarding_course_starting": "09caea78fbb686ec96c458060b31e914c899006de0cd2be9e4c7faec696a603c",
   "onboarding_create_account": "abdaa9890437a6c571cd0f1ef271e4b8f3a74a823ea928629b6d7dd4c5a462aa",
   "onboarding_create_account_short": "445216e47868e5ed42c9b94c1b77324271b03a94c1363b0e8fc48e17043b9292",
+  "onboarding_date_continue_without": "7a65775ce20ee070b15360e47ab2c2a7fe9d4f0e1502510054b9d27015f2d8d3",
   "onboarding_date_description": "8f49d9f6d16631eb5906d160d8e57774d5ec2969a353bf037fb4d551b2444cc6",
   "onboarding_date_is_today": "131a12bd2f8b18b91d81ae4ec3a1bb9aeb06563fab463cd9bd10bcef8862e3b1",
   "onboarding_date_label": "c01e58072b8801a4a5138cd0116d36c8a6fe882458503be4d61dcd2d3ac065bf",
-  "onboarding_date_none": "db196fae653088cdc7e5be5ddb8bfcc316fab42fc4d72a776b55e88f9ed2ca87",
   "onboarding_date_passed": "153724fbaffe41799cf1e75d6dccfdc8c921141371f125e4325f1022a4b32fad",
+  "onboarding_date_remove": "85fa6f88dfd1f43010bb9645fbc73e3e49ff134dbed877b76e0aa9689b7860ad",
   "onboarding_date_title": "8f093bdb182d7928f4850504f9f824cd22019acc23c065016d96bd2e3215828d",
   "onboarding_day_too_short": "2605917a8d7bf13beb542451443a5094c6779134d3ef54b0204c4b7513453ba4",
   "onboarding_days": "bf3d90b0afe406996b3a86599c43ef9bc89a5dd665ab27ba22a526cd68d50b98",
@@ -539,6 +540,12 @@
     <string name="onboarding_understood_locked_goal">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">無料アカウントで利用できます</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -967,7 +974,8 @@
     <string name="onboarding_another_date">別の日付</string>
     <string name="onboarding_date_title">目標日はありますか？</string>
     <string name="onboarding_date_description">日付を決めなければ、自分のペースですべて学べます。それぞれの節目にいつ到達するかも表示します。</string>
-    <string name="onboarding_date_none">日付を決めずにすべて学ぶ</string>
+    <string name="onboarding_date_continue_without">日付を設定せずに続ける</string>
+    <string name="onboarding_date_remove">日付を削除する</string>
     <string name="onboarding_date_label">日付</string>
     <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
     <string name="onboarding_no_date">日付なし</string>
@@ -1096,12 +1104,6 @@
     </plurals>
     <string name="onboarding_reason_choices">学ぶ理由</string>
     <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">無料アカウントで利用できます</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">国</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->

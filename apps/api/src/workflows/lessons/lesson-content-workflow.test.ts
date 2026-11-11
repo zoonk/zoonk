@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
+import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
@@ -96,6 +97,10 @@ describe(lessonContentWorkflow, () => {
 
     vi.mocked(checkLessonQuality).mockResolvedValue(
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
+    );
+
+    vi.mocked(checkLanguageLesson).mockResolvedValue(
+      taskResult({ issues: [] }, "anthropic/claude-sonnet-5.5"),
     );
   });
 

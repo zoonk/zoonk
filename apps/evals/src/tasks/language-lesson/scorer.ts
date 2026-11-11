@@ -7,7 +7,7 @@ import { isSameLanguage } from "@zoonk/utils/languages";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
 import { type LanguageLessonInput } from "./test-cases";
 
-function parseLesson(output: string): LanguageLessonContent | null {
+export function parseLesson(output: string): LanguageLessonContent | null {
   try {
     return JSON.parse(output) as LanguageLessonContent;
   } catch {

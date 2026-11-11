@@ -45,6 +45,8 @@ import { imageCheckTask } from "./image-check/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { imageSceneTask } from "./image-scene/task";
 import { languageAudioTask } from "./language-audio/task";
+import { languageLessonCheckTask } from "./language-lesson-check/task";
+import { languageLessonFixTask } from "./language-lesson-fix/task";
 import { languageLessonTask } from "./language-lesson/task";
 import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
 import { lessonFixTask } from "./lesson-fix/task";
@@ -158,6 +160,8 @@ export const TASKS: readonly RegisteredTask[] = [
   pictureNeedTask,
   lessonWriterTask,
   lessonQualityCheckTask,
+  languageLessonCheckTask,
+  languageLessonFixTask,
   lessonFixTask,
   stepVariantTask,
   exampleLinesTask,

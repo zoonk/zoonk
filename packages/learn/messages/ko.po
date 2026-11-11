@@ -9875,14 +9875,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "날짜를 정하지 않으면 원하는 속도로 모든 내용을 공부할 수 있고, 각 단계에 언제 도달할지 알려 드려요."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "날짜 없이 모두 공부하기"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "날짜 없이 계속하기"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "목표로 정한 날짜가 있나요?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "날짜 지우기"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"

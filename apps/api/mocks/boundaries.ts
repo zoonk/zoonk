@@ -52,7 +52,11 @@ export const boundaries = {
   },
   "@zoonk/ai/tasks/language/check-sentence-orders": { checkSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/conversation-scenario": { generateConversationScenario: vi.fn() },
-  "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
+  "@zoonk/ai/tasks/language/language-lesson": {
+    fixLanguageLesson: vi.fn(),
+    generateLanguageLesson: vi.fn(),
+  },
+  "@zoonk/ai/tasks/language/language-lesson-check": { checkLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
   "@zoonk/ai/tasks/language/skill-levels": { classifySkillLevels: vi.fn() },
