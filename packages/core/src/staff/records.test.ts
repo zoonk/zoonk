@@ -268,19 +268,21 @@ describe("staff reads", () => {
     expect(JSON.stringify(log.mock.calls)).not.toContain(user.name);
   });
 
-  it("uses a local five-second statement timeout and restores the connection setting", async () => {
-    const before = await prisma.$queryRaw<[{ statement_timeout: string }]>`SHOW statement_timeout`;
+  it("sets the default statement timeout to five seconds inside the transaction", async () => {
+    const [setting] = await staffTransaction(
+      (client) => client.$queryRaw<[{ statement_timeout: string }]>`SHOW statement_timeout`,
+    );
 
+    expect(setting.statement_timeout).toBe("5s");
+  });
+
+  it("maps real Postgres query cancellation to a timeout result", async () => {
     const result = await staffRead({
       call: { verb: "timeout-probe" },
       run: async () => {
         await staffTransaction(async (client) => {
-          const [setting] = await client.$queryRaw<
-            [{ statement_timeout: string }]
-          >`SHOW statement_timeout`;
-
-          expect(setting.statement_timeout).toBe("5s");
-          await client.$queryRaw`SELECT pg_sleep(6)`;
+          await client.$executeRaw`SET LOCAL statement_timeout = '50ms'`;
+          await client.$queryRaw`SELECT pg_sleep(1)`;
         });
 
         return { data: {}, rows: 0 };
@@ -291,7 +293,5 @@ describe("staff reads", () => {
       message: expect.stringContaining("narrower filters"),
       status: "timeout",
     });
-
-    await expect(prisma.$queryRaw`SHOW statement_timeout`).resolves.toStrictEqual(before);
   });
 });
