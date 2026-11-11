@@ -141,7 +141,7 @@ private struct FocusTestSuggestedFocus: View {
         FocusTestProposal(proposal: proposal, goalID: goalID, isAnswered: $isAnswered)
       }
 
-      if let changeFocus, [.current, .alreadyFits, .handPicked].contains(focus.state) {
+      if let changeFocus, focus.state == .current || focus.state == .handPicked {
         Button(action: changeFocus) {
           Text(
             "Change focus", tableName: "FocusTest",
