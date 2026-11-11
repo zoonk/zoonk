@@ -18,7 +18,10 @@ describe(toExplanationSteps, () => {
     ]);
 
     expect(steps[0]?.content).toStrictEqual({
-      image: { alt: "The market isn't one price", prompt: "A basket of company logos on a scale" },
+      image: {
+        alt: "A scale holding a basket of company logos, the biggest logos taking most of the room",
+        prompt: "A basket of company logos on a scale",
+      },
       text: "“The market” is an **index**.",
       title: "The market isn't one price",
     });

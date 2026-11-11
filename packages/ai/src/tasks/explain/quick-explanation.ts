@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { imageRequestSchema } from "../images/image-request-schema";
 import {
   QUICK_EXPLANATION_MAX_SCREENS,
   QUICK_EXPLANATION_MIN_SCREENS,
@@ -28,8 +29,9 @@ const MAX_RELATED_QUESTIONS = 3;
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; the story comes before the check and the ending. */
 const schema = z.object({
   title: z.string(),
+  description: z.string(),
   screens: z
-    .array(z.object({ title: z.string(), text: z.string(), imagePrompt: z.string().nullable() }))
+    .array(z.object({ title: z.string(), text: z.string(), image: imageRequestSchema }))
     .min(QUICK_EXPLANATION_MIN_SCREENS)
     .max(QUICK_EXPLANATION_MAX_SCREENS),
   check: z.object({
