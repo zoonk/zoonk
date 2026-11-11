@@ -41,6 +41,7 @@ msgstr "Doğru"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "Sıradaki"
@@ -55,6 +56,7 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, other {{done, number} ders tamamlandı (toplam # ders)}}"
 
 #: src/_components/chapter-mark.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "Atlandı"
@@ -69,6 +71,7 @@ msgstr "Atlandı"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -396,6 +399,7 @@ msgstr "{done, number} / {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +458,7 @@ msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar do
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -819,6 +823,7 @@ msgstr "Hafta sonları farklı çalışma süresi"
 
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
+#: src/today/today-week-day.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
 msgstr "{time} çalıştın"
@@ -1874,6 +1879,7 @@ msgstr "Yazdır"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -4806,25 +4812,25 @@ msgid "Next on your path"
 msgstr "Yolculuğunda sıradaki adım"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
 msgstr "çalışılmadı"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "1sq74z"
 msgid "rest day"
 msgstr "dinlenme günü"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "kkpP2k"
 msgid "today"
 msgstr "bugün"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
 msgstr "planlandı"
@@ -4841,7 +4847,7 @@ msgid "This week"
 msgstr "Bu hafta"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
@@ -7152,7 +7158,7 @@ msgid "Couldn't undo. Try again."
 msgstr "Geri alınamadı. Tekrar dene."
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7168,87 @@ msgstr "Sunucuya ulaşamadık. Bağlantını kontrol et."
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "Ünite tamamlandı"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Tam ekranda aç"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Zihin haritası"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Ana kavramları tek bir görselde"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Oluştur"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {Hazırlanacak # ders}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Metin olarak gör"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Zihin haritası hazır"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Önce dersleri, sonra zihin haritasını hazırlıyoruz…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Zihin haritasını çiziyoruz…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "Bu kez oluşturulamadı."
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7269,6 @@ msgstr "Zihin haritası: {title}. {idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Kısaca:"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, other {Hazırlanacak # ders}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, other {Önce # ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "Ana kavramları tek bir görselde"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Metin olarak gör"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "Zihin haritası hazır"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Önce dersleri, sonra zihin haritasını hazırlıyoruz…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Zihin haritasını çiziyoruz…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "Bu kez oluşturulamadı."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Zihin haritası"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Oluştur"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7934,17 +7949,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Henüz bilmiyorum"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {Hiçbir yanlış düzeltilmedi} one {Yanlış düzeltildi. Yanlış defterinden çıkarılıyor.} other {# yanlış düzeltildi. Yanlış defterinden çıkarılıyor.}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Cevap geri bildirimi"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {Hiçbir yanlış düzeltilmedi} one {Yanlış düzeltildi. Yanlış defterinden çıkarılıyor.} other {# yanlış düzeltildi. Yanlış defterinden çıkarılıyor.}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "Doğru cevap: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9789,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Bu hedef için verdiğin cevaplar silinir ve yeniden bir hedef yazarsın."
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "Seninle ilgili kalan soruları atla"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "Hepsini atla"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Seninle ilgili kalan soruları atla"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -13493,11 +13514,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "Üst üste {count} doğru"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Doğru cevap: {answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -14339,6 +14355,7 @@ msgstr ", atlandı"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "Senin için hazırlıyoruz…"
@@ -14369,16 +14386,19 @@ msgid "What changed"
 msgstr "Neler değişti"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Ay_6I8"
 msgid "Not written yet."
 msgstr "Henüz hazırlanmadı."
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Sıradaki derslerin"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Her zamankinden uzun sürüyor"
@@ -14656,6 +14676,41 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Haftan"
 
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "Şimdiye kadar öğrendiklerini kontrol eder."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "Öğrendiklerini kendi cümlelerinle anlatırsın."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "Yanlış yaptığın soruları bir kez daha denersin."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "Gerçek sınava benzeyen bir deneme sınavı."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "Öğrendiklerini bir araya getiren yeni sorular."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "Çalıştığın konuları unutmadan önce hatırlatır."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} / {count, plural, other {#}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
@@ -14706,45 +14761,55 @@ msgctxt "MuwOz5"
 msgid "every topic, your weakest first"
 msgstr "tüm konular, önce en çok zorlandıkların"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
 msgstr "günlük çalışma süresi tamamlandı"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "F8phHs"
 msgid "studied"
 msgstr "çalışıldı"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "uMBOLl"
 msgid "exam day"
 msgstr "sınav günü"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
 msgstr "hedef tarihin"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
 msgid "before your plan"
 msgstr "planının başlangıcından önce"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "fy2sc9"
 msgid "after your date"
 msgstr "hedef tarihinden sonra"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
 msgid "{day}: {name}"
 msgstr "{day}: {name}"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "JsGsZi"
 msgid "{day}: {name}, {status}"
 msgstr "{day}: {name}, {status}"
+
+#: src/today/today-week-day.tsx
+msgctxt "KPis2L"
+msgid "{studied} of {planned} studied"
+msgstr "{studied} / {planned} çalışıldı"
+
+#: src/today/today-week-day.tsx
+msgctxt "9PPMqu"
+msgid "{time} planned"
+msgstr "{time} planlandı"
 
 #: src/today/today-week.tsx
 msgctxt "sq7Fxi"
@@ -15014,8 +15079,3 @@ msgstr "Gelecek hafta"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Haftanın günlerine göre bu beceride verilen doğru cevaplar"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Tam ekranda aç"

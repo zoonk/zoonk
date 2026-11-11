@@ -41,6 +41,7 @@ msgstr "Correct"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "À suivre"
@@ -55,6 +56,7 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, one {{done, number} leçon terminée sur #} other {{done, number} leçons terminées sur #}}"
 
 #: src/_components/chapter-mark.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "Sauté"
@@ -69,6 +71,7 @@ msgstr "Sauté"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -396,6 +399,7 @@ msgstr "{done, number} sur {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +458,7 @@ msgstr "Cela prend plus de temps que d’habitude. L’ouverture se fera toute s
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -819,6 +823,7 @@ msgstr "Durée différente le week-end"
 
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
+#: src/today/today-week-day.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
 msgstr "{time} d’étude"
@@ -1874,6 +1879,7 @@ msgstr "Imprimer"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -4806,25 +4812,25 @@ msgid "Next on your path"
 msgstr "La suite de ton parcours"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
 msgstr "pas étudié"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "1sq74z"
 msgid "rest day"
 msgstr "jour de repos"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "kkpP2k"
 msgid "today"
 msgstr "aujourd’hui"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
 msgstr "prévu"
@@ -4841,7 +4847,7 @@ msgid "This week"
 msgstr "Cette semaine"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day} : {status}"
@@ -7152,7 +7158,7 @@ msgid "Couldn't undo. Try again."
 msgstr "Impossible d’annuler. Réessaie."
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7168,87 @@ msgstr "Impossible de joindre le serveur. Vérifie ta connexion."
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "Chapitre terminé"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Plein écran"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Carte mentale"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Ses idées principales en une image"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Créer"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# leçon à préparer} other {# leçons à préparer}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {On prépare d’abord # leçon, ce qui prend quelques minutes.} other {On prépare d’abord # leçons, ce qui prend quelques minutes.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {On prépare d’abord # leçon, qui est décomptée de tes leçons gratuites.} other {On prépare d’abord # leçons, qui sont décomptées de tes leçons gratuites.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "En texte"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Carte mentale prête"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Ça prend quelques minutes. Tu peux quitter la page ; tu retrouveras la carte ici."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Préparation des leçons, puis de la carte mentale…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Environ trente secondes. Tu peux quitter la page ; tu retrouveras la carte ici."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Création de la carte mentale…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "La carte mentale n’a pas pu être créée cette fois-ci."
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7269,6 @@ msgstr "Carte mentale : {title}. {idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "En bref :"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, one {# leçon à préparer} other {# leçons à préparer}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, one {On prépare d’abord # leçon, ce qui prend quelques minutes.} other {On prépare d’abord # leçons, ce qui prend quelques minutes.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {On prépare d’abord # leçon, qui est décomptée de tes leçons gratuites.} other {On prépare d’abord # leçons, qui sont décomptées de tes leçons gratuites.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "Ses idées principales en une image"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "En texte"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "Carte mentale prête"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "Ça prend quelques minutes. Tu peux quitter la page ; tu retrouveras la carte ici."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Préparation des leçons, puis de la carte mentale…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "Environ trente secondes. Tu peux quitter la page ; tu retrouveras la carte ici."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Création de la carte mentale…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "La carte mentale n’a pas pu être créée cette fois-ci."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Carte mentale"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Créer"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7934,17 +7949,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Je ne sais pas encore"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {# erreur corrigée} one {# erreur corrigée et retirée de ton carnet.} other {# erreurs corrigées et retirées de ton carnet.}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Retour sur ta réponse"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {# erreur corrigée} one {# erreur corrigée et retirée de ton carnet.} other {# erreurs corrigées et retirées de ton carnet.}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "Bonne réponse : {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9789,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Tes réponses pour cet objectif seront effacées et tu devras saisir à nouveau un objectif."
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "Sauter les questions restantes à propos de toi"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "Tout sauter"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Sauter les questions restantes à propos de toi"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -13493,11 +13514,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count} bonnes réponses d’affilée"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Bonne réponse : {answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -14339,6 +14355,7 @@ msgstr ", sautée"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "En préparation pour toi…"
@@ -14369,16 +14386,19 @@ msgid "What changed"
 msgstr "Ce qui a changé"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Ay_6I8"
 msgid "Not written yet."
 msgstr "Pas encore préparées."
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Tes prochaines leçons"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Ça prend plus de temps que d’habitude"
@@ -14656,6 +14676,41 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Ta semaine"
 
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "Vérifie ce que tu as appris jusqu’ici."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "Tu expliques ce que tu as appris avec tes propres mots."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "Tu reprends les questions où tu as fait des erreurs."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "Un examen blanc, comme le vrai."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "De nouvelles questions qui mélangent ce que tu as appris."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "Te fait revoir ce que tu as étudié avant que tu l’oublies."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} sur {count, plural, one {# question} other {# questions}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
@@ -14706,45 +14761,55 @@ msgctxt "MuwOz5"
 msgid "every topic, your weakest first"
 msgstr "tous les sujets, en commençant par ceux que tu maîtrises le moins"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
 msgstr "durée quotidienne atteinte"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "F8phHs"
 msgid "studied"
 msgstr "étudié"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "uMBOLl"
 msgid "exam day"
 msgstr "jour d’examen"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
 msgstr "date de ton objectif"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
 msgid "before your plan"
 msgstr "avant ton plan"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "fy2sc9"
 msgid "after your date"
 msgstr "après la date de ton objectif"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
 msgid "{day}: {name}"
 msgstr "{day} : {name}"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "JsGsZi"
 msgid "{day}: {name}, {status}"
 msgstr "{day} : {name}, {status}"
+
+#: src/today/today-week-day.tsx
+msgctxt "KPis2L"
+msgid "{studied} of {planned} studied"
+msgstr "{studied} d’étude sur {planned}"
+
+#: src/today/today-week-day.tsx
+msgctxt "9PPMqu"
+msgid "{time} planned"
+msgstr "Durée prévue : {time}"
 
 #: src/today/today-week.tsx
 msgctxt "sq7Fxi"
@@ -15014,8 +15079,3 @@ msgstr "La semaine prochaine"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Bonnes réponses pour cette compétence chaque jour de la semaine"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Plein écran"
