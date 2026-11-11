@@ -135,6 +135,12 @@ function useFocusIntro() {
         return t(
           "You chose your own focus, and your plan keeps it. This is what the test suggests.",
         );
+      case "declined":
+        return t({
+          description:
+            "Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged.",
+          message: "You kept your plan as it is.",
+        });
       default:
         return state satisfies never;
     }
@@ -154,7 +160,11 @@ function SuggestedFocus({
   const intro = useFocusIntro();
   const space = useSentenceSpace();
   const [applied, setApplied] = useState(false);
-  const changesFocus = plan && (focus.state === "current" || focus.state === "handPicked");
+
+  const changesFocus =
+    plan &&
+    (focus.state === "current" || focus.state === "handPicked" || focus.state === "declined");
+
   const followsImportance = focus.basis === "importance";
 
   if (focus.rows.length === 0) {
