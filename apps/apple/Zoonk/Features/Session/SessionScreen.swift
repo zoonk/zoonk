@@ -115,8 +115,14 @@ private struct SessionContent: View {
             }
 
             // The buddy acts once, on the next stop's screen.
-            DayMomentSections(result: moment.day)
-              .environment(\.celebrates, false)
+            Group {
+              Section {
+                DayProgressBlock(moment: moment)
+              }
+
+              DayMomentSections(result: moment.day)
+            }
+            .environment(\.celebrates, false)
 
             Section {
               ProgressView()
@@ -243,23 +249,28 @@ private struct NextStopView: View {
         MomentSummary(moment: moment, title: title(of: moment))
       }
 
+      Section {
+        DayProgressBlock(moment: moment)
+          .celebratesOnce(id: moment)
+      }
+
       DayMomentSections(result: moment.day)
 
       if let chapter = moment.finishedChapter {
         FinishedChapterSection(chapter: chapter)
       }
-    }
+    } else {
+      Section {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "\(day.sessionBar.completed) of \(day.sessionBar.total) done",
+            tableName: "Session", comment: "How far the day's session is"
+          )
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
 
-    Section {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
-          tableName: "Session", comment: "How far the day's session is"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-
-        MeterParts(parts: day.meterParts)
+          DaySegments(segments: day.daySegments)
+        }
       }
     }
   }
@@ -708,6 +719,11 @@ private struct MomentSummary: View {
           comment: "When the block's lesson comes back"
         )
         .foregroundStyle(.mutedForeground)
+      }
+
+      if let catchUp = moment.dayProgress.catchUp {
+        CatchUpLine(catchUp: catchUp)
+          .padding(.top, 8)
       }
     }
   }

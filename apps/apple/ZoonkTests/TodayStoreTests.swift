@@ -9,17 +9,25 @@ final class TodayStoreTests: XCTestCase {
 
     XCTAssertEqual(session.minutes.left, 240)
     XCTAssertEqual(session.blocks.map(\.estimatedMinutes), [61])
-    XCTAssertEqual(session.meterParts.map(\.weight), [61, 179])
-    guard case .track = session.meterParts.last?.fill else {
-      return XCTFail("Reserved lessons use the existing ahead track")
-    }
+    XCTAssertEqual(session.daySegments.count, 2)
+    XCTAssertEqual(session.daySegments.last, .ahead, "Reserved lessons take one equal ahead part")
+  }
+
+  func testASkippedBlockIsNeitherDoneNorCountedNorDrawn() throws {
+    var session = try timedDay(left: 30, coming: false, estimates: [8, 8, 8])
+    session.blocks[0].status = .completed
+    session.blocks[1].status = .skipped
+
+    XCTAssertEqual(session.sessionBar, SessionBar(completed: 1, total: 2))
+    XCTAssertEqual(session.daySegments.count, 2)
+    XCTAssertEqual(session.daySegments.first, .done)
   }
 
   func testOnlyLessonsBeingWrittenOrAwaitingPreparationGetAReservedSegment() throws {
     for (coming, preparing) in [(false, false), (true, false), (false, true), (true, true)] {
       let session = try timedDay(
         left: 61.5, coming: coming, preparing: preparing, estimates: [61])
-      XCTAssertEqual(session.meterParts.count, coming || preparing ? 2 : 1)
+      XCTAssertEqual(session.daySegments.count, coming || preparing ? 2 : 1)
       XCTAssertEqual(session.showsDayProgress, coming || preparing)
     }
 
@@ -871,6 +879,7 @@ private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment
     """
     {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
     "blocks":[\(blockJSON(position: 0, kind: "learn", status: "completed", id: blockID, lessonID: "l0", planItemID: nil, checkpoint: nil)),\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil))],
+    "dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":50},"sessionBar":{"completed":1,"total":2},
     "sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},
     "next":{"block":\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil)),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],

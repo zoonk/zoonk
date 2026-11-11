@@ -415,7 +415,12 @@ struct TodayDayLead: View {
       mockFunding
 
       if session.showsDayProgress {
-        DayProgressRow(session: session)
+        DaySegments(segments: session.daySegments)
+          .accessibilityElement(children: .ignore)
+          .accessibilityLabel(
+            Text(
+              "\(session.sessionBar.completed) of \(session.sessionBar.total) done",
+              tableName: "Today", comment: "How far the day's session is"))
       }
     }
   }
@@ -489,19 +494,6 @@ struct TodayDayLead: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
-  }
-}
-
-private struct DayProgressRow: View {
-  let session: StudyDay
-
-  var body: some View {
-    MeterParts(parts: session.meterParts)
-      .accessibilityElement(children: .ignore)
-      .accessibilityLabel(
-        Text(
-          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
-          tableName: "Today", comment: "How far the day's session is"))
   }
 }
 

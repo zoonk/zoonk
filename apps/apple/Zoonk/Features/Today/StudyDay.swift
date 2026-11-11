@@ -148,31 +148,34 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.contains { $0.status != .pending }
   }
 
-  var showsDayProgress: Bool { !blocks.isEmpty && meterParts.count >= 2 }
+  var showsDayProgress: Bool { !blocks.isEmpty && daySegments.count >= 2 }
 
-  var meterParts: [MeterParts.Part] {
-    var parts = blocks.map { block in
-      let weight = Double(max(block.estimatedMinutes, 1))
+  /// Core's `getSessionBar`: a skipped block is neither done nor counted.
+  var sessionBar: SessionBar {
+    SessionBar(
+      completed: blocks.filter { $0.status == .completed }.count,
+      total: blocks.filter { $0.status != .skipped }.count)
+  }
 
-      if block.isFinished {
-        return MeterParts.Part(weight: weight, fill: .color(.success))
+  var daySegments: [DaySegments.Segment] {
+    var segments = blocks.filter { $0.status != .skipped }.map { block -> DaySegments.Segment in
+      if block.status == .completed {
+        return .done
       }
 
       if block.position == nextPosition {
-        return MeterParts.Part(weight: weight, fill: .current)
+        return .current
       }
 
       let kind = block.learnKind
-      return MeterParts.Part(
-        weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
+      return kind == .lesson ? .ahead : .kind(kind.color)
     }
 
-    if lessonsComing || lessonsToPrepare {
-      let held = foldedMinutes(showing: blocks)
-      if held > 0 { parts.append(.init(weight: held, fill: .track)) }
+    if lessonsComing || lessonsToPrepare, foldedMinutes(showing: blocks) > 0 {
+      segments.append(.ahead)
     }
 
-    return parts
+    return segments
   }
 }
 
