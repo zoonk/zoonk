@@ -19,7 +19,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { StatusRegion } from "../_components/status-region";
 import { type CountryChoice, type SuggestedCountry } from "./country-choice";
-import { matchesCountry } from "./country-search";
+import { foundNoCountry, matchesCountry } from "./country-search";
 import { useCountryCatalog } from "./use-country-catalog";
 
 type PickerRow = { country: CountryChoice | null; home: boolean; key: string; label: string };
@@ -179,6 +179,7 @@ export function CountryPicker({
       ].filter((group) => group.items.length > 0);
 
   const results = searching ? (groups[0]?.items.length ?? 0) : null;
+  const noCountry = foundNoCountry({ found: results ?? 0, searching, status: catalog.status });
 
   const changeOpen = (next: boolean) => {
     if (!next) {
@@ -215,12 +216,12 @@ export function CountryPicker({
         <CommandList
           after={
             <>
-              {searching && results === 0 && (
+              {noCountry && (
                 <p className="text-muted-foreground px-4 py-6 text-center text-sm">
                   {t("No country found")}
                 </p>
               )}
-              {!searching && catalog.status !== "ready" && (
+              {catalog.status !== "ready" && (
                 <CatalogState onRetry={catalog.retry} status={catalog.status} />
               )}
             </>
@@ -245,7 +246,7 @@ export function CountryPicker({
       </Command>
 
       <StatusRegion className="sr-only">
-        {results !== null && <ResultCount count={results} />}
+        {results !== null && (results > 0 || noCountry) && <ResultCount count={results} />}
       </StatusRegion>
     </CommandDialog>
   );
