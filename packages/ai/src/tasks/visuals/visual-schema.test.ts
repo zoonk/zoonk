@@ -22,7 +22,7 @@ function chart(seriesCount: number): ChartVisual {
 }
 
 describe("lesson visual schema", () => {
-  it("takes a chart's categories and a timeline's events past the prompt's counts", () => {
+  it("takes a chart's categories, series and a timeline's events past the prompt's counts", () => {
     const timeline = {
       events: Array.from({ length: 11 }, (_, index) => ({
         date: String(1900 + index),
@@ -33,11 +33,7 @@ describe("lesson visual schema", () => {
       title: "A century",
     };
 
-    expect(lessonVisualSchema.safeParse(chart(3)).success).toBe(true);
+    expect(lessonVisualSchema.safeParse(chart(7)).success).toBe(true);
     expect(lessonVisualSchema.safeParse(timeline).success).toBe(true);
-  });
-
-  it("keeps a chart to the three series the app has colors for", () => {
-    expect(lessonVisualSchema.safeParse(chart(4)).success).toBe(false);
   });
 });

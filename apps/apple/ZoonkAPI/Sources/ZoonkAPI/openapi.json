@@ -37029,7 +37029,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -37187,7 +37186,6 @@
               },
               "series": {
                 "minItems": 1,
-                "maxItems": 3,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -37281,7 +37279,7 @@
             "additionalProperties": false
           }
         ],
-        "description": "A bar or line chart (categories with up to three series of values) or a timeline of dated events, drawn from its data"
+        "description": "A bar or line chart (categories with one or more series of values) or a timeline of dated events, drawn from its data"
       },
       "TrueFalseLabels": {
         "type": "string",
@@ -61270,7 +61268,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66194,7 +66191,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66681,7 +66677,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -66877,7 +66872,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -70821,7 +70815,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -71276,7 +71269,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -87038,7 +87030,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",

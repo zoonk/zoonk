@@ -14,8 +14,6 @@ const label = aimForCharacters(z.string(), LABEL_TARGET);
 const title = aimForCharacters(z.string(), TITLE_TARGET);
 const MIN_CATEGORIES = 2;
 const MIN_EVENTS = 2;
-/** The app has three series colors, and dropping a series could drop what a question asks about. */
-const MAX_SERIES = 3;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind first, then what the visual is about, then its data. */
 
@@ -32,8 +30,7 @@ const chartVisualSchema = z.object({
   categories: z.array(label).min(MIN_CATEGORIES),
   series: z
     .array(z.object({ name: label, values: z.array(z.number()).min(MIN_CATEGORIES) }))
-    .min(1)
-    .max(MAX_SERIES),
+    .min(1),
   /** Null for a made-up example. */
   source: title.nullable(),
 });
