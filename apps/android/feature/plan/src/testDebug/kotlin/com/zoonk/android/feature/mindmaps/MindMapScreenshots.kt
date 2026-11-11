@@ -85,6 +85,10 @@ class MindMapScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "de-w320dp-h1400dp-xxhdpi")
+    fun smallPhoneGerman() = capture("small-de")
+
+    @Test
     @Config(qualifiers = "w700dp-h1400dp-xhdpi")
     fun medium() = capture("medium")
 
@@ -174,13 +178,16 @@ class MindMapScreenshots {
         val PLUS_MONTH = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"month\""))
         val GUEST = offer(needLessons = 1, startable = 0, stop = stop("signUpRequired", "null", "null"))
         val FREE_LIMIT = offer(needLessons = 2, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
-        val NEED_LESSONS = """{"eligible":0,"needLessons":2,"startable":0,"stop":null}"""
+        val NEED_LESSONS = offer(needLessons = 2, startable = 0, eligible = 0)
+        val NEED_LESSONS_AT_LIMIT =
+            offer(needLessons = 2, startable = 0, eligible = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
 
         fun offer(
             needLessons: Int,
             startable: Int,
+            eligible: Int = 5,
             stop: String = "null",
-        ) = """{"eligible":5,"needLessons":$needLessons,"startable":$startable,"stop":$stop}"""
+        ) = """{"eligible":$eligible,"needLessons":$needLessons,"startable":$startable,"stop":$stop}"""
 
         fun stop(
             reason: String,
@@ -326,6 +333,8 @@ class MindMapScreenshots {
                 "mind-maps-offer-all-settled" to { Library(ALL, chapters = SETTLED) },
                 "mind-maps-offer-part-settled" to { Library(PART, chapters = SETTLED) },
                 "mind-maps-offer-free-limit" to { Library(FREE_LIMIT, chapters = SETTLED) },
+                "mind-maps-offer-free-limit-open" to { Library(FREE_LIMIT, chapters = SETTLED, notMade = true) },
+                "mind-maps-offer-need-lessons-at-limit-open" to { Library(NEED_LESSONS_AT_LIMIT, chapters = SETTLED, notMade = true) },
                 "mind-maps-offer-need-lessons" to { Library(NEED_LESSONS, chapters = SETTLED, notMade = true) },
                 "mind-maps-offer-need-lessons-plus" to { Library(NEED_LESSONS, chapters = SETTLED, notMade = true, tier = LimitTier.Plus) },
                 "mind-maps-offer-unreachable" to { Library(ALL, chapters = SETTLED, createAll = CreateAll.Unreachable) },
@@ -347,6 +356,11 @@ class MindMapScreenshots {
                 "study-last" to { Study(chapterSlide(false), start = 11) },
                 "study-one" to { Study(chapterSlide(false), start = 0, count = 1) },
                 "study-loading" to { Study(Slide.Loading("Waves and sound")) },
+                "study-long-title" to {
+                    val map = chapterMindMap("ready")
+                    val title = "Grundlagen der Quantenverschränkung und ihre Anwendungen heute"
+                    Study(Slide.Chapter(map.chapterId, ViewedMap(title, map.image, map.outline!!), saved = false))
+                },
                 "mind-map-viewer" to {
                     val map = chapterMindMap("ready")
                     MindMapViewer(ViewedMap(map.title, map.image, map.outline!!), onClose = {}, onSave = {}, onBookmark = {})

@@ -84,11 +84,14 @@ internal fun LazyListScope.chaptersTab(
     if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
 }
 
+/** [stop] is what keeps any new map from starting now, which takes its Create away; [numbered] rows say which chapter they are. */
 @Composable
 private fun ChapterRow(
     map: GoalMindMap,
     actions: TabActions,
     open: (() -> Unit)? = null,
+    stop: Limit? = null,
+    numbered: Boolean = true,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
     val local = actions.state.requests[map.chapterId]
@@ -103,7 +106,7 @@ private fun ChapterRow(
             place = MindMapPlace.Library,
             shown = shown,
             local = local,
-            cap = null,
+            cap = stop,
             plus = actions.state.plus,
             actions =
                 MindMapRowActions(
@@ -113,13 +116,15 @@ private fun ChapterRow(
                     toggleSave = toggle,
                 ),
             saved = saved,
+            numbered = numbered,
         )
     }
 }
 
 /**
  * Main's "Not made yet": a button that starts as many maps as can start now, one line (the first
- * that applies), and those chapters folded under Show chapters with today's Create on each.
+ * that applies), and those chapters folded under Show chapters, each with its Create while a new
+ * map can start. The list mixes subjects without their headers, so its rows go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
@@ -140,8 +145,10 @@ private fun LazyListScope.notMadeBlock(
         )
     }
     if (open) {
+        val offer = mindMaps.createOffer
+        val stop = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
         // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
-        if (actions.state.tier != LimitTier.Plus && notMade.any { it.lessonsToWrite > 0 }) {
+        if (stop == null && actions.state.tier != LimitTier.Plus && notMade.any { it.lessonsToWrite > 0 }) {
             item(key = "not-made-note", contentType = "note") {
                 Text(
                     stringResource(R.string.mindmaps_lessons_count_free),
@@ -152,7 +159,7 @@ private fun LazyListScope.notMadeBlock(
             }
         }
         items(notMade, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
-            Divided(true) { ChapterRow(map, actions) }
+            Divided(true) { ChapterRow(map, actions, stop = stop, numbered = false) }
         }
     }
 }
@@ -191,7 +198,8 @@ private fun NotMadeLine(
     val offer = mindMaps.createOffer
     val locale = currentLocale()
     val onTheWay = mindMaps.chapters.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
-    val limit = (offer.stop?.limit(actions.state.tier) ?: actions.state.cap).takeIf { offer.eligible > 0 && offer.startable == 0L }
+    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
+    val limit = (offer.stop?.limit(actions.state.tier) ?: actions.state.cap.takeIf { offer.eligible > 0 }).takeIf { offer.startable == 0L }
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
