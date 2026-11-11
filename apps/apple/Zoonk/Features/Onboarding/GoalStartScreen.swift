@@ -191,7 +191,6 @@ private struct GoalStartFlow: View {
             switch page {
             case .draft:
               draftPage
-                .environment(\.opensPlanAsSheet, true)
             case .questions:
               MaterialQuestionsView(sources: material)
             }

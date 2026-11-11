@@ -4,8 +4,6 @@ import SwiftUI
 enum AppSheet: Hashable, Identifiable {
   case account(AccountPage? = nil)
   case feedback(screen: String)
-  /// The Plan over a task, so closing it shows the task again.
-  case plan
   case signIn
   case subscription
 

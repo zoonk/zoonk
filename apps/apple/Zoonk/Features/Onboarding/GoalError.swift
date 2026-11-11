@@ -188,7 +188,6 @@ struct GoalLimitNoticeSection: View {
   var upFront = false
 
   @Environment(AppRouter.self) private var router
-  @Environment(\.opensPlanAsSheet) private var opensPlanAsSheet
 
   var body: some View {
     if reason.isPlusLimit {
@@ -233,11 +232,7 @@ struct GoalLimitNoticeSection: View {
 
         if reason == .activeGoals {
           Button {
-            if opensPlanAsSheet {
-              router.present(.plan)
-            } else {
-              router.showRoot(of: .plan)
-            }
+            router.showRoot(of: .plan)
           } label: {
             Text(
               "Go to your Plan", tableName: "Onboarding",
@@ -247,10 +242,4 @@ struct GoalLimitNoticeSection: View {
       }
     }
   }
-}
-
-extension EnvironmentValues {
-  /// The card sets it: a learner who pauses a goal on the Plan closes it and is back on the card,
-  /// which reads its room for goals again.
-  @Entry var opensPlanAsSheet = false
 }
