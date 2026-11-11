@@ -234,7 +234,7 @@ class AppContainer private constructor(
                 },
         )
 
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::decideChange)
+    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::setRegion, plans::decideChange)
     val earlierQuestions =
         EarlierQuestionsStore(
             api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +55,7 @@ import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.goalSpokenName
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -227,7 +229,10 @@ private fun Empty(
 private fun UpNextRow(item: CertificateUpNext) {
     val progress = item.progress
     ListRow(
-        headline = { Text(item.goal.displayName) },
+        headline = {
+            val spoken = goalSpokenName(item.goal.displayName, item.goal.targetLanguage, item.goal.targetRegion)
+            Text(item.goal.displayName, Modifier.semantics { contentDescription = spoken })
+        },
         leading = { GoalMark(item.goal.displayName, item.goal.languageFlag) },
         supporting = {
             Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))

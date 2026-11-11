@@ -38,6 +38,15 @@ class FormattersTest {
     }
 
     @Test
+    fun aVarietyNamesOnlyTheCountryTheLearnerChose() {
+        assertEquals("Spanish (Argentina)", varietyName("es", "AR", en))
+        assertEquals("English (United Kingdom)", varietyName("en", "GB", en))
+        assertEquals("Spanish", varietyName("es", null, en))
+        assertEquals("Espanhol (Argentina)", varietyName("es", "AR", pt))
+        assertEquals("espanhol (Argentina)", varietyNameInSentence("es", "AR", pt))
+    }
+
+    @Test
     fun durationRoundsToSecondsMinutesThenHoursAndMinutes() {
         val cases =
             mapOf(

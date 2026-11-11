@@ -27,24 +27,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.feature.conversation.PracticeCallSheet
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
+import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.flagEmoji
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
+import com.zoonk.android.ui.format.varietyName
+import com.zoonk.android.ui.format.varietyNameInSentence
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.TutorToolOffer
 import com.zoonk.api.models.TutorToolOfferOneOf
@@ -54,6 +63,7 @@ import com.zoonk.api.models.TutorToolOfferOneOf4
 import com.zoonk.api.models.TutorToolOfferOneOf5
 import com.zoonk.api.models.TutorToolOfferOneOf6
 import com.zoonk.api.models.TutorToolOfferOneOf7
+import com.zoonk.api.models.TutorToolOfferOneOf8
 import com.zoonk.api.models.TutorToolOfferOneOfCourse
 
 /** A place or practice the buddy offers under its answer; each opens only from the learner's tap. */
@@ -61,6 +71,8 @@ import com.zoonk.api.models.TutorToolOfferOneOfCourse
 internal fun TutorOffer(
     offer: TutorToolOffer,
     routes: TutorRoutes,
+    variety: VarietySave?,
+    onApplyVariety: (TutorToolOfferOneOf8) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (offer) {
@@ -102,6 +114,10 @@ internal fun TutorOffer(
         }
 
         is TutorToolOffer.TutorToolOfferOneOf8Value -> {
+            VarietyOffer(offer.value, variety, { onApplyVariety(offer.value) }, modifier)
+        }
+
+        is TutorToolOffer.TutorToolOfferOneOf9Value -> {
             PlaceOffer(
                 R.string.tutor_offer_stats,
                 R.string.tutor_offer_stats_description,
@@ -112,7 +128,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf9Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf10Value -> {
             PlaceOffer(
                 R.string.tutor_offer_logbook,
                 R.string.tutor_offer_logbook_description,
@@ -123,7 +139,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf10Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf11Value -> {
             PlaceOffer(
                 R.string.tutor_offer_memory,
                 R.string.tutor_offer_memory_description,
@@ -134,7 +150,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf11Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf12Value -> {
             val subscribed = offer.value.subscribed
             OfferCard(
                 title = stringResource(R.string.tutor_offer_plus),
@@ -353,6 +369,51 @@ private fun PronunciationOffer(
         tile = { OfferIcon(R.drawable.ic_mic, tint = MaterialTheme.zoonk.warning) },
         modifier = modifier,
     ) { OfferButton(stringResource(R.string.tutor_offer_practice)) { routes.open(AppRoute.Pronunciation(offer.goalId.toString())) } }
+}
+
+/** Saves the learner's country with one tap, as the plan's changes apply, then says it took. */
+@Composable
+private fun VarietyOffer(
+    offer: TutorToolOfferOneOf8,
+    save: VarietySave?,
+    onApply: () -> Unit,
+    modifier: Modifier,
+) {
+    val locale = currentLocale()
+
+    OfferCard(
+        title = varietyName(offer.targetLanguage, offer.targetRegion, locale),
+        description =
+            varietyNote(LocalResources.current, locale, offer.targetLanguage, offer.targetRegion, offer.taughtRegion)
+                ?: stringResource(
+                    R.string.tutor_offer_variety_description,
+                    varietyNameInSentence(offer.targetLanguage, offer.targetRegion, locale),
+                ),
+        tile = {
+            flagEmoji(
+                offer.targetRegion,
+            )?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) }
+        },
+        modifier = modifier,
+    ) {
+        if (save == VarietySave.Saved) {
+            Text(
+                stringResource(R.string.tutor_offer_variety_applied),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        } else {
+            Button(busy = save == VarietySave.Saving, onClick = onApply) { Text(stringResource(R.string.tutor_plan_change_apply)) }
+        }
+        if (save == VarietySave.Failed) {
+            Text(
+                stringResource(R.string.tutor_plan_change_failed),
+                Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
 }
 
 @Composable

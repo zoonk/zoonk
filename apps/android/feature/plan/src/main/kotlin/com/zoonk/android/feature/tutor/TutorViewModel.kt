@@ -55,6 +55,8 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
+    /** A variety card's Apply, by its turn. */
+    val varieties: Map<String, VarietySave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
     val loadingEarlier: Boolean = false,
     val earlierFailed: Boolean = false,
@@ -103,6 +105,10 @@ class TutorViewModel internal constructor(
         internal set
 
     internal val goalId: String? get() = scope.goalId ?: activeGoalId
+
+    /** Each goal's chosen country, from the learner summary, so a variety card already in effect shows applied. */
+    var goalRegions: Map<UUID, String?> by mutableStateOf(emptyMap())
+        internal set
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
 
@@ -285,6 +291,25 @@ class TutorViewModel internal constructor(
                     failedDecisions = if (result is MutationResult.Failed) it.failedDecisions + changeId else it.failedDecisions,
                 )
             }
+        }
+    }
+
+    /** Saves the country a variety card offers; nothing changed before this tap. */
+    fun applyVariety(
+        turnId: String,
+        goalId: UUID,
+        region: String,
+    ) {
+        if (state.value.varieties[turnId] == VarietySave.Saving) return
+        mutableState.update { it.copy(varieties = it.varieties + (turnId to VarietySave.Saving)) }
+        viewModelScope.launch {
+            val save =
+                when (store.setRegion(goalId, region)) {
+                    is MutationResult.Done -> VarietySave.Saved
+                    is MutationResult.Failed -> VarietySave.Failed
+                    MutationResult.Obsolete -> null
+                }
+            mutableState.update { it.copy(varieties = if (save == null) it.varieties - turnId else it.varieties + (turnId to save)) }
         }
     }
 
@@ -610,6 +635,8 @@ private const val INITIAL_POLL_MILLIS = 1_000.0
 private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
+
+enum class VarietySave { Saving, Saved, Failed }
 
 @Immutable
 data class BlockNotice(

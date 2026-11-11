@@ -15,6 +15,7 @@ class TutorStore(
     val cache: AppCache,
     val sessions: SessionSource,
     val undoMemory: suspend (List<MemoryChangeReference>) -> MutationResult<Unit>,
+    val setRegion: suspend (goalId: UUID, region: String?) -> MutationResult<Unit>,
     val decidePlanChange: suspend (goalId: UUID, changeId: UUID, PlanChangeDecisionInput.Status) -> MutationResult<PlanChange>,
 ) {
     /** Before its first question a conversation reads as an empty thread, so a sent one can be added to it. */

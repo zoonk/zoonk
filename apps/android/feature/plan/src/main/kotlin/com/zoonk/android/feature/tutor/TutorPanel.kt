@@ -71,6 +71,11 @@ fun rememberTutor(
     val account = (session as? SessionState.SignedIn)?.session?.localId
     val summary by app.learnerSummary.summary.collectShown()
     val activeGoalId = summary.value?.activeGoalId?.toString()
+    val goalRegions =
+        summary.value
+            ?.goals
+            ?.associate { it.id to it.targetRegion }
+            .orEmpty()
     val vm =
         viewModel(key = "tutor:${scope.thread}:$account") {
             TutorViewModel(scope, app.tutor, createSavedStateHandle(), app.studyOpener::openMission)
@@ -78,6 +83,7 @@ fun rememberTutor(
     SideEffect {
         vm.scope = scope
         vm.activeGoalId = activeGoalId
+        vm.goalRegions = goalRegions
     }
     return vm
 }

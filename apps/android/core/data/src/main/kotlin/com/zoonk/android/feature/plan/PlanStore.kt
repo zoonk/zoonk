@@ -17,7 +17,7 @@ import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.GoalProgress
-import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanCertificates
@@ -35,6 +35,8 @@ import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Clock
@@ -98,13 +100,20 @@ interface PlanApi {
     suspend fun setStatus(
         session: AuthenticatedSession,
         goalId: UUID,
-        status: GoalUpdateInput.Status,
+        status: LearnerSummaryGoal.Status,
     )
 
     suspend fun rename(
         session: AuthenticatedSession,
         goalId: UUID,
         displayName: String,
+    )
+
+    /** A language goal's country, or null for none: only the buddy and practice calls change, never the plan. */
+    suspend fun setRegion(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        region: String?,
     )
 
     suspend fun change(
@@ -223,9 +232,9 @@ class LivePlanApi(
     override suspend fun setStatus(
         session: AuthenticatedSession,
         goalId: UUID,
-        status: GoalUpdateInput.Status,
+        status: LearnerSummaryGoal.Status,
     ) {
-        perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = status)) }
+        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("status", status.value) }) }
     }
 
     override suspend fun rename(
@@ -233,7 +242,15 @@ class LivePlanApi(
         goalId: UUID,
         displayName: String,
     ) {
-        perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(displayName = displayName)) }
+        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("displayName", displayName) }) }
+    }
+
+    override suspend fun setRegion(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        region: String?,
+    ) {
+        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("targetRegion", region) }) }
     }
 
     override suspend fun change(
@@ -365,7 +382,7 @@ class PlanStore(
     /** Main's `updateGoal` revalidates the learning profile too. */
     suspend fun setStatus(
         goalId: UUID,
-        status: GoalUpdateInput.Status,
+        status: LearnerSummaryGoal.Status,
     ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
 
     suspend fun rename(
@@ -373,6 +390,13 @@ class PlanStore(
         displayName: String,
     ): MutationResult<Unit> =
         cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.rename(it, goalId, displayName) }
+
+    /** From the Plan's picker or the buddy's card; the plan stays as it is. */
+    suspend fun setRegion(
+        goalId: UUID,
+        region: String?,
+    ): MutationResult<Unit> =
+        cache.mutate(invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile)) { api.setRegion(it, goalId, region) }
 
     /** A learner's edit, from their tap. */
     suspend fun change(

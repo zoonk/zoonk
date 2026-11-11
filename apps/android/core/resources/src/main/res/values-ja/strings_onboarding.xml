@@ -452,6 +452,10 @@
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
+  "onboarding_variety_description": "3d5e43586db0c419af896da8765a91aedb2f57c09b63b4e294ae832c847928d4",
+  "onboarding_variety_none": "460bcd8ac80c27821d4e72f3890e144f226dfe8eb2b030a545f37bc4a5e93af5",
+  "onboarding_variety_note": "2d763e862f887b575d70cc669a98cd59a997c01f25d281b1c57218767f5ff8fd",
+  "onboarding_variety_taught": "5eeea43dab4f6fe580e864bb82cb73bf7a83d7515a58f25ba0c9ae277dfd2594",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
   "onboarding_weekend_time": "8653109d4f3428d5b744163f218dc65df2f267d2f8419ea4f5d3c74208320644",
@@ -1089,4 +1093,12 @@
     </plurals>
     <string name="onboarding_reason_choices">学ぶ理由</string>
     <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows. -->
+    <string name="onboarding_variety_description">相棒とのやり取りや会話練習では、選んだ国の話し方を使います。レッスンは変わりません。</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">指定なし</string>
+    <!-- Beside the country whose way of speaking the lessons and their audio teach, such as "Mexico · Lessons use this variety". -->
+    <string name="onboarding_variety_taught">レッスンで使う話し方</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">相棒と会話練習では%1$sを使います。レッスンと音声では%2$sを使います。</string>
 </resources>

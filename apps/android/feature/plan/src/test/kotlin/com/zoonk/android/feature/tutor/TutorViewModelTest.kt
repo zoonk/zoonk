@@ -70,7 +70,13 @@ class TutorViewModelTest {
     ): TutorViewModel =
         TutorViewModel(
             scope,
-            TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) },
+            TutorStore(
+                api,
+                cache,
+                session,
+                { MutationResult.Done(Unit) },
+                { _, _ -> MutationResult.Done(Unit) },
+            ) { _, _, status -> decision(status) },
             saved,
             openMission,
         ).also { it.thread.load() }
@@ -364,7 +370,14 @@ class TutorViewModelTest {
     fun aScreensAskDropsWhenTheLearnerLeavesBeforeTheConversationLoads() =
         runTest(dispatcher) {
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
@@ -381,7 +394,14 @@ class TutorViewModelTest {
         runTest(dispatcher) {
             api.thread = TutorThread(listOf(turn("q1", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
@@ -399,7 +419,14 @@ class TutorViewModelTest {
         runTest(dispatcher) {
             api.threadFailure = ApiException(ApiError.Network)
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))

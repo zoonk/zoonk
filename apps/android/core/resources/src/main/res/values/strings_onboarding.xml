@@ -657,4 +657,12 @@
     </plurals>
     <string name="onboarding_reason_choices">Why you\'re learning it</string>
     <string name="onboarding_aim_description">How far your course goes, which sets how long your plan is.</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows. -->
+    <string name="onboarding_variety_description">Your buddy and practice calls use the country you choose. Lessons stay the same.</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">No preference</string>
+    <!-- Beside the country whose way of speaking the lessons and their audio teach, such as "Mexico · Lessons use this variety". -->
+    <string name="onboarding_variety_taught">Lessons use this variety</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">Your buddy and practice calls use %1$s. Lessons and their audio use %2$s.</string>
 </resources>

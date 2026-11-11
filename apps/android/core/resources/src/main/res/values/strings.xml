@@ -25,6 +25,8 @@
     <string name="gate_start_goal_title">Start with a goal</string>
     <string name="gate_start_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
     <string name="gate_start_goal">Start a goal</string>
+    <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
+    <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">White belt</string>
     <string name="belt_yellow">Yellow belt</string>
     <string name="belt_orange">Orange belt</string>

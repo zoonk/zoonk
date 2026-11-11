@@ -77,6 +77,7 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
+import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -323,7 +324,15 @@ private fun TurnView(
                     onDecide = { vm.decidePlanChange(change.id, it) },
                 )
             }
-            turn.toolOffer?.let { TutorOffer(it, routes) }
+            turn.toolOffer?.let { offer ->
+                val applied =
+                    (offer as? TutorToolOffer.TutorToolOfferOneOf8Value)?.value?.let {
+                        vm.goalRegions[it.goalId] ==
+                            it.targetRegion
+                    }
+                val variety = state.varieties[turn.id] ?: VarietySave.Saved.takeIf { applied == true }
+                TutorOffer(offer, routes, variety, onApplyVariety = { vm.applyVariety(turn.id, it.goalId, it.targetRegion) })
+            }
         }
         state.memoryChanges[turn.id]?.let { changes ->
             MemoryUpdated(
