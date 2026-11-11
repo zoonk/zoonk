@@ -13,6 +13,9 @@ const LETTER = /\p{L}/u;
 /** A form's question number sits between the gap and the word before it: "Name: Kevin (1) ____". */
 const QUESTION_NUMBER = /\(\d+\)\s*$/u;
 
+/** The gap's sentence or form field ends here, so a word past it isn't beside the answer. */
+const BOUNDARY = /[.!?:;\n]/u;
+
 /**
  * Digits next to each other are one number ("07702 554190"); a number written in words is words,
  * so "nine thirty" is two words and "9:30" one number.
@@ -52,9 +55,12 @@ function getGapNeighbors({ context, question }: TypedAnswerQuestion) {
     return null;
   }
 
+  const start = text.slice(0, gap.index).replace(QUESTION_NUMBER, "");
+  const end = text.slice(gap.index + gap[0].length);
+
   return {
-    after: getWords(text.slice(gap.index + gap[0].length)).at(0),
-    before: getWords(text.slice(0, gap.index).replace(QUESTION_NUMBER, "")).at(-1),
+    after: getWords(end.split(BOUNDARY).at(0) ?? "").at(0),
+    before: getWords(start.split(BOUNDARY).at(-1) ?? "").at(-1),
   };
 }
 

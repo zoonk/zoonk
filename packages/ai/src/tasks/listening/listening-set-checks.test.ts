@@ -186,6 +186,19 @@ describe(toListeningItem, () => {
     expect(item).toMatchObject({ acceptedAnswers: ["towel"], sampleAnswer: "towel" });
   });
 
+  it("reads the gap's neighbors only within its own sentence or field", () => {
+    const item = toListeningItem(
+      gap({
+        acceptedAnswers: ["write", "spell"],
+        context: "At the workshop, children learn how to ______. Write carefully.",
+        plusNumber: false,
+        sampleAnswer: "write",
+      }),
+    );
+
+    expect(item).toMatchObject({ acceptedAnswers: ["write", "spell"], sampleAnswer: "write" });
+  });
+
   it("counts a number written in digits as the number and a number written in words as words", () => {
     const item = toListeningItem(
       gap({
