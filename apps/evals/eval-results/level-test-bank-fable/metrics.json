@@ -8,7 +8,7 @@
       "openai/gpt-6-astra": 6.6
     },
     "cost": 0.6298080000000001,
-    "seconds": 79149.957042,
+    "seconds": 79.15,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -24,7 +24,7 @@
       "openai/gpt-6-astra": 8.35
     },
     "cost": 1.965976,
-    "seconds": 217057.826375,
+    "seconds": 217.058,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -40,7 +40,7 @@
       "openai/gpt-6-astra": 7.05
     },
     "cost": 0.632488,
-    "seconds": 80296.24208400001,
+    "seconds": 80.296,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -56,7 +56,7 @@
       "openai/gpt-6-astra": 7.4
     },
     "cost": 1.9432560000000003,
-    "seconds": 120688.319708,
+    "seconds": 120.688,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -72,7 +72,7 @@
       "openai/gpt-6-astra": 8.35
     },
     "cost": 0.619448,
-    "seconds": 71828.37820800001,
+    "seconds": 71.828,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -88,7 +88,7 @@
       "openai/gpt-6-astra": 9
     },
     "cost": 2.038736,
-    "seconds": 131066.89383300001,
+    "seconds": 131.067,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -104,7 +104,7 @@
       "openai/gpt-6-astra": 8.25
     },
     "cost": 0.7015480000000001,
-    "seconds": 95947.32620899999,
+    "seconds": 95.947,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -120,7 +120,7 @@
       "openai/gpt-6-astra": 6.6
     },
     "cost": 2.2861360000000004,
-    "seconds": 231013.19108299998,
+    "seconds": 231.013,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -136,7 +136,7 @@
       "openai/gpt-6-astra": 7.4
     },
     "cost": 0.6822280000000001,
-    "seconds": 101255.758125,
+    "seconds": 101.256,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -152,7 +152,7 @@
       "openai/gpt-6-astra": 8.6
     },
     "cost": 2.2592160000000003,
-    "seconds": 139981.12016700002,
+    "seconds": 139.981,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -168,7 +168,7 @@
       "openai/gpt-6-astra": 8.6
     },
     "cost": 0.669676,
-    "seconds": 107565.582,
+    "seconds": 107.566,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -184,7 +184,7 @@
       "openai/gpt-6-astra": 8.75
     },
     "cost": 2.482644,
-    "seconds": 190962.554708,
+    "seconds": 190.963,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -200,7 +200,7 @@
       "openai/gpt-6-astra": 8
     },
     "cost": 0.6491960000000001,
-    "seconds": 87017.291541,
+    "seconds": 87.017,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -216,7 +216,7 @@
       "openai/gpt-6-astra": 8.75
     },
     "cost": 2.0588040000000003,
-    "seconds": 243049.548125,
+    "seconds": 243.05,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -232,7 +232,7 @@
       "openai/gpt-6-astra": 8.35
     },
     "cost": 0.6330680000000001,
-    "seconds": 89886.69437499999,
+    "seconds": 89.887,
     "codeChecks": {
       "passed": 11,
       "problems": [],
@@ -248,7 +248,7 @@
       "openai/gpt-6-astra": 7.15
     },
     "cost": 1.9726160000000001,
-    "seconds": 161854.109958,
+    "seconds": 161.854,
     "codeChecks": {
       "passed": 11,
       "problems": [],
