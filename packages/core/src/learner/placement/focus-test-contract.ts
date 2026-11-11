@@ -137,10 +137,10 @@ const focusTestFocusSchema = z
       .meta({ description: "For `proposed`: the change to apply or decline, with its effect" }),
     rows: z.array(focusRowSchema).meta({ description: "Up to three, the most needed first" }),
     state: z
-      .enum(["ifTimeShort", "proposed", "current", "handPicked"])
+      .enum(["ifTimeShort", "proposed", "current", "alreadyFits", "handPicked"])
       .meta({
         description:
-          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan already focuses these. `handPicked`: the learner chose their own focus, which the test never changes",
+          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the plan has no focus and its time already covers these subjects, so no focus is needed. `handPicked`: the learner chose their own focus, which the test never changes",
       }),
   })
   .meta({ id: "FocusTestFocus" });

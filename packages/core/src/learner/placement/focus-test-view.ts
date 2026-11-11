@@ -122,7 +122,11 @@ function getFocusState({
     return "proposed";
   }
 
-  return plan.covered || isSameFocus(plan.focusAreas, suggested) ? "current" : "handPicked";
+  if (isSameFocus(plan.focusAreas, suggested)) {
+    return "current";
+  }
+
+  return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : "handPicked";
 }
 
 function toFocus({ plan, rows }: { plan: FocusPlan; rows: FocusRow[] }): FocusTestFocus | null {

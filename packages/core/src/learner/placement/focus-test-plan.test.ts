@@ -217,14 +217,14 @@ describe("the Focus test on a plan whose time is short", () => {
     });
   });
 
-  it("says the plan already follows its suggestion when a focus wouldn't move it", async () => {
+  it("distinguishes time that already fits the suggested subjects from an actual focus", async () => {
     const { goal, plan } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: PLAN_SHOWN });
     const completion = await sit(goal.id, [DONT_KNOW]);
 
     expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
       proposal: null,
       rows: [{ areas: ["Direito"] }, { areas: ["Português"] }],
-      state: "current",
+      state: "alreadyFits",
     });
 
     await expect(
