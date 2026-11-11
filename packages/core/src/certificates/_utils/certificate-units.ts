@@ -1,13 +1,14 @@
 import { type CourseLevel, type Goal, type PlanItem } from "@zoonk/db";
 import { CourseLevel as COURSE_LEVELS } from "@zoonk/db/enums";
+import { type PlanScope, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { areLessonsFinished, isTodo } from "../../plans/_utils/plan-end";
 import { getWorkProgress } from "../../plans/_utils/work-progress";
-import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
+import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
 import { type PlanPhase } from "../../plans/planner/plan-state";
 
 const LEVEL_ORDER = Object.values(COURSE_LEVELS);
 
-const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
+export const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
 
 export type CertifiableItem = Pick<
   PlanItem,
@@ -51,23 +52,55 @@ function isStudied(item: CertifiableItem): boolean {
 }
 
 /**
- * Every lesson studied or tested out, at least one studied, and every challenge of their phases
- * won. An exam's mocks and reviews rehearse the exam rather than teach, so they never count.
+ * One set of lessons sizes the unit and credits it: every lesson teaching its skills, each once,
+ * whichever unit holds it, with what those skills still lack.
+ */
+function isHalfOfSkillsStudied({
+  learn,
+  scope,
+  skillIds,
+}: {
+  learn: readonly CertifiableItem[];
+  scope: PlanScope;
+  skillIds: ReadonlySet<string>;
+}): boolean {
+  return isHalfStudied(
+    measureStudied({
+      items: learn.filter((item) => !isStandIn(item) || skillIds.has(item.skillId ?? "")),
+      lessonIds: new Set(
+        scope.lessons.flatMap((lesson) =>
+          lesson.skillIds.some((skillId) => skillIds.has(skillId)) ? lesson.lessonId : [],
+        ),
+      ),
+      unwritten: scope.unwritten.reduce(
+        (sum, skill) => (skillIds.has(skill.skillId) ? sum + skill.lessons : sum),
+        0,
+      ),
+    }),
+  );
+}
+
+/**
+ * Every lesson studied or tested out, at least half of its skills' lessons studied, and every
+ * challenge of their phases won. An exam's mocks and reviews rehearse the exam rather than teach, so
+ * they never count.
  */
 function isUnitDone({
   challenges,
   dates,
+  halfStudied,
   learn,
   phases,
 }: {
   challenges: readonly CertifiableItem[];
   dates: UnitDates;
+  halfStudied: boolean;
   learn: readonly CertifiableItem[];
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
 }): boolean {
   return (
     areLessonsFinished({ items: learn, ...dates }) &&
-    learn.some((item) => isStudied(item)) &&
+    halfStudied &&
     !phases.some((phase) => phase.challengeLeftOut) &&
     !challenges.some((item) => isTodo(item))
   );
@@ -115,6 +148,8 @@ export function listCertificateUnits({
   levelCourseId,
   phases,
   planCreatedAt,
+  scope,
+  skillLevels,
   studiesPastTarget,
 }: {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
@@ -124,6 +159,9 @@ export function listCertificateUnits({
   levelCourseId: string | null;
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
   planCreatedAt: Date;
+  scope: PlanScope;
+  /** The levels at which the plan's primary course teaches each graph skill. */
+  skillLevels: ReadonlyMap<string, readonly CourseLevel[]>;
   studiesPastTarget: boolean;
 }): CertificateUnit[] {
   if (!COURSE_GOALS.has(goal.kind)) {
@@ -151,6 +189,15 @@ export function listCertificateUnits({
           isUnitDone({
             challenges: unitChallenges,
             dates,
+            halfStudied: isHalfOfSkillsStudied({
+              learn,
+              scope,
+              skillIds: new Set(
+                [...skillLevels].flatMap(([skillId, taught]) =>
+                  taught.includes(level) ? skillId : [],
+                ),
+              ),
+            }),
             learn: unitLearn,
             phases: phases.filter((_phase, index) => phaseIndexes.has(index)),
           });
@@ -176,7 +223,17 @@ export function listCertificateUnits({
     courseLevel: null,
     finished:
       learn.some((item) => isStudied(item) && (!item.level || !covered.has(item.level))) &&
-      isUnitDone({ challenges, dates, learn, phases }),
+      isUnitDone({
+        challenges,
+        dates,
+        halfStudied: isHalfOfSkillsStudied({
+          learn,
+          scope,
+          skillIds: new Set(scope.keptSkills.map((skill) => skill.skillId)),
+        }),
+        learn,
+        phases,
+      }),
     items: [...learn, ...challenges],
     key: goal.id,
   };

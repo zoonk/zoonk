@@ -1,36 +1,34 @@
 import { pickReviewers } from "../../_utils/model-family";
-import { type CallReuse } from "../../provider-options";
 
 /**
- * Catching every real error matters most on a lesson many learners read: Sonnet 5.5 blocked all 20
- * planted mistakes on the lesson-quality-check eval (9 Oct 2026). Gemini 3.8 Flash let an
- * over-broad summary through, and Haiku blocked clean lessons, which costs fix passes.
+ * On the 26 shared lessons Opus wrote on 8 Nov 2026, two blind judges confirmed 6 errors. Astra
+ * found all 6 with no false flag at $0.037 a review on flex, Sol 4 and Opus 2. Gemini 4 Argon found
+ * none and flagged a correct legal citation as wrong because the lesson plan had it wrong, and
+ * Gemini 3.8 Flash, the reviewer before, passed 24 of those lessons. So an Opus-written lesson has
+ * no fallback outside OpenAI: no other evaluated reviewer helped.
  */
-const REUSED_LESSON_REVIEWERS = [
-  "anthropic/claude-sonnet-5.5",
-  "google/gemini-3.8-flash",
+const WRITTEN_REVIEWERS = [
+  "openai/gpt-6-astra",
   "openai/gpt-6.1-sol",
+  "anthropic/claude-opus-5.5",
 ] as const;
 
-/**
- * Gemini 3.8 Flash caught all 14 planted mistakes at about 40% of Sonnet's price (7 Oct 2026). A
- * lesson Gemini wrote gets the next reviewer from another family.
- */
-const ONE_LEARNER_LESSON_REVIEWERS = [
-  "google/gemini-3.8-flash",
+/** Luna writes alphabet lessons; Sonnet 5.5 blocked all 20 planted mistakes in the review eval (9 Oct 2026). */
+const ALPHABET_REVIEWERS = [
   "anthropic/claude-sonnet-5.5",
+  "google/gemini-3.8-flash",
   "openai/gpt-6.1-sol",
 ] as const;
 
 export function getLessonCheckModels({
-  reuse,
+  alphabet = false,
   writerModel,
 }: {
-  reuse: CallReuse;
+  alphabet?: boolean;
   writerModel: string;
 }): { fallbackModels: string[]; model: string } {
   return pickReviewers({
-    reviewers: reuse === "bounded" ? REUSED_LESSON_REVIEWERS : ONE_LEARNER_LESSON_REVIEWERS,
+    reviewers: alphabet ? ALPHABET_REVIEWERS : WRITTEN_REVIEWERS,
     writerModel,
   });
 }

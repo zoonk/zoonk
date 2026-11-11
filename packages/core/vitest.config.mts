@@ -27,8 +27,16 @@ const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
 /** Table-wide locks must run after parallel files and apart from one another. */
 const REQUEST_INSTANT_TEST = "src/learner/facts/request-instant.test.ts";
 const OPEN_GOAL_INPUT_RACE_TEST = "src/sessions/open-goal-input-race.test.ts";
+const MIND_MAP_CLAIM_RACE_TEST = "src/mind-maps/mind-map-claim-race.test.ts";
+
+const TABLE_LOCK_TESTS = [
+  REQUEST_INSTANT_TEST,
+  OPEN_GOAL_INPUT_RACE_TEST,
+  MIND_MAP_CLAIM_RACE_TEST,
+];
+
 const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
-const ORDERED_TESTS = [...ORDERED_CALL_TESTS, REQUEST_INSTANT_TEST, OPEN_GOAL_INPUT_RACE_TEST];
+const ORDERED_TESTS = [...ORDERED_CALL_TESTS, ...TABLE_LOCK_TESTS];
 
 const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_TESTS.includes(file));
 const MISSION_TEST_GROUP = 1;
@@ -59,7 +67,7 @@ export default defineConfig({
         extends: true,
         test: {
           fileParallelism: false,
-          include: [MISSION_COMPLETION_TEST, REQUEST_INSTANT_TEST, OPEN_GOAL_INPUT_RACE_TEST],
+          include: [MISSION_COMPLETION_TEST, ...TABLE_LOCK_TESTS],
           name: "mission-completion",
           sequence: { groupOrder: MISSION_TEST_GROUP },
         },

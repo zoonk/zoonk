@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "5a6b9c0b546b998959ea3b06968fb8fc6ac5ebf627bbfbddfef19d0a9c8f9f17",
   "questions_drill_open_lesson": "9a7c055ec459d31377fec63f182f9296dcdd321a16a658546a185252659bd7df",
   "questions_drill_read_carefully": "408eb2e038bdf39a7a58ee085ce2a21551fc89d48b6f759e113e9ae2889fe0cb",
-  "questions_drill_reteach": "7df534d309f695809848e76823da56d1576debffe9b01f82c75e478d239dfbe6",
-  "questions_drill_reteach_ideas": "2f8855fd45031f6f0ce8637e58750477a4487fe38eed12b892166b77d6d72248",
+  "questions_drill_reteach": "3a5a09fb7ac729d579eaf55f6967d38221fdfc5314753bde0218e0869439aedc",
+  "questions_drill_reteach_ideas": "d6121c3172ad6356b265a5ab641e1ad30036a31f12d8c70082ebbee442df0a0b",
   "questions_drill_retry": "d42843940e12910a2034922932f4e55ff0a03d9b62139d8e578b4a16545fe0fa",
   "questions_drill_seconds_left": "20b4509eefea5d95024b61a6e97b463ac5c27da451c2fd60703e96995b3797e9",
-  "questions_drill_show_answers": "9b78e40247234b8ea60a1a23edcdde9bf4355ada786f9118ecd1eda92e00989f",
   "questions_drill_spot_the_trap": "a8c0350ea559b3755503564b1bdc1fae56451588eb46f13c468ce1ee96e1a550",
   "questions_drill_start": "98932062454bf626b93124b4c41671b651152147df74011505e5079f0eb5ca85",
   "questions_drill_time_left": "db91f9e6a6f1e1dee9cb7854892b04dd78c010886de5c08c4d094a7973011cff",
@@ -123,8 +122,8 @@
     <string name="questions_placement_note">学習計画を調整しています。ここで間違えても、間違いノートには保存されません。</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">過去問 · %1$s</string>
-    <string name="questions_drill_reteach_ideas">まず考え方を学んでから、問題をいくつか解きます。</string>
-    <string name="questions_drill_reteach">つまずいた内容について、問題をいくつか解きます。</string>
+    <string name="questions_drill_reteach_ideas">まずポイントを学んでから、実際に使ってみます。</string>
+    <string name="questions_drill_reteach">つまずいたポイントに戻ります。</string>
     <string name="questions_drill_read_carefully">一語一語よく読んでから答えましょう。</string>
     <string name="questions_drill_spot_the_trap">ひっかけがあります。見つけてから答えましょう。</string>
     <plurals name="questions_drill_timed">
@@ -143,7 +142,6 @@
     <plurals name="questions_drill_seconds_left">
         <item quantity="other">残り%d秒</item>
     </plurals>
-    <string name="questions_drill_show_answers">読み終えたので答えを見る</string>
     <string name="questions_drill_not_sure">自信がない</string>
     <string name="questions_drill_open_lesson">レッスンを復習する</string>
 </resources>

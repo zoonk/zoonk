@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -84,6 +84,11 @@ describe("checkpoint previews follow the day Start actually opens", () => {
       lessons: 1,
     });
 
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: "boss", planId: plan.id },
+    });
+
     const skill = skills[0]!;
 
     await attemptFixture({
@@ -99,6 +104,8 @@ describe("checkpoint previews follow the day Start actually opens", () => {
       position: 1,
     });
 
+    await planItemFixture({ kind: "boss", phase: 0, planId: plan.id, position: 2, status: "done" });
+    await layOutPlanFixture(plan.id);
     await prisma.planItem.update({ data: { titleSnapshot: "" }, where: { id: weekly.id } });
 
     await expect(getWeeklyChallenge({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({

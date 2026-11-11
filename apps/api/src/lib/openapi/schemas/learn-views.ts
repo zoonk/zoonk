@@ -1,11 +1,12 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { type ContentView } from "@zoonk/core/view-models/content/get";
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { GoalKind, MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { goalPreparationResponseSchema } from "./preparation";
-import { logicalDateSchema, studyBlockSchema } from "./study-sessions";
+import { logicalDateSchema } from "./study-sessions";
 
 const masteryStateSchema = z.enum(MasteryState);
 
@@ -46,6 +47,7 @@ const stillNeededSchema = z
 export const goalProgressResponseSchema = z
   .object({
     goal: z.object({
+      displayName: z.string(),
       id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
@@ -91,7 +93,12 @@ export const goalContentResponseSchema = z
         .meta({ description: "Skills due for review today (time capsules)" }),
     }),
     counts: skillStateCountsSchema.meta({ description: "The goal's skills by state" }),
-    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({
+      displayName: z.string(),
+      id: uuidSchema(),
+      kind: z.enum(GoalKind),
+      title: z.string(),
+    }),
     groups: z
       .array(
         z.object({

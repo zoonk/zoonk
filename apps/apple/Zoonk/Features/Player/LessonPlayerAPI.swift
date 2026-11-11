@@ -26,8 +26,34 @@ enum LessonLoad: Hashable, Sendable {
   case sessionRequired(LessonOutline)
 }
 
+struct LessonOpening: Hashable, Sendable {
+  let data: Data
+
+  init(_ input: some Encodable) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    data = try encoder.encode(input)
+  }
+
+  init(data: Data) { self.data = data }
+
+  static func block(_ id: String) -> LessonOpening {
+    try! LessonOpening(
+      Components.Schemas.StudyBlockOpeningInput(
+        target: .block(.init(blockId: id, kind: .block))))
+  }
+}
+
+enum LessonStartOutcome: Sendable {
+  case success(LessonRunStart)
+  case failure(LessonRunRefusal)
+  case opened(StudyBlockOpening)
+}
+
 struct LessonRunStart: Hashable, Sendable {
   let runId: String
+  var sessionId: String? = nil
+  var clockId: String? = nil
   /// When this sitting's run started: earlier answers came from sittings before it.
   let startedAt: Date
   let answers: [LessonRunAnswer]
@@ -127,20 +153,31 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// Resumes the open run (within half an hour) with its answers.
-  func startLesson(id: String, studySessionId: String?, token: String) async throws -> Result<
-    LessonRunStart, LessonRunRefusal
-  > {
+  func startLesson(
+    id: String, studySessionId: String?, opening: LessonOpening? = nil, runId: String? = nil,
+    token: String
+  ) async throws -> LessonStartOutcome {
     let body = Components.Schemas.LibraryLessonStartInput(
-      studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
+      opening: try opening.map {
+        try JSONDecoder().decode(
+          Components.Schemas.LibraryLessonStartInput.OpeningPayload.self, from: $0.data)
+      }, runId: runId, studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
 
-    let output = try await clients.perform(
-      token: token,
-      operation: {
-        try await $0.createLibraryLessonStart(
-          path: .init(lessonId: id), body: .json(body))
-      })
+    var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(body)) as! [String: Any]
+    if let opening { json["opening"] = try JSONSerialization.jsonObject(with: opening.data) }
+    let encoded = try JSONSerialization.data(withJSONObject: json)
+    func send() async throws -> Operations.CreateLibraryLessonStart.Output {
+      try await clients.perform(token: token, body: encoded) {
+        try await $0.createLibraryLessonStart(path: .init(lessonId: id), body: .json(body))
+      }
+    }
+    let first = try await send()
+    let output: Operations.CreateLibraryLessonStart.Output
+    if case .serviceUnavailable = first { output = try await send() } else { output = first }
 
     switch output {
+    case .ok(let response): return .opened(try response.body.json.opening)
+    case .serviceUnavailable: return .failure(.failed)
     case .created(let response):
       guard let run = try? response.body.json else {
         return .failure(.failed)
@@ -148,7 +185,7 @@ struct LessonPlayerAPI: Sendable {
 
       return .success(
         LessonRunStart(
-          runId: run.runId,
+          runId: run.runId, sessionId: run.sessionId, clockId: run.clockId,
           startedAt: run.startedAt,
           answers: run.answers.map {
             LessonRunAnswer(
@@ -170,6 +207,21 @@ struct LessonPlayerAPI: Sendable {
       return .failure(Self.refusal(try? response.body.json, status: 429))
     case .badRequest, .internalServerError, .undocumented:
       return .failure(.failed)
+    }
+  }
+
+  func updateClock(id: String, input: Components.Schemas.LessonClockInput, token: String)
+    async throws -> Components.Schemas.LessonClockResult
+  {
+    let output = try await clients.perform(token: token) {
+      try await $0.updateLibraryLessonClock(path: .init(lessonId: id), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response): return try response.body.json
+    case .unauthorized: throw APIError.unauthorized
+    case .notFound: throw APIError.notFound
+    case .badRequest, .internalServerError, .undocumented: throw APIError.network
     }
   }
 
@@ -242,7 +294,11 @@ struct LessonPlayerAPI: Sendable {
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
-          day: block?.day ?? DayResult(completion), block: block))
+          day: block?.day ?? DayResult(completion), block: block,
+          finishedChapter: completion.finishedChapter?.value1,
+          planReveal: completion.planReveal.map {
+            PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
+          }))
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:
@@ -477,7 +533,7 @@ struct LessonPlayerAPI: Sendable {
 
 /// A live check's result and a saved answer's restored one share these fields, so both read into
 /// the player's result the same way.
-private protocol CheckResultPayload {
+protocol CheckResultPayload {
   var checked: Bool { get }
   var correctAnswer: String? { get }
   var feedback: String? { get }
@@ -491,27 +547,27 @@ private protocol CheckResultPayload {
 }
 
 extension Components.Schemas.LessonStepCheckResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension Components.Schemas.LessonRunAnswerResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension LessonStepResult {
-  fileprivate init(_ payload: some CheckResultPayload, answerText: String? = nil) {
+  init(_ payload: some CheckResultPayload, answerText: String? = nil) {
     self.init(
       isCorrect: payload.isCorrect, answerText: answerText, correctAnswer: payload.correctAnswer,
       feedback: payload.feedback)

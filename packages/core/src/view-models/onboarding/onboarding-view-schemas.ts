@@ -2,6 +2,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
 import { goalDraftSchema } from "../../goals/goal-contract";
+import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
   type GoalUnderstandingView,
   ONBOARDING_DRAFT_STATUSES,
@@ -52,6 +53,13 @@ const understoodGoalSchema = z
       .meta({
         description:
           "The exam's dates for the named year (or the next ones): from its stored notice, or estimated from its usual timing",
+      }),
+    languageAim: languageAimViewSchema
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "Language goals only: the level the words aim for and the aims the card offers instead. Edit it with field targetScore set to one of the choices' aims; null for other goals",
       }),
   })
   .meta({ id: "UnderstoodGoal" }) satisfies z.ZodType<UnderstoodGoalView>;

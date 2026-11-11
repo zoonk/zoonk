@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanSteering
 import com.zoonk.api.models.WrittenPractice
@@ -42,7 +43,7 @@ internal fun PlanActivities(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PlanSteering.SkippedActivities.entries.forEach { activity ->
                 val isOn = activity !in skipped
-                PlanChip(
+                SelectionChip(
                     text = activityName(activity),
                     selected = askedOn(asked, activity.value) ?: isOn,
                     onClick = {
@@ -165,7 +166,7 @@ internal fun PlanSteering(
         SectionLabel(stringResource(R.string.plan_how_is_it_going))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             steers.forEach { steer ->
-                PlanChip(
+                SelectionChip(
                     text = stringResource(steer.label),
                     selected = steer.active,
                     onClick = {

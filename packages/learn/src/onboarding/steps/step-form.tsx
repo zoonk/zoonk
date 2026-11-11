@@ -20,6 +20,7 @@ export function StepForm({
   children,
   continueLabel,
   description,
+  notice,
   onContinue,
   onSkip,
   pending,
@@ -32,6 +33,8 @@ export function StepForm({
   children?: React.ReactNode;
   continueLabel?: string;
   description?: React.ReactNode;
+  /** A quiet line above the buttons, so it never moves the choices. */
+  notice?: React.ReactNode;
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
@@ -69,6 +72,7 @@ export function StepForm({
         {children}
 
         <OnboardingFooter>
+          {notice}
           <OnboardingPrimaryButton
             busy={sender === "continue"}
             disabled={!canContinue || pending}

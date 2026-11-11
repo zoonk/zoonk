@@ -1,8 +1,9 @@
-import { chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
+import { beginGoalCurriculum } from "@zoonk/core/library/curriculum/begin-goal-curriculum";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
   type GoalCurriculumInputs,
@@ -25,6 +26,12 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
 
 type RunScope = { analytics?: ContentAnalytics; workflowRunId: string };
+
+export async function beginGoalCurriculumStep(input: Parameters<typeof beginGoalCurriculum>[0]) {
+  "use step";
+
+  return beginGoalCurriculum(input);
+}
 
 export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurriculumInputs | null> {
   "use step";
@@ -142,11 +149,13 @@ export async function saveGoalSkillsStep({
   analytics,
   provenance,
   scope,
+  serviceTier,
   skills,
   workflowRunId,
 }: RunScope & {
   provenance: GraphProvenance;
   scope: CurriculumScope;
+  serviceTier?: ServiceTier;
   skills: GoalSkillGraph["skills"];
 }): Promise<Record<string, string>> {
   "use step";
@@ -155,6 +164,7 @@ export async function saveGoalSkillsStep({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     provenance,
     scope,
+    serviceTier,
     skills,
   });
 }

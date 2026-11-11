@@ -30,10 +30,6 @@ export async function setSoundsEnabledAction(soundsEnabled: boolean): Promise<bo
   return saveProfile({ soundsEnabled });
 }
 
-export async function setDailyLimitAction(dailyLimitMinutes: number | null): Promise<boolean> {
-  return saveProfile({ dailyLimitMinutes });
-}
-
 /** The browser keeps it for a visitor; a guest's or learner's account keeps it too. */
 export async function setShareUsageDataAction(shareUsageData: unknown): Promise<boolean> {
   if (typeof shareUsageData !== "boolean") {

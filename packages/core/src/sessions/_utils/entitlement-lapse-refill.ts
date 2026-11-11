@@ -13,13 +13,14 @@ import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
 import { withSessionAppendLock } from "./extra-blocks";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
-import { hasSameBlocks, planRestOfDay } from "./refresh-day-session";
+import { hasSameBlocks, planRestOfDayWithPlan } from "./refresh-day-session";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 type EntitlementRefill = {
+  plannedMinutes: number;
   basis: { id: string; inputVersion: number; version: number };
   blocks: DayBlockInput[];
-  lessons: Awaited<ReturnType<typeof planRestOfDay>>;
+  lessons: Awaited<ReturnType<typeof planRestOfDayWithPlan>>["blocks"];
 };
 
 class RefillInputsChangedError extends Error {
@@ -95,7 +96,7 @@ export async function planEntitlementLapseRefill({
     return null;
   }
 
-  const planned = await planRestOfDay({
+  const { blocks: planned, plannedMinutes } = await planRestOfDayWithPlan({
     day: { goal, session: { ...session, goal }, timeZone },
     kept,
     readSubscription,
@@ -126,6 +127,11 @@ export async function planEntitlementLapseRefill({
       })),
     ],
     lessons,
+    plannedMinutes:
+      plannedMinutes +
+      session.blocks
+        .filter((block) => !keptIds.has(block.id))
+        .reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
   };
 }
 
@@ -197,12 +203,7 @@ export async function persistEntitlementLapseRefill({
         });
 
         await transaction.studySession.update({
-          data: {
-            plannedMinutes: [...locked.blocks, ...refill.lessons].reduce(
-              (sum, block) => sum + (block.estimatedMinutes ?? 0),
-              0,
-            ),
-          },
+          data: { plannedMinutes: refill.plannedMinutes },
           where: { id: session.id },
         });
 

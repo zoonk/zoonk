@@ -1,11 +1,85 @@
 {
-  "generatedAt": "2026-10-31T00:18:19.408Z",
+  "failedRuns": [
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 703,
+            "outputTokens": 97,
+            "reasoningTokens": 66
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 315,
+            "outputTokens": 169,
+            "reasoningTokens": 153
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 315,
+            "outputTokens": 268,
+            "reasoningTokens": 252
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 314,
+            "outputTokens": 72,
+            "reasoningTokens": 57
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 314,
+            "outputTokens": 84,
+            "reasoningTokens": 70
+          }
+        }
+      ],
+      "testCaseId": "de-lookalike-name-1"
+    }
+  ],
+  "generatedAt": "2026-11-08T14:48:22.015Z",
   "modelId": "google/gemini-3.8-flash-lite-tts",
   "outputs": [
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2119.8397079999995,
+      "calls": [],
+      "duration": 1680.8476669999945,
       "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-word.mp3\",\n  \"costUsd\": 0.00023150000000000002,\n  \"durationMs\": 1400\n}",
       "systemPrompt": "",
       "testCaseId": "en-word-1",
@@ -14,8 +88,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2521.3992909999943,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-sentence.mp3\",\n  \"costUsd\": 0.0005725000000000001,\n  \"durationMs\": 3640\n}",
+      "calls": [],
+      "duration": 2121.9392910000024,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-sentence.mp3\",\n  \"costUsd\": 0.0007225,\n  \"durationMs\": 4640\n}",
       "systemPrompt": "",
       "testCaseId": "en-sentence-1",
       "userPrompt": "Could you tell me where the nearest train station is?"
@@ -23,8 +98,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2405.8493329999983,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-request.mp3\",\n  \"costUsd\": 0.000462,\n  \"durationMs\": 2920\n}",
+      "calls": [],
+      "duration": 2039.3707920000015,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-request.mp3\",\n  \"costUsd\": 0.000492,\n  \"durationMs\": 3120\n}",
       "systemPrompt": "",
       "testCaseId": "en-request-1",
       "userPrompt": "Can you help me carry these bags?"
@@ -32,7 +108,8 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2637.3859169999996,
+      "calls": [],
+      "duration": 2191.646833999999,
       "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-instruction.mp3\",\n  \"costUsd\": 0.000571,\n  \"durationMs\": 3640\n}",
       "systemPrompt": "",
       "testCaseId": "en-instruction-1",
@@ -41,8 +118,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 3807.077041000004,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-passage.mp3\",\n  \"costUsd\": 0.0014515,\n  \"durationMs\": 9440\n}",
+      "calls": [],
+      "duration": 3472.6016670000026,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/en-passage.mp3\",\n  \"costUsd\": 0.0014575000000000002,\n  \"durationMs\": 9480\n}",
       "systemPrompt": "",
       "testCaseId": "en-passage-1",
       "userPrompt": "I moved to a new apartment last month. It is small, but the kitchen gets a lot of light, and my neighbors are very friendly."
@@ -50,8 +128,24 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1608.6410839999953,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-word.mp3\",\n  \"costUsd\": 0.00024350000000000004,\n  \"durationMs\": 1280\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 708,
+            "outputTokens": 28,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 3577.5496249999997,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-word.mp3\",\n  \"costUsd\": 0.00023750000000000003,\n  \"durationMs\": 1240\n}",
       "systemPrompt": "",
       "testCaseId": "pt-word-1",
       "userPrompt": "aluguel"
@@ -59,8 +153,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2352.4082909999997,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-sentence.mp3\",\n  \"costUsd\": 0.0006145000000000001,\n  \"durationMs\": 3720\n}",
+      "calls": [],
+      "duration": 1767.7063750000016,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-sentence.mp3\",\n  \"costUsd\": 0.0005545000000000001,\n  \"durationMs\": 3320\n}",
       "systemPrompt": "",
       "testCaseId": "pt-sentence-1",
       "userPrompt": "Eu gostaria de um café com leite, por favor."
@@ -68,8 +163,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 3757.5657500000016,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-passage.mp3\",\n  \"costUsd\": 0.0014645,\n  \"durationMs\": 9320\n}",
+      "calls": [],
+      "duration": 3153.582416999998,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-passage.mp3\",\n  \"costUsd\": 0.0014585,\n  \"durationMs\": 9280\n}",
       "systemPrompt": "",
       "testCaseId": "pt-passage-1",
       "userPrompt": "No fim de semana, fomos à praia com os nossos amigos. O mar estava calmo e almoçamos peixe grelhado num restaurante pequeno."
@@ -77,8 +173,24 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1762.0353749999995,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-word.mp3\",\n  \"costUsd\": 0.0002905,\n  \"durationMs\": 1600\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 706,
+            "outputTokens": 29,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 3536.957499999997,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-word.mp3\",\n  \"costUsd\": 0.0003445,\n  \"durationMs\": 1960\n}",
       "systemPrompt": "",
       "testCaseId": "es-word-1",
       "userPrompt": "ferrocarril"
@@ -86,8 +198,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2327.4793749999953,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-sentence.mp3\",\n  \"costUsd\": 0.000608,\n  \"durationMs\": 3680\n}",
+      "calls": [],
+      "duration": 2134.4518339999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-sentence.mp3\",\n  \"costUsd\": 0.000644,\n  \"durationMs\": 3920\n}",
       "systemPrompt": "",
       "testCaseId": "es-sentence-1",
       "userPrompt": "¿Me puedes decir a qué hora sale el próximo autobús?"
@@ -95,8 +208,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 3395.3424580000064,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-passage.mp3\",\n  \"costUsd\": 0.0012325,\n  \"durationMs\": 7800\n}",
+      "calls": [],
+      "duration": 3183.2835829999967,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-passage.mp3\",\n  \"costUsd\": 0.0012805,\n  \"durationMs\": 8120\n}",
       "systemPrompt": "",
       "testCaseId": "es-passage-1",
       "userPrompt": "Ayer visité a mi abuela en el pueblo. Me enseñó a preparar su receta de tortilla y hablamos durante horas."
@@ -104,8 +218,24 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1582.6820000000007,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-word.mp3\",\n  \"costUsd\": 0.000268,\n  \"durationMs\": 1480\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 702,
+            "outputTokens": 28,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 3735.215333,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-word.mp3\",\n  \"costUsd\": 0.000286,\n  \"durationMs\": 1600\n}",
       "systemPrompt": "",
       "testCaseId": "fr-word-1",
       "userPrompt": "grenouille"
@@ -113,8 +243,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2599.2917919999963,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-sentence.mp3\",\n  \"costUsd\": 0.00073,\n  \"durationMs\": 4520\n}",
+      "calls": [],
+      "duration": 2268.3002500000002,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-sentence.mp3\",\n  \"costUsd\": 0.0007240000000000001,\n  \"durationMs\": 4480\n}",
       "systemPrompt": "",
       "testCaseId": "fr-sentence-1",
       "userPrompt": "Je voudrais réserver une table pour deux personnes ce soir."
@@ -122,8 +253,24 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1775.9493330000041,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-word.mp3\",\n  \"costUsd\": 0.000304,\n  \"durationMs\": 1720\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 709,
+            "outputTokens": 34,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 5552.566749999998,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-word.mp3\",\n  \"costUsd\": 0.000292,\n  \"durationMs\": 1640\n}",
       "systemPrompt": "",
       "testCaseId": "de-word-1",
       "userPrompt": "Eichhörnchen"
@@ -131,8 +278,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2004.8600420000002,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-sentence.mp3\",\n  \"costUsd\": 0.000554,\n  \"durationMs\": 3360\n}",
+      "calls": [],
+      "duration": 1920.3828749999957,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-sentence.mp3\",\n  \"costUsd\": 0.0005600000000000001,\n  \"durationMs\": 3400\n}",
       "systemPrompt": "",
       "testCaseId": "de-sentence-1",
       "userPrompt": "Kannst du mir bitte sagen, wo der Bahnhof ist?"
@@ -140,8 +288,50 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1759.0740420000002,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-word.mp3\",\n  \"costUsd\": 0.0002435,\n  \"durationMs\": 1320\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 705,
+            "outputTokens": 38,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 322,
+            "outputTokens": 109,
+            "reasoningTokens": 94
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 322,
+            "outputTokens": 86,
+            "reasoningTokens": 69
+          }
+        }
+      ],
+      "duration": 7017.744332999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-word.mp3\",\n  \"costUsd\": 0.0002675,\n  \"durationMs\": 1400\n}",
       "systemPrompt": "",
       "testCaseId": "it-word-1",
       "userPrompt": "gnocchi"
@@ -149,8 +339,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2393.1124169999966,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-sentence.mp3\",\n  \"costUsd\": 0.0006335000000000001,\n  \"durationMs\": 3880\n}",
+      "calls": [],
+      "duration": 2025.4398750000037,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-sentence.mp3\",\n  \"costUsd\": 0.0006395000000000001,\n  \"durationMs\": 3920\n}",
       "systemPrompt": "",
       "testCaseId": "it-sentence-1",
       "userPrompt": "Vorrei un biglietto di andata e ritorno per Firenze."
@@ -158,8 +349,60 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2274.7615829999995,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/nl-sentence.mp3\",\n  \"costUsd\": 0.000519,\n  \"durationMs\": 3120\n}",
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 704,
+            "outputTokens": 27,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 313,
+            "outputTokens": 101,
+            "reasoningTokens": 87
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 313,
+            "outputTokens": 82,
+            "reasoningTokens": 60
+          }
+        }
+      ],
+      "duration": 6230.705709000002,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/nl-word.mp3\",\n  \"costUsd\": 0.0002325,\n  \"durationMs\": 1160\n}",
+      "systemPrompt": "",
+      "testCaseId": "nl-word-1",
+      "userPrompt": "fruit"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1957.130916999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/nl-sentence.mp3\",\n  \"costUsd\": 0.0005310000000000001,\n  \"durationMs\": 3200\n}",
       "systemPrompt": "",
       "testCaseId": "nl-sentence-1",
       "userPrompt": "Ik wil graag een kopje koffie, alstublieft."
@@ -167,7 +410,8 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1903.350750000005,
+      "calls": [],
+      "duration": 1538.6875829999917,
       "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ja-word.mp3\",\n  \"costUsd\": 0.00022250000000000001,\n  \"durationMs\": 1200\n}",
       "systemPrompt": "",
       "testCaseId": "ja-word-1",
@@ -176,8 +420,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2050.284875000005,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ja-sentence.mp3\",\n  \"costUsd\": 0.000506,\n  \"durationMs\": 3080\n}",
+      "calls": [],
+      "duration": 1830.1528749999998,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ja-sentence.mp3\",\n  \"costUsd\": 0.00044600000000000005,\n  \"durationMs\": 2680\n}",
       "systemPrompt": "",
       "testCaseId": "ja-sentence-1",
       "userPrompt": "駅までどのくらいかかりますか？"
@@ -185,8 +430,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 3329.158875000001,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ja-passage.mp3\",\n  \"costUsd\": 0.0011330000000000001,\n  \"durationMs\": 7240\n}",
+      "calls": [],
+      "duration": 2826.6748750000115,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ja-passage.mp3\",\n  \"costUsd\": 0.001187,\n  \"durationMs\": 7600\n}",
       "systemPrompt": "",
       "testCaseId": "ja-passage-1",
       "userPrompt": "先週、友達と京都に行きました。お寺をたくさん見て、おいしい抹茶を飲みました。"
@@ -194,8 +440,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1854.4930830000012,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/zh-word.mp3\",\n  \"costUsd\": 0.00030000000000000003,\n  \"durationMs\": 1720\n}",
+      "calls": [],
+      "duration": 1786.7570000000123,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/zh-word.mp3\",\n  \"costUsd\": 0.00035400000000000004,\n  \"durationMs\": 2080\n}",
       "systemPrompt": "",
       "testCaseId": "zh-word-1",
       "userPrompt": "图书馆"
@@ -203,8 +450,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2179.2580420000013,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/zh-sentence.mp3\",\n  \"costUsd\": 0.0005475,\n  \"durationMs\": 3360\n}",
+      "calls": [],
+      "duration": 1890.3032079999975,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/zh-sentence.mp3\",\n  \"costUsd\": 0.0005295000000000001,\n  \"durationMs\": 3240\n}",
       "systemPrompt": "",
       "testCaseId": "zh-sentence-1",
       "userPrompt": "请问，最近的地铁站在哪里？"
@@ -212,151 +460,8 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1740.2178339999955,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ko-word.mp3\",\n  \"costUsd\": 0.00024050000000000002,\n  \"durationMs\": 1320\n}",
-      "systemPrompt": "",
-      "testCaseId": "ko-word-1",
-      "userPrompt": "도서관"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 1906.8307089999944,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ko-sentence.mp3\",\n  \"costUsd\": 0.00041600000000000003,\n  \"durationMs\": 2480\n}",
-      "systemPrompt": "",
-      "testCaseId": "ko-sentence-1",
-      "userPrompt": "이 근처에 약국이 있나요?"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 2252.9606249999997,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ru-word.mp3\",\n  \"costUsd\": 0.00044900000000000007,\n  \"durationMs\": 2680\n}",
-      "systemPrompt": "",
-      "testCaseId": "ru-word-1",
-      "userPrompt": "достопримечательность"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 2205.2624580000047,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ru-sentence.mp3\",\n  \"costUsd\": 0.0005835,\n  \"durationMs\": 3560\n}",
-      "systemPrompt": "",
-      "testCaseId": "ru-sentence-1",
-      "userPrompt": "Скажите, пожалуйста, как пройти к вокзалу?"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 1658.752999999997,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ar-word.mp3\",\n  \"costUsd\": 0.000261,\n  \"durationMs\": 1440\n}",
-      "systemPrompt": "",
-      "testCaseId": "ar-word-1",
-      "userPrompt": "مكتبة"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 2349.9999580000003,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ar-sentence.mp3\",\n  \"costUsd\": 0.0005875000000000001,\n  \"durationMs\": 3600\n}",
-      "systemPrompt": "",
-      "testCaseId": "ar-sentence-1",
-      "userPrompt": "أين أقرب محطة قطار من هنا؟"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 1687.294249999999,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/hi-word.mp3\",\n  \"costUsd\": 0.00024900000000000004,\n  \"durationMs\": 1360\n}",
-      "systemPrompt": "",
-      "testCaseId": "hi-word-1",
-      "userPrompt": "पुस्तकालय"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 2312.0429159999912,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/hi-sentence.mp3\",\n  \"costUsd\": 0.0005890000000000001,\n  \"durationMs\": 3600\n}",
-      "systemPrompt": "",
-      "testCaseId": "hi-sentence-1",
-      "userPrompt": "क्या आप मुझे स्टेशन का रास्ता बता सकते हैं?"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 6071.103666000003,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/nl-word.mp3\",\n  \"costUsd\": 0.0002565,\n  \"durationMs\": 1320\n}",
-      "systemPrompt": "",
-      "testCaseId": "nl-word-1",
-      "userPrompt": "fruit"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 11599.480375,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-lookalike-name.mp3\",\n  \"costUsd\": 0.0002545,\n  \"durationMs\": 1320\n}",
-      "systemPrompt": "",
-      "testCaseId": "de-lookalike-name-1",
-      "userPrompt": "Name"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 6676.926708999999,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-lookalike-kind.mp3\",\n  \"costUsd\": 0.0002305,\n  \"durationMs\": 1160\n}",
-      "systemPrompt": "",
-      "testCaseId": "de-lookalike-kind-1",
-      "userPrompt": "Kind"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 24389.093459,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3\",\n  \"costUsd\": 0.000263,\n  \"durationMs\": 1320\n}",
-      "systemPrompt": "",
-      "testCaseId": "pt-lookalike-charles-1",
-      "userPrompt": "Charles"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 8191.548042000002,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-time.mp3\",\n  \"costUsd\": 0.00022650000000000003,\n  \"durationMs\": 1080\n}",
-      "systemPrompt": "",
-      "testCaseId": "pt-lookalike-time-1",
-      "userPrompt": "time"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 6271.202582999998,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-lookalike-pie.mp3\",\n  \"costUsd\": 0.00021250000000000002,\n  \"durationMs\": 1000\n}",
-      "systemPrompt": "",
-      "testCaseId": "es-lookalike-pie-1",
-      "userPrompt": "pie"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 6548.341916999998,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-lookalike-pain.mp3\",\n  \"costUsd\": 0.0001885,\n  \"durationMs\": 880\n}",
-      "systemPrompt": "",
-      "testCaseId": "fr-lookalike-pain-1",
-      "userPrompt": "pain"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 5896.016166999994,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-lookalike-pane.mp3\",\n  \"costUsd\": 0.00024300000000000002,\n  \"durationMs\": 1240\n}",
-      "systemPrompt": "",
-      "testCaseId": "it-lookalike-pane-1",
-      "userPrompt": "pane"
-    },
-    {
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "duration": 2107.7972500000014,
+      "calls": [],
+      "duration": 1337.4067500000092,
       "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/yue-word.mp3\",\n  \"costUsd\": 0.000216,\n  \"durationMs\": 1160\n}",
       "systemPrompt": "",
       "testCaseId": "yue-word-1",
@@ -365,8 +470,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2425.815292000001,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/yue-sentence.mp3\",\n  \"costUsd\": 0.00048150000000000005,\n  \"durationMs\": 2920\n}",
+      "calls": [],
+      "duration": 1832.9844999999914,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/yue-sentence.mp3\",\n  \"costUsd\": 0.0005175000000000001,\n  \"durationMs\": 3160\n}",
       "systemPrompt": "",
       "testCaseId": "yue-sentence-1",
       "userPrompt": "唔該，請問地鐵站喺邊度？"
@@ -374,8 +480,89 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2253.7980420000004,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/he-word.mp3\",\n  \"costUsd\": 0.000266,\n  \"durationMs\": 1480\n}",
+      "calls": [],
+      "duration": 1508.594916999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ko-word.mp3\",\n  \"costUsd\": 0.00023450000000000004,\n  \"durationMs\": 1280\n}",
+      "systemPrompt": "",
+      "testCaseId": "ko-word-1",
+      "userPrompt": "도서관"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1792.031707999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ko-sentence.mp3\",\n  \"costUsd\": 0.00047,\n  \"durationMs\": 2840\n}",
+      "systemPrompt": "",
+      "testCaseId": "ko-sentence-1",
+      "userPrompt": "이 근처에 약국이 있나요?"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1568.2772499999992,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ru-word.mp3\",\n  \"costUsd\": 0.00040100000000000004,\n  \"durationMs\": 2360\n}",
+      "systemPrompt": "",
+      "testCaseId": "ru-word-1",
+      "userPrompt": "достопримечательность"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 2017.0217499999999,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ru-sentence.mp3\",\n  \"costUsd\": 0.0005775,\n  \"durationMs\": 3520\n}",
+      "systemPrompt": "",
+      "testCaseId": "ru-sentence-1",
+      "userPrompt": "Скажите, пожалуйста, как пройти к вокзалу?"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1527.687832999989,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ar-word.mp3\",\n  \"costUsd\": 0.000255,\n  \"durationMs\": 1400\n}",
+      "systemPrompt": "",
+      "testCaseId": "ar-word-1",
+      "userPrompt": "مكتبة"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1895.170499999993,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ar-sentence.mp3\",\n  \"costUsd\": 0.0005695,\n  \"durationMs\": 3480\n}",
+      "systemPrompt": "",
+      "testCaseId": "ar-sentence-1",
+      "userPrompt": "أين أقرب محطة قطار من هنا؟"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1646.8194159999985,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/hi-word.mp3\",\n  \"costUsd\": 0.00030300000000000005,\n  \"durationMs\": 1720\n}",
+      "systemPrompt": "",
+      "testCaseId": "hi-word-1",
+      "userPrompt": "पुस्तकालय"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 2451.0290830000013,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/hi-sentence.mp3\",\n  \"costUsd\": 0.0005350000000000001,\n  \"durationMs\": 3240\n}",
+      "systemPrompt": "",
+      "testCaseId": "hi-sentence-1",
+      "userPrompt": "क्या आप मुझे स्टेशन का रास्ता बता सकते हैं?"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [],
+      "duration": 1557.2214999999997,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/he-word.mp3\",\n  \"costUsd\": 0.000272,\n  \"durationMs\": 1520\n}",
       "systemPrompt": "",
       "testCaseId": "he-word-1",
       "userPrompt": "ספרייה"
@@ -383,8 +570,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2296.058500000001,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/he-sentence.mp3\",\n  \"costUsd\": 0.00045400000000000003,\n  \"durationMs\": 2720\n}",
+      "calls": [],
+      "duration": 1735.5745409999945,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/he-sentence.mp3\",\n  \"costUsd\": 0.000424,\n  \"durationMs\": 2520\n}",
       "systemPrompt": "",
       "testCaseId": "he-sentence-1",
       "userPrompt": "איפה תחנת הרכבת הקרובה?"
@@ -392,8 +580,9 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1712.199541,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/uk-word.mp3\",\n  \"costUsd\": 0.000293,\n  \"durationMs\": 1640\n}",
+      "calls": [],
+      "duration": 1762.594207999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/uk-word.mp3\",\n  \"costUsd\": 0.00034700000000000003,\n  \"durationMs\": 2000\n}",
       "systemPrompt": "",
       "testCaseId": "uk-word-1",
       "userPrompt": "бібліотека"
@@ -401,7 +590,8 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 2148.842583999998,
+      "calls": [],
+      "duration": 1917.7584170000046,
       "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/uk-sentence.mp3\",\n  \"costUsd\": 0.0006150000000000001,\n  \"durationMs\": 3760\n}",
       "systemPrompt": "",
       "testCaseId": "uk-sentence-1",
@@ -410,11 +600,318 @@
     {
       "inputTokens": 0,
       "outputTokens": 0,
-      "duration": 1764.8107500000006,
-      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ur-sentence.mp3\",\n  \"costUsd\": 0.0004965000000000001,\n  \"durationMs\": 3000\n}",
+      "calls": [],
+      "duration": 1906.3619169999874,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/ur-sentence.mp3\",\n  \"costUsd\": 0.0005325000000000001,\n  \"durationMs\": 3240\n}",
       "systemPrompt": "",
       "testCaseId": "ur-sentence-1",
       "userPrompt": "قریب ترین ریلوے اسٹیشن کہاں ہے؟"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 704,
+            "outputTokens": 30,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 313,
+            "outputTokens": 105,
+            "reasoningTokens": 90
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 313,
+            "outputTokens": 76,
+            "reasoningTokens": 54
+          }
+        }
+      ],
+      "duration": 10599.626375000007,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/de-lookalike-kind.mp3\",\n  \"costUsd\": 0.00023,\n  \"durationMs\": 1160\n}",
+      "systemPrompt": "",
+      "testCaseId": "de-lookalike-kind-1",
+      "userPrompt": "Kind"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 707,
+            "outputTokens": 38,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 21686.402541999996,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3\",\n  \"costUsd\": 0.000281,\n  \"durationMs\": 1440\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-lookalike-charles-1",
+      "userPrompt": "Charles"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 705,
+            "outputTokens": 155,
+            "reasoningTokens": 122
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 316,
+            "outputTokens": 446,
+            "reasoningTokens": 419
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 316,
+            "outputTokens": 725,
+            "reasoningTokens": 709
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 316,
+            "outputTokens": 92,
+            "reasoningTokens": 76
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 316,
+            "outputTokens": 86,
+            "reasoningTokens": 70
+          }
+        }
+      ],
+      "duration": 21428.937416999994,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-time.mp3\",\n  \"costUsd\": 0.00023250000000000004,\n  \"durationMs\": 1120\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-lookalike-time-1",
+      "userPrompt": "time"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 702,
+            "outputTokens": 28,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 310,
+            "outputTokens": 67,
+            "reasoningTokens": 52
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 310,
+            "outputTokens": 78,
+            "reasoningTokens": 64
+          }
+        }
+      ],
+      "duration": 8059.317041999995,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/es-lookalike-pie.mp3\",\n  \"costUsd\": 0.00021850000000000003,\n  \"durationMs\": 1040\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-lookalike-pie-1",
+      "userPrompt": "pie"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 700,
+            "outputTokens": 29,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 308,
+            "outputTokens": 72,
+            "reasoningTokens": 57
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 308,
+            "outputTokens": 86,
+            "reasoningTokens": 72
+          }
+        }
+      ],
+      "duration": 7294.382375000001,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/fr-lookalike-pain.mp3\",\n  \"costUsd\": 0.0002005,\n  \"durationMs\": 960\n}",
+      "systemPrompt": "",
+      "testCaseId": "fr-lookalike-pain-1",
+      "userPrompt": "pain"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "usage": {
+            "cacheReadTokens": 594,
+            "cacheWriteTokens": 0,
+            "inputTokens": 702,
+            "outputTokens": 28,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 312,
+            "outputTokens": 80,
+            "reasoningTokens": 66
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 312,
+            "outputTokens": 71,
+            "reasoningTokens": 58
+          }
+        }
+      ],
+      "duration": 11398.255750000011,
+      "output": "{\n  \"audioPath\": \"language-audio/google-gemini-3.8-flash-lite-tts/it-lookalike-pane.mp3\",\n  \"costUsd\": 0.00023700000000000001,\n  \"durationMs\": 1200\n}",
+      "systemPrompt": "",
+      "testCaseId": "it-lookalike-pane-1",
+      "userPrompt": "pane"
     }
   ],
   "taskId": "language-audio"

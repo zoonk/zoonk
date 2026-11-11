@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -145,13 +146,14 @@ test.describe("Starting a course from its page", () => {
     const targetDate = new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
     await page.getByLabel("Date", { exact: true }).fill(targetDate);
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip all" }).click();
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
 
     await expect(page.getByRole("heading", { name: level })).toBeHidden();
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
       details: {
-        answered: ["level", "targetDate"],
+        answered: ["level", "targetDate", ...PROFILE_QUESTIONS],
         courseStart: { chapterId: null },
         level: "basic",
       },

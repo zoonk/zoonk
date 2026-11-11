@@ -83,7 +83,10 @@ describe("non-language open-answer skips", () => {
 
     await planFixture({
       goalId: goal.id,
-      items: [{ lessonId: setup.lesson.id, skillId: setup.skill.id }],
+      items: [
+        { lessonId: setup.lesson.id, skillId: setup.skill.id },
+        { kind: "boss", position: 100, status: "done" },
+      ],
     });
 
     const runId = await startRun(setup.lesson.id);

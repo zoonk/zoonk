@@ -49,6 +49,7 @@ import { planAdvicePaths } from "./paths/plan-advice";
 import { planChangedSincePaths } from "./paths/plan-changed-since";
 import { planPreviewPaths } from "./paths/plan-previews";
 import { planPaths } from "./paths/plans";
+import { profileQuestionPaths } from "./paths/profile-questions";
 import { progressPaths } from "./paths/progress";
 import { pronunciationPaths } from "./paths/pronunciation";
 import { researchSourcePaths } from "./paths/research-sources";
@@ -98,6 +99,7 @@ function withInternalErrorResponses(paths: ZodOpenApiPathsObject): ZodOpenApiPat
 
 const paths = withInternalErrorResponses({
   ...accountPaths,
+  ...profileQuestionPaths,
   ...appAttestPaths,
   ...catalogPaths,
   ...catalogResourcePaths,

@@ -59,15 +59,6 @@ const baseInput: SessionBuildInput = {
   capsules: [capsule("a"), capsule("b"), capsule("c")],
   checkpoints: [],
   dailyMinutes: 45,
-  drills: [
-    {
-      itemIds: ["m1", "m2"],
-      kind: "retry",
-      lessonId: null,
-      mistakeId: "mistake-1",
-      timeLimitSeconds: null,
-    },
-  ],
   examTrialEnded: false,
   freshStart: null,
   lessons: [lesson("l1", 14), lesson("l2", 10), lesson("l3", 10)],
@@ -76,8 +67,6 @@ const baseInput: SessionBuildInput = {
   practice,
   practiceShare: 0.2,
   produce: null,
-  reinforcement: [],
-  remainingLimitMinutes: null,
   reviewPlanItemId: null,
   topics: new Map([
     ["s0", { area: "Math", name: "Functions" }],
@@ -91,6 +80,175 @@ function getFullReview(input: SessionBuildInput) {
 }
 
 describe(buildSessionBlocks, () => {
+  const putOffDay = {
+    ...baseInput,
+    capsules: [],
+    checkpoints: [boss],
+
+    lastSessionChallenges: new Map([["plan-boss", false]]),
+    lessons: [lesson("l1", 15)],
+    planItems: [
+      { id: "plan-boss", kind: "boss" as const, position: 0, status: "todo" as const },
+      { id: "plan-l1", kind: "lesson" as const, position: 1, status: "todo" as const },
+    ],
+    practice: [],
+  };
+
+  it.each([
+    [15, ["plan-l1"]],
+    [45, ["plan-l1", "plan-boss"]],
+  ])("puts a challenge put off yesterday after a %i-minute day's lessons", (minutes, day) => {
+    const built = buildSessionBlocks({ ...putOffDay, dailyMinutes: minutes });
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(day);
+  });
+
+  it("puts every challenge after the lessons once one was put off", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      checkpoints: [{ ...boss, planItemId: "plan-rematch", rematch: true }, boss],
+      dailyMinutes: 15,
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-l1"]);
+  });
+
+  it("keeps a duel the learner started in that session leading", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      checkpoints: [{ ...boss, planItemId: "plan-rematch", rematch: true }, boss],
+      dailyMinutes: 15,
+      lastSessionChallenges: new Map([
+        ["plan-boss", false],
+        ["plan-rematch", true],
+      ]),
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-rematch"]);
+  });
+
+  it("puts a challenge put off yesterday after its own lesson and the lessons past it", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      dailyMinutes: 30,
+      lessons: [lesson("l1", 15), lesson("l2", 15)],
+      planItems: [
+        { id: "plan-l1", kind: "lesson", position: 0, status: "todo" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+        { id: "plan-l2", kind: "lesson", position: 2, status: "todo" },
+      ],
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual([
+      "plan-l1",
+      "plan-l2",
+    ]);
+  });
+
+  it("leads with a challenge put off yesterday once no lessons are left, even past the day's time", () => {
+    const built = buildSessionBlocks({ ...putOffDay, dailyMinutes: 10, lessons: [] });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-boss"]);
+    expect(built.plannedMinutes).toBe(15);
+  });
+
+  it("keeps a reached challenge within the time left on a started day", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [boss],
+      dailyMinutes: 30,
+
+      lessons: [lesson("l1", 4)],
+      planItems: [
+        { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+        { id: "plan-l1", kind: "lesson", position: 2, status: "todo" },
+      ],
+      practice: [],
+      usedMinutes: 25,
+    });
+
+    expect(built.blocks.map((block) => block.lessonId)).toStrictEqual(["l1"]);
+    expect(built.plannedMinutes).toBeLessThanOrEqual(5);
+  });
+
+  it.each([
+    ["new", { reviewPlanItemId: "review-1" }],
+    ["new", { fullReviewSkillIds: ["s0"] }],
+    ["new", { fullReviewSkillIds: ["s0", "uncovered"] }],
+    ["put off yesterday", { reviewPlanItemId: "review-1" }],
+    ["put off yesterday", { fullReviewSkillIds: ["s0"] }],
+  ])("offers no %s phase challenge on a review day: %j", (history, review) => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      lastSessionChallenges: new Map(history === "new" ? [] : [["plan-boss", false]]),
+      planItems: [
+        { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+      ],
+      ...review,
+    });
+
+    expect(built.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+    expect(built.blocks.some((block) => block.kind === "learn")).toBe(false);
+  });
+
+  it("funds only one of two reached 15-minute challenges on a 20-minute day", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [boss, { ...boss, phase: 2, planItemId: "second" }],
+      dailyMinutes: 20,
+
+      lessons: [],
+      practice: [],
+    });
+
+    expect(built.blocks.filter((block) => block.kind === "checkpoint")).toHaveLength(1);
+    expect(built.plannedMinutes).toBeLessThanOrEqual(20);
+  });
+
+  it("keeps one oversized challenge alone, ahead of placement and reinforcement", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [{ ...boss, minutes: 15, reinforcement: [lesson("r", 3)], rematch: true }],
+      dailyMinutes: 10,
+      placementItemIds: ["placement"],
+    });
+
+    expect(built.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
+    expect(built.plannedMinutes).toBe(15);
+  });
+
+  it("funds a first duel before a put-off rematch", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [
+        {
+          ...boss,
+          minutes: 20,
+          reinforcement: [lesson("rematch-reinforcement", 3)],
+          rematch: true,
+        },
+        { ...boss, minutes: 20, phase: 2, planItemId: "first-duel" },
+      ],
+      dailyMinutes: 30,
+
+      lessons: [],
+      practice: [],
+    });
+
+    expect(
+      built.blocks
+        .filter((block) => block.kind === "checkpoint")
+        .map((block) => block.payload.planItemId),
+    ).toStrictEqual(["first-duel"]);
+
+    expect(built.blocks.some((block) => block.lessonId === "rematch-reinforcement")).toBe(false);
+  });
+
   it("builds an easy start, the hard middle and fits the day", () => {
     const { blocks, plannedMinutes } = buildSessionBlocks(baseInput);
 
@@ -107,9 +265,19 @@ describe(buildSessionBlocks, () => {
     expect(blocks[1]?.canDo).toBe("You'll do l1");
     expect(blocks[1]?.payload.planItemId).toBe("plan-l1");
 
-    expect(blocks[3]?.payload.drills).toStrictEqual(baseInput.drills);
+    expect(blocks[3]?.payload.drills).toStrictEqual([]);
 
-    expect(blocks[3]?.payload.itemIds).toStrictEqual(["p0", "p1", "p2", "p3", "p4", "p5", "p6"]);
+    expect(blocks[3]?.payload.itemIds).toStrictEqual([
+      "p0",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "p5",
+      "p6",
+      "p7",
+      "p8",
+    ]);
   });
 
   it("opens the first week's sessions with a few placement questions, even without capsules", () => {
@@ -147,25 +315,24 @@ describe(buildSessionBlocks, () => {
     expect(blocks.some((block) => block.kind === "learn")).toBe(true);
   });
 
-  it("puts reinforcement lessons before a boss rematch and waits on new lessons", () => {
+  it("puts reinforcement before its funded rematch and continues with lessons", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoints: [boss],
-      reinforcement: [lesson("r1", 3), lesson("r2", 3)],
+      checkpoints: [{ ...boss, reinforcement: [lesson("r1", 3), lesson("r2", 3)] }],
     });
 
     expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
       ["review", null],
       ["learn", "r1"],
       ["learn", "r2"],
-      ["practice", null],
-      ["practice", null],
       ["checkpoint", null],
+      ["learn", "l1"],
+      ["practice", null],
     ]);
 
     expect(blocks[1]?.payload.reinforcement).toBe(true);
 
-    expect(blocks[5]?.payload.checkpoint).toStrictEqual({
+    expect(blocks[3]?.payload.checkpoint).toStrictEqual({
       kind: "boss",
       mock: false,
       passMark: 7,
@@ -175,60 +342,55 @@ describe(buildSessionBlocks, () => {
     });
   });
 
-  it("gives the lessons its plan has before a challenge on its day first, and waits on the rest", () => {
+  it("walks lessons and challenges in plan order without waiting for a challenge", () => {
+    const lessons = [lesson("l1", 5), lesson("l2", 5), lesson("l3", 5)];
+    const order = ["plan-l1", "plan-boss", "plan-l2", "plan-l3"];
+
     const { blocks } = buildSessionBlocks({
       ...baseInput,
+      capsules: [],
       checkpoints: [boss],
-      lessons: [{ ...lesson("l1", 5), beforeChallenge: true }, lesson("l2", 10)],
+
+      lessons,
+      planItems: order.map((id, position) => ({
+        id,
+        kind: id === "plan-boss" ? "boss" : "lesson",
+        position,
+        status: "todo",
+      })),
+      practice: [],
     });
 
-    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
-      ["review", null],
-      ["learn", "l1"],
-      ["practice", null],
-      ["practice", null],
-      ["checkpoint", null],
-    ]);
+    expect(blocks.map((block) => block.payload.planItemId)).toStrictEqual(order);
   });
 
-  it("follows a first duel with the lessons its plan has after it on its day", () => {
+  it("passes over a challenge that does not fit and continues with the next phase", () => {
+    const lessons = [lesson("l1", 10), lesson("l2", 10)];
+    const order = ["plan-l1", "plan-boss", "plan-l2"];
+
     const { blocks } = buildSessionBlocks({
       ...baseInput,
+      capsules: [],
       checkpoints: [boss],
-      lessons: [
-        { ...lesson("l1", 5), beforeChallenge: true },
-        { ...lesson("l2", 5), afterChallenge: true },
-        lesson("l3", 5),
-      ],
+      dailyMinutes: 20,
+
+      lessons,
+      planItems: order.map((id, position) => ({
+        id,
+        kind: id === "plan-boss" ? "boss" : "lesson",
+        position,
+        status: "todo",
+      })),
+      practice: [],
     });
 
-    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
-      ["review", null],
-      ["learn", "l1"],
-      ["practice", null],
-      ["checkpoint", null],
-      ["learn", "l2"],
-    ]);
-  });
-
-  it("gives the lessons before and after a first duel one budget, in plan order", () => {
-    const { blocks } = buildSessionBlocks({
-      ...baseInput,
-      checkpoints: [boss],
-      lessons: [
-        { ...lesson("l1", 10), beforeChallenge: true },
-        { ...lesson("l2", 10), afterChallenge: true },
-      ],
-    });
-
-    expect(blocks.map((block) => block.lessonId).filter(Boolean)).toStrictEqual(["l1"]);
+    expect(blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-l1", "plan-l2"]);
   });
 
   it("never holds new lessons back on a rematch, so a lost boss locks nothing", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoints: [{ ...boss, rematch: true }],
-      reinforcement: [lesson("r1", 3), lesson("r2", 3)],
+      checkpoints: [{ ...boss, reinforcement: [lesson("r1", 3), lesson("r2", 3)], rematch: true }],
     });
 
     expect(blocks.map((block) => block.lessonId).filter(Boolean)).toStrictEqual(["r1", "r2", "l1"]);
@@ -302,7 +464,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [capsule("a")],
       dailyMinutes: 25,
-      drills: [],
+
       fullReviewSkillIds: skills,
       practice: pool,
     };
@@ -318,16 +480,6 @@ describe(buildSessionBlocks, () => {
       const review = getFullReview({ ...fullReviewDay, dailyMinutes: 10 });
 
       expect(review?.fullReview).toBe(true);
-    });
-
-    it("stays within the learner's daily limit", () => {
-      const { plannedMinutes } = buildSessionBlocks({
-        ...fullReviewDay,
-        dailyMinutes: 10,
-        remainingLimitMinutes: 10,
-      });
-
-      expect(plannedMinutes).toBeLessThanOrEqual(10);
     });
   });
 
@@ -347,26 +499,14 @@ describe(buildSessionBlocks, () => {
     ]);
   });
 
-  it("keeps reviews and mistake fixes free when a free exam trial has ended", () => {
+  it("keeps reviews free when a free exam trial has ended", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
       checkpoints: [boss],
       examTrialEnded: true,
     });
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
-    expect(blocks[1]?.payload.itemIds).toStrictEqual([]);
-    expect(blocks[1]?.payload.drills).toHaveLength(1);
-  });
-
-  it("fits the learner's daily limit and builds nothing once it's reached", () => {
-    const limited = buildSessionBlocks({ ...baseInput, remainingLimitMinutes: 12 });
-    expect(limited.plannedMinutes).toBeLessThanOrEqual(12);
-
-    expect(buildSessionBlocks({ ...baseInput, remainingLimitMinutes: 2 })).toStrictEqual({
-      blocks: [],
-      plannedMinutes: 0,
-    });
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
   });
 
   it("still offers the next lesson when it's longer than the day's room", () => {
@@ -374,7 +514,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 10,
-      drills: [],
+
       lessons: [lesson("long", 12)],
     });
 
@@ -386,7 +526,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: Array.from({ length: 10 }, (_, index) => lesson(`l${index}`, 3)),
       practice: [],
       practiceShare: 0.5,
@@ -401,7 +541,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: Array.from({ length: 30 }, (_, index) => ({
         itemId: `p${index}`,
@@ -423,7 +563,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [lesson("l1", 3)],
       practice: Array.from({ length: 30 }, (_, index) => ({
         itemId: `p${index}`,
@@ -433,7 +573,8 @@ describe(buildSessionBlocks, () => {
     });
 
     expect(blocks.some((block) => block.kind === "practice")).toBe(true);
-    expect(plannedMinutes).toBe(18);
+    expect(plannedMinutes).toBe(30);
+    expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBe(18);
   });
 
   it("keeps the time of lessons still being written free when review takes the rest of the day", () => {
@@ -441,17 +582,18 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: Array.from({ length: 12 }, (_, index) => capsule(`c${index}`)),
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: [],
       writingMinutes: 18,
     });
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
-    expect(plannedMinutes).toBeLessThanOrEqual(12);
+    expect(plannedMinutes).toBe(30);
+    expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBeLessThanOrEqual(12);
   });
 
-  it("splits a long day's practice into short blocks, mistakes first, and never a set", () => {
+  it("splits a long day's practice into short blocks without splitting a set", () => {
     const sets = Array.from({ length: 4 }, (_set, set) =>
       Array.from({ length: 3 }, (_item, index) => ({
         itemId: `set${set}-q${index}`,
@@ -479,10 +621,10 @@ describe(buildSessionBlocks, () => {
 
     expect(blocks.every((block) => block.kind === "practice")).toBe(true);
     expect(blocks.every((block) => block.estimatedMinutes <= 15)).toBe(true);
-    expect(blocks[0]?.payload.drills).toHaveLength(1);
+    expect(blocks[0]?.payload.drills).toStrictEqual([]);
     expect(blocks.slice(1).every((block) => block.payload.drills.length === 0)).toBe(true);
-    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(80);
-    expect(plannedMinutes).toBe(120);
+    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(79);
+    expect(plannedMinutes).toBe(119);
 
     expect(
       blocks.every((block) => {
@@ -506,7 +648,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: [
         "s1",
@@ -544,7 +686,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 15,
-      drills: [],
+
       lessons: [],
       practice: ["s0", "s0", "s0", "s1", "s2", "s2", "s2", "s2", "s1", "s1"].map(
         (skillId, index) => ({ itemId: `q${index}`, skillId }),
@@ -565,7 +707,7 @@ describe(buildSessionBlocks, () => {
     const withSet = {
       ...baseInput,
       capsules: [],
-      drills: [],
+
       lessons: [],
       practice: [practice[0], ...passage, practice[1], practice[2]].filter(
         (item) => item !== undefined,
@@ -573,7 +715,7 @@ describe(buildSessionBlocks, () => {
     };
 
     const getAsked = (minutes: number) =>
-      buildSessionBlocks({ ...withSet, remainingLimitMinutes: minutes }).blocks.find(
+      buildSessionBlocks({ ...withSet, dailyMinutes: minutes }).blocks.find(
         (block) => block.kind === "practice",
       )?.payload.itemIds;
 
@@ -593,21 +735,19 @@ describe("a long day's practice in three-question sets", () => {
   ).flat();
 
   it.each([
-    { dailyMinutes: 60, most: 60, remainingLimitMinutes: null },
-    { dailyMinutes: 120, most: 120, remainingLimitMinutes: null },
-    { dailyMinutes: 120, most: 60, remainingLimitMinutes: 60 },
+    { dailyMinutes: 60, most: 60 },
+    { dailyMinutes: 120, most: 120 },
   ])(
     "plans no more than $most minutes for a $dailyMinutes-minute day, keeping each set whole",
-    ({ dailyMinutes, most, remainingLimitMinutes }) => {
+    ({ dailyMinutes, most }) => {
       const { blocks, plannedMinutes } = buildSessionBlocks({
         ...baseInput,
         capsules: [],
         dailyMinutes,
-        drills: [],
+
         lessons: [],
         practice: sets,
         practiceShare: 0.6,
-        remainingLimitMinutes,
       });
 
       const setsByBlock = blocks.map(
@@ -657,5 +797,107 @@ describe(getPracticeShare, () => {
     expect(kinds.at(-1)).toBe("produce");
     expect(blocks.at(-1)?.payload.itemIds).toStrictEqual(["essay-1"]);
     expect(plannedMinutes).toBeLessThanOrEqual(60 + 14);
+  });
+});
+
+describe("filling ordinary study days", () => {
+  const empty = {
+    ...baseInput,
+    capsules: [],
+    dailyMinutes: 100,
+
+    lessons: [],
+    practice: [],
+  };
+
+  it("fills practice's unused time with the next written lessons", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      fillLessons: Array.from({ length: 12 }, (_, i) => lesson(`later-${i}`, 10)),
+      lessons: [lesson("first", 10)],
+      practiceShare: 0.6,
+    });
+
+    expect(result.blocks).toHaveLength(10);
+    expect(result.plannedMinutes).toBe(100);
+  });
+
+  it("leaves a day-replacing mock as the day's work", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      checkpoints: [{ ...boss, kind: "weekly", mock: true }],
+      fillLessons: [lesson("later", 10)],
+      mockReplacesDay: true,
+    });
+
+    expect(result.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
+    expect(result.plannedMinutes).toBe(15);
+  });
+
+  it("puts fill lessons before practice and a shared mock checkpoint", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      checkpoints: [{ ...boss, kind: "weekly", mock: true }],
+      fillLessons: [lesson("later", 10)],
+      lessons: [lesson("first", 10)],
+      mockReplacesDay: false,
+      practice,
+    });
+
+    expect(result.blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["learn", "first"],
+      ["learn", "later"],
+      ["practice", null],
+      ["practice", null],
+      ["checkpoint", null],
+    ]);
+  });
+
+  it("keeps a healthy question bank's actual practice before filling", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 20,
+      fillLessons: [lesson("later", 10)],
+      lessons: [lesson("first", 10)],
+      practice: Array.from({ length: 20 }, (_, i) => ({
+        itemId: `question-${i}`,
+        skillId: "skill",
+      })),
+      practiceShare: 0.5,
+    });
+
+    expect(result.blocks.map((block) => block.kind)).toStrictEqual(["learn", "practice"]);
+  });
+
+  it("never adds a second first-lesson overflow", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 10,
+      fillLessons: [lesson("second", 6)],
+      lessons: [lesson("first", 6)],
+    });
+
+    expect(result.blocks.map((block) => block.lessonId)).toStrictEqual(["first"]);
+    expect(result.plannedMinutes).toBe(10);
+  });
+
+  it.each([{ examTrialEnded: true }, { reviewPlanItemId: "review" }])(
+    "does not fill when new lessons are closed: %j",
+    (gate) => {
+      const result = buildSessionBlocks({ ...empty, fillLessons: [lesson("later", 10)], ...gate });
+      expect(result.blocks).toStrictEqual([]);
+      expect(result.plannedMinutes).toBe(0);
+    },
+  );
+
+  it("keeps a rounded forty-lesson day at its commitment", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      dailyMinutes: 240,
+      lessons: Array.from({ length: 40 }, (_, i) => lesson(`personal-${i}`, 6)),
+    });
+
+    expect(result.blocks).toHaveLength(40);
+    expect(result.plannedMinutes).toBe(240);
   });
 });

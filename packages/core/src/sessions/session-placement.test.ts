@@ -8,6 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
+import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -27,7 +28,14 @@ const DAY_MS = 86_400_000;
 
 async function setup({ details = {} }: { details?: object } = {}) {
   const user = await userFixture();
-  const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [1], userId: user.id });
+
+  const fixture = await learnerGoalFixture({
+    challengesDone: true,
+    itemsPerSkill: 2,
+    phases: [1],
+    userId: user.id,
+  });
+
   const [first, second] = fixture.items;
 
   await Promise.all([
@@ -73,6 +81,7 @@ async function plannedSetup() {
   });
 
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await finishChallengesFixture(plan.id);
 
   const [answered, asked] = await Promise.all([
     itemFixture({ content: choiceItemContent(), skillId }),

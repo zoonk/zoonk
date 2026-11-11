@@ -1,4 +1,6 @@
-import { type FeedbackContentKind, type FeedbackStatus } from "@zoonk/db";
+import { getLearnerLabel } from "@/lib/learner-label";
+import { type FeedbackReportType } from "@zoonk/core/feedback/contract";
+import { type FeedbackContentKind, type FeedbackStatus, type User } from "@zoonk/db";
 
 export const feedbackContentKindLabels: Record<FeedbackContentKind, string> = {
   answerExplanation: "Answer explanation",
@@ -19,6 +21,16 @@ export const feedbackStatusLabels: Record<FeedbackStatus, string> = {
   read: "Read",
   replied: "Replied",
 };
+
+export const feedbackReportTypeLabels: Record<FeedbackReportType, string> = {
+  saveFailure: "Save problem",
+};
+
+export function getFeedbackLearnerLabel(
+  user: Pick<User, "email" | "isAnonymous" | "name" | "username">,
+): string {
+  return user.isAnonymous ? "Guest" : getLearnerLabel(user);
+}
 
 export function getFeedbackStatusVariant(status: FeedbackStatus) {
   if (status === "new") {

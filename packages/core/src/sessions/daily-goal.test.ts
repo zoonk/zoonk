@@ -3,7 +3,6 @@ import {
   type PlanDay,
   getBlockMinutes,
   getNextStudyDate,
-  getSessionMinutesDone,
   getWeekDayKind,
   getWeekDays,
 } from "./daily-goal";
@@ -168,26 +167,5 @@ describe(getBlockMinutes, () => {
     expect(getBlockMinutes({ completedAt: WEDNESDAY, estimatedMinutes: 5, startedAt: null })).toBe(
       5,
     );
-  });
-});
-
-describe(getSessionMinutesDone, () => {
-  it("counts the planned minutes of finished blocks, however fast the learner went", () => {
-    const start = new Date("2026-10-06T12:00:00Z");
-    const oneMinuteLater = new Date("2026-10-06T12:01:00Z");
-
-    const blocks = [
-      ...Array.from({ length: 4 }, () => ({
-        completedAt: oneMinuteLater,
-        estimatedMinutes: 8,
-        startedAt: start,
-        status: "completed" as const,
-      })),
-      { completedAt: null, estimatedMinutes: 10, startedAt: start, status: "active" as const },
-      { completedAt: null, estimatedMinutes: 12, startedAt: null, status: "pending" as const },
-      { completedAt: start, estimatedMinutes: 6, startedAt: null, status: "skipped" as const },
-    ];
-
-    expect(getSessionMinutesDone(blocks)).toBe(32);
   });
 });

@@ -980,13 +980,41 @@ describe("language conversations", () => {
     const scheduled = await loadSessionBosses({
       examBlueprintId: null,
       goal: { kind: "language", targetDate: null },
-      graphSkills: [],
-      itemSkillIds: new Map(),
+      graphSkills: planItems.flatMap((item) =>
+        item.skillId
+          ? [
+              {
+                area: null,
+                lessons: 1,
+                name: item.titleSnapshot,
+                phase: item.phase,
+                skillId: item.skillId,
+                weight: null,
+              },
+            ]
+          : [],
+      ),
+      itemSkillIds: new Map(planItems.map((item) => [item.id, item.skillId ? [item.skillId] : []])),
       items: planItems,
       listeningSkillIds: new Set(),
-      movedEvents: [],
       phases: [],
-      skills: [],
+      skills: planItems.flatMap((item) =>
+        item.skillId
+          ? [
+              {
+                areaId: "language",
+                areaTitle: "Language",
+                id: item.skillId,
+                memberSkillIds: [item.skillId],
+                name: item.titleSnapshot,
+                order: item.position,
+                phase: item.phase,
+                prerequisiteIds: [],
+                sectionTitle: null,
+              },
+            ]
+          : [],
+      ),
       today: new Date(),
       userId: user.id,
     });

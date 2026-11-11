@@ -78,12 +78,7 @@ function useEssayWriter(onGraded: (draft: EssayDraft, sent: { editedSince: boole
 
     const result = settled?.status === "settled" ? settled.value : null;
 
-    if (
-      result === null ||
-      result === "dailyLimitReached" ||
-      result === "limitReached" ||
-      result === "signUpRequired"
-    ) {
+    if (result === null || result === "limitReached" || result === "signUpRequired") {
       setStatus(result ?? "error");
       return;
     }
@@ -148,8 +143,8 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   return (
     <>
       <StatusLine gradesLeft={writer.gradesLeft} status={writer.status} />
-      {finishing.failed && !finishing.pending && (
-        <AnswersSaveError onRetry={() => void finishing.finish()} />
+      {finishing.failures > 0 && !finishing.pending && (
+        <AnswersSaveError failures={finishing.failures} onRetry={() => void finishing.finish()} />
       )}
       <TaskActions>
         {drafts.length > 0 && (

@@ -6,6 +6,7 @@ import {
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
 import { getTaskResults } from "@/lib/eval-runner";
+import { aggregateEvalResults } from "@/lib/eval-summary";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import {
   combineOutputsWithTestCases,
@@ -27,7 +28,6 @@ import { redirect } from "next/navigation";
 import { Suspense, cache } from "react";
 import { getTaskRoute } from "../_utils/task-route";
 import { EvalResults } from "./eval-results";
-import { GeneratedOutputs } from "./generated-outputs";
 import { TaskModelActionsCard, TaskModelActionsCardSkeleton } from "./task-model-actions-card";
 
 type TaskModelRouteParams = PageProps<"/tasks/[taskId]/[modelId]">["params"];
@@ -98,7 +98,10 @@ const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => 
   ]);
 
   const generatedOutputs = modelOutputs
-    ? combineOutputsWithTestCases({ modelOutputs, task })
+    ? combineOutputsWithTestCases({
+        modelOutputs: { ...modelOutputs, outputs: results?.outputs ?? [] },
+        task,
+      })
     : null;
 
   return { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName: task.name };
@@ -117,11 +120,20 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
   return (
     <TaskModelActionsCard
       exportEntries={
-        generatedOutputs?.outputs.map((output) => ({
-          input: output.testCase.userInput,
-          output: output.output,
-        })) ?? []
+        generatedOutputs?.outputs.map((output) => {
+          const result = results?.results.find((entry) => entry.testCase.id === output.testCaseId);
+
+          return {
+            input: output.testCase.userInput,
+            itemsScored: result?.itemsScored,
+            keyFlaws: result?.keyFlaws,
+            output: output.output,
+            testCaseId: output.testCaseId,
+          };
+        }) ?? []
       }
+      summary={aggregateEvalResults(results ?? { outputs: [], results: [] })}
+      failedRuns={results?.failedRuns ?? []}
       model={model}
       modelId={modelId}
       outputStatus={outputStatus}
@@ -138,11 +150,11 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
 async function TaskModelResults({ params }: TaskModelRouteProps) {
   const { generatedOutputs, results } = await getTaskModelContentFromParams(params);
 
-  if (results) {
-    return <EvalResults results={results} />;
+  if (results && generatedOutputs) {
+    return <EvalResults outputs={generatedOutputs} results={results} />;
   }
 
-  return generatedOutputs && <GeneratedOutputs outputs={generatedOutputs} />;
+  return null;
 }
 
 export default function TaskModelPage({ params }: TaskModelRouteProps) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import {
   type StudyBlockDetail,
   type StudyQuestion,
@@ -25,47 +26,50 @@ function getPicks(answer: StudyQuestionAnswer | null): number[] {
   return "selectedIndexes" in answer ? answer.selectedIndexes : [];
 }
 
-function getChoiceResult(phase: QuestionBlockPhase): ChoiceResult | null {
-  if (phase.kind !== "feedback") {
-    return null;
-  }
+type QuestionResult = {
+  answer: StudyQuestionAnswer;
+  correctAnswer: StudyQuestionAnswer | null;
+  isCorrect: boolean;
+};
 
-  return { correct: getPicks(phase.feedback.correctAnswer), picked: getPicks(phase.answer) };
+function getChoiceResult(result: QuestionResult | null): ChoiceResult | null {
+  return result
+    ? { correct: getPicks(result.correctAnswer), picked: getPicks(result.answer) }
+    : null;
 }
 
-function getTrueFalseResult(phase: QuestionBlockPhase): TrueFalseResult | null {
-  if (phase.kind !== "feedback") {
+function getTrueFalseResult(result: QuestionResult | null): TrueFalseResult | null {
+  if (!result) {
     return null;
   }
 
-  const { answer } = phase;
-  const correct = phase.feedback.correctAnswer;
+  const { answer, correctAnswer } = result;
 
   return {
     answer: "isTrue" in answer ? { isTrue: answer.isTrue } : { dontKnow: true },
-    correct: correct && "isTrue" in correct ? correct.isTrue : null,
+    correct: correctAnswer && "isTrue" in correctAnswer ? correctAnswer.isTrue : null,
   };
 }
 
-function getOrderResult(phase: QuestionBlockPhase): OrderResult | null {
-  if (phase.kind !== "feedback" || !("order" in phase.answer)) {
+function getOrderResult(result: QuestionResult | null): OrderResult | null {
+  if (!result || !("order" in result.answer)) {
     return null;
   }
 
-  const correct = phase.feedback.correctAnswer;
+  const correct = result.correctAnswer;
 
   return {
     correctOrder: correct && "order" in correct ? correct.order : [],
-    order: phase.answer.order,
+    order: result.answer.order,
   };
 }
 
-function getAnswerMark(phase: QuestionBlockPhase): "correct" | "wrong" | null {
-  if (phase.kind !== "feedback" || "dontKnow" in phase.answer) {
+function getAnswerMark(result: QuestionResult | null): "correct" | "wrong" | null {
+  if (!result || "dontKnow" in result.answer) {
     return null;
   }
 
-  return phase.feedback.isCorrect ? "correct" : "wrong";
+  return result.isCorrect ? "correct" : "wrong";
 }
 
 export function isNetScoredQuestion({
@@ -96,16 +100,55 @@ export function QuestionView({
   phase: QuestionBlockPhase;
   question: StudyQuestion;
 }) {
-  const locked = phase.kind !== "answering" && phase.kind !== "answerFailed";
+  return (
+    <QuestionInputs
+      allowBlank={isNetScoredQuestion({ detail, question })}
+      disabled={phase.kind !== "answering" && phase.kind !== "answerFailed"}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      question={question}
+      result={
+        phase.kind === "feedback"
+          ? {
+              answer: phase.answer,
+              correctAnswer: phase.feedback.correctAnswer,
+              isCorrect: phase.feedback.isCorrect,
+            }
+          : null
+      }
+      trueFalseLabels={detail.trueFalseLabels}
+    />
+  );
+}
 
+export function QuestionInputs({
+  allowBlank,
+  disabled,
+  onChange,
+  onSubmit,
+  question,
+  result,
+  trueFalseLabels,
+}: {
+  allowBlank: boolean;
+  disabled: boolean;
+  onChange: (answer: StudyQuestionAnswer | null) => void;
+  onSubmit: (answer: StudyQuestionAnswer) => void;
+  question: Pick<
+    StudyQuestion,
+    "format" | "entry" | "unit" | "options" | "left" | "right" | "question" | "select"
+  >;
+  result: QuestionResult | null;
+  trueFalseLabels: TrueFalseLabels;
+}) {
   if (question.format === "numeric") {
     return (
       <NumericQuestion
-        disabled={locked}
+        disabled={disabled}
         entry={question.entry}
         onChange={onChange}
         onSubmit={onSubmit}
-        result={getAnswerMark(phase)}
+        result={getAnswerMark(result)}
         unit={question.unit}
       />
     );
@@ -114,10 +157,10 @@ export function QuestionView({
   if (question.format === "typed") {
     return (
       <TypedQuestion
-        disabled={locked}
+        disabled={disabled}
         onChange={onChange}
         onSubmit={onSubmit}
-        result={getAnswerMark(phase)}
+        result={getAnswerMark(result)}
       />
     );
   }
@@ -125,9 +168,9 @@ export function QuestionView({
   if (question.format === "order") {
     return (
       <OrderQuestion
-        disabled={locked}
+        disabled={disabled}
         onChange={onChange}
-        result={getOrderResult(phase)}
+        result={getOrderResult(result)}
         steps={question.options ?? []}
       />
     );
@@ -136,7 +179,7 @@ export function QuestionView({
   if (question.format === "matchPairs") {
     return (
       <MatchPairsQuestion
-        disabled={locked}
+        disabled={disabled}
         left={question.left ?? []}
         onChange={onChange}
         right={question.right ?? []}
@@ -147,22 +190,22 @@ export function QuestionView({
   if (question.format === "trueFalse") {
     return (
       <TrueFalseQuestion
-        allowBlank={isNetScoredQuestion({ detail, question })}
-        disabled={locked}
+        allowBlank={allowBlank}
+        disabled={disabled}
         onChange={onChange}
-        result={getTrueFalseResult(phase)}
+        result={getTrueFalseResult(result)}
         statement={question.question}
-        trueFalseLabels={detail.trueFalseLabels}
+        trueFalseLabels={trueFalseLabels}
       />
     );
   }
 
   return (
     <ChoiceQuestion
-      disabled={locked}
+      disabled={disabled}
       onChange={onChange}
       options={question.options ?? []}
-      result={getChoiceResult(phase)}
+      result={getChoiceResult(result)}
       select={question.select}
     />
   );

@@ -38,7 +38,6 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.spaceAfterSentence
@@ -50,17 +49,14 @@ import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayProgress
 import kotlinx.datetime.toJavaLocalDate
 
-/** The eyebrow's parts, separated by a dot; any can wrap to the next line. */
 @Composable
 internal fun TodayPageHeader(
-    date: String?,
     state: String?,
     title: String,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        val parts = listOfNotNull(date, state)
-        if (parts.isNotEmpty()) Eyebrow(AnnotatedString(parts.factsLine()))
+        state?.let { Eyebrow(it) }
         PageTitleRow(title)
     }
 }
@@ -73,7 +69,7 @@ internal fun TodayHeading(
     action: @Composable () -> Unit,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(todayEyebrow(model))
+        todayEyebrow(model).takeIf { it.isNotEmpty() }?.let { Eyebrow(it) }
 
         PageTitleRow(stringResource(R.string.today_title)) {
             if (wide) {
@@ -114,14 +110,10 @@ private fun MockFundingLine(model: TodayDayModel) {
 @Composable
 private fun todayEyebrow(model: TodayDayModel): AnnotatedString {
     val today = model.today
-    val locale = currentLocale()
-    val date = model.day.localDate.toJavaLocalDate()
     val daysLeft = today.goal.daysLeft?.toInt()
     val exam = today.exam
     val status = today.progress?.status
     val parts = mutableListOf<AnnotatedString>()
-
-    parts += AnnotatedString(formatDate(date, locale, DateStyle.WeekdayDayShort, date))
 
     if (daysLeft != null) {
         val text =
@@ -251,15 +243,15 @@ internal fun DayTime(
 ) {
     val locale = currentLocale()
     val studied = model.day.studiedToday()
-    val left = model.day.minutesLeft()
+    val left = model.day.minutes.left
 
     val text =
         when {
-            model.state == StudySession.State.WAITING -> {
+            model.state == StudySession.State.REST -> {
                 null
             }
 
-            model.state == StudySession.State.DONE || model.day.limitReached -> {
+            model.state == StudySession.State.DONE -> {
                 if (studied >
                     0
                 ) {
@@ -269,12 +261,12 @@ internal fun DayTime(
                 }
             }
 
-            left == 0L -> {
+            left == 0.0 -> {
                 null
             }
 
             else -> {
-                stringResource(R.string.today_time_left, formatMinutes(left.toInt(), locale))
+                stringResource(R.string.today_time_left, formatMinutes(left, locale))
             }
         } ?: return
 

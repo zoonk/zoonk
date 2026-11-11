@@ -28,6 +28,7 @@ struct CheckpointDuelState: Equatable {
   }
 
   private(set) var completion: Components.Schemas.StudyBlockCompletion?
+  private(set) var saveFailures = 0
   private(set) var failure: Failure?
   private(set) var feedback: Feedback?
   /// The answers given in this visit, so the review marks the learner's own pick.
@@ -65,6 +66,7 @@ struct CheckpointDuelState: Equatable {
   }
 
   mutating func failed(_ failure: Failure) {
+    saveFailures += 1
     self.failure = failure
     isPending = false
   }
@@ -73,6 +75,7 @@ struct CheckpointDuelState: Equatable {
     _ answer: PracticeAnswer, isCorrect: Bool, itemId: String, reinforcementLessons: Int?,
     transcript: [PracticeTranscriptLine]?, setId: String?
   ) {
+    saveFailures = 0
     feedback = Feedback(answer: answer, isCorrect: isCorrect, itemId: itemId)
     given[itemId] = answer
     isPending = false
@@ -94,6 +97,7 @@ struct CheckpointDuelState: Equatable {
   }
 
   mutating func finished(_ completion: Components.Schemas.StudyBlockCompletion) {
+    saveFailures = 0
     self.completion = completion
     feedback = nil
     isPending = false

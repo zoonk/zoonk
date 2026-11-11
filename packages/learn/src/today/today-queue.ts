@@ -17,13 +17,34 @@ export function splitTodayQueue<Block extends Pick<DayStep, "position" | "status
   nextPosition,
 }: {
   blocks: readonly Block[];
-  nextPosition: number;
+  nextPosition: number | null;
 }) {
   const nextIndex = blocks.findIndex((block) => block.position === nextPosition);
+
+  if (nextIndex === -1) {
+    return {
+      after: blocks.filter((block) => !isFinished(block)),
+      before: [],
+      done: blocks.filter((block) => isFinished(block)),
+    };
+  }
 
   return {
     after: blocks.slice(nextIndex + 1).filter((block) => !isFinished(block)),
     before: blocks.slice(0, nextIndex).filter((block) => !isFinished(block)),
     done: blocks.filter((block) => isFinished(block)),
   };
+}
+
+export const UPCOMING_ROWS = 4;
+
+/** The blocks "+N more" holds while the queue is folded. */
+export function getFoldedBlocks<Block extends Pick<DayStep, "position" | "status">>({
+  blocks,
+  nextPosition,
+}: {
+  blocks: readonly Block[];
+  nextPosition: number | null;
+}): Block[] {
+  return splitTodayQueue({ blocks, nextPosition }).after.slice(UPCOMING_ROWS);
 }

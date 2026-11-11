@@ -309,7 +309,7 @@ describe("Today's render reads", () => {
           listCurrentUserMistakes({ goalId: goal.id, limit: 1, offset: 0, status: "open" }),
           getLearnerSummary(),
         ]),
-      'SELECT "public"."items"."skill_id" FROM "public"."items"',
+      'FROM "public"."items" WHERE "public"."items"."id" IN',
     );
 
     const [today, mistakes, summary] = reads.result;

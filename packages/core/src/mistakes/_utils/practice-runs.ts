@@ -38,10 +38,9 @@ export async function loadPracticeAnswers({
       skillId: true,
     },
     where: {
+      answer: { not: "", path: ["practiceMistakeId"] },
       answeredAt: { gte: new Date(Date.now() - MAX_RUN_AGE_MS) },
       id: { in: ids },
-      itemId: { not: null },
-      stepId: null,
       studySessionId: null,
       userId,
     },
@@ -51,23 +50,7 @@ export async function loadPracticeAnswers({
     return null;
   }
 
-  const itemIds = answers.flatMap((answer) => (answer.itemId ? [answer.itemId] : []));
-  const skillIds = answers.flatMap((answer) => (answer.skillId ? [answer.skillId] : []));
-
-  const mistakes = await prisma.mistake.findMany({
-    select: { itemId: true, skillId: true },
-    where: { OR: [{ itemId: { in: itemIds } }, { skillId: { in: skillIds } }], userId },
-  });
-
-  const practiced = answers.every((answer) =>
-    mistakes.some(
-      (mistake) =>
-        mistake.itemId === answer.itemId ||
-        (mistake.skillId !== null && mistake.skillId === answer.skillId),
-    ),
-  );
-
-  return practiced ? answers : null;
+  return answers;
 }
 
 function readRunAnswerIds(event: Pick<LearningEvent, "contentIds">): string[] {
@@ -119,10 +102,10 @@ export async function hasPracticeRunCorrection({
   const answers = await tx.attempt.findMany({
     select: { answer: true, answeredAt: true },
     where: {
+      answer: { not: "", path: ["practiceMistakeId"] },
       answeredAt: { gte: from, lte: through },
       id: { in: readRunAnswerIds(run) },
       isCorrect: true,
-      stepId: null,
       studySessionId: null,
       userId,
     },

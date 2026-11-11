@@ -76,6 +76,7 @@ export function gradeOrder({ answer, item }: { answer: QuestionAnswer; item: Ord
       format: item.format,
       misconception: null,
       question: item.content.question,
+      replay: { item, kind: "item" as const },
     },
     workedSteps: [] as string[],
   };

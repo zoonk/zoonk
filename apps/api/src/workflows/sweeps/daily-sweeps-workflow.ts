@@ -6,16 +6,21 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
+import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
-import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
-  listLessonsForLaterReviewStep,
   listOwedPictureChecksStep,
+  listOwedSentenceOrdersStep,
+  listOwedSkillLevelsStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
@@ -35,10 +40,11 @@ type SweepCounts = {
   freshnessChecks: number;
   guestsDeleted: number;
   itemsRecalibrated: number;
-  laterReviews: number;
   memoryFactsPurged: number;
   pictureChecks: number;
   retiredStepsDeleted: number;
+  sentenceOrders: number;
+  skillLevels: number;
   verificationsPurged: number;
 };
 
@@ -75,6 +81,37 @@ async function checkOwedPictures(): Promise<number> {
   return assetIds.length;
 }
 
+async function writeOwedSentenceOrders(): Promise<number> {
+  const lessonIds = await listOwedSentenceOrdersStep();
+
+  await Promise.all(
+    lessonIds.map((lessonId) =>
+      startOnce(
+        sentenceOrdersWorkflow,
+        [{ lessonId, wait: "later" }],
+        getSentenceOrdersToken(lessonId),
+      ),
+    ),
+  );
+
+  return lessonIds.length;
+}
+
+/** Also tags the content written before skills had levels. */
+async function tagOwedSkillLevels(): Promise<number> {
+  const skillIds = await listOwedSkillLevelsStep();
+
+  if (skillIds.length > 0) {
+    await startOnce(
+      skillLevelsWorkflow,
+      [{ skillIds, wait: "later" }],
+      getSkillLevelsToken("sweep"),
+    );
+  }
+
+  return skillIds.length;
+}
+
 async function deleteGuests(): Promise<number> {
   const { total } = await repeatUntil<{ deleted: number; total: number }>({
     done: ({ deleted }) => deleted === 0,
@@ -99,16 +136,6 @@ async function rewriteFlaggedContent(): Promise<boolean> {
   return true;
 }
 
-async function startLaterReviews(): Promise<number> {
-  const lessonIds = await listLessonsForLaterReviewStep();
-
-  if (lessonIds.length > 0) {
-    await start(laterReviewWorkflow, [{ lessonIds }]);
-  }
-
-  return lessonIds.length;
-}
-
 async function sweep(): Promise<SweepCounts> {
   const [
     checks,
@@ -116,7 +143,6 @@ async function sweep(): Promise<SweepCounts> {
     facts,
     runs,
     items,
-    reviews,
     flagged,
     retired,
     verifications,
@@ -124,13 +150,14 @@ async function sweep(): Promise<SweepCounts> {
     followUps,
     courseReleases,
     pictures,
+    sentenceOrders,
+    skillLevels,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
     purgeMemoryFactsStep(),
     purgeEvaluationRunsStep(),
     recalibrateItemDifficultiesStep(),
-    startLaterReviews(),
     rewriteFlaggedContent(),
     deleteRetiredStepsStep(),
     purgeExpiredVerificationsStep(),
@@ -139,6 +166,8 @@ async function sweep(): Promise<SweepCounts> {
     // Also catches an update whose start failed.
     updateCoursesBehind(),
     checkOwedPictures(),
+    writeOwedSentenceOrders(),
+    tagOwedSkillLevels(),
   ]);
 
   return {
@@ -150,11 +179,12 @@ async function sweep(): Promise<SweepCounts> {
     freshnessChecks: countOf(checks),
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
-    laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
     pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),
+    sentenceOrders: countOf(sentenceOrders),
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
+    skillLevels: countOf(skillLevels),
     verificationsPurged: countOf(verifications),
   };
 }

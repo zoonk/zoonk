@@ -5,12 +5,15 @@ import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-temp
 export type LessonSpecExpected = {
   avoidTemplates?: readonly string[];
   pictures?: "any" | "none" | "some";
+  /** Answering this lesson's questions means seeing something, so at least one shows it in a picture. */
+  questionPicture?: boolean;
 };
 
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const VISUAL_EXPECTATIONS = `
   - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only
+  - Go through every guess, check, activity and application on its own: when answering it depends on seeing something (where a part or a place is, which numbered label, a setup's positions or distances, two things compared by how they look), it shows that, and its \`visual\` names every label the answer needs without showing the answer. A question like that left text only is a missing visual, even when an earlier screen showed the picture; a question the words alone settle (a job named, a rule, a calculation) stays text only
   - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and \`visual\` null; something to work with as an activity whose template draws it; a picture in \`visual\` only for what those can't show
   - A planned picture names every part, place or label its screen talks about; no decorative picture
   - Don't evaluate JSON formatting; estimated minutes are computed by code
@@ -22,15 +25,17 @@ function visualCase({
   expectations,
   id,
   pictures,
+  questionPicture,
   ...input
-}: Omit<LessonSpecParams, "activityTemplates"> & {
-  expectations: string;
-  id: string;
-  pictures: LessonSpecExpected["pictures"];
-}): VisualCase {
+}: Omit<LessonSpecParams, "activityTemplates"> &
+  Pick<LessonSpecExpected, "questionPicture"> & {
+    expectations: string;
+    id: string;
+    pictures: LessonSpecExpected["pictures"];
+  }): VisualCase {
   return {
     expectations: `${expectations}\n${VISUAL_EXPECTATIONS}`,
-    expected: { pictures },
+    expected: { pictures, questionPicture },
     id: `visual-${id}`,
     userInput: { activityTemplates: ACTIVITY_TEMPLATES, ...input },
   };
@@ -43,6 +48,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     expectations: `
       - MUST be in US English
       - The screens that explain where each lobe is and what it does show the brain with those lobes (one picture of the brain with its lobes labeled, the lobe in question highlighted on each screen, or a labeled diagram whose picture numbers the lobes); a lesson that names the lobes in words only fails
+      - Every question that asks where a lobe is (which numbered or highlighted area, which lobe sits at a spot), the application included, shows the brain with the lobes numbered or the spot marked, never their names; a question that gives a job and asks for the lobe's name can stay text only
     `,
     id: "en-brain-lobes",
     language: "en",
@@ -51,6 +57,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "The lobes of the brain",
     level: "beginner",
     pictures: "some",
+    questionPicture: true,
     skills: ["Locate the four lobes of the brain", "Match each lobe to its main job"],
   }),
   visualCase({
@@ -68,6 +75,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "Renascimento e Barroco: comparando pinturas",
     level: "beginner",
     pictures: "some",
+    questionPicture: true,
     skills: ["Comparar a composição e a luz de pinturas renascentistas e barrocas"],
   }),
   visualCase({
@@ -125,6 +133,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     expectations: `
       - MUST be in US English
       - A lever must be seen: a picture of the bar, the fulcrum, the load and the effort with their distances; an activity where the learner moves the fulcrum or a weight also fits
+      - Every guess, check and application that sets up a lever (where the fulcrum, the load and the push sit, and how far apart) shows that setup with its distances; one that only asks about the rule in words can stay text only
     `,
     id: "en-lever",
     language: "en",
@@ -133,6 +142,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "How a lever multiplies force",
     level: "beginner",
     pictures: "any",
+    questionPicture: true,
     skills: ["Relate a lever's arm lengths to the force it needs"],
   }),
   visualCase({
@@ -166,6 +176,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "Syntax trees",
     level: "intermediate",
     pictures: "some",
+    questionPicture: true,
     skills: ["Split a simple sentence into a noun phrase and a verb phrase"],
   }),
   visualCase({
@@ -199,6 +210,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "The 4-3-3 formation",
     level: "overview",
     pictures: "some",
+    questionPicture: true,
     skills: ["Describe the lines of a 4-3-3 formation"],
   }),
   visualCase({
@@ -263,6 +275,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     lessonTitle: "Romanesque and Gothic churches",
     level: "beginner",
     pictures: "some",
+    questionPicture: true,
     skills: ["Identify Romanesque and Gothic features in a church"],
   }),
   visualCase({
@@ -281,5 +294,113 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     level: "beginner",
     pictures: "any",
     skills: ["Order the main events from 1765 to 1776"],
+  }),
+  visualCase({
+    chapterTitle: "Eletricidade",
+    courseTitle: "Física",
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - A circuit is a layout to see: the screens that explain series and parallel show each circuit (the battery, the wires and the bulbs, numbered), and every question that asks which bulbs stay lit shows the circuit it asks about with the bulbs numbered, never the answer; a circuit described only in words ("the bulbs one after the other") fails
+    `,
+    id: "pt-circuito-serie-paralelo",
+    language: "pt",
+    lessonCanDo:
+      "Prever quais lâmpadas apagam quando uma queima num circuito em série ou em paralelo",
+    lessonDescription: "Veja por que, em casa, uma lâmpada queimada não apaga as outras.",
+    lessonTitle: "Circuitos em série e em paralelo",
+    level: "beginner",
+    pictures: "some",
+    questionPicture: true,
+    skills: ["Prever o efeito de uma lâmpada queimada num circuito em série ou em paralelo"],
+  }),
+  visualCase({
+    chapterTitle: "Reprodução das plantas",
+    courseTitle: "Biologia",
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The parts are shown on a flower: a picture of a flower cut in half with petals, sepals, stamens (anther and filament) and pistil (stigma, style, ovary) labeled, kept across the screens that explain them, or a labeled diagram activity on the same flower
+      - A question that asks which part is which (a numbered part, where pollen is made) shows the flower with the parts numbered, not named; one that gives a job and asks for the part's name can stay text only
+    `,
+    id: "pt-partes-da-flor",
+    language: "pt",
+    lessonCanDo: "Identificar as partes de uma flor e dizer o que cada uma faz",
+    lessonDescription: "Conheça as partes da flor e o papel de cada uma na formação do fruto.",
+    lessonTitle: "As partes da flor",
+    level: "beginner",
+    pictures: "some",
+    questionPicture: true,
+    skills: [
+      "Identificar pétala, sépala, estame e pistilo numa flor",
+      "Relacionar cada parte da flor à sua função",
+    ],
+  }),
+  visualCase({
+    chapterTitle: "Reptiles",
+    courseTitle: "Animals of the world",
+    expectations: `
+      - MUST be in US English
+      - The difference is in how they look: one picture with both heads, labeled 1 and 2, showing the U-shaped against the V-shaped snout and the hidden against the visible lower teeth when the mouth is closed
+      - A question that asks which animal it is shows one head alone, without its name; habitat (fresh or salt water) can be text and needs no map
+    `,
+    id: "en-alligator-crocodile",
+    language: "en",
+    lessonCanDo: "Tell an alligator from a crocodile by how it looks",
+    lessonDescription: "Tell the two apart by the shape of the snout and the teeth you can see.",
+    lessonTitle: "Alligator or crocodile?",
+    level: "overview",
+    pictures: "some",
+    questionPicture: true,
+    skills: ["Tell an alligator from a crocodile by its snout and teeth"],
+  }),
+  visualCase({
+    chapterTitle: "Maps",
+    courseTitle: "Geography",
+    expectations: `
+      - MUST be in US English
+      - Contour lines are a pattern to see: the screens that explain them show a hill and its contour map (lines at a labeled interval such as every 10 m, close together on one side and far apart on the other), and every question that asks where the slope is steeper or which way a trail climbs shows the map with the places it names labeled A and B, never the answer
+      - The rule that close lines mean a steep slope is said in words too, and a question about only that rule can stay text only
+    `,
+    id: "en-contour-lines",
+    language: "en",
+    lessonCanDo: "Read a topographic map's contour lines to find steep and gentle slopes",
+    lessonDescription:
+      "See how the spacing of contour lines shows where a hill is steep or gentle.",
+    lessonTitle: "Reading contour lines",
+    level: "beginner",
+    pictures: "some",
+    questionPicture: true,
+    skills: ["Tell steep from gentle slopes by how close contour lines are"],
+  }),
+  visualCase({
+    chapterTitle: "Common mix-ups",
+    courseTitle: "English writing",
+    expectations: `
+      - MUST be in US English
+      - The rule is clear in words (it's means it is or it has; its shows ownership, like his and her), so no screen has a picture, the opening scene included; a short table of examples is fine but not required
+    `,
+    id: "en-its-or-its",
+    language: "en",
+    lessonCanDo: "Choose between its and it's in a sentence",
+    lessonDescription: "Know when to write its and when to write it's.",
+    lessonTitle: "Its or it's?",
+    level: "beginner",
+    pictures: "none",
+    skills: ["Choose its or it's by testing whether it means it is or it has"],
+  }),
+  visualCase({
+    chapterTitle: "Porcentagem",
+    courseTitle: "Matemática do dia a dia",
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The prices and percentages are numbers the screens give, so no screen has a picture (no price tag, shelf or receipt drawn), the opening scene included; a small table comparing prices before and after is fine where the learner compares several
+    `,
+    id: "pt-desconto-percentual",
+    language: "pt",
+    lessonCanDo: "Calcular o preço final de um produto com desconto percentual",
+    lessonDescription: "Descubra quanto você paga por um produto com desconto percentual.",
+    lessonTitle: "Calcular um desconto",
+    level: "beginner",
+    pictures: "none",
+    skills: ["Calcular o preço com desconto multiplicando pelo que sobra da porcentagem"],
   }),
 ];

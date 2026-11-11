@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "66a04cad3236506978a9b17362bc905d9405522405efc791dd50b22511ad7c34",
-  "missions_after_lessons": "7d80f82d8245e5b886d34c59433e5c9f1075ff5b71845f75f7e83a9770db67a4",
+  "missions_after_lessons": "e7cf0d420eff1f366ef7d1d7120e24daa95e01a90526894d99061836e98e5cae",
   "missions_already_earned": "cad7984fac644a178964e91ccb9fc3adc8dc04d51f71868822fcd419a8caf315",
   "missions_ask_anything": "3a164d225c862d9b785c2e8aada7661af8fd56e976298f9b00a09080f8a837f8",
   "missions_ask_buddy": "c1be1b6158ac25ef7f5d636a35079b17b780e4311fdb420d944cd341d8bc8981",
@@ -115,8 +114,7 @@
     <string name="missions_ask_buddy">%1$s에게 질문하기</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s 연습하기</string>
-    <string name="missions_after_lessons">오늘의 레슨을 마친 후</string>
-    <string name="missions_after_challenge">앞선 챌린지를 마친 후</string>
+    <string name="missions_after_lessons">이 단계의 레슨을 마친 후</string>
     <string name="missions_from_notebook">오답 노트의 문제</string>
     <string name="missions_due_today">오늘 연습할 차례</string>
     <!-- %1$s is a language unit's title. -->

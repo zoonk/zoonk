@@ -153,7 +153,7 @@ export function TrueFalseQuestion({
     <div className="flex flex-col gap-4">
       <div
         className={cn(
-          "bg-card ring-border flex min-h-32 w-full items-start rounded-xl p-5 text-left ring-1 select-none ring-inset",
+          "bg-card ring-border flex w-full items-start rounded-xl p-5 text-left ring-1 select-none ring-inset",
           "motion-safe:transition-transform",
           hasTable ? "touch-auto" : "touch-pan-y",
           canSwipe && "cursor-grab active:cursor-grabbing",

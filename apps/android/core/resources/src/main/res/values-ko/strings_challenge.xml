@@ -54,11 +54,6 @@
   "challenge_trickster_recordings": "73ee4881bf91f74c0655babbbd01163f6dd9f412fcc38a05b5d115e100e8ab74",
   "challenge_trickster_rule": "acf986c3b06f831e33052b567aa6f317d8dd21ff701327cd7775be69e664446d",
   "challenge_undo": "17f4a348cc6de7111f94f6cdfbd5625a483a14a112144677ce25719d7fc91b93",
-  "challenge_used_up_move": "7d0ee1626dc61578c02df61e70ed8c4f28cf604cd2123133fd5a0e41e626a789",
-  "challenge_used_up_next_session": "f6d93f2133a9e34afd1f07a53e497933ee0ca9064978a9d5ded2a8356bbcfa88",
-  "challenge_used_up_on": "1ec11325487a8c8c03368e07bc44c304184e19aa602c572a3a4f0f795c284bb8",
-  "challenge_used_up_tomorrow": "d68e953b91c7075b3aa4527a49c7cba770d9ec3be89e09bde62a9feb32e804be",
-  "challenge_used_up_weekly": "5f81fe9e837270c59a4727f14e21ceb8768fe330dd019d638dc25cd4810a326c",
   "challenge_weekly_detail": "a1945078f04eba0b1b241ed1d06b9f184913e6a8b96263bbcb8e54f611e47911",
   "challenge_weekly_rule": "fe749781e342276852468fb57b2c3be2c7280d973843b21770b48b53bfad36dd",
   "challenge_writing": "8fdd9c2f8d24a32033323abd62800091e79c6fa3de9fe80080bc283b5d21d997",
@@ -148,16 +143,6 @@
     <string name="challenge_opens_after_lessons">이 단계의 레슨을 마치면 열려요</string>
     <string name="challenge_not_ready">아직 챌린지가 준비되지 않았어요.</string>
     <string name="challenge_next_session">다음 학습 때</string>
-    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">하루 학습 시간 제한에 도달했어요. 이번 주 챌린지에는 참여할 수 없어요.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_move">하루 학습 시간 제한에 도달했어요. 챌린지를 놓치지 않으려면 월요일로 옮기세요.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_next_session">하루 학습 시간 제한에 도달했어요. 챌린지는 다음 학습에 포함돼요.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_tomorrow">하루 학습 시간 제한에 도달했어요. 챌린지는 내일 할 수 있어요.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">오늘 학습 시간을 다 채웠어요. 챌린지는 %1$s에 할 수 있어요.</string>
     <string name="challenge_back_to_today">오늘로 돌아가기</string>
     <string name="challenge_move">월요일로 옮기기</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

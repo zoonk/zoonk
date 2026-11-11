@@ -1,5 +1,5 @@
 import "server-only";
-import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import {
@@ -32,19 +32,17 @@ export type LessonWritingContext = Pick<
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
 
-/** Flaws a fix pass may not fully clear that still leave a lesson worth publishing. */
-const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
+/** Advisory codes never block publication or start a fix. */
+const ADVISORY_CODES = new Set<LessonCheckProblem["code"]>([
   "basis",
   "guessAnswer",
   "moneyFormat",
   "newTerms",
   "plannedVisual",
-  "rawMath",
   "readingLevel",
   "repeatedExample",
   "repeatedQuestion",
   "repeatedVisual",
-  "screenLength",
   "termOrder",
 ]);
 
@@ -56,78 +54,53 @@ export type LessonGateProblem = {
 
 type LessonGateResult = {
   blocking: LessonGateProblem[];
-  incorrect: LessonGateProblem[];
   minor: LessonGateProblem[];
   screens: ConvertedScreen[];
 };
 
 async function reviewLesson({
-  afterFix,
   analytics,
   context,
   lesson,
-  reuse,
   screens,
   serviceTier,
   writerModel,
 }: {
-  afterFix: boolean;
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
-  reuse: CallReuse;
   screens: readonly ConvertedScreen[];
   serviceTier?: ServiceTier;
   writerModel: string;
-}): Promise<Pick<LessonGateResult, "blocking" | "incorrect" | "minor">> {
+}): Promise<LessonGateProblem[]> {
   const { data } = await checkLessonQuality({
     ...context,
     analytics,
     lesson: toReviewedLesson({ lesson, screens }),
-    reuse,
     serviceTier,
     writerModel,
   });
 
-  type Issue = (typeof data.issues)[number];
-
-  const toProblem = (issue: Issue): LessonGateProblem => ({
+  return data.issues.map((issue) => ({
     problem: `${issue.problem} Fix: ${issue.fix}`,
     screen: issue.screen,
     source: "review",
-  });
-
-  const isBlocking = (issue: Issue) =>
-    issue.severity === "blocking" && (!afterFix || issue.kind === "incorrect");
-
-  const blocking = data.issues.filter((issue) => isBlocking(issue));
-
-  return {
-    blocking: blocking.map((issue) => toProblem(issue)),
-    incorrect: blocking
-      .filter((issue) => issue.kind === "incorrect")
-      .map((issue) => toProblem(issue)),
-    minor: data.issues.filter((issue) => !isBlocking(issue)).map((issue) => toProblem(issue)),
-  };
+  }));
 }
 
 export async function runLessonQualityGate({
-  afterFix = false,
   allowActivityFallback = false,
   analytics,
   context,
   lesson,
-  reuse,
   review,
   serviceTier,
   writerModel,
 }: {
-  afterFix?: boolean;
   allowActivityFallback?: boolean;
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
-  reuse: CallReuse;
   review: boolean;
   serviceTier?: ServiceTier;
   writerModel: string;
@@ -144,37 +117,31 @@ export async function runLessonQualityGate({
     spec: context.spec,
   });
 
-  const [programProblems, reviewed] = await Promise.all([
+  const [programProblems, reviewProblems] = await Promise.all([
     checkLessonPrograms(checked.screens),
     review
       ? reviewLesson({
-          afterFix,
           analytics,
           context,
           lesson,
-          reuse,
           screens: checked.screens,
           serviceTier,
           writerModel,
         })
-      : { blocking: [], incorrect: [], minor: [] },
+      : [],
   ]);
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
-    isMinor: afterFix && LENIENT_AFTER_FIX.has(problem.code),
+    isMinor: ADVISORY_CODES.has(problem.code),
     problem: { problem: problem.problem, screen: problem.screen, source: "code" as const },
   }));
 
   return {
     blocking: [
       ...codeProblems.filter((entry) => !entry.isMinor).map((entry) => entry.problem),
-      ...reviewed.blocking,
+      ...reviewProblems,
     ],
-    incorrect: reviewed.incorrect,
-    minor: [
-      ...codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
-      ...reviewed.minor,
-    ],
+    minor: codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
     screens: checked.screens,
   };
 }

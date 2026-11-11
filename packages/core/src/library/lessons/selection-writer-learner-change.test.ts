@@ -20,7 +20,7 @@ import { describe, expect, it } from "vitest";
 import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { languageLessonDraft } from "../language/_test-utils/language-lesson-draft";
 import { saveLanguageLesson } from "../language/_utils/save-language-lesson";
-import { pullLessonForFix } from "../quality/later-reviews";
+import { pullLessonForFix } from "../quality/pull-lesson-for-fix";
 import { createHomeChapterLessons, createLibraryLesson } from "./create-library-lesson";
 
 const WRITERS = ["publication", "creation", "pull"] as const;

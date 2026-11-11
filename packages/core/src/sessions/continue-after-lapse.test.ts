@@ -3,6 +3,7 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getAllowance } from "../entitlements/get-allowance";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW } from "./_test-utils/session-goal";
 import { getStudySession } from "./get-study-session";
@@ -60,5 +61,24 @@ describe("the frame's explicit Continue after Plus lapses", () => {
     await expect(
       prisma.languageConversation.count({ where: { userId: day.user.id } }),
     ).resolves.toBe(0);
+  });
+
+  it("keeps replacement lessons on the action path until their saved block IDs exist", async () => {
+    const day = await lapsedDayFixture();
+    const lessonId = day.planItems.at(-1)?.lessonId;
+
+    if (!lessonId) {
+      throw new Error("Expected a replacement lesson");
+    }
+
+    await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
+    const read = await getTodayView({ goalId: day.goal.id, timeZone: "UTC" });
+
+    if (read.status !== "ready") {
+      throw new Error("Expected the lapsed day preview");
+    }
+
+    expect(read.today.session.blocks.some((block) => block.screen === "lesson")).toBe(true);
+    expect(read.today.session.blocks.every((block) => !block.opensInPlayer)).toBe(true);
   });
 });

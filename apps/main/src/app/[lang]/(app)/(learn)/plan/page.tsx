@@ -5,13 +5,14 @@ import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
-import { hasGoalMindMaps } from "@zoonk/core/mind-maps/has-any";
+import { hasMindMapsPage } from "@zoonk/core/mind-maps/contract";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { getSession } from "@zoonk/core/users/session";
 import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
 import { getLanguageUnitsView } from "@zoonk/core/view-models/language/units";
 import { getFieldMapView } from "@zoonk/core/view-models/map/get";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
+import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
@@ -88,7 +89,7 @@ async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" |
   const onboarding = await getOnboarding({ goalId });
   const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
-  return steps.some((step) => step !== "plan") ? "setup" : "building";
+  return hasOnboardingQuestions(steps) ? "setup" : "building";
 }
 
 async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
@@ -107,7 +108,7 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
 
 async function JourneyContent() {
   // The locale comes from the root param: a prefetch warms its caches with `params` still pending.
-  const [readAt, result, progress, language, units, syllabus, hasMindMaps, buddy, locale, goals] =
+  const [readAt, result, progress, language, units, syllabus, buddy, locale, goals] =
     await Promise.all([
       getReadAt(),
       getPlanTabView(),
@@ -115,7 +116,6 @@ async function JourneyContent() {
       getLanguageProgressView(),
       getLanguageUnitsView(),
       getSyllabusView(),
-      hasGoalMindMaps(),
       getLearnerBuddy(),
       lang(),
       listCurrentUserGoals(),
@@ -134,7 +134,7 @@ async function JourneyContent() {
 
   if (result.status !== "ready" || !result.view.plan.ready) {
     return activeGoal ? (
-      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.title} />
+      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.displayName} />
     ) : (
       <PlanNoGoal />
     );
@@ -176,10 +176,10 @@ async function JourneyContent() {
       buddy={buddy}
       certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
-      goal={{ kind: goal.kind, title: goal.title }}
+      goal={{ displayName: goal.displayName, kind: goal.kind }}
       goalId={goal.id}
       goalStatus={goalStatus}
-      hasMindMaps={hasMindMaps}
+      hasMindMaps={hasMindMapsPage(goal.kind)}
       language={language.status === "ready" ? language.progress : null}
       next={
         end?.next

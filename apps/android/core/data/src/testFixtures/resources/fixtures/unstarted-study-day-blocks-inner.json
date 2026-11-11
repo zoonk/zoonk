@@ -29,5 +29,6 @@
   "subject": null,
   "title": null,
   "waitReason": null,
-  "weakest": false
+  "weakest": false,
+  "opensInPlayer": false
 }

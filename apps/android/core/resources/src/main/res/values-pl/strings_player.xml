@@ -15,6 +15,7 @@
   "player_activity_your_answer": "169fdbae7c1279669071e3407d2ee0341e0547dca6d5ea90fc2a00ded72ae5e7",
   "player_ai_note": "8811419b29dda61eb23161d6078eedea700d097be3eaf0282b328604fc042899",
   "player_already_knew": "e6161abe14fc361360a12f70fcdccc8c0aaf0126099788ba63ac50a45987bbf9",
+  "player_also_correct_label": "129f5c96c92031240104e2c1f003dfb154d98beffb3ff247c0f6b361ecac453f",
   "player_answer_feedback": "6ec44985187e7ceeae0b1a6d184405a6ba45defdbae6838b6500f8d7669a3356",
   "player_answer_options": "c3d28b32a1f4d6447ed10e13d9d4e92d4b0ca0d8cc50bafc6623bb162d0ed0b0",
   "player_ask_something_else": "18ab80157394a16d4fb653300d8e97c161d35c734707660e65111d6e4b5e3d6d",
@@ -95,7 +96,9 @@
   "player_lesson_complete": "e9d16a9667842ea37376ed0d6fb87f21d3a712eae0d2ac07ee1f7b5e47a925cc",
   "player_lesson_map": "cb555e387a836416318be3cef089401e45d62d1d7c8d61badeeed99f74f100a5",
   "player_lesson_map_nested": "dfea8e881cd56d240f27a1fb336e8e9dcd03fcf8f1e5906d75a6caa1431bec48",
+  "player_lesson_not_saved": "a00ab959e150512e36511cfe0341bfcea51abbf7a332eae7fec12c5f852242f1",
   "player_lesson_of": "675dea7a5f48105d339971bd08ece4401450102b1fac625036230ac3b7772716",
+  "player_lessons_deferred": "3421cf834da29e4bc4a9150bf745491bcb7f94a4816d113d8a5ee7820856ee96",
   "player_listen": "2bfe217970c7e15766874c21b06d7011f8c4d85e65f9d934e11cf2056455a0fc",
   "player_microphone_blocked": "a77ce5515d31089725fd4cfdf2209fefca4a48fa4c52e96017a6f95ed8312ba5",
   "player_next_lesson": "7dbea98773de00436b9f0efc53e36ff1366a4bf5112a52e8c90d8afd5cde27aa",
@@ -168,6 +171,7 @@
   "player_stop_for_today": "cb14a4f2bf394534aa9a8d233e1e3095e5f7419b1c92014e409b5b52ff03e321",
   "player_summary": "30ece8c4e27236c13c4f329f9361cdf5026fd7952c155e97733b0c31a14a2ce3",
   "player_summary_ideas": "6176fb289f2216de0d66d8385eff3e92f0619edcaa549e733337a5d90838ef91",
+  "player_time_studied": "67b06eb0e456215f5796f837122b52ff55e4c3a6ba2312a162fd6568dbd5d136",
   "player_try_again": "1ad066e9ec636b67aeffb646896dd7031680f3fd6705ba30be70c686afc631fb",
   "player_unchecked_compare": "fa3e7e01ea7148f74e1f16111fa108eed829c5f29bdad6f25160fc48915df75c",
   "player_verdict_almost": "eeae5ea66b026cef88f1f26b20119e37b5e4d8ef6ac45aca286fb5771d39a0cd",
@@ -244,6 +248,8 @@
     <string name="player_answer_feedback">Omówienie odpowiedzi</string>
     <string name="player_spelled">Zapis:</string>
     <string name="player_correct_answer_label">Odpowiedź:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Inna poprawna wersja:</string>
     <string name="player_explain_answer">Wyjaśnij moją odpowiedź</string>
     <string name="player_explain_answer_failed">Nie udało się teraz tego wyjaśnić. Spróbuj ponownie za chwilę.</string>
     <string name="player_explain_answer_title">Dlaczego ta odpowiedź jest nietrafna</string>
@@ -415,8 +421,18 @@
     <string name="player_already_knew">To już znasz</string>
     <string name="player_saving_progress">Zapisujemy twoje postępy…</string>
     <string name="player_save_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
+    <string name="player_lesson_not_saved">Lekcja nie została jeszcze zapisana</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s nauki</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Powtórka: %1$s</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="one">Przeniesiono %1$s lekcję na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
+        <item quantity="few">Przeniesiono %1$s lekcje na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
+        <item quantity="many">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
+        <item quantity="other">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
+    </plurals>
     <string name="player_next_lesson">Przejdź do kolejnej lekcji</string>
     <string name="player_stop_for_today">Zakończ na dziś</string>
     <string name="player_see_todays_summary">Zobacz dzisiejsze podsumowanie</string>

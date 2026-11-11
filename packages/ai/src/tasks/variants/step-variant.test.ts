@@ -1,7 +1,8 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { NO_INSTALL_TOOL_KEY, generateStepVariant } from "./step-variant";
+import { generateStepVariant } from "./step-variant";
+import { NO_INSTALL_TOOL_KEY } from "./step-variant-key";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));

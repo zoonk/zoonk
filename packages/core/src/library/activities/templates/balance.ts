@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   explanationSchema,
@@ -13,7 +14,7 @@ import { isClose, issue } from "./_utils/template-helpers";
 const MAX_HINTS = 4;
 const MAX_OBJECTS = 3;
 const MAX_STEPS = 4;
-const MAX_SYMBOL_LENGTH = 3;
+const SYMBOL_TARGET = 3;
 
 const equationSchema = z.object({ left: expressionSchema, right: expressionSchema }).strict();
 
@@ -26,7 +27,12 @@ const balanceFields = z
       .max(MAX_HINTS),
     objects: z
       .array(
-        z.object({ label: labelSchema, symbol: z.string().min(1).max(MAX_SYMBOL_LENGTH) }).strict(),
+        z
+          .object({
+            label: labelSchema,
+            symbol: aimForCharacters(z.string().min(1), SYMBOL_TARGET),
+          })
+          .strict(),
       )
       .min(1)
       .max(MAX_OBJECTS),

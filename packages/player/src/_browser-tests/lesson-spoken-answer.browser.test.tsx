@@ -8,7 +8,11 @@ import {
   runAnswer,
   startedRun,
 } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters, type SpokenAnswerOutcome } from "../lesson/lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonStartOutcome,
+  type SpokenAnswerOutcome,
+} from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
@@ -56,6 +60,23 @@ async function sayIt() {
 describe("spoken answers", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("never sends a spoken grade when the pending start is refused", async () => {
+    allowMicrophone();
+    const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
+    const admission = Promise.withResolvers<LessonStartOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { gradeSpokenAnswer, startLesson: () => admission.promise }),
+      lesson,
+    });
+
+    await sayIt();
+    admission.resolve({ reason: "plusRequired" });
+    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+    expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 
   it("plays a spoken screen as listening when the learner can't talk now, for the day", async () => {
@@ -169,6 +190,20 @@ describe("spoken answers", () => {
     late.resolve({ status: "failed" });
     await expect.poll(() => vi.mocked(adapters.checkStep).mock.calls.length).toBe(1);
     vi.useRealTimers();
+  });
+
+  it("puts a failed check away once the learner records again", async () => {
+    allowMicrophone();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(async () => ({ status: "failed" as const }));
+    openSpokenLesson({ gradeSpokenAnswer });
+    await sayIt();
+
+    const failed = page.getByText("We couldn't check your answer this time. Try again.");
+    await expect.element(failed).toBeVisible();
+
+    await page.getByRole("button", { name: "Record" }).click();
+    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+    await expect.element(failed).not.toBeInTheDocument();
   });
 
   it("with no words in it says so and lets the learner try again or type", async () => {

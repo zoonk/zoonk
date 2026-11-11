@@ -1,9 +1,10 @@
 "use client";
 
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useRouter } from "@/i18n/navigation";
 import { useReminderOfferActions } from "@/lib/reminders/use-reminder-offer-actions";
-import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
+import { getCompletionLessonHref } from "@/lib/session/lesson-opening";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
@@ -16,16 +17,12 @@ type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 /** The session screen's frame is static, so Continue opens the next block there at once. */
 export function useLessonSessionSlots({
   buddy,
-  session,
+  inSession,
 }: {
   buddy: LearnBuddy | null;
-  session: LessonSessionContext | null;
+  inSession: boolean;
 }): Pick<LessonPlayerSlots, "completion" | "completionHeader"> | null {
-  const navigation = useStudyNavigation(session?.id ?? "");
-  const startTestOut = useStartTestOut();
-  const reminderActions = useReminderOfferActions();
   const router = useRouter();
-  const inSession = session !== null;
 
   useEffect(() => {
     if (inSession) {
@@ -34,7 +31,7 @@ export function useLessonSessionSlots({
   }, [inSession, router]);
 
   return useMemo(() => {
-    if (!session) {
+    if (!inSession) {
       return null;
     }
 
@@ -42,20 +39,9 @@ export function useLessonSessionSlots({
       // The player sits outside the learning tabs, so the moment brings main's adapters along.
       completion: ({ completion, onRetry }) => (
         <MainLearnProvider>
-          <LessonMoment
-            buddy={buddy}
-            completion={completion}
-            onContinue={navigation.continueSession}
-            onRetry={onRetry}
-            onStartTestOut={(chapterId) =>
-              session.goalId
-                ? startTestOut({ chapterId, fromSession: true, goalId: session.goalId })
-                : Promise.resolve({ status: "failed" })
-            }
-            onStop={navigation.stop}
-            reminderActions={reminderActions}
-            session={session}
-          />
+          <MainFinishedChapterMaps>
+            <SessionLessonMoment buddy={buddy} completion={completion} onRetry={onRetry} />
+          </MainFinishedChapterMaps>
         </MainLearnProvider>
       ),
       completionHeader: ({ completion, menu }) =>
@@ -65,5 +51,37 @@ export function useLessonSessionSlots({
           </MainLearnProvider>
         ) : null,
     };
-  }, [buddy, navigation, reminderActions, session, startTestOut]);
+  }, [buddy, inSession]);
+}
+
+function SessionLessonMoment({
+  buddy,
+  completion,
+  onRetry,
+}: {
+  buddy: LearnBuddy | null;
+  completion: Parameters<NonNullable<LessonPlayerSlots["completion"]>>[0]["completion"];
+  onRetry: () => void;
+}) {
+  const moment = completion.result?.studyBlock;
+  const navigation = useStudyNavigation(moment?.sessionId ?? "");
+  const startTestOut = useStartTestOut();
+  const reminderActions = useReminderOfferActions();
+
+  return (
+    <LessonMoment
+      buddy={buddy}
+      completion={completion}
+      continueHref={moment ? getCompletionLessonHref(moment) : null}
+      onContinue={navigation.continueSession}
+      onRetry={onRetry}
+      onStartTestOut={(chapterId) =>
+        moment?.goalId
+          ? startTestOut({ chapterId, fromSession: true, goalId: moment.goalId })
+          : Promise.resolve({ status: "failed" })
+      }
+      onStop={navigation.stop}
+      reminderActions={reminderActions}
+    />
+  );
 }

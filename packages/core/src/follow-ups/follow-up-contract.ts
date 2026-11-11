@@ -13,6 +13,10 @@ const mistakeCauseInputSchema = z.object({
 });
 
 export const followUpSchema = z.discriminatedUnion("kind", [
+  z.object({
+    input: z.object({ sessionId: uuidSchema(), timeZone: z.string() }),
+    kind: z.literal("refreshStudyDay"),
+  }),
   z.object({ input: z.object({ sessionId: uuidSchema() }), kind: z.literal("prepareSession") }),
   z.object({
     input: z.object({
@@ -32,6 +36,15 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("prepareGoalLessons"),
   }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
+  z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rebuildGoalCurriculum") }),
+  z.object({
+    input: z.object({ goalId: uuidSchema(), waitsForNotice: z.boolean() }),
+    kind: z.literal("preparePlacementItems"),
+  }),
+  z.object({
+    input: z.object({ chapterId: uuidSchema(), goalId: uuidSchema() }),
+    kind: z.literal("makeChapterMindMap"),
+  }),
   z.object({
     input: z.object({ cause: mistakeCauseInputSchema, mistakeId: uuidSchema() }),
     kind: z.literal("classifyMistakeCause"),

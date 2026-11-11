@@ -9,6 +9,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -161,9 +162,28 @@ test.describe("Library lesson player", () => {
       steps: TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary"),
     });
 
+    const events = await captureAnalytics(page);
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: noProgressUser.id });
+
     await page.goto(`/learn/${lesson.id}`);
 
     await answerHook(page);
+
+    await expect
+      .poll(() =>
+        events
+          .filter((event) => event.name === "Onboarding Progressed")
+          .map((event) => event.data.stage),
+      )
+      .toEqual(["first_scene_visible", "first_answer"]);
+
+    expect(
+      events
+        .filter((event) => event.name === "Onboarding Progressed")
+        .every((event) => event.data.goal_id === goal.id && event.data.lesson_id === lesson.id),
+    ).toBe(true);
+
     await readExplanation(page);
     await followWorkedExample(page);
     await answerCheckWithKeys(page);

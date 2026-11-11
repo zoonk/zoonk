@@ -15,6 +15,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assert, describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import { settlePublishedDraft } from "../../_test-utils/settle-published-draft";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import {
   loadStatuteDrillTargets,
@@ -22,6 +23,7 @@ import {
 } from "../../exams/statutes/statute-drill-targets";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { completeLessonContent } from "../generation/lesson-generation-state";
+import { keyChecked } from "../items/_test-utils/generated-items";
 import {
   publishStagedLessonVersion,
   stageLessonVersion,
@@ -178,7 +180,7 @@ async function lawGoal() {
 }
 
 function drill(days: string) {
-  return {
+  return keyChecked({
     context: null,
     difficulty: "medium" as const,
     format: "trueFalse" as const,
@@ -189,7 +191,7 @@ function drill(days: string) {
     reference: "Art. 13",
     statement: `A posse ocorrerá no prazo de ${days} dias contados da publicação do ato.`,
     visual: null,
-  };
+  });
 }
 
 async function writeDrill({ days, goalId }: { days: string; goalId: string }) {
@@ -338,10 +340,8 @@ describe("content written while its source changes", () => {
         issues: [
           {
             fix: "Say that a rise moves up the thermometer.",
-            kind: "incorrect" as const,
             problem: "The screen says a rise moves the mark down below zero.",
             screen: 4,
-            severity: "blocking" as const,
           },
         ],
       }) as never,
@@ -361,12 +361,16 @@ describe("content written while its source changes", () => {
       }) as never,
     );
 
+    vi.mocked(checkLessonQuality).mockResolvedValueOnce(modelOutput({ issues: [] }) as never);
+
     await expect(
-      checkPublishedLesson({
-        lessonId: lesson.id,
-        plan: written.check,
-        workflowRunId: randomUUID(),
-      }),
+      settlePublishedDraft(
+        await checkPublishedLesson({
+          lessonId: lesson.id,
+          plan: written.check,
+          workflowRunId: randomUUID(),
+        }),
+      ),
     ).resolves.toMatchObject({ status: "republished", version: 2 });
 
     await expect(publishFixedVersion({ lessonId: lesson.id, version: 2 })).resolves.toBe(true);

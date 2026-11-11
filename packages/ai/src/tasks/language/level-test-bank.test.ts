@@ -105,4 +105,24 @@ describe(generateLevelTestBank, () => {
     expect(total.inputTokens).toBe(5000);
     expect(provenance).toMatchObject({ gatewayCostUsd: expect.closeTo(0.25), model: MODEL });
   });
+
+  it("sets every level's texts where the tested language is spoken", async () => {
+    const calls = answerLevelsLater();
+    const pending = generateLevelTestBank({ learnerLanguage: "pt", targetLanguage: "it" });
+
+    await expect.poll(() => calls.length).toBe(5);
+
+    for (const call of calls) {
+      call.resolve();
+    }
+
+    await pending;
+
+    const prompts = vi
+      .mocked(generateText)
+      .mock.calls.map(([options]) => (typeof options.prompt === "string" ? options.prompt : ""));
+
+    expect(prompts.every((prompt) => prompt.includes("- Place: Italy"))).toBe(true);
+    expect(prompts.some((prompt) => /Brazil|Register/u.test(prompt))).toBe(false);
+  });
 });

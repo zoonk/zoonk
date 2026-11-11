@@ -1,5 +1,8 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
+import { readLessonStates } from "../../learner/facts/lesson-states";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
@@ -8,11 +11,11 @@ import { toDayBlockRef } from "../day-block";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
+import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
-import { withLessonDisplayMinutes } from "./lesson-display-minutes";
 import { loadStudySessionView } from "./load-session-view";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -31,8 +34,20 @@ export async function readSavedDayView({
   userId: string;
   weekDate?: Date;
 }): Promise<DayView> {
+  const { goalId } = session;
+  const readCatchUp = goalId ? () => readCatchUpItems(userId, goalId) : undefined;
+
   const [view, refill] = await Promise.all([
-    loadStudySessionView({ blueprint, session, timeZone, userId, weekDate }),
+    loadStudySessionView({
+      blueprint,
+      readCatchUp,
+      readDayProgress: readDayMissionProgress,
+      readLessonStates,
+      session,
+      timeZone,
+      userId,
+      weekDate,
+    }),
     session.goal
       ? planEntitlementLapseRefill({
           goal: session.goal,
@@ -47,15 +62,14 @@ export async function readSavedDayView({
     return view;
   }
 
-  const [display, subjects, blockedTestOutChapters, catchUp] = await Promise.all([
-    withLessonDisplayMinutes({ blocks: refill.blocks }),
+  const [subjects, blockedTestOutChapters, catchUp] = await Promise.all([
     loadBlockSubjects({ blocks: refill.blocks, blueprint, goal: session.goal }),
     loadBlockedTestOutChapters({
       chapterIds: [
         ...new Set(refill.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
       ],
       goalId: session.goalId,
-      known: { source: readSavedPlan(userId, session.goalId) },
+      known: { blueprint, goal: session.goal, source: readSavedPlan(userId, session.goalId) },
       now: new Date(),
       timeZone,
       userId,
@@ -66,13 +80,14 @@ export async function readSavedDayView({
       examTomorrow: view.examTomorrow,
       freshStart: session.freshStart,
       goalId: session.goalId,
+      readItems: readCatchUp,
       trialEnded: view.examAccess.trialEnded,
     }),
   ]);
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
-  const blocks = display.map((block) => {
+  const blocks = refill.blocks.map((block) => {
     const saved = block.id ? savedViews.get(block.id) : undefined;
 
     if (saved) {
@@ -102,14 +117,17 @@ export async function readSavedDayView({
       ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
       : null,
     emptyDay: null,
-    extraTime: getExtraTime({
+    extraTime: getExtraTime({ blocks: refill.blocks }),
+    minutes: getSessionMinutes({
       blocks: refill.blocks,
-      remainingLimitMinutes: view.dailyLimit?.remainingMinutes ?? null,
+      dailyGoal: view.minutes.dailyGoal,
+      planned: getVisibleSessionTotal({
+        blocks: session.blocks,
+        planned: refill.plannedMinutes,
+        visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+      }),
+      reserved: view.lessonsComing || view.lessonsToPrepare,
     }),
-    minutes: {
-      ...view.minutes,
-      planned: refill.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
-    },
     missions: missions.map((mission): UnstartedDayView["missions"][number] => {
       const { opens, ...rest } = mission;
 

@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { gradeChoiceAnswer, parseChoiceItem } from "../../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
@@ -31,7 +32,7 @@ describe("notebook practice mission moments", () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });
 
-    const [item, extra] = await Promise.all([
+    const [item] = await Promise.all([
       itemFixture({ content: choiceItemContent(), skillId: skill.id }),
       itemFixture({ content: choiceItemContent(), skillId: skill.id }),
     ]);
@@ -63,7 +64,7 @@ describe("notebook practice mission moments", () => {
     mockSession(user.id);
 
     const answered = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: extra.id, timeZone: "UTC" },
+      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
       mistakeId: mistake.id,
     });
 
@@ -257,11 +258,20 @@ describe("notebook practice mission moments", () => {
       if (refixed) {
         vi.setSystemTime(new Date(NOW.getTime() + 3000));
 
+        const parsed = parseChoiceItem(practiceItem);
+
+        if (!parsed) {
+          throw new Error("The original must be playable");
+        }
+
+        const grade = gradeChoiceAnswer({ answer: { selectedIndex: 0 }, item: parsed });
+
         await recordLearnerAnswer({
           answer: { selectedIndex: 0 },
           graded: { durationMs: 5000, isCorrect: true },
           itemId: practiceItem.id,
           language: "en",
+          mistake: { questionText: grade.snapshot.question, snapshot: grade.snapshot },
           purpose: "learning",
           skillId: skill.id,
           studySessionId: session.id,
@@ -272,7 +282,7 @@ describe("notebook practice mission moments", () => {
 
       await expect(
         prisma.mistake.findUniqueOrThrow({ where: { id: practiceMistake.id } }),
-      ).resolves.toMatchObject({ status: refixed ? "fixed" : "open" });
+      ).resolves.toMatchObject({ status: reopened || refixed ? "fixed" : "open" });
 
       const input = {
         answerIds: [
@@ -284,12 +294,12 @@ describe("notebook practice mission moments", () => {
       };
 
       await expect(finishMistakePractice(input)).resolves.toMatchObject({
-        result: { missionMoment: null },
+        result: { missionMoment: reopened ? { completed: ["fixMistake"] } : null },
         status: "ready",
       });
 
       await expect(finishMistakePractice(input)).resolves.toMatchObject({
-        result: { missionMoment: null },
+        result: { missionMoment: reopened ? { completed: ["fixMistake"] } : null },
         status: "ready",
       });
 
@@ -305,7 +315,7 @@ describe("notebook practice mission moments", () => {
 
       expect(saved.fullMealAt !== null).toBe(reviewDone);
       expect(JSON.stringify(saved.startSnapshot)).not.toContain("fullMealSource");
-      expect(JSON.stringify(saved.missions)).not.toContain("completedBy");
+      expect(JSON.stringify(saved.missions).includes("completedBy")).toBe(reopened);
     },
   );
 });

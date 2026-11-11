@@ -66,6 +66,42 @@ internal fun LessonPlayerState.resume(
     return resumed.enterPosition(position, now)
 }
 
+/**
+ * A run that lands after the learner acted on this visit leaves them where they are: screens they haven't touched, other
+ * than the one in play, show the run's answers, and a check it missed once comes back at the end.
+ */
+internal fun LessonPlayerState.fillUntouched(
+    answers: List<RunAnswer>,
+    workedStepIds: Set<String>,
+): LessonPlayerState {
+    val inPlay = currentStep?.id?.takeIf { it !in results }
+    val saved =
+        answers.filter {
+            it.stepId in steps && it.stepId != inPlay && it.stepId !in workedStepIds && it.stepId !in this.answers &&
+                it.stepId !in results
+        }
+
+    val hydrated = copy(firstVerdicts = firstVerdicts + runVerdicts(answers))
+    if (saved.isEmpty()) return hydrated
+
+    val lessonQueue = quickCheck?.returnQueue ?: queue
+    val owed =
+        saved
+            .groupBy(RunAnswer::stepId)
+            .filter { (id, tries) -> steps[id]?.isRetryStep == true && tries.size == 1 && !tries.first().isCorrect }
+            .keys
+            .filter { id -> lessonQueue.count { it == id } == 1 }
+    val filled = saved.map(RunAnswer::stepId).toSet()
+
+    return hydrated
+        .copy(
+            queue = if (quickCheck == null) queue + owed else queue,
+            quickCheck = quickCheck?.copy(returnQueue = lessonQueue + owed),
+            retried = (retried + retriedIn(saved) + owed).distinct(),
+            rounds = rounds + filled.associateWith { round(it) + 1 },
+        ).answeredAs(saved)
+}
+
 /** "I don't know yet": an open answer's sample, or the guess's answer with no pick, without a verdict; neither counts. */
 internal fun LessonPlayerState.revealAnswer(stepId: String): LessonPlayerState {
     val step = currentStep?.takeIf { it.id == stepId && phase == LessonPhase.Playing } ?: return this

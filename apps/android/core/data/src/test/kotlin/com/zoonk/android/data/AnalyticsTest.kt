@@ -49,7 +49,7 @@ private class GatedProfileApi : LearningProfileApi {
     val saved = CompletableDeferred<Unit>()
     var current: LearningProfile =
         ApiJson.decodeFromString(
-            """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"shareUsageData":true,"soundsEnabled":true}""",
+            """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"shareUsageData":true,"soundsEnabled":true}""",
         )
 
     override suspend fun profile(session: AuthenticatedSession) = current

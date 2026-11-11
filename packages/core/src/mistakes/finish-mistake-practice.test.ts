@@ -49,9 +49,21 @@ async function answer({
   mistakeId: string;
   run?: { answerIds: string[]; goalId?: string };
 }): Promise<string> {
+  const originalMistake = await prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } });
+
+  const target =
+    originalMistake.itemId === itemId
+      ? originalMistake
+      : await mistakeFixture({
+          createdAt: YESTERDAY,
+          itemId,
+          skillId: originalMistake.skillId,
+          userId: originalMistake.userId,
+        });
+
   const result = await answerMistakePractice({
     input: { answer: choice, attemptId, durationMs: 20_000, itemId, run, timeZone: "UTC" },
-    mistakeId,
+    mistakeId: target.id,
   });
 
   if (result.status !== "ready") {
@@ -172,7 +184,12 @@ describe(finishMistakePractice, () => {
     const runs = await loadRuns(user.id);
 
     expect(runs).toMatchObject([{ brainPower: 6, correctAnswers: 2, incorrectAnswers: 0 }]);
-    expect(runs[0]?.contentIds).toStrictEqual({ answerIds: `${first},${second}` });
+
+    expect(
+      String((runs[0]?.contentIds as { answerIds?: string } | undefined)?.answerIds)
+        .split(",")
+        .toSorted(),
+    ).toStrictEqual([first, second].toSorted());
   });
 
   it("counts the run as each answer that names it is saved, and the end adds nothing twice", async () => {

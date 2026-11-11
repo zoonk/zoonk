@@ -114,6 +114,7 @@ struct QuestionBlockView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var stopFailed = false
   @State private var isStopping = false
+  @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
   @State private var pressedWithFocus: PracticeFocus?
@@ -151,6 +152,10 @@ struct QuestionBlockView: View {
       followPress(to: phase)
     }
     .announcesStatus(announcement(phase))
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "question-block", reportType: .saveFailure), isReport: true
+    )
     .onChange(of: run.needsRefresh) { _, needsRefresh in
       if needsRefresh { onRefresh() }
     }
@@ -191,7 +196,7 @@ struct QuestionBlockView: View {
           }
         }
 
-        if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill || drill.isReadFirst {
+        if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill {
           DrillNoteView(drill: drill)
         }
 
@@ -240,7 +245,6 @@ struct QuestionBlockView: View {
       result: result,
       isLocked: !phase.acceptsAnswer,
       continuesSet: run.detail.continuesSet(at: run.state.index),
-      hidesAnswers: run.drillStage == .reading,
       askedIn: run.detail.block.id,
       recordingQuestions: run.detail.recordingQuestions(for: question),
       transcript: graded(phase)?.feedback.transcript,
@@ -326,7 +330,9 @@ struct QuestionBlockView: View {
     case .finishReady:
       PracticeMainButton(title: finishTitle, icon: .forward) { Task { await run.finish() } }
     case .finishFailed:
-      PracticeSaveError { Task { await run.finish() } }
+      PracticeSaveError(
+        failures: run.state.saveFailures, onReport: { showsSaveReport = true },
+        retry: { Task { await run.finish() } })
     case .finishing, .finished:
       EmptyView()
     case .feedback(_, let feedback):
@@ -337,7 +343,9 @@ struct QuestionBlockView: View {
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed = phase {
-        PracticeSaveError { Task { await run.retryAnswer() } }
+        PracticeSaveError(
+          failures: run.state.saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await run.retryAnswer() } })
       }
 
       if run.drillStage == .idea {
@@ -347,17 +355,6 @@ struct QuestionBlockView: View {
             comment: "Starts a content-gap drill's questions after its idea."),
           icon: .play
         ) { run.startDrill() }
-      } else if run.drillStage == .reading {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "I've read it. Show the answers", table: "Practice",
-            comment: "Shows a misread drill's answers once the question was read."),
-          icon: .reveal
-        ) {
-          if focuses.has(.reveal) { focuses.move(to: .answer) }
-          run.revealAnswers()
-        }
-        .practiceFocus(.reveal)
       } else {
         answerButtons(phase: phase)
       }

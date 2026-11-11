@@ -3,8 +3,8 @@ package com.zoonk.android.feature.activities.code
 import com.zoonk.android.feature.activities.ActivityExpression
 import kotlin.math.abs
 import kotlin.math.max
+import com.zoonk.api.models.ActivityExpectedFormulaTolerance as Tolerance
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOf1ExamplesInner as FormulaExample
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance as Tolerance
 
 /** [value] is null when the formula can't be worked out for this example. */
 data class FormulaResult(

@@ -87,7 +87,6 @@ export async function lookUpAccount({ goal, scope }: Lookup): Promise<GoalTutorL
     plan: { link: toPageLink({ page: "subscription", scope }), tier: allowance.tier },
     preferences: {
       buddyName: profile.buddy.name,
-      dailyLimitMinutes: profile.dailyLimitMinutes,
       link: toPageLink({ page: "appearance", scope }),
       sounds: profile.soundsEnabled,
     },

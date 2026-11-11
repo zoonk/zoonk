@@ -175,6 +175,8 @@ class TodayViewModel(
      */
     fun endVisit() {
         visit++
+        doneOpen = false
+        moreOpen = false
         failed = null
         noticeHold = null
         planChangeAnswer = null
@@ -186,6 +188,10 @@ class TodayViewModel(
     /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row and opens nothing. */
     var visit = 0
         private set
+
+    /** The queue's folds, opened for this visit only: every visit starts with the day folded. */
+    var doneOpen by mutableStateOf(false)
+    var moreOpen by mutableStateOf(false)
 
     /** A plan change answered here, so its card says what the answer did after Today moves on. */
     var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)

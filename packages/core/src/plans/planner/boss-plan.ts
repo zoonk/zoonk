@@ -6,12 +6,14 @@ import { type PlannedItem } from "./plan-items";
 export function toBossPlan({
   input,
   items,
+  phases,
   rows = { chapterLessons: [], lessonSkills: [] },
   skillLessons,
   survivors = new Map(),
 }: {
   input: Pick<BuildPlanInput, "goal" | "graph" | "settings">;
   items: readonly PlannedItem[];
+  phases?: readonly { kind?: string; endDate?: string | null }[];
   rows?: ItemSkillRows;
   skillLessons: ReadonlyMap<string, number>;
   survivors?: ReadonlyMap<string, string>;
@@ -34,6 +36,7 @@ export function toBossPlan({
     })),
     itemSkillIds: projected.itemSkillIds,
     items: saved,
+    phases,
     skills: projected.skillIds.filter((id) => !skipped.has(id)).map((id) => ({ id })),
     targetDate: input.goal.targetDate,
   };

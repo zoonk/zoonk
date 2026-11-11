@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "093db42a01457948858c37ded40ce9ea2377348f267664e077686bf07ef46be7",
-  "missions_after_lessons": "62c71482ab6ff7df5a372c06faf42aea79178c51fb3c224d6311df95ceb1a345",
+  "missions_after_lessons": "3ac3c4ee44f2b52551b1ffb7ef6faad32e71e670bd614efc647449a4ab837a1a",
   "missions_already_earned": "0bdd0fb5a9867ce9fd3489f057310010a60954f85bee6a00d60a7fc3d52ad37d",
   "missions_ask_anything": "857fa772db920c88c709ee9f3afb2587593f2a59b21dea8206f29c6bb5cafc0f",
   "missions_ask_buddy": "00fb162bd616725801cc01c351444d5816715252abe44bffcfd7a7ce8a69f4c1",
@@ -125,8 +124,7 @@
     <string name="missions_ask_buddy">Chiedi qualcosa a %1$s</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">Fai pratica: %1$s</string>
-    <string name="missions_after_lessons">Dopo le lezioni di oggi</string>
-    <string name="missions_after_challenge">Dopo la sfida precedente</string>
+    <string name="missions_after_lessons">Dopo le lezioni di questa fase</string>
     <string name="missions_from_notebook">Dal tuo quaderno degli errori</string>
     <string name="missions_due_today">Da ripassare oggi</string>
     <!-- %1$s is a language unit's title. -->

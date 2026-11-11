@@ -5,7 +5,6 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";
 import { validateActivity, validateExploreActivity } from "../activities/validate-activity";
 import { type MathCheckInput, toMathCheckContent } from "./_utils/math-check-content";
-import { optionTextSchema } from "./contract/content-schemas";
 import { describeContentIssues, safeParseStepContent } from "./contract/step-contract";
 
 export type ScreenMathItem = Omit<MathCheckInput, "correctReason">;
@@ -164,7 +163,7 @@ function toTeachingContent(
     case "typedAnswer": {
       const acceptedAnswers = screen.acceptedAnswers
         .map((answer) => answer.trim())
-        .filter((answer) => optionTextSchema.safeParse(answer).success);
+        .filter((answer) => answer.length > 0);
 
       return {
         content: {

@@ -3,11 +3,18 @@ import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   brandFixture,
   productFixture,
@@ -27,8 +34,9 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
+import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
+import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
-import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
@@ -62,6 +70,10 @@ async function missedQuestionFixture() {
   return item;
 }
 
+function languageSkillFixture(attrs: Parameters<typeof skillFixture>[0] = {}) {
+  return skillFixture({ level: "beginner", targetLanguage: "en", ...attrs });
+}
+
 describe(dailySweepsWorkflow, () => {
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {
     const now = Date.now();
@@ -79,12 +91,7 @@ describe(dailySweepsWorkflow, () => {
       where: { id: guest.id },
     });
 
-    const [lesson, oldCode, expiredCode] = await Promise.all([
-      // Ids ending this way land in the later review's one-in-five sample.
-      libraryLessonFixture({
-        contentStatus: "completed",
-        id: `${randomUUID().slice(0, -8)}0000000a`,
-      }),
+    const [oldCode, expiredCode] = await Promise.all([
       verificationFixture(new Date(now - 2 * DAY_MS)),
       verificationFixture(new Date(now - 60_000)),
       memoryFactFixture({
@@ -152,13 +159,6 @@ describe(dailySweepsWorkflow, () => {
     );
 
     expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
-
-    const reviewed = getStartMock()
-      .mock.calls.filter(([workflow]) => workflow === laterReviewWorkflow)
-      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
-
-    expect(reviewed).toContain(lesson.id);
-    expect(result.laterReviews).toBe(reviewed.length);
   });
 
   it("starts the follow-ups of learners whose owed work no run took", async () => {
@@ -239,6 +239,164 @@ describe(dailySweepsWorkflow, () => {
     expect(started).toContain(owed.id);
     expect(started).not.toContain(checked.id);
     expect(result.pictureChecks).toBe(started.length);
+  });
+
+  it("starts a separate token-owned run for each lesson still owing word orders", async () => {
+    const [owed, alsoOwed, written, failing] = await Promise.all([
+      languageLessonFixture(),
+      languageLessonFixture(),
+      languageLessonFixture(),
+      languageLessonFixture(),
+    ]);
+
+    await Promise.all([
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: new Date(Date.now() - 30 * DAY_MS) },
+        where: { lessonId: owed.lesson.id },
+      }),
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: null },
+        where: { lessonId: written.lesson.id },
+      }),
+      prisma.lesson.update({
+        data: { sentenceOrdersAttempts: 8 },
+        where: { id: failing.lesson.id },
+      }),
+    ]);
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const runs = getStartMock().mock.calls.filter(
+      ([workflow]) => workflow === sentenceOrdersWorkflow,
+    );
+
+    const started = runs.map(([, args]) => (args as [{ lessonId: string }])[0].lessonId);
+
+    expect(started).toContain(owed.lesson.id);
+    expect(started).toContain(alsoOwed.lesson.id);
+    expect(started).not.toContain(written.lesson.id);
+    expect(started).not.toContain(failing.lesson.id);
+    expect(result.sentenceOrders).toBe(started.length);
+
+    for (const [, args, options] of runs) {
+      const [{ lessonId }] = args as [{ lessonId: string }];
+      expect(args).toStrictEqual([{ lessonId, wait: "later" }]);
+
+      expect(options).toStrictEqual({
+        experimental_hook: { token: `sentence-orders:${lessonId}` },
+      });
+    }
+  });
+
+  it("prioritizes the lessons learners played most recently over older debt and unplayed lessons", async () => {
+    const [recent, older, unplayed, user] = await Promise.all([
+      languageLessonFixture(),
+      languageLessonFixture(),
+      languageLessonFixture(),
+      userFixture(),
+    ]);
+
+    const now = Date.now();
+
+    await Promise.all([
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: new Date(now - 60 * DAY_MS) },
+        where: { lessonId: unplayed.lesson.id },
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: recent.lesson.id },
+        endedAt: new Date(now - DAY_MS),
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: recent.lesson.id },
+        endedAt: new Date(now - 30 * DAY_MS),
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: older.lesson.id },
+        endedAt: new Date(now - 2 * DAY_MS),
+        userId: user.id,
+      }),
+    ]);
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
+      .map(([, args]) => (args as [{ lessonId: string }])[0].lessonId)
+      .filter((id) => [recent.lesson.id, older.lesson.id, unplayed.lesson.id].includes(id));
+
+    expect(started).toStrictEqual([recent.lesson.id, older.lesson.id, unplayed.lesson.id]);
+  });
+
+  it("starts one repair for a lesson an old writer finishes after migration", async () => {
+    const [first, second] = await Promise.all([languageLessonFixture(), languageLessonFixture()]);
+
+    await prisma.lessonSentence.update({
+      data: { lessonId: first.lesson.id, position: 1 },
+      where: {
+        lessonId_sentenceId: { lessonId: second.lesson.id, sentenceId: second.sentence.id },
+      },
+    });
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
+      .map(([, args]) => (args as [{ lessonId: string }])[0].lessonId);
+
+    expect(started.filter((id) => id === first.lesson.id)).toStrictEqual([first.lesson.id]);
+    expect(started).not.toContain(second.lesson.id);
+  });
+
+  it("starts one run tagging the skills without a level that a language plan's items or graph use", async () => {
+    const [user, inItem, inGraph, survivor, tagged, exhausted, learnOnly] = await Promise.all([
+      userFixture(),
+      languageSkillFixture(),
+      languageSkillFixture(),
+      languageSkillFixture(),
+      languageSkillFixture({ cefrLevel: "A1" }),
+      languageSkillFixture({ cefrAttempts: 8 }),
+      languageSkillFixture(),
+    ]);
+
+    const [merged, languageGoal, learnGoal] = await Promise.all([
+      languageSkillFixture({ mergedIntoId: survivor.id }),
+      goalFixture({ kind: "language", targetLanguage: "en", userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const [languagePlan] = await Promise.all([
+      planFixture({ goalId: languageGoal.id, graph: { skills: plannedSkills([inGraph, tagged]) } }),
+      planFixture({ goalId: learnGoal.id, graph: { skills: plannedSkills([learnOnly]) } }),
+    ]);
+
+    await Promise.all(
+      [inItem, merged, exhausted].map((skill, position) =>
+        planItemFixture({ planId: languagePlan.id, position, skillId: skill.id }),
+      ),
+    );
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const runs = getStartMock().mock.calls.filter(([workflow]) => workflow === skillLevelsWorkflow);
+    expect(runs).toHaveLength(1);
+
+    const [, args, options] = runs[0] ?? [];
+    const [{ skillIds, wait }] = args as [{ skillIds: string[]; wait: string }];
+
+    expect(skillIds).toStrictEqual(expect.arrayContaining([inItem.id, inGraph.id, survivor.id]));
+
+    for (const skill of [merged, tagged, exhausted, learnOnly]) {
+      expect(skillIds).not.toContain(skill.id);
+    }
+
+    expect(wait).toBe("later");
+    expect(options).toStrictEqual({ experimental_hook: { token: "skill-levels:sweep" } });
+    expect(result.skillLevels).toBe(skillIds.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

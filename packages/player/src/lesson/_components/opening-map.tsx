@@ -108,7 +108,7 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
 
   return (
     <figure
-      className="flex w-full flex-col items-center gap-4 pt-2 lg:pt-8"
+      className="flex w-full flex-col items-center gap-4 pt-2 sm:my-auto lg:pt-8"
       data-slot="opening-map"
     >
       <div

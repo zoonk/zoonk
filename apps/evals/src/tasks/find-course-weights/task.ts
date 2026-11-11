@@ -7,11 +7,10 @@ import {
 } from "@zoonk/ai/tasks/research/find-course-weights";
 import { TEST_CASES } from "./test-cases";
 
-export type FindCourseWeightsExpected = {
-  /** Uses 1-based part numbers; an empty list imposes no relative weight requirements. */
-  atLeast: { part: number; than: number }[];
-  status: "found" | "unknown";
-};
+/** The published weights in `SUBJECTS` order; a source's scale may differ (1, 2 or 10, 20). */
+export type FindCourseWeightsExpected =
+  | { status: "found"; weights: number[] }
+  | { status: "unknown" };
 
 function parseOutput(output: string): CourseWeightsFinding | null {
   try {
@@ -21,21 +20,19 @@ function parseOutput(output: string): CourseWeightsFinding | null {
   }
 }
 
-function findWrongOrder({
+function isSameWeighting({
   expected,
-  weights,
+  found,
 }: {
-  expected: FindCourseWeightsExpected;
-  weights: readonly number[];
-}): string[] {
-  return expected.atLeast.flatMap(({ part, than }) => {
-    const weight = weights[part - 1] ?? 0;
-    const other = weights[than - 1] ?? 0;
+  expected: readonly number[];
+  found: readonly number[];
+}): boolean {
+  const scale = (found[0] ?? 0) / (expected[0] ?? 1);
 
-    return weight >= other
-      ? []
-      : [`part ${part} (${weight}) weighs less than part ${than} (${other})`];
-  });
+  return (
+    found.length === expected.length &&
+    expected.every((weight, index) => Math.abs((found[index] ?? 0) - weight * scale) < 1e-6)
+  );
 }
 
 const scoreCourseWeights: TaskScorer<FindCourseWeightsExpected> = ({ output, testCase }) => {
@@ -56,11 +53,12 @@ const scoreCourseWeights: TaskScorer<FindCourseWeightsExpected> = ({ output, tes
     return createFixedScore({ conclusion: "Weights for a course that has none", score: 6 });
   }
 
-  const wrong = findWrongOrder({ expected, weights: found.weights });
-
-  return wrong.length === 0
+  return isSameWeighting({ expected: expected.weights, found: found.weights })
     ? createFixedScore({ conclusion: "None", score: 10 })
-    : createFixedScore({ conclusion: wrong.join("; "), score: 6 });
+    : createFixedScore({
+        conclusion: `Weights ${found.weights.join(", ")} differ from the published ${expected.weights.join(", ")}`,
+        score: 6,
+      });
 };
 
 export const findCourseWeightsTask: Task<

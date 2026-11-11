@@ -176,7 +176,7 @@ describe("less of the subject of the chapter in progress while today is shown", 
       graph,
       operations: [{ areas: ["Redação"], kind: "reduceAreas" }],
       prerequisites: new Map([["Redação-1", ["Redação-0"]]]),
-      start: addDays(TODAY, -2),
+      start: addDays(TODAY, -4),
     });
 
     expect(inProgress).toBe("chapter-Redação-0");
@@ -194,7 +194,7 @@ describe("less of the subject of the chapter in progress on funded days", () => 
       graph,
       operations: [{ areas: ["Redação"], kind: "reduceAreas" }],
       prerequisites: new Map([["Redação-1", ["Redação-0"]]]),
-      start: addDays(TODAY, -4),
+      start: addDays(TODAY, -2),
     });
 
     expect(inProgress).toBe("chapter-Redação-0");
@@ -207,18 +207,18 @@ describe("less of the subject of the chapter in progress on funded days", () => 
 describe("the chapter in progress on light days", () => {
   it.each([
     { back: 3, chapter: "Redação-0", minutes: 25, mock: 15 },
-    { back: 5, chapter: "Redação-0", minutes: 25, mock: 15 },
+    { back: 5, chapter: "Matemática-0", minutes: 25, mock: 15 },
     { back: 4, chapter: "Redação-0", minutes: 28, mock: 15 },
     { back: 4, chapter: "Redação-0", minutes: 31, mock: 15 },
   ])(
-    "keeps the essay chapter's next lesson at $minutes minutes, $back days in",
+    "keeps the in-progress chapter's next lesson at $minutes minutes, $back days in",
     ({ back, chapter, minutes, mock }) => {
       const { after, context, inProgress, shown } = steerMidChapter({
         chapterSkillId: chapter,
         dailyMinutes: minutes,
         graph,
         mockMinutes: mock,
-        operations: [{ areas: ["Redação"], kind: "reduceAreas" }],
+        operations: [{ areas: [chapter.split("-")[0] ?? ""], kind: "reduceAreas" }],
         prerequisites: new Map([["Redação-1", ["Redação-0"]]]),
         start: addDays(TODAY, -back),
       });
@@ -239,7 +239,7 @@ describe("the chapter in progress on light days", () => {
     });
 
     expect(inProgress).toBe("chapter-Linguagens-0");
-    expect(shown).toBe("2026-10-15");
+    expect(shown).toBe("2026-10-19");
     expect(after && shown && after <= shown).toBe(true);
     expect(checkChapterInProgressKept(context)).toStrictEqual([]);
   });

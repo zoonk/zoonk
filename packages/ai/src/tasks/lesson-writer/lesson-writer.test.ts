@@ -6,7 +6,7 @@ import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { getLessonCheckModels } from "../quality/lesson-check-models";
-import { getLessonRewriteModel, getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
+import { getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
 import type * as Ai from "ai";
 
 /** Where the schema the answer follows starts, after the writer's rules. */
@@ -95,27 +95,10 @@ describe(getLessonWriterModel, () => {
   it("gives every writer the chain may serve a reviewer from another family", () => {
     for (const reuse of REUSES) {
       for (const writerModel of [getLessonWriterModel({ reuse }), OPUS, TERRA, ARGON]) {
-        const { model } = getLessonCheckModels({ reuse, writerModel });
+        const { model } = getLessonCheckModels({ writerModel });
         expect(getModelFamily(model)).not.toBe(getModelFamily(writerModel));
       }
     }
-  });
-});
-
-describe(getLessonRewriteModel, () => {
-  it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "openai/gpt-6.1-terra"])).toBe(
-      "anthropic/claude-opus-5.5",
-    );
-
-    expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
-      "openai/gpt-6.1-terra",
-    );
-
-    // A fallback wrote one of them: both families are left out.
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
-      "google/gemini-4-argon",
-    );
   });
 });
 
@@ -266,7 +249,7 @@ describe(writeLessonDraft, () => {
     expect(data.screens[0]).toMatchObject({ options: [{ picture: null }, { picture: null }] });
   });
 
-  it("brings a long alt and a guess's extra wrong option within bounds instead of failing", async () => {
+  it("keeps a long alt as written and drops a guess's extra wrong option instead of failing", async () => {
     const alt = "word ".repeat(40).trim();
 
     await answerOnceWith({
@@ -299,7 +282,7 @@ describe(writeLessonDraft, () => {
     });
 
     expect(data.screens[0]).toMatchObject({
-      image: { alt: expect.stringMatching(/^(?:word ){30,}word\u2026$/u) },
+      image: { alt },
       options: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
     });
   });

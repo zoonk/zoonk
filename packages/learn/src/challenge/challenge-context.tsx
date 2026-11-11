@@ -24,7 +24,6 @@ export type ChallengeActions = {
   >;
   start: () => Promise<
     | Extract<StartChallengeResult, { status: "earlierFirst" }>
-    | "dailyLimitReached"
     | "failed"
     | "notToday"
     | "plusRequired"

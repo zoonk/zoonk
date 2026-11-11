@@ -98,6 +98,7 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
       const claimed = await tx.lesson.updateMany({
         data: {
           contentStatus: "completed",
+          sentenceOrdersAttempts: 0,
           summary: { ideas: content.summary.map((text) => ({ text })) },
         },
         where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },

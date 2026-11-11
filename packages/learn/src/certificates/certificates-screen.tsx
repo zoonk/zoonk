@@ -44,7 +44,7 @@ export type ListedCertificate = { facts: OwnedCertificateFacts; links: Certifica
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
 export type CertificateUpNext = {
-  goal: { kind: string; targetLanguage: string | null; title: string };
+  goal: { kind: string; targetLanguage: string | null; displayName: string };
   id: string;
   /** The plan's share of lessons done, 0 to 1; null for a language. */
   progress: number | null;
@@ -153,10 +153,10 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle>{item.goal.title}</ListRowTitle>
+          <ListRowTitle>{item.goal.displayName}</ListRowTitle>
           <ListRowDescription>
             {item.progress === null
-              ? t("Comes when every skill you practice reaches the next level")
+              ? t("Comes when you finish a level, studying at least half of it")
               : t("Your certificate comes when you finish the plan")}
           </ListRowDescription>
         </ListRowContent>

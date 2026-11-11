@@ -131,31 +131,6 @@ class ChallengeViewModelTest {
         }
 
     @Test
-    fun aDayThatChangedReadsTheIntroAgainAndPlusRequiredSaysSo() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-            viewModel.challenge.load()
-            advanceUntilIdle()
-
-            start = { throw ApiException(ApiError.Unavailable, "DAILY_LIMIT_REACHED", status = 409) }
-            viewModel.start()
-            advanceUntilIdle()
-            assertEquals(2, reads)
-            assertNull(viewModel.ui.value.problem)
-
-            start = { throw ApiException(ApiError.Unavailable, "CONFLICT", status = 409) }
-            viewModel.start()
-            advanceUntilIdle()
-            assertEquals(3, reads)
-            assertNull(viewModel.ui.value.problem)
-
-            start = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", status = 403) }
-            viewModel.start()
-            advanceUntilIdle()
-            assertEquals(StartProblem.PlusRequired, viewModel.ui.value.problem)
-        }
-
-    @Test
     fun aMoveShowsWhereItWentAndUndoBringsTheIntroBack() =
         runTest(dispatcher) {
             val viewModel = viewModel()

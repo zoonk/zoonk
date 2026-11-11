@@ -45,65 +45,7 @@ export function getListeningSkillIds({
   );
 }
 
-export async function listDrillableMistakes<
-  T extends { itemId: string | null; skillId: string | null },
->({
-  listeningSkillIds,
-  mistakes,
-}: {
-  listeningSkillIds: ReadonlySet<string>;
-  mistakes: readonly T[];
-}): Promise<T[]> {
-  const isHeard = (mistake: T) =>
-    mistake.skillId !== null && listeningSkillIds.has(mistake.skillId);
-
-  const heard = mistakes.filter((mistake) => isHeard(mistake));
-
-  if (heard.length === 0) {
-    return [...mistakes];
-  }
-
-  const recorded = await prisma.item.findMany({
-    select: { id: true },
-    where: { id: { in: heard.flatMap((mistake) => mistake.itemId ?? []) }, set: { kind: "audio" } },
-  });
-
-  const recordedIds = new Set(recorded.map((item) => item.id));
-
-  return mistakes.filter(
-    (mistake) => !isHeard(mistake) || (mistake.itemId !== null && recordedIds.has(mistake.itemId)),
-  );
-}
-
-export function isDrillQuestion({
-  item,
-  listeningSkillIds,
-  mistakeItemId,
-}: {
-  item: { id: string; skillId: string };
-  listeningSkillIds: ReadonlySet<string>;
-  mistakeItemId: string | null;
-}): boolean {
-  return !listeningSkillIds.has(item.skillId) || item.id === mistakeItemId;
-}
-
 const LISTENING_GOAL_SELECT = { examBlueprint: true, kind: true, targetLanguage: true } as const;
-
-export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<string>> {
-  const goals = await prisma.goal.findMany({
-    select: { ...LISTENING_GOAL_SELECT, plan: { select: { graph: true } } },
-    where: { examBlueprintId: { not: null }, kind: "exam", userId },
-  });
-
-  return new Set(
-    goals.flatMap((goal) => [
-      ...getListeningSkillIds({
-        exam: toListeningExam(goal),
-        graph: parsePlanGraph(goal.plan?.graph),
-      }),
-    ]),
-  );
-}
 
 export async function loadGoalListeningSkillIds({
   blueprint,

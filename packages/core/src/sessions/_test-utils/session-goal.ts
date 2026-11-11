@@ -1,7 +1,8 @@
-import { type Goal, type PlanItem } from "@zoonk/db";
+import { type PlanItem } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionPlanFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { finishChallengesFixture } from "../../plans/_test-utils/finish-challenges";
 
 /** Avoid accidental Monday fresh-start rules in session fixtures. */
 export const SESSION_NOW = new Date("2026-09-30T12:00:00Z");
@@ -15,12 +16,14 @@ export function daysAgo(days: number): Date {
 }
 
 export async function sessionGoalFixture({
+  challengesDone = false,
   goal,
   itemsPerSkill = 3,
   lessons = 3,
   userId,
 }: {
-  goal?: Partial<Omit<Goal, "details">> & { details?: object };
+  challengesDone?: boolean;
+  goal?: Omit<Parameters<typeof goalFixture>[0], "userId">;
   itemsPerSkill?: number;
   lessons?: number;
   userId: string;
@@ -34,7 +37,13 @@ export async function sessionGoalFixture({
     details: { placementDeclined: true, ...goal?.details },
   });
 
-  return studySessionPlanFixture({ goal: created, itemsPerSkill, lessons });
+  const fixture = await studySessionPlanFixture({ goal: created, itemsPerSkill, lessons });
+
+  if (challengesDone) {
+    await finishChallengesFixture(fixture.plan.id);
+  }
+
+  return fixture;
 }
 
 export function dueSkillFixture({

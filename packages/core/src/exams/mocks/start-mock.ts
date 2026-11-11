@@ -7,14 +7,7 @@ import { findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
 export type StartMockResult = {
-  status:
-    | "blockFinished"
-    | "dailyLimitReached"
-    | "expired"
-    | "finished"
-    | "notFound"
-    | "ready"
-    | "unauthorized";
+  status: "blockFinished" | "expired" | "finished" | "notFound" | "ready" | "unauthorized";
 };
 
 async function startScheduledBlock({

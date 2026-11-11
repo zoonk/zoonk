@@ -71,59 +71,6 @@
       "testCase": {
         "expected": {
           "brandUrl": [
-            "apple.com"
-          ],
-          "docsUrl": [
-            "support.apple.com"
-          ],
-          "productUrl": [
-            "apple.com/iphone"
-          ],
-          "releaseUrl": [
-            "support.apple.com",
-            "apple.com"
-          ],
-          "releasesUrl": [
-            "support.apple.com",
-            "apple.com"
-          ]
-        },
-        "id": "iphone-13-1",
-        "language": "en",
-        "userInput": {
-          "hints": {
-            "brand": "Apple",
-            "name": "iPhone",
-            "release": "iPhone 13"
-          },
-          "officialDomains": [
-            "apple.com",
-            "support.apple.com"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "brandUrl": [
             "linear.app"
           ],
           "docsUrl": [
@@ -366,6 +313,246 @@
             "release": null
           },
           "officialDomains": []
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "figma.com"
+          ],
+          "docsUrl": [
+            "help.figma.com",
+            "developers.figma.com"
+          ],
+          "productUrl": [
+            "figma.com"
+          ],
+          "releasesUrl": [
+            "figma.com/release-notes",
+            "figma.com/whats-new"
+          ]
+        },
+        "id": "figma-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Figma",
+            "name": "Figma",
+            "release": null
+          },
+          "officialDomains": [
+            "figma.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "microsoft.com"
+          ],
+          "docsUrl": [
+            "support.microsoft.com",
+            "learn.microsoft.com"
+          ],
+          "productUrl": [
+            "microsoft.com/en-us/microsoft-365/excel",
+            "microsoft.com/en-US/microsoft-365/excel",
+            "microsoft.com/microsoft-365/excel",
+            "microsoft.com/en/microsoft-365/excel"
+          ]
+        },
+        "id": "excel-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Microsoft",
+            "name": "Excel",
+            "release": null
+          },
+          "officialDomains": [
+            "microsoft.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "samsung.com"
+          ],
+          "productUrl": [
+            "samsung.com"
+          ],
+          "releaseUrl": [
+            "samsung.com"
+          ]
+        },
+        "id": "galaxy-s24-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "Samsung",
+            "name": "Galaxy S",
+            "release": "Galaxy S24"
+          },
+          "officialDomains": [
+            "samsung.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "apple.com"
+          ],
+          "docsUrl": [
+            "support.apple.com"
+          ],
+          "productUrl": [
+            "apple.com/iphone"
+          ],
+          "releaseUrl": [
+            "support.apple.com",
+            "apple.com"
+          ],
+          "releasesUrl": [
+            "support.apple.com/en-us/108044",
+            "support.apple.com/108044"
+          ]
+        },
+        "id": "iphone-13-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Apple",
+            "name": "iPhone",
+            "release": "iPhone 13"
+          },
+          "officialDomains": [
+            "apple.com",
+            "support.apple.com"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "rdstation.com"
+          ],
+          "docsUrl": [
+            "ajuda.rdstation.com",
+            "developers.rdstation.com"
+          ],
+          "productUrl": [
+            "rdstation.com/produtos/marketing",
+            "rdstation.com/marketing"
+          ]
+        },
+        "id": "rd-station-marketing-1",
+        "language": "pt",
+        "userInput": {
+          "hints": {
+            "brand": "RD Station",
+            "name": "RD Station Marketing",
+            "release": null
+          },
+          "officialDomains": [
+            "rdstation.com"
+          ]
         }
       }
     }

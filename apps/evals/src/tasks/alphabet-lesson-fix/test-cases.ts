@@ -57,6 +57,7 @@ export const TEST_CASES: TestCase<unknown, AlphabetLessonFixInput>[] = [
         problem:
           'The cue for х places its sound "mais atrás que o h de “hora”", but the h of "hora" is silent in Portuguese, so it gives the learner no sound to start from. Fix: Describe /x/ as a rough sound at the back of the mouth and compare it with a Portuguese sound that has it, such as the strong r of "rato" in a Rio accent, still showing ха (kha).',
         screen: 7,
+        source: "review" as const,
       },
     ]),
   },
@@ -68,6 +69,7 @@ export const TEST_CASES: TestCase<unknown, AlphabetLessonFixInput>[] = [
         problem:
           'The cue compares ㅡ with the oo of "book", a lower, lax vowel, while ㅡ is the high back unrounded vowel /ɯ/. Fix: Compare it with the oo of "food" said with the lips spread instead of rounded, still showing 으 (eu).',
         screen: 6,
+        source: "review" as const,
       },
     ]),
   },
@@ -79,6 +81,7 @@ export const TEST_CASES: TestCase<unknown, AlphabetLessonFixInput>[] = [
         problem:
           "The screen says Russian is read from right to left, but Russian is read from left to right. Fix: Say each line is read from left to right.",
         screen: 0,
+        source: "review" as const,
       },
     ]),
   },
@@ -90,6 +93,7 @@ export const TEST_CASES: TestCase<unknown, AlphabetLessonFixInput>[] = [
         problem:
           "The can-do line lists ㅎ, which the lesson never teaches, and leaves out ㅅ, which it does. Fix: List ㅅ instead of ㅎ.",
         screen: null,
+        source: "review" as const,
       },
     ]),
   },
@@ -101,6 +105,7 @@ export const TEST_CASES: TestCase<unknown, AlphabetLessonFixInput>[] = [
         problem:
           "х is romanized as h, but its standard transliteration is kh, as its cue already shows. Fix: Romanize it as kh.",
         screen: 7,
+        source: "review" as const,
       },
     ]),
   },

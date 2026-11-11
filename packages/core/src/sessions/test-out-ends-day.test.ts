@@ -19,12 +19,19 @@ import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { readBlockPayload } from "./block-payload";
+import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
 
 /** A started day with one lesson open and one waiting, which a test-out and a set-aside take. */
 async function startedDayOfTwoLessons() {
   const user = await userFixture();
-  const { goal, lessons, planItems } = await sessionGoalFixture({ lessons: 2, userId: user.id });
+
+  const { goal, lessons, planItems } = await sessionGoalFixture({
+    challengesDone: true,
+    lessons: 2,
+    userId: user.id,
+  });
+
   const [tested, setAside] = lessons;
   const testedItemId = planItems[0]?.id ?? "";
   const now = new Date();
@@ -66,6 +73,7 @@ async function startedDay() {
   const user = await userFixture();
 
   const { chapters, goal, planItems } = await learnerGoalFixture({
+    challengesDone: true,
     itemsPerSkill: 4,
     phases: [1, 1],
     userId: user.id,
@@ -223,5 +231,71 @@ describe("a started day whose last open lesson a test-out takes away", () => {
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
     ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
+  });
+});
+
+describe("a day refilled after a test-out", () => {
+  it("replaces a tested-out lesson while another lesson is still pending, keeping the day's time", async () => {
+    const user = await userFixture();
+
+    const { goal, lessons, planItems } = await sessionGoalFixture({
+      challengesDone: true,
+      goal: { dailyMinutes: 8 },
+      lessons: 3,
+      userId: user.id,
+    });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      plannedMinutes: 8,
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      studySessionBlockFixture({
+        estimatedMinutes: 4,
+        lessonId: lessons[0]?.id,
+        position: 0,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({
+        estimatedMinutes: 4,
+        lessonId: lessons[1]?.id,
+        position: 1,
+        sessionId: session.id,
+      }),
+      prisma.planItem.update({
+        data: { completedAt: new Date(), status: "testedOut" },
+        where: { id: planItems[0]?.id },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await skipTestedOutBlocks({
+      goalId: goal.id,
+      notStarted: true,
+      planItemIds: [planItems[0]?.id ?? ""],
+    });
+
+    await runOwedSettlements(user.id);
+    const day = await getStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
+
+    expect(day).toMatchObject({
+      session: { minutes: { left: 8, planned: 8 }, status: "active" },
+      status: "ready",
+    });
+
+    if (day.status !== "ready") {
+      throw new Error(day.status);
+    }
+
+    expect(
+      day.session.blocks
+        .filter((block) => block.status === "pending")
+        .map((block) => block.lessonId),
+    ).toStrictEqual([lessons[1]?.id, lessons[2]?.id]);
   });
 });

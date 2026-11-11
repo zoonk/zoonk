@@ -4,7 +4,7 @@ import { type BossCandidate, listBossCandidates, projectBossPlan } from "./boss-
 import { type BuildPlanInput } from "./build-plan";
 import { getExamChallengeDayRules, listPhaseChallengeDays } from "./phase-challenge-days";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
-import { type PlannedItem, getItemKey } from "./plan-items";
+import { type PlannedItem } from "./plan-items";
 import { type PlanPhase } from "./plan-state";
 import { type FixedEvent, type PlanDay } from "./schedule-units";
 
@@ -61,20 +61,7 @@ export function placeExamBosses({
   const candidates = listBossCandidates({ built });
   const exam = input.goal.targetDate && toIsoDate(input.goal.targetDate);
 
-  const movedOnto = new Set(input.settings.movedEvents.map((move) => move.to));
-
-  const savedDays = new Map(
-    input.items.flatMap((item) =>
-      item.kind === "boss" && item.scheduledFor
-        ? [[getItemKey(item), toIsoDate(item.scheduledFor)] as const]
-        : [],
-    ),
-  );
-
-  const canGoOn = (key: string, day: string) => !movedOnto.has(day) || savedDays.get(key) === day;
-
-  const listStudyDays = (key: string) =>
-    getChallengeDays({ days: built.studyDays.filter((day) => canGoOn(key, day)), exam });
+  const challengeDays = getChallengeDays({ days: built.studyDays, exam });
 
   const { at, plan, without } = projectBossPlan({ built, candidates, input, rows, survivors });
 
@@ -135,14 +122,13 @@ export function placeExamBosses({
   const placeOne = (candidate: BossCandidate) => {
     const { phase } = candidate;
     const own = listOwnTeaching(phase);
-    const studyDays = listStudyDays(candidate.key);
-    const lastTaught = lastEnd(own, studyDays, candidate.date);
+    const lastTaught = lastEnd(own, challengeDays, candidate.date);
 
     if (!lastTaught) {
       return placeAfterWindow(candidate);
     }
 
-    const day = findStudyDayAfter(studyDays, lastTaught);
+    const day = findStudyDayAfter(challengeDays, lastTaught);
 
     return {
       beside: day === undefined,
@@ -154,24 +140,23 @@ export function placeExamBosses({
   const placeAfterWindow = (candidate: BossCandidate) => {
     const { key, phase } = candidate;
     const anchor = candidate.date;
-    const studyDays = listStudyDays(key);
-    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }), studyDays, anchor);
+    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }), challengeDays, anchor);
 
     const ends = learn
-      .map((item) => endOf(item, studyDays, anchor))
+      .map((item) => endOf(item, challengeDays, anchor))
       .filter((end): end is Date => end !== undefined && end !== null);
 
     const changeDays = [
       ...new Set(
         ends.flatMap((end) => {
-          const day = findStudyDayAfter(studyDays, toIsoDate(end));
+          const day = findStudyDayAfter(challengeDays, toIsoDate(end));
           return day ? [day] : [];
         }),
       ),
     ].toSorted();
 
     const date: string | undefined = atAnchor
-      ? findStudyDayAfter(studyDays, atAnchor)
+      ? findStudyDayAfter(challengeDays, atAnchor)
       : (changeDays.find((day) => day > anchor) ?? anchor);
 
     if (!date) {
@@ -181,7 +166,7 @@ export function placeExamBosses({
     for (let day: string | undefined = date; day;) {
       const on: string = day;
       const tested = listOn({ date: on, key, phase });
-      const end = lastEnd(tested, studyDays, anchor);
+      const end = lastEnd(tested, challengeDays, anchor);
       const keys = tested.map((item) => item.key);
 
       if (tested.length > 0 && end !== null && end < on) {
@@ -191,7 +176,7 @@ export function placeExamBosses({
       day =
         end === null
           ? changeDays.find((event) => event > on)
-          : findStudyDayAfter(studyDays, end > on ? end : on);
+          : findStudyDayAfter(challengeDays, end > on ? end : on);
 
       if (!day && end !== null) {
         return { beside: true, date: end, tested: keys };
@@ -321,10 +306,7 @@ export function listBossDayFacts({
     }
   }
 
-  const rules = getExamChallengeDayRules({
-    settings: input.settings,
-    targetDate: input.goal.targetDate,
-  });
+  const rules = getExamChallengeDayRules({ targetDate: input.goal.targetDate });
 
   return { studyDays: listPhaseChallengeDays({ days, rules }), teachingEnds };
 }

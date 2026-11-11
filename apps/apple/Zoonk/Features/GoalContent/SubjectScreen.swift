@@ -90,6 +90,7 @@ struct SubjectScreen: View {
 
 private struct SubjectContent: View {
   @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
   // Above the panes, so a fold or a resize that rebuilds them keeps what the learner opened.
   @State private var showsAllChapters = false
   @State private var showsDoneChapters = false
@@ -286,11 +287,27 @@ private struct SubjectContent: View {
         SectionTitle(
           Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
         ) {
-          Text(
-            "\(done.count { !$0.known }) of \(chapters.count)", tableName: "Plan",
-            comment: "Chapters done of the subject's chapters"
-          )
-          .monospacedDigit()
+          HStack(spacing: 12) {
+            Text(
+              "\(done.count { !$0.known }) of \(chapters.count)", tableName: "Plan",
+              comment: "Chapters done of the subject's chapters"
+            )
+            .monospacedDigit()
+
+            if learner.summary.value?.places.mindMaps == true {
+              Button {
+                router.open(.mindMaps(subjectKey: subject.key))
+              } label: {
+                Label {
+                  Text("Mind maps", tableName: "Plan", comment: "Opens the subject's mind maps")
+                } icon: {
+                  KindMark(kind: .mindMap)
+                }
+              }
+              .buttonStyle(.ghost)
+              .controlSize(.small)
+            }
+          }
         }
       }
     }

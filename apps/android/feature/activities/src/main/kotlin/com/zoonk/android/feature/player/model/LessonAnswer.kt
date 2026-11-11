@@ -3,8 +3,6 @@ package com.zoonk.android.feature.player.model
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonRunAnswerResult
-import com.zoonk.api.models.LessonRunAnswerResultCorrectionsInner
-import com.zoonk.api.models.LessonRunAnswerResultKeyPointsInner
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf1
@@ -19,14 +17,16 @@ import com.zoonk.api.models.LessonStepAnswerOneOf7UserPairsInner
 import com.zoonk.api.models.LessonStepAnswerOneOf8
 import com.zoonk.api.models.LessonStepAnswerOneOf9
 import com.zoonk.api.models.LessonStepCheckResult
+import com.zoonk.api.models.LessonStepCheckResultCorrectionsInner
+import com.zoonk.api.models.LessonStepCheckResultKeyPointsInner
 import com.zoonk.api.models.SpokenAnswerGrade
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
-typealias AnswerCorrection = LessonRunAnswerResultCorrectionsInner
-typealias AnswerKeyPoint = LessonRunAnswerResultKeyPointsInner
+typealias AnswerCorrection = LessonStepCheckResultCorrectionsInner
+typealias AnswerKeyPoint = LessonStepCheckResultKeyPointsInner
 
 /** A learner's answer to one screen. A hook's guess is never sent: it isn't graded. */
 @Immutable

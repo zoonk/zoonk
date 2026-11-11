@@ -10,9 +10,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Evals
 
+## Choosing a model
+
+An eval's job is to find the cheapest model that matches a higher tier's quality on what the task needs.
+
+- Never test one model alone. Run the task on models from different families (at least OpenAI, Anthropic and Google), picked from the AI Gateway's current catalog.
+- Work from the bottom up. Start with each family's cheapest model and move one tier up only when the one below isn't good enough. For OpenAI, that's Luna, then Terra, then Sol, then Astra.
+- First say what matters most for this task: quality when it needs the best output, cost when keeping spend down comes first, or latency when speed is critical. Then pick the best balance.
+- Private content serves one learner and can't spread its cost, so it takes the cheapest model that keeps good quality. Shared content is reused, so it can afford a pricier model when quality needs it.
+- When a cheaper model reaches the same or very similar quality, use it. It's usually faster too.
+- Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected. A decision that would rest on a handful of cases first adds cases that cover the task's fields and edge cases.
+- Compare models by their measured cost per run on the task, never by per-token price: models spend very different token counts on the same input.
+- Read the outputs, don't just trust the scores: the leading models' outputs on every case where they differ and, before switching a task's model, the old and new models' outputs on every case. Read them blind, paired in random order, and see which model wrote which only after judging every case. When a read disagrees with a score, fix the eval (expectations, scorer or rubric) or add the case that shows it, before choosing.
+- For shared items, don't choose a model with judge-flagged key flaws over one without unless its affected cases have been read; the comment beside the model states the judge-flagged count.
+- A model tends to favor its own family, as a judge, a labeler or a reader. When the judge or the leading models share a family, a reviewer from another family reads the outputs; when hand labels decide between models, label blind with two families.
+- The comment beside a model says why it was chosen: the eval evidence and any judgment beyond the scores.
+
 ## Regression cases
 
 - Every AI failure found while testing (persona walks, manual checks, eval runs, bug reports) becomes a test case on the task that produced it, in that task's `test-cases.ts`, added with the fix. The case uses the input that triggered the failure and states the expectation it broke.
 - A real input the task fails is the case to keep. Never swap it for an easier input to make an eval pass: a failing case is the eval doing its job. Fix the task or the pipeline and keep the case.
 - When code can verify the flaw, the task's scorer reuses the validator the generation pipeline runs before saving (for example `@zoonk/utils/text-flaws` or `findSkillGraphProblems`), so evals and production judge output the same way. Otherwise, write the expectation so the judge can check it.
 - Cases hold Library content, public documents and test learners' inputs, never a real learner's data.
+- After changing a scorer or a case's expectations, rescore every saved model's results on the cases it affects, not only the models you're comparing: the leaderboard reads saved scores as they are, so a model left out keeps credit the new check would take away.

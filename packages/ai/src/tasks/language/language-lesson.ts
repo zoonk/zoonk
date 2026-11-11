@@ -4,7 +4,12 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import {
+  type Reasoning,
+  type ServedSpeed,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
@@ -14,8 +19,10 @@ import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
 import basePrompt from "./language-lesson.prompt.md";
 
 /**
- * Written once per pair and shared, so quality wins: Terra scored 8.91 against GPT-6.1 Sol's 8.75
- * at under half the cost (30 Oct 2026).
+ * Written once per pair and shared, so quality wins: on 15 cases (8 Nov 2026), Terra scored 8.95
+ * (EN 9.18, PT 8.74) at $12.96/1k; Luna at high reasoning scored 8.33 and wrote an English
+ * speaker's instructions in Portuguese. Gemini 3.8 Flash (7.36) is below the floor, so it's only an
+ * outage route.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
@@ -143,6 +150,7 @@ export type LanguageLessonParams = {
   knownWords?: string[];
   model?: string;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -180,10 +188,25 @@ ${formatList(params.knownWords)}
  * pair; everything else belongs to the pair.
  */
 export async function generateLanguageLesson(params: LanguageLessonParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning,
+    serviceTier,
+    speed,
+    useFallback = true,
+  } = params;
+
   const systemPrompt = getSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    serviceTier,
+    speed,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

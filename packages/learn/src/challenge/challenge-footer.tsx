@@ -9,17 +9,14 @@ import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
-import { StudyTimeUsedUpActions } from "../_components/study-time-used-up";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { WaitLine } from "../missions/mission-copy";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
-import { ChallengeUsedUpLine, WeeklyUsedUpLine } from "./challenge-used-up";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
@@ -52,7 +49,17 @@ function OpensLine() {
     );
   }
 
-  return <StatusLine icon={icon}>{t("Opens after this phase's lessons")}</StatusLine>;
+  return <PhaseLessonsLine />;
+}
+
+function PhaseLessonsLine() {
+  const t = useExtracted();
+
+  return (
+    <StatusLine icon={<CalendarClockIcon className="size-4" />}>
+      {t("Opens after this phase's lessons")}
+    </StatusLine>
+  );
 }
 
 function WaitingLine() {
@@ -210,19 +217,10 @@ function PlusRequiredNotice() {
   return <FreeWeekOverNotice cta={false} />;
 }
 
-function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
-  return (
-    <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      <WaitLine reason={reason} />
-    </StatusLine>
-  );
-}
-
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const { challenge, hrefs, start, writing } = useChallengeScreen();
-  const movable = useMovable();
+  const { challenge, start, writing } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
     return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
@@ -232,30 +230,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "ready":
     case "started":
       if (challenge.waitReason) {
-        return { actions: null, line: <WaitReasonLine reason={challenge.waitReason} /> };
-      }
-
-      if (challenge.status === "ready" && challenge.dailyLimitReached) {
-        return {
-          actions: (
-            <>
-              <MoveFailed />
-              <StudyTimeUsedUpActions
-                href={hrefs.exit}
-                main={movable && <MoveToMondayButton main />}
-              />
-            </>
-          ),
-          line:
-            challenge.kind === "weekly" ? (
-              <WeeklyUsedUpLine movable={movable} />
-            ) : (
-              <ChallengeUsedUpLine
-                nextStudyDate={challenge.nextStudyDate}
-                today={challenge.today}
-              />
-            ),
-        };
+        return { actions: null, line: <PhaseLessonsLine /> };
       }
 
       if (challenge.status === "ready" && writing?.kind === "refused") {
@@ -288,7 +263,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "waiting":
       return { actions: null, line: <WaitingLine /> };
     case "queued":
-      return { actions: null, line: <WaitReasonLine reason="challenge" /> };
     case "upcoming":
       return { actions: null, line: <OpensLine /> };
     default:

@@ -1,5 +1,11 @@
 package com.zoonk.android.feature.player
 
+import android.view.View
+import android.view.ViewGroup
+import android.view.accessibility.AccessibilityEvent
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +21,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -47,6 +61,8 @@ import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
+import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -153,6 +169,8 @@ internal fun PlayingLesson(
                 lessonId = route.lessonId,
                 studySessionId = route.sessionId,
                 firstAnswer = route.firstAnswer,
+                opening = route.opening,
+                tapped = navigator.takeLessonTap(route),
                 store = app.lessonPlayer,
                 cache = app.cache,
                 sessions = app.sessions,
@@ -177,6 +195,10 @@ internal fun PlayingLesson(
     val signedIn = (session as? SessionState.SignedIn)?.session
     val state by viewModel.state.collectAsStateWithLifecycle()
     val ending by viewModel.ending.collectAsStateWithLifecycle()
+    val redirect by viewModel.redirect.collectAsStateWithLifecycle()
+    LaunchedEffect(redirect) {
+        redirect?.takeIf { navigator.currentRoute == route }?.let { navigator.leaveTaskFor(it) }
+    }
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
 
@@ -203,29 +225,80 @@ internal fun PlayingLesson(
             null
         }
 
-    CompositionLocalProvider(
-        LocalLessonSpeech provides app.speech,
-        LocalCodeSandbox provides app.codeSandbox,
-        LocalChallengeTeam provides team,
-    ) {
-        LessonPlayer(
-            load.lesson,
-            state,
-            ending,
-            viewModel,
-            exits,
-            navigator,
-            endSlot,
-            buddy = summary.value?.buddy,
-            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
-            tutor = tutor,
-            certificatesMoment = { awarded, onClose ->
-                CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
-            },
-            reminderOffer = { ReminderOfferCard(app, it) },
-        )
-        LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
+    LearnerInput(viewModel::act) {
+        CompositionLocalProvider(
+            LocalLessonSpeech provides app.speech,
+            LocalCodeSandbox provides app.codeSandbox,
+            LocalChallengeTeam provides team,
+        ) {
+            val saveReport = rememberSaveFailureReport(app, "lesson-end")
+            LessonPlayer(
+                load.lesson,
+                state,
+                ending,
+                viewModel,
+                exits,
+                navigator,
+                endSlot,
+                buddy = summary.value?.buddy,
+                onReportSaveFailure = saveReport::open,
+                ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+                tutor = tutor,
+                certificatesMoment = { awarded, onClose ->
+                    CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
+                },
+                finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
+                reminderOffer = { ReminderOfferCard(app, it) },
+            )
+            LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
+        }
     }
+}
+
+/**
+ * Calls [onInput] for each of the learner's own inputs in [content], without taking any: a tap (lifted within touch slop of
+ * where it went down, from any pointer), a key press, or a click from TalkBack or Switch Access. Scrolls and drags don't count.
+ */
+@Composable
+internal fun LearnerInput(
+    onInput: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val currentOnInput by rememberUpdatedState(onInput)
+    val host = LocalView.current.parent as? ViewGroup
+
+    // Accessibility services click through the screen's semantics, which no pointer input sees; Compose reports each of
+    // those clicks to the view's parent.
+    DisposableEffect(host) {
+        host?.accessibilityDelegate =
+            object : View.AccessibilityDelegate() {
+                override fun onRequestSendAccessibilityEvent(
+                    host: ViewGroup,
+                    child: View,
+                    event: AccessibilityEvent,
+                ): Boolean {
+                    if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) currentOnInput()
+                    return super.onRequestSendAccessibilityEvent(host, child, event)
+                }
+            }
+        onDispose { host?.accessibilityDelegate = null }
+    }
+
+    Box(
+        modifier
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    // Before the screen's own controls take the touch.
+                    val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                    val up = waitForUpOrCancellation(PointerEventPass.Initial)
+                    if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) currentOnInput()
+                }
+            }.onPreviewKeyEvent {
+                if (it.type == KeyEventType.KeyDown) currentOnInput()
+                false
+            },
+    ) { content() }
 }
 
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */
@@ -340,7 +413,6 @@ private fun WaitingLesson(
             LessonWritingViewModel(
                 lessonId = route.lessonId,
                 store = app.lessonPlayer,
-                writingApi = LiveLessonWritingApi(app.api),
                 generations = { LiveGenerationSource(app.api, it) },
                 cache = app.cache,
                 sessions = app.sessions,
@@ -348,7 +420,16 @@ private fun WaitingLesson(
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
 
+    val summary by app.learnerSummary.summary.collectShown()
+
     LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
 
-    LessonWaitingScreen(outline, viewModel, app.warmUps, exits, readLesson = resource::refresh)
+    LessonWaitingScreen(
+        outline,
+        viewModel,
+        app.warmUps,
+        exits,
+        readLesson = resource::refresh,
+        goalId = summary.value?.activeGoalId?.toString(),
+    )
 }

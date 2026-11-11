@@ -24,13 +24,11 @@ function loadConversationClient() {
 export function CheckpointCallPreviewClient({
   blockId,
   buddy,
-  dailyLimitReached,
   intro,
   userId,
 }: {
   blockId: string;
   buddy: LearnBuddy;
-  dailyLimitReached: boolean;
   intro: LanguageConversationIntro;
   userId: string;
 }) {
@@ -55,13 +53,7 @@ export function CheckpointCallPreviewClient({
     [],
   );
 
-  useEffect(() => {
-    if (dailyLimitReached) {
-      return;
-    }
-
-    return runWhenIdle(() => void loadConversationClient());
-  }, [dailyLimitReached]);
+  useEffect(() => runWhenIdle(() => void loadConversationClient()), []);
 
   if (call) {
     return (
@@ -78,7 +70,6 @@ export function CheckpointCallPreviewClient({
   return (
     <CheckpointCallIntro
       conversation={intro}
-      dailyLimitReached={dailyLimitReached}
       rereading={rereading}
       onStart={async (audio) => {
         tappedAudio.current = audio;

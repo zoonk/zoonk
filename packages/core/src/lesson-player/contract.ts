@@ -3,14 +3,19 @@ import { z } from "zod";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
+import { MAX_STEP_ID_LENGTH } from "../library/steps/contract/content-schemas";
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
-import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import { finishedChapterSchema, studyBlockCompletionSchema } from "../sessions/completion-contract";
+import {
+  openStudyBlockInputSchema,
+  studyBlockOpeningSchema,
+} from "../sessions/open-block-contract";
+import { openStudyDayInputSchema } from "../sessions/open-day-contract";
 import { progressCelebrationShape } from "../sessions/progress-celebration";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
 export const MAX_TYPED_ANSWER_LENGTH = 1000;
 
-const MAX_OPTION_ID_LENGTH = 40;
 /** Leave room for malformed paths to reach semantic validation (422) instead of transport rejection (400). */
 const MAX_CHALLENGE_PICKS = 10;
 
@@ -19,13 +24,13 @@ const typedTextSchema = z.string().trim().min(1).max(MAX_TYPED_ANSWER_LENGTH);
 /** Hooks never record answers; spokenAnswer here is the typed speech fallback. */
 export const lessonStepAnswerSchema = z
   .discriminatedUnion("kind", [
-    z.object({ kind: z.literal("check"), optionId: z.string().min(1).max(MAX_OPTION_ID_LENGTH) }),
+    z.object({ kind: z.literal("check"), optionId: z.string().min(1).max(MAX_STEP_ID_LENGTH) }),
     z.object({ kind: z.literal("typedAnswer"), text: typedTextSchema }),
     z.object({ kind: z.literal("spokenAnswer"), text: typedTextSchema }),
     z.object({ answer: activityAnswerSchema, kind: z.literal("activity") }),
     z.object({
       choiceIds: z
-        .array(z.string().min(1).max(MAX_OPTION_ID_LENGTH))
+        .array(z.string().min(1).max(MAX_STEP_ID_LENGTH))
         .min(1)
         .max(MAX_CHALLENGE_PICKS)
         .meta({ description: "The choice picked at each decision of a challenge, in order" }),
@@ -60,6 +65,7 @@ export type LessonStepCheckInput = z.infer<typeof lessonStepCheckInputSchema>;
 
 export const libraryLessonStartInputSchema = z
   .object({
+    opening: z.union([openStudyBlockInputSchema, openStudyDayInputSchema]).optional(),
     runId: lessonRunIdSchema
       .optional()
       .describe("Refresh this open run, including after a long pause"),
@@ -84,7 +90,13 @@ export const lessonStepCheckResultSchema = z
         description:
           "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise.",
       }),
-    correctAnswer: z.string().nullable().meta({ description: "The right answer when missed" }),
+    correctAnswer: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+      }),
     corrections: z
       .array(
         z.object({
@@ -182,6 +194,12 @@ export const libraryLessonRunSchema = z
         description:
           "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`",
       }),
+    clockId: uuidSchema()
+      .nullable()
+      .optional()
+      .describe(
+        "This player's lesson clock interval. Send visibility transitions to POST /library/lessons/{lessonId}/clock with an increasing sequence. A new start replaces it; null outside an active study block.",
+      ),
     hyperdrive: z
       .object({
         knownStepIds: z
@@ -212,9 +230,20 @@ export const libraryLessonRunSchema = z
           "True when the learner already finished this lesson: its end offers no next lesson",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
+    sessionId: uuidSchema()
+      .nullable()
+      .meta({ description: "The run's canonical study session, or null for standalone work" }),
     startedAt: z.iso.datetime(),
   })
   .meta({ id: "LibraryLessonRun" });
+
+export const libraryLessonRetryableSchema = z
+  .object({ status: z.literal("retryable") })
+  .meta({ id: "LibraryLessonRetryable" });
+
+export const libraryLessonOpenedSchema = z
+  .object({ opening: studyBlockOpeningSchema, status: z.literal("opened") })
+  .meta({ id: "LibraryLessonOpened" });
 
 export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 
@@ -225,6 +254,7 @@ export const libraryLessonCompletionSchema = z
     brainPower: z.int(),
     correctCount: z.int().min(0),
     energyDelta: z.number(),
+    finishedChapter: finishedChapterSchema,
     incorrectCount: z.int().min(0),
     isFirstCompletion: z
       .boolean()
@@ -235,6 +265,17 @@ export const libraryLessonCompletionSchema = z
       .datetime()
       .nullable()
       .meta({ description: "When the lesson's skills come back for review, the earliest first" }),
+    planReveal: z
+      .object({
+        goalId: uuidSchema(),
+        goalTitle: z.string().meta({ description: "The goal's name, as the learner sees it" }),
+        planReady: z.boolean().meta({ description: "False while the plan is still being built" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+      }),
     seconds: z.int().min(0),
     studyBlock: studyBlockCompletionSchema
       .nullable()

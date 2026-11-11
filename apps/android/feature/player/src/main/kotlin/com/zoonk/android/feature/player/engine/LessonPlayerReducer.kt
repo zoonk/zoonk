@@ -70,6 +70,9 @@ sealed interface LessonAction {
         val startedAt: Instant,
         val optionalStepIds: List<String> = emptyList(),
         val heldAnswers: List<RunAnswer> = emptyList(),
+        /** The learner already did something on this visit, so their screen stays where it is. */
+        val keepsScreen: Boolean = false,
+        val workedStepIds: Set<String> = emptySet(),
     ) : LessonAction
 
     /** A fresh read of the lesson's screens while some pictures were still being drawn. */
@@ -181,11 +184,11 @@ fun reduce(
         }
 
         is LessonAction.CompletionSaved -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result) }
+            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result, saveFailures = 0) }
         }
 
         LessonAction.CompletionFailed -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Failed) }
+            state.withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
         }
 
         LessonAction.CompletionRetried -> {
@@ -266,11 +269,14 @@ private fun LessonPlayerState.startRun(
             .filter { it.answeredAt < action.startedAt }
             .map(RunAnswer::stepId)
             .toSet()
-    val answers = withHeld(action.answers, action.heldAnswers)
+    val answers = withHeld(action.answers, action.heldAnswers).filter { it.stepId in steps }
+    val started =
+        copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
+            .skipSteps(action.optionalStepIds, now)
 
-    return copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
-        .skipSteps(action.optionalStepIds, now)
-        .resumeFrom(answers, now)
+    if (action.keepsScreen || firstVerdicts == runVerdicts(answers)) return started.fillUntouched(answers, action.workedStepIds)
+
+    return started.resumeFrom(answers, now)
 }
 
 /** The server's answers, then the device's held ones in turn; the server records nothing on a screen after its right answer. */
@@ -292,7 +298,7 @@ private fun LessonPlayerState.resync(
     val started = run as? LessonRun.Started
 
     if (started != null && action.runId != null && action.runId != started.runId) {
-        return withCompletion { it.copy(status = CompletionStatus.Failed) }
+        return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
     }
 
     val available = skipSteps(action.optionalStepIds, now)
@@ -304,7 +310,8 @@ private fun LessonPlayerState.resync(
                 unavailableStepIds = available.unavailableStepIds - drawn.keys,
             ).resumeFrom(action.answers, now)
     val missing = resumed.queue.distinct().filter { resumed.steps[it]?.isAnswerable == true && it !in resumed.results }
-    val first = missing.firstOrNull() ?: return withCompletion { it.copy(status = CompletionStatus.Failed) }
+    val first =
+        missing.firstOrNull() ?: return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
     val recovery = missing.associateWith { if (it in drawn) LessonNotice.PictureReady else LessonNotice.AnswerNotSaved }
 
     return resumed.copy(recovery = recovery).enterPosition(resumed.queue.indexOf(first), now)

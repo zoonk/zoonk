@@ -41,6 +41,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
@@ -85,13 +86,29 @@ internal fun ColumnScope.ScheduleStep(
     vm: GoalSetupViewModel,
     pending: Boolean,
     factsBeside: Boolean,
+    startsOnRecommended: Boolean,
 ) {
     var choice by rememberSaveable(stateSaver = jsonSaver(ScheduleChoice.serializer())) {
         mutableStateOf(ScheduleChoice(startingDays(goal.studyDays.map(Long::toInt))))
     }
     // What the learner set is theirs, so a new date keeps it; what it covers starts over for the date.
     ForDate(goal.targetDate) {
-        ScheduleTime(goal, recommendedMinutes, timeChoices, planReadiness, run, store, vm, pending, factsBeside, choice) { choice = it }
+        ScheduleTime(
+            goal,
+            recommendedMinutes,
+            timeChoices,
+            planReadiness,
+            run,
+            store,
+            vm,
+            pending,
+            factsBeside,
+            choice,
+            startsOnRecommended,
+        ) {
+            choice =
+                it
+        }
     }
 }
 
@@ -123,6 +140,7 @@ private fun ColumnScope.ScheduleTime(
     pending: Boolean,
     factsBeside: Boolean,
     choice: ScheduleChoice,
+    startsOnRecommended: Boolean,
     onChoiceChange: (ScheduleChoice) -> Unit,
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
@@ -151,20 +169,46 @@ private fun ColumnScope.ScheduleTime(
     val dated = lastFound?.let { it.targetDate != null } ?: (goal.targetDate != null || exam)
     val findFailed = covering.status == PollStatus.Failed
     val shownFound = found ?: lastFound
-    val minutes = shownMinutes(recommendedMinutes, first, shownFound, picked, settled = !dated || findFailed)
+    val minutes =
+        shownMinutes(
+            recommendedMinutes,
+            first,
+            shownFound,
+            picked,
+            settled = !dated || findFailed,
+            startsOnRecommended = startsOnRecommended,
+        )
     val studiesEverything = exam && fullCourse
     val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend, studiesEverything)
 
+    val aim =
+        LocalSetupAim.current.aim
+            ?.aim
+            ?.value
     val timeAdvice =
         rememberPlanAnswer(
             store.timeAdvice,
-            AdviceQuery(goal, asked.adviceInput(minutes ?: recommendedMinutes)),
+            AdviceQuery(
+                goal,
+                asked.adviceInput(minutes ?: recommendedMinutes).copy(
+                    aim =
+                        com.zoonk.api.models.PlanTimeAdviceInput.Aim.entries.firstOrNull {
+                            it.value ==
+                                aim
+                        },
+                ),
+            ),
             enabled = hasDays && asksAboutTime(dated, found, studiesEverything, minutes),
             paused = paused,
             planMade = run.planMade,
             querySerializer = AdviceQuery.serializer(),
             serializer = PlanTimeAdvice.serializer(),
             ready = { it.ready },
+            scope = {
+                it.input.aim
+                    ?.value
+                    .orEmpty()
+            },
         )
     val advice = timeAdvice.answer?.takeIf { it.ready }
     val askFailed = timeAdvice.status == PollStatus.Failed
@@ -222,14 +266,17 @@ private fun ColumnScope.ScheduleTime(
     val answers = listOf(covering.answer, covering.last, covering.first)
     val choose = { next: Int, followed: PlanTimeToCover? ->
         pickedSplit = daySplit(next, timeChoices, answers) ?: pickedSplit.takeIf { next == picked }
-        onChoiceChange(choice.copy(picked = pickedMinutes(first, followed, next)))
+        onChoiceChange(choice.copy(picked = pickedMinutes(first, followed, next, startsOnRecommended)))
     }
     val pick = { next: Int -> choose(next, shownFound) }
-    val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
+    val stale = hasDays && !startsOnRecommended && waitsForSuggestion(findFailed, first, found, picked)
     val marked = markedTimes(found)
 
+    com.zoonk.android.data
+        .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
+        continueLabel = stringResource(R.string.onboarding_see_plan),
         canContinue = hasDays && minutes != null,
         pending = pending || waitsToSave(line, picked),
         onContinue = {
@@ -249,6 +296,7 @@ private fun ColumnScope.ScheduleTime(
         },
     ) {
         if (!factsBeside) PlanFactChips(goal)
+        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
 
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -281,6 +329,15 @@ private fun ColumnScope.ScheduleTime(
                 date = date,
                 exam = exam,
                 line = shown.line,
+                aim =
+                    LocalSetupAim.current.aim?.let { selected ->
+                        selected.aim?.value?.takeIf { value ->
+                            selected.choices.any {
+                                it.aim.value ==
+                                    value
+                            }
+                        }
+                    },
                 minutes = minutes,
                 note = fullTimeNote(shown.found, shown.line, studiesEveryDay = days.size == EVERY_DAY.size),
                 offer = timeOffer(shown.found, shown.line, minutes),

@@ -341,7 +341,7 @@ class ChallengeViewModel(
         const val MOVED = "moved"
 
         // The API says "not in today's session" as a plain conflict.
-        val REREAD_CODES = setOf("DAILY_LIMIT_REACHED", "EARLIER_FIRST", "CONFLICT")
+        val REREAD_CODES = setOf("EARLIER_FIRST", "CONFLICT")
     }
 }
 

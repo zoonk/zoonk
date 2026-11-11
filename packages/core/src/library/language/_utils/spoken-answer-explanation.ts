@@ -13,18 +13,20 @@ type SpokenStep = {
 };
 
 async function writeExplanation({
+  cache,
   heard,
   step,
   userId,
   words,
 }: {
+  cache: boolean;
   heard: string;
   step: SpokenStep;
   userId: string;
   words: readonly SpokenPracticeWord[];
 }) {
   return explainSpokenAnswer({
-    analytics: { contentScope: "shared", distinctId: userId },
+    analytics: { contentScope: cache ? "shared" : "personal", distinctId: userId },
     expectedSentence: step.targetText,
     heard,
     learnerLanguage: step.learnerLanguage,
@@ -38,12 +40,14 @@ async function writeExplanation({
 }
 
 export async function getSpokenAnswerExplanation({
+  cache = true,
   heard,
   normalizedHeard,
   step,
   userId,
   words,
 }: {
+  cache?: boolean;
   heard: string;
   normalizedHeard: string;
   step: SpokenStep;
@@ -52,17 +56,26 @@ export async function getSpokenAnswerExplanation({
 }): Promise<string | null> {
   const target = { stepId: step.id };
   const language = step.learnerLanguage;
-  const stored = await findAnswerExplanation({ answer: normalizedHeard, language, target });
+
+  const stored = cache
+    ? await findAnswerExplanation({ answer: normalizedHeard, language, target })
+    : null;
 
   if (stored) {
     return stored.explanation;
   }
 
-  const { data, error } = await safeAsync(() => writeExplanation({ heard, step, userId, words }));
+  const { data, error } = await safeAsync(() =>
+    writeExplanation({ cache, heard, step, userId, words }),
+  );
 
   if (error) {
     logError("Error explaining a spoken answer:", error);
     return null;
+  }
+
+  if (!cache) {
+    return data.data.explanation;
   }
 
   const saved = await saveAnswerExplanation({

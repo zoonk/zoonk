@@ -34,16 +34,32 @@ export async function requestSpokenGrade({
   durationMs,
   stepId,
   studySessionId,
+  practice,
 }: {
   audio: Blob;
   durationMs: number;
   stepId: string;
   studySessionId: string | null;
+  practice?: {
+    mistakeId: string;
+    attemptId: string;
+    goalId: string;
+    answerIds: string[];
+    practiceDurationMs: number;
+  };
 }): Promise<SpokenAnswerOutcome> {
   const form = new FormData();
   form.set("audio", audio);
   form.set("durationMs", String(Math.round(durationMs)));
   form.set("timeZone", getLocalTimeZone());
+
+  if (practice) {
+    form.set("mistakeId", practice.mistakeId);
+    form.set("practiceDurationMs", String(Math.round(practice.practiceDurationMs)));
+    form.set("attemptId", practice.attemptId);
+    form.set("goalId", practice.goalId);
+    form.set("answerIds", JSON.stringify(practice.answerIds));
+  }
 
   if (studySessionId) {
     form.set("studySessionId", studySessionId);

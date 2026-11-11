@@ -38,6 +38,8 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanPhaseChaptersInner
+import com.zoonk.api.models.PlanPhaseCheckpoint
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
@@ -56,29 +58,42 @@ internal fun NextOnPath(
     val afterExam = plan.phases.filter { it.kind == PlanPhase.Kind.AFTER_EXAM }
     val hasNext = mockDate != null || chapter?.chapterId != null || checkpoint != null || afterExam.isNotEmpty()
     if (!hasNext && !page.isExam) return
+    // A challenge in the next session comes before the next phase's lessons, as on Today.
+    val challengeFirst =
+        checkpoint?.`when` == PlanPhaseCheckpoint.`When`.NEXT_SESSION &&
+            plan.phases.indexOfFirst { it.checkpoint === checkpoint } <
+            plan.phases.indexOfFirst { phase -> phase.chapters.any { it === chapter } }
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_next_on_path))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             mockDate?.let { MockRow(page, it, links) }
-            chapter?.chapterId?.let { id ->
-                val count =
-                    PlanDateWords(
-                        stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
-                        lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
-                    )
-                ListRow(
-                    headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-                    onClick = { links.chapter(id.toString()) },
-                    leading = { ChapterMark(chapter, isNext = true) },
-                    meta = { TrailingText(count) },
-                )
-            }
-            checkpoint?.let { CheckpointRow(page, it, links) }
+            if (challengeFirst) CheckpointRow(page, checkpoint, links)
+            chapter?.let { NextChapterRow(it, links) }
+            if (!challengeFirst) checkpoint?.let { CheckpointRow(page, it, links) }
             FinishRow(page, links)
             afterExam.forEach { AfterExamRow(page, it) }
         }
     }
+}
+
+@Composable
+private fun NextChapterRow(
+    chapter: PlanPhaseChaptersInner,
+    links: PlanLinks,
+) {
+    val id = chapter.chapterId ?: return
+    val count =
+        PlanDateWords(
+            stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
+            lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
+        )
+    ListRow(
+        headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+        onClick = { links.chapter(id.toString()) },
+        leading = { ChapterMark(chapter, isNext = true) },
+        meta = { TrailingText(count) },
+    )
 }
 
 @Composable
@@ -95,7 +110,7 @@ private fun FinishRow(
         }
 
     ListRow(
-        headline = { Text(page.goal.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
         supporting = date?.let { { Text(it) } },
@@ -148,13 +163,12 @@ internal fun MoreSection(
     links: PlanLinks,
     modifier: Modifier = Modifier,
 ) {
-    if (!links.hasExam && !links.hasMindMaps) return
+    if (!links.hasExam) return
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (links.hasExam) LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
-            if (links.hasMindMaps) LinkRow(R.drawable.ic_lan, stringResource(R.string.plan_mind_maps), links::mindMaps)
+            LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
         }
     }
 }

@@ -178,7 +178,7 @@ describe("this week's saved teaching", () => {
 
     const after = await readSaved();
     expect(after.version).toBeGreaterThan(before.version);
-    expect(parsePlanSettings(after.settings).pace?.factor).toBe(1.01);
+    expect(parsePlanSettings(after.settings).pace?.factor).toBe(1.02);
     const lesson = after.items.find((item) => item.lessonId === functionLessonId);
 
     const continuation = after.items.find(

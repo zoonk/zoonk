@@ -46,25 +46,6 @@ export type SelectedDayPlan = {
   summary: SelectedSummary | null;
 };
 
-/** The phase after an exam intentionally has no checkpoints. */
-function needsCheckpointReconciliation(context: PlanContext): boolean {
-  if (!context.phases.some((phase) => phase.startDate !== null)) {
-    return false;
-  }
-
-  const challenges = new Set(
-    context.items.filter((item) => item.kind === "boss").map((item) => item.phase),
-  );
-
-  return context.items.some(
-    (item) =>
-      LEARN_KINDS.has(item.kind) &&
-      item.status !== "skipped" &&
-      !challenges.has(item.phase) &&
-      context.phases[item.phase]?.kind !== "afterExam",
-  );
-}
-
 /** A day rollover cannot replace a shown layout whose actual inputs are still current. */
 function keepsShownLayout(context: PlanContext): boolean {
   const stored = planSummarySchema.safeParse(context.plan.summary);
@@ -87,7 +68,7 @@ function keepsShownLayout(context: PlanContext): boolean {
         value: context.plan.summary,
       }) !== null);
 
-  return hasShownLayout && sameInputs && !needsCheckpointReconciliation(context);
+  return hasShownLayout && sameInputs;
 }
 
 /** Start and Continue must select fresh inputs before saving a queue. */

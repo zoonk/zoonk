@@ -20,7 +20,7 @@ import {
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, userId: user.id });
   const [firstSkill] = fixture.skills;
   const [firstItem] = fixture.items;
 
@@ -50,6 +50,7 @@ async function examReviewTitles(examInDays: number) {
   const targetDate = new Date(SESSION_TODAY.getTime() + examInDays * DAY_MS);
 
   const { goal, plan, skills } = await sessionGoalFixture({
+    challengesDone: true,
     goal: { createdAt: daysAgo(1), kind: "exam", targetDate },
     userId: user.id,
   });
@@ -105,7 +106,6 @@ describe(getTodayStudySession, () => {
       ["review", null],
       ["learn", lessons[1]?.id],
       ["learn", lessons[2]?.id],
-      ["practice", null],
     ]);
 
     expect(session.blocks[0]?.capsules).toMatchObject([
@@ -113,7 +113,7 @@ describe(getTodayStudySession, () => {
     ]);
 
     expect(session.blocks[1]).toMatchObject({ canDo: "You'll do thing 2", status: "pending" });
-    expect(session.blocks[3]?.questions).toBeGreaterThan(0);
+    expect(session.blocks.every((block) => !block.mistakesOnly)).toBe(true);
     expect(session.nextBlockId).toBe(session.blocks[0]?.id);
 
     expect(session.missions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
@@ -124,6 +124,7 @@ describe(getTodayStudySession, () => {
     expect(session.minutes).toStrictEqual({
       dailyGoal: 45,
       done: 0,
+      left: session.minutes.planned,
       planned: session.minutes.planned,
     });
 
@@ -158,6 +159,7 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
 
     const { goal, plan } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { createdAt: daysAgo(7) },
       lessons: 8,
       userId: user.id,
@@ -186,7 +188,12 @@ describe(getTodayStudySession, () => {
 
   it("starts nothing over on a goal's first day, even for a learner back from a break", async () => {
     const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ lessons: 8, userId: user.id });
+
+    const { goal } = await sessionGoalFixture({
+      challengesDone: true,
+      lessons: 8,
+      userId: user.id,
+    });
 
     await dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]);
     mockSession(user.id);
@@ -201,6 +208,7 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
 
     const { goal, plan } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { createdAt: daysAgo(7) },
       lessons: 8,
       userId: user.id,
@@ -224,7 +232,7 @@ describe(getTodayStudySession, () => {
       rest.status === "ready" && rest.session.week.days.filter((day) => day.goalMinutes > 0),
     ).toHaveLength(6);
 
-    const other = await sessionGoalFixture({ lessons: 8, userId: user.id });
+    const other = await sessionGoalFixture({ challengesDone: true, lessons: 8, userId: user.id });
 
     await prisma.plan.update({
       data: { settings: { lightWeeks: [{ endDate: "2026-10-04", startDate: "2026-09-28" }] } },
@@ -241,6 +249,7 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
 
     const { goal, plan } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { createdAt: SESSION_NOW },
       lessons: 8,
       userId: user.id,
@@ -267,6 +276,7 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
 
     const { goal } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { createdAt: SESSION_NOW },
       userId: user.id,
     });
@@ -294,7 +304,11 @@ describe(getTodayStudySession, () => {
   it("measures a day already past against what it asked, after the learner's time changes", async () => {
     const user = await userFixture();
 
-    const { goal } = await sessionGoalFixture({ goal: { createdAt: daysAgo(7) }, userId: user.id });
+    const { goal } = await sessionGoalFixture({
+      challengesDone: true,
+      goal: { createdAt: daysAgo(7) },
+      userId: user.id,
+    });
 
     await Promise.all([
       studySessionFixture({
@@ -368,37 +382,11 @@ describe(getTodayStudySession, () => {
     ]);
   });
 
-  it("fits the learner's daily limit", async () => {
-    const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ userId: user.id });
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 9 * 60, userId: user.id },
-      ]),
-    ]);
-
-    mockSession(user.id);
-    const result = await getTodayStudySession({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.session.blocks).toStrictEqual([]);
-
-    expect(result.status === "ready" && result.session.dailyLimit).toMatchObject({
-      limitMinutes: 10,
-      remainingMinutes: 1,
-    });
-
-    expect(result.status === "ready" && result.session.extraTime).toMatchObject({
-      available: false,
-      reason: "dailyLimit",
-    });
-  });
-
-  it("keeps reviews and fixes free once a free exam plan's first week is over", async () => {
+  it("keeps reviews free once a free exam plan's first week is over", async () => {
     const user = await userFixture();
 
     const { goal, items, planItems, skills } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { createdAt: daysAgo(10), kind: "exam" },
       userId: user.id,
     });
@@ -424,7 +412,7 @@ describe(getTodayStudySession, () => {
 
     expect(
       result.status === "ready" && result.session.blocks.map((block) => block.kind),
-    ).toStrictEqual(["review", "practice"]);
+    ).toStrictEqual(["review"]);
   });
 
   it("reviews every skill that would fade before the exam once the final stretch starts", async () => {

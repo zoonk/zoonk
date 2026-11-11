@@ -37,7 +37,7 @@ export function buildEstimateView({ context }: { context: PlanReadContext }): Pl
           value: context.plan.summary,
         })?.advice.fullCourseEndDate ?? null)
       : null,
-    pace,
+    pace: pace ? { factor: pace.factor, source: pace.source } : null,
     remainingHours: toHours(remainingMinutes),
     totalHours: Math.round(totalHours * 10) / 10,
   };

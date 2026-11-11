@@ -3,6 +3,7 @@ import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
+import { getCourseFinish } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
@@ -21,7 +22,6 @@ import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
-import { hasCompleteSkillCoverage } from "./planner/skill-minutes";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
@@ -92,14 +92,14 @@ function getSearchWeekdayMinutes({
 }
 
 function withStudyWeek({
+  aim,
   context,
   dailyMinutes,
   fullCourse = false,
   input,
-}: {
+}: Pick<PlanTimeAdviceInput, "aim" | "fullCourse"> & {
   context: PlanContext;
   dailyMinutes: number;
-  fullCourse?: boolean;
   input: PlanTimeToCoverInput;
 }): PlanState {
   const schedule = getScheduleOperations({
@@ -109,7 +109,11 @@ function withStudyWeek({
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
-    operations: fullCourse ? [...schedule, { fullCourse, kind: "setFullCourse" }] : schedule,
+    operations: [
+      ...schedule,
+      ...(fullCourse ? [{ fullCourse, kind: "setFullCourse" } as const] : []),
+      ...(aim && context.goal.kind === "language" ? [{ aim, kind: "setAim" } as const] : []),
+    ],
     state: context.state,
     today: context.today,
   });
@@ -132,7 +136,7 @@ async function loadAskedPlan(
     return owned;
   }
 
-  const readiness = await readPlanReadiness(goalId);
+  const readiness = await readPlanReadiness({ goalId, userId: owned.userId });
 
   if (readiness && !readiness.ready) {
     return { readingNotice: readiness.readingNotice, ready: false };
@@ -226,7 +230,7 @@ export async function getPlanTimeAdvice({
       context,
       mode: "forced",
       pace: "saved",
-      state: withStudyWeek({ context, dailyMinutes, fullCourse, input: week }),
+      state: withStudyWeek({ aim: input.aim, context, dailyMinutes, fullCourse, input: week }),
     }),
     loadGoalDateKind(context.goal),
   ]);
@@ -238,10 +242,7 @@ export async function getPlanTimeAdvice({
   return {
     advice: {
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
-      endDate:
-        !targetDate && end && hasCompleteSkillCoverage(computed.built.skillMinutes)
-          ? toIsoDate(end)
-          : null,
+      endDate: getCourseFinish(computed),
       fullCourseEndDate: fullCourse
         ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { type MathValues } from "../../library/items/_utils/math-values";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
 import { type MathVersion, checkMathAnswer, withNewNumbers } from "../../library/items/item-math";
-import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
+import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 
 type MathContent = Extract<ParsedItemContent, { format: "numeric" }>["content"];
 
@@ -98,6 +98,7 @@ export function gradeMathAnswer({
     format: item.format,
     misconception: graded.mistake?.misconception ?? null,
     question: [version.context, version.question].filter(Boolean).join(" "),
+    replay: { item, kind: "item", math: version },
   };
 
   return {

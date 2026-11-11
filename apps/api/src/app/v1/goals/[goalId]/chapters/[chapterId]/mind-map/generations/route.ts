@@ -1,18 +1,28 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  getChapterMindMapToken,
+  toChapterMindMapInput,
+} from "@/workflows/mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-function generating(generationId: string | null) {
+function onItsWay({
+  generationId,
+  status,
+}: {
+  generationId: string | null;
+  status: "drawing" | "writingLessons";
+}) {
   return NextResponse.json(
-    { generationId, status: "generating" },
+    { generationId, status },
     {
       headers: generationId
         ? { Location: `/v1/generations/${encodeURIComponent(generationId)}` }
@@ -39,9 +49,11 @@ async function createMindMapGeneration(
   }
 
   if (result.status === "unavailable") {
-    return errors.unprocessableEntity(
-      "Mind maps are for chapters the learner finished, once their lessons are written",
-    );
+    return errors.unprocessableEntity("This chapter has no mind map");
+  }
+
+  if (result.status === "plusRequired") {
+    return plusRequiredError();
   }
 
   if (result.status === "refused") {
@@ -52,15 +64,20 @@ async function createMindMapGeneration(
     return NextResponse.json({ generationId: null, status: "ready" });
   }
 
-  if (result.status === "generating") {
-    return generating(result.generationId);
+  if (result.status !== "start") {
+    return onItsWay(result);
   }
 
-  const run = await start(chapterMindMapWorkflow, [
-    { analytics: result.analytics, chapterId: path.chapterId },
-  ]);
+  const generationId = await startOnce(
+    chapterMindMapWorkflow,
+    [toChapterMindMapInput({ chapterId: path.chapterId, request: result })],
+    getChapterMindMapToken(path.chapterId),
+  );
 
-  return generating(run.runId);
+  return onItsWay({
+    generationId,
+    status: result.lessonIds.length > 0 ? "writingLessons" : "drawing",
+  });
 }
 
 export const POST = withApiErrorBoundary(createMindMapGeneration);

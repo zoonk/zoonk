@@ -229,6 +229,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   let goalId: String
+  /// A language goal's level the course goes up to and the aims to change it to; nil for others.
+  let languageAim: LanguageAimView?
   let notice: Notice?
   /// Nil until the plan is computed.
   let numbers: Numbers?
@@ -411,6 +413,49 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
+/// A day of the plan's first week, with the lessons laid out on it.
+/// The reveal's Today and first week, composed in core so each lesson shows once: drawn as given.
+struct PlanRevealRead: Decodable, Equatable, Sendable {
+  struct Week: Decodable, Equatable, Sendable {
+    let days: Int
+    let minutes: Int
+  }
+
+  let today: StudyDay
+  /// What `today` lists, in minutes.
+  let minutes: Int
+  /// The days after today.
+  let nextDays: [RevealDay]
+  let week: Week
+}
+
+struct RevealDay: Decodable, Equatable, Identifiable, Sendable {
+  struct Item: Decodable, Equatable, Sendable {
+    enum Kind: String, Decodable, Sendable {
+      case boss
+      case chapter
+      case checkpoint
+      case lesson
+      case mock
+      case review
+    }
+
+    let kind: Kind
+    let lessonId: String?
+    let status: String
+    /// The lesson's; empty for a skill whose lessons are still being written.
+    let title: String
+
+    var isTeaching: Bool { kind == .lesson || kind == .chapter }
+  }
+
+  let date: String
+  let items: [Item]
+  let minutes: Double
+
+  var id: String { date }
+}
+
 enum BaseChoice: String, Codable, Sendable {
   case deep
   case essential
@@ -463,18 +508,18 @@ struct StudyNext: Decodable, Equatable, Sendable {
 struct LanguageStanding: Decodable, Equatable, Sendable {
   struct Level: Decodable, Equatable, Sendable {
     let label: String
-    let score: Double
     /// `reading`, `listening`, `speaking` or `writing`.
     let skill: String
   }
 
-  struct Target: Decodable, Equatable, Sendable {
+  struct PlanLevel: Decodable, Equatable, Sendable {
     let label: String
+    /// Nil once the plan's level reaches the goal's.
+    let target: String?
   }
 
-  let level: String?
+  let level: PlanLevel?
   let levels: [Level]
-  let target: Target?
 }
 
 struct LanguageUnitsOverview: Decodable, Equatable, Sendable {

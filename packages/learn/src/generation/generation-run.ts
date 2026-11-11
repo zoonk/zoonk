@@ -6,10 +6,20 @@ export type GenerationStepTimes = Partial<Record<GenerationStepState, number>>;
 /** `connection`: the updates stopped, though the run may still be working. */
 export type GenerationFailure = "connection" | "generation" | "notStarted";
 
+/** A learn goal's first lesson, which its plan's run writes before the plan. */
+export type GenerationFirstLesson = {
+  id: string;
+  status: "done" | "ready" | "stopped" | "writing";
+  title: string;
+};
+
 export type GenerationRun = {
+  ended?: boolean;
+  id?: string | null;
   /** This device's clock minus the server's. */
   clockOffsetMs?: number;
   failure: GenerationFailure | null;
+  firstLesson?: GenerationFirstLesson;
   retry?: () => void;
   /** The newest skill the run's skill graph wrote, while it writes them. */
   skillName?: string;

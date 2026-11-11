@@ -99,10 +99,10 @@ function ExplainRecap({
         </SectionLabel>
         <ol className="flex flex-col [&>li+li]:border-t">
           {recap.map((sentence, index) => (
-            <li className="flex gap-3 py-3 lg:first:pt-0" key={sentence}>
+            <li className="flex items-baseline gap-3 py-3 lg:first:pt-0" key={sentence}>
               <span
                 aria-hidden="true"
-                className="text-faint w-4 shrink-0 font-mono text-xs leading-relaxed tabular-nums"
+                className="text-faint w-4 shrink-0 font-mono text-xs tabular-nums"
               >
                 {index + 1}
               </span>

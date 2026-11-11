@@ -1,49 +1,50 @@
 import { type ExamBlueprint } from "@zoonk/db";
-import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import "server-only";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
-import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
-import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
+import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
-import { readBlockPayload } from "../block-payload";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
-import { loadBlockSubjects } from "./block-subjects";
+import { type DayProgressReader } from "../missions/mission-day-views";
+import { getVisibleSessionTotal } from "../session-minutes";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
-import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
-import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { withLessonDisplayMinutes } from "./lesson-display-minutes";
+import { type LessonStatesReader } from "./lesson-screens";
+import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
-import { loadSessionAnswers } from "./session-answers";
+import { hasSessionLessonReservation } from "./session-lesson-reservation";
+import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 async function loadDayOutlines({
   dayMinutes,
+  plan,
   session,
 }: {
   dayMinutes: number;
+  plan: { graph: unknown } | null;
   session: StudySessionRow;
 }): Promise<DayOutlines> {
   if (dayMinutes === 0 || session.status === "completed" || !session.goal) {
     return null;
   }
 
-  return getDayOutlines({ goal: session.goal, localDate: session.localDate });
+  return getDayOutlines({ goal: session.goal, graph: plan?.graph, localDate: session.localDate });
 }
 
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
   if (fresh) {
-    return { settings: fresh.plan.settings };
+    return { graph: fresh.plan.graph, items: fresh.plan.items, settings: fresh.plan.settings };
   }
 
   return session.goalId ? readSavedPlan(session.userId, session.goalId) : null;
@@ -52,38 +53,55 @@ function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: St
 async function loadSessionBasics({
   initialDay,
   session,
-  userId,
 }: {
   initialDay?: PlannedStudyDay;
   session: StudySessionRow;
-  userId: string;
 }) {
   const fresh =
     session.startedAt === null && session.blocks.every((block) => block.status === "pending")
       ? initialDay
       : undefined;
 
-  const [answers, dailyLimit, viewer, plan] = await Promise.all([
-    fresh ? [] : loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
-    getRequestProgressDateContext().then(({ currentDate }) =>
-      readDailyTimeLimitStatus({ date: currentDate, userId }),
-    ),
+  const [viewer, plan] = await Promise.all([
     fresh ? { tier: fresh.plan.tier } : readEntitlementViewer(),
     loadViewPlan({ fresh, session }),
   ]);
 
-  return { answers, dailyLimit, plan, viewer };
+  return { plan, viewer };
+}
+
+async function loadLessonReservation({
+  current,
+  plan,
+  ...input
+}: Parameters<typeof hasSessionLessonReservation>[0] & { current: boolean }): Promise<boolean> {
+  if (!current || !plan) {
+    return false;
+  }
+
+  const prerequisites = await loadSkillPrerequisites(
+    parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId),
+  );
+
+  return hasSessionLessonReservation({ ...input, plan, prerequisites });
 }
 
 export async function loadStudySessionView({
   blueprint,
   initialDay,
+  readCatchUp,
+  readDayProgress,
+  readLessonStates,
   session: storedSession,
   timeZone,
   userId,
   weekDate = storedSession.localDate,
 }: {
   blueprint?: ExamBlueprint | null;
+  /** A GET's request-wide catch-up items; without it, they're read fresh. */
+  readCatchUp?: () => Promise<readonly SessionPlanItem[]>;
+  readDayProgress?: DayProgressReader;
+  readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
@@ -91,49 +109,39 @@ export async function loadStudySessionView({
   weekDate?: Date;
   initialDay?: PlannedStudyDay;
 }): Promise<StudySessionView> {
-  const [
-    basics,
-    week,
-    oftenTestedSkillIds,
-    blockSubjects,
-    blockedTestOutChapters,
-    blocksWithLessonMinutes,
-  ] = await Promise.all([
-    loadSessionBasics({ initialDay, session: storedSession, userId }),
+  const [basics, week, blockViews] = await Promise.all([
+    loadSessionBasics({ initialDay, session: storedSession }),
     loadStudyWeek({ localDate: weekDate, userId }),
-    loadOftenTestedSkillIds(storedSession.goal),
-    loadBlockSubjects({ blocks: storedSession.blocks, blueprint, goal: storedSession.goal }),
-    storedSession.goalId
-      ? loadBlockedTestOutChapters({
-          chapterIds: [
-            ...new Set(
-              storedSession.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? []),
-            ),
-          ],
-          goalId: storedSession.goalId,
-          known: { source: readSavedPlan(userId, storedSession.goalId) },
-          now: new Date(),
-          timeZone,
-          userId,
-        })
-      : new Set<string>(),
-    withLessonDisplayMinutes({ blocks: storedSession.blocks }),
+    loadSessionBlockViews({
+      blueprint,
+      readLessonStates,
+      session: storedSession,
+      timeZone,
+      userId,
+      ...(initialDay &&
+        storedSession.startedAt === null &&
+        storedSession.blocks.every((block) => block.status === "pending") && { answers: [] }),
+    }),
   ]);
 
-  const { answers, dailyLimit, plan, viewer } = basics;
+  const { plan, viewer } = basics;
+  const { answers } = blockViews;
 
   const visibleBlocks = withoutLockedPhaseChallenges({
     blocks: storedSession.blocks,
     phaseChallengesRequired: storedSession.goal?.kind !== "language" || viewer?.tier === "plus",
   });
 
+  const visibleBlockIds = new Set(visibleBlocks.map((block) => block.id));
+
   const session = {
     ...storedSession,
     blocks: visibleBlocks,
-    plannedMinutes:
-      visibleBlocks.length === storedSession.blocks.length
-        ? storedSession.plannedMinutes
-        : visibleBlocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
+    plannedMinutes: getVisibleSessionTotal({
+      blocks: storedSession.blocks,
+      planned: storedSession.plannedMinutes,
+      visibleIds: visibleBlockIds,
+    }),
   };
 
   const dayMinutes = session.goal
@@ -144,8 +152,7 @@ export async function loadStudySessionView({
       })
     : 0;
 
-  const visibleBlockIds = new Set(session.blocks.map((block) => block.id));
-  const displayBlocks = blocksWithLessonMinutes.filter((block) => visibleBlockIds.has(block.id));
+  const displayBlocks = blockViews.displayBlocks.filter((block) => visibleBlockIds.has(block.id));
 
   const now = new Date();
   const current = isCurrentSession({ now, session, timeZone });
@@ -163,9 +170,15 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true, trialEnded: false };
 
-  const [outlines, missions, fullMealEarned, plusLessons] = await Promise.all([
-    loadDayOutlines({ dayMinutes, session }),
-    getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
+  const [outlines, missions, fullMealEarned, plusLessons, reserved] = await Promise.all([
+    loadDayOutlines({ dayMinutes, plan, session }),
+    getDayMissions({
+      displayBlocks,
+      readProgress: readDayProgress,
+      session,
+      timeZone,
+      ...(current && { through: new Date() }),
+    }),
     hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
       access: examAccess,
@@ -173,28 +186,20 @@ export async function loadStudySessionView({
       localDate: session.localDate,
       userId,
     }),
+    loadLessonReservation({ access: examAccess, current, plan, session }),
   ]);
 
   const view = toStudySessionView({
     answers,
-    blockSubjects,
-    blockedTestOutChapters,
+    blockViews: blockViews.blocks.filter((block) => visibleBlockIds.has(block.id)),
     current,
-    dailyLimit,
     dayEndsAt,
     dayMinutes,
     examAccess,
     fullMealEarned,
-    lessonRoom:
-      current &&
-      hasLessonRoom({
-        day: { dailyMinutes: dayMinutes, freshStart: session.freshStart },
-        limitMinutes: dailyLimit?.limitMinutes ?? null,
-        plannedMinutes: session.plannedMinutes,
-      }),
+    lessonRoom: reserved,
     missions,
-    oftenTestedSkillIds,
-    outlines,
+    outlines: reserved ? (outlines ?? "idle") : null,
     plusLessons,
     session,
     timeZone,
@@ -209,19 +214,10 @@ export async function loadStudySessionView({
       examTomorrow: view.examTomorrow,
       freshStart: session.freshStart,
       goalId: session.goalId,
+      readItems: readCatchUp,
       trialEnded: examAccess.trialEnded,
     }),
   ]);
 
-  const displayMinutes = new Map(displayBlocks.map((block) => [block.id, block.estimatedMinutes]));
-
-  return {
-    ...view,
-    blocks: view.blocks.map((block) => ({
-      ...block,
-      estimatedMinutes: displayMinutes.get(block.id) ?? block.estimatedMinutes,
-    })),
-    catchUp,
-    extraTime,
-  };
+  return { ...view, catchUp, extraTime };
 }

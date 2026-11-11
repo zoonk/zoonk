@@ -5,6 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { issueEarnedCertificates } from "../certificate-issuance";
 import { type GuestLinkContext, moveKeyedRows } from "./_utils/merge-keyed-rows";
 import { mergeLanguageLevels } from "./_utils/merge-language-levels";
+import { mergeProfileAnswers } from "./_utils/merge-profile-answers";
 import {
   mergeDailyProgress,
   mergeLearningProfile,
@@ -124,6 +125,7 @@ async function moveGuestData({
 
       await moveTutorThreads(context);
       await movePrivateCourses(context);
+      const takeGuestSupport = await mergeProfileAnswers(context);
       await moveOwnedRows(context);
       await moveKeyedRows(context);
       await issueEarnedCertificates(transaction, { now: new Date(), plus: "check", userId });
@@ -132,7 +134,7 @@ async function moveGuestData({
       // Lifetime progress before the day, in the order settlements lock them.
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
-      await mergeLearningProfile(context);
+      await mergeLearningProfile({ ...context, takeGuestSupport });
       await mergeStudyReminder({ ...context, guestSessionId, sessionId });
 
       // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.

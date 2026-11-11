@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import { defineActivityTemplate } from "../define-activity-template";
 import {
@@ -11,7 +12,7 @@ import {
 import { issue } from "./_utils/template-helpers";
 
 const MAX_NOTES = 6;
-const MAX_NOTATION_LENGTH = 1000;
+const NOTATION_TARGET = 1000;
 const MIN_TEMPO = 40;
 const MAX_TEMPO = 220;
 const MIN_PATTERN_STEPS = 4;
@@ -79,7 +80,7 @@ export const notationPlayerTemplate = defineActivityTemplate({
     "Read a short melody on the staff or as guitar tab while it plays, like Ode to Joy. Notes are written in ABC notation with T: (title), optional C: (composer), M: (meter), L: (unit length) and K: (key) headers, the notes last. Fills: the notes in ABC, the tempo, staff or tab and the check question.",
   fields: z
     .object({
-      notation: z.string().min(1).max(MAX_NOTATION_LENGTH),
+      notation: aimForCharacters(z.string().min(1), NOTATION_TARGET),
       tempo: z.number().int().min(MIN_TEMPO).max(MAX_TEMPO),
       view: z.enum(["staff", "tab"]),
     })

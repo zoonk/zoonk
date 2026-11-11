@@ -57,7 +57,7 @@ function essayScreen(submit: EssayActions["submit"], essay: EssayView = ESSAY) {
       <EssayScreen
         actions={{ finish: vi.fn(async () => true), submit }}
         essay={essay}
-        hrefs={{ dailyLimit: "/settings/appearance", exit: "/today" }}
+        hrefs={{ exit: "/today" }}
       />
     </LearnProvider>
   );
@@ -172,23 +172,6 @@ describe("an essay sent for grading", () => {
   afterEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
-  });
-
-  it("says when the daily time limit stops the send, links to the limit, and keeps the text", async () => {
-    renderEssay(async () => "dailyLimitReached");
-
-    await userEvent.type(answer(), "Charging cars clears the air.");
-    await page.getByRole("button", { name: "Send for grading" }).click();
-
-    await expect
-      .element(page.getByText("You've reached your daily time limit. Your text stays here."))
-      .toBeVisible();
-
-    await expect
-      .element(page.getByRole("link", { name: "Change limit" }))
-      .toHaveAttribute("href", "/settings/appearance");
-
-    await expect.element(answer()).toHaveValue("Charging cars clears the air.");
   });
 
   it("keeps what the learner typed while it was graded, on the screen and on the device", async () => {

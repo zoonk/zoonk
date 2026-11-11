@@ -5,7 +5,15 @@ import { hasSubjectPages } from "../subject-pages";
 import { buildSyllabus } from "./build-syllabus";
 import { readSyllabusInput } from "./read-syllabus-input";
 
-type ChapterNumber = { position: number; subject: { key: string; name: string } | null };
+type ChapterNumber = {
+  position: number;
+  subject: { key: string; name: string; shortName: string } | null;
+  /**
+   * Where the numbering that set `position` sits in the syllabus: a subject's place, as subject
+   * pages are ordered, with the course after every subject; null when only the plan numbers it.
+   */
+  syllabusOrder: number | null;
+};
 
 /** Falls back to planPosition when no subject or course numbers the chapter. */
 export type ChapterNumbering = (chapter: {
@@ -39,7 +47,7 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
   const subjects =
     syllabus && hasSubjectPages({ goalKind: goal.kind, syllabus }) ? syllabus.subjects : [];
 
-  const entries = subjects.flatMap((subject) =>
+  const entries = subjects.flatMap((subject, subjectOrder) =>
     subject.chapters.flatMap((chapter) =>
       chapter.chapterId
         ? [
@@ -47,7 +55,8 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
               chapter.chapterId,
               {
                 position: chapter.position,
-                subject: { key: subject.key, name: subject.shortName },
+                subject: { key: subject.key, name: subject.name, shortName: subject.shortName },
+                syllabusOrder: subjectOrder,
               },
             ] as const,
           ]
@@ -57,9 +66,14 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
 
   const numbers = new Map(entries.toReversed());
 
-  return ({ chapterId, planPosition }) =>
-    numbers.get(chapterId) ?? {
-      position: courseNumbers.get(chapterId) ?? planPosition,
-      subject: null,
-    };
+  return ({ chapterId, planPosition }) => {
+    const courseNumber = courseNumbers.get(chapterId);
+
+    return (
+      numbers.get(chapterId) ??
+      (courseNumber === undefined
+        ? { position: planPosition, subject: null, syllabusOrder: null }
+        : { position: courseNumber, subject: null, syllabusOrder: subjects.length })
+    );
+  };
 }

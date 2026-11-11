@@ -26,12 +26,10 @@ type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired"
 
 export function CheckpointCallIntro({
   conversation,
-  dailyLimitReached,
   onStart,
   rereading,
 }: {
   conversation: LanguageConversationIntro;
-  dailyLimitReached: boolean;
   onStart: (audio: TappedCallAudio) => Promise<CheckpointStartResult>;
   rereading: boolean;
 }) {
@@ -72,7 +70,7 @@ export function CheckpointCallIntro({
         <CallIntroFooter
           conversation={conversation}
           onStart={(audio) => void run(audio)}
-          start={toFooterState({ dailyLimitReached, rereading, start })}
+          start={toFooterState({ rereading, start })}
         />
       }
     />
@@ -80,11 +78,9 @@ export function CheckpointCallIntro({
 }
 
 function toFooterState({
-  dailyLimitReached,
   rereading,
   start,
 }: {
-  dailyLimitReached: boolean;
   rereading: boolean;
   start: CheckpointStart;
 }): CallIntroFooterState {
@@ -92,7 +88,7 @@ function toFooterState({
     return "starting";
   }
 
-  return dailyLimitReached ? "dailyLimitReached" : start;
+  return start;
 }
 
 export function ConversationIntro({
@@ -152,10 +148,13 @@ function HowTheCallWorks({ conversation }: { conversation: LanguageConversationI
       <PageSectionTitle id={titleId}>{t("How the call works")}</PageSectionTitle>
       <ol className="flex flex-col gap-2">
         {steps.map((step, index) => (
-          <li className="flex gap-3 text-[0.9375rem] leading-snug text-pretty" key={step}>
+          <li
+            className="flex items-baseline gap-3 text-[0.9375rem] leading-snug text-pretty"
+            key={step}
+          >
             <span
               aria-hidden="true"
-              className="text-muted-foreground w-3 shrink-0 font-mono text-[0.8125rem] leading-5.5 tabular-nums"
+              className="text-muted-foreground w-3 shrink-0 font-mono text-[0.8125rem] tabular-nums"
             >
               {index + 1}
             </span>

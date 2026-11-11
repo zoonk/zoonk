@@ -1,7 +1,13 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
+import { installTranslationResilience } from "translation-resilience";
 import { AUTH_BASE_PATH } from "./lib/auth-base-path";
+
+// Page translators swap React's text nodes for their own, so React's next change to that text
+// would throw or never show (facebook/react#11538). Eager, because Edge's translator and Google
+// Translate's extension don't mark the page before they start.
+installTranslationResilience({ eager: true });
 
 if (process.env.NODE_ENV === "production") {
   init({

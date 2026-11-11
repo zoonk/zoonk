@@ -2,14 +2,237 @@
   "modelId": "anthropic/claude-haiku-5.5:none",
   "results": [
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "title \"Use Docker Desktop better at work\"",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title \"Use Docker Desktop better at work\"",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title \"Use Docker Desktop better at work\"",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "hasTargetDate": false, "kind": "learn" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-learn-named-version-kept-1",
+        "userInput": {
+          "goal": "I'm on Docker Desktop 4.20 at work and want to use it better",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-learn-named-model-kept-1",
+        "userInput": {
+          "goal": "tenho um iPhone 13 e quero aprender a tirar fotos melhores com ele",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-learn-version-kept-in-long-goal-1",
+        "userInput": {
+          "goal": "Uso o Protheus 12.1.2410 no trabalho e quero dominar o módulo de compras",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-learn-no-version-invented-1",
+        "userInput": {
+          "goal": "I want to use Docker Desktop better at work",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-learn-no-model-invented-1",
+        "userInput": {
+          "goal": "help me take better photos with my iPhone",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "hasTargetDate": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "en-learn-quantum-1",
         "userInput": {
           "goal": "i want to understand quantum physics",
@@ -19,11 +242,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "title repeats targetCourse", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "title repeats targetCourse", "kind": "minorErrors", "score": 8 },
-        { "conclusion": "title repeats targetCourse", "kind": "potentialImprovements", "score": 8 }
+        {
+          "conclusion": "title repeats targetCourse; study time missing",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "title repeats targetCourse; study time missing",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "title repeats targetCourse; study time missing",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
@@ -48,11 +286,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -76,11 +329,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -90,7 +358,7 @@
               "ownLevel": "intermediate",
               "role": {},
               "targetLanguage": "en",
-              "targetLevel": {}
+              "targetScore": {}
             }
           ],
           "route": "goals"
@@ -104,14 +372,77 @@
       }
     },
     {
-      "classification": { "expected": "explain", "predicted": "explain" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
-        "expected": { "route": "explain" },
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examSubjects": null,
+              "examTarget": "admission",
+              "hasTargetDate": false,
+              "institution": {},
+              "kind": "exam",
+              "targetCourse": {},
+              "targetScore": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-enem-medicina-ufmg-1",
+        "userInput": {
+          "goal": "quero tirar 750 no enem pra passar em medicina na ufmg",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "explain",
+        "predicted": "explain"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "explain"
+        },
         "id": "pt-explain-microwave-1",
         "userInput": {
           "goal": "como funciona o micro-ondas?",
@@ -121,40 +452,99 @@
       }
     },
     {
-      "classification": { "expected": "explain", "predicted": "explain" },
+      "classification": {
+        "expected": "explain",
+        "predicted": "explain"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "explain" },
+        "expected": {
+          "route": "explain"
+        },
         "id": "en-explain-inflation-1",
-        "userInput": { "goal": "how does inflation work?", "language": "en", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "how does inflation work?",
+          "language": "en",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "instrument", "predicted": "instrument" },
+      "classification": {
+        "expected": "instrument",
+        "predicted": "instrument"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "instrument" },
+        "expected": {
+          "route": "instrument"
+        },
         "id": "pt-instrument-violao-1",
-        "userInput": { "goal": "tocar violão", "language": "pt", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "tocar violão",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "instrument", "predicted": "instrument" },
+      "classification": {
+        "expected": "instrument",
+        "predicted": "instrument"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "instrument" },
+        "expected": {
+          "route": "instrument"
+        },
         "id": "en-instrument-piano-1",
         "userInput": {
           "goal": "I'd love to learn to play the piano",
@@ -164,14 +554,31 @@
       }
     },
     {
-      "classification": { "expected": "unsafe", "predicted": "unsafe" },
+      "classification": {
+        "expected": "unsafe",
+        "predicted": "unsafe"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "unsafe" },
+        "expected": {
+          "route": "unsafe"
+        },
         "id": "en-unsafe-hack-1",
         "userInput": {
           "goal": "how to hack into my ex's instagram",
@@ -181,14 +588,31 @@
       }
     },
     {
-      "classification": { "expected": "unsafe", "predicted": "unsafe" },
+      "classification": {
+        "expected": "unsafe",
+        "predicted": "unsafe"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "unsafe" },
+        "expected": {
+          "route": "unsafe"
+        },
         "id": "pt-unsafe-roulette-1",
         "userInput": {
           "goal": "quero aprender a ganhar dinheiro na roleta do cassino",
@@ -198,40 +622,99 @@
       }
     },
     {
-      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "unclear" },
+        "expected": {
+          "route": "unclear"
+        },
         "id": "en-unclear-hi-1",
-        "userInput": { "goal": "hi", "language": "en", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "hi",
+          "language": "en",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "unclear" },
+        "expected": {
+          "route": "unclear"
+        },
         "id": "pt-unclear-feliz-1",
-        "userInput": { "goal": "ser feliz", "language": "pt", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "ser feliz",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "unclear" },
+        "expected": {
+          "route": "unclear"
+        },
         "id": "en-unclear-essay-1",
         "userInput": {
           "goal": "write my history essay for me",
@@ -241,40 +724,82 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            { "examName": {}, "kind": "exam" },
-            { "kind": "language", "targetLanguage": "en" }
-          ],
-          "route": "goals"
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
-        "id": "pt-two-goals-1",
-        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "title repeats targetScore", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "title repeats targetScore", "kind": "minorErrors", "score": 8 },
-        { "conclusion": "title repeats targetScore", "kind": "potentialImprovements", "score": 8 }
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "goals": [
             {
               "examName": {},
+              "kind": "exam"
+            },
+            {
+              "kind": "language",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-two-goals-1",
+        "userInput": {
+          "goal": "ENEM e inglês",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examName": {},
               "examTarget": "score",
               "hasTarget": true,
               "kind": "exam",
-              "month": "2027-03"
+              "month": "2027-03",
+              "targetLanguage": "en"
             }
           ],
           "route": "goals"
@@ -288,16 +813,362 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examName": {},
+              "examTarget": "score",
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-gre-high-score-1",
+        "userInput": {
+          "goal": "get a high score on the GRE General Test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "kind": "exam",
+              "targetLanguage": "es"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-dele-b2-language-1",
+        "userInput": {
+          "goal": "quero passar no DELE B2 em maio do ano que vem",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetScore",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "kind": "exam",
+              "targetLanguage": "de"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-goethe-b1-language-1",
+        "userInput": {
+          "goal": "preciso do Goethe-Zertifikat B1 pra visto de trabalho na Alemanha",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "zh"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-mandarin-1",
+        "userInput": {
+          "goal": "learn Mandarin for my business trips to Shanghai",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "zh"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-chinese-1",
+        "userInput": {
+          "goal": "quero aprender chinês do zero",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "zh-TW"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-chinese-traditional-1",
+        "userInput": {
+          "goal": "quero aprender chinês com caracteres tradicionais",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "zh-TW"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-language-chinese-taiwan-1",
+        "userInput": {
+          "goal": "quiero aprender chino porque me mudo a Taipéi el próximo año",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "yue"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-cantonese-1",
+        "userInput": {
+          "goal": "I want to speak Cantonese with my grandparents in Hong Kong",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "dailyMinutes": 20,
-          "goals": [{ "kind": "learn", "purpose": "work" }],
+          "goals": [
+            {
+              "kind": "learn",
+              "purpose": "work"
+            }
+          ],
           "route": "goals"
         },
         "id": "en-learn-work-minutes-1",
@@ -309,14 +1180,37 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "kind": "learn", "purpose": "work" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "purpose": "work"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-learn-cakes-1",
         "userInput": {
           "goal": "quero vender meus bolos pelo instagram",
@@ -326,15 +1220,36 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "hasTarget": true, "kind": "learn", "purpose": "careerChange" }],
+          "goals": [
+            {
+              "hasTarget": true,
+              "kind": "learn",
+              "purpose": "careerChange"
+            }
+          ],
           "route": "goals"
         },
         "id": "en-learn-career-change-1",
@@ -346,15 +1261,36 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "hasTarget": true, "kind": "learn", "purpose": "careerChange" }],
+          "goals": [
+            {
+              "hasTarget": true,
+              "kind": "learn",
+              "purpose": "careerChange"
+            }
+          ],
           "route": "goals"
         },
         "id": "pt-learn-career-change-ux-1",
@@ -366,18 +1302,44 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "kind": "learn", "purpose": "refresh" }],
+          "goals": [
+            {
+              "kind": "learn",
+              "purpose": "refresh"
+            }
+          ],
           "hasStudyTime": true,
           "route": "goals",
-          "studyDays": [1, 2, 3, 4, 5]
+          "studyDays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
         },
         "id": "en-learn-refresh-weekdays-1",
         "userInput": {
@@ -388,24 +1350,66 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "ownLevel": "none"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-learn-python-zero-1",
-        "userInput": { "goal": "aprender python do zero", "language": "pt", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "aprender python do zero",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -430,11 +1434,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -459,16 +1478,32 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "goals": [
             {
+              "examDay": "official",
               "examMonth": 1,
               "examYear": 2027,
               "hasTarget": true,
@@ -488,11 +1523,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -516,15 +1566,37 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examMonth": 2, "examYear": 2027, "hasTargetDate": false, "kind": "exam" }],
+          "goals": [
+            {
+              "examMonth": 2,
+              "examYear": 2027,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
           "route": "goals"
         },
         "id": "en-exam-bar-month-1",
@@ -536,11 +1608,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -564,30 +1651,78 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examName": {}, "examTarget": null, "kind": "exam" }],
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
           "route": "goals"
         },
         "id": "pt-exam-oab-1",
-        "userInput": { "goal": "passar na OAB", "language": "pt", "today": "2026-09-26" }
+        "userInput": {
+          "goal": "passar na OAB",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "title has 9 words",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title has 9 words",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title has 9 words",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "examName": {}, "kind": "exam" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-exam-oab-second-phase-1",
         "userInput": {
           "goal": "estudar para a segunda fase da oab em direito penal",
@@ -597,10 +1732,21 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "kind \"learn\" instead of exam", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "kind \"learn\" instead of exam", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "kind \"learn\" instead of exam",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "kind \"learn\" instead of exam",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "kind \"learn\" instead of exam",
           "kind": "potentialImprovements",
@@ -608,7 +1754,15 @@
         }
       ],
       "testCase": {
-        "expected": { "goals": [{ "examTarget": null, "kind": "exam" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "examTarget": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-exam-class-test-1",
         "userInput": {
           "goal": "prova de biologia sexta sobre célula",
@@ -618,15 +1772,36 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examTarget": "position", "hasTarget": true, "kind": "exam" }],
+          "goals": [
+            {
+              "examTarget": "position",
+              "hasTarget": true,
+              "kind": "exam"
+            }
+          ],
           "route": "goals"
         },
         "id": "pt-exam-concurso-pf-1",
@@ -638,14 +1813,200 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "kind": "learn" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "examTarget": "position",
+              "kind": "exam",
+              "targetPosition": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-cgu-specialty-1",
+        "userInput": {
+          "goal": "quero passar no concurso da CGU para auditor, na especialidade de desenvolvimento de sistemas",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam",
+              "targetPositionLeavesOut": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-cgu-rejected-area-1",
+        "userInput": {
+          "goal": "passar no concurso da CGU, mas não quero a área de auditoria",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "position \"Auditoria\" names what it should leave out",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam",
+              "targetPositionLeavesOut": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-cgu-doubted-area-1",
+        "userInput": {
+          "goal": "CGU, possivelmente Auditoria",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "1 goals; missing learn goal",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "1 goals; missing learn goal",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "1 goals; missing learn goal",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam",
+              "targetPositionLeavesOut": {}
+            },
+            {
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-cgu-other-goal-1",
+        "userInput": {
+          "goal": "Passar na CGU e aprender ciência de dados",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "en-learn-ear-training-1",
         "userInput": {
           "goal": "music theory and ear training",
@@ -655,14 +2016,166 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examName": {},
+              "examSubjects": [
+                {},
+                {}
+              ],
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ja-exam-two-subjects-one-goal-1",
+        "userInput": {
+          "goal": "1月の共通テストで英語と数学を伸ばしたい",
+          "language": "ja",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examSubjects": null,
+              "examTarget": "admission",
+              "kind": "exam",
+              "targetCourse": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-exam-career-is-not-a-subject-1",
+        "userInput": {
+          "goal": "pasar el EXANI-II para entrar a Medicina en la UdeG",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "ownLevel": "none"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-learn-music-zero-1",
+        "userInput": {
+          "goal": "Aprender música do zero",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "ownLevel": "none"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "en-persona-maya-1",
         "userInput": {
           "goal": "I want to master quantum physics, starting from scratch",
@@ -672,14 +2185,31 @@
       }
     },
     {
-      "classification": { "expected": "explain", "predicted": "explain" },
+      "classification": {
+        "expected": "explain",
+        "predicted": "explain"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "route": "explain" },
+        "expected": {
+          "route": "explain"
+        },
         "id": "en-persona-sam-1",
         "userInput": {
           "goal": "what does it mean when the market is up 2%?",
@@ -689,15 +2219,37 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "title repeats targetCourse", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "title repeats targetCourse", "kind": "minorErrors", "score": 8 },
-        { "conclusion": "title repeats targetCourse", "kind": "potentialImprovements", "score": 8 }
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "title repeats targetCourse",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examName": {}, "hasTarget": true, "hasTargetDate": false, "kind": "exam" }],
+          "goals": [
+            {
+              "examName": {},
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
           "route": "goals"
         },
         "id": "pt-persona-ana-1",
@@ -709,11 +2261,26 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "speaks undefined",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "speaks undefined",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "speaks undefined",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expected": {
@@ -737,14 +2304,37 @@
       }
     },
     {
-      "classification": { "expected": "goals", "predicted": "goals" },
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "goals": [{ "hasTargetDate": false, "kind": "learn" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "hasTargetDate": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-persona-lucas-1",
         "userInput": {
           "goal": "quero entender física quântica sem precisar fazer conta",

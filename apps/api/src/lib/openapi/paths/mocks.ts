@@ -226,7 +226,6 @@ export const mockPaths = {
       responses: {
         "204": { description: "Running" },
         ...commonErrors,
-        "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
         "409": {
           ...conflictResponse,
           description: "The mock or its block already finished, or the mock expired",

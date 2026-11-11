@@ -12,6 +12,7 @@ import {
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
 import { markPlanInputsUntil } from "../plans/_test-utils/mark-plan-inputs";
+import { createGoalPlan } from "../plans/create-goal-plan";
 import { loadPlanLessons, pickPlanStartToWrite } from "./speculative-lessons";
 
 async function landedBand() {
@@ -33,6 +34,38 @@ describe("lessons picked and started while a plan's band lands", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("follows the rebuilt graph rather than restoring an initial run's old start", async () => {
+    const { goal, lessonIds: oldLessons } = await landedBand();
+    const skill = await skillFixture();
+    const lessons = await outlineSkill(skill);
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Rebuilt foundations" }],
+        skills: [
+          {
+            area: null,
+            lessons: lessons.length,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    await expect(pickPlanStartToWrite(goal.id)).resolves.toBe(lessons[0]);
+    expect(oldLessons).not.toContain(lessons[0]);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({
+      graph: { skills: [expect.objectContaining({ skillId: skill.id })] },
+    });
   });
 
   it("loads the outlined opening without saving over onboarding's stand-ins", async () => {

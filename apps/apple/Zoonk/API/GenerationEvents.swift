@@ -1,18 +1,26 @@
 import Foundation
 import OpenAPIRuntime
+import Synchronization
 
 struct GenerationEvent: Decodable, Hashable, Sendable {
   let at: Date?
   let entityID: String?
+  let lessonID: String?
+  let lessonTitle: String?
   let reason: String?
   let skillName: String?
   let status: String
   let step: String
   let warmUpID: String?
+  /// This device's clock minus the server's, from the `Date` of the stream connection that brought
+  /// the event: the step's `at` on this device is `at` plus this.
+  var clockOffset: TimeInterval?
 
   private enum CodingKeys: String, CodingKey {
     case at
     case entityID = "entityId"
+    case lessonID = "lessonId"
+    case lessonTitle
     case reason
     case skillName
     case status
@@ -21,22 +29,28 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   }
 
   init(
-    at: Date? = nil, entityID: String? = nil, reason: String? = nil, skillName: String? = nil,
-    status: String, step: String, warmUpID: String? = nil
+    at: Date? = nil, entityID: String? = nil, lessonID: String? = nil, lessonTitle: String? = nil,
+    reason: String? = nil, skillName: String? = nil, status: String, step: String,
+    warmUpID: String? = nil, clockOffset: TimeInterval? = nil
   ) {
     self.at = at
     self.entityID = entityID
+    self.lessonID = lessonID
+    self.lessonTitle = lessonTitle
     self.reason = reason
     self.skillName = skillName
     self.status = status
     self.step = step
     self.warmUpID = warmUpID
+    self.clockOffset = clockOffset
   }
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     at = try container.decodeIfPresent(Int.self, forKey: .at).map(dateFromEpochMilliseconds)
     entityID = try container.decodeIfPresent(String.self, forKey: .entityID)
+    lessonID = try container.decodeIfPresent(String.self, forKey: .lessonID)
+    lessonTitle = try container.decodeIfPresent(String.self, forKey: .lessonTitle)
     reason = try container.decodeIfPresent(String.self, forKey: .reason)
     skillName = try container.decodeIfPresent(String.self, forKey: .skillName)
     status = try container.decode(String.self, forKey: .status)
@@ -75,6 +89,20 @@ extension APIClientFactory {
     "joinRunningCall", "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
+
+  private struct GoalProgress {
+    var ready = false
+    var writingLesson = false
+
+    mutating func record(_ event: GenerationEvent) {
+      switch (event.step, event.status) {
+      case ("writeFirstLesson", "started"): writingLesson = true
+      case ("firstLessonReady", "completed"): writingLesson = false
+      case ("goalReady", "completed"): ready = true
+      default: break
+      }
+    }
+  }
 
   private enum StreamEnd {
     case ready
@@ -145,6 +173,7 @@ extension APIClientFactory {
   ) async throws {
     var run = id
     var received = 0
+    var goal = GoalProgress()
     var dropsWithoutEvents = 0
     /// Once a status read the run ended, the next connection reads its stream to the end.
     var runEnded = false
@@ -156,7 +185,7 @@ extension APIClientFactory {
       let end: StreamEnd
 
       do {
-        end = try await read(run, token: token, received: &received, continuation)
+        end = try await read(run, token: token, received: &received, goal: &goal, continuation)
       } catch {
         let error = apiError(from: error)
 
@@ -187,6 +216,7 @@ extension APIClientFactory {
       case .joined(let joined):
         run = joined
         received = 0
+        goal = GoalProgress()
         runEnded = false
         watch.cancel()
         watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
@@ -203,12 +233,15 @@ extension APIClientFactory {
     _ run: String,
     token: String?,
     received: inout Int,
+    goal: inout GoalProgress,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
   ) async throws -> StreamEnd {
-    for try await event in try await openGenerationEvents(
+    let (events, clockOffset) = try await openGenerationEvents(
       id: run, token: token, startIndex: received)
-    {
+
+    for try await var event in events {
       received += 1
+      event.clockOffset = clockOffset
 
       if event.status == "error" || event.step == "workflowError" {
         return .stopped
@@ -218,15 +251,22 @@ extension APIClientFactory {
         return .joined(joined)
       }
 
+      goal.record(event)
       continuation.yield(event)
 
-      if Self.readySteps.contains(event.step), event.status == "completed" {
+      if goal.ready && !goal.writingLesson {
+        return .ready
+      }
+      if Self.readySteps.contains(event.step), event.status == "completed",
+        !(event.step == "goalReady" && goal.writingLesson)
+      {
         return .ready
       }
     }
 
     // A cancelled iteration ends like a closed stream.
     try Task.checkCancellation()
+    if goal.ready { return .ready }
     return .closed(try await generationStatus(id: run, token: token))
   }
 
@@ -265,20 +305,26 @@ extension APIClientFactory {
     }
   }
 
+  /// The connection's events, and this device's clock minus the server's, from the response's
+  /// `Date` as web takes it: a replay brings old steps, so their times can't tell the clocks apart.
   private func openGenerationEvents(
     id: String,
     token: String?,
     startIndex: Int
-  ) async throws -> some AsyncSequence<GenerationEvent, any Error> {
-    let output = try await makeStreamingClient(token: token).streamGenerationEvents(
+  ) async throws -> (some AsyncSequence<GenerationEvent, any Error>, TimeInterval?) {
+    let clockOffset = Mutex<TimeInterval?>(nil)
+    let output = try await makeStreamingClient(
+      token: token, serverClock: { offset in clockOffset.withLock { $0 = offset } }
+    ).streamGenerationEvents(
       path: .init(generationId: id),
       query: .init(startIndex: startIndex))
 
     switch output {
     case .ok(let response):
-      return try response.body.textEventStream
+      let events = try response.body.textEventStream
         .asDecodedServerSentEventsWithJSONData(of: GenerationEvent.self)
         .compactMap { $0.data }
+      return (events, clockOffset.withLock { $0 })
     case .notFound:
       throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented:

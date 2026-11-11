@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "profile_questions_activities_favorites": "bceedcd5255ce57820e53d1ec35d3aad0ad57cc8ff21ee237555eeef834580c3",
+  "profile_questions_activities_placeholder": "c566837c0a3e30dbf23e1377f9b65f14425bd23f1bcad18c4ba4ef1309ccdb63",
+  "profile_questions_activities_title": "43c3accc8578746ecd5516a4e06ca3bfe4fc0b409ab479ef5c4459a45fa81730",
+  "profile_questions_add": "7f3b24371ea3cfb893d2e197d71a4b20f5cfea19669d052ccae333d1cca1dcdf",
+  "profile_questions_cap": "d53c70b37d98e52129481b1805214d325022d2b08769b8ed9dfc104f79218a95",
+  "profile_questions_condition_note": "501c6125d895fab57aa884cad89a346bf60b11bb85487b4c9b491c3938a4150b",
+  "profile_questions_conditions_description": "611104615e72eb49fc373dac0cb014483bbdf41c0d68354582dd75568a83a284",
+  "profile_questions_conditions_next": "2eb498f72362aa3b1e981377242932da52b1e5d62fa7a039a148a2c0fcb94740",
+  "profile_questions_conditions_saved": "82d6ffa267e60758d035ab23b19a3da241abc942d04aa4d45613e295a5b3388f",
+  "profile_questions_conditions_title": "699c506c665fa9ab545d11496be345aeb1786479ad8879bcb2541a9cce1a57f1",
+  "profile_questions_consent": "d171f99fa31a192254204edf2189cbee6e36db2286ae117e9bd550c4fd377880",
+  "profile_questions_consent_help": "dfa881bc2559bd90da72c5a6d264212087a911e2aa900576e3e046f14f3fa3fa",
+  "profile_questions_description": "79c3dbfa373a2988476187c57ffc1f408071828a2b8f39ff84d204cf631cb8fd",
+  "profile_questions_earlier_answer": "d49b1cf755b54bd53204342560383dc0dd42b8c65b7492f980fd037bb014534a",
+  "profile_questions_for_fun": "ef909e3db5f0e38b4e291c231ed27e3d67dd1bcddedca291653e3da8e46b2882",
+  "profile_questions_how_learn": "98c0aa531886e68a66d93a0b9f5812a93124d446a83873e29479169bebfa4882",
+  "profile_questions_interest_description": "0b646d56df2f4d0775471f839b3df38ebbae40d0e33c39fbdc3eec56a9ae3c5d",
+  "profile_questions_job": "c2df9041428d5236c119cb47267bea1f51deb4f2517ae72ca6c068683cdd43b4",
+  "profile_questions_job_placeholder": "1f957070696742590beaf4ddc299f6a6f2d024e51b3bd1e8feacb9d754b1bd27",
+  "profile_questions_lesson_ready": "9fc5707cc19883fb0506fa6cd14d763abd4bfd6215423c2eac4bd14ddd8856b3",
+  "profile_questions_listen_favorites": "6849842debd517de973b9b7537f8067dbbc79ddadecaf086b53ae48fe09202f7",
+  "profile_questions_listen_placeholder": "699b9079e9610c8898ae037bf0970cf0cd0d19699481ae7c0d8ee1109028a418",
+  "profile_questions_listen_title": "80531ed7b41d29ed8f71a7926e7b5691ee1faf31a410fae50b6212802145d79b",
+  "profile_questions_memory_off": "3ca972e01235616efa2fd0e35d8b594bca9211e944a0d2700e173d4d5861beb1",
+  "profile_questions_never_ask": "1db0a6a904b5a353c4710cd92dafa1f5c048c7ff7d8aa0cf4d940d90e57fa995",
+  "profile_questions_never_ask_help": "f5f1b6eb740776e4ca4c25a9e955da3c60ba8b695f4ddbb059dfdd09b1ddc394",
+  "profile_questions_none": "ccf83ceb37d00d72223ea84ba50f57cb363e9c13783e536183fdcde073e6fafc",
+  "profile_questions_not_answered": "8df80389d75674954b99b6213c99b639d2a4b1f2133489afa8aa2641e128b5e4",
+  "profile_questions_not_shared": "b18646b3281bc9f0ba47c57f22dd55bc9a5f38763b5c3629f7708074e4e36b84",
+  "profile_questions_nothing_particular": "0444e29ce73f2eb0f95b71178c8f2dafc5d82cfb732f53f6849285d4463b4466",
+  "profile_questions_nothing_to_add": "6fb025b6d7e2fe7b0fe25012c9a3c7fd5dda16f8b56b8c1a5f9dc0f316869ecf",
+  "profile_questions_play_favorites": "027870a17e03b26f4e7837c7291b8b695bcfb46f4e4ea549656700fbf8892418",
+  "profile_questions_play_placeholder": "cb86540e90e1bbb7ab0ac3f1f0549105b4876c6262b12c09bac872a5e7d13327",
+  "profile_questions_play_title": "c7462d30dff263920958a16e19a30b25a6467ef64f72e57b84e34734657ab883",
+  "profile_questions_prefer_not": "ee92f0b363b8f1f2d0e0fae1bc0934d8b510d16c8be35e8a31e523698f625426",
+  "profile_questions_progress": "66d931bb6c2ee52fce837eff86286cf2d298c5c98e1b647b2b2cc1e6a9254965",
+  "profile_questions_read_favorites": "96bd662867ce9fb4ae26b1e8d9ba6bf65053b3fc4415ca1eb80372ae90162d6c",
+  "profile_questions_read_placeholder": "0f4cf5ea55efe5506b042bd2b501fa86a02b2b1be6cf0febdae22265fc59876e",
+  "profile_questions_read_title": "5884a03f9d7fcdeeaf324d3b8974b335231487a5a28bbef310bcafa8423e8fbf",
+  "profile_questions_row_activities": "f6071c372d915be921cfce650219e7ef170686619b4342beb830f06a15649b6e",
+  "profile_questions_row_conditions": "4d4b81df240b73a65542e8899c90abc85db2dc789dca9da45ce44280b74a3fa6",
+  "profile_questions_row_listen": "ff1a483ed0756e6a52ad9e4112be3318576f0811689f27b799c883aab2e8a501",
+  "profile_questions_row_play": "c1a99f0929db9a195f9ce16a936d0179fabd42c72fb94dc433860e8a2f812a6b",
+  "profile_questions_row_read": "65d7ffacc183e2c1e187f4b3f349d00922439f1e632d7292fd38a6ebebd95348",
+  "profile_questions_row_studies": "77b1a1031025499d44edf4fd4a96460a72b36b8e91aa1f2973fb7d86adb2eb35",
+  "profile_questions_row_support": "0d8f701829e5a781603de8580f1c2ead4c1016592df8f1841c0d82e4bfaa7fca",
+  "profile_questions_row_tools": "bd01562de639c51bcc493cf8d177d4dcf2df87c08effb6c04bb1f4765a811930",
+  "profile_questions_row_watch": "22b241ab79a3a9ea240bb02ceb7d8367f0ab2ad87a56e01bcd954364608aa0fa",
+  "profile_questions_row_work": "20dcf4364cd3f1df5f393aee13016c567a330174c49652b2fa37b94fda908acf",
+  "profile_questions_save_start_lesson": "411f4b27ebede921f5929ebc2acec40d2943c9bcdfe6daec29ec8034667e18cf",
+  "profile_questions_skip_all": "3018d5643221ee1033aaa6972659db44a0fb8fa85c12ba8ba50c5fc3dbafb19e",
+  "profile_questions_skip_all_label": "52eaf7e67076606a3de0e43ad642e7b446542cc9220518e48f6484d4ae5be6d5",
+  "profile_questions_something_else": "29e0ea51f42396998530ce10fc3e7af02b46909b0586f49e140e1aaf556db85e",
+  "profile_questions_start_lesson": "f757e77cad9e760b9c9151c1ded170959d8fc43a8894722f555d059915f67da6",
+  "profile_questions_studies_description": "5c21112e4bea4d493c04ec9ed78965fab4e6cdd97f962d4869f1132ecc489e45",
+  "profile_questions_studies_title": "7c8265ad975341d837b5abbf7fe949d22380e4ee0465f27b6c30ca71fa0b2bdb",
+  "profile_questions_subject": "c437180ffa3329dada1124d7c689b44e5d134f6c3a62bbe3c1f87d2c26b54483",
+  "profile_questions_subject_placeholder": "d508e5bb15eaa92a4e5d6e369383065ded339e3a0b9dc1d5ec462e2d048e6f9f",
+  "profile_questions_suggested": "cc0029468bd003eeee3e65ff16be868b6d14429a7d892976325bbdf5bde89d11",
+  "profile_questions_support_description": "14414bffc890ec669a4feffc862e368c12aa4a915098c26e9df354a7757dd667",
+  "profile_questions_support_note": "ec96085b2642af6b95fdf0bc644c10beee80be64daaad36e8e8718e594a01dcd",
+  "profile_questions_support_note_help": "097d7edbbe3ea55ff21301c4988d19d0096c03ec3b2e5d7650a1779f622840eb",
+  "profile_questions_support_placeholder": "ec9cf8fde8ecb3660478757dfab3d35bfe7e393971117841bfb82875dae0a035",
+  "profile_questions_support_title": "6ac3c3964dc0aaf53be08a0970ca72d242592cee013cbb4aff5a79f8d209044e",
+  "profile_questions_title": "647e7ca5ce7ba31e19450d033c3803d64c5e21786ced096bed2cff0b09ea0a2e",
+  "profile_questions_tools_description": "32c2f13cae9f25c636cfe27c52fc70d1c0c66d836106c58b3b495f1246f7d9c8",
+  "profile_questions_tools_other": "430a5844031efe74098a9713a52585af06da9ec7d1995cc346bb9bcb2268d397",
+  "profile_questions_tools_placeholder": "cc62a650cd5c1ff37b6eea6ef86c7bd8da9a85d3bbdb6e76ce756813eb5c2b9b",
+  "profile_questions_tools_title": "273b3749f9712e7ec73f6096cb30f345e2d4081a30a38909315d23ded52a59f6",
+  "profile_questions_watch_favorites": "7c2deece9447b58f0f9bb2c6b2390e0d2cd26dc373076334f8aba992b1b34ede",
+  "profile_questions_watch_placeholder": "85e9c84fa143fa92031dbdbde57b3c9e13e51791e88f5f7b37a13f50253c6181",
+  "profile_questions_watch_title": "906ea501c7f12461a649aa73e6c1db5d06f76f700745b79c454d20366de2cdf7",
+  "profile_questions_which_field": "670dd94c4a45d841b3f6b61dbba30e3f93bede64774afeed6ec0ad0c7d5b6a90",
+  "profile_questions_work_description": "0e03e56382982af226c8be7dce2bfcb22eb6032c78a7822bf8717d3861cb930f",
+  "profile_questions_work_title": "a9c481b7da92b5887191ddcf469388ea0290009fc6e882c9011830487fa5a5e7",
+  "profile_questions_you_told_us": "9c67313be3b9af456abfc5a4c3e63ca105ef210c021efaf6944bd3b8da7e1d65",
+  "profile_questions_your_day": "70a95d53673abca03d8e863f105e79cf89c3ea3e56d185391d45766a426cbd8d"
+}
+-->
+<resources>
+    <string name="profile_questions_title">プロフィール</string>
+    <string name="profile_questions_description">ここで教えてくれたことを、学習で使う例や相棒とのやり取りに反映します。回答はすべて任意です。</string>
+    <string name="profile_questions_progress">プロフィール · %1$d/%2$d</string>
+    <string name="profile_questions_skip_all">すべてスキップする</string>
+    <string name="profile_questions_skip_all_label">プロフィールに関する残りの質問をスキップする</string>
+    <string name="profile_questions_never_ask">今後これらの質問を表示しない</string>
+    <string name="profile_questions_never_ask_help">設定 › プロフィールでいつでも回答できます。</string>
+    <string name="profile_questions_cap">3つまで選べます。</string>
+    <string name="profile_questions_work_title">今はどんな仕事や活動をしていますか？</string>
+    <string name="profile_questions_work_description">普段の仕事や生活の場面を、学習で使う例に取り入れます。</string>
+    <string name="profile_questions_job">職業（任意）</string>
+    <string name="profile_questions_job_placeholder">例：ソフトウェアエンジニア、看護師</string>
+    <string name="profile_questions_earlier_answer">以前の回答から</string>
+    <string name="profile_questions_prefer_not">回答しない</string>
+    <string name="profile_questions_tools_title">よく使うアプリやツールは何ですか？</string>
+    <string name="profile_questions_tools_description">3つまで選べます。学習で使う例に取り入れます。</string>
+    <string name="profile_questions_tools_other">その他（任意）</string>
+    <string name="profile_questions_tools_placeholder">例：Photoshop、Python、SAP</string>
+    <string name="profile_questions_none">あてはまるものはない</string>
+    <string name="profile_questions_studies_title">これまでにどんなことを学んできましたか？</string>
+    <string name="profile_questions_studies_description">以前学んだことも、今学んでいることも含みます。学び終えていなくても、仕事と違う分野でも大丈夫です。</string>
+    <string name="profile_questions_nothing_to_add">特になし</string>
+    <string name="profile_questions_subject">%1$s：コースや科目（任意）</string>
+    <string name="profile_questions_which_field">どの分野ですか？</string>
+    <string name="profile_questions_subject_placeholder">例：ジャーナリズム</string>
+    <string name="profile_questions_interest_description">3つまで選べます。レッスンで使う例に取り入れます。</string>
+    <string name="profile_questions_watch_title">何を見るのが好きですか？</string>
+    <string name="profile_questions_watch_favorites">好きな番組、映画、チーム、チャンネル（任意）</string>
+    <string name="profile_questions_watch_placeholder">例：Star Trek、Flamengo</string>
+    <string name="profile_questions_listen_title">何を聴くのが好きですか？</string>
+    <string name="profile_questions_listen_favorites">好きなアーティストやポッドキャスト（任意）</string>
+    <string name="profile_questions_listen_placeholder">例：Coldplay、Radiolab</string>
+    <string name="profile_questions_play_title">どんなゲームが好きですか？</string>
+    <string name="profile_questions_play_favorites">好きなゲーム（任意）</string>
+    <string name="profile_questions_play_placeholder">例：Catan、Valorant</string>
+    <string name="profile_questions_read_title">何を読むのが好きですか？</string>
+    <string name="profile_questions_read_favorites">好きな本、作家、サイト（任意）</string>
+    <string name="profile_questions_read_placeholder">例：Dune、The Economist</string>
+    <string name="profile_questions_activities_title">どんなことをするのが好きですか？</string>
+    <string name="profile_questions_activities_favorites">ほかに好きなことはありますか？（任意）</string>
+    <string name="profile_questions_activities_placeholder">例：パン作り、車、天文学</string>
+    <string name="profile_questions_conditions_title">この中にあてはまるものはありますか？</string>
+    <string name="profile_questions_conditions_description">回答は任意です。保存を選ばない限り、回答は保存されません。</string>
+    <string name="profile_questions_conditions_next">回答は任意です。次の画面で、役立つことの多い工夫を提案します。保存を選ばない限り、回答は保存されません。</string>
+    <string name="profile_questions_condition_note">知っておいてほしいことはありますか？</string>
+    <string name="profile_questions_consent">プロフィールに保存する</string>
+    <string name="profile_questions_consent_help">Zoonkはこの情報を使って、学習の進め方を今後も継続して調整します。ほかの人に教えたり、レッスンの例に使ったりすることはありません。設定でいつでも削除できます。</string>
+    <string name="profile_questions_support_title">どんな工夫があると学びやすいですか？</string>
+    <string name="profile_questions_support_description">役立つものをいくつでも選べます。特性に名前がついていなくても、診断を受けていなくても大丈夫です。</string>
+    <string name="profile_questions_suggested">選んだ内容をもとに、どんな工夫が役立つことが多いかを調べました。自由に変更できます。</string>
+    <string name="profile_questions_nothing_particular">特になし</string>
+    <string name="profile_questions_something_else">+ ほかに役立つこと</string>
+    <string name="profile_questions_support_note">学びやすくなることを自分の言葉で（任意）</string>
+    <string name="profile_questions_support_placeholder">例：文章より図のほうが理解しやすいです</string>
+    <string name="profile_questions_support_note_help">相棒とのやり取りに役立てるため、覚えておきます。メモリで削除できます。</string>
+    <string name="profile_questions_lesson_ready">レッスン1の準備ができました。</string>
+    <string name="profile_questions_start_lesson">レッスン1を始める</string>
+    <string name="profile_questions_save_start_lesson">保存してレッスン1を始める</string>
+    <string name="profile_questions_your_day">今日の学習</string>
+    <string name="profile_questions_for_fun">趣味</string>
+    <string name="profile_questions_how_learn">学び方</string>
+    <string name="profile_questions_row_work">現在の仕事や立場</string>
+    <string name="profile_questions_row_tools">アプリとツール</string>
+    <string name="profile_questions_row_studies">これまでに学んだこと</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
+    <string name="profile_questions_row_watch">見るのが好きなもの</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">聴くもの</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">スポーツ・ゲーム</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
+    <string name="profile_questions_row_read">読むもの</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">好きなこと</string>
+    <string name="profile_questions_row_conditions">健康状態や特性</string>
+    <string name="profile_questions_row_support">学習の助けになること</string>
+    <string name="profile_questions_not_answered">未回答</string>
+    <string name="profile_questions_not_shared">まだ教えていません</string>
+    <string name="profile_questions_add">追加</string>
+    <plurals name="profile_questions_conditions_saved">
+        <item quantity="other">%1$d件保存済み</item>
+    </plurals>
+    <string name="profile_questions_memory_off">メモリがオフのため、Zoonkは1日の過ごし方や趣味の情報を使っていません。変更するには、メモリでオンにしてください。</string>
+    <string name="profile_questions_you_told_us">教えてもらったこと</string>
+</resources>

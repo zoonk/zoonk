@@ -3,8 +3,8 @@ package com.zoonk.android.feature.activities.code
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import com.zoonk.api.models.ActivityExpectedFormulaTolerance as Tolerance
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOf1ExamplesInner as Example
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance as Tolerance
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOfInputsInner as Input
 
 // Main's `pattern-results.test.ts` and core's `withinTolerance`.

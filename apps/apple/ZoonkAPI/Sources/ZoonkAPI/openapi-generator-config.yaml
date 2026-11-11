@@ -15,6 +15,7 @@ filter:
   operations:
     - acknowledgeTodayPlanChange
     - adaptPlanFromMock
+    - answerCurrentUserProfileQuestion
     - answerLanguageLevelTest
     - answerLanguageLevelTestOutLoud
     - answerMemoryInsight
@@ -116,12 +117,12 @@ filter:
     - getCurrentUserActivity
     - getCurrentUserAllowance
     - getCurrentUserBuddy
-    - getCurrentUserDailyTimeLimit
     - getCurrentUserEnergy
     - getCurrentUserLearningProfile
     - getCurrentUserLevel
     - getCurrentUserMemory
     - getCurrentUserMistakePractice
+    - getCurrentUserProfileQuestions
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
@@ -164,6 +165,7 @@ filter:
     - getMock
     - getMockQuestionThread
     - getOnboarding
+    - getPlanRevealToday
     - getOnboardingResume
     - getPlanChangedSince
     - getPlanLink
@@ -199,6 +201,7 @@ filter:
     - listPronunciationReviews
     - listSourceChangeNotices
     - markCertificateShown
+    - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock
@@ -235,5 +238,6 @@ filter:
     - updateCurrentUserMemorySettings
     - updateCurrentUserStudyReminder
     - updateGoal
+    - updateLibraryLessonClock
     - updateMemoryFact
     - updateOwnLevel

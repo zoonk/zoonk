@@ -8,6 +8,7 @@ import {
 } from "../certificates/certificate-contract";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type ReminderOffer, reminderOfferSchema } from "../reminders/study-reminder-contract";
+import { type StudyCompletionQueue, studyCompletionQueueShape } from "./completion-queue-contract";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
@@ -34,7 +35,7 @@ export type TestOutOffer = {
   lessonsLeft: number;
 };
 
-export type StudyBlockCompletion = {
+export type StudyBlockCompletion = StudyCompletionQueue & {
   blockId: string;
   brainPower: number;
   capsulesOpened: number;
@@ -46,6 +47,7 @@ export type StudyBlockCompletion = {
   comesBackOn: Date | null;
   completedMissions: Mission["kind"][];
   correct: number;
+  finishedChapter: FinishedChapter | null;
   fullMeal: { bonus: number; paid: boolean };
   milestones: Milestone[];
   missions: Mission[];
@@ -65,6 +67,19 @@ export type StudyBlockCompletion = {
 
 const idSchema = uuidSchema();
 const countSchema = z.number().int().min(0);
+
+const finishedChapterObjectSchema = z
+  .object({ chapterId: idSchema, goalId: idSchema, title: z.string() })
+  .meta({ id: "FinishedChapter" });
+
+export type FinishedChapter = z.infer<typeof finishedChapterObjectSchema>;
+
+export const finishedChapterSchema = finishedChapterObjectSchema
+  .nullable()
+  .meta({
+    description:
+      "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Show its map row (GET /goals/{goalId}/chapters/{chapterId}/mind-map). Retries of the same completion return it again; null otherwise",
+  });
 
 /** Off-session activity points exclude the separately displayed daily mission reward. */
 export const activityBrainPowerSchema = z
@@ -217,6 +232,7 @@ const checkpointResultSchema = z.object({
 export const studyBlockCompletionSchema = z
   .object({
     blockId: idSchema,
+    ...studyCompletionQueueShape,
     brainPower: countSchema.meta({
       description: "Earned by the block, with the bonus for all offered missions when it just paid",
     }),
@@ -239,6 +255,7 @@ export const studyBlockCompletionSchema = z
       .array(z.enum(MISSION_KINDS))
       .meta({ description: "The day's missions this block completed, in the day's order" }),
     correct: countSchema,
+    finishedChapter: finishedChapterSchema,
     fullMeal: z
       .object({ bonus: z.number().int(), paid: z.boolean() })
       .meta({

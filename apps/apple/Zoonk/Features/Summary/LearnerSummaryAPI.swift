@@ -36,6 +36,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   let status: Status
   /// `YYYY-MM-DD`, a calendar day.
   let targetDate: String?
+  let displayName: String
+  /// What the goal is about, which search also matches; screens show `displayName`.
   let title: String
 
   enum Kind: String, Sendable {
@@ -60,8 +62,7 @@ struct LearnerWaitingGoal: Equatable, Identifiable, Sendable {
   /// POST /goals as it is, with the learner's time zone, starts it.
   let input: Components.Schemas.GoalCreateInputOutput
   let locked: Bool
-
-  var title: String { input.goals.first?.title ?? "" }
+  let displayName: String
 }
 
 struct LearnerAnalytics: Equatable, Sendable {
@@ -166,7 +167,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,
-        title: goal.title)
+        displayName: goal.displayName, title: goal.title)
     },
     identity: LearnerIdentity(
       isAnonymous: summary.identity.isAnonymous,
@@ -189,7 +190,8 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     timeZone: summary.timeZone,
     todayBlocksLeft: summary.today?.blocksLeft,
     waitingGoals: summary.waitingGoals.map { goal in
-      LearnerWaitingGoal(id: goal.id, input: goal.input.value1, locked: goal.locked)
+      LearnerWaitingGoal(
+        id: goal.id, input: goal.input.value1, locked: goal.locked, displayName: goal.displayName)
     })
 }
 

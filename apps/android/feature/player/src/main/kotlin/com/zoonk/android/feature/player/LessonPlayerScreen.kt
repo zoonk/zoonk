@@ -150,10 +150,13 @@ import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
+import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+
+typealias FinishedChapterSlot = @Composable (FinishedChapter) -> Unit
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
 interface LessonPlayerExits {
@@ -235,6 +238,8 @@ fun LessonPlayer(
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
     certificatesMoment: CertificatesMoment? = null,
+    finishedChapter: FinishedChapterSlot? = null,
+    onReportSaveFailure: () -> Unit = {},
     reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
@@ -245,10 +250,16 @@ fun LessonPlayer(
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
+    androidx.lifecycle.compose.LifecycleResumeEffect(viewModel, shownStep != null) {
+        if (shownStep != null) viewModel.firstSceneVisible()
+        onPauseOrDispose {}
+    }
     language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
-        viewModel.resendAnswers()
+        viewModel.resume()
+        viewModel.resendUnsaved()
+        viewModel.retryFailedFinish()
         onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
     }
     val actions =
@@ -467,11 +478,13 @@ fun LessonPlayer(
                             buddy,
                             ceremony,
                             certificatesMoment,
+                            finishedChapter,
                             reminderOffer,
                             offer,
                             help,
                             touches,
                             canvasWork,
+                            onReportSaveFailure,
                         )
                     }
                 }
@@ -577,11 +590,13 @@ private fun Content(
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
+    finishedChapter: FinishedChapterSlot?,
     reminderOffer: (@Composable (StudyReminderOffer) -> Unit)?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
+    onReportSaveFailure: () -> Unit,
 ) {
     val run = state.run
 
@@ -595,7 +610,11 @@ private fun Content(
         state.phase == LessonPhase.Completed -> {
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
-                if (ownEnd == null) LessonCompletionView(state, ending, buddy, reminderOffer) else ownEnd.body(state)
+                if (ownEnd == null) {
+                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure, reminderOffer)
+                } else {
+                    ownEnd.body(state)
+                }
             }
         }
 

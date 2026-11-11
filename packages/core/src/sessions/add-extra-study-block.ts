@@ -11,7 +11,6 @@ import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { getBlockScreen } from "./day-block";
 import { type ExtraTimeReason, getExtraTime } from "./extra-time";
-import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
 export type ExtraStudyBlockResult =
   | { block: StudyBlockView; status: "ready" }
@@ -20,7 +19,7 @@ export type ExtraStudyBlockResult =
   | { status: "unauthorized" }
   | { reason: ExtraTimeReason; status: "unavailable" };
 
-/** Requires all planned blocks finished; returns the first added block and respects daily limits and free-exam gates. */
+/** Requires all planned blocks finished; returns the first added block and respects free-exam gates. */
 export async function addExtraStudyBlock({
   sessionId,
 }: {
@@ -37,15 +36,11 @@ export async function addExtraStudyBlock({
   }
 
   const { userId } = owned;
-  const limit = await getDailyTimeLimitStatus();
   const skillIds = owned.session.goalId ? await loadGoalSkillIds(owned.session.goalId) : [];
 
   const added = await withSessionAppendLock<ExtraStudyBlockResult>({
     run: async ({ session, transaction }) => {
-      const extraTime = getExtraTime({
-        blocks: session.blocks,
-        remainingLimitMinutes: limit?.remainingMinutes ?? null,
-      });
+      const extraTime = getExtraTime({ blocks: session.blocks });
 
       if (!extraTime.available) {
         return { reason: extraTime.reason, status: "unavailable" };

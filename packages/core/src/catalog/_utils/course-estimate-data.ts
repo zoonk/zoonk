@@ -25,7 +25,7 @@ import { loadQuickBaseLessons } from "../../plans/_utils/quick-bases";
 import { weighGraphForExam } from "../../plans/planner/exam-weights";
 import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
-import { choosePace } from "../../plans/planner/plan-pace";
+import { choosePace, getPaceFamily } from "../../plans/planner/plan-pace";
 import { getCourseEstimateAreas } from "./course-estimate-areas";
 import { loadCoursePublishedContent } from "./course-published-content";
 
@@ -148,6 +148,7 @@ export async function loadCourseEstimateData(courseId: string, today: string) {
 
   const pace = choosePace(
     await loadPaceSamples({
+      family: getPaceFamily(course.targetLanguage),
       lessonIds: lessons.slice(0, PACE_LESSON_LIMIT).map((lesson) => lesson.lessonId),
       now: fromIsoDate(today),
       userId: null,

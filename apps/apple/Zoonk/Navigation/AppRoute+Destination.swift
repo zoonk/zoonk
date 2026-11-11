@@ -88,8 +88,8 @@ extension AppRoute {
       ChapterScreen(chapterId: chapterId)
     case .languageUnit(let chapterId):
       LanguageUnitScreen(chapterId: chapterId)
-    case .mindMaps:
-      MindMapsScreen()
+    case .mindMaps(let subjectKey):
+      MindMapsScreen(subjectKey: subjectKey)
     case .exam:
       ExamScreen()
     case .mockChooser:
@@ -119,8 +119,10 @@ extension AppRoute {
       SessionScreen()
     case .logbook:
       LogbookScreen()
-    case .lesson(let lessonId, let sessionId, let fromCatalog):
-      LessonPlayerScreen(lessonId: lessonId, sessionId: sessionId, fromCatalog: fromCatalog)
+    case .lesson(let lessonId, let sessionId, let fromCatalog, let opening, let activated):
+      LessonPlayerScreen(
+        lessonId: lessonId, sessionId: sessionId, fromCatalog: fromCatalog, opening: opening,
+        activated: activated)
     case .questionBlock(let sessionId, let blockId):
       QuestionBlockScreen(sessionId: sessionId, blockId: blockId)
     case .mistakePractice(let skillId):

@@ -1,5 +1,3 @@
-import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
-import { getSessionDayMinutes } from "../fresh-start";
 import { type DayOutlines } from "./outlining-stand-ins";
 import { type EmptyDay } from "./session-view";
 
@@ -20,23 +18,6 @@ function toEmptyDay({
   }
 
   return outlines === "idle" ? "lessonsToPrepare" : "nothingNew";
-}
-
-/** Room as the session builder fills it: its day's minutes, capped by the learner's daily time limit. */
-export function hasLessonRoom({
-  day,
-  limitMinutes,
-  plannedMinutes,
-}: {
-  day: Parameters<typeof getSessionDayMinutes>[0];
-  limitMinutes: number | null;
-  plannedMinutes: number;
-}): boolean {
-  const dayMinutes = getSessionDayMinutes(day);
-
-  return (
-    Math.min(dayMinutes, limitMinutes ?? dayMinutes) - plannedMinutes >= DEFAULT_LESSON_MINUTES
-  );
 }
 
 /**

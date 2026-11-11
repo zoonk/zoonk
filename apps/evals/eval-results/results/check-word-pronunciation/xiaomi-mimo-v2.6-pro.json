@@ -2,26 +2,31 @@
   "modelId": "xiaomi/mimo-v2.6-pro",
   "results": [
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "english"
+      },
       "steps": [
         {
-          "conclusion": "Heard /frœʊt/ and called it native; the clip is native.",
+          "conclusion": "Heard /fraʊt/ and called it unclear; the clip is native.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "Heard /frœʊt/ and called it native; the clip is native.",
+          "conclusion": "Heard /fraʊt/ and called it unclear; the clip is native.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "Heard /frœʊt/ and called it native; the clip is native.",
+          "conclusion": "Heard /fraʊt/ and called it unclear; the clip is native.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 2
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "nl-word-native-1",
         "userInput": {
           "englishIpa": "fruːt",
@@ -34,26 +39,31 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
-          "conclusion": "Heard /frut/ and called it english; the clip is english.",
+          "conclusion": "Heard /fruːt/ and called it english; the clip is english.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /frut/ and called it english; the clip is english.",
+          "conclusion": "Heard /fruːt/ and called it english; the clip is english.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /frut/ and called it english; the clip is english.",
+          "conclusion": "Heard /fruːt/ and called it english; the clip is english.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "nl-word-english-1",
         "userInput": {
           "englishIpa": "fruːt",
@@ -66,26 +76,31 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
-          "conclusion": "Heard /ˈnaːmə/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈnɑːmə/ and called it native; the clip is native.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /ˈnaːmə/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈnɑːmə/ and called it native; the clip is native.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /ˈnaːmə/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈnɑːmə/ and called it native; the clip is native.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "de-lookalike-name-native-1",
         "userInput": {
           "englishIpa": "neɪm",
@@ -98,7 +113,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /neɪm/ and called it english; the clip is english.",
@@ -117,7 +135,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "de-lookalike-name-english-1",
         "userInput": {
           "englishIpa": "neɪm",
@@ -130,7 +150,10 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
           "conclusion": "Heard /kɪnt/ and called it native; the clip is native.",
@@ -149,7 +172,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "de-lookalike-kind-native-1",
         "userInput": {
           "englishIpa": "kaɪnd",
@@ -162,7 +187,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /kaɪnd/ and called it english; the clip is english.",
@@ -181,7 +209,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "de-lookalike-kind-english-1",
         "userInput": {
           "englishIpa": "kaɪnd",
@@ -194,7 +224,10 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
           "conclusion": "Heard /ˈʃaʁlis/ and called it native; the clip is native.",
@@ -213,7 +246,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "pt-lookalike-charles-native-1",
         "userInput": {
           "englishIpa": "tʃɑːrlz",
@@ -226,7 +261,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /tʃɑːrlz/ and called it english; the clip is english.",
@@ -245,7 +283,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "pt-lookalike-charles-english-1",
         "userInput": {
           "englishIpa": "tʃɑːrlz",
@@ -258,26 +298,31 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "english"
+      },
       "steps": [
         {
-          "conclusion": "Heard /ˈtʃimi/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈtimi/ and called it unclear; the clip is native.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "Heard /ˈtʃimi/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈtimi/ and called it unclear; the clip is native.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "Heard /ˈtʃimi/ and called it native; the clip is native.",
+          "conclusion": "Heard /ˈtimi/ and called it unclear; the clip is native.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 2
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "pt-lookalike-time-native-1",
         "userInput": {
           "englishIpa": "taɪm",
@@ -290,7 +335,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /taɪm/ and called it english; the clip is english.",
@@ -309,7 +357,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "pt-lookalike-time-english-1",
         "userInput": {
           "englishIpa": "taɪm",
@@ -322,26 +372,31 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
-          "conclusion": "Heard /pje/ and called it native; the clip is native.",
+          "conclusion": "Heard /bje (or pje – plain unaspirated bilabial stop + je)/ and called it native; the clip is native.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /pje/ and called it native; the clip is native.",
+          "conclusion": "Heard /bje (or pje – plain unaspirated bilabial stop + je)/ and called it native; the clip is native.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Heard /pje/ and called it native; the clip is native.",
+          "conclusion": "Heard /bje (or pje – plain unaspirated bilabial stop + je)/ and called it native; the clip is native.",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "es-lookalike-pie-native-1",
         "userInput": {
           "englishIpa": "paɪ",
@@ -354,7 +409,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /paɪ/ and called it english; the clip is english.",
@@ -373,7 +431,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "es-lookalike-pie-english-1",
         "userInput": {
           "englishIpa": "paɪ",
@@ -386,7 +446,10 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
           "conclusion": "Heard /pɛ̃/ and called it native; the clip is native.",
@@ -405,7 +468,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "fr-lookalike-pain-native-1",
         "userInput": {
           "englishIpa": "peɪn",
@@ -418,7 +483,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /peɪn/ and called it english; the clip is english.",
@@ -437,7 +505,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "fr-lookalike-pain-english-1",
         "userInput": {
           "englishIpa": "peɪn",
@@ -450,7 +520,10 @@
       }
     },
     {
-      "classification": { "expected": "native", "predicted": "native" },
+      "classification": {
+        "expected": "native",
+        "predicted": "native"
+      },
       "steps": [
         {
           "conclusion": "Heard /ˈpaːne/ and called it native; the clip is native.",
@@ -469,7 +542,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "native" },
+        "expected": {
+          "pronunciation": "native"
+        },
         "id": "it-lookalike-pane-native-1",
         "userInput": {
           "englishIpa": "peɪn",
@@ -482,7 +557,10 @@
       }
     },
     {
-      "classification": { "expected": "english", "predicted": "english" },
+      "classification": {
+        "expected": "english",
+        "predicted": "english"
+      },
       "steps": [
         {
           "conclusion": "Heard /peɪn/ and called it english; the clip is english.",
@@ -501,7 +579,9 @@
         }
       ],
       "testCase": {
-        "expected": { "pronunciation": "english" },
+        "expected": {
+          "pronunciation": "english"
+        },
         "id": "it-lookalike-pane-english-1",
         "userInput": {
           "englishIpa": "peɪn",

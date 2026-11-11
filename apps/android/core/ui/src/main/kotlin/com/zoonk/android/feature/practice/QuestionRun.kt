@@ -41,19 +41,20 @@ sealed interface RunPhase {
     ) : RunPhase
 }
 
-enum class DrillStage { Ideas, Reading, Open }
+enum class DrillStage { Ideas, Open }
 
 data class Graded(
     val isCorrect: Boolean,
     val blank: Boolean,
 )
 
-/** [answers] are this visit's, by step: a mistakes practice can ask one item under two mistakes. */
+/** [answers] are this visit's, by step. */
 data class QuestionRun(
     val index: Int,
     val phase: RunPhase,
     val stage: DrillStage,
     val timedOut: Boolean = false,
+    val saveFailures: Int = 0,
     val answers: Map<Int, Graded> = emptyMap(),
 ) {
     val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
@@ -67,27 +68,19 @@ data class QuestionRun(
         blank: Boolean = feedback.blank,
     ) = copy(
         phase = RunPhase.Checked(answer, feedback),
+        saveFailures = 0,
         answers = answers + (index to Graded(feedback.isCorrect, blank)),
     )
 
-    fun failed(phase: RunPhase) = copy(phase = phase)
+    fun failed(phase: RunPhase) =
+        copy(
+            phase = phase,
+            saveFailures = saveFailures + if (phase == RunPhase.AnswerFailed || phase == RunPhase.FinishFailed) 1 else 0,
+        )
 
     fun timeUp() = copy(timedOut = true)
 
-    /** A content gap's ideas lead to its questions, read first when the drill asks for that. */
-    fun start(questions: List<Question>) =
-        copy(
-            stage =
-                if (questions.getOrNull(index)?.drill?.isReadFirst ==
-                    true
-                ) {
-                    DrillStage.Reading
-                } else {
-                    DrillStage.Open
-                },
-        )
-
-    fun reveal() = copy(stage = DrillStage.Open)
+    fun start() = copy(stage = DrillStage.Open)
 
     fun next(questions: List<Question>): QuestionRun {
         val next = index + 1
@@ -100,7 +93,7 @@ data class QuestionRun(
 
     fun finishing() = copy(phase = RunPhase.Finishing)
 
-    fun finished(completion: StudyBlockCompletion) = copy(phase = RunPhase.Finished(completion))
+    fun finished(completion: StudyBlockCompletion) = copy(phase = RunPhase.Finished(completion), saveFailures = 0)
 
     companion object {
         /** Resumes at the first unanswered question; a fully answered block waits for Finish. */
@@ -118,7 +111,6 @@ data class QuestionRun(
             val first = questions.getOrNull(index - 1)?.mistakeId != questions[index].mistakeId
             return when {
                 first && drill.isIdeaFirst -> DrillStage.Ideas
-                drill.isReadFirst -> DrillStage.Reading
                 else -> DrillStage.Open
             }
         }

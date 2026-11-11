@@ -163,7 +163,6 @@ export type SeedLearner = {
   language: SeedLanguage;
   timeZone: string;
   buddy?: { kind: BuddyKind; name: string; glasses: BuddyGlasses };
-  dailyLimitMinutes?: number;
   goal: SeedGoal;
   skills: { skill: string; memory: MemoryPreset }[];
   attempts: SeedAttempt[];

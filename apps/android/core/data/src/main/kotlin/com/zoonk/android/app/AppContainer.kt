@@ -102,6 +102,8 @@ import com.zoonk.android.feature.player.LiveLessonPlayerApi
 import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.practice.block.LiveQuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
+import com.zoonk.android.feature.profile.LiveProfileQuestionsApi
+import com.zoonk.android.feature.profile.ProfileQuestionsStore
 import com.zoonk.android.feature.pronunciation.LivePronunciationApi
 import com.zoonk.android.feature.pronunciation.PronunciationStore
 import com.zoonk.android.feature.questions.ListeningPlays
@@ -223,6 +225,7 @@ class AppContainer private constructor(
     // Account and Plus (L1).
     val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
+    val profileQuestions = ProfileQuestionsStore(LiveProfileQuestionsApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
     val subscriptions =
         SubscriptionStore(

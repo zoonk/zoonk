@@ -11,6 +11,8 @@ enum class LimitTier { Guest, Free, Plus }
 
 enum class LimitPeriod { Day, Month, Total }
 
+enum class LimitSubject { Help, Lessons, MindMaps, Outlines, Calls }
+
 sealed interface Limit {
     data class SlowDown(
         val retryAfterSeconds: Int,

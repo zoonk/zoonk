@@ -183,6 +183,12 @@ describe("turning lesson screens with a finger", () => {
       renderLessonPlayer({ lesson: buildLesson([pictured(FRONTAL), previewScreen(screen)]) });
       await swipeFrom(page.getByText("It plans what you do next."), { x: -SWIPE_PX });
 
+      await expect
+        .poll(
+          () => control().element().closest('[data-slot="lesson-screen"]')?.getAnimations().length,
+        )
+        .toBe(0);
+
       await swipeFrom(control(), { x: SWIPE_PX });
       await expect.element(text()).toBeVisible();
       await expect.element(heading(FRONTAL.title)).not.toBeInTheDocument();

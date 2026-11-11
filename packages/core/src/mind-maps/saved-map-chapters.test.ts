@@ -1,25 +1,22 @@
 import { createRequire } from "node:module";
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import {
-  studySessionBlockFixture,
-  studySessionFixture,
-} from "@zoonk/testing/fixtures/study-sessions";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { loadLearnerFacts } from "../learner/summary/_utils/load-learner-facts";
 import { courseGoalFixture, signedInCourseGoal } from "../view-models/_test-utils/course-goal";
+import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { getChapterMindMap } from "./get-chapter-mind-map";
-import { hasGoalMindMaps } from "./has-goal-mind-maps";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
 
@@ -55,6 +52,95 @@ async function writeLessons(lessonIds: string[]) {
   });
 }
 
+function noticeSubject(name: string, topic: string, shortName?: string) {
+  return {
+    citation: { passage: "Conteúdo programático", sourceId: "notice" },
+    name,
+    questions: 10,
+    shortName,
+    topics: [topic],
+    weight: null,
+  };
+}
+
+function graphSkill(skill: { id: string; name: string }, area: string) {
+  return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id };
+}
+
+/**
+ * An exam whose plan schedules a later subject first, then a subject's second chapter before its
+ * first: the syllabus numbers a subject's finished chapters first.
+ */
+async function examScheduledOutOfOrder() {
+  const user = await userFixture();
+
+  const [blueprint, spelling, law, cohesion] = await Promise.all([
+    examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: null,
+        rules: [],
+        subjects: [
+          noticeSubject("Língua Portuguesa", "Ortografia", "Português"),
+          noticeSubject("Direito Constitucional", "Princípios"),
+        ],
+      },
+    }),
+    skillFixture({ name: "Aplicar a ortografia" }),
+    skillFixture({ name: "Aplicar os princípios" }),
+    skillFixture({ name: "Analisar a coesão" }),
+  ]);
+
+  const [goal, spellingChapter, lawChapter, cohesionChapter] = await Promise.all([
+    goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id }),
+    libraryChapterFixture({ title: "Grafia" }),
+    libraryChapterFixture({ title: "A Constituição" }),
+    libraryChapterFixture({ title: "Coesão" }),
+  ]);
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ name: "Fundamentos" }],
+      skills: [
+        graphSkill(spelling, "Língua Portuguesa"),
+        graphSkill(law, "Direito Constitucional"),
+        graphSkill(cohesion, "Língua Portuguesa"),
+      ],
+    },
+  });
+
+  const scheduled = [
+    { chapter: lawChapter, skill: law, status: "todo" },
+    { chapter: cohesionChapter, skill: cohesion, status: "todo" },
+    { chapter: spellingChapter, skill: spelling, status: "done" },
+  ] as const;
+
+  await Promise.all(
+    scheduled.map(async ({ chapter, skill, status }, position) => {
+      const lesson = await libraryLessonFixture({ title: chapter.title });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+        planItemFixture({
+          chapterId: chapter.id,
+          planId: plan.id,
+          position,
+          skillId: skill.id,
+          status,
+        }),
+      ]);
+    }),
+  );
+
+  mockSession(user.id);
+  return goal;
+}
+
+function firstLessons(fixture?: { lessons: { id: string }[] }) {
+  return fixture?.lessons.slice(0, 2).map((lesson) => lesson.id) ?? [];
+}
+
 async function readyMindMaps(goalId: string) {
   const result = await listGoalMindMaps({ goalId });
 
@@ -70,75 +156,29 @@ describe("mind maps read from the saved plan", () => {
     Client.prototype.query = originalQuery;
   });
 
-  it("names the chapter the learner is in, with its lessons left, from the saved plan", async () => {
-    const { chapters, goal, items, user } = await signedInCourseGoal({
-      statuses: ["done", "todo", "todo", "todo"],
-    });
-
-    const [first, second] = chapters;
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      chapters: [],
-      nextChapter: { chapterId: first?.id, lessonsLeft: 1, title: "The very small world" },
-    });
-
-    await prisma.planItem.update({ data: { status: "testedOut" }, where: { id: items[1]?.id } });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 2, title: "Inside the atom" },
-    });
-
-    await prisma.planItem.update({ data: { status: "skipped" }, where: { id: items[3]?.id } });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 1 },
-    });
-
-    await prisma.planItem.updateMany({
-      data: { status: "todo" },
-      where: { id: { in: [items[1]?.id ?? "", items[3]?.id ?? ""] } },
-    });
-
-    await prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } });
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-
-    await studySessionBlockFixture({
-      lessonId: items[2]?.lessonId ?? null,
-      payload: { planItemId: items[2]?.id },
-      position: 0,
-      sessionId: session.id,
-      status: "pending",
-    });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
-      nextChapter: { chapterId: second?.id, lessonsLeft: 2 },
-    });
-
-    await prisma.planItem.updateMany({
-      data: { status: "done" },
-      where: { planId: items[0]?.planId },
-    });
-
-    await expect(readyMindMaps(goal.id)).resolves.toMatchObject({ nextChapter: null });
-  });
-
-  it("lists the goals the summary says have mind maps, by the same rule", async () => {
+  it("lists every chapter of the plan that can have a map, finished or not, with its row's status", async () => {
     const user = await userFixture();
     mockSession(user.id);
 
-    const finished = ["done", "testedOut", "todo", "todo"] as const;
+    const statuses = ["done", "testedOut", "todo", "todo"] as const;
 
-    const [written, unwritten, stale, making, language, broken] = await Promise.all(
-      Array.from({ length: 6 }, () =>
-        courseGoalFixture({ statuses: [...finished], userId: user.id }),
+    const [written, stale, making, owed, language, broken, setAside] = await Promise.all(
+      Array.from({ length: 7 }, () =>
+        courseGoalFixture({ statuses: [...statuses], userId: user.id }),
       ),
     );
 
-    await prisma.goal.update({ data: { kind: "language" }, where: { id: language?.goal.id } });
-
     await Promise.all([
-      writeLessons(written?.lessons.slice(0, 2).map((lesson) => lesson.id) ?? []),
-      writeLessons(language?.lessons.slice(0, 2).map((lesson) => lesson.id) ?? []),
+      prisma.goal.update({ data: { kind: "language" }, where: { id: language?.goal.id } }),
+      writeLessons([...firstLessons(written), ...firstLessons(owed), ...firstLessons(language)]),
+      prisma.lesson.updateMany({
+        data: { contentStatus: "failed", setAsideAt: new Date() },
+        where: { id: { in: firstLessons(setAside) } },
+      }),
+      prisma.chapter.update({
+        data: { targetLanguage: "es" },
+        where: { id: setAside?.chapters[1]?.id },
+      }),
       prisma.chapterMindMap.create({
         data: {
           chapterId: stale?.chapters[0]?.id ?? "",
@@ -158,41 +198,85 @@ describe("mind maps read from the saved plan", () => {
           structure: { title: "Half a map" },
         },
       }),
+      prisma.followUp.create({
+        data: {
+          input: { chapterId: owed?.chapters[0]?.id, goalId: owed?.goal.id },
+          key: owed?.chapters[0]?.id ?? "",
+          kind: "makeChapterMindMap",
+          userId: user.id,
+        },
+      }),
     ]);
 
-    const goals = [written, unwritten, stale, making, language, broken].flatMap((fixture) =>
+    const goals = [written, stale, making, owed, language, broken, setAside].flatMap((fixture) =>
       fixture ? [fixture.goal] : [],
     );
 
     const listed = await Promise.all(
       goals.map(async (goal) => {
         const mindMaps = await readyMindMaps(goal.id);
-        return { chapters: mindMaps.chapters.map((chapter) => chapter.status), goalId: goal.id };
+        return mindMaps.chapters.map(({ lessonsToWrite, status }) => [status, lessonsToWrite]);
       }),
     );
 
-    expect(listed.map((goal) => goal.chapters)).toStrictEqual([
-      ["available"],
+    const unwritten = ["available", 2];
+
+    expect(listed).toStrictEqual([
+      [["available", 0], unwritten],
+      [["failed", 2], unwritten],
+      [["writingLessons", 2], unwritten],
+      [["drawing", 0], unwritten],
       [],
-      [],
-      ["generating"],
-      [],
+      [["failed", 2], unwritten],
       [],
     ]);
+  });
 
-    const { mindMapGoalIds } = await loadLearnerFacts(user.id);
+  it("lists chapters as the syllabus numbers them, grouped under their subject pages' names", async () => {
+    const goal = await examScheduledOutOfOrder();
+    const mindMaps = await readyMindMaps(goal.id);
 
-    expect(mindMapGoalIds.toSorted()).toStrictEqual(
-      listed.flatMap((goal) => (goal.chapters.length > 0 ? [goal.goalId] : [])).toSorted(),
+    expect(
+      mindMaps.chapters.map(({ position, subject, title }) => [subject?.name, position, title]),
+    ).toStrictEqual([
+      ["Língua Portuguesa", 1, "Grafia"],
+      ["Língua Portuguesa", 2, "Coesão"],
+      ["Direito Constitucional", 1, "A Constituição"],
+    ]);
+  });
+
+  it("lists a course plan's chapters as the course numbers them, as the chapter page does", async () => {
+    const { chapters, goal, items } = await signedInCourseGoal();
+
+    const moveItems = (toPosition: (index: number) => number) =>
+      Promise.all(
+        items.map((item, index) =>
+          prisma.planItem.update({ data: { position: toPosition(index) }, where: { id: item.id } }),
+        ),
+      );
+
+    await moveItems((index) => 100 + index);
+    await moveItems((index) => (index + 2) % 4);
+
+    const mindMaps = await readyMindMaps(goal.id);
+    const listed = mindMaps.chapters.map(({ chapterId, position }) => [chapterId, position]);
+
+    expect(listed).toStrictEqual(chapters.map((chapter, index) => [chapter.id, index + 1]));
+
+    const pages = await Promise.all(
+      chapters.map((chapter) => getChapterView({ chapterId: chapter.id })),
     );
 
-    await expect(
-      Promise.all(goals.map((goal) => hasGoalMindMaps({ goalId: goal.id }))),
-    ).resolves.toStrictEqual(listed.map((goal) => goal.chapters.length > 0));
+    expect(
+      pages.map((page, index) => [
+        chapters[index]?.id,
+        page.status === "ready" ? page.chapter.chapter.position : null,
+      ]),
+    ).toStrictEqual(listed);
   });
 
   it("keeps a chapter the plan files a lesson under only by the lesson's home", async () => {
-    const { beginner, chapters, goal, plan, user } = await signedInCourseGoal({
+    const { beginner, chapters, goal, plan } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
 
@@ -225,31 +309,23 @@ describe("mind maps read from the saved plan", () => {
 
     const mindMaps = await readyMindMaps(goal.id);
 
-    expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual([beginner.id]);
-
-    await expect(
-      Promise.all(
-        [[beginner.id], chapters.map((chapter) => chapter.id)].map((chapterIds) =>
-          hasGoalMindMaps({ chapterIds, goalId: goal.id }),
-        ),
-      ),
-    ).resolves.toStrictEqual([true, false]);
-
-    await expect(loadLearnerFacts(user.id)).resolves.toMatchObject({ mindMapGoalIds: [goal.id] });
+    expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual([
+      ...chapters.map((chapter) => chapter.id),
+      beginner.id,
+    ]);
 
     await expect(
       requestChapterMindMap({ chapterId: beginner.id, goalId: goal.id }),
-    ).resolves.toMatchObject({ status: "start" });
+    ).resolves.toMatchObject({ lessonIds: [], status: "start" });
   });
 
   it.each(["the same skill", "a duplicate merged into it"])(
     "files no chapter under a lesson's home when an earlier chapter teaches %s first",
     async (taught) => {
-      const { beginner, chapters, goal, lessons, plan, skills, user } = await signedInCourseGoal({
+      const { beginner, chapters, goal, lessons, plan, skills } = await signedInCourseGoal({
         statuses: ["done", "done", "todo", "todo"],
       });
 
-      const [first] = chapters;
       const [atom] = skills;
 
       const [lesson, duplicate] = await Promise.all([
@@ -288,9 +364,9 @@ describe("mind maps read from the saved plan", () => {
 
       const mindMaps = await readyMindMaps(goal.id);
 
-      expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual([first?.id]);
-
-      await expect(loadLearnerFacts(user.id)).resolves.toMatchObject({ mindMapGoalIds: [goal.id] });
+      expect(mindMaps.chapters.map((chapter) => chapter.chapterId)).toStrictEqual(
+        chapters.map((chapter) => chapter.id),
+      );
     },
   );
 

@@ -143,7 +143,7 @@ class QuestionBlockViewModelTest {
             assertEquals(
                 """{"selectedIndex":1}""",
                 ApiJson.encodeToString(
-                    com.zoonk.api.models.StudyAnswerInputAnswer
+                    com.zoonk.api.models.QuestionAnswer
                         .serializer(),
                     sent.single().answer,
                 ),
@@ -259,7 +259,7 @@ class QuestionBlockViewModelTest {
             assertEquals(
                 """{"dontKnow":true}""",
                 ApiJson.encodeToString(
-                    com.zoonk.api.models.StudyAnswerInputAnswer
+                    com.zoonk.api.models.QuestionAnswer
                         .serializer(),
                     sent.single().answer,
                 ),
@@ -299,7 +299,7 @@ class QuestionBlockViewModelTest {
             assertEquals(
                 """{"dontKnow":true}""",
                 ApiJson.encodeToString(
-                    com.zoonk.api.models.StudyAnswerInputAnswer
+                    com.zoonk.api.models.QuestionAnswer
                         .serializer(),
                     sent.last().answer,
                 ),

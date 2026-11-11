@@ -6,6 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { analytics } from "../_test-utils/test-boundaries";
+import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
+import { finishMistakePractice } from "../mistakes/finish-mistake-practice";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
@@ -22,13 +24,13 @@ import { startStudyBlock } from "./start-study-block";
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
   const [firstSkill] = fixture.skills;
 
   const mistake = await mistakeFixture({
     createdAt: daysAgo(1),
-    itemId: fixture.items[0]?.id,
-    skillId: firstSkill?.id,
+    itemId: fixture.items[3]?.id,
+    skillId: fixture.skills[1]?.id,
     userId: user.id,
   });
 
@@ -99,16 +101,29 @@ async function playLesson({
   });
 }
 
-async function playPractice({ blockId, sessionId }: { blockId: string; sessionId: string }) {
-  await startStudyBlock({ blockId, input: {}, sessionId });
-  const answers = await answerBlockInOrder({ blockId, sessionId });
-
-  expect(answers[0]).toMatchObject({ feedback: { mistakeFixed: true }, status: "ready" });
-
-  await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
-    completion: { fullMeal: { paid: false }, sessionCompleted: true },
-    status: "ready",
+async function playNotebook({ mistakeId, itemId }: { mistakeId: string; itemId: string }) {
+  const answer = await answerMistakePractice({
+    input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId, timeZone: "UTC" },
+    mistakeId,
   });
+
+  if (answer.status !== "ready") {
+    throw new Error("The original must be answered");
+  }
+
+  expect(answer.feedback.fixed).toBe(true);
+
+  const finished = await finishMistakePractice({
+    answerIds: [answer.feedback.answerId],
+    ended: true,
+    timeZone: "UTC",
+  });
+
+  if (finished.status !== "ready") {
+    throw new Error("Notebook practice must count");
+  }
+
+  return finished.result.brainPower;
 }
 
 describe("study session blocks", () => {
@@ -124,13 +139,9 @@ describe("study session blocks", () => {
   it("pays a short day's review and lesson missions once, then finishes its mistake practice", async () => {
     const flush = runDeferredWork();
     const { lessons, mistake, session, user } = await setup();
-    const [review, learn, practice] = session.blocks.map((block) => block.id);
+    const [review, learn] = session.blocks.map((block) => block.id);
 
-    expect(session.blocks.map((block) => block.kind)).toStrictEqual([
-      "review",
-      "learn",
-      "practice",
-    ]);
+    expect(session.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn"]);
 
     await playReview({ blockId: review ?? "", sessionId: session.id });
 
@@ -150,7 +161,10 @@ describe("study session blocks", () => {
       userId: user.id,
     });
 
-    await playPractice({ blockId: practice ?? "", sessionId: session.id });
+    const notebookPower = await playNotebook({
+      itemId: mistake.itemId ?? "",
+      mistakeId: mistake.id,
+    });
 
     const [stored, fixed, events, progress] = await Promise.all([
       prisma.studySession.findUniqueOrThrow({
@@ -177,7 +191,7 @@ describe("study session blocks", () => {
     expect(blocksPower).toBeGreaterThan(LESSON_POWER);
 
     expect(Number(progress.totalBrainPower)).toBe(
-      blocksPower - LESSON_POWER + BRAIN_POWER_BONUS.fullMeal,
+      blocksPower - LESSON_POWER + BRAIN_POWER_BONUS.fullMeal + notebookPower,
     );
   });
 

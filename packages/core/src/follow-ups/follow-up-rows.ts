@@ -1,6 +1,8 @@
 import "server-only";
 import { type FollowUp as FollowUpRow, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { type OwedFollowUp, followUpSchema } from "./follow-up-contract";
 
 const BATCH = 50;
@@ -21,11 +23,14 @@ async function readRow(row: FollowUpRow): Promise<OwedFollowUp | null> {
 }
 
 /** Internal, for the follow-ups workflow: the learner's owed work, oldest first. Reads only. */
-export async function listFollowUps(userId: string): Promise<OwedFollowUp[]> {
+export async function listFollowUps(
+  userId: string,
+  started: readonly Pick<OwedFollowUp, "id" | "revision">[] = [],
+): Promise<OwedFollowUp[]> {
   const rows = await prisma.followUp.findMany({
     orderBy: { requestedAt: "asc" },
     take: BATCH,
-    where: { userId },
+    where: { ...(started.length > 0 ? { NOT: [...started] } : {}), failedAt: null, userId },
   });
 
   const read = await Promise.all(rows.map((row) => readRow(row)));
@@ -40,11 +45,16 @@ export async function endFollowUp({
   id: string;
   revision: number;
 }): Promise<void> {
-  await prisma.followUp.deleteMany({ where: { id, revision } });
-}
+  const ended = await prisma.$queryRaw<{ rebuilt: boolean; userId: string }[]>`
+    DELETE FROM follow_ups WHERE id = ${id}::uuid AND revision = ${revision}
+    RETURNING user_id AS "userId", kind = 'rebuild_goal_curriculum'::"FollowUpKind" AS rebuilt
+  `;
 
-export function countFollowUps(userId: string): Promise<number> {
-  return prisma.followUp.count({ where: { userId } });
+  for (const row of ended) {
+    if (row.rebuilt) {
+      revalidateCacheTags([getGoalsCacheTag(row.userId), getLearnerModelCacheTag(row.userId)]);
+    }
+  }
 }
 
 /** Learners whose owed work no run has taken for a while, such as after a start that failed. */
@@ -53,7 +63,7 @@ export async function listLearnersWithOldFollowUps(): Promise<string[]> {
     by: ["userId"],
     orderBy: { userId: "asc" },
     take: SWEPT_LEARNERS,
-    where: { requestedAt: { lt: new Date(Date.now() - OLD_AFTER_MS) } },
+    where: { failedAt: null, requestedAt: { lt: new Date(Date.now() - OLD_AFTER_MS) } },
   });
 
   return rows.map((row) => row.userId);

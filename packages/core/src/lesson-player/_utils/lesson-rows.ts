@@ -106,8 +106,20 @@ export async function findOpenedVersion({
 }
 
 /** Includes replaced screens for already-open runs; recording still requires an open run of a published lesson. */
-export async function findPlayableStepRow({ stepId, userId }: { stepId: string; userId: string }) {
-  const row = await prisma.step.findFirst({
+export async function findPlayableStepRows({
+  stepIds,
+  userId,
+  learnerVersions = true,
+}: {
+  stepIds: readonly string[];
+  userId: string;
+  learnerVersions?: boolean;
+}) {
+  if (stepIds.length === 0) {
+    return [];
+  }
+
+  const rows = await prisma.step.findMany({
     include: {
       ...playableStepInclude,
       lesson: {
@@ -116,6 +128,7 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
           language: true,
           level: true,
           planItems: ownExplanationItems(userId),
+          sentenceOrdersAttempts: true,
           skills: {
             orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
             select: { skillId: true },
@@ -124,15 +137,31 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
         },
       },
     },
-    where: { id: stepId, lesson: libraryRowsVisibleTo(userId) },
+    where: { id: { in: [...stepIds] }, lesson: libraryRowsVisibleTo(userId) },
   });
 
-  if (!row) {
-    return null;
+  if (!learnerVersions) {
+    return rows;
   }
 
-  const [seen] = await withLearnerVersionRows({ lessonId: row.lessonId, rows: [row], userId });
-  return seen ?? row;
+  const lessonIds = [...new Set(rows.map((row) => row.lessonId))];
+
+  const groups = await Promise.all(
+    lessonIds.map((lessonId) =>
+      withLearnerVersionRows({
+        lessonId,
+        rows: rows.filter((row) => row.lessonId === lessonId),
+        userId,
+      }),
+    ),
+  );
+
+  return groups.flat();
+}
+
+export async function findPlayableStepRow({ stepId, userId }: { stepId: string; userId: string }) {
+  const [row] = await findPlayableStepRows({ stepIds: [stepId], userId });
+  return row ?? null;
 }
 
 /** Untagged screens train the lesson's first skill, so misses remain schedulable in the notebook. */

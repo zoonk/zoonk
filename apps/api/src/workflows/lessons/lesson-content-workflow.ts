@@ -9,7 +9,11 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimRunToken } from "../_shared/run-token";
+import { claimRunToken, startOnce } from "../_shared/run-token";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
@@ -40,7 +44,6 @@ export type LessonContentInput = {
   planManifest?: PlanGenerationManifest | null;
   analytics?: ContentAnalytics;
   forExam?: boolean;
-  forceReview?: boolean;
   wait?: CallWait;
 };
 
@@ -259,18 +262,35 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  if (outcome.imageScope) {
-    const { analytics, wait } = input;
-    await markAndDraw({ analytics, imageScope: outcome.imageScope, lessonId, wait });
+  try {
+    if (outcome.imageScope) {
+      await markAndDraw({
+        analytics: input.analytics,
+        imageScope: outcome.imageScope,
+        lessonId,
+        wait: input.wait,
+      });
+    }
+
+    const completed = await completeLessonContentStep({ lessonId, workflowRunId });
+    const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
+
+    if (outcome.owesSentenceOrders) {
+      await startOnce(
+        sentenceOrdersWorkflow,
+        [{ analytics: input.analytics, lessonId, wait: "soon" }],
+        getSentenceOrdersToken(lessonId),
+      );
+    }
+
+    if (outcome.check && (outcome.check.review || outcome.check.cite)) {
+      const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
+      await start(lessonCheckWorkflow, [{ ...check, plan: outcome.check }]);
+    }
+
+    return ready;
+  } catch (error) {
+    await failLessonContentStep({ lessonId, workflowRunId });
+    throw error;
   }
-
-  const completed = await completeLessonContentStep({ lessonId, workflowRunId });
-  const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
-
-  if (outcome.check && (outcome.check.review || outcome.check.cite)) {
-    const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
-    await start(lessonCheckWorkflow, [{ ...check, plan: outcome.check }]);
-  }
-
-  return ready;
 }

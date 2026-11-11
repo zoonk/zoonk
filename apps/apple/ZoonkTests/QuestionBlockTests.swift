@@ -70,9 +70,9 @@ final class QuestionBlockStateTests: XCTestCase {
 
     XCTAssertEqual(DrillStage.opening(drill: ideas, isFirstOfDrill: true), .idea)
     XCTAssertEqual(DrillStage.opening(drill: ideas, isFirstOfDrill: false), .open)
-    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: false), .reading)
+    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: true), .open)
+    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: false), .open)
     XCTAssertEqual(DrillStage.opening(drill: gapWithoutIdeas, isFirstOfDrill: true), .open)
-    XCTAssertEqual(DrillStage.afterIdea(drill: misread), .reading)
   }
 }
 
@@ -139,8 +139,10 @@ final class QuestionBlockRunTests: XCTestCase {
 
     seconds = 30
     await run.submit(.choice(0))
+    XCTAssertEqual(run.state.saveFailures, 1)
     seconds = 90
     await run.submit(.choice(0))
+    XCTAssertEqual(run.state.saveFailures, 2)
     seconds = 100
     await run.submit(.choice(1))
 
@@ -275,7 +277,7 @@ final class PracticeModelTests: XCTestCase {
   }
 
   func testAnswersReachTheGeneratedInputs() throws {
-    let input: Components.Schemas.StudyAnswerInput.AnswerPayload = try PracticeJSON.recode(
+    let input: Components.Schemas.QuestionAnswer = try PracticeJSON.recode(
       PracticeAnswer.number(2.5))
     XCTAssertEqual(input.value3?.number, 2.5)
 
@@ -389,7 +391,7 @@ private actor FakeQuestionBlockClient: QuestionBlockClient {
 
 private let completionJSON = #"""
   {"blockId":"block","brainPower":10,"capsulesOpened":0,"ceremony":null,"certificates":[],"checkpoint":null,"comesBackOn":null,
-   "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
+   "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
    "netScore":null,"nextBlockId":null,"reached":{"energy":null,"level":null},"sessionBar":{"completed":1,"total":3},
    "reminderOffer":null,"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":1,"total":1}
   """#

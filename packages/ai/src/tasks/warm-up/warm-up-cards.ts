@@ -27,8 +27,6 @@ type RawOption = RawWarmUpCard["options"][number];
 /** A deck shows the first 8 cards the checker keeps, and none when fewer than 2 are left. */
 export const WARM_UP_DECK_SIZE = { max: 8, min: 2 } as const;
 
-/** Well past the spec (about 110 characters, 6 words, 220), so only text that can't fit goes. */
-const MAX_LENGTH = { option: 60, question: 160, reveal: 280 } as const;
 const MIN_OPTIONS = 2;
 const MAX_OPTIONS = 3;
 const OPTION_IDS = ["a", "b", "c"] as const;
@@ -96,11 +94,9 @@ function isPlayable(card: RawWarmUpCard): boolean {
     card.options.length >= MIN_OPTIONS &&
     card.options.length <= MAX_OPTIONS &&
     card.options.filter((option) => option.correct).length === 1 &&
-    card.question.length <= MAX_LENGTH.question &&
-    card.reveal.length <= MAX_LENGTH.reveal &&
     isWritten(card.question) &&
     isWritten(card.reveal) &&
-    card.options.every((option) => option.text.length <= MAX_LENGTH.option && isAnswer(option.text))
+    card.options.every((option) => isAnswer(option.text))
   );
 }
 

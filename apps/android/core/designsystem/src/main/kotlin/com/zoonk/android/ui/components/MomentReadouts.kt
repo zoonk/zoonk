@@ -20,6 +20,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -55,8 +56,8 @@ fun MomentReadouts(
                 if (earned) BrainPowerReadout(brainPower)
             }
         }
-        facts.forEach { fact ->
-            Text(fact, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (facts.isNotEmpty()) {
+            Text(facts.factsLine(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

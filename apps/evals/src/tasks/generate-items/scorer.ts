@@ -23,11 +23,12 @@ function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeChec
   const { items } = JSON.parse(output) as { items: GeneratedItem[] };
 
   if (items.length === 0) {
-    return { judgedOutput: output, passed: 1, problems: [], total: 1 };
+    return { judgedOutput: output, keyFlawLocators: [], passed: 1, problems: [], total: 1 };
   }
 
   const checked = items.map((item, index) => ({
     item,
+    itemLocator: `items[${index}]`,
     problems: [
       ...checkItem({
         expectedFormat: input.format,
@@ -44,7 +45,12 @@ function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeChec
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    judgedOutput: JSON.stringify({ items: passing.map((entry) => entry.item) }, null, 2),
+    judgedOutput: JSON.stringify(
+      { items: passing.map(({ item, itemLocator }) => ({ ...item, itemLocator })) },
+      null,
+      2,
+    ),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length,
     problems: checked.flatMap((entry) => entry.problems),
     total: items.length,

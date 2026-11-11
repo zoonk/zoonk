@@ -1,4 +1,4 @@
-import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { type ProfileQuestion } from "@zoonk/db/enums";
 import { z } from "zod";
 import {
   type ExamChoiceView,
@@ -8,24 +8,25 @@ import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { reasonAnswerSchema } from "../../language/aims/language-aim-schemas";
+import {
+  type LanguageAimView,
+  type OnboardingLanguageAim,
+} from "../../language/aims/language-aims";
+import { type GoalWarmUp } from "../../library/warm-ups/warm-up-contract";
 import { type NoSitting } from "../../plans/plan-view-contract";
-import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type PlanReadiness } from "../../plans/time-advice-contract";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
+import { profileOnboardingAnswerSchemas } from "../../profile/questions/profile-onboarding-contract";
+import { type ProfileQuestionsView } from "../../profile/questions/profile-question-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
+import { scheduleAnswerSchema, timeZoneSchema } from "./schedule-answer-schema";
 
 const MAX_KNOWN_SUBJECTS = 40;
 const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
-
-const timeZoneSchema = z
-  .string()
-  .refine(isValidTimeZone, { message: "Invalid timezone" })
-  .optional()
-  .meta({ description: "The learner's IANA timezone, for relative dates; UTC when left out" });
 
 export const goalUnderstandingInputSchema = z
   .object({
@@ -79,6 +80,7 @@ export type UnderstoodGoalView = {
   draft: GoalDraft;
   /** Empty until research has stored notice dates. */
   examDates: OnboardingExamDate[];
+  languageAim: LanguageAimView | null;
 };
 
 export type UnderstoodSchedule = {
@@ -97,8 +99,6 @@ export type GoalUnderstandingView =
 
 export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed"] as const;
 
-type OnboardingDraftStatus = (typeof ONBOARDING_DRAFT_STATUSES)[number];
-
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
   /** Goals past this many on the card are Plus's: shown locked and left out of the goals created. Null on Plus. */
@@ -108,7 +108,7 @@ export type OnboardingDraftView = {
   goalId: string | null;
   id: string;
   prompt: string;
-  status: OnboardingDraftStatus;
+  status: (typeof ONBOARDING_DRAFT_STATUSES)[number];
   /** Counts the learner's today, which a `targetDate` fix must come after. */
   timeZone: string;
   understanding: GoalUnderstandingView | null;
@@ -138,7 +138,7 @@ export const onboardingDraftEditSchema = z
   .discriminatedUnion("field", [
     z
       .object({
-        field: z.literal("title"),
+        field: z.enum(["title", "displayName"]),
         goal: draftGoalSchema,
         value: goalDraftSchema.shape.title,
       })
@@ -182,7 +182,6 @@ export type OnboardingResumeView =
   | { goalId: string; kind: "goal"; title: string }
   | { kind: "today" };
 
-/** The onboarding questions, in the order they're asked. Each one is a screen. */
 export const ONBOARDING_QUESTIONS = [
   "purpose",
   "role",
@@ -198,7 +197,7 @@ export const ONBOARDING_QUESTIONS = [
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
 /** Buddy choice follows goal questions because it belongs to the learner profile. */
-export type OnboardingStep = OnboardingQuestion | "buddy" | "placement" | "plan";
+export type OnboardingStep = OnboardingQuestion | ProfileQuestion | "buddy" | "placement" | "plan";
 
 export type OnboardingLibraryCourse = {
   brandSlug: string;
@@ -213,9 +212,18 @@ export type OnboardingDateProblem =
   | { kind: "passed" | "today" }
   | ({ kind: "noSitting" } & NoSitting);
 
-type OnboardingTimeChoice = { minutes: number; split: DaySplit | null };
+/**
+ * A learn goal's first lesson, picked before the plan: the learner can start it once it's `ready`,
+ * and it's `done` once they finished it, which outranks a `ready` the run's stream reports.
+ */
+export type OnboardingFirstLesson = {
+  id: string;
+  status: "done" | "ready" | "stopped" | "writing";
+  title: string;
+};
 
 export type OnboardingView = {
+  profile: ProfileQuestionsView;
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
   dateProblem: OnboardingDateProblem | null;
   /** Studies only selected options; empty when the exam offers no choices. `subject` is the saved pick or the option the learner's stated position or answers name, which is taken without asking. */
@@ -224,64 +232,42 @@ export type OnboardingView = {
   examDays: { days: string[]; estimated: boolean } | null;
   /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
+  /** Null until it's picked, and for goals whose first lesson comes from the plan. */
+  firstLesson: OnboardingFirstLesson | null;
   followUps: string[];
   /** Follow via GET /v1/generations/{id}/events; null until the run starts. */
   generationId: string | null;
   goal: GoalView;
   /** Goals created in the same onboarding, which share the day's time. */
   goalIds: string[];
+  languageAim: OnboardingLanguageAim | null;
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
   /** As the time answers say it, so the time question opens on its wait while the plan can't answer. */
   planReadiness: PlanReadiness;
+  /** The learner pressed the reveal's action. Until then resume brings the reveal back, and a reveal an action opened plays its moment. */
+  planRevealed: boolean;
   /** How long the level question's quick test takes: a language goal's is its level test. */
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
+  startsOnRecommended: boolean;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
   /** The daily times the time question offers, `recommendedMinutes` among them. */
-  timeChoices: OnboardingTimeChoice[];
+  timeChoices: { minutes: number; split: DaySplit | null }[];
+  /**
+   * The goal's deck for its waits: `writing` once a run claimed it, so a wait opens on the quiz with
+   * its card still coming, and `ready` once its cards can be read. Null when none is coming (a
+   * private goal, a failed deck), so a wait opens on its progress.
+   */
+  warmUp: GoalWarmUp | null;
 };
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH).nullable();
 
 /** Generated iOS clients omit nil fields, so omission must equal an explicit null skipped answer. */
 const skippableAnswer = nullableAnswer.default(null);
-
-const scheduleAnswerSchema = z
-  .object({
-    dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES),
-    fullCourse: z
-      .boolean()
-      .optional()
-      .meta({
-        description:
-          "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
-      }),
-    question: z.literal("schedule"),
-    studyDays: z
-      .array(
-        z
-          .int()
-          .min(0)
-          .max(DAYS_PER_WEEK - 1),
-      )
-      .min(1)
-      .max(DAYS_PER_WEEK)
-      .optional(),
-    timeZone: timeZoneSchema,
-    weekendMinutes: z
-      .int()
-      .min(MIN_DAILY_MINUTES)
-      .max(MAX_DAILY_MINUTES)
-      .optional()
-      .meta({
-        description:
-          "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
-      }),
-  })
-  .strict();
 
 /** Null skips skippable questions; placement marks completion after finishing, stopping, or opting out. */
 export const onboardingAnswerInputSchema = z
@@ -299,7 +285,7 @@ export const onboardingAnswerInputSchema = z
           .meta({ description: "For work, what they use the subject for in their job" }),
       })
       .strict(),
-    z.object({ question: z.literal("reason"), reason: skippableAnswer }).strict(),
+    reasonAnswerSchema,
     z.object({ question: z.literal("target"), target: skippableAnswer }).strict(),
     z
       .object({
@@ -353,6 +339,19 @@ export const onboardingAnswerInputSchema = z
       .object({
         buddy: learningProfileUpdateSchema.shape.buddy.unwrap(),
         question: z.literal("buddy"),
+      })
+      .strict(),
+    ...profileOnboardingAnswerSchemas,
+    z
+      .object({
+        forever: z
+          .boolean()
+          .default(false)
+          .meta({
+            description:
+              "Declines every unanswered profile question permanently instead of skipping this onboarding",
+          }),
+        question: z.literal("skipProfile"),
       })
       .strict(),
   ])

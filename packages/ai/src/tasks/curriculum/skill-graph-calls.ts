@@ -17,13 +17,17 @@ import { type ExamOutline, formatExamOutline } from "./exam-outline";
 import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-system-prompt";
 
 /**
- * Terra scored a little above Sol on the skill-graph eval at half the cost (30 Oct 2026); Flash
- * missed whole areas on huge goals, so it's only the last fallback.
+ * On 37 cases (8 Nov 2026), Terra scored 8.73 (EN 8.94, PT 8.69) at $56.40/1k against Luna's 8.49
+ * at $6.06/1k, and 8.70 to 8.30 on the ten huge goals, keeping foundations Luna dropped. Haiku 5.5
+ * scored 8.46 on a 15-case sample.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+export const skillGraphModel = "openai/gpt-6.1-terra";
+export const skillGraphFallbackModels = [
+  "openai/gpt-6-luna",
+  "anthropic/claude-haiku-5.5",
+] as const;
 
-const courseSchema = z.object({
+export const courseSchema = z.object({
   key: z.string(),
   levels: z.array(z.enum(COURSE_LEVELS)),
   title: z.string(),
@@ -31,7 +35,7 @@ const courseSchema = z.object({
 
 const phaseSchema = z.object({ milestone: z.string(), title: z.string() });
 
-const skillSchema = z.object({
+export const skillSchema = z.object({
   area: z.string(),
   course: z.string(),
   description: z.string(),
@@ -100,6 +104,14 @@ export type SkillGraphParams = {
   lessonBudget?: number | null;
   /** The branded product the goal is about, and the exact title of the course that teaches it. */
   product?: { brand: string; courseTitle: string; name: string } | null;
+  /** A learn goal's first skill, already written and shared: the graph starts with it as given. */
+  firstSkill?: {
+    course: { key: string; title: string };
+    description: string;
+    key: string;
+    level: (typeof COURSE_LEVELS)[number];
+    name: string;
+  } | null;
   librarySkills?: boolean;
   model?: string;
   serviceTier?: ServiceTier;
@@ -202,8 +214,19 @@ function formatGoalInputs(params: SkillGraphParams): string {
 }
 
 function buildUserPrompt({ params, part }: { params: SkillGraphParams; part: GraphPart }): string {
+  const { firstSkill } = params;
+
   const learnerInput = formatUntrustedInput({
     CONTEXT: params.context?.trim() || "none",
+    ...(firstSkill && {
+      FIRST_SKILL: JSON.stringify({
+        course: firstSkill.course,
+        description: firstSkill.description,
+        key: firstSkill.key,
+        level: firstSkill.level,
+        name: firstSkill.name,
+      }),
+    }),
     GOAL: params.goal,
   });
 
@@ -216,6 +239,11 @@ function buildUserPrompt({ params, part }: { params: SkillGraphParams; part: Gra
   return `\n${parts.join("\n\n")}\n  `;
 }
 
+/** What a call that writes part of a learn goal's path reads about the goal, as the graph reads it. */
+export function formatGoalPrompt(params: SkillGraphParams): string {
+  return buildUserPrompt({ params, part: { kind: "whole" } });
+}
+
 async function writePart<TOutput>({
   params,
   part,
@@ -225,10 +253,16 @@ async function writePart<TOutput>({
   part: GraphPart;
   partSchema: z.ZodType<TOutput>;
 }) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const { analytics, model = skillGraphModel, reasoning, serviceTier, useFallback = true } = params;
   const systemPrompt = buildSkillGraphSystemPrompt(params);
   const userPrompt = buildUserPrompt({ params, part });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels: skillGraphFallbackModels,
+    model,
+    serviceTier,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

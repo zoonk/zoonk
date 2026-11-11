@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct MemoryView: View {
+  /// A fact the learner gave in About you is changed there, on its question.
+  let editProfile: (ProfileQuestion) -> Void
+
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
   @State private var statement = ""
@@ -65,7 +68,7 @@ struct MemoryView: View {
           if !facts.isEmpty {
             Section {
               ForEach(facts) { fact in
-                MemoryFactRow(fact: fact, edit: { startEditing(fact) }) {
+                MemoryFactRow(fact: fact, edit: { edit(fact) }) {
                   Task {
                     await settings.deleteMemoryFact(id: fact.id)
                   }
@@ -157,9 +160,13 @@ struct MemoryView: View {
       })
   }
 
-  private func startEditing(_ fact: MemoryFact) {
-    statement = fact.statement
-    editing = fact
+  private func edit(_ fact: MemoryFact) {
+    if let question = fact.profileQuestion {
+      editProfile(question)
+    } else {
+      statement = fact.statement
+      editing = fact
+    }
   }
 
   private func enabledBinding(_ enabled: Bool) -> Binding<Bool> {
@@ -174,7 +181,7 @@ struct MemoryView: View {
 }
 
 /// Core's `MAX_MEMORY_STATEMENT_LENGTH`.
-private let memoryStatementLimit = 160
+private let memoryStatementLimit = 300
 
 private struct MemoryFactRow: View {
   let fact: MemoryFact

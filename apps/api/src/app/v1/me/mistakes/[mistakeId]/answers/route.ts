@@ -17,6 +17,18 @@ async function createMistakePracticeAnswer(
 
   const result = await answerMistakePractice({ input: body, mistakeId: path.mistakeId });
 
+  if (result.status === "retryable") {
+    return NextResponse.json(
+      {
+        error: {
+          code: "ANSWER_PENDING",
+          message: "This answer is still being checked. Retry with the same attemptId.",
+        },
+      },
+      { status: 409 },
+    );
+  }
+
   if (result.status !== "ready") {
     return learnerAccessError(result.status);
   }

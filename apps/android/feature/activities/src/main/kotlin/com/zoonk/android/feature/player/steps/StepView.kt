@@ -108,6 +108,7 @@ fun StepView(
     navigator: AppNavigator,
     language: LessonLanguage,
     part: StepPart,
+    writingOptions: Boolean = true,
 ) {
     val answer = state.answers[step.id]
     val result = state.results[step.id]
@@ -124,7 +125,7 @@ fun StepView(
             is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part, marking)
             is StepContent.Summary -> if (part.showsScreen) SummaryView(content)
             is StepContent.Map -> if (part.showsScreen) LessonMapStepView(content)
-            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part, marking)
+            is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part, marking, writingOptions)
             is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language, part)
             is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, part)
             is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions, part)

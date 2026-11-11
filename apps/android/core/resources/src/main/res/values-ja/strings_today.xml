@@ -8,12 +8,11 @@
   "today_behind_kept": "5456742f3206a68d5de42548d2655466501588a517f033e7700b9aaa6cbd621f",
   "today_building_plan": "ebae8c5d179224b9370e5bd685c841fad8ac237f48ddf4efc6e1d91d5be50d09",
   "today_building_plan_detail": "49a68768a9476e4d2be56395401e2897499fe607429e7e6f55fb09568de5ad6a",
-  "today_building_plan_goal": "8a9d096061c0f1ef9feb5af44e0806e9c3ea54f0ec37859dba58cee53b1cb02e",
+  "today_building_plan_goal": "dc537ba7f66a78281d93d491e7b299e71b052b4a5ba5970dbfa771f3982cc5f6",
   "today_catch_up_before_exam": "adac3a0252a48693dde42f103ea617902bb260736a60e4fb4496a313c55c7b28",
   "today_catch_up_next_days": "ef3b81498839128f4cd0c5df86d2cd5b108f0c613520e64ab5040a7a2cf987b1",
   "today_catch_up_today": "8bd1c2f34c55390bbb78055c8b64ef52242ef84d88d2de33af207cd4e44d4584",
   "today_catch_up_tomorrow": "686c04c74f7dcd0af413e61ce970cf3102a519a074b4b6a74cbdfb3b8927d692",
-  "today_change_limit": "7139b540d806ba19dafd6d9dafb3069cee600bda523bfdf57d0632012eb3e0c4",
   "today_choose_focus": "346f626b63346f88a076784268640e03602e382c89e03c0b8d9024ee4bb319dc",
   "today_coming_not_written": "cd08fb5b7df0779d5f1f7b59758c636dc3272b991d13c1ffe782ed95cbeae0df",
   "today_coming_stalled": "f65f75e6d3c18918907b81c2f178c2d0c8f3ba0ba9f28577f4dbc0edb1613fcb",
@@ -43,7 +42,7 @@
   "today_exam_tomorrow": "763ac646fdf33fd61c23524b39e9ca594b28afb0f2c2dec08b824fe9b3b40434",
   "today_finished": "cb7275e17d87c09941d5107db7a77ed23bb621b8934f582a8f2d323fd22a222a",
   "today_finished_detail": "946022eb10475ca9e5ee6df1a2dc2d64b1edf31277ac056d858673c6ab956a91",
-  "today_finished_goal": "f5bbd29c7d2a3a5cf45c9ab5ab26677a7965b613a3a8461833d3f6a9a48f4ddb",
+  "today_finished_goal": "44b37ccd0984c6b38671bff3300c85010c2933320686fa7003748fd07e525d12",
   "today_fresh_start_new_phase": "ed131c3993218cae4dd5b35906c3f701148b41d4e9e27b5654258f587136e4eb",
   "today_fresh_start_new_week": "1225e68cb4bfa9abd4fc9508cc76e6e162708b999c5c5e32fc206b7fc0b6b2ee",
   "today_fresh_start_welcome_back": "e2bf2c1e3ba9fbc1ff3f5bf64063ea5257fa6cdb7b01b4df7c1317641811799b",
@@ -61,8 +60,6 @@
   "today_keep_learning_failed": "bdecc1baf7528db9512e94a8b7389e9c60bc9b26b78c1978ce6d370700d97bf6",
   "today_keep_my_time": "1d5c8e2603463202b7715305ea6c4e56cd46064b2173accbc44f8a8c00b07464",
   "today_lessons_not_written": "daefe1d6cc44ac093dbd7e1dd371028c3ae18db38edd5bbb0f7270d2b276c09b",
-  "today_limit_reached": "c0149a69a2e96a8599560d22a2b118b6c04b098e06ab561903158ca913aeeb66",
-  "today_limit_stops": "8025405c524c670a0fc8d66bfb1aa5b3a4dc650f544fcc385ecc97610eb220b8",
   "today_mistakes_notebook": "ac592af7b759c937bf273984b5bcbaed0246737a29dd1d0b0bbb976a282b8d66",
   "today_mistakes_ready": "923a1ee420dd7b6bed3f6f4886b53b1d7bb9ac6d624416ab70f37caab61fc2da",
   "today_mistakes_redo": "b6a21002af111edd2c3a5ad0202d9ad044d0d558b743a0443f4d1eefc44f3120",
@@ -102,7 +99,7 @@
   "today_past_date_exam": "91b63dbec84968ad215f1a47e65f362f69024572795ab99cece8b99863713125",
   "today_paused": "13b53948fcc32e45afca132500372a67b3ab528612593502c762f8546891ecf8",
   "today_paused_detail": "5e344c8ce8357d5bc7d0117159d7b3c17affc7ae3b76c739b187ff8091690b47",
-  "today_paused_goal": "420e9c70eda8bb48bfef658674313a4384d09147f67664e7c07950c47e8bc8d9",
+  "today_paused_goal": "d9cac2008e79b544b0f08cefe3a5b60ce035e5a08fdf41629fe8c84439a8b693",
   "today_paused_this_goal": "7dfdc30cbe422a38a7911e2d6f424dacad7694de38161ee59b0963ba01d6f3c2",
   "today_plan_apply": "82f17067028febb95061d3a5b4c366fe59972137cbeda565b61852986b0435d9",
   "today_plan_keep_mine": "74ee40b43517f32a55a5bae428e3bbf50dd9c835b448a957f050b334162f1f0a",
@@ -133,19 +130,15 @@
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
   "today_see_plan": "6799ba80460d5c54a6ccf987d49efde0a732f781e70f21f667ff429cf7a33902",
   "today_see_summary": "00f4d50d9702dc15e08d746fc8ce04bb441f451e806a9a1ffe1587dac1ed2d58",
-  "today_see_you_day": "6f7ed76fae5352d78df4ef755a1ec0bc043233f69518f03210823085ce60932f",
-  "today_see_you_next_session": "9ab5aad2e119dfddb6018619bba1feedda403621415395845ade5acab7858b34",
-  "today_see_you_tomorrow": "35004ac9371acbbced50064a3f9896c76df3a820d7ca87169cca22a9b9fad70e",
   "today_see_your_plan": "3446780f55c43c9d5f708ed8eee6a8790594f2e8919072bc8abdac153794db78",
   "today_setting_up": "25d7da831242f7d24011cda9ff2b82f3fa14c84ef31d7f0c8ac0663821c14a46",
   "today_setting_up_detail": "8cc36d3d9728537302367156f72c1dd15b64b64b151d7c346c3eb550370dca95",
-  "today_setting_up_goal": "2eff45dc7c88995ace2ed2ed455a4ef1e6db298a8c8352054f719189c978604b",
+  "today_setting_up_goal": "1127d43c56bfea713bc9ac317c49576158097837aaf4e2ef29934d08c43bfa1f",
+  "today_show_less": "a5804450d77e3ed4030c8a3527e9edaffff04e8bfa756b050665d163f41eeb29",
   "today_start_new_goal": "b26f64ff48475547ae6d93df71e71b4b32706ab8d3686a12fa3eb80a65f24a2c",
   "today_start_session": "bb9d44deecb041ffe82ab51c4a3a77826c7a637ece601b4830c6fd77e2f0327e",
-  "today_step_after_challenge": "ad538f80e9693cd68761fe486b5e2a5bba0e695b32305345b91423312daa20e4",
-  "today_step_after_challenge_phase": "edd31869ccc2de249b8464f5d1d98942666bb24f7bde873f99cf97c43d7a8cce",
-  "today_step_after_lessons": "a2e4fe721a0c30b35a13f121c8860e76a25962a61438bcb4915a3d5e25960709",
-  "today_step_after_lessons_phase": "a835145f3a173245c83eed414bfacd865c1ad95366aa3324715cd937e9a68cb4",
+  "today_step_after_lessons": "074f43f999a882de5c0048156ecd53d3a966a67c2f0732a42b68a37e4649f750",
+  "today_step_after_lessons_phase": "866b0c29adaf0a733b89e6cadbcbc63cc701d140e07f31aa177e03a53c888e0a",
   "today_step_being_written": "387c0dcf245865f83ea08fc1358c68f98ac3e99bfc819d1a156d67b3b782a769",
   "today_step_catching_up": "cac5ad7ac6174387f0dc476459ae343a2c4fd55f6f5b7ca022788dbfd7f9ddb7",
   "today_step_catching_up_subject": "6a185636e5e8da6e843c228a4863a36fbd13d1b60ba3297016231c9d3d301ff1",
@@ -248,6 +241,8 @@
     <plurals name="today_more_count">
         <item quantity="other">+%d件</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">折りたたむ</string>
     <string name="today_step_done">完了</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">次のステップ</string>
@@ -260,11 +255,9 @@
     <string name="today_step_catching_up_subject">遅れを取り戻す · %1$s</string>
     <string name="today_step_often_tested">よく出題される</string>
     <string name="today_step_often_tested_label">%1$s · 試験によく出る内容</string>
-    <string name="today_step_after_lessons">今日のレッスンを終えたら</string>
+    <string name="today_step_after_lessons">このフェーズのレッスン終了後</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · 今日のレッスンの後</string>
-    <string name="today_step_after_challenge">前のチャレンジが終わった後</string>
-    <string name="today_step_after_challenge_phase">%1$s · 直前のチャレンジの後</string>
+    <string name="today_step_after_lessons_phase">%1$s・このフェーズのレッスン終了後</string>
     <string name="today_done">今日の学習が終わりました。</string>
     <string name="today_done_day_off">休みの日に学習しました。</string>
     <string name="today_see_summary">今日のまとめを見る</string>
@@ -284,16 +277,6 @@
         <item quantity="other">期日を迎えた時点で、%dレッスンが残っていました。</item>
     </plurals>
     <string name="today_past_date_detail">学習を続けるには、計画を調整してください。</string>
-    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_stops">今日の学習は、1日の学習時間の上限（%1$s）で終了します。</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_reached">1日の学習時間の上限（%1$s）に達しました。</string>
-    <!-- A link to the setting for the daily time limit. -->
-    <string name="today_change_limit">上限を変更する</string>
-    <string name="today_see_you_next_session">また次の学習でお会いしましょう！</string>
-    <string name="today_see_you_tomorrow">また明日お会いしましょう！</string>
-    <!-- %1$s is a weekday, such as "Monday". -->
-    <string name="today_see_you_day">また%1$sに!</string>
     <string name="today_nothing_to_review">今日は復習する内容がありません。</string>
     <string name="today_nothing_new">今日は新しいレッスンはありません。</string>
     <string name="today_nothing_new_detail">学習計画の内容はすべて、学び終えたか、もともと知っていたものです。</string>
@@ -316,12 +299,12 @@
     <string name="today_not_now">今はしない</string>
     <string name="today_save_failed">保存できませんでした。もう一度お試しください。</string>
     <string name="today_finished">完了</string>
-    <!-- %1$s is the goal's title. -->
-    <string name="today_finished_goal">「%1$s」を完了しました。</string>
+    <!-- %1$s is the goal's short name, like "CGU" or "Italian". -->
+    <string name="today_finished_goal">目標「%1$s」を達成しました。</string>
     <string name="today_finished_detail">新しい目標を始めるか、上でほかの目標を選んでください。</string>
     <string name="today_start_new_goal">新しい目標を始める</string>
     <string name="today_paused">一時停止中</string>
-    <string name="today_paused_goal">「%1$s」は一時停止中です。</string>
+    <string name="today_paused_goal">目標「%1$s」は一時停止中です。</string>
     <string name="today_paused_this_goal">この目標は一時停止中です。</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">目標を再開するまで、学習の予定はありません。</string>
@@ -330,11 +313,11 @@
     <string name="today_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
     <string name="today_resume_goal_limit">無料プランで進められる目標は一度に1つです。この目標を再開するには、ほかの目標を一時停止するか、複数の目標を進められるPlusに登録してください。</string>
     <string name="today_setting_up">準備しています</string>
-    <string name="today_setting_up_goal">「%1$s」の学習計画を作成するには、あといくつか回答が必要です。</string>
+    <string name="today_setting_up_goal">「%1$s」の学習計画は、あと数問に答えると完成します。</string>
     <string name="today_setting_up_detail">回答をもとに学習計画を作成します。</string>
     <string name="today_continue_setting_up">設定を続ける</string>
     <string name="today_building_plan">学習計画を作成しています</string>
-    <string name="today_building_plan_goal">%1$sに向けた学習計画を作成しています</string>
+    <string name="today_building_plan_goal">%1$sの学習計画を作成しています</string>
     <string name="today_building_plan_detail">通常1〜2分かかります。準備ができ次第、ここに初日の学習が表示されます。</string>
     <string name="today_quick_explanation">クイック解説</string>
     <string name="today_continue_explanation">解説を続ける</string>

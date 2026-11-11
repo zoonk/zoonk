@@ -8,7 +8,6 @@
 
 ## Glossary
 
-- “daily time limit” (the learner's setting): “limite de temps quotidienne”
 - “plan” (study plan): “plan”, not “programme” or “parcours”; subscription plan: “formule”
 - “Free” (subscription): “gratuite”
 - “session” (study): “séance”; sign-in session: “session”
@@ -67,7 +66,6 @@
 - “Past date”: “Date passée”, not “Clos” or “Expiré”
 - “Needs adjusting”: “À ajuster”
 - “Too tight”: “Trop serré”
-- “Even across skills”: “Équilibré entre les compétences”
 - “left out”: “laissé de côté”, not “passé” or “sauté”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “sauter” / “sauté”, never “passer” or “passé”
 - “Daily time”: “Durée quotidienne”, not “Temps par jour”

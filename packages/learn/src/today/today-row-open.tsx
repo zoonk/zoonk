@@ -42,6 +42,23 @@ export function RowOpen({
     });
   };
 
+  const href = actions.lessonHref(block);
+
+  if (href) {
+    return (
+      <LearnLink
+        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+        className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
+        data-slot="today-row-open"
+        href={href}
+        lessonWritten
+        prefetch={isNext}
+      >
+        {children}
+      </LearnLink>
+    );
+  }
+
   return (
     <>
       <button
@@ -80,6 +97,7 @@ export function LessonAgainLink({
       className={cn(ROW_OPEN_CLASS, "after:-inset-x-2.5")}
       href={actions.lessonAgainHref(lessonId)}
       lessonWritten
+      prefetch={false}
     >
       {children}
     </LearnLink>

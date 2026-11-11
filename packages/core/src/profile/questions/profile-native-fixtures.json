@@ -1,0 +1,1035 @@
+{
+  "fixtures": [
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "job": "software engineer",
+          "status": "work"
+        },
+        "question": "work"
+      },
+      "view": {
+        "id": "work",
+        "options": [
+          {
+            "description": null,
+            "id": "work",
+            "label": "I work"
+          },
+          {
+            "description": null,
+            "id": "student",
+            "label": "I’m a student"
+          },
+          {
+            "description": null,
+            "id": "workAndStudy",
+            "label": "I work and study"
+          },
+          {
+            "description": null,
+            "id": "neither",
+            "label": "Neither right now"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "work"
+          ],
+          "studies": [],
+          "text": "software engineer"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "job": null,
+          "status": "student"
+        },
+        "question": "work"
+      },
+      "view": {
+        "id": "work",
+        "options": [
+          {
+            "description": null,
+            "id": "work",
+            "label": "I work"
+          },
+          {
+            "description": null,
+            "id": "student",
+            "label": "I’m a student"
+          },
+          {
+            "description": null,
+            "id": "workAndStudy",
+            "label": "I work and study"
+          },
+          {
+            "description": null,
+            "id": "neither",
+            "label": "Neither right now"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "student"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": true,
+          "job": null,
+          "status": null
+        },
+        "question": "work"
+      },
+      "view": {
+        "id": "work",
+        "options": [
+          {
+            "description": null,
+            "id": "work",
+            "label": "I work"
+          },
+          {
+            "description": null,
+            "id": "student",
+            "label": "I’m a student"
+          },
+          {
+            "description": null,
+            "id": "workAndStudy",
+            "label": "I work and study"
+          },
+          {
+            "description": null,
+            "id": "neither",
+            "label": "Neither right now"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": ""
+        },
+        "status": "declined",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "Python",
+          "picks": [
+            "figma",
+            "vsCode"
+          ]
+        },
+        "question": "tools"
+      },
+      "view": {
+        "id": "tools",
+        "options": [
+          {
+            "description": null,
+            "id": "excel",
+            "label": "Excel"
+          },
+          {
+            "description": null,
+            "id": "googleSheets",
+            "label": "Google Sheets"
+          },
+          {
+            "description": null,
+            "id": "word",
+            "label": "Word"
+          },
+          {
+            "description": null,
+            "id": "powerPoint",
+            "label": "PowerPoint"
+          },
+          {
+            "description": null,
+            "id": "canva",
+            "label": "Canva"
+          },
+          {
+            "description": null,
+            "id": "figma",
+            "label": "Figma"
+          },
+          {
+            "description": null,
+            "id": "notion",
+            "label": "Notion"
+          },
+          {
+            "description": null,
+            "id": "vsCode",
+            "label": "VS Code"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "figma",
+            "vsCode"
+          ],
+          "studies": [],
+          "text": "Python"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "studies": [
+            {
+              "field": "business",
+              "subject": null
+            },
+            {
+              "field": "media",
+              "subject": "journalism"
+            },
+            {
+              "field": "other",
+              "subject": "astronomy"
+            }
+          ]
+        },
+        "question": "studies"
+      },
+      "view": {
+        "id": "studies",
+        "options": [
+          {
+            "description": null,
+            "id": "computing",
+            "label": "Computing"
+          },
+          {
+            "description": null,
+            "id": "business",
+            "label": "Business"
+          },
+          {
+            "description": null,
+            "id": "health",
+            "label": "Health"
+          },
+          {
+            "description": null,
+            "id": "engineering",
+            "label": "Engineering"
+          },
+          {
+            "description": null,
+            "id": "media",
+            "label": "Media & journalism"
+          },
+          {
+            "description": null,
+            "id": "humanities",
+            "label": "Arts & humanities"
+          },
+          {
+            "description": null,
+            "id": "socialSciences",
+            "label": "Social sciences"
+          },
+          {
+            "description": null,
+            "id": "naturalSciences",
+            "label": "Natural sciences"
+          },
+          {
+            "description": null,
+            "id": "education",
+            "label": "Education"
+          },
+          {
+            "description": null,
+            "id": "law",
+            "label": "Law"
+          },
+          {
+            "description": null,
+            "id": "other",
+            "label": "Another field"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [
+            {
+              "field": "business",
+              "subject": null
+            },
+            {
+              "field": "media",
+              "subject": "journalism"
+            },
+            {
+              "field": "other",
+              "subject": "astronomy"
+            }
+          ],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "Star Trek, Fringe",
+          "picks": [
+            "anime",
+            "sciFi"
+          ]
+        },
+        "question": "watch"
+      },
+      "view": {
+        "id": "watch",
+        "options": [
+          {
+            "description": null,
+            "id": "sports",
+            "label": "Sports"
+          },
+          {
+            "description": null,
+            "id": "sciFi",
+            "label": "Sci-fi & fantasy"
+          },
+          {
+            "description": null,
+            "id": "comedy",
+            "label": "Comedy"
+          },
+          {
+            "description": null,
+            "id": "drama",
+            "label": "Drama"
+          },
+          {
+            "description": null,
+            "id": "anime",
+            "label": "Anime"
+          },
+          {
+            "description": null,
+            "id": "documentaries",
+            "label": "Documentaries"
+          },
+          {
+            "description": null,
+            "id": "crime",
+            "label": "Crime & mystery"
+          },
+          {
+            "description": null,
+            "id": "reality",
+            "label": "Reality shows"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "anime",
+            "sciFi"
+          ],
+          "studies": [],
+          "text": "Star Trek, Fringe"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "",
+          "picks": [
+            "novelas"
+          ]
+        },
+        "question": "watch"
+      },
+      "view": {
+        "id": "watch",
+        "options": [
+          {
+            "description": null,
+            "id": "sports",
+            "label": "Sports"
+          },
+          {
+            "description": null,
+            "id": "sciFi",
+            "label": "Sci-fi & fantasy"
+          },
+          {
+            "description": null,
+            "id": "comedy",
+            "label": "Comedy"
+          },
+          {
+            "description": null,
+            "id": "drama",
+            "label": "Drama"
+          },
+          {
+            "description": null,
+            "id": "anime",
+            "label": "Anime"
+          },
+          {
+            "description": null,
+            "id": "documentaries",
+            "label": "Documentaries"
+          },
+          {
+            "description": null,
+            "id": "crime",
+            "label": "Crime & mystery"
+          },
+          {
+            "description": null,
+            "id": "reality",
+            "label": "Reality shows"
+          },
+          {
+            "description": null,
+            "id": "novelas",
+            "label": "Novelas"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "novelas"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "Radiolab",
+          "picks": []
+        },
+        "question": "listen"
+      },
+      "view": {
+        "id": "listen",
+        "options": [
+          {
+            "description": null,
+            "id": "pop",
+            "label": "Pop"
+          },
+          {
+            "description": null,
+            "id": "rock",
+            "label": "Rock"
+          },
+          {
+            "description": null,
+            "id": "hipHop",
+            "label": "Hip-hop & rap"
+          },
+          {
+            "description": null,
+            "id": "electronic",
+            "label": "Electronic"
+          },
+          {
+            "description": null,
+            "id": "rnb",
+            "label": "R&B & soul"
+          },
+          {
+            "description": null,
+            "id": "classicalJazz",
+            "label": "Classical & jazz"
+          },
+          {
+            "description": null,
+            "id": "podcasts",
+            "label": "Podcasts"
+          },
+          {
+            "description": null,
+            "id": "audiobooks",
+            "label": "Audiobooks"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": "Radiolab"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "",
+          "picks": [
+            "soccer"
+          ]
+        },
+        "question": "play"
+      },
+      "view": {
+        "id": "play",
+        "options": [
+          {
+            "description": null,
+            "id": "soccer",
+            "label": "Soccer"
+          },
+          {
+            "description": null,
+            "id": "basketball",
+            "label": "Basketball"
+          },
+          {
+            "description": null,
+            "id": "volleyball",
+            "label": "Volleyball"
+          },
+          {
+            "description": null,
+            "id": "tennis",
+            "label": "Tennis"
+          },
+          {
+            "description": null,
+            "id": "videoGames",
+            "label": "Video games"
+          },
+          {
+            "description": null,
+            "id": "boardGames",
+            "label": "Board & card games"
+          },
+          {
+            "description": null,
+            "id": "chess",
+            "label": "Chess"
+          },
+          {
+            "description": null,
+            "id": "mobileGames",
+            "label": "Mobile games"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "soccer"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": true,
+          "favorites": "",
+          "picks": []
+        },
+        "question": "read"
+      },
+      "view": {
+        "id": "read",
+        "options": [
+          {
+            "description": null,
+            "id": "newsPolitics",
+            "label": "News & politics"
+          },
+          {
+            "description": null,
+            "id": "fiction",
+            "label": "Fiction"
+          },
+          {
+            "description": null,
+            "id": "science",
+            "label": "Science"
+          },
+          {
+            "description": null,
+            "id": "history",
+            "label": "History"
+          },
+          {
+            "description": null,
+            "id": "business",
+            "label": "Business & money"
+          },
+          {
+            "description": null,
+            "id": "tech",
+            "label": "Tech"
+          },
+          {
+            "description": null,
+            "id": "comics",
+            "label": "Comics & manga"
+          },
+          {
+            "description": null,
+            "id": "selfImprovement",
+            "label": "Self-improvement"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": ""
+        },
+        "status": "declined",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "favorites": "baking bread",
+          "picks": [
+            "cook",
+            "travel"
+          ]
+        },
+        "question": "activities"
+      },
+      "view": {
+        "id": "activities",
+        "options": [
+          {
+            "description": null,
+            "id": "cook",
+            "label": "Cook"
+          },
+          {
+            "description": null,
+            "id": "workOut",
+            "label": "Work out"
+          },
+          {
+            "description": null,
+            "id": "outdoors",
+            "label": "Outdoors & hiking"
+          },
+          {
+            "description": null,
+            "id": "travel",
+            "label": "Travel"
+          },
+          {
+            "description": null,
+            "id": "drawPaint",
+            "label": "Draw & paint"
+          },
+          {
+            "description": null,
+            "id": "playMusic",
+            "label": "Play music"
+          },
+          {
+            "description": null,
+            "id": "fixBuild",
+            "label": "Fix & build things"
+          },
+          {
+            "description": null,
+            "id": "pets",
+            "label": "Care for pets"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "cook",
+            "travel"
+          ],
+          "studies": [],
+          "text": "baking bread"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "conditions": [
+            {
+              "condition": "adhd",
+              "note": null
+            },
+            {
+              "condition": "other",
+              "note": "migraines"
+            }
+          ],
+          "consented": true,
+          "declined": false
+        },
+        "question": "conditions"
+      },
+      "view": {
+        "id": "conditions",
+        "options": [
+          {
+            "description": null,
+            "id": "adhd",
+            "label": "ADHD"
+          },
+          {
+            "description": null,
+            "id": "autism",
+            "label": "Autism"
+          },
+          {
+            "description": null,
+            "id": "dyslexia",
+            "label": "Dyslexia"
+          },
+          {
+            "description": "Your buddy explains calculations in small steps.",
+            "id": "dyscalculia",
+            "label": "Dyscalculia"
+          },
+          {
+            "description": "Your buddy explains in words, without pointing to things on the screen.",
+            "id": "blindOrLowVision",
+            "label": "Blind or low vision"
+          },
+          {
+            "description": "Right and wrong answers show a word, not only a color.",
+            "id": "colorBlind",
+            "label": "Color blindness"
+          },
+          {
+            "description": "Calls let you type, and your buddy can leave listening out of a language plan.",
+            "id": "deafOrHardOfHearing",
+            "label": "Deaf or hard of hearing"
+          },
+          {
+            "description": "Lesson speaking screens have “I can’t talk now”, and calls let you type.",
+            "id": "speech",
+            "label": "Stutter or other speech difference"
+          },
+          {
+            "description": null,
+            "id": "motor",
+            "label": "Limited movement or dexterity"
+          },
+          {
+            "description": null,
+            "id": "anxiety",
+            "label": "Anxiety"
+          },
+          {
+            "description": "Tell us in your own words.",
+            "id": "other",
+            "label": "Something else"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "adhd",
+            "other"
+          ],
+          "studies": [],
+          "text": "migraines"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "conditions": [],
+          "consented": false,
+          "declined": true
+        },
+        "question": "conditions"
+      },
+      "view": {
+        "id": "conditions",
+        "options": [
+          {
+            "description": null,
+            "id": "adhd",
+            "label": "ADHD"
+          },
+          {
+            "description": null,
+            "id": "autism",
+            "label": "Autism"
+          },
+          {
+            "description": null,
+            "id": "dyslexia",
+            "label": "Dyslexia"
+          },
+          {
+            "description": "Your buddy explains calculations in small steps.",
+            "id": "dyscalculia",
+            "label": "Dyscalculia"
+          },
+          {
+            "description": "Your buddy explains in words, without pointing to things on the screen.",
+            "id": "blindOrLowVision",
+            "label": "Blind or low vision"
+          },
+          {
+            "description": "Right and wrong answers show a word, not only a color.",
+            "id": "colorBlind",
+            "label": "Color blindness"
+          },
+          {
+            "description": "Calls let you type, and your buddy can leave listening out of a language plan.",
+            "id": "deafOrHardOfHearing",
+            "label": "Deaf or hard of hearing"
+          },
+          {
+            "description": "Lesson speaking screens have “I can’t talk now”, and calls let you type.",
+            "id": "speech",
+            "label": "Stutter or other speech difference"
+          },
+          {
+            "description": null,
+            "id": "motor",
+            "label": "Limited movement or dexterity"
+          },
+          {
+            "description": null,
+            "id": "anxiety",
+            "label": "Anxiety"
+          },
+          {
+            "description": "Tell us in your own words.",
+            "id": "other",
+            "label": "Something else"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": ""
+        },
+        "status": "declined",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "needs": [
+            "shorterDays",
+            "stepByStep"
+          ],
+          "note": "I understand diagrams better than text",
+          "soundEffects": false
+        },
+        "question": "learningSupport"
+      },
+      "view": {
+        "id": "learningSupport",
+        "options": [
+          {
+            "description": "Your buddy breaks explanations into small steps.",
+            "id": "stepByStep",
+            "label": "Step by step"
+          },
+          {
+            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "id": "plainWords",
+            "label": "Plain, literal words"
+          },
+          {
+            "description": "Your buddy keeps answers short, one idea at a time.",
+            "id": "shortAnswers",
+            "label": "Short answers"
+          },
+          {
+            "description": "Your buddy shows a worked example before the rule.",
+            "id": "examplesFirst",
+            "label": "Examples first"
+          },
+          {
+            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "id": "shorterDays",
+            "label": "Shorter study days"
+          },
+          {
+            "description": "Turns off sounds for right answers and finishing.",
+            "id": "noSoundEffects",
+            "label": "No sound effects"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "shorterDays",
+            "stepByStep",
+            "noSoundEffects"
+          ],
+          "studies": [],
+          "text": "I understand diagrams better than text"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": true,
+          "needs": [],
+          "note": null,
+          "soundEffects": true
+        },
+        "question": "learningSupport"
+      },
+      "view": {
+        "id": "learningSupport",
+        "options": [
+          {
+            "description": "Your buddy breaks explanations into small steps.",
+            "id": "stepByStep",
+            "label": "Step by step"
+          },
+          {
+            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "id": "plainWords",
+            "label": "Plain, literal words"
+          },
+          {
+            "description": "Your buddy keeps answers short, one idea at a time.",
+            "id": "shortAnswers",
+            "label": "Short answers"
+          },
+          {
+            "description": "Your buddy shows a worked example before the rule.",
+            "id": "examplesFirst",
+            "label": "Examples first"
+          },
+          {
+            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "id": "shorterDays",
+            "label": "Shorter study days"
+          },
+          {
+            "description": "Turns off sounds for right answers and finishing.",
+            "id": "noSoundEffects",
+            "label": "No sound effects"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": ""
+        },
+        "status": "declined",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "needs": [],
+          "note": "Use diagrams for me",
+          "soundEffects": false
+        },
+        "question": "learningSupport"
+      },
+      "view": {
+        "id": "learningSupport",
+        "options": [
+          {
+            "description": "Your buddy breaks explanations into small steps.",
+            "id": "stepByStep",
+            "label": "Step by step"
+          },
+          {
+            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "id": "plainWords",
+            "label": "Plain, literal words"
+          },
+          {
+            "description": "Your buddy keeps answers short, one idea at a time.",
+            "id": "shortAnswers",
+            "label": "Short answers"
+          },
+          {
+            "description": "Your buddy shows a worked example before the rule.",
+            "id": "examplesFirst",
+            "label": "Examples first"
+          },
+          {
+            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "id": "shorterDays",
+            "label": "Shorter study days"
+          },
+          {
+            "description": "Turns off sounds for right answers and finishing.",
+            "id": "noSoundEffects",
+            "label": "No sound effects"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "noSoundEffects"
+          ],
+          "studies": [],
+          "text": "Use diagrams for me"
+        },
+        "status": "declined",
+        "version": 1
+      }
+    }
+  ]
+}

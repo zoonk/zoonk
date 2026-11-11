@@ -1,4 +1,3 @@
-import { checkpointRefSchema } from "@zoonk/core/sessions/day-block";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
@@ -13,18 +12,6 @@ export const checkpointEndedWithoutQuestionsSchema = z
   .boolean()
   .optional()
   .meta({ description: "Ended without a verdict because no remaining question could be asked" });
-
-const checkpointDetails = {
-  passMark: z.int().min(0).meta({ description: "Right answers needed to win" }),
-  timeLimitMinutes: z.int().min(0).nullable(),
-};
-
-export const studyCheckpointSchema = z
-  .discriminatedUnion("mock", [
-    checkpointRefSchema.options[0].extend(checkpointDetails),
-    checkpointRefSchema.options[1].extend(checkpointDetails),
-  ])
-  .meta({ id: "StudyCheckpoint" });
 
 export const checkpointPhaseSchema = z
   .object({ index: z.number().int().min(0), name: z.string() })

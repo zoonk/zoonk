@@ -20,15 +20,7 @@ import {
 
 export type SubmitEssayResult =
   | { grade: EssayGradeView; status: "graded" }
-  | {
-      status:
-        | "blockNotActive"
-        | "dailyLimitReached"
-        | "limitReached"
-        | "notFound"
-        | "signUpRequired"
-        | "unauthorized";
-    };
+  | { status: "blockNotActive" | "limitReached" | "notFound" | "signUpRequired" | "unauthorized" };
 
 function replaySaved(saved: Pick<Attempt, "answer">): SubmitEssayResult {
   const grade = essayAnswerSchema.safeParse(saved.answer).data?.grade;
@@ -77,10 +69,6 @@ export async function submitEssay({
     block.status === "pending"
       ? await startStudyBlock({ blockId, input: { timeZone: input.timeZone }, sessionId })
       : null;
-
-  if (started?.status === "dailyLimitReached") {
-    return { status: "dailyLimitReached" };
-  }
 
   if (block.status !== "active" && started?.status !== "ready") {
     return { status: "blockNotActive" };

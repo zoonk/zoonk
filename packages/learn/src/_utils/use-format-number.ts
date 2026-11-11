@@ -6,7 +6,12 @@ import {
   getNumberFormatter,
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
-import { currencyFor, formatMoney, moneyFractionDigits, withUnit } from "@zoonk/utils/math-answer";
+import {
+  formatMoney,
+  moneyFractionDigits,
+  splitMoneyUnit,
+  withUnit,
+} from "@zoonk/utils/math-answer";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "./locale";
 
@@ -18,19 +23,6 @@ type FormatOptions = {
   signed?: boolean;
   unit?: string;
 };
-
-function splitMoneyUnit(unit?: string): { currency: string; rest: string } | null {
-  const whole = currencyFor(unit);
-
-  if (whole || !unit) {
-    return whole ? { currency: whole, rest: "" } : null;
-  }
-
-  const [head, ...rest] = unit.split(" ");
-  const currency = currencyFor(head);
-
-  return currency && rest.length > 0 ? { currency, rest: rest.join(" ") } : null;
-}
 
 export function displayDigits(value: number, unit?: string): number {
   return splitMoneyUnit(unit) ? moneyFractionDigits(value) : fractionDigitsFor(value);

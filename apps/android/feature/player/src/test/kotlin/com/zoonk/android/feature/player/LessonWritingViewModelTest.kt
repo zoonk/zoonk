@@ -45,7 +45,6 @@ class LessonWritingViewModelTest {
     private val session = FakeSession(ana)
     private val api = FakeLessonPlayerApi(LessonLoad.NotGenerated(LessonOutline(LESSON_ID, "Clouds", "Why they float.", 5)))
     private val events = mutableListOf<GenerationEvent>()
-    private val waits = mutableListOf<Pair<AuthenticatedSession, Long>>()
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -64,11 +63,10 @@ class LessonWritingViewModelTest {
         return LessonWritingViewModel(
             LESSON_ID,
             LessonPlayerStore(api, cache),
-            { session, milliseconds -> waits += session to milliseconds },
             { generations },
             cache,
             session,
-        ) { testScheduler.currentTime }
+        )
     }
 
     @Test
@@ -85,7 +83,7 @@ class LessonWritingViewModelTest {
         }
 
     @Test
-    fun theTapWritesItFollowsItsRunAndRecordsTheWaitOnceWhenReady() =
+    fun theTapWritesItAndFollowsItsRun() =
         runTest(dispatcher) {
             api.readinessStates += "notStarted"
             events +=
@@ -104,11 +102,6 @@ class LessonWritingViewModelTest {
             assertEquals(1, api.writes)
             assertEquals(LessonWriting.Writing, writing.writing.value)
             assertEquals(GenerationRun.Status.Ready, writing.run.value.status)
-
-            writing.recordWait()
-            writing.recordWait()
-            advanceUntilIdle()
-            assertEquals(1, waits.size)
         }
 
     @Test

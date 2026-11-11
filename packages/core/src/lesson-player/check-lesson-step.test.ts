@@ -56,6 +56,28 @@ function check({
   });
 }
 
+async function setupSentenceOrderRun() {
+  const [user, { lesson, sentence, steps }] = await Promise.all([
+    userFixture(),
+    languageLessonFixture({
+      sentenceText: "Yesterday the bus arrived.",
+      sentenceTranslation: "Ontem o ônibus chegou.",
+    }),
+  ]);
+
+  await prisma.lessonSentence.update({
+    data: {
+      otherSentenceOrders: ["The bus arrived yesterday."],
+      otherTranslationOrders: ["O ônibus chegou ontem."],
+    },
+    where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+  });
+
+  const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+  mockSession(user.id);
+  return { run, steps, user };
+}
+
 async function whileLearnerLocked<T>({
   userId,
   waiters,
@@ -1135,6 +1157,77 @@ describe(checkLessonStep, () => {
     });
   });
 
+  it.each([
+    {
+      arrangedWords: ["The", "bus", "arrived", "yesterday."],
+      correctAnswer: "Yesterday the bus arrived.",
+    },
+    { arrangedWords: ["yesterday,", "THE", "BUS", "ARRIVED!"], correctAnswer: null },
+  ])("grades stored reading orders: $arrangedWords", async ({ arrangedWords, correctAnswer }) => {
+    const { run, steps, user } = await setupSentenceOrderRun();
+    const stepId = stepOfKind(steps, "reading").id;
+
+    const outcome = await check({
+      answer: { arrangedWords, kind: "reading" },
+      runId: run.id,
+      stepId,
+    });
+
+    expect(outcome).toMatchObject({
+      result: { correctAnswer, isCorrect: true, savedMistake: false },
+      status: "checked",
+    });
+
+    await expect(prisma.mistake.count({ where: { stepId, userId: user.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { stepId, userId: user.id } }),
+    ).resolves.toMatchObject({ isCorrect: true });
+
+    await expect(
+      prisma.languageSkillLevel.findMany({
+        select: { windowCorrect: true, windowTotal: true },
+        where: { userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ windowCorrect: 1, windowTotal: 1 }]);
+  });
+
+  it("rejects an unlisted reading permutation even when other orders are stored", async () => {
+    const { run, steps } = await setupSentenceOrderRun();
+
+    const outcome = await check({
+      answer: { arrangedWords: ["Yesterday", "the", "arrived", "bus."], kind: "reading" },
+      runId: run.id,
+      stepId: stepOfKind(steps, "reading").id,
+    });
+
+    expect(outcome).toMatchObject({
+      result: { correctAnswer: "Yesterday the bus arrived.", isCorrect: false },
+      status: "checked",
+    });
+  });
+
+  it.each(["listening", "spokenAnswer"])(
+    "accepts a stored translation order on %s",
+    async (kind) => {
+      const { run, steps, user } = await setupSentenceOrderRun();
+      const stepId = stepOfKind(steps, kind).id;
+
+      const outcome = await check({
+        answer: { arrangedWords: ["O", "ônibus", "chegou", "ontem."], kind: "listening" },
+        runId: run.id,
+        stepId,
+      });
+
+      expect(outcome).toMatchObject({
+        result: { correctAnswer: "Ontem o ônibus chegou.", isCorrect: true, savedMistake: false },
+        status: "checked",
+      });
+
+      await expect(prisma.mistake.count({ where: { stepId, userId: user.id } })).resolves.toBe(0);
+    },
+  );
+
   it("grades a spoken screen played as listening, and saves a miss as a listening mistake", async () => {
     const [user, { lesson, steps }] = await Promise.all([userFixture(), languageLessonFixture()]);
     const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
@@ -1163,6 +1256,24 @@ describe(checkLessonStep, () => {
     await expect(
       prisma.mistake.findFirstOrThrow({ where: { stepId, userId: user.id } }),
     ).resolves.toMatchObject({ snapshot: { answer: "o Quanto é aluguel?", format: "listening" } });
+  });
+
+  it("counts a spoken screen answered by typing as writing, not speaking", async () => {
+    const [user, { lesson, steps }] = await Promise.all([userFixture(), languageLessonFixture()]);
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      check({
+        answer: { kind: "spokenAnswer", text: "Quanto é o aluguel?" },
+        runId: run.id,
+        stepId: stepOfKind(steps, "spokenAnswer").id,
+      }),
+    ).resolves.toMatchObject({ status: "checked" });
+
+    await expect(
+      prisma.languageSkillLevel.findMany({ select: { skill: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ skill: "writing" }]);
   });
 
   it.each([

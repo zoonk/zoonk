@@ -14,6 +14,11 @@ vi.mock("@zoonk/ai/tasks/items/statute-drills", async (importOriginal) => ({
   generateStatuteDrills: vi.fn(),
 }));
 
+vi.mock("@zoonk/ai/tasks/items/solve", async (importOriginal) => {
+  const { solveLikeTheKeys } = await import("../_test-utils/solved-items");
+  return { ...(await importOriginal<object>()), solveItems: vi.fn(solveLikeTheKeys) };
+});
+
 const DAY_MS = 86_400_000;
 
 const DRILLS = {

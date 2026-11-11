@@ -1,20 +1,24 @@
 enum FollowUpKind {
-  prepareSession        @map("prepare_session")
-  prepareGoalLessons    @map("prepare_goal_lessons")
-  writeLesson           @map("write_lesson")
-  classifyMistakeCause  @map("classify_mistake_cause")
-  findMistakePattern    @map("find_mistake_pattern")
-  rememberOnboarding    @map("remember_onboarding")
-  rememberSession       @map("remember_session")
-  checkDailyInsight     @map("check_daily_insight")
-  checkFactSensitivity  @map("check_fact_sensitivity")
-  voiceWord             @map("voice_word")
-  writeSpeakingPaper    @map("write_speaking_paper")
-  reviewAlphabetLesson  @map("review_alphabet_lesson")
-  checkUploadVisibility @map("check_upload_visibility")
+  refreshStudyDay            @map("refresh_study_day")
+  prepareSession             @map("prepare_session")
+  prepareGoalLessons         @map("prepare_goal_lessons")
+  preparePlacementItems      @map("prepare_placement_items")
+  rebuildGoalCurriculum      @map("rebuild_goal_curriculum")
+  writeLesson                @map("write_lesson")
+  classifyMistakeCause       @map("classify_mistake_cause")
+  findMistakePattern         @map("find_mistake_pattern")
+  rememberOnboarding         @map("remember_onboarding")
+  rememberSession            @map("remember_session")
+  checkDailyInsight          @map("check_daily_insight")
+  checkFactSensitivity       @map("check_fact_sensitivity")
+  voiceWord                  @map("voice_word")
+  writeSpeakingPaper         @map("write_speaking_paper")
+  reviewAlphabetLesson       @map("review_alphabet_lesson")
+  checkUploadVisibility      @map("check_upload_visibility")
   endWebPlusBesideStore      @map("end_web_plus_beside_store")
   askToCancelSecondStorePlus @map("ask_to_cancel_second_store_plus")
   settleSessionDay           @map("settle_session_day")
+  makeChapterMindMap         @map("make_chapter_mind_map")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,
@@ -28,6 +32,8 @@ model FollowUp {
   input       Json
   revision    Int          @default(0)
   requestedAt DateTime     @default(now()) @map("requested_at")
+  /// A terminal failure waits for a new ask; dispatch and sweeps skip it.
+  failedAt    DateTime?    @map("failed_at")
 
   @@unique([userId, kind, key], name: "userKindKey")
   @@index([requestedAt])

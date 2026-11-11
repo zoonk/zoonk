@@ -562,7 +562,7 @@ private fun PausedSuggestion(
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
 ) {
-    val title = stringResource(R.string.plan_goal_paused, page.goal.title)
+    val title = stringResource(R.string.plan_goal_paused, page.goal.displayName)
     val resumeAction =
         @Composable {
             SuggestionAction(

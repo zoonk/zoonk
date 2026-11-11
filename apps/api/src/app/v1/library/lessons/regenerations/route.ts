@@ -33,11 +33,7 @@ async function createLessonRegeneration(request: NextRequest) {
 
   await Promise.all(
     result.lessonIds.map((lessonId) =>
-      startOnce(
-        lessonContentWorkflow,
-        [{ forceReview: true, lessonId }],
-        getLessonContentHookToken(lessonId),
-      ),
+      startOnce(lessonContentWorkflow, [{ lessonId }], getLessonContentHookToken(lessonId)),
     ),
   );
 

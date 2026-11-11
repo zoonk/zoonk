@@ -84,3 +84,37 @@ describe("a goal's details", () => {
     expect(goalUpdateInputSchema.safeParse({ details: oversized }).success).toBe(false);
   });
 });
+
+describe("display name edits", () => {
+  it("trims names and refuses blank input without aliasing the internal title", () => {
+    expect(goalUpdateInputSchema.parse({ displayName: "  Algebra  " })).toStrictEqual({
+      displayName: "Algebra",
+    });
+
+    expect(goalUpdateInputSchema.safeParse({ displayName: "   " }).success).toBe(false);
+
+    expect(
+      goalDraftSchema.parse({
+        displayName: "Astronomy ".repeat(30).trim(),
+        kind: "learn",
+        language: "en",
+        prompt: "Astronomy",
+        title: "Learn astronomy",
+      }).displayName,
+    ).toBe("Astronomy ".repeat(30).trim());
+
+    expect(
+      goalDraftSchema.safeParse({
+        displayName: " ",
+        kind: "learn",
+        language: "en",
+        prompt: "Math",
+        title: "Learn math",
+      }).success,
+    ).toBe(false);
+
+    expect(goalUpdateInputSchema.parse({ title: "Internal summary" })).toStrictEqual({
+      title: "Internal summary",
+    });
+  });
+});

@@ -139,6 +139,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
         exit: "/chapter",
         exitTo: "chapter",
         nextLesson: "/learn/next",
+        seePlan: (goalId) => `/start/${goalId}`,
         signUp: "/login",
         upgrade: "/subscription",
       },

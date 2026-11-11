@@ -184,6 +184,20 @@ function BlockOpenFailed() {
   );
 }
 
+function BlockUnavailable() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground mt-2 text-sm">
+      {t({
+        description:
+          "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since",
+        message: "This step isn't available anymore.",
+      })}
+    </p>
+  );
+}
+
 // Streamdown's code and table scrollers carry their own border and background, which the sideways
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
 // and scrolls instead of breaking them letter by letter.
@@ -193,6 +207,7 @@ const TUTOR_MARKDOWN_CLASS = cn(
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );
 
+/** Admin renders answers without an intl provider, so only parts shown after a click may translate. */
 export function TutorMarkdown({
   answer,
   appLinks,
@@ -204,7 +219,6 @@ export function TutorMarkdown({
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
-  const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
   const [openingBlockId, setOpeningBlockId] = useState<string | null>(null);
   const [opened, setOpened] = useState<boolean | "changed" | null>(null);
@@ -256,17 +270,7 @@ export function TutorMarkdown({
 
       {opened === false && <BlockOpenFailed />}
 
-      <div role="status">
-        {opened === "changed" && (
-          <p className="text-muted-foreground mt-2 text-sm">
-            {t({
-              description:
-                "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since",
-              message: "This step isn't available anymore.",
-            })}
-          </p>
-        )}
-      </div>
+      <div role="status">{opened === "changed" && <BlockUnavailable />}</div>
     </TutorAnswerLinksContext>
   );
 }

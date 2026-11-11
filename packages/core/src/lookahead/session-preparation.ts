@@ -267,7 +267,7 @@ function filterUnwritten({
 }): string[] {
   return lessonIds.filter((lessonId) => {
     const state = states.get(lessonId);
-    return state?.status === "notStarted" || canRedraftLesson(state);
+    return canRedraftLesson(state);
   });
 }
 

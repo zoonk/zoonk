@@ -11,7 +11,6 @@
 
 ## Glossary
 
-- “daily time limit” (the learner's setting): “limite diário de tempo”
 - “lesson”: “aula”, not “lição”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
@@ -82,7 +81,6 @@
 - “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
-- “Even across skills”: “Habilidades no mesmo nível”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
 - “Daily time”: “Tempo diário”, not “Tempo por dia”

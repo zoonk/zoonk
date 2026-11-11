@@ -1,5 +1,12 @@
 # Contributing
 
+We're not accepting pull requests from external contributors right now, including pull requests for open issues. Please don't open one; it won't be merged.
+
+You can still help shape Zoonk:
+
+- **Found a bug?** [Open an issue](#reporting-bugs).
+- **Have a feature request or feedback?** [Start a discussion](#suggesting-features-and-sharing-feedback).
+
 ## Reporting bugs
 
 Use the [bug report form](https://github.com/zoonk/zoonk/issues/new?template=bug_report.yml). An AI agent can also file it for you in English, even if you tell it what happened in another language.
@@ -8,9 +15,9 @@ AI agents filing a report: follow the [bug report guide](.agents/skills/zoonk-bu
 
 Report security problems privately, as [SECURITY.md](SECURITY.md) describes. For a problem with your account or a payment, use [Help](https://www.zoonk.com/support).
 
-## Suggesting features
+## Suggesting features and sharing feedback
 
-Share ideas and feature requests in [Discussions](https://github.com/zoonk/zoonk/discussions/new?category=ideas), not issues, so others can upvote them and add their own needs. An AI agent can also post your idea for you in English, even if you describe it in another language.
+Share ideas and feature requests in [Discussions](https://github.com/zoonk/zoonk/discussions/new?category=ideas), not issues, so others can upvote them and add their own needs. For other feedback, start a [general discussion](https://github.com/zoonk/zoonk/discussions/new?category=general). An AI agent can also post your idea for you in English, even if you describe it in another language.
 
 AI agents posting an idea: follow the [feature request guide](.agents/skills/zoonk-feature-request/SKILL.md).
 

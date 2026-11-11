@@ -12,7 +12,6 @@ import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
 import { type AppearanceBuddy, BuddySettings } from "./buddy-settings";
-import { DailyLimitSetting } from "./daily-limit-setting";
 import { LanguageSetting } from "./language-setting";
 
 export type { AppearanceBuddy } from "./buddy-settings";
@@ -20,7 +19,6 @@ export type { AppearanceBuddy } from "./buddy-settings";
 export type AppearanceView = {
   availableGlasses: BuddyGlasses[];
   canPersonalize: boolean;
-  dailyLimitMinutes: number | null;
   look: BuddyLook;
   buddy: ResolvedBuddy;
   shareUsageData: boolean;
@@ -30,7 +28,6 @@ export type AppearanceView = {
 /** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
-  setDailyLimit: (minutes: number | null) => Promise<boolean>;
   setShareUsageData: (share: boolean) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
@@ -46,24 +43,17 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function useAppearance({ actions, view }: { actions: AppearanceActions; view: AppearanceView }) {
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
-  const [dailyLimitMinutes, setOptimisticLimit] = useOptimistic(view.dailyLimitMinutes);
   const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
 
   const { failed, run } = useOptimisticSave();
 
   return {
     buddy,
-    dailyLimitMinutes,
     failed,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
-      ),
-    setDailyLimit: (next: number | null) =>
-      run(
-        () => setOptimisticLimit(next),
-        () => actions.setDailyLimit(next),
       ),
     setShareUsageData: (next: boolean) =>
       run(
@@ -115,10 +105,6 @@ export function AppearanceScreen({
               description={t("When you get it right or finish")}
               label={t("Sounds")}
               onCheckedChange={appearance.setSoundsEnabled}
-            />
-            <DailyLimitSetting
-              minutes={appearance.dailyLimitMinutes}
-              onChange={appearance.setDailyLimit}
             />
           </ListGroup>
         </PageSection>

@@ -46,7 +46,7 @@ enum AppLink: Equatable {
     case (1, "buddy", _, _): return .tab(.buddy)
     case (1, "stats", _, _): return .route(.statistics)
     case (1, "courses", _, _): return .route(.catalog)
-    case (1, "mind-maps", _, _): return .route(.mindMaps)
+    case (1, "mind-maps", _, _): return .route(.mindMaps())
     case (1, "exam", _, _): return .route(.exam)
     case (1, "mistakes", _, _): return .route(.mistakes)
     case (1, "completed-lessons", _, _): return .route(.completedLessons)
@@ -59,7 +59,25 @@ enum AppLink: Equatable {
     case (1, "session", _, _): return value("block").map { .block(blockId: $0) } ?? .route(.session)
     case (1, "logbook", _, _): return .route(.logbook)
     case (2, "learn", let lessonId, _):
-      return .route(.lesson(lessonId: lessonId, sessionId: session))
+      let opening: LessonOpening?
+      if query.contains(where: { $0.name == "block" }) {
+        guard let block = value("block") else { return nil }
+        opening = .block(block)
+      } else if let goal = value("goal"), let day = value("day"), let ref = value("ref"),
+        let data = ref.data(using: .utf8),
+        let reference = try? JSONSerialization.jsonObject(with: data),
+        let input = try? JSONSerialization.data(withJSONObject: [
+          "goalId": goal, "shownDate": day,
+          "target": ["kind": "ref", "ref": reference],
+        ])
+      {
+        opening = LessonOpening(data: input)
+      } else if query.contains(where: { ["goal", "day", "ref"].contains($0.name) }) {
+        return nil
+      } else {
+        opening = nil
+      }
+      return .route(.lesson(lessonId: lessonId, sessionId: session, opening: opening))
     case (2, "mistakes", "practice", _): return .route(.mistakePractice(skillId: value("skill")))
     case (2, "pattern", let patternId, _): return .route(.pattern(patternId: patternId))
     case (2, "test-out", let chapterId, _):

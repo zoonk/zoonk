@@ -3,7 +3,6 @@ import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view"
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -24,8 +23,7 @@ import { LearnNotFound } from "../_components/learn-not-found";
 import { type ReminderGoal, ReminderGoalNotice } from "./reminder-goal-notice";
 import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
-import { getLocalDay } from "./today-local-day";
-import { TodayOnboardingLeft, isOnboardingLeft } from "./today-onboarding-left";
+import { TodayOnboardingLeft, readOnboardingLeft } from "./today-onboarding-left";
 import { TodayPreparingClient } from "./today-preparing-client";
 import { loadTodayScreen } from "./today-view";
 
@@ -39,7 +37,7 @@ async function WelcomeBack({ suggestion }: { suggestion: SuggestedGoalView }) {
 
   return (
     <Page className="gap-5">
-      <TodayPageHeader date={null} title={t("Welcome back")} />
+      <TodayPageHeader title={t("Welcome back")} />
       <SuggestedGoalClient suggestion={suggestion} />
     </Page>
   );
@@ -72,27 +70,18 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
   );
 }
 
-async function loadNoGoalContext(locale: string) {
+async function loadOpenExplanation(): Promise<Explanation | null> {
   const list = await listCurrentUserGoals();
-  const goals = list?.goals ?? [];
 
-  const explanation = goals.findLast(
+  const explanation = list?.goals.findLast(
     (goal) => goal.kind === "explain" && goal.status !== "completed" && goal.status !== "archived",
   );
 
-  const date = await getLocalDay({
-    locale,
-    timeZone: goals.find((goal) => goal.timezone)?.timezone ?? null,
-  });
-
-  return {
-    date,
-    explanation: explanation ? { id: explanation.id, title: explanation.title } : null,
-  };
+  return explanation ? { id: explanation.id, title: explanation.title } : null;
 }
 
 /** The complete no-goal display can prefetch; starting a goal still claims its fresh limit. */
-async function loadFirstGoalView(locale: string) {
+async function loadFirstGoalView() {
   "use cache: private";
 
   const resume = await getOnboardingResume();
@@ -100,14 +89,14 @@ async function loadFirstGoalView(locale: string) {
   const draftId =
     resume.status === "ready" && resume.resume?.kind === "draft" ? resume.resume.draftId : null;
 
-  const [start, context] = await Promise.all([loadStartView(draftId), loadNoGoalContext(locale)]);
-  return { context, start };
+  const [start, explanation] = await Promise.all([loadStartView(draftId), loadOpenExplanation()]);
+
+  return { explanation, start };
 }
 
 async function TodayFirstGoal() {
   const t = await getExtracted();
-  const locale = await getAppLocale();
-  const { start, context } = await loadFirstGoalView(locale);
+  const { start, explanation } = await loadFirstGoalView();
   const { canAttach, draft, goalLimit, needsAccount } = start;
 
   return (
@@ -118,8 +107,8 @@ async function TodayFirstGoal() {
       goalLimit={goalLimit}
       header={
         <>
-          <TodayPageHeader date={context.date} title={t("Today")} />
-          {context.explanation && <ExplanationContinue explanation={context.explanation} />}
+          <TodayPageHeader title={t("Today")} />
+          {explanation && <ExplanationContinue explanation={explanation} />}
         </>
       }
       initialDraft={draft}
@@ -157,7 +146,9 @@ async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null
   const list = await listCurrentUserGoals();
   const goal = list?.goals.find((candidate) => candidate.id === goalId);
 
-  return goal?.status === "active" && !goal.isActive ? { id: goal.id, title: goal.title } : null;
+  return goal?.status === "active" && !goal.isActive
+    ? { id: goal.id, title: goal.displayName }
+    : null;
 }
 
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
@@ -214,14 +205,17 @@ async function TodayPreparingState({
   goal,
 }: {
   banner: React.ReactNode;
-  goal: { id: string; title: string };
+  goal: { displayName: string; id: string; title: string };
 }) {
-  // A goal left halfway through its questions has no plan coming until they're answered.
-  if (await isOnboardingLeft(goal.id)) {
-    return <TodayOnboardingLeft banner={banner} goal={goal} />;
+  // A goal left halfway through its questions has no plan coming until they're answered, and a
+  // made plan is shown once before its first day.
+  const left = await readOnboardingLeft(goal.id);
+
+  if (left) {
+    return <TodayOnboardingLeft banner={banner} goal={goal} left={left} />;
   }
 
-  return <TodayPreparingClient banner={banner} goalId={goal.id} goalTitle={goal.title} />;
+  return <TodayPreparingClient banner={banner} goalId={goal.id} goalTitle={goal.displayName} />;
 }
 
 export default function TodayPage({ searchParams }: PageProps<"/[lang]/today">) {

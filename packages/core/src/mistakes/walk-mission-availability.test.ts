@@ -54,7 +54,7 @@ describe("mistake mission and notebook availability", () => {
     });
   });
 
-  it("offers only a recording mistake on a skill practiced with listening", async () => {
+  it("offers each exact original on a skill practiced with listening", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
     const { blueprint, goal, listeningSkills, plan, user } = await listeningGoalFixture();
@@ -96,35 +96,37 @@ describe("mistake mission and notebook availability", () => {
     const practice = await getMistakePractice({ goalId: goal.id });
 
     expect(notebook).toMatchObject({
-      availability: { ready: 1, tomorrow: 0 },
+      availability: { ready: 2, tomorrow: 0 },
       counts: { open: 2 },
     });
 
     expect(
       notebook.status === "ready" && notebook.mistakes.find((entry) => entry.id === textMistake.id),
-    ).toMatchObject({ practiceAvailable: false, practiceAvailableTomorrow: false });
+    ).toMatchObject({ practiceAvailable: true, practiceAvailableTomorrow: false });
 
     expect(
-      practice.status === "ready" && practice.practice.map((entry) => entry.mistakeId),
-    ).toStrictEqual([recordedMistake.id]);
+      practice.status === "ready" && practice.practice.map((entry) => entry.mistakeId).toSorted(),
+    ).toStrictEqual([textMistake.id, recordedMistake.id].toSorted());
   });
 
   it("separates mistakes ready now from today's mistakes using the goal's local midnight", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-13T02:30:00Z"));
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
-    const { goal, skills } = await learnerGoalFixture({ phases: [1], userId: user.id });
+    const { goal, skills, items } = await learnerGoalFixture({ phases: [1], userId: user.id });
     await prisma.goal.update({ data: { timezone: "America/Sao_Paulo" }, where: { id: goal.id } });
     mockSession(user.id);
 
     const [ready, tomorrow] = await Promise.all([
       mistakeFixture({
         createdAt: new Date("2026-10-12T02:59:59Z"),
+        itemId: items[0]!.id,
         skillId: skills[0]?.id,
         userId: user.id,
       }),
       mistakeFixture({
         createdAt: new Date("2026-10-12T03:00:00Z"),
+        itemId: items[1]!.id,
         skillId: skills[0]?.id,
         userId: user.id,
       }),

@@ -22,6 +22,7 @@
   "practice_pause_text": "daec090dbd5ecf94eda87db1dba8499829e54f564ca9125c9e001f0d7be51018",
   "practice_progress": "63ced42c687b4de8b06c6d07706afa979966c5ada810d55b3c9a279e59817905",
   "practice_save_error": "493f47a58ca46c3ed2911649b9426ade122f21251988d8b915b229fd138fcfe8",
+  "practice_save_error_repeat": "8f46b00a79a57ddbe492cca7d2c47d41a486a4a72267d293ce512b4b187b0eb9",
   "practice_time_machine_answered": "4371816a9536bab4d9365a0e98926646b0fd12e1aa065d22e78a7063194f1877",
   "practice_time_machine_right_again": "0cbea6f0040a1960aa6e8ff4c5fb63de7aff6e05eff8070e40c481ebffba1120",
   "practice_time_machine_right_before": "1679fc8d6179f023a8b6c765ae20a196b21a0e8b2a51834f05f7dcbab968512d",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">Concludi per vedere com’è andata.</string>
     <string name="practice_already_answered">Hai già risposto a questa domanda.</string>
     <string name="practice_save_error">L’invio non è riuscito. Le tue risposte sono al sicuro.</string>
+    <string name="practice_save_error_repeat">L’invio non è riuscito neanche questa volta. Puoi tornare più tardi.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d corretta</item>
         <item quantity="many">%d corrette</item>

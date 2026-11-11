@@ -32,11 +32,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let positions: [Int]
   }
 
-  struct DailyLimit: Decodable, Equatable, Sendable {
-    let limitMinutes: Int?
-    let reached: Bool
-  }
-
   struct ExamAccess: Decodable, Equatable, Sendable {
     let includesMockExams: Bool
     let trialEnded: Bool
@@ -58,11 +53,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let earned: Bool
   }
 
-  struct Minutes: Decodable, Equatable, Sendable {
-    let dailyGoal: Double
-    let done: Int
-    let planned: Int
-  }
+  typealias Minutes = Components.Schemas.StudySessionMinutes
 
   struct PlusLesson: Decodable, Equatable, Sendable {
     let title: String
@@ -73,7 +64,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let brainPower: Int
   let catchUp: CatchUp?
   let current: Bool
-  let dailyLimit: DailyLimit?
   /// Epoch milliseconds.
   let dayEndsAt: Int
   let emptyDay: EmptyDay?
@@ -86,7 +76,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let lessonsToPrepare: Bool
   /// The learner's calendar day, `YYYY-MM-DD`.
   let localDate: String
-  let minutes: Minutes
+  var minutes: Minutes
   let missions: [StudyMission]
   var nextBlockId: String?
   var nextPosition: Int?
@@ -109,47 +99,20 @@ struct StudyDay: Decodable, Equatable, Sendable {
     return lessonsComing ? .beingWritten : nil
   }
 
-  /// Mirrors main's `TodayDayStatus`: the learner's daily time limit ended the day, ended it short
-  /// of its plan, or will cut it short.
-  var limitStatus: DailyLimitStatus? {
-    let dailyGoal = minutes.dailyGoal
-
-    switch state {
-    case .limit:
-      return .reached
-    case .done where dailyLimit?.reached == true && Double(minutes.planned) < dailyGoal:
-      return .reached
-    case .underway where dailyLimit?.limitMinutes.map { Double($0) < dailyGoal } == true:
-      return .cuts
-    default:
-      return nil
-    }
-  }
-
   /// The day as a block's completion says it now stands, before the session is read again: the
   /// block done and the server's next block up.
   func finishing(_ moment: BlockMoment) -> StudyDay {
-    guard let index = blocks.firstIndex(where: { $0.id == moment.blockId }) else {
-      return self
-    }
-
+    guard moment.sessionId == id,
+      blocks.filter(\.isFinished).allSatisfy({ old in
+        moment.blocks.contains { $0.id == old.id && $0.isFinished }
+      })
+    else { return self }
     var day = self
-    day.blocks[index].status = .completed
-    day.nextBlockId = moment.nextBlockId
-    day.nextPosition = nil
-
-    if let nextID = moment.nextBlockId {
-      // A next block this day doesn't list yet waits for the read, and one already done means a
-      // later completion (another window's) got here first.
-      guard let next = blocks.first(where: { $0.id == nextID }), !next.isFinished else {
-        return self
-      }
-
-      day.nextPosition = next.position
-    } else {
-      // A day with nothing next is done, as core says once Today is read again.
-      day.state = .done
-    }
+    day.blocks = moment.blocks
+    day.minutes = moment.minutes
+    day.nextBlockId = moment.next?.block.id
+    day.nextPosition = moment.next?.block.position
+    if moment.sessionCompleted { day.state = .done }
 
     return day
   }
@@ -166,16 +129,29 @@ struct StudyDay: Decodable, Equatable, Sendable {
     )
   }
 
-  var minutesLeft: Int {
-    blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes }
+  /// Rows the queue shows after its next block before "+N more".
+  static let upcomingRows = 4
+
+  /// Mirrors main's `getFoldedBlocks`: the blocks "+N more" holds while the queue is folded.
+  var foldedBlocks: [StudyBlock] {
+    Array(queue(next: nextBlock).after.dropFirst(Self.upcomingRows))
+  }
+
+  func foldedMinutes(showing blocks: [StudyBlock]) -> Double {
+    max(
+      0,
+      minutes.left - Double(blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes })
+    )
   }
 
   var isStarted: Bool {
     blocks.contains { $0.status != .pending }
   }
 
+  var showsDayProgress: Bool { !blocks.isEmpty && meterParts.count >= 2 }
+
   var meterParts: [MeterParts.Part] {
-    blocks.map { block in
+    var parts = blocks.map { block in
       let weight = Double(max(block.estimatedMinutes, 1))
 
       if block.isFinished {
@@ -190,6 +166,13 @@ struct StudyDay: Decodable, Equatable, Sendable {
       return MeterParts.Part(
         weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
     }
+
+    if lessonsComing || lessonsToPrepare {
+      let held = foldedMinutes(showing: blocks)
+      if held > 0 { parts.append(.init(weight: held, fill: .track)) }
+    }
+
+    return parts
   }
 }
 
@@ -198,16 +181,10 @@ enum ComingLessons {
   case toPrepare
 }
 
-enum DailyLimitStatus {
-  case cuts
-  case reached
-}
-
 /// Core decides where the day stands.
 enum DayState: String, Decodable, Sendable {
   case ahead
   case done
-  case limit
   /// Its lessons wait for the learner to ask for them.
   case prepare
   case rest
@@ -215,7 +192,7 @@ enum DayState: String, Decodable, Sendable {
   case waiting
 }
 
-struct StudyBlock: Decodable, Equatable, Sendable {
+struct StudyBlock: Decodable, Hashable, Sendable {
   enum Kind: String, Codable, Sendable {
     case checkpoint
     case learn
@@ -236,13 +213,13 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     case lessons
   }
 
-  struct Capsule: Decodable, Equatable, Sendable {
+  struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
   }
 
-  struct Checkpoint: Codable, Equatable, Sendable {
-    struct MockIdentity: Codable, Equatable, Sendable {
+  struct Checkpoint: Codable, Hashable, Sendable {
+    struct MockIdentity: Codable, Hashable, Sendable {
       let day: Int?
       let fullLength: Bool
     }
@@ -272,6 +249,7 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
+  let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
   let planItemKey: String?

@@ -60,7 +60,7 @@
   "certificates_linkedin_title": "ac38c1f34078bfd5ee901dd6ac4d8b2ae82e15c5cd3a4fd8e43e7b03a702b185",
   "certificates_locked": "a19d593b74a36221a602405d15d2751c0ead6170ad62a6b8ef6ff43d9530fe86",
   "certificates_meaning_cefr": "7de35fe6911d25afb4c0b54a2b69b077d673be7bb3aa1a6ca9d98e4b3d856189",
-  "certificates_meaning_language": "e439d099ca998c4331532559ab86fb9e1959cc2c795d558dc576c7de2d8630b5",
+  "certificates_meaning_language": "2bcab709552d5b9ef67450fc999c42e446f3e1e3e3ca15cd51398c96bbcbd650",
   "certificates_meaning_level": "b2ad314ddbd0660347c29488745782afd02f2e35e267ef5ea9a2437ee6242ba2",
   "certificates_meaning_name": "94abceeaaf456012702ddaca794fe2dacf44baf22645b266aa8b0ac6b63e8dd2",
   "certificates_meaning_plan": "462c5b8fd8980425a8ad0882aae677c1f5b1dedc18d24fff316e8f091364a17d",
@@ -89,7 +89,7 @@
   "certificates_topics_covered": "57df60e51bafc8b4c56ff00aae720a6b9756a16fcadbe9c0f020ec1a51872ce8",
   "certificates_up_next": "948d9b0706eac4ff5fa241069a9b7ee983950cfdd70a4c1ecd5d8ac3b14f270b",
   "certificates_up_next_course": "acfcbbb862e18069aa5a9aa6638edecda11e6f416c8db467e1d828d4de7f5b2d",
-  "certificates_up_next_language": "ffde1e94918d8ca36517f751a856698f59610c41be3ae65936a1da90fc9220ea",
+  "certificates_up_next_language": "215b586d15d6c7f33ae31e9dddd5227a878b4dbc5e609c937a41e26d004ee8b5",
   "certificates_verified": "22e280d682c6319936f91cd5279884e2b3f93e92e7d031a1532c566db21b00da",
   "certificates_view": "ebff4debd8728702eaa57140a1ed5687602bcb9542a6fd4269f80d5f70bd9b7d",
   "certificates_view_several": "d95d6b5355bcc6749e61729cf4124dad7c9fb9e1409e81d8758cac529f10f826"
@@ -120,8 +120,8 @@
     <string name="certificates_get">Zertifikat erhalten</string>
     <string name="certificates_up_next">Als Nächstes</string>
     <string name="certificates_up_next_course">Du bekommst dein Zertifikat, wenn du den Plan abschließt</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">Du bekommst es, sobald alle Fähigkeiten, die du übst, das nächste Level erreichen</string>
+    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
+    <string name="certificates_up_next_language">Erhältst du, wenn du ein Level abschließt und mindestens die Hälfte der Lektionen bearbeitet hast</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs abgeschlossen!</string>
     <string name="certificates_level_complete">%1$s abgeschlossen!</string>
@@ -206,7 +206,7 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">etwa %1$s</string>
     <string name="certificates_meaning_title">Was dieses Zertifikat bedeutet</string>
-    <string name="certificates_meaning_language">Zoonk bewertet jede Fähigkeit (Lesen, Hören, Sprechen, Schreiben) anhand der Antworten in Lektionen und Übungen. Ein Level ist abgeschlossen, wenn alle Fähigkeiten, die durch diese Antworten höher eingestuft wurden, das nächste Level erreichen. Dieses Zertifikat wurde daher ausgestellt, als jede davon %1$s erreicht hatte.</string>
+    <string name="certificates_meaning_language">Zoonk stellt dieses Zertifikat aus, wenn jemand ein Level abschließt und dabei mindestens die Hälfte der zugehörigen Lektionen bearbeitet.</string>
     <string name="certificates_meaning_level">Zoonk stellt dieses Zertifikat aus, wenn du alle Kapitel eines Kurslevels abschließt, dabei jede Lektion bearbeitest oder den jeweiligen Test bestehst und alle Herausforderungen des Levels gewinnst.</string>
     <string name="certificates_meaning_plan">Zoonk stellt dieses Zertifikat aus, wenn alle Lektionen im Plan eines Kurses entweder durch Lernen oder durch Bestehen des jeweiligen Tests abgeschlossen und alle Herausforderungen darin gewonnen wurden.</string>
     <string name="certificates_meaning_record">Es bestätigt den Abschluss auf Zoonk, zählt aber nicht als Studienleistung.</string>

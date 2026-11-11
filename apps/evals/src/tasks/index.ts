@@ -34,6 +34,7 @@ import { findSubjectQuestionsTask } from "./find-subject-questions/task";
 import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
 import { generateItemsTask } from "./generate-items/task";
+import { goalOpeningTask } from "./goal-opening/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
 import { goalTutorSearchTask } from "./goal-tutor-search/task";
 import { goalTutorTask } from "./goal-tutor/task";
@@ -45,6 +46,7 @@ import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task"
 import { imageSceneTask } from "./image-scene/task";
 import { languageAudioTask } from "./language-audio/task";
 import { languageLessonTask } from "./language-lesson/task";
+import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
 import { lessonMarksTask } from "./lesson-marks/task";
@@ -77,6 +79,8 @@ import { readProductPagesTask } from "./read-product-pages/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
+import { skillLevelsTask } from "./skill-levels/task";
+import { solveItemsTask } from "./solve-items/task";
 import { sourceChangeNoticeTask } from "./source-change-notice/task";
 import { sourceResearchPlanTask } from "./source-research-plan/task";
 import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
@@ -132,6 +136,7 @@ export const TASKS: readonly RegisteredTask[] = [
   generateItemsTask,
   placementItemsTask,
   statuteDrillsTask,
+  solveItemsTask,
   writeListeningSetTask,
   writeItemSetTask,
   pastQuestionsTask,
@@ -143,6 +148,8 @@ export const TASKS: readonly RegisteredTask[] = [
   challengeCaseTask,
   questionGeneralityTask,
   skillGraphTask,
+  goalOpeningTask,
+  skillLevelsTask,
   courseOutlineTask,
   courseDetailsTask,
   courseIconTask,
@@ -173,6 +180,7 @@ export const TASKS: readonly RegisteredTask[] = [
   memoryInsightTask,
   memorySessionPatternsTask,
   languageLessonTask,
+  languageSentenceOrdersTask,
   explainSpokenAnswerTask,
   transcribeSpeechTask,
   assessPronunciationTask,

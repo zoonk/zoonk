@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   explanationSchema,
@@ -13,7 +14,7 @@ import { duplicateIssues, issue } from "./_utils/template-helpers";
 
 const MAX_STEPS = 7;
 const MAX_ELEMENTS = 6;
-const MAX_FORMULA_LENGTH = 24;
+const FORMULA_TARGET = 24;
 
 const MAX_MOLECULE_ATOMS = 12;
 
@@ -53,7 +54,7 @@ const moleculeFields = z
       .array(z.string().regex(/^[A-Z][a-z]?$/u))
       .min(1)
       .max(MAX_ELEMENTS),
-    formula: z.string().min(1).max(MAX_FORMULA_LENGTH),
+    formula: aimForCharacters(z.string().min(1), FORMULA_TARGET),
   })
   .strict();
 

@@ -39,11 +39,11 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.MistakePatternPracticeResultReachedLevel
+import com.zoonk.api.models.MistakePracticeFeedbackReachedLevel
 
 /** A new belt level and the tenth of Energy a block reached, each null when it reached none. */
 data class ReachedFacts(
-    val level: MistakePatternPracticeResultReachedLevel?,
+    val level: MistakePracticeFeedbackReachedLevel?,
     val energy: Long?,
 )
 
@@ -110,7 +110,7 @@ private fun ReachedRow(
 
 @Composable
 private fun LevelReached(
-    level: MistakePatternPracticeResultReachedLevel,
+    level: MistakePracticeFeedbackReachedLevel,
     delayMillis: Int?,
 ) {
     val belt = Belt.entries.first { it.name.equals(level.color.value, ignoreCase = true) }

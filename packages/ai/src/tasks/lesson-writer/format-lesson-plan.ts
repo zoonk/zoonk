@@ -32,16 +32,17 @@ export type LessonWritingContext = {
 };
 
 /** `screen` is a 0-based index, or null for the whole lesson. */
-export type LessonProblem = { screen: number | null; problem: string };
+export type LessonProblem = { screen: number | null; problem: string; source?: "check" | "review" };
+
+function formatLessonProblem({ problem, screen, source }: LessonProblem): string {
+  const location = screen === null ? "Whole lesson" : `Screen ${screen + 1}`;
+  const label = source === "check" ? "automatic check" : "reviewer";
+  const attribution = source ? ` (${label})` : "";
+  return `- ${location}${attribution}: ${problem}`;
+}
 
 export function formatLessonProblems(problems: readonly LessonProblem[]): string {
-  return problems
-    .map((problem) =>
-      problem.screen === null
-        ? `- Whole lesson: ${problem.problem}`
-        : `- Screen ${problem.screen + 1}: ${problem.problem}`,
-    )
-    .join("\n");
+  return problems.map((problem) => formatLessonProblem(problem)).join("\n");
 }
 
 function formatSkill(skill: LessonSpecSkill, index: number): string {

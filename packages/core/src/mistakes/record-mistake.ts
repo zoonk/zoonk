@@ -1,18 +1,47 @@
 import { type MistakeCauseInput } from "@zoonk/ai/tasks/mistakes/cause";
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
+import { z } from "zod";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
-import { type MistakeSnapshot } from "./mistake-snapshot";
+import {
+  type MistakeReplay,
+  loadMistakeReplay,
+  loadMistakeReplays,
+  readMistakeReplay,
+} from "./mistake-replay";
+import { isSameMistakeQuestion } from "./mistake-replay-identity";
+import {
+  type RecordedMistakeSnapshot as MistakeSnapshot,
+  readMistakeSnapshot,
+} from "./mistake-snapshot";
+import { matchesMistakeSource } from "./mistake-source-snapshot";
 
 type MistakeTarget = { itemId: string | null; stepId: string | null };
 
-function findOpenMistake({
+async function findOpenMistake({
   itemId,
   stepId,
+  replay,
+  snapshot,
   transaction,
   userId,
-}: MistakeTarget & { transaction: TransactionClient; userId: string }) {
-  const targets = [itemId ? { itemId } : null, stepId ? { stepId } : null].filter(
+}: MistakeTarget & {
+  replay: MistakeReplay | null;
+  snapshot: MistakeSnapshot;
+  transaction: TransactionClient;
+  userId: string;
+}) {
+  const replayTarget = replay
+    ? {
+        snapshot: {
+          equals: replay.kind === "item" ? replay.item.id : replay.lesson.step.id,
+          path:
+            replay.kind === "item" ? ["replay", "item", "id"] : ["replay", "lesson", "step", "id"],
+        },
+      }
+    : null;
+
+  const targets = [itemId ? { itemId } : null, stepId ? { stepId } : null, replayTarget].filter(
     (target) => target !== null,
   );
 
@@ -20,7 +49,30 @@ function findOpenMistake({
     return null;
   }
 
-  return transaction.mistake.findFirst({ where: { OR: targets, status: "open", userId } });
+  const open = await transaction.mistake.findMany({
+    where: { OR: targets, status: "open", userId },
+  });
+
+  const legacyNumeric =
+    replay?.kind === "item" && replay.item.format === "numeric"
+      ? open.filter((mistake) => !readMistakeReplay(mistake.snapshot))
+      : [];
+
+  const restored = await loadMistakeReplays({ mistakes: legacyNumeric, userId });
+
+  return (
+    open.find((mistake) => {
+      const saved = readMistakeReplay(mistake.snapshot) ?? restored.get(mistake.id);
+
+      if (replay) {
+        return saved
+          ? isSameMistakeQuestion({ answered: replay, saved })
+          : matchesMistakeSource({ replay, snapshot: mistake.snapshot });
+      }
+
+      return readMistakeSnapshot(mistake.snapshot).question === snapshot.question;
+    }) ?? null
+  );
 }
 
 function toCauseInput({
@@ -74,24 +126,56 @@ export async function recordMistake(
   const cause = isLanguageWriting ? null : inferMistakeCause(signals);
   const unknownGap = signals.dontKnow && cause === "gap";
 
-  const target =
-    unknownGap && practicedMistakeId
-      ? await transaction.mistake.findFirst({ where: { id: practicedMistakeId, userId } })
-      : null;
+  const target = practicedMistakeId
+    ? await transaction.mistake.findFirst({
+        where: { id: practicedMistakeId, status: "open", userId },
+      })
+    : null;
 
-  const existing = target ?? (await findOpenMistake({ itemId, stepId, transaction, userId }));
+  const replay =
+    snapshot.replay ??
+    (await loadMistakeReplay({ mistake: { attemptId, itemId, snapshot, stepId }, userId }));
+
+  const existing =
+    target ?? (await findOpenMistake({ itemId, replay, snapshot, stepId, transaction, userId }));
 
   if (existing) {
-    return unknownGap
-      ? transaction.mistake.update({
-          data: { cause: "gap", fixedAt: null, status: "open" },
-          where: { id: existing.id },
-        })
-      : existing;
+    const original = readMistakeSnapshot(existing.snapshot);
+
+    const preserve =
+      !readMistakeReplay(existing.snapshot) &&
+      replay &&
+      matchesMistakeSource({ replay, snapshot: existing.snapshot });
+
+    if (!unknownGap && !preserve) {
+      return existing;
+    }
+
+    const originalJson = JSON.stringify({ ...original, ...(preserve ? { replay } : {}) });
+    const originalSnapshot: unknown = JSON.parse(originalJson);
+
+    return transaction.mistake.update({
+      data: {
+        ...(unknownGap ? { cause: "gap", fixedAt: null, status: "open" } : {}),
+        ...(preserve ? { snapshot: z.record(z.string(), z.json()).parse(originalSnapshot) } : {}),
+      },
+      where: { id: existing.id },
+    });
   }
 
+  const serialized = JSON.stringify(replay ? { ...snapshot, replay } : snapshot);
+  const preserved: unknown = JSON.parse(serialized);
+
   const mistake = await transaction.mistake.create({
-    data: { attemptId, cause, itemId, skillId, snapshot, stepId, userId },
+    data: {
+      attemptId,
+      cause,
+      itemId,
+      skillId,
+      snapshot: z.record(z.string(), z.json()).parse(preserved),
+      stepId,
+      userId,
+    },
   });
 
   if (!cause && !isLanguageWriting) {

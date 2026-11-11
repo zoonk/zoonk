@@ -19,13 +19,10 @@ export type DrillView = {
   timeLimitSeconds: number | null;
 };
 
-export type DrillItemCandidate = { hasMisconceptions: boolean; id: string; seen: boolean };
-
 export type MistakeDrill = {
   itemIds: string[];
   kind: MistakeDrillKind;
   lessonId: string | null;
-  /** Per question, never a whole-drill limit. */
   timeLimitSeconds: number | null;
 };
 
@@ -35,15 +32,6 @@ const DRILL_KINDS: Readonly<Record<MistakeCause, MistakeDrillKind>> = {
   misread: "readCarefully",
   time: "timed",
   trap: "spotTheTrap",
-};
-
-const EXTRA_QUESTIONS: Readonly<Record<MistakeDrillKind, number>> = {
-  noGuessing: 1,
-  readCarefully: 1,
-  reteach: 2,
-  retry: 1,
-  spotTheTrap: 2,
-  timed: 2,
 };
 
 const TIMED_DRILL_SECONDS = 45;
@@ -70,67 +58,7 @@ export function isPastTimeLimit({
   return timeLimitSeconds !== null && durationMs >= timeLimitSeconds * MS_PER_SECOND;
 }
 
-function rankCandidate({
-  candidate,
-  kind,
-}: {
-  candidate: DrillItemCandidate;
-  kind: MistakeDrillKind;
-}): number {
-  const seenRank = candidate.seen ? 1 : 0;
-  const trapRank = kind === "spotTheTrap" && !candidate.hasMisconceptions ? 2 : 0;
-
-  return seenRank + trapRank;
-}
-
-/** Unseen questions come first; trap drills prioritize misconception-bearing options. */
-export function selectMistakeDrill({
-  candidates,
-  cause,
-  lessonId,
-  originalItemId,
-}: {
-  candidates: readonly DrillItemCandidate[];
-  cause: MistakeCause | null;
-  lessonId: string | null;
-  originalItemId: string | null;
-}): MistakeDrill {
-  const kind = getDrillKind(cause);
-  const original = candidates.find((candidate) => candidate.id === originalItemId);
-
-  const extras = candidates
-    .filter((candidate) => candidate.id !== originalItemId)
-    .toSorted(
-      (a, b) => rankCandidate({ candidate: a, kind }) - rankCandidate({ candidate: b, kind }),
-    )
-    .slice(0, EXTRA_QUESTIONS[kind]);
-
-  return {
-    itemIds: [original, ...extras]
-      .filter((candidate) => candidate !== undefined)
-      .map(({ id }) => id),
-    kind,
-    lessonId: kind === "reteach" ? lessonId : null,
-    timeLimitSeconds: getDrillTimeLimitSeconds(kind),
-  };
-}
-
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
-
-export function isMistakeSkill({
-  itemSkillId,
-  mistakeSkillId,
-  ownerOf,
-}: {
-  itemSkillId: string;
-  mistakeSkillId: string | null;
-  ownerOf: ReadonlyMap<string, string>;
-}): boolean {
-  return (
-    mistakeSkillId !== null &&
-    (itemSkillId === mistakeSkillId || itemSkillId === ownerOf.get(mistakeSkillId))
-  );
-}
 
 /** Oldest first with one-per-skill breadth; excludes mistakes from the learner's current local day. */
 export function selectMistakesToPractice<TMistake extends PracticeCandidate>({

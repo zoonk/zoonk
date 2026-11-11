@@ -277,7 +277,21 @@ export async function pickPlacementItemSkills({
   return { confirmingCount, quickFormat, skills: picks };
 }
 
-/** Ends waiting even for failed question writes; uncovered topics are left to lessons and reviews. */
-export async function recordPlacementPrepared(goalId: string): Promise<void> {
-  await prisma.plan.updateMany({ data: { placementPreparedAt: new Date() }, where: { goalId } });
+export async function readPlacementPlanRunId(goalId: string): Promise<string | null> {
+  const plan = await prisma.plan.findUnique({ select: { runId: true }, where: { goalId } });
+  return plan?.runId ?? null;
+}
+
+/** A previous curriculum's question writer cannot finish waiting for the rebuilt curriculum. */
+export async function recordPlacementPrepared({
+  goalId,
+  planRunId,
+}: {
+  goalId: string;
+  planRunId: string | null;
+}): Promise<void> {
+  await prisma.plan.updateMany({
+    data: { placementPreparedAt: new Date() },
+    where: { goalId, runId: planRunId },
+  });
 }

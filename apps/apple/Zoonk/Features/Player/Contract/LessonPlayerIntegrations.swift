@@ -132,15 +132,31 @@ struct SpokenHeard: Hashable, Sendable {
   let wordsToPractice: [PracticeWord]
 }
 
+struct SpokenMistakeTarget: Sendable {
+  let mistakeId: String
+  let attemptId: String
+  let goalId: String?
+  let answerIds: [String]
+  let questionStartedAt: Date
+  var practiceDurationMs: Int? = nil
+}
+
 struct SpokenAnswerContext {
   let lessonId: String
-  let studySessionId: String?
   let stepId: String
   let content: SpokenAnswerContent
   let isLocked: Bool
+  /// Spoken grading needs the lesson's run: a recording made while it starts waits for it, and
+  /// isn't graded when it doesn't start.
+  let waitForRun: @MainActor () async -> Bool
+  /// The run's session, once it started.
+  let studySessionId: @MainActor () -> String?
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
   /// The microphone is off for the app: the screen offers typing instead.
   let onBlocked: @MainActor () -> Void
+  var mistake: SpokenMistakeTarget? = nil
+  var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
+  var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 }
 
 /// Records spoken answers. Without a recorder (`input` nil), spoken screens take a typed answer,

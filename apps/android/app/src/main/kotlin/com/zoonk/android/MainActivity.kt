@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
         createdInThisProcess = true
 
         val container = (application as ZoonkApplication).container
+        container.warmUps.registerSavedState(savedStateRegistry)
         handleAppleLink(intent)
 
         setContent {

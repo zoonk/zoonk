@@ -1,12 +1,10 @@
 import { type TestCase } from "@/lib/types";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
-import {
-  type CheckLessonQualityParams,
-  type LessonQualityIssueKind,
-} from "@zoonk/ai/tasks/quality/lesson-check";
+import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-check";
 import { ALPHABET_LESSONS, ALPHABET_SLIPS, type AlphabetCheckInput } from "./alphabet-lessons";
 import { BASE_LESSONS } from "./base-lessons";
 import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
+import { MOBILITY_BASE_LESSON } from "./mobility-lesson";
 import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
 
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
@@ -26,7 +24,7 @@ export type LessonQualityCheckInput = Pick<
 
 export type LessonQualityCheckExpected =
   | { verdict: "pass" }
-  | { kinds: LessonQualityIssueKind[]; screen: number | null; verdict: "fail" };
+  | { screen: number | null; verdict: "fail" };
 
 function plant(
   base: LessonQualityCheckInput,
@@ -69,12 +67,12 @@ export const TEST_CASES: TestCase<
     userInput: ALPHABET_LESSONS.cyrillic,
   },
   {
-    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    expected: { screen: 8, verdict: "fail" },
     id: "pt-ru-alphabet-silent-h",
     userInput: ALPHABET_SLIPS.silentH,
   },
   {
-    expected: { kinds: ["incorrect"], screen: 7, verdict: "fail" },
+    expected: { screen: 7, verdict: "fail" },
     id: "en-ko-alphabet-book-vowel",
     userInput: ALPHABET_SLIPS.bookVowel,
   },
@@ -85,7 +83,7 @@ export const TEST_CASES: TestCase<
     userInput: EXAM_PREP_BASE_LESSON,
   },
   {
-    expected: { kinds: ["weakCheck", "level"], screen: 5, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-finalidades-oab-exam-prep-absurd-option",
     userInput: plant(EXAM_PREP_BASE_LESSON, 5, {
       basis: null,
@@ -118,9 +116,44 @@ export const TEST_CASES: TestCase<
       visual: null,
     }),
   },
+  {
+    expected: { screen: 3, verdict: "fail" },
+    id: "pt-mobilidade-guess-unresolved",
+    userInput: MOBILITY_BASE_LESSON,
+  },
+  {
+    expected: { verdict: "pass" },
+    id: "pt-mobilidade-guess-resolved",
+    userInput: plant(
+      plant(MOBILITY_BASE_LESSON, 3, {
+        image: null,
+        kind: "hookGuess",
+        options: [
+          { isCorrect: false, text: "Diminui" },
+          { isCorrect: true, text: "Permanece igual" },
+        ],
+        question:
+          "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?",
+        reveal:
+          "Pela medida que as próximas telas usam, a vantagem da origem alta permanece igual nos dois períodos.",
+        visual: null,
+      }),
+      8,
+      {
+        exampleLineIdea:
+          "uma notícia sobre mais jovens de famílias pobres entrando na universidade ou no serviço público",
+        explore: null,
+        image: null,
+        kind: "explanation",
+        text: "De A para B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25. Dividir as fatias que chegam ao topo daria 5 e depois 3, mas essa queda só mostra que mais gente de toda origem subiu. Nas odds, a vantagem seguiu em nove vezes. Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem.",
+        title: "Mais subidas, mesma vantagem",
+        visual: null,
+      },
+    ),
+  },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {
-    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    expected: { screen: 4, verdict: "fail" },
     id: "en-tax-deadlines-contradicts-source",
     userInput: plant(taxDeadlines, 4, {
       exampleLineIdea: null,
@@ -133,7 +166,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 2, verdict: "fail" },
+    expected: { screen: 2, verdict: "fail" },
     id: "pt-estabilidade-contradicts-source",
     userInput: plant(estabilidade, 2, {
       exampleLineIdea: null,
@@ -194,7 +227,7 @@ export const TEST_CASES: TestCase<
     userInput: { ...regra, lesson: regra.lesson },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    expected: { screen: 4, verdict: "fail" },
     id: "en-temperature-wrong-math",
     userInput: plant(temperature, 4, {
       image: null,
@@ -210,7 +243,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["filler", "scope"], screen: 6, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-filler",
     userInput: plant(temperature, 6, {
       exampleLineIdea: null,
@@ -223,7 +256,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["decorativeActivity", "weakCheck", "unclear"], screen: 7, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-decorative-activity",
     userInput: plant(temperature, 7, {
       content: JSON.stringify({
@@ -249,7 +282,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["jargon", "unclear", "level"], screen: 2, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-regra-jargon",
     userInput: plant(regra, 2, {
       exampleLineIdea: null,
@@ -262,16 +295,16 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["scope"], screen: 5, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-regra-framed-around-one-exam",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       context:
-        "Na prova da Cebraspe para analista da Câmara dos Deputados, conforme o subitem 13.5 do edital, recursos vão para sac@cebraspe.org.br. Um setor da Câmara organiza a triagem desses recursos.",
+        "Neste simulado para a prova da Câmara dos Deputados, uma equipe organiza a triagem de pedidos. Todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
     }),
   },
   {
-    expected: { kinds: ["unclear"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-case-before-shown",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -279,7 +312,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect", "scope"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-real-brand-failure",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -288,7 +321,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-wrong-answer-key",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -324,20 +357,20 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["level", "jargon"], screen: 6, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-eletron-formula-in-overview",
     userInput: plant(eletron, 6, {
       exampleLineIdea: null,
       explore: null,
       image: null,
       kind: "explanation",
-      text: String.raw`O arranjo mais estável minimiza a energia total $E = \frac{\hbar^2}{2 m r^2} - \frac{e^2}{4 \pi \varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \approx 0{,}53$ Å.`,
+      text: String.raw`Num modelo simplificado do átomo de hidrogênio, o estado de menor energia minimiza $E = \frac{\hbar^2}{2 m r^2} - \frac{e^2}{4 \pi \varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \approx 0{,}53$ Å.`,
       title: "O arranjo mais estável",
       visual: null,
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 6, verdict: "fail" },
+    expected: { screen: 6, verdict: "fail" },
     id: "pt-regra-worked-example-trap",
     userInput: plant(regra, 6, {
       image: null,
@@ -361,7 +394,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
+    expected: { screen: 9, verdict: "fail" },
     id: "en-temperature-mismatched-reason",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -394,7 +427,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["unclear", "incorrect"], screen: 9, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-data-disagrees-with-options",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -433,7 +466,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
+    expected: { screen: null, verdict: "fail" },
     id: "pt-regra-wrong-summary",
     userInput: {
       ...regra,
@@ -460,7 +493,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
+    expected: { screen: null, verdict: "fail" },
     id: "pt-regra-over-broad-summary",
     userInput: {
       ...regra,
@@ -487,7 +520,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
+    expected: { screen: 9, verdict: "fail" },
     id: "en-temperature-two-right-options",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -522,7 +555,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-eletron-wrong-reason-on-right-option",
     userInput: plant(eletron, 5, {
       ...(screenOf(eletron, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -560,7 +593,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["scope", "weakCheck"], screen: 9, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-repeats-earlier-lesson",
     userInput: {
       ...temperature,

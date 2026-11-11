@@ -4,7 +4,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { type LibraryIdentitySubject, formatIdentitySubject } from "./library-identity-subject";
 import systemPrompt from "./library-search-terms.prompt.md";
 
@@ -30,6 +30,7 @@ export type SearchTermsParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -65,11 +66,12 @@ export async function generateSearchTerms({
   analytics,
   model = defaultModel,
   reasoning = defaultReasoning,
+  serviceTier,
   subjects,
   useFallback = true,
 }: SearchTermsParams) {
   const userPrompt = formatUntrustedInput({ ITEMS: formatSubjects(subjects) });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

@@ -14,6 +14,8 @@ import {
 import { listGoalTutorPages } from "@zoonk/ai/tasks/tutor/goal-tutor-pages";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
 import { createAnswerLinks } from "@zoonk/core/lesson-questions/app-links";
+import { LEARNER_NEEDS_CASES } from "../lesson-question/learner-needs-cases";
+import { QUANTUM_PLAN } from "../lesson-question/screen-contexts";
 import { TEST_CASES } from "./test-cases";
 
 type GoalTutorOutput = {
@@ -166,5 +168,16 @@ export const goalTutorTask: Task<GoalTutorInput, GoalTutorOutput> = {
   id: "goal-tutor",
   latencyBudget: { p50: 8, p95: 15 },
   name: "Goal Tutor",
-  testCases: TEST_CASES,
+  testCases: [
+    ...TEST_CASES,
+    ...LEARNER_NEEDS_CASES.map((testCase) => ({
+      ...testCase,
+      userInput: {
+        contextSnapshot: { ...QUANTUM_PLAN, screen: testCase.userInput.contextSnapshot },
+        learnerNeeds: testCase.userInput.learnerNeeds,
+        priorTurns: [],
+        question: testCase.userInput.question,
+      },
+    })),
+  ],
 };

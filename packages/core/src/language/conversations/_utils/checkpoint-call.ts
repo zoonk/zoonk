@@ -3,7 +3,6 @@ import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { arePhaseChallengesRequired } from "../../../checkpoints/_utils/phase-challenge-access";
 import { getStoredBlockWait } from "../../../sessions/block-wait";
-import { getDailyTimeLimitStatus } from "../../../sessions/get-daily-time-limit";
 import { type StartStudyBlockResult, startStudyBlock } from "../../../sessions/start-study-block";
 import { type PreparingCall } from "../call-writing-contract";
 import { type ConversationScenario } from "../conversation-contract";
@@ -143,8 +142,7 @@ async function findCheckpointRefusal({
     return { reason, status: "earlierFirst" };
   }
 
-  const limit = block.status === "pending" ? await getDailyTimeLimitStatus() : null;
-  return limit?.reached ? { status: "dailyLimitReached" } : null;
+  return null;
 }
 
 /** The scenario comes first, so a call still being written never starts the block's clock. */

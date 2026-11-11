@@ -35,16 +35,7 @@ export const languageCheckpointCallSchema = z
         id: "LanguageCheckpointCallReady",
       }),
     z
-      .object({
-        dailyLimitReached: z
-          .boolean()
-          .meta({
-            description:
-              "Today's study time is used up, so Start would refuse this call until tomorrow: say so on the intro before any tap",
-          }),
-        intro: languageConversationIntroSchema,
-        status: z.literal("notStarted"),
-      })
+      .object({ intro: languageConversationIntroSchema, status: z.literal("notStarted") })
       .meta({
         description:
           'The call isn\'t made yet: show its intro, and Start makes it (`POST /v1/language-conversations` with `kind: "checkpoint"`)',
@@ -61,7 +52,7 @@ export const languageCheckpointCallSchema = z
       .object({ reason: z.enum(["challenge", "lessons"]), status: z.literal("earlierFirst") })
       .meta({
         description:
-          "Earlier lessons or an earlier phase challenge of the session come first: go back to Today",
+          "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned",
         id: "LanguageCheckpointCallEarlierFirst",
       }),
     z

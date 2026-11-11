@@ -7,6 +7,7 @@ import { LessonWaiting } from "./lesson-waiting";
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
 export function LessonWaitingView({
+  goalId,
   initialRequest,
   inSession,
   lesson,
@@ -14,6 +15,7 @@ export function LessonWaitingView({
   waiting,
   warmUp,
 }: {
+  goalId: string | null;
   initialRequest: LessonRequest;
   inSession: boolean;
   lesson: LessonOutline;
@@ -29,6 +31,7 @@ export function LessonWaitingView({
   return (
     <MainLearnProvider>
       <LessonWaiting
+        goalId={goalId}
         alternative={waiting?.status === "ready" ? waiting.state.alternative : null}
         exitHref={inSession ? "/today" : (origin ?? "/")}
         initialRequest={request}

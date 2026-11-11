@@ -28,6 +28,7 @@ export async function settleFinishedLesson({
   }
 
   const { session, ...block } = found;
+
   const result = await finishLessonBlock({ block, energy, session, timeZone, userId });
 
   return result.status === "ready" ? result.completion : null;

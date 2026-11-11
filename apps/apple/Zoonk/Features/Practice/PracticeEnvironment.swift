@@ -28,6 +28,7 @@ struct PracticeAskTarget: Equatable, Sendable {
   let answered: Bool
   /// Ask says the buddy's name, when asking helps most.
   let missed: Bool
+  var mistakeId: String? = nil
 }
 
 /// A language unit's checkpoint is a live call, which main's checkpoint page reads before the

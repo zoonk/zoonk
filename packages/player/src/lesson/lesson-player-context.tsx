@@ -2,6 +2,7 @@
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { type MomentCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { type ReactNode, createContext, use } from "react";
@@ -32,6 +33,7 @@ export type LessonPlayerActions = {
   /** Applies to every lesson today without changing the plan. */
   skipWriting: () => void;
   skipSteps: (stepIds: string[]) => void;
+  startRecording: () => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
 };
 
@@ -50,10 +52,13 @@ export type LessonPlayerSlots = {
   /** Return null to keep the lesson header; render `menu` at the replacement header's end. */
   completionHeader?: (props: LessonCompletionSlotProps & { menu: ReactNode }) => ReactNode;
   completionActions?: (props: LessonCompletionSlotProps) => ReactNode;
+  finishedChapter?: (chapter: FinishedChapter) => ReactNode;
   reportMenuItem?: (target: LessonReportTarget) => ReactNode;
 };
 
 type LessonPlayerConfig = {
+  showWritingAlternatives?: boolean;
+  canRecordSpokenAnswer?: boolean;
   adapters: LessonPlayerAdapters;
   buddy?: LearnBuddy | null;
   challengeTeam: ChallengeTeam | null;

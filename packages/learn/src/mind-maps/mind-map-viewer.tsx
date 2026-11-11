@@ -10,10 +10,9 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { cn } from "@zoonk/ui/lib/utils";
-import { DownloadIcon, MinusIcon, PlusIcon, ScanIcon, XIcon } from "lucide-react";
+import { DownloadIcon, MinusIcon, PlusIcon, ScanIcon, TextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { toMindMapDownloadHref, toMindMapFileName, toMindMapSrc } from "./_utils/mind-map-urls";
 import { MAX_SCALE, fitSide } from "./_utils/pan-zoom";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
@@ -28,8 +27,9 @@ export function MindMapDownloadLink({
   label,
   title,
 }: {
-  className?: string;
+  className: string;
   image: MindMapImage;
+  /** Shown beside the icon; without it the icon stands alone. */
   label?: string;
   title: string;
 }) {
@@ -134,6 +134,47 @@ function ZoomFrame({
   );
 }
 
+function OutlinePane({ outline, pictureFailed }: { outline: Outline; pictureFailed: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <div className="max-w-column mx-auto flex flex-col gap-5">
+        {pictureFailed && (
+          <p className="text-muted-foreground text-sm text-pretty">
+            {t("Its picture had mistakes, so here's the mind map as text.")}
+          </p>
+        )}
+        <MindMapOutline outline={outline} />
+      </div>
+    </div>
+  );
+}
+
+function AsTextToggle({
+  onChange,
+  pressed,
+}: {
+  onChange: (pressed: boolean) => void;
+  pressed: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <Button
+      aria-pressed={pressed}
+      className="min-[72rem]:hidden"
+      onClick={() => onChange(!pressed)}
+      size="bar"
+      variant={pressed ? "secondary" : "ghost"}
+    >
+      <TextIcon aria-hidden="true" data-icon="inline-start" />
+      {t("As text")}
+    </Button>
+  );
+}
+
+/** A map whose picture failed its check opens as text. */
 export function MindMapViewer({
   image,
   onOpenChange,
@@ -141,7 +182,7 @@ export function MindMapViewer({
   outline,
   title,
 }: {
-  image: MindMapImage;
+  image: MindMapImage | null;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   outline: Outline | null;
@@ -151,13 +192,15 @@ export function MindMapViewer({
   const descriptionId = useId();
   const alt = useMindMapAlt({ outline, title });
   const barButton = buttonVariants({ size: "icon-bar", variant: "ghost" });
-  const zoom = usePanZoom({ active: open });
+  const [asText, setAsText] = useState(false);
+  const zoom = usePanZoom({ active: open && image !== null && !asText });
 
   return (
     <Dialog
       onOpenChange={(isOpen) => {
         if (!isOpen) {
           zoom.fit();
+          setAsText(false);
         }
 
         onOpenChange(isOpen);
@@ -179,34 +222,43 @@ export function MindMapViewer({
               {title}
             </DialogTitle>
 
-            <MindMapDownloadLink className={cn(barButton)} image={image} title={title} />
+            {image && outline && <AsTextToggle onChange={setAsText} pressed={asText} />}
+            {image && <MindMapDownloadLink className={barButton} image={image} title={title} />}
           </header>
 
           <DialogDescription className="sr-only">
-            {alt} {t("Pinch, scroll or use + and - to zoom; drag or use the arrows to move.")}
+            {image && !asText
+              ? `${alt} ${t("Pinch, scroll or use + and - to zoom; drag or use the arrows to move.")}`
+              : alt}
           </DialogDescription>
-          <MindMapDescription id={descriptionId} outline={outline} />
+          {image && <MindMapDescription id={descriptionId} outline={outline} />}
 
-          <div className="flex min-h-0 flex-1">
-            <div className="flex min-w-0 flex-1 flex-col">
-              <ZoomFrame
-                alt={alt}
-                descriptionId={outline ? descriptionId : undefined}
-                image={image}
-                zoom={zoom}
-              />
+          {image && !asText && (
+            <div className="flex min-h-0 flex-1">
+              <div className="flex min-w-0 flex-1 flex-col">
+                <ZoomFrame
+                  alt={alt}
+                  descriptionId={outline ? descriptionId : undefined}
+                  image={image}
+                  zoom={zoom}
+                />
+              </div>
+
+              {outline && (
+                <aside
+                  aria-hidden="true"
+                  className="border-border hidden w-80 shrink-0 overflow-y-auto border-l px-6 py-6 min-[72rem]:block"
+                  data-slot="mind-map-viewer-outline"
+                >
+                  <MindMapOutline outline={outline} />
+                </aside>
+              )}
             </div>
+          )}
 
-            {outline && (
-              <aside
-                aria-hidden="true"
-                className="border-border hidden w-80 shrink-0 overflow-y-auto border-l px-6 py-6 min-[72rem]:block"
-                data-slot="mind-map-viewer-outline"
-              >
-                <MindMapOutline outline={outline} />
-              </aside>
-            )}
-          </div>
+          {(!image || asText) && outline && (
+            <OutlinePane outline={outline} pictureFailed={!image} />
+          )}
         </DialogPopup>
       </DialogPortal>
     </Dialog>

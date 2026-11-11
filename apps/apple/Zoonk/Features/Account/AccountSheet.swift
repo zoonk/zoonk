@@ -1,6 +1,8 @@
 import SwiftUI
 
 private enum AccountDestination: Hashable {
+  case aboutYou
+  case aboutYouQuestion(ProfileQuestion)
   case certificate(code: String)
   case certificates
   case createAccount
@@ -153,7 +155,7 @@ struct AccountSheet: View {
   private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
     let isSection =
       switch destination {
-      case .certificate, .deleteAccount: false
+      case .aboutYouQuestion, .certificate, .deleteAccount: false
       default: true
       }
 
@@ -173,6 +175,14 @@ struct AccountSheet: View {
   @ViewBuilder
   private func destination(_ destination: AccountDestination) -> some View {
     switch destination {
+    case .aboutYou:
+      AboutYouView {
+        path.append(.aboutYouQuestion($0))
+      } openMemory: {
+        path.append(.memory)
+      }
+    case .aboutYouQuestion(let question):
+      AboutYouQuestionView(question: question)
     case .certificate(let code):
       CertificateScreen(code: code)
     case .certificates:
@@ -187,7 +197,9 @@ struct AccountSheet: View {
         hasAppleAccount: deletion.hasAppleAccount,
         subscription: deletion.subscription)
     case .memory:
-      MemoryView()
+      MemoryView {
+        path.append(.aboutYouQuestion($0))
+      }
     case .preferences:
       PreferencesView()
     case .reminders:
@@ -313,8 +325,8 @@ struct AccountSheet: View {
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .certificate, .certificates, .createAccount, .memory, .plus, .preferences, .profile,
-        .reminders, .subscription:
+      case .aboutYou, .aboutYouQuestion, .certificate, .certificates, .createAccount, .memory,
+        .plus, .preferences, .profile, .reminders, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -411,6 +423,13 @@ private struct SettingsHubView: View {
             }
             .typeStyle(.meta)
           }
+        }
+
+        AccountSectionLink(destination: .aboutYou, sectionOpen: sectionOpen) {
+          ListRow(
+            Text(
+              "About you", tableName: "Account",
+              comment: "Settings row for what the learner told Zoonk about themselves"))
         }
 
         AccountSectionLink(destination: .memory, sectionOpen: sectionOpen) {

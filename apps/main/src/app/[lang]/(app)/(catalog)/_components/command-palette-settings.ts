@@ -23,6 +23,12 @@ export function useSettingsPaletteItems(isLoggedIn: boolean) {
             menu: getMenu("profile"),
           }),
           createNavigationPaletteItem({
+            id: "aboutYou",
+            keywords,
+            label: t("About you"),
+            menu: getMenu("aboutYou"),
+          }),
+          createNavigationPaletteItem({
             id: "memory",
             keywords,
             label: t("Memory"),

@@ -72,6 +72,40 @@ describe(workflowRunReducer, () => {
     expect(run([{ runIds: [], type: "restart" }], dealt).warmUpId).toBe("deck");
   });
 
+  it("keeps the word that the goal's deck won't come through a start over, so no skeleton comes back", () => {
+    const failed = run([
+      event({ status: "completed", step: "warmUpFailed" }),
+      event({ status: "started", step: "buildSkillGraph" }),
+      event({ status: "error", step: "buildSkillGraph" }),
+    ]);
+
+    expect(run([{ runIds: ["failed-run"], type: "restart" }], failed).steps).toStrictEqual({
+      warmUpFailed: "completed",
+    });
+  });
+
+  it("keeps the first lesson the run writes, ready once it reports so, through a replay", () => {
+    const writing = event({
+      lessonId: "lesson",
+      lessonTitle: "Why birds sing at dawn",
+      status: "started",
+      step: "writeFirstLesson",
+    });
+
+    const ready = event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" });
+    const lesson = { id: "lesson", title: "Why birds sing at dawn" };
+
+    expect(run([writing]).firstLesson).toStrictEqual({ ...lesson, status: "writing" });
+    expect(run([writing, ready]).firstLesson).toStrictEqual({ ...lesson, status: "ready" });
+
+    expect(run([writing, ready, writing]).firstLesson).toStrictEqual({
+      ...lesson,
+      status: "ready",
+    });
+
+    expect(run([writing, ready]).ready).toBe(false);
+  });
+
   it("is ready once the step that ends the kind's wait finished", () => {
     const started = run([event({ status: "started", step: "createPlan" })]);
     const finished = run([event({ status: "completed", step: "createPlan" })], started);
@@ -242,4 +276,67 @@ describe(getRunStatus, () => {
       getRunStatus({ runId: "run", state: run(lostConnections(MAX_LOST_CONNECTIONS + 1)) }),
     ).toBe("failed");
   });
+
+  it("keeps lesson events after the plan is ready until the lesson settles", () => {
+    const state = run([
+      event({
+        lessonId: "lesson",
+        lessonTitle: "Dawn",
+        status: "started",
+        step: "writeFirstLesson",
+      }),
+      event({ status: "completed", step: "goalReady" }),
+      event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" }),
+    ]);
+
+    expect(state.ready).toBe(true);
+    expect(state.firstLesson?.status).toBe("ready");
+  });
+
+  it("marks a failed goal ended even after its plan became ready", () => {
+    const state = run([
+      event({
+        lessonId: "lesson",
+        lessonTitle: "Dawn",
+        status: "started",
+        step: "writeFirstLesson",
+      }),
+      event({ status: "completed", step: "goalReady" }),
+      event({ status: "error", step: "workflowError" }),
+    ]);
+
+    expect(state.ready).toBe(true);
+    expect(state.ended).toBe(true);
+  });
+
+  it.each([false, true])(
+    "ends a closed ready-plan stream with lesson ready=%s while its run still works",
+    (ready) => {
+      const afterPlan = run([
+        event({
+          lessonId: "lesson",
+          lessonTitle: "Dawn",
+          status: "started",
+          step: "writeFirstLesson",
+        }),
+        event({ status: "completed", step: "goalReady" }),
+        ...(ready
+          ? [event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" })]
+          : []),
+      ]);
+
+      const cycle: WorkflowRunAction[] = [
+        { runId: "run", status: "running", type: "runStatus" },
+        { type: "reconnect" },
+      ];
+
+      const afterReopens = run(Array.from({ length: 80 }, () => cycle).flat(), afterPlan);
+      const closed = run([{ runId: "run", status: "running", type: "runStatus" }], afterReopens);
+
+      expect({ ended: closed.ended, reconnectIn: closed.reconnectIn }).toStrictEqual({
+        ended: true,
+        reconnectIn: null,
+      });
+    },
+  );
 });

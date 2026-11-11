@@ -2,33 +2,18 @@
 
 import { useMindMapActions } from "@/lib/mind-maps/use-mind-map-actions";
 import { type GoalMindMapsView } from "@zoonk/core/mind-maps/contract";
-import {
-  type MindMapLimit,
-  type MindMapsHrefs,
-  MindMapsScreen,
-  type NextMindMap,
-} from "@zoonk/learn/mind-maps";
-
-const HREFS: MindMapsHrefs = {
-  back: "/plan",
-  chapter: (chapterId) => `/content/chapters/${chapterId}`,
-  today: "/today",
-};
+import { MindMapsScreen } from "@zoonk/learn/mind-maps";
 
 export function MindMapsClient({
-  cap,
   goalId,
   mindMaps,
-  next,
+  plus,
 }: {
-  cap: MindMapLimit | null;
   goalId: string;
   mindMaps: GoalMindMapsView;
-  next: NextMindMap | null;
+  plus: boolean;
 }) {
   const actions = useMindMapActions(goalId);
 
-  return (
-    <MindMapsScreen actions={actions} cap={cap} hrefs={HREFS} mindMaps={mindMaps} next={next} />
-  );
+  return <MindMapsScreen actions={actions} backHref="/plan" mindMaps={mindMaps} plus={plus} />;
 }

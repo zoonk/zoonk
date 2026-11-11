@@ -8,7 +8,6 @@ import {
   loadUsageTotals,
 } from "../../entitlements/_utils/usage-counts";
 import { readExamPicks } from "../../exams/choices/exam-choices";
-import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { type GoalPlan, getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { listReadyMistakes } from "../../mistakes/mistake-availability";
@@ -17,7 +16,6 @@ import {
   loadPracticeMistakes,
 } from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
-import { loadDailyTimeLimitStatus } from "../_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
 import { type loadDayPlan } from "../_utils/day-plan";
 import { loadExamStructure } from "../_utils/exam-structure";
@@ -99,17 +97,13 @@ export type DayMissionFacts = {
 };
 
 async function readyMistakes({
-  goal,
   goalPlan,
   localDate,
-  listeningSkillIds,
   readMistakes,
   timeZone,
   userId,
 }: {
-  goal: Goal;
   goalPlan: GoalPlan;
-  listeningSkillIds?: ReadonlySet<string>;
   localDate: Date;
   readMistakes?: () => Promise<PracticeMistake[]>;
   timeZone: string;
@@ -117,12 +111,7 @@ async function readyMistakes({
 }) {
   const mistakes = readMistakes
     ? await readMistakes()
-    : await loadPracticeMistakes({
-        goal,
-        listeningSkillIds: listeningSkillIds ?? (await loadListeningSkillIds(goal.id)),
-        ownerOf: getSkillOwners(goalPlan.skills),
-        userId,
-      });
+    : await loadPracticeMistakes({ skillIds: [...getSkillOwners(goalPlan.skills).keys()], userId });
 
   return listReadyMistakes({ localDate, mistakes, timeZone });
 }
@@ -150,11 +139,10 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 async function loadMissionContext(input: MissionContext) {
   const { dayPlan, goal, localDate, now, readSubscription, readUsage, selection, userId } = input;
 
-  const [plan, goalPlan, tier, limit, recent, usage] = await Promise.all([
+  const [plan, goalPlan, tier, recent, usage] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
     dayPlan?.tier ?? getLearnerTier(userId, readSubscription),
-    dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
       take: RECENT_SESSIONS,
@@ -163,7 +151,7 @@ async function loadMissionContext(input: MissionContext) {
     readUsage ? readUsage() : loadUsageTotals({ client: prisma, now, userId }),
   ]);
 
-  return { goalPlan, limit, plan, recent, tier, usage };
+  return { goalPlan, plan, recent, tier, usage };
 }
 
 /** Internal build-time read. It never starts generation or claims any usage. */
@@ -201,7 +189,7 @@ export async function loadDayMissionFacts({
   timeZone: string;
   userId: string;
 }): Promise<DayMissionFacts> {
-  const { plan, goalPlan, tier, limit, recent, usage } = await loadMissionContext({
+  const { plan, goalPlan, tier, recent, usage } = await loadMissionContext({
     dayPlan,
     goal,
     localDate,
@@ -213,15 +201,9 @@ export async function loadDayMissionFacts({
   });
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
-  const dailyMinutes = Math.min(dayMinutes, limit.remainingMinutes ?? dayMinutes);
+  const dailyMinutes = dayMinutes;
 
-  const available =
-    goal.status !== "paused" &&
-    goal.status !== "archived" &&
-    !limit.reached &&
-    blocks.length > 0 &&
-    plannedMinutes > 0 &&
-    dailyMinutes > 0;
+  const available = goal.status !== "paused" && goal.status !== "archived" && dailyMinutes > 0;
 
   const recentPicks = recent.map(
     (session) => readMissionDocument(session.missions)?.picks.map((pick) => pick.kind) ?? [],
@@ -244,15 +226,7 @@ export async function loadDayMissionFacts({
   const items = plan?.items ?? [];
 
   const [mistakes, language, weakSpot, structure] = await Promise.all([
-    readyMistakes({
-      goal,
-      goalPlan,
-      listeningSkillIds: dayPlan?.listeningSkillIds,
-      localDate,
-      readMistakes,
-      timeZone,
-      userId,
-    }),
+    readyMistakes({ goalPlan, localDate, readMistakes, timeZone, userId }),
     languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
     weakSpotCandidate({
       blocks,
@@ -302,6 +276,7 @@ export async function loadDayMissionFacts({
 
   return {
     ...base,
+    available: available && ((blocks.length > 0 && plannedMinutes > 0) || mistakes.length > 0),
     candidates,
     firstSteps,
     oldestReadyMistakeAt: mistakes[0]

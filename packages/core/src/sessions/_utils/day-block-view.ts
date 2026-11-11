@@ -1,6 +1,7 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
+import { studyCheckpointSchema } from "../block-view-contract";
 import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
 import { getBlockScreen } from "../day-block";
@@ -44,7 +45,7 @@ function getEstimateOutcome(block: DayBlockInput): { outcome: BlockOutcome; ques
 }
 
 function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["checkpoint"] {
-  return checkpoint;
+  return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
 }
 
 export function toDayBlockView({
@@ -105,6 +106,7 @@ export function toDayBlockView({
       block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
+    opensInPlayer: false,
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,

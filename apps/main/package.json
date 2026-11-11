@@ -43,6 +43,7 @@
     "recharts": "catalog:",
     "server-only": "catalog:",
     "sharp": "catalog:",
+    "translation-resilience": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

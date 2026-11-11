@@ -10,12 +10,15 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
 import systemPrompt from "./topic-skill-names.prompt.md";
 
-/** The plan edits' small model: the learner waits on the buddy's card. */
-const defaultModel = "google/gemini-3.5-flash-lite";
-const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
-
-const MAX_NAME_LENGTH = 80;
-const MAX_DESCRIPTION_LENGTH = 200;
+/**
+ * The learner waits on the buddy's card (3 s p50, 6 s p95). On 10 cases (8 Nov 2026), Luna and
+ * Haiku 5.5, both at minimal reasoning as the chain sends it, each scored 10.00, at $0.1114/1k in
+ * 1.71/2.89 s and $0.1324/1k in 1.80/2.65 s; Flash Lite cost $0.3576/1k and named a Japanese skill
+ * in the plain form instead of the potential one.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const defaultReasoning: Reasoning = "minimal";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({
   skills: z.array(z.object({ description: z.string(), name: z.string() })),
@@ -35,13 +38,12 @@ export type TopicSkillNamesParams = TopicSkillNamesInput & {
   useFallback?: boolean;
 };
 
-function cleanText({ max, text }: { max: number; text: string }): string {
+function cleanText(text: string): string {
   return decodeHtmlEntities(text)
     .replaceAll(/\s*[—–]\s*/gu, ", ")
     .replaceAll(/\s+/gu, " ")
     .trim()
-    .replace(/\.$/u, "")
-    .slice(0, max);
+    .replace(/\.$/u, "");
 }
 
 /** Never the topic's own words: they may name the learner's teacher, school or test. */
@@ -54,13 +56,13 @@ function toSkillNames({
 }): (TopicSkillName | null)[] {
   return Array.from({ length: count }, (_, index) => {
     const skill = raw.skills[index];
-    const name = skill ? cleanText({ max: MAX_NAME_LENGTH, text: skill.name }) : "";
+    const name = skill ? cleanText(skill.name) : "";
 
     if (!skill || name.length === 0) {
       return null;
     }
 
-    const description = cleanText({ max: MAX_DESCRIPTION_LENGTH, text: skill.description });
+    const description = cleanText(skill.description);
     return { description: description ? `${description}.` : "", name };
   });
 }
@@ -97,7 +99,13 @@ export async function nameTopicSkills(
   usage: LanguageModelUsage;
   userPrompt: string;
 }> {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

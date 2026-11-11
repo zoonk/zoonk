@@ -35,7 +35,7 @@ export function useStepGrading({
   ensureRun,
   hold,
   keepGrade,
-  resendHeld,
+  resendUnsaved,
   state,
 }: {
   adapters: LessonPlayerAdapters;
@@ -43,7 +43,7 @@ export function useStepGrading({
   ensureRun: () => Promise<{ runId: string } | null>;
   hold: (check: Omit<UnsentAnswer, "runId">) => void;
   keepGrade: <T>(grade: { request: Promise<T>; stepId: string }) => Promise<T>;
-  resendHeld: () => Promise<boolean>;
+  resendUnsaved: () => Promise<boolean>;
   state: LessonPlayerState;
 }) {
   const pendingRef = useRef(new Map<string, PendingAttempt>());
@@ -64,11 +64,15 @@ export function useStepGrading({
   );
 
   const gradeOnServer = useCallback(
-    async ({ answer, step }: CheckContext) => {
+    async ({
+      answer,
+      answerText: localAnswerText,
+      step,
+    }: CheckContext & { answerText?: string | null }) => {
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
-      const answerText = "text" in answer ? answer.text : "";
+      const answerText = localAnswerText ?? ("text" in answer ? answer.text : "");
       const pending = pendingRef.current.get(step.id);
 
       // Asked again after its reply was lost, the server replays the saved verdict for the same id.
@@ -103,13 +107,13 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
       dispatch({ stepId: step.id, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.helped, state.stepStartedAt],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
   const submitSpokenAnswer = useCallback(
@@ -133,8 +137,8 @@ export function useStepGrading({
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({
-          request: ensureRun().then(() =>
-            gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }),
+          request: ensureRun().then((run) =>
+            run ? gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }) : null,
           ),
           stepId,
         }),
@@ -148,7 +152,7 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
@@ -162,7 +166,7 @@ export function useStepGrading({
 
       dispatch({ issue, stepId, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.phase, state.steps],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.phase, state.steps],
   );
 
   return { gradeOnServer, recordInBackground, submitSpokenAnswer };

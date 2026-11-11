@@ -10,8 +10,11 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { FatalError } from "workflow";
+import { FatalError, sleep } from "workflow";
+import { getRun } from "workflow/api";
+import { getStartMock } from "../_test-utils/start-mock";
 import { TEST_IMAGE, imageProvenance } from "../images/_test-utils/image-results";
+import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { chapterMindMapWorkflow } from "./chapter-mind-map-workflow";
 
 const structure = {
@@ -91,6 +94,148 @@ describe(chapterMindMapWorkflow, () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("writes the chapter's lessons through their own runs first, keeping the map on its way", async () => {
+    const chapter = await claimedChapter();
+    const unwritten = await libraryLessonFixture({ title: "Inside a cell" });
+
+    await chapterLessonFixture({ chapterId: chapter.id, lessonId: unwritten.id, position: 1 });
+
+    await prisma.chapterMindMap.update({
+      data: { updatedAt: new Date(Date.now() - 9 * 60 * 1000) },
+      where: { chapterId: chapter.id },
+    });
+
+    getStartMock().mockResolvedValue({ runId: "lesson-run" } as never);
+
+    const writing = [true, false];
+
+    vi.mocked(getRun).mockImplementation(
+      () =>
+        ({
+          exists: Promise.resolve(true),
+          status: Promise.resolve(writing.shift() ? "running" : "completed"),
+        }) as never,
+    );
+
+    vi.mocked(sleep).mockImplementation(async () => {
+      const held = await prisma.chapterMindMap.findUniqueOrThrow({
+        where: { chapterId: chapter.id },
+      });
+
+      expect(held).toMatchObject({ runId: "test-run-id", status: "running" });
+      expect(Date.now() - held.updatedAt.getTime()).toBeLessThan(60 * 1000);
+
+      await prisma.lesson.update({
+        data: { contentStatus: "completed" },
+        where: { id: unwritten.id },
+      });
+    });
+
+    await expect(
+      chapterMindMapWorkflow({
+        chapterId: chapter.id,
+        lessons: { forExam: true, ids: [unwritten.id] },
+      }),
+    ).resolves.toStrictEqual({ hasImage: true });
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
+      lessonContentWorkflow,
+      [{ analytics: undefined, forExam: true, lessonId: unwritten.id, wait: "learner" }],
+      { experimental_hook: { token: `lesson-content:${unwritten.id}` } },
+    );
+
+    expect(sleep).toHaveBeenCalledOnce();
+
+    expect(generateMindMapStructure).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        chapter: expect.objectContaining({
+          lessons: [
+            expect.objectContaining({ title: "What a cell is" }),
+            expect.objectContaining({ title: "Inside a cell" }),
+          ],
+        }),
+      }),
+    );
+  });
+
+  it("fails the map instead of drawing part of the chapter when a lesson's run ends unwritten", async () => {
+    const chapter = await claimedChapter();
+
+    const missing = await libraryLessonFixture({
+      contentStatus: "failed",
+      title: "The missing half",
+    });
+
+    await chapterLessonFixture({ chapterId: chapter.id, lessonId: missing.id, position: 1 });
+    getStartMock().mockResolvedValue({ runId: "failed-lesson-run" } as never);
+
+    vi.mocked(getRun).mockImplementation(
+      () => ({ exists: Promise.resolve(true), status: Promise.resolve("failed") }) as never,
+    );
+
+    await expect(
+      chapterMindMapWorkflow({
+        chapterId: chapter.id,
+        lessons: { forExam: false, ids: [missing.id] },
+      }),
+    ).rejects.toThrow();
+
+    expect(generateMindMapStructure).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
+    ).resolves.toMatchObject({ status: "failed" });
+  });
+
+  it("waits for a lesson its owner still writes after the lesson run it started ended", async () => {
+    const chapter = await claimedChapter();
+
+    const owned = await libraryLessonFixture({
+      contentRunId: "owner-run",
+      contentStatus: "running",
+      title: "Inside a cell",
+    });
+
+    await chapterLessonFixture({ chapterId: chapter.id, lessonId: owned.id, position: 1 });
+    getStartMock().mockResolvedValue({ runId: "joined-lesson-run" } as never);
+
+    const ownerWriting = [true, false];
+
+    vi.mocked(getRun).mockImplementation(
+      (runId) =>
+        ({
+          exists: Promise.resolve(true),
+          status: Promise.resolve(
+            runId === "owner-run" && ownerWriting.shift() ? "running" : "completed",
+          ),
+        }) as never,
+    );
+
+    vi.mocked(sleep).mockImplementation(async () => {
+      await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: owned.id } });
+    });
+
+    await expect(
+      chapterMindMapWorkflow({
+        chapterId: chapter.id,
+        lessons: { forExam: false, ids: [owned.id] },
+      }),
+    ).resolves.toStrictEqual({ hasImage: true });
+
+    expect(sleep).toHaveBeenCalledOnce();
+
+    expect(generateMindMapStructure).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        chapter: expect.objectContaining({
+          lessons: [
+            expect.objectContaining({ title: "What a cell is" }),
+            expect.objectContaining({ title: "Inside a cell" }),
+          ],
+        }),
+      }),
+    );
   });
 
   it("shows the map as soon as its picture is drawn, then checks its words", async () => {

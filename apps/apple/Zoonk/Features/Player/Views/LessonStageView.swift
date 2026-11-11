@@ -86,11 +86,12 @@ struct LessonStageView: View {
         let map = store.lesson?.taggedSummary
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
+        let opensWithMap = step.opensLesson && map != nil
 
         HStack(spacing: 0) {
           if let pages = spread {
             ScrollViewReader { scroll in
-              LessonPage(store: store) {
+              LessonPage(store: store, fillsHeight: opensWithMap) {
                 LessonNotice(state: state, store: store)
 
                 VStack(alignment: .leading, spacing: 20) {
@@ -121,8 +122,7 @@ struct LessonStageView: View {
 
           ScrollViewReader { scroll in
             LessonPage(
-              store: store,
-              fillsHeight: spread == nil && (step.hasWordBank || (step.opensLesson && map != nil))
+              store: store, fillsHeight: spread == nil && (step.hasWordBank || opensWithMap)
             ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
@@ -155,7 +155,7 @@ struct LessonStageView: View {
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
                 VStack(alignment: .leading, spacing: 24) {
                   LessonVerdictView(
-                    step: step, result: result, store: store,
+                    step: step, answer: state.currentAnswer, result: result, store: store,
                     willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
                       ?? false,
                     hyperdriveStreak: state.hyperdriveStreak(for: step.id)

@@ -5,7 +5,7 @@ import { type CheckpointKind } from "../sessions/brain-power";
 import { type CheckpointPhase } from "./checkpoint-contract";
 import { type CheckpointReward } from "./checkpoint-reward";
 
-/** `tried` retries tomorrow; `queued` waits for an earlier phase. `waiting` preserves its pending item and saved day. */
+/** `tried` retries tomorrow; `queued` is retained for older clients and is never returned. `waiting` preserves its pending item and saved day. */
 export const CHALLENGE_STATUSES = [
   "done",
   "plusRequired",
@@ -44,9 +44,7 @@ export type ChallengeView = {
   blockId: string | null;
   call: ChallengeCall | null;
   canMove: boolean;
-  /** Blocks starting a ready challenge; false while waitReason names an earlier prerequisite. */
-  dailyLimitReached: boolean;
-  /** The learner-local day it's planned for, YYYY-MM-DD. */
+  /** A reached phase challenge's next capable day when it waits; the real day for calendar challenges. Null before a phase challenge is reached. */
   date: string | null;
   /** Real learner pace, capped at minutes; defaults to exam pace and is null when size is unknown. */
   estimatedMinutes: number | null;
@@ -61,8 +59,6 @@ export type ChallengeView = {
   mock: boolean;
   leftOut: MockLeftOut[];
   netScored: boolean;
-  /** Next learner-local YYYY-MM-DD within a week; null for weekly challenges, exams, or no eligible day. */
-  nextStudyDate: string | null;
   number: number | null;
   /** Questions needed to pass, or goals for a call; null while unknown. Weekly challenges reward finishing. */
   passMark: number | null;
@@ -90,7 +86,7 @@ export type ChallengeView = {
   today: string;
   /** Plan-ordered topics; empty for mocks and language calls. */
   topics: ChallengeTopic[];
-  /** Earlier lessons or challenges must finish or be skipped; null before session creation or when unblocked. */
+  /** Earlier lessons must finish or be skipped; null before session creation or when unblocked. */
   waitReason: "challenge" | "lessons" | null;
 };
 

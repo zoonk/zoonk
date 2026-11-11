@@ -47,7 +47,12 @@ export async function mergeUserProgress({ guestUserId, transaction, userId }: Gu
 }
 
 /** Removing the guest profile first frees its unique active goal before the account takes it. */
-export async function mergeLearningProfile({ guestUserId, transaction, userId }: GuestLinkContext) {
+export async function mergeLearningProfile({
+  guestUserId,
+  transaction,
+  userId,
+  takeGuestSupport = false,
+}: GuestLinkContext & { takeGuestSupport?: boolean }) {
   await transaction.$executeRaw`
     WITH guest_profile AS (
       DELETE FROM user_learning_profiles
@@ -55,16 +60,18 @@ export async function mergeLearningProfile({ guestUserId, transaction, userId }:
       RETURNING *
     )
     INSERT INTO user_learning_profiles (
-      id, user_id, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, share_usage_data,
+      id, user_id, learning_needs, buddy_kind, buddy_name, buddy_glasses,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       created_at, updated_at
     )
-    SELECT id, ${userId}::uuid, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, share_usage_data,
+    SELECT id, ${userId}::uuid, learning_needs, buddy_kind, buddy_name, buddy_glasses,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
       active_goal_id = COALESCE(EXCLUDED.active_goal_id, user_learning_profiles.active_goal_id),
+      learning_needs = CASE WHEN ${takeGuestSupport} THEN EXCLUDED.learning_needs ELSE user_learning_profiles.learning_needs END,
+      sounds_enabled = CASE WHEN ${takeGuestSupport} THEN EXCLUDED.sounds_enabled ELSE user_learning_profiles.sounds_enabled END,
       share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL

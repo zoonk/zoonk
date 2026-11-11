@@ -1,12 +1,11 @@
 import "server-only";
-import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type CallReuse, type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { type LessonGateProblem, runLessonQualityGate } from "../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../quality/lesson-repairs";
-import { getReasoningCheckReason } from "../quality/reasoning-check-policy";
 import {
   type GateResult,
   type LessonAnalytics,
@@ -53,30 +52,23 @@ export type LessonDraftState = {
 export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; status: "needsFix" };
 
 /**
- * A private lesson serves one learner, so it gets no model review: a second fix pass on what the
- * code checks flag stands in for it.
- */
-const PRIVATE_FIX_PASSES = 2;
-
-/**
  * Internal workflow bridge: the caller must hold the lesson's content claim, report the lesson
  * ready once it's saved (`completeLessonContent`) and dispatch returned background checks.
  */
 export async function writeLessonContent({
   analytics,
-  forExam = false,
-  forceReview = false,
   lessonId,
   reuse = "bounded",
   serviceTier,
+  speed,
   workflowRunId,
 }: {
   analytics?: LessonAnalytics;
-  forExam?: boolean;
-  forceReview?: boolean;
   lessonId: string;
   reuse?: CallReuse;
   serviceTier?: ServiceTier;
+  /** Only the first draft's writer: fixes and reviews keep the standard speed. */
+  speed?: ServedSpeed;
   workflowRunId: string;
 }): Promise<
   | Extract<LessonContentOutcome, { status: "missingSpec" | "notClaimed" }>
@@ -100,6 +92,7 @@ export async function writeLessonContent({
     heldBackProblems: writer.heldBackProblems,
     model: writer.model,
     serviceTier,
+    speed,
   });
 
   const writerModel = draft.provenance.model;
@@ -107,24 +100,15 @@ export async function writeLessonContent({
   const cite = getLessonDocuments(inputs).length > 0;
   const reusable = inputs.ownerId === null;
 
-  const review =
-    reusable &&
-    (forceReview ||
-      cite ||
-      getReasoningCheckReason({
-        categories: inputs.categories,
-        forExam,
-        lesson: draft.data,
-        level: inputs.level,
-      }) !== null);
+  const review = reusable;
 
   return {
     draft: {
       cite,
-      gate: { analytics: taskAnalytics, context, reuse, serviceTier, sources, writerModel },
+      gate: { analytics: taskAnalytics, context, serviceTier, sources, writerModel },
       inputs,
       previous: null,
-      remainingFixes: reusable ? 1 : PRIVATE_FIX_PASSES,
+      remainingFixes: 1,
       review,
       version: {
         lesson: repairWrittenLesson({
@@ -167,13 +151,7 @@ export async function checkLessonContent({
   const { cite, gate, inputs, previous, review, version: written } = draft;
 
   const checked = previous
-    ? await checkFixedLesson({
-        draft: previous.lesson,
-        first: previous.first,
-        fixed: written.lesson,
-        gate,
-        review: false,
-      })
+    ? await checkFixedLesson({ fixed: written.lesson, gate, review: false })
     : await runLessonQualityGate({ ...gate, lesson: written.lesson, review: false });
 
   if (checked.blocking.length > 0) {

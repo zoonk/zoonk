@@ -31,6 +31,22 @@ final class PlanEditor {
     }
   }
 
+  /// What `edits` would do, without saving; nil when it couldn't be read.
+  func preview(_ edits: [PlanEdit]) async -> PlanChangePreview? {
+    let goalId = goalId
+    let result = await store.write { api, token in
+      try await api.preview(token: token, goalId: goalId, edits: edits)
+    } changed: { _ in
+      false
+    }
+
+    guard case .done(let preview) = result else {
+      return nil
+    }
+
+    return preview
+  }
+
   @discardableResult
   func apply(
     sentence: String,

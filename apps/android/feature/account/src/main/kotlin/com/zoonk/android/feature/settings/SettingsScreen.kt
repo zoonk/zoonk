@@ -143,6 +143,11 @@ fun SettingsScreen(
                                 ?.size
                                 ?.let { formatNumber(it.toDouble(), currentLocale()) },
                     ) { open(AppRoute.Memory) }
+                    ListDivider()
+                    PageRow(
+                        title = stringResource(R.string.profile_questions_title),
+                        selected = navigator.currentRoute == AppRoute.AboutYou || navigator.currentRoute is AppRoute.ProfileQuestionEdit,
+                    ) { open(AppRoute.AboutYou) }
                 }
 
                 Column {
@@ -237,6 +242,7 @@ private val SETTINGS_PAGES =
         AppRoute.Preferences,
         AppRoute.Reminders,
         AppRoute.Memory,
+        AppRoute.AboutYou,
         AppRoute.Subscription,
         AppRoute.Help,
         AppRoute.Licenses,
@@ -244,6 +250,7 @@ private val SETTINGS_PAGES =
 
 /** Beside the hub, a page replaces the one shown, as main's settings tabs do, rather than stacking on it. */
 fun AppNavigator.openSettingsPage(route: AppRoute) {
+    if (currentRoute is AppRoute.ProfileQuestionEdit) back()
     if (currentRoute in SETTINGS_PAGES) back()
     open(route)
 }

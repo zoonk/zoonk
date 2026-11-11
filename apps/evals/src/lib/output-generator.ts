@@ -1,12 +1,15 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { GatewayError } from "@ai-sdk/gateway";
 import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { logError, logInfo } from "@zoonk/utils/logger";
+import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
 import { settleWithConcurrency } from "./concurrency";
 import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
   type FailedRun,
+  type FailureReason,
   type ModelOutputs,
   type OutputEntry,
   type RegisteredTask,
@@ -42,7 +45,24 @@ function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: Te
   };
 }
 
-type FailedAttempt = { billed: BilledCall[]; testCaseId: string };
+type FailedAttempt = {
+  billed: BilledCall[];
+  testCaseId: string;
+  reason: FailureReason;
+  message: string;
+};
+
+function getFailureReason(error: unknown): FailureReason {
+  if (RetryError.isInstance(error)) {
+    return getFailureReason(error.lastError);
+  }
+
+  if (NoObjectGeneratedError.isInstance(error)) {
+    return "schema";
+  }
+
+  return APICallError.isInstance(error) || GatewayError.isInstance(error) ? "provider" : "other";
+}
 
 function toRunCalls(billed: readonly BilledCall[]): Pick<OutputEntry, "calls" | "extraCalls"> {
   const extraCalls = billed.filter((call) => call.extra).map((call) => toModelCall(call));
@@ -80,7 +100,15 @@ async function generateOutputForTestCase({
 
   const result = await meterBilledCalls(billed, () => runTask(input as never)).catch(
     (error: unknown) => {
-      failed.push({ billed, testCaseId });
+      failed.push({
+        billed,
+        message: (error instanceof Error ? error.message : String(error))
+          .replaceAll(/\s+/gu, " ")
+          .slice(0, 300),
+        reason: getFailureReason(error),
+        testCaseId,
+      });
+
       throw error;
     },
   );
@@ -161,9 +189,12 @@ function createModelOutputs({
 }): ModelOutputs {
   const allFailedRuns = [
     ...failedRuns,
-    ...failed
-      .filter(({ billed }) => billed.length > 0)
-      .map(({ billed, testCaseId }) => ({ ...toRunCalls(billed), testCaseId })),
+    ...failed.map(({ billed, message, reason, testCaseId }) => ({
+      ...toRunCalls(billed),
+      message,
+      reason,
+      testCaseId,
+    })),
   ];
 
   return {

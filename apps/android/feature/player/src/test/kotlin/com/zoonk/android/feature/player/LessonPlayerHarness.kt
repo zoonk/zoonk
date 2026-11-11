@@ -132,28 +132,30 @@ internal class LessonPlayerHarness(
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LessonPlayer(
-                        lesson,
-                        state,
-                        ending,
-                        viewModel,
-                        exits,
-                        rememberAppNavigator(),
-                        tutor =
-                            if (withTutor) {
-                                LessonTutor(TutorIdentity("Sam", look = null), LESSON_SUGGESTIONS) { _, _, _, _, _, onOpenChange ->
-                                    TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
-                                }
-                            } else {
-                                null
-                            },
-                    )
+                    LearnerInput(viewModel::act) {
+                        LessonPlayer(
+                            lesson,
+                            state,
+                            ending,
+                            viewModel,
+                            exits,
+                            rememberAppNavigator(),
+                            tutor =
+                                if (withTutor) {
+                                    LessonTutor(TutorIdentity("Sam", look = null), LESSON_SUGGESTIONS) { _, _, _, _, _, onOpenChange ->
+                                        TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
+                                    }
+                                } else {
+                                    null
+                                },
+                        )
+                    }
                 }
             }
         }
         if (restoration != null) restoration.setContent(content) else rule.setContent(content)
         rule.waitUntil {
-            viewModel.state.value
+            api.startGate?.let { api.startOpenings.isNotEmpty() } ?: viewModel.state.value
                 ?.run
                 .let { it is LessonRun.Started || it is LessonRun.Refused }
         }

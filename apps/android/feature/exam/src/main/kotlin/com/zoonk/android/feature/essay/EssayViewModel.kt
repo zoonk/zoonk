@@ -31,7 +31,7 @@ private val Essay.closed get() = status == Essay.Status.COMPLETED || status == E
 
 enum class EssayMode { Grade, Write }
 
-enum class EssaySend { Idle, Pending, Failed, LimitReached, DailyLimitReached, SignUpRequired }
+enum class EssaySend { Idle, Pending, Failed, LimitReached, SignUpRequired }
 
 @Immutable
 data class EssayUi(
@@ -42,7 +42,7 @@ data class EssayUi(
     val text: String = "",
     val send: EssaySend = EssaySend.Idle,
     val finishing: Boolean = false,
-    val finishFailed: Boolean = false,
+    val finishFailures: Int = 0,
     /** The block is done, so only going on is left. */
     val finished: Boolean = false,
     /** The essay's latest read says it was completed or skipped. */
@@ -142,7 +142,6 @@ class EssayViewModel(
                     val send =
                         when (result.code) {
                             ESSAY_LIMIT_REACHED -> EssaySend.LimitReached
-                            DAILY_LIMIT_REACHED -> EssaySend.DailyLimitReached
                             SIGN_UP_REQUIRED -> EssaySend.SignUpRequired
                             else -> EssaySend.Failed
                         }
@@ -167,11 +166,17 @@ class EssayViewModel(
     /** Every draft still being graded is recorded first, so the block counts it. */
     fun finish() {
         if (mutableUi.value.finishing || move.value.busy) return
-        mutableUi.update { it.copy(finishing = true, finishFailed = false) }
+        mutableUi.update { it.copy(finishing = true) }
         viewModelScope.launch {
             sending.values.toList().awaitAll()
             val finished = mutableUi.value.finished || store.finish(sessionId, blockId) is MutationResult.Done
-            mutableUi.update { it.copy(finishing = false, finishFailed = !finished, finished = finished) }
+            mutableUi.update {
+                it.copy(
+                    finishing = false,
+                    finishFailures = if (finished) 0 else it.finishFailures + 1,
+                    finished = finished,
+                )
+            }
             if (finished) mover.continueSession()
         }
     }
@@ -240,7 +245,6 @@ class EssayViewModel(
 
     private companion object {
         const val ESSAY_LIMIT_REACHED = "ESSAY_LIMIT_REACHED"
-        const val DAILY_LIMIT_REACHED = "DAILY_LIMIT_REACHED"
         const val SIGN_UP_REQUIRED = "SIGN_UP_REQUIRED"
         const val BLOCK_NOT_ACTIVE = "BLOCK_NOT_ACTIVE"
 

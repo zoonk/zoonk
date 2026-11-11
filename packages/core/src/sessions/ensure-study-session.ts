@@ -7,7 +7,6 @@ import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadPlanAtToken } from "../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../plans/plan-conflict";
-import { loadDailyTimeLimitStatus } from "./_utils/daily-time-limit";
 import { getGoalDayMinutes } from "./_utils/day-minutes";
 import { openPlannedDay } from "./_utils/open-planned-day";
 import { findSavedDaySession } from "./_utils/saved-day-session";
@@ -101,16 +100,13 @@ export async function saveDayBeforeActivity({
 
     const localDate = getDateInTimeZone({ date: now, timeZone: zone });
 
-    const [plan, limit] = await Promise.all([
-      prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } }),
-      loadDailyTimeLimitStatus({ date: localDate, userId }),
-    ]);
+    const plan = await prisma.plan.findUnique({
+      select: { settings: true },
+      where: { goalId: goal.id },
+    });
 
-    // Empty rest/limited days offer no missions, so repeated activity requests must not keep planning them.
-    if (
-      limit.reached ||
-      getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings }) === 0
-    ) {
+    // Empty rest days offer no missions, so repeated activity requests must not keep planning them.
+    if (getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings }) === 0) {
       return;
     }
 

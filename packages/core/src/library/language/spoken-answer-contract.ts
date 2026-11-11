@@ -2,10 +2,14 @@ import { normalizeContentType } from "@zoonk/utils/upload";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type RefusedUsage } from "../../entitlements/contract";
-import { answerTimeZoneSchema } from "../../learner/contract";
+import { answerDurationSchema, answerTimeZoneSchema } from "../../learner/contract";
+import { MAX_PRACTICE_ANSWERS } from "../../mistakes/contract";
+import { mistakePracticeFeedbackSchema } from "../../mistakes/practice-feedback";
 
 /** What every app records: Opus in WebM, or AAC in MP4. */
 const SPOKEN_AUDIO_MEDIA_TYPES = ["audio/webm", "audio/mp4", "audio/m4a", "audio/x-m4a"] as const;
+
+const MAX_NOTEBOOK_ANSWER_IDS_LENGTH = 4096;
 
 export const MAX_SPOKEN_AUDIO_BYTES = 2_000_000;
 
@@ -18,16 +22,43 @@ export function isSpokenAudioMediaType(mediaType: string): boolean {
 
 export const spokenAnswerFieldsSchema = z
   .object({
+    answerIds: z
+      .string()
+      .max(MAX_NOTEBOOK_ANSWER_IDS_LENGTH)
+      .transform((value, ctx) => {
+        try {
+          return JSON.parse(value) as unknown;
+        } catch {
+          ctx.issues.push({
+            code: "custom",
+            input: value,
+            message: "Send answerIds as a JSON array",
+          });
+
+          return z.NEVER;
+        }
+      })
+      .pipe(z.array(uuidSchema()).max(MAX_PRACTICE_ANSWERS - 1))
+      .optional()
+      .meta({ description: "For notebook practice, a JSON array of the run's earlier answer IDs" }),
+    attemptId: uuidSchema().optional(),
     durationMs: z.coerce
       .number()
       .int()
       .min(0)
       .max(MAX_SPOKEN_ANSWER_DURATION_MS)
       .meta({ description: "How long the learner spoke, in milliseconds" }),
+    goalId: uuidSchema().optional(),
+    mistakeId: uuidSchema().optional(),
+    practiceDurationMs: z.coerce.number().int().pipe(answerDurationSchema).optional(),
     studySessionId: uuidSchema().optional().meta({ description: "Today's study session, if any" }),
     timeZone: answerTimeZoneSchema,
   })
-  .strict();
+  .strict()
+  .refine((fields) => !fields.mistakeId || Boolean(fields.attemptId), {
+    message: "Notebook recordings require an attemptId",
+    path: ["attemptId"],
+  });
 
 export type SpokenAnswerFields = z.infer<typeof spokenAnswerFieldsSchema>;
 
@@ -70,6 +101,7 @@ export const spokenAnswerGradeSchema = z
       .nullable()
       .meta({ description: "What we heard and how to say the words that didn't match" }),
     isCorrect: z.boolean().meta({ description: "Every word was heard as expected" }),
+    practice: mistakePracticeFeedbackSchema.optional(),
     score: z.number().min(0).max(1).meta({ description: "Share of words heard as expected" }),
     transcript: z.string(),
     words: z.array(spokenWordResultSchema),

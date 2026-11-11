@@ -20,23 +20,81 @@ describe("Closed PR cleanup", () => {
     vi.unstubAllEnvs();
   });
 
-  it.each(["closed", "open"])("rechecks PR state before deleting its branch: %s", async (state) => {
+  it.each(["closed", "open"])(
+    "rechecks PR state before removing its database branch and addresses: %s",
+    async (state) => {
+      const deletions: string[] = [];
+      const prReads: URL[] = [];
+
+      vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
+        if (url.hostname === "api.github.com") {
+          prReads.push(url);
+          return Promise.resolve(Response.json({ state: prReads.length === 1 ? "closed" : state }));
+        }
+
+        if (init.method === "DELETE") {
+          deletions.push(`${url.hostname}${url.pathname}`);
+
+          return Promise.resolve(
+            url.pathname.includes("zoonk-admin-")
+              ? Response.json({}, { status: 404 })
+              : Response.json({}),
+          );
+        }
+
+        if (url.pathname === "/v2/teams/test-team") {
+          return Promise.resolve(Response.json({ slug: "zoonk" }));
+        }
+
+        if (url.hostname === "api.vercel.com") {
+          return Promise.resolve(Response.json({ deployments: [], pagination: { next: null } }));
+        }
+
+        return Promise.resolve(
+          Response.json({ branches: [{ id: "br-preview", name: "preview/pr-42" }] }),
+        );
+      });
+
+      await import("./cleanup.mts");
+      expect(prReads).toHaveLength(2);
+
+      expect(deletions.toSorted()).toStrictEqual(
+        state === "closed"
+          ? [
+              "api.vercel.com/v2/aliases/zoonk-admin-pr-42-zoonk.vercel.app",
+              "api.vercel.com/v2/aliases/zoonk-api-pr-42-zoonk.vercel.app",
+              "api.vercel.com/v2/aliases/zoonk-pr-42-zoonk.vercel.app",
+              "console.neon.tech/api/v2/projects/test-project/branches/br-preview",
+            ]
+          : [],
+      );
+    },
+  );
+
+  it("deletes the database branch even when Vercel fails to remove an address", async () => {
     const deletions: string[] = [];
-    const prReads: URL[] = [];
 
     vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
       if (url.hostname === "api.github.com") {
-        prReads.push(url);
-        return Promise.resolve(Response.json({ state: prReads.length === 1 ? "closed" : state }));
+        return Promise.resolve(Response.json({ state: "closed" }));
+      }
+
+      if (init.method === "DELETE") {
+        deletions.push(url.hostname);
+
+        return Promise.resolve(
+          url.hostname === "api.vercel.com"
+            ? Response.json({}, { status: 403 })
+            : Response.json({}),
+        );
+      }
+
+      if (url.pathname === "/v2/teams/test-team") {
+        return Promise.resolve(Response.json({ slug: "zoonk" }));
       }
 
       if (url.hostname === "api.vercel.com") {
         return Promise.resolve(Response.json({ deployments: [], pagination: { next: null } }));
-      }
-
-      if (init.method === "DELETE") {
-        deletions.push(url.pathname);
-        return Promise.resolve(Response.json({}));
       }
 
       return Promise.resolve(
@@ -44,8 +102,7 @@ describe("Closed PR cleanup", () => {
       );
     });
 
-    await import("./cleanup.mts");
-    expect(prReads).toHaveLength(2);
-    expect(deletions).toHaveLength(state === "closed" ? 1 : 0);
+    await expect(import("./cleanup.mts")).rejects.toThrow("HTTP 403");
+    expect(deletions).toContain("console.neon.tech");
   });
 });

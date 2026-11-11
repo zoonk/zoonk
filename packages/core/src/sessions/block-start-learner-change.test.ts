@@ -1,11 +1,9 @@
 import { prisma } from "@zoonk/db";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { toUTCMidnight } from "@zoonk/utils/date";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -96,29 +94,5 @@ describe("block starts", () => {
         where: { goalId: day.session.goalId, kind: "session", userId: day.user.id },
       }),
     ).resolves.toBe(1);
-  });
-
-  it("rolls back the early mark and progress insert when the daily limit refuses a start", async () => {
-    const day = await setup();
-    await learningProfileFixture({ dailyLimitMinutes: 15, userId: day.user.id });
-
-    await prisma.dailyProgress.create({
-      data: {
-        date: toUTCMidnight(new Date()),
-        dayOfWeek: 0,
-        timeSpentSeconds: 900,
-        userId: day.user.id,
-      },
-    });
-
-    const before = await versions(day);
-    await expect(start(day)).resolves.toStrictEqual({ status: "dailyLimitReached" });
-    await expect(versions(day)).resolves.toStrictEqual(before);
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: day.block.id } }),
-    ).resolves.toStrictEqual(day.block);
-
-    await expect(prisma.userProgress.count({ where: { userId: day.user.id } })).resolves.toBe(0);
   });
 });

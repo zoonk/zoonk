@@ -132,6 +132,10 @@ class WarmUpScreenshots {
         var scheduleReady by mutableStateOf(false)
         var noticeRead by mutableStateOf(false)
 
+        kotlinx.coroutines.runBlocking {
+            warmUps.decks[WARM_UP_ID].prepare()
+            readingWarmUps.decks[WARM_UP_ID].prepare()
+        }
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface {
@@ -143,7 +147,6 @@ class WarmUpScreenshots {
                                         PlanRevealStep(
                                             examGoal(),
                                             isGuest = false,
-                                            libraryCourse = null,
                                             run = MAPPING,
                                             onRetryRun = {},
                                             plans = plans,
@@ -162,7 +165,6 @@ class WarmUpScreenshots {
                                             PlanRevealStep(
                                                 examGoal(),
                                                 isGuest = false,
-                                                libraryCourse = null,
                                                 run = MAPPING,
                                                 onRetryRun = {},
                                                 plans = readingPlans,
@@ -198,7 +200,7 @@ class WarmUpScreenshots {
                                             mocks,
                                             rememberAppNavigator(),
                                             onProgress = {},
-                                            onDone = {},
+                                            onDone = { WriteOutcome.Done(Unit) },
                                         )
                                     }
                                 }

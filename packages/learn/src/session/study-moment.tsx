@@ -1,8 +1,9 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleStopIcon } from "lucide-react";
+import { ArrowRightIcon, CircleStopIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
@@ -10,9 +11,11 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { useFormatDuration } from "../_utils/time-format";
-import { SCREEN_STEADY_MS } from "../_utils/use-steady";
+import { useFormatDuration, useStudyTimeFact } from "../_utils/time-format";
+import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { LearnLink } from "../learn-link";
+import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { ReminderOffer, type ReminderOfferActions } from "../reminders/reminder-offer";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
@@ -33,12 +36,21 @@ import { useSessionAction } from "./use-session-action";
  * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
  * next.
  */
-function MomentEarned({ moment }: { moment: StudyMomentView }) {
+function MomentEarned({
+  lessonSeconds = 0,
+  moment,
+}: {
+  lessonSeconds?: number;
+  moment: StudyMomentView;
+}) {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
+  const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
+    studied,
     moment.comesBackOn &&
       t("Review on {date}", {
         date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
@@ -48,6 +60,11 @@ function MomentEarned({ moment }: { moment: StudyMomentView }) {
         }),
       }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
+    moment.deferredLessonsCount > 0 &&
+      t(
+        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
+        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
+      ),
   ];
 
   return <MomentReadouts brainPower={brainPower} facts={facts} />;
@@ -88,10 +105,12 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
  * second tap never stops the session.
  */
 function MomentActions({
+  continueHref,
   onContinue,
   onStop,
   sessionCompleted,
 }: {
+  continueHref?: string | null;
   onContinue: () => Promise<boolean>;
   onStop: () => Promise<boolean>;
   sessionCompleted: boolean;
@@ -100,7 +119,7 @@ function MomentActions({
 
   const proceed = useSessionAction({
     action: onContinue,
-    enterKey: true,
+    enterKey: !continueHref,
     steadyMs: SCREEN_STEADY_MS,
   });
 
@@ -127,20 +146,25 @@ function MomentActions({
           </Button>
         )}
 
-        <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
-          {sessionCompleted ? t("See today's summary") : t("Continue")}
-        </EnterButton>
+        {continueHref ? (
+          <MomentContinueLink href={continueHref} />
+        ) : (
+          <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
+            {sessionCompleted ? t("See today's summary") : t("Continue")}
+          </EnterButton>
+        )}
       </TaskActions>
     </TaskActionBar>
   );
 }
 
 export function StudyMoment({
-  blocks,
+  continueHref,
   buddy,
   exitHref,
   inLessonPlayer = false,
   kind,
+  lessonSeconds,
   moment,
   next,
   finishedChapterId = null,
@@ -151,12 +175,13 @@ export function StudyMoment({
   renderCeremony,
   testedOut = false,
 }: {
-  blocks: readonly StudyBlock[];
+  continueHref?: string | null;
   buddy?: LearnBuddy | null;
   exitHref?: string;
   finishedChapterId?: string | null;
   inLessonPlayer?: boolean;
   kind: MomentKind;
+  lessonSeconds?: number;
   moment: StudyMomentView;
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
@@ -171,11 +196,14 @@ export function StudyMoment({
   const offer = onStartTestOut ? moment.testOutOffer : null;
   const hasHeader = !inLessonPlayer && exitHref !== undefined;
 
-  const queue = getSessionQueue({
-    blocks,
-    finishedId: moment.blockId,
-    nextId: nextBlock?.id ?? null,
-  });
+  const queue = {
+    left: moment.minutes.left,
+    rows: getSessionQueue({
+      blocks: moment.blocks,
+      finishedId: moment.blockId,
+      nextId: nextBlock?.id ?? null,
+    }),
+  };
 
   const aside = useSessionQueueAside(queue);
 
@@ -188,7 +216,7 @@ export function StudyMoment({
     <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
-          <MomentEarned moment={moment} />
+          <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
         <DayMoment
@@ -201,6 +229,8 @@ export function StudyMoment({
           }}
           reached={moment.reached}
         />
+
+        <FinishedChapterMoment chapter={moment.finishedChapter} />
 
         <ReminderOffer actions={reminderActions} offer={moment.reminderOffer} />
 
@@ -216,6 +246,7 @@ export function StudyMoment({
       </TaskBody>
 
       <MomentActions
+        continueHref={continueHref}
         onContinue={onContinue}
         onStop={onStop}
         sessionCompleted={moment.sessionCompleted}
@@ -237,5 +268,28 @@ export function StudyMoment({
       <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
       {content}
     </SessionFrame>
+  );
+}
+
+function MomentContinueLink({ href }: { href: string }) {
+  const t = useExtracted();
+  const ref = useEnterClick<HTMLAnchorElement>();
+  const steady = useSteady(SCREEN_STEADY_MS);
+
+  return (
+    <LearnLink
+      className={buttonVariants({ size: "xl" })}
+      href={href}
+      lessonWritten
+      onClick={(event) => {
+        if (!steady()) {
+          event.preventDefault();
+        }
+      }}
+      ref={ref}
+    >
+      {t("Continue")}
+      <ArrowRightIcon aria-hidden="true" className="size-4" />
+    </LearnLink>
   );
 }

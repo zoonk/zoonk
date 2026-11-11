@@ -77,7 +77,6 @@ export async function writeLearnerUser({
     buddyGlasses: learner.buddy?.glasses ?? "round",
     buddyKind: learner.buddy?.kind ?? null,
     buddyName: learner.buddy?.name ?? null,
-    dailyLimitMinutes: learner.dailyLimitMinutes ?? null,
     memoryEnabled: true,
   };
 

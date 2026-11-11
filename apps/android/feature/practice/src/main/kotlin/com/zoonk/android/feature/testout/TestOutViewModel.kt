@@ -26,6 +26,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ChapterTestOutRecord
 import com.zoonk.api.models.ChapterTestOutResult
 import com.zoonk.api.models.CreateChapterTestOutGeneration200Response
+import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.SubmitChapterTestOut200Response
 import com.zoonk.api.models.TestOutGeneration
@@ -49,6 +50,8 @@ data class TestOutOutcome(
     val ceremony: Milestone? = null,
     val reached: ReachedFacts? = null,
     val certificates: List<CertificateName> = emptyList(),
+    /** The chapter this test-out finished, for its mind map; a result opened again names none. */
+    val finishedChapter: FinishedChapter? = null,
 )
 
 @Immutable
@@ -61,7 +64,7 @@ data class TestOutUi(
     /** Null until the answers kept on the device are read. */
     val answers: List<GradedAnswer>? = null,
     val sending: Boolean = false,
-    val sendFailed: Boolean = false,
+    val sendFailures: Int = 0,
     val outcome: TestOutOutcome? = null,
     val celebrate: Boolean = false,
     val undo: UndoState = UndoState.Idle,
@@ -204,18 +207,25 @@ class TestOutViewModel(
 
     private fun send(answers: List<GradedAnswer>) {
         if (mutableUi.value.sending) return
-        mutableUi.update { it.copy(sending = true, sendFailed = false) }
+        mutableUi.update { it.copy(sending = true) }
         keepSent(requestId)
         viewModelScope.launch {
             when (val result = store.submit(key, AnswersDraft(requestId, answers))) {
                 is MutationResult.Done -> {
                     when (val graded = result.value) {
                         is SubmitChapterTestOut200Response.ChapterTestOutResultValue -> {
-                            mutableUi.update { it.copy(sending = false, outcome = graded.value.outcome(), celebrate = true) }
+                            mutableUi.update {
+                                it.copy(
+                                    sending = false,
+                                    sendFailures = 0,
+                                    outcome = graded.value.outcome(),
+                                    celebrate = true,
+                                )
+                            }
                         }
 
                         is SubmitChapterTestOut200Response.NothingToSkipValue -> {
-                            mutableUi.update { it.copy(sending = false, nothingToSkip = true) }
+                            mutableUi.update { it.copy(sending = false, sendFailures = 0, nothingToSkip = true) }
                         }
                     }
                     answersDraft?.remove()
@@ -223,7 +233,7 @@ class TestOutViewModel(
 
                 is MutationResult.Failed -> {
                     keepSent(null)
-                    mutableUi.update { it.copy(sending = false, sendFailed = true) }
+                    mutableUi.update { it.copy(sending = false, sendFailures = it.sendFailures + 1) }
                 }
 
                 MutationResult.Obsolete -> {
@@ -314,6 +324,7 @@ private fun ChapterTestOutResult.outcome() =
         ceremony = ceremony,
         reached = ReachedFacts(reached.level, reached.energy),
         certificates = certificates.map { it.naming },
+        finishedChapter = finishedChapter,
     )
 
 private fun ChapterTestOutRecord.outcome() =

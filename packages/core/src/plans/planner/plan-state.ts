@@ -5,6 +5,7 @@ import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-acti
 import { challengeTeamSchema } from "../../library/challenges/challenge-team";
 import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "../plan-tools-contract";
+import { PACE_FAMILIES } from "./plan-pace";
 
 const PLAN_PHASE_KINDS = [
   "learn",
@@ -118,7 +119,11 @@ const planSettingsSchema = z.object({
   movedEvents: z.array(movedEventSchema).default([]),
   noticeDate: isoDateSchema.nullable().default(null),
   pace: z
-    .object({ factor: z.number().positive(), source: z.enum(PACE_SOURCES) })
+    .object({
+      factor: z.number().positive(),
+      family: z.enum(PACE_FAMILIES).optional(),
+      source: z.enum(PACE_SOURCES),
+    })
     .nullable()
     .default(null),
   pastBasicsAreas: z.array(z.string()).default([]),
@@ -128,6 +133,12 @@ const planSettingsSchema = z.object({
   skippedActivities: z.array(z.enum(LANGUAGE_ACTIVITY_TYPES)).default([]),
   skippedAreas: z.array(z.string()).default([]),
   startDate: isoDateSchema.nullable().default(null),
+  /**
+   * A language plan studies only the situations up to its aim's band. Plans laid out before that
+   * rule keep every band until the learner moves their aim. Absent unless set, so those plans keep
+   * the settings, and so the inputs key, they were saved with.
+   */
+  stopsAtAim: z.boolean().optional(),
   team: challengeTeamSchema.nullable().default(null),
   tools: z.array(toolChoiceSchema).default([]),
   weekdayMinutes: z
@@ -161,7 +172,12 @@ export type PlanToolChoice = z.infer<typeof toolChoiceSchema>;
 export type StoredBaseChoice = z.infer<typeof baseChoiceSchema>;
 
 export const planStateSchema = z.object({
-  goal: z.object({ dailyMinutes: z.int(), targetDate: isoDateSchema.nullable() }),
+  goal: z.object({
+    /** A language goal's aim (its `targetScore`); absent from snapshots saved before it was kept. */
+    aim: z.string().nullable().optional(),
+    dailyMinutes: z.int(),
+    targetDate: isoDateSchema.nullable(),
+  }),
   graph: planGraphSchema,
   settings: planSettingsSchema,
 });

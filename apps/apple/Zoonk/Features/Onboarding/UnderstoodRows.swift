@@ -1,7 +1,7 @@
 import Foundation
 
 enum UnderstoodField: String, Equatable, Sendable {
-  case title
+  case displayName
   case targetDate
   case institution
   case reason
@@ -37,6 +37,8 @@ struct UnderstoodRow: Identifiable, Equatable {
   var editValue: String?
   var suggestedDate: String?
   var choiceDates: [String] = []
+  /// A language goal's aim is edited by picking one of these levels, never as free text.
+  var aimChoices: [String] = []
 }
 
 struct UnderstoodSource: Equatable {
@@ -61,7 +63,7 @@ struct UnderstoodSource: Equatable {
 
 struct UnderstoodFacts: Decodable {
   let kind: String
-  let title: String
+  let displayName: String
   let language: String
   let targetDate: String?
   let targetLanguage: String?
@@ -106,10 +108,10 @@ enum UnderstoodRows {
 
     var rows = [
       UnderstoodRow(
-        id: "title",
+        id: "displayName",
         label: LocalizedStringResource(
           "Goal", table: "Onboarding", comment: "Row naming an understood goal"),
-        value: facts.title, field: .title, editValue: facts.title)
+        value: facts.displayName, field: .displayName, editValue: facts.displayName)
     ]
 
     if let date = dateRow(facts: facts, examDates: goal.examDates, today: today) {
@@ -118,6 +120,20 @@ enum UnderstoodRows {
 
     rows += languageRows(facts: facts, locale: locale)
     rows += detailRows(facts: facts, cutoff: goal.cutoff?.value1)
+
+    // The card's aim row opens the aims it can change to, never free text that sizes nothing.
+    if let languageAim = goal.languageAim.flatMap({
+      try? PracticeJSON.recode($0, as: LanguageAimView.self)
+    }), let index = rows.firstIndex(where: { $0.id == "targetScore" }), !languageAim.choices.isEmpty
+    {
+      rows[index].aimChoices = languageAim.choices.map(\.aim)
+
+      if let aim = languageAim.aim, let label = aimLabel(aim) {
+        rows[index] = UnderstoodRow(
+          id: "targetScore", label: rows[index].label, value: "\(aim), \(label)",
+          field: .targetScore, editValue: aim, aimChoices: rows[index].aimChoices)
+      }
+    }
 
     if let levelNote = text(facts.details?.levelNote) {
       rows.append(
@@ -188,7 +204,7 @@ enum UnderstoodRows {
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
-    if !isSaid(language, in: facts.title) {
+    if !isSaid(language, in: facts.displayName) {
       rows.append(
         UnderstoodRow(
           id: "targetLanguage",
@@ -212,7 +228,7 @@ enum UnderstoodRows {
     cutoff: Components.Schemas.TargetCutoff?
   ) -> [UnderstoodRow] {
     func unsaid(_ value: String?) -> String? {
-      text(value).flatMap { isSaid($0, in: facts.title) ? nil : $0 }
+      text(value).flatMap { isSaid($0, in: facts.displayName) ? nil : $0 }
     }
 
     let details = facts.details
@@ -280,7 +296,7 @@ enum UnderstoodRows {
           id: "reason",
           label: LocalizedStringResource(
             "Reason", table: "Onboarding", comment: "Row with why the learner studies"),
-          value: reason, field: .reason, editValue: reason))
+          value: languageReasonLabel(reason) ?? reason, field: .reason, editValue: reason))
     }
 
     if let role = unsaid(details?.role) {

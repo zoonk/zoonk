@@ -327,7 +327,7 @@ class FocusTestViewModelTest {
             viewModel.ui.value.questions
                 .forEach { viewModel.answer(it, Answer.Choice(0)) }
             advanceUntilIdle()
-            assertTrue(viewModel.ui.value.sendFailed)
+            assertEquals(1, viewModel.ui.value.sendFailures)
 
             submit = ::result
             viewModel.send()

@@ -1,15 +1,17 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import {
+  arePhaseChallengesRequired,
+  withoutLockedPhaseChallenges,
+} from "../checkpoints/_utils/phase-challenge-access";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
 import { isCurrentSession } from "./_utils/current-session";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
-import { loadStudySessionView } from "./_utils/load-session-view";
-import { loadOpenedDayView } from "./_utils/open-day-view";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
 import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { type StudyBlockView, type StudySessionView } from "./_utils/session-view";
+import { type StudyBlockView, getNextBlockId, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
   type StudySessionRow,
@@ -24,40 +26,75 @@ type Target<Kind extends OpenStudyBlockInput["target"]["kind"]> = Extract<
 >;
 
 type OpenedSession =
-  | { session: StudySessionView; status: "ready"; userId: string }
+  | {
+      session: {
+        id: string;
+        current: boolean;
+        blocks: StudyBlockView[];
+        nextBlockId: string | null;
+      };
+      status: "ready";
+      userId: string;
+    }
   | { status: "goalNotActive" | "retryable" };
 
 async function openSavedSession({
   session,
+  targetBlockId,
   timeZone: deviceTimeZone,
   userId,
 }: {
   session: StudySessionRow;
+  targetBlockId?: string;
   timeZone: string | undefined;
   userId: string;
 }): Promise<OpenedSession> {
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: deviceTimeZone });
+  const current = isCurrentSession({ now: new Date(), session, timeZone });
 
-  if (!isCurrentSession({ now: new Date(), session, timeZone }) || !session.goal) {
-    const view = await readLessonScreens(await loadStudySessionView({ session, timeZone, userId }));
-    return { session: view, status: "ready", userId };
-  }
-
-  if (session.goal.status !== "active") {
+  if (current && session.goal && session.goal.status !== "active") {
     return { status: "goalNotActive" };
   }
 
-  const refilled = await persistEntitlementLapseRefill({ goal: session.goal, session, timeZone });
+  const refilled =
+    current && session.goal
+      ? await persistEntitlementLapseRefill({ goal: session.goal, session, timeZone })
+      : session;
 
   if (!refilled) {
     return { status: "retryable" };
   }
 
-  const current = await followSavedDay({ session: refilled, timeZone });
+  const required =
+    !session.goal || (await arePhaseChallengesRequired({ goalKind: session.goal.kind, userId }));
 
-  const view = await readLessonScreens(
-    await loadOpenedDayView({ session: current, timeZone, userId }),
-  );
+  const visible = withoutLockedPhaseChallenges({
+    blocks: refilled.blocks,
+    phaseChallengesRequired: required,
+  });
+
+  const targetId = targetBlockId ?? getNextBlockId(visible);
+  const target = visible.find((block) => block.id === targetId);
+
+  // Queue reconciliation only appends work, so existing work does not wait for it. Entitlement replacement still runs before target selection.
+  const selected =
+    current &&
+    refilled.goal &&
+    (!target || (target.status !== "pending" && target.status !== "active"))
+      ? await followSavedDay({ session: refilled, timeZone })
+      : refilled;
+
+  const blocks = withoutLockedPhaseChallenges({
+    blocks: selected.blocks,
+    phaseChallengesRequired: required,
+  });
+
+  const view = await readLessonScreens({
+    blocks: blocks.map((block) => toStudyBlockView({ answeredItemIds: new Set(), block, blocks })),
+    current,
+    id: selected.id,
+    nextBlockId: getNextBlockId(blocks),
+  });
 
   return { session: view, status: "ready", userId };
 }
@@ -136,7 +173,12 @@ async function openTappedBlock({
     return { status: "notFound" };
   }
 
-  const opened = await openSavedSession({ session: saved, timeZone, userId });
+  const opened = await openSavedSession({
+    session: saved,
+    targetBlockId: target.blockId,
+    timeZone,
+    userId,
+  });
 
   if (opened.status !== "ready") {
     return opened;

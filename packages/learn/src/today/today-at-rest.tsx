@@ -2,22 +2,13 @@ import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/p
 import { TodayEyebrow, TodayEyebrowPart } from "./today-heading";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 
-export function TodayPageHeader({
-  date,
-  state,
-  title,
-}: {
-  date: string | null;
-  state?: string;
-  title: string;
-}) {
+export function TodayPageHeader({ state, title }: { state?: string; title: string }) {
   return (
     <PageHeader>
       <PageHeaderContent className="w-full">
-        {(date || state) && (
+        {state && (
           <TodayEyebrow>
-            {date && <span>{date}</span>}
-            {state && <TodayEyebrowPart>{state}</TodayEyebrowPart>}
+            <TodayEyebrowPart>{state}</TodayEyebrowPart>
           </TodayEyebrow>
         )}
         <PageTitle>{title}</PageTitle>
@@ -31,7 +22,6 @@ export function TodayAtRest({
   actions,
   banner = null,
   clause,
-  date,
   detail,
   icon,
   sentence,
@@ -41,7 +31,6 @@ export function TodayAtRest({
   actions: React.ReactNode;
   banner?: React.ReactNode;
   clause: string;
-  date: string | null;
   detail?: React.ReactNode;
   icon: React.ReactNode;
   sentence: string;
@@ -51,7 +40,7 @@ export function TodayAtRest({
   return (
     <Page className="gap-5" data-slot="today-goal-at-rest">
       {banner}
-      <TodayPageHeader date={date} state={state} title={title} />
+      <TodayPageHeader state={state} title={title} />
 
       <div className="flex flex-col gap-4">
         <TodayStatusLine icon={icon}>

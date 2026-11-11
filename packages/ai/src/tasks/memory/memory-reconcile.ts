@@ -10,8 +10,11 @@ import {
 import { type MemoryFactText, formatMemoryFact, formatMemoryFactList } from "./memory-facts";
 import instructions from "./memory-reconcile.prompt.md";
 
-/** The memory-reconcile eval's runner-up. */
-const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
+/**
+ * On 30 cases (8 Nov 2026), Jev and Mammoth matched every action (EN 16/16, PT 14/14), at $0.0416
+ * and $0.0743 per 1k; Decider V1.2 kept an old fact beside the one replacing it.
+ */
+const FALLBACK_EVALUATION_MODEL = "baseten/mammoth-1";
 
 export type MemoryReconcileInput = {
   fact: MemoryFactText & { intent: MemoryFactIntent };

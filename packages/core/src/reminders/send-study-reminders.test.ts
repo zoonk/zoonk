@@ -245,14 +245,23 @@ describe("reading a study reminder's delivery", () => {
     const session = await studySessionFixture({
       goalId: goal.id,
       localDate: TODAY,
+      plannedMinutes: 30,
       userId: user.id,
     });
 
     await studySessionBlockFixture({
       completedAt: new Date("2026-10-07T08:00:00Z"),
       estimatedMinutes: 10,
+      position: 0,
       sessionId: session.id,
       status: "completed",
+    });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 20,
+      position: 1,
+      sessionId: session.id,
+      status: "pending",
     });
 
     const delivery = await readStudyReminderDelivery({

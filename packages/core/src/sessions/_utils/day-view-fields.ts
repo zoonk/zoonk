@@ -3,11 +3,10 @@ import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
-import { getSessionMinutesDone } from "../daily-goal";
 import { getExtraTime } from "../extra-time";
-import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
+import { getSessionMinutes } from "../session-minutes";
 import { type DayBlockInput } from "./day-block-view";
 import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
@@ -20,7 +19,6 @@ import { type StudySessionView } from "./session-view";
 export type DayViewFieldsInput = {
   answers: readonly SessionAnswer[];
   current: boolean;
-  dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt?: number;
   dayMinutes: number;
   examAccess: ExamPrepAccess;
@@ -58,7 +56,6 @@ function getNextPosition(
 export function toDayViewFields({
   answers,
   current,
-  dailyLimit,
   dayEndsAt,
   dayMinutes,
   examAccess,
@@ -85,24 +82,19 @@ export function toDayViewFields({
     trialEnded: examAccess.trialEnded,
   });
 
-  const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {
     brainPower: blocksPower + (session.fullMealAt === null ? 0 : BRAIN_POWER_BONUS.fullMeal),
     catchUp: null,
     current,
-    dailyLimit,
     dayEndsAt:
       dayEndsAt ??
       getStartOfLocalDay({ localDate: addDays(session.localDate, 1), timeZone }).getTime(),
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({
-      blocks: session.blocks,
-      remainingLimitMinutes: dailyLimit?.remainingMinutes ?? null,
-    }),
+    extraTime: getExtraTime({ blocks: session.blocks }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),
@@ -114,7 +106,12 @@ export function toDayViewFields({
     lessonsComing: lessons.lessonsComing,
     lessonsToPrepare: lessons.lessonsToPrepare,
     localDate: session.localDate,
-    minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },
+    minutes: getSessionMinutes({
+      blocks: session.blocks,
+      dailyGoal: dayMinutes,
+      planned: session.plannedMinutes,
+      reserved: lessonRoom,
+    }),
     nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     plusLessons,

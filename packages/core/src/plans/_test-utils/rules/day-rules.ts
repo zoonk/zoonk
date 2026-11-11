@@ -1,6 +1,9 @@
+import { readSelectedItemFacts } from "../../_utils/selected-item-contract";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "../../planner/plan-calendar";
 import { type RuleContext, type RuleItem, type RulePlan, type RuleViolation } from "./rule-context";
 import { findFirstDue, findLastDue, getAreaOf, isDueOn, isTodoLesson } from "./rule-items";
+
+const MINUTE_TOLERANCE = 0.001;
 
 function getPlanStart({ plan, today }: { plan: RulePlan; today: Date }): Date {
   return plan.settings.startDate ? fromIsoDate(plan.settings.startDate) : today;
@@ -182,4 +185,49 @@ export function checkMocksInEveryPhase(context: RuleContext): RuleViolation[] {
   ];
 
   return problems.map((problem) => ({ ...problem, rule: "R24" }));
+}
+
+export function checkDayOneLessonShare({ after, event, today }: RuleContext): RuleViolation[] {
+  if (event.kind !== "planCreated") {
+    return [];
+  }
+
+  const start = getPlanStart({ plan: after, today });
+  const date = toIsoDate(start);
+  const closed = after.goal.targetDate !== null && start >= after.goal.targetDate;
+
+  const finalStretch = after.phases.some(
+    (phase) =>
+      phase.kind === "finalStretch" &&
+      phase.startDate !== null &&
+      phase.endDate !== null &&
+      phase.startDate <= date &&
+      phase.endDate >= date,
+  );
+
+  if (closed || finalStretch) {
+    return [];
+  }
+
+  const practice = after.items.filter(isTodoLesson).reduce((sum, item) => {
+    const facts = readSelectedItemFacts(item.facts);
+    const day = facts?.days?.find(([on]) => on === date);
+
+    if (day) {
+      return sum + day[1] - day[2];
+    }
+
+    return sum + (isDueOn({ day: start, item }) ? (facts?.parts.practice ?? 0) : 0);
+  }, 0);
+
+  return practice > MINUTE_TOLERANCE
+    ? [
+        {
+          details: { date, practice },
+          message:
+            "Day one's lesson allocation reserves time for practice before anything is learned.",
+          rule: "R46",
+        },
+      ]
+    : [];
 }

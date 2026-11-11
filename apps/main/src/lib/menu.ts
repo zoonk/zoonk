@@ -28,10 +28,12 @@ import {
   TagIcon,
   TargetIcon,
   TimerIcon,
+  UserRoundIcon,
   ZapIcon,
 } from "lucide-react";
 
 const menu = {
+  aboutYou: { icon: UserRoundIcon, url: "/settings/about-you" },
   activity: { icon: ChartNoAxesColumnIncreasingIcon, url: "/activity" },
   appearance: { icon: PaletteIcon, url: "/settings/appearance" },
   blog: { icon: Newspaper, url: "/blog" },

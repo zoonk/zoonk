@@ -13,6 +13,7 @@ import { withTestSubmissionClaim } from "../../learner/_utils/test-submission-cl
 import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ItemAnswerInput } from "../../learner/contract";
 import { persistLearnerAnswer, publishLearnerAnswer } from "../../learner/record-learner-answer";
+import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
@@ -48,7 +49,9 @@ export type SubmitFocusTestResult =
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
-type GradedAnswer = { answer: ItemAnswerInput; area: string; isCorrect: boolean; item: ChoiceItem };
+type GradedAnswer = { answer: ItemAnswerInput; area: string; item: ChoiceItem } & ReturnType<
+  typeof gradeChoiceAnswer
+>;
 
 function getChance(item: ChoiceItem): number {
   return item.format === "trueFalse" ? 1 / 2 : 1 / Math.max(2, item.content.options.length);
@@ -68,6 +71,7 @@ async function gradeAnswers({
   areas: readonly FocusTestArea[];
 }): Promise<GradedAnswer[] | null> {
   const rows = await prisma.item.findMany({
+    include: ITEM_IMAGE_INCLUDE,
     where: { id: { in: answers.map((answer) => answer.itemId) } },
   });
 
@@ -77,12 +81,7 @@ async function gradeAnswers({
     const area = item && areas.find((candidate) => candidate.skillIds.includes(item.skillId));
 
     return item && area
-      ? {
-          answer,
-          area: area.name,
-          isCorrect: gradeChoiceAnswer({ answer: answer.answer, item }).isCorrect,
-          item,
-        }
+      ? { answer, area: area.name, ...gradeChoiceAnswer({ answer: answer.answer, item }), item }
       : null;
   });
 
@@ -116,7 +115,7 @@ async function countFocusTest({
       const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
       const persisted = [];
 
-      const persist = ({ answer, isCorrect, item }: GradedAnswer) =>
+      const persist = ({ answer, isCorrect, item, snapshot }: GradedAnswer) =>
         persistLearnerAnswer({
           input: {
             answer: answer.answer,
@@ -124,6 +123,7 @@ async function countFocusTest({
             graded: { durationMs: answer.durationMs, isCorrect },
             itemId: item.id,
             language: item.language,
+            mistake: { questionText: snapshot.question, snapshot },
             purpose: "diagnostic",
             skillId: item.skillId,
             timeZone,

@@ -173,7 +173,7 @@ struct TodayMoreSection: View {
       view.session.extraTime.available || view.session.catchUp?.later.offered == true
     case .underway:
       view.session.catchUp?.later.offered == true
-    case .limit, .prepare, .waiting:
+    case .prepare, .waiting:
       false
     }
   }
@@ -506,8 +506,8 @@ struct TodayPlanChangeSection: View {
   }
 }
 
-/// Under the queue, when every mission only opens one of its blocks, the card leaves the rows to the
-/// queue, whose marks name those blocks, so no block is listed twice.
+/// Under the queue, when every mission only opens one of the blocks it shows above its fold, the
+/// card leaves the rows to the queue, whose marks name those blocks, so no block is listed twice.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -527,7 +527,7 @@ struct TodayMissionsSection: View {
       MissionsSummary(missions: missions, bonus: view.session.fullMeal.bonus, earned: earned)
         .rowSeparatorHiddenBelow()
 
-      if !earned, isBesideTheDay || !onlyOpensBlocks {
+      if !earned, isBesideTheDay || !leavesRowsToQueue {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
           let block = view.session.blocks.first { mission.opens($0) }
           let tap = block.map { TodayDayView.Tap.mission($0.position) }
@@ -549,10 +549,13 @@ struct TodayMissionsSection: View {
     }
   }
 
-  private var onlyOpensBlocks: Bool {
-    missions.allSatisfy { mission in
+  private var leavesRowsToQueue: Bool {
+    let folded = view.session.foldedBlocks
+
+    return missions.allSatisfy { mission in
       mission.isDone
-        || (mission.opens?.kind == "block" && mission.waitReason == nil && mission.total <= 1)
+        || (mission.opens?.kind == "block" && mission.waitReason == nil && mission.total <= 1
+          && !folded.contains { mission.opens($0) })
     }
   }
 
@@ -907,7 +910,7 @@ struct TodayProgressSection: View {
 
       card(
         title: Text("Level", tableName: "Today", comment: "Title of a language goal's level card"),
-        value: standing.value?.levelText, detail: standing.value?.leadingSkill.map { Text($0) }
+        value: standing.value?.levelText, detail: nil
       ) {
         EmptyView()
       }

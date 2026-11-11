@@ -21,7 +21,8 @@ let learnerSummaryUITestJSON = """
         "status": "active",
         "targetDate": null,
         "targetLanguage": null,
-        "title": "Learn how plants grow"
+        "title": "Learn how plants grow",
+        "displayName": "Plant growth"
       }
     ],
     "identity": {

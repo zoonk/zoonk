@@ -3,6 +3,8 @@ import { type ItemScopeContext } from "@zoonk/ai/tasks/lessons/question-context"
 import { prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
+import { gradeMistakeItem, toMistakeQuestion } from "../../mistakes/mistake-item";
+import { type MistakeReplay, loadMistakeReplay } from "../../mistakes/mistake-replay";
 import {
   type SessionItem,
   type SessionQuestion,
@@ -50,17 +52,27 @@ function describeQuestion(question: SessionQuestion): ItemScopeContext["question
 async function describeLatestAnswer({
   blockId,
   item,
+  mistakeId,
+  replay,
   sessionId,
   userId,
 }: {
   blockId: string;
   item: SessionItem;
+  mistakeId?: string;
+  replay?: Extract<MistakeReplay, { kind: "item" }>;
   sessionId: string | null;
   userId: string;
 }): Promise<ItemScopeContext["answer"]> {
   const attempt = await prisma.attempt.findFirst({
     orderBy: { answeredAt: "desc" },
-    where: { itemId: item.id, userId, ...(sessionId ? { studySessionId: sessionId } : {}) },
+    where: {
+      userId,
+      ...(mistakeId
+        ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } }
+        : { itemId: item.id }),
+      ...(sessionId ? { studySessionId: sessionId } : {}),
+    },
   });
 
   const answer = attempt ? readRecordedAnswer(attempt.answer) : null;
@@ -69,13 +81,60 @@ async function describeLatestAnswer({
     return null;
   }
 
-  const { snapshot } = gradeSessionAnswer({ answer, blockId, item });
+  const { snapshot } = replay
+    ? gradeMistakeItem({ answer, replay })
+    : gradeSessionAnswer({ answer, blockId, item });
 
   return {
     correctAnswer: snapshot.correctAnswer ?? null,
     explanation: snapshot.explanation ?? null,
     isCorrect: attempt.isCorrect,
     learnerAnswer: snapshot.answer,
+  };
+}
+
+async function buildMistakeItemContext({
+  context,
+  itemId,
+  userId,
+}: {
+  context: LessonQuestionItemContext;
+  itemId: string;
+  userId: string;
+}): Promise<ItemScopeContext | null> {
+  const mistake = await prisma.mistake.findFirst({
+    include: { skill: { select: { name: true } } },
+    where: { id: context.mistakeId, userId },
+  });
+
+  const replay = mistake ? await loadMistakeReplay({ mistake, userId }) : null;
+
+  if (!mistake || replay?.kind !== "item" || replay.item.id !== itemId || context.blockId) {
+    return null;
+  }
+
+  const { item } = replay;
+  const question = toMistakeQuestion(replay);
+
+  const answer = context.answered
+    ? await describeLatestAnswer({
+        blockId: "",
+        item,
+        mistakeId: mistake.id,
+        replay,
+        sessionId: null,
+        userId,
+      })
+    : null;
+
+  return {
+    answer,
+    language: item.language,
+    question: describeQuestion(question),
+    scope: { kind: "item" },
+    set: question.set?.text ?? null,
+    skill: mistake.skill?.name ?? "",
+    version: 1,
   };
 }
 
@@ -89,13 +148,16 @@ export async function buildItemContextSnapshot({
   itemId: string;
   userId: string;
 }): Promise<ItemScopeContext | null> {
+  if (context.mistakeId) {
+    return buildMistakeItemContext({ context, itemId, userId });
+  }
+
   const [row, block] = await Promise.all([
     prisma.item.findFirst({
       include: { ...ITEM_SET_INCLUDE, skill: { select: { name: true } } },
       where: {
         id: itemId,
         skill: libraryRowsVisibleTo(userId),
-        /** Practice can serve unseen questions for a previously fixed mistake's skill too. */
         ...(context.blockId
           ? {}
           : {

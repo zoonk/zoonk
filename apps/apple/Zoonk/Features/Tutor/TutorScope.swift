@@ -13,10 +13,11 @@ enum TutorScope: Hashable, Sendable {
   /// shows its result.
   case step(
     lessonId: String, stepId: String, stepNumber: Int, answer: LessonAnswer?,
-    suggestions: [TutorSuggestion])
+    suggestions: [TutorSuggestion], mistakeId: String? = nil)
   /// A session's or practice's question: whether it was checked (`answered`), the session block
   /// it's asked in (absent in mistakes practice), and whether the learner missed it.
-  case item(itemId: String, blockId: String?, answered: Bool, missed: Bool)
+  case item(
+    itemId: String, blockId: String?, answered: Bool, missed: Bool, mistakeId: String? = nil)
 
   /// A checked item or a lesson's suggestions don't start another conversation.
   var conversationKey: String {
@@ -31,19 +32,19 @@ enum TutorScope: Hashable, Sendable {
       "mock:\(blockId)"
     case .lesson(let lessonId, _, _):
       "lesson:\(lessonId)"
-    case .step(_, let stepId, _, _, _):
-      "step:\(stepId)"
-    case .item(let itemId, _, _, _):
-      "item:\(itemId)"
+    case .step(_, let stepId, _, _, _, let mistakeId):
+      "step:\(stepId):\(mistakeId ?? "-")"
+    case .item(let itemId, _, _, _, let mistakeId):
+      "item:\(itemId):\(mistakeId ?? "-")"
     }
   }
 
   /// Mirrors main's `isAboutCheckedAnswer`.
   var isAboutCheckedAnswer: Bool {
     switch self {
-    case .step(_, _, _, let answer, _):
+    case .step(_, _, _, let answer, _, _):
       answer != nil
-    case .item(_, _, let answered, _):
+    case .item(_, _, let answered, _, _):
       answered
     case .plan, .subject, .chapter, .mock, .lesson:
       false
@@ -60,6 +61,13 @@ enum TutorScope: Hashable, Sendable {
     case .lesson: .lesson
     case .step: isAboutCheckedAnswer ? .answer : .step
     case .item: isAboutCheckedAnswer ? .answer : .item
+    }
+  }
+
+  var mistakeId: String? {
+    switch self {
+    case .step(_, _, _, _, _, let id), .item(_, _, _, _, let id): id
+    default: nil
     }
   }
 

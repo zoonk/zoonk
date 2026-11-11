@@ -71,17 +71,35 @@ function ItemTutor({
   const identity = useTutorIdentity(tutor.buddy);
   const asideShown = useTaskAsideShown();
   const itemId = item?.itemId ?? "";
-  const target = useMemo(() => ({ itemId, kind: "item" as const }), [itemId]);
+  const lesson = item?.lesson;
 
-  const activeContext = useMemo<LessonQuestionContext>(
-    () => ({
+  const target = useMemo(
+    () =>
+      lesson ? { kind: "lesson" as const, lessonId: lesson.id } : { itemId, kind: "item" as const },
+    [itemId, lesson],
+  );
+
+  const activeContext = useMemo<LessonQuestionContext>(() => {
+    if (lesson) {
+      const where = {
+        mistakeId: lesson.mistakeId,
+        step: { id: lesson.stepId },
+        stepIndex: item.position,
+      };
+
+      return lesson.answer
+        ? { kind: "answer", selectedAnswer: lesson.answer, ...where }
+        : { kind: "step", ...where };
+    }
+
+    return {
       answered: item?.answered ?? false,
       blockId: item?.blockId ?? null,
       itemId,
       kind: "item",
-    }),
-    [item?.answered, item?.blockId, itemId],
-  );
+      ...(item?.mistakeId && { mistakeId: item.mistakeId }),
+    };
+  }, [item, itemId, lesson]);
 
   return (
     <LessonQuestionHostProvider
@@ -89,7 +107,7 @@ function ItemTutor({
       host={{
         activeContext,
         canAskQuestions: tutor.canAsk && item !== null,
-        lessonStepIds: [],
+        lessonStepIds: lesson ? [lesson.stepId] : [],
         preload: asideShown,
       }}
       target={target}

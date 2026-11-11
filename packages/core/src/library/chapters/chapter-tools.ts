@@ -1,12 +1,7 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 
-const MAX_TOOL_NAME_LENGTH = 80;
-
-const chapterToolSchema = z.object({
-  essential: z.boolean(),
-  name: z.string().trim().min(1).max(MAX_TOOL_NAME_LENGTH),
-});
+const chapterToolSchema = z.object({ essential: z.boolean(), name: z.string().trim().min(1) });
 
 const chapterToolsSchema = z.array(chapterToolSchema);
 

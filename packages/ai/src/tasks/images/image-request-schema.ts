@@ -1,16 +1,17 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 
-/** Mirrors the step contract's image request limits (core `stepImageRequestSchema`). */
-export const MAX_IMAGE_PROMPT_LENGTH = 400;
-export const MAX_IMAGE_ALT_LENGTH = 160;
+/** Mirrors the step contract's image request targets (core `stepImageRequestSchema`). */
+const IMAGE_PROMPT_TARGET = 400;
+const IMAGE_ALT_TARGET = 160;
 const MIN_NUMBERED_PARTS = 2;
 const MAX_NUMBERED_PARTS = 6;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what to draw, then how to describe it. */
 
 const pictureRequest = z.object({
-  prompt: z.string().max(MAX_IMAGE_PROMPT_LENGTH),
-  alt: z.string().max(MAX_IMAGE_ALT_LENGTH),
+  prompt: aimForCharacters(z.string(), IMAGE_PROMPT_TARGET),
+  alt: aimForCharacters(z.string(), IMAGE_ALT_TARGET),
 });
 
 /** Null when nothing needs to be seen. */

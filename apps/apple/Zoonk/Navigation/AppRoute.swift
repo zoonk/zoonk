@@ -4,7 +4,8 @@ enum AppRoute: Hashable, Identifiable {
   case subject(subjectKey: String)
   case chapter(chapterId: String)
   case languageUnit(chapterId: String)
-  case mindMaps
+  /// `subjectKey` opens it at that subject's maps.
+  case mindMaps(subjectKey: String? = nil)
   case exam
   case mockChooser
   case mistakes
@@ -21,7 +22,9 @@ enum AppRoute: Hashable, Identifiable {
   case logbook
   /// `fromCatalog`: started from a public catalog page (its Library page, or "Try a lesson" on a
   /// course or chapter), where main asks its first question.
-  case lesson(lessonId: String, sessionId: String? = nil, fromCatalog: Bool = false)
+  case lesson(
+    lessonId: String, sessionId: String? = nil, fromCatalog: Bool = false,
+    opening: LessonOpening? = nil, activated: Bool = false)
   case questionBlock(sessionId: String, blockId: String)
   case mistakePractice(skillId: String? = nil)
   case pattern(patternId: String)

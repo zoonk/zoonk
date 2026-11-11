@@ -42,6 +42,7 @@ export function createGoal(userId: string) {
   return prisma.goal.create({
     data: {
       dailyMinutes: DAILY_MINUTES,
+      displayName: "Photosynthesis",
       kind: "learn",
       language: "en",
       prompt: "Learn photosynthesis",
@@ -250,7 +251,7 @@ export function createCertificate({
       code: randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase(),
       completedOn: new Date("2026-09-01T00:00:00Z"),
       createdAt: new Date("2026-09-01T00:00:00Z"),
-      details: { canDo: [], lessonsStudied: 20, minutes: null, skillLevels: [] },
+      details: { canDo: [], lessonsStudied: 20, minutes: null },
       key,
       kind: "languageLevel",
       language: "en",

@@ -161,4 +161,18 @@ describe(getPhaseProgress, () => {
 
     expect(result.activeMs).toBeNull();
   });
+
+  it("starts the running stage when its first step started, on this device's clock", () => {
+    const run = {
+      clockOffsetMs: 500,
+      stepTimes: {
+        buildSkillGraph: { started: 2000 },
+        understandGoal: { completed: 1900, started: 1000 },
+      },
+      steps: { buildSkillGraph: "started", understandGoal: "completed" } as const,
+    };
+
+    expect(progressOf("curriculum", run).activeSince).toBe(2500);
+    expect(progressOf("curriculum", { status: "waiting" }).activeSince).toBeNull();
+  });
 });

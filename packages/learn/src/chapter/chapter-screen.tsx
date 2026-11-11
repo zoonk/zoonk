@@ -1,6 +1,5 @@
 "use client";
 
-import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -11,7 +10,6 @@ import {
   DetailLayout,
 } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
-import { type MindMapLimit } from "../_components/help-limit-notice";
 import { LessonList, LessonProgress } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
@@ -19,8 +17,6 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { SectionLabel } from "../_components/section-label";
 import { SkillList } from "../_components/skill-list";
 import { TestOutStartRow } from "../_components/test-out-start-link";
-import { type MindMapActions } from "../mind-maps/mind-map-actions";
-import { MindMapCard } from "../mind-maps/mind-map-card";
 import {
   type ChapterActions,
   type ChapterHrefs,
@@ -28,52 +24,49 @@ import {
   useChapterScreen,
 } from "./chapter-context";
 import { ChapterBar, ChapterHeader } from "./chapter-header";
+import {
+  ChapterMapAside,
+  ChapterMapProvider,
+  ChapterMapRow,
+  type ChapterMindMap,
+  WIDE_ONLY_CLASS,
+  useHasAsideMap,
+} from "./chapter-mind-map";
 import { ChapterMistakes } from "./chapter-mistakes";
 
 export type { AreaPracticeOutcome } from "../_utils/use-practice-run";
 export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
-type ChapterMindMap = {
-  actions: MindMapActions;
-  cap?: MindMapLimit | null;
-  view: ChapterMindMapView;
-};
-
 const PRACTICE_TITLE_ID = "chapter-practice-title";
 const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
 function ChapterSummary({
-  mindMap,
   renderLessonText,
 }: {
-  mindMap: ChapterMindMap | null;
   renderLessonText: (text: string) => React.ReactNode;
 }) {
   const t = useExtracted();
   const { chapter } = useChapterScreen();
-  const map = mindMap?.view.status === "unavailable" ? null : mindMap;
+  const hasMap = useHasAsideMap();
   const hasSummary = chapter.skills.length > 0 || chapter.summaries.length > 0;
 
-  if (!map && !hasSummary) {
+  if (!hasMap && !hasSummary) {
     return null;
   }
 
   return (
-    <PageSection aria-labelledby={REFERENCE_TITLE_ID}>
+    <PageSection
+      aria-labelledby={REFERENCE_TITLE_ID}
+      // With only the map, the section is empty where the map sits under the header instead.
+      className={hasSummary ? undefined : WIDE_ONLY_CLASS}
+    >
       <PageSectionHeader>
         <PageSectionTitle id={REFERENCE_TITLE_ID}>{t("For reference")}</PageSectionTitle>
       </PageSectionHeader>
 
-      {map && (
-        <MindMapCard
-          actions={map.actions}
-          cap={map.cap ?? null}
-          chapterTitle={chapter.chapter.title}
-          mindMap={map.view}
-        />
-      )}
+      <ChapterMapAside />
 
       {hasSummary && (
         <ListGroup>
@@ -151,10 +144,8 @@ function ChapterProgress() {
 }
 
 function ChapterBody({
-  mindMap,
   renderLessonText,
 }: {
-  mindMap: ChapterMindMap | null;
   renderLessonText: (text: string) => React.ReactNode;
 }) {
   const t = useExtracted();
@@ -166,7 +157,7 @@ function ChapterBody({
         <>
           <ChapterProgress />
           <ChapterPractice />
-          <ChapterSummary mindMap={mindMap} renderLessonText={renderLessonText} />
+          <ChapterSummary renderLessonText={renderLessonText} />
         </>
       }
       asideLabel={t("About this chapter")}
@@ -175,6 +166,7 @@ function ChapterBody({
     >
       <DetailAside>
         <ChapterHeader />
+        <ChapterMapRow />
       </DetailAside>
 
       <DetailContent>
@@ -207,7 +199,9 @@ export function ChapterScreen({
 }) {
   return (
     <ChapterScreenProvider value={{ actions, ask, chapter, hrefs }}>
-      <ChapterBody mindMap={mindMap} renderLessonText={renderLessonText} />
+      <ChapterMapProvider mindMap={mindMap}>
+        <ChapterBody renderLessonText={renderLessonText} />
+      </ChapterMapProvider>
     </ChapterScreenProvider>
   );
 }

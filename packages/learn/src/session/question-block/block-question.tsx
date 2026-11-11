@@ -5,14 +5,13 @@ import { useState } from "react";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { type ListeningQuestions } from "../../listening/listening-stimulus";
 import { DrillAnswerNotes } from "../../mistakes/drill/drill-answer-notes";
-import { NotSureButton, useFocusAnswersOnReveal } from "../../mistakes/drill/drill-controls";
+import { NotSureButton } from "../../mistakes/drill/drill-controls";
 import { DrillCountdown } from "../../mistakes/drill/drill-countdown";
 import { DrillIntro } from "../../mistakes/drill/drill-intro";
 import {
   type Drill,
   type LessonHref,
   isIdeaFirst,
-  isReadFirst,
   pressesCheck,
 } from "../../mistakes/drill/drill-types";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
@@ -37,14 +36,10 @@ const NOT_SURE = { dontKnow: true } as const;
 
 type Run = ReturnType<typeof useQuestionBlock>;
 
-type DrillStage = "idea" | "open" | "reading";
+type DrillStage = "idea" | "open";
 
 function getOpeningStage({ drill, first }: { drill: Drill | null; first: boolean }): DrillStage {
-  if (first && isIdeaFirst(drill)) {
-    return "idea";
-  }
-
-  return isReadFirst(drill) ? "reading" : "open";
+  return first && isIdeaFirst(drill) ? "idea" : "open";
 }
 
 export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; index: number }) {
@@ -62,9 +57,8 @@ export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; ind
   return {
     drill,
     first,
-    reveal: () => setState({ ...current, stage: "open" }),
     stage: current.stage,
-    start: () => setState({ ...current, stage: isReadFirst(drill) ? "reading" : "open" }),
+    start: () => setState({ ...current, stage: "open" }),
     timeUp: () => setState({ ...current, timedOut: true }),
     timedOut: current.timedOut,
   };
@@ -73,7 +67,7 @@ export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; ind
 type BlockDrill = ReturnType<typeof useBlockDrill>;
 
 function showsDrillIntro({ drill, first }: Pick<BlockDrill, "drill" | "first">): boolean {
-  return drill !== null && !isIdeaFirst(drill) && (first || isReadFirst(drill));
+  return drill !== null && !isIdeaFirst(drill) && first;
 }
 
 export function BlockDrillNotes({
@@ -219,7 +213,6 @@ export function BlockQuestion({
   const spoken = useSpokenText();
   const { phase } = run.state;
   const { drill, stage } = blockDrill;
-  const answers = useFocusAnswersOnReveal(stage === "reading");
 
   if (drill && stage === "idea") {
     return <DrillIntro drill={drill} lessonHref={lessonHref} onStart={blockDrill.start} />;
@@ -250,33 +243,18 @@ export function BlockQuestion({
         className="flex flex-col gap-4"
         key={question.itemId}
       >
-        {stage === "reading" ? (
-          <>
-            <QuotedSource question={question} />
-            <QuestionMaterial
-              continued={isSetContinued({ detail, index: run.state.index })}
-              question={question}
-            />
-            <QuestionTitle text={question.question} />
-          </>
-        ) : (
-          <>
-            <QuestionText
-              continued={isSetContinued({ detail, index: run.state.index })}
-              graded={phase.kind === "feedback"}
-              question={question}
-            />
-            <div ref={answers}>
-              <QuestionView
-                detail={detail}
-                onChange={draft.set}
-                onSubmit={(answer) => void run.submit(answer)}
-                phase={phase}
-                question={question}
-              />
-            </div>
-          </>
-        )}
+        <QuestionText
+          continued={isSetContinued({ detail, index: run.state.index })}
+          graded={phase.kind === "feedback"}
+          question={question}
+        />
+        <QuestionView
+          detail={detail}
+          onChange={draft.set}
+          onSubmit={(answer) => void run.submit(answer)}
+          phase={phase}
+          question={question}
+        />
       </section>
     </>
   );
@@ -290,15 +268,10 @@ type BlockActionsProps = {
 };
 
 function getMainAction({
-  blockDrill,
   draft,
   run,
 }: BlockActionsProps): React.ComponentProps<typeof QuestionMainButton> {
   const { phase } = run.state;
-
-  if (blockDrill.stage === "reading") {
-    return { action: "reveal", onPress: blockDrill.reveal };
-  }
 
   if (phase.kind === "feedback") {
     return { action: "continue", onPress: run.next };
@@ -318,7 +291,7 @@ function getMainAction({
 
 export function BlockQuestionActions(props: BlockActionsProps) {
   const t = useExtracted();
-  const { drill, stage } = props.blockDrill;
+  const { drill } = props.blockDrill;
   const { phase } = props.run.state;
   const checking = phase.kind === "checking";
   const asking = phase.kind === "answering" || checking || phase.kind === "answerFailed";
@@ -327,7 +300,7 @@ export function BlockQuestionActions(props: BlockActionsProps) {
 
   return (
     <>
-      {stage !== "reading" && asking && notSureFits && (
+      {asking && notSureFits && (
         <NotSureButton
           busy={checking && phase.sender === "notSure"}
           disabled={checking}

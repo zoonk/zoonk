@@ -9,7 +9,6 @@ import {
 
 const CHANGED = new Set<StartLanguageConversationResult["status"]>([
   "blockFinished",
-  "dailyLimitReached",
   "earlierFirst",
   "notFound",
   "notLanguage",

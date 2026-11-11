@@ -188,7 +188,6 @@ export async function answerStudyQuestion({
   const result = await recordStudyAnswer({
     blank,
     block,
-    drill,
     drilled,
     format: row.format,
     graded,

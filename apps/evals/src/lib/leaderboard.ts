@@ -1,37 +1,24 @@
 import { type LanguageSummary, summarizeByLanguage } from "@/lib/case-languages";
+import { type EvalSummary, aggregateEvalResults } from "@/lib/eval-summary";
 import { meetsLatencyBudget } from "@/lib/latency";
 import { getModelById, getModelFamily, getReasoningLabel } from "@/lib/models";
-import { calculateScore } from "@/lib/score-calculation";
 import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
 import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
-
-export function calculateAverageScore(results: TaskEvalResults): number {
-  if (results.results.length === 0) {
-    return 0;
-  }
-
-  const totalScore = results.results.reduce(
-    (acc, result) =>
-      acc + calculateScore({ categoryScores: result.categoryScores, steps: result.steps }),
-    0,
-  );
-
-  return totalScore / results.results.length;
-}
 
 export type LeaderboardEntry = {
   modelId: string;
   modelName: string;
   provider: string;
   reasoning: string;
-  averageScore: number;
+  averageScore: number | null;
+  summary: EvalSummary;
   accuracy: number | null;
-  latencyP50: number;
-  latencyP95: number;
+  latencyP50: number | null;
+  latencyP95: number | null;
   meetsLatencyBudget: boolean | null;
-  costPer1000Runs: number;
+  costPer1000Runs: number | null;
   judgeCost: number;
   categoryScores: CategoryScoreSummary[];
   languages: LanguageSummary[];
@@ -54,11 +41,12 @@ export function getLeaderboardEntries({
     }
 
     const stats = getStatsFromResults({ evalResults: result, prices });
+    const summary = aggregateEvalResults(result);
 
     return [
       {
         accuracy: stats.classification?.accuracy ?? null,
-        averageScore: calculateAverageScore(result),
+        averageScore: summary.averageScore,
         categoryScores: summarizeCategoryScores(
           result.results.map((evalResult) => evalResult.categoryScores),
         ),
@@ -75,6 +63,7 @@ export function getLeaderboardEntries({
         modelName: model.name,
         provider: getModelFamily(model),
         reasoning: model.kind === "generation" ? getReasoningLabel(model.reasoning) : "—",
+        summary,
       } satisfies LeaderboardEntry,
     ];
   });

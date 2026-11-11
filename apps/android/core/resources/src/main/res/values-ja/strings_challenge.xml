@@ -54,11 +54,6 @@
   "challenge_trickster_recordings": "f52193391020b7c57e1e938280c55ef7b0575961f5e5b5ebafff0c2f9dc0124d",
   "challenge_trickster_rule": "c948bafdaa59351df5a2f249d2c6eaba0e00dbcc7936f8ea6276c7cc18991332",
   "challenge_undo": "64ad6fdadaa9b926d0d1968d6350afab4f5d66cab93cc30d02d63b656b073cbf",
-  "challenge_used_up_move": "9d854540d8143b00e156d93d99fcc082a1b7c9e7597cb7fbe427447887b55ed7",
-  "challenge_used_up_next_session": "e6a71d8caac13427464a63cf02c84239ad8492c73a5efdae3dff0e37eb0483dd",
-  "challenge_used_up_on": "50f06bd837d85312992984f74da1b310a066d08745ceaf3b0b856fcbe9868372",
-  "challenge_used_up_tomorrow": "990cd461f6d3791b764f5ded572eb03f503365099e17e48368f5d26ae38308a4",
-  "challenge_used_up_weekly": "dac4c8918144152d2dd7b2789aa6f6b8e5c2e079dae03c43af7f064ecb2b2d22",
   "challenge_weekly_detail": "11217f9e028b38f92a17b65d432426c6ff032fc8bf5eb6e9c53ec9da994daf2a",
   "challenge_weekly_rule": "1775ff14942ba5120bce9339e742d3f9445a1fab20a0c3af3c5279a0a1e0b850",
   "challenge_writing": "4a502696f6c0c8146867e662795b7964ae34bc7b169c8e220c67abc46ae34f46",
@@ -148,16 +143,6 @@
     <string name="challenge_opens_after_lessons">このフェーズのレッスンを終えると挑戦できます</string>
     <string name="challenge_not_ready">このチャレンジはまだ準備中です。</string>
     <string name="challenge_next_session">次の学習で</string>
-    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">今日の学習時間の上限に達しました。今週のチャレンジには参加できません。</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_move">今日の学習時間の上限に達しました。チャレンジを逃さないよう、月曜日に移してください。</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_next_session">今日の学習時間の上限に達しました。次の学習でチャレンジに取り組めます。</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_tomorrow">今日の学習時間の上限に達しました。チャレンジには明日取り組めます。</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">1日の学習時間の上限に達しました。%1$sにこのチャレンジに挑戦できます。</string>
     <string name="challenge_back_to_today">「今日」に戻る</string>
     <string name="challenge_move">月曜日に移す</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

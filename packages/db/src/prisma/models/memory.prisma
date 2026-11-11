@@ -40,29 +40,31 @@ enum MilestoneKind {
 /// Sensitive facts are stored only when the learner explicitly asks. Deleted facts are purged 30
 /// days after `deletedAt`, taking the facts they replaced.
 model MemoryFact {
-  id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId         String           @map("user_id") @db.Uuid
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String                 @map("user_id") @db.Uuid
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   category       MemoryCategory
   statement      String
   origin         MemoryOrigin
-  status         MemoryFactStatus @default(active)
-  supersededById String?          @map("superseded_by_id") @db.Uuid
-  supersededBy   MemoryFact?      @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: Cascade)
-  supersedes     MemoryFact[]     @relation("MemoryFactSupersession")
+  status         MemoryFactStatus       @default(active)
+  supersededById String?                @map("superseded_by_id") @db.Uuid
+  supersededBy   MemoryFact?            @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: Cascade)
+  supersedes     MemoryFact[]           @relation("MemoryFactSupersession")
   conversations  LanguageConversation[]
   confidence     Float?
-  sensitive      Boolean          @default(false)
-  sourceRef      Json?            @map("source_ref")
-  expiresAt      DateTime?        @map("expires_at")
-  lastUsedAt     DateTime?        @map("last_used_at")
-  deletedAt      DateTime?        @map("deleted_at")
+  sensitive      Boolean                @default(false)
+  /// Structured profile answer, cleared when the learner rewords the fact.
+  profileAnswer  Json?                  @map("profile_answer")
+  sourceRef      Json?                  @map("source_ref")
+  expiresAt      DateTime?              @map("expires_at")
+  lastUsedAt     DateTime?              @map("last_used_at")
+  deletedAt      DateTime?              @map("deleted_at")
   model          String?
-  promptVersion  String?          @map("prompt_version")
-  runId          String?          @map("run_id")
-  generatedAt    DateTime?        @map("generated_at")
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
+  promptVersion  String?                @map("prompt_version")
+  runId          String?                @map("run_id")
+  generatedAt    DateTime?              @map("generated_at")
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @default(now()) @updatedAt @map("updated_at")
 
   @@index([userId, category, status])
   @@index([supersededById])

@@ -13,7 +13,6 @@
   "essay_criterion_legal_basis": "4dadfa7a2e3eecae16ae01c9d9e95bf8eec0539f74951e867dcaf39db3a1825b",
   "essay_criterion_requests": "e485de4e6d10ea5bf83f65ac8e4243d54d333483119b8a74747c7d9dfb25b0c0",
   "essay_criterion_topic": "285dacbf99eab4d055e8a2081a8a4c29aed08de44930592ecd9f06008ee2e562",
-  "essay_daily_limit_reached": "2ae6af293240f0f53397dd4e7ec938cf5652505f2ad21e6d4e2783b302a841b9",
   "essay_element_action": "4b0f6fdcb6d65a10c923535d4807b98057093674cc3d9c7541e049ca4b1577f5",
   "essay_element_agent": "ddd30894dc2f43d8bd2191388e08f47507b03fd2c8c1cd5d67da5dc0da3cc11c",
   "essay_element_detail": "03898a0dc1c93ec761ed4ce5387a4d25dc2eee2a683ffb76fc2444b6939e036c",
@@ -109,8 +108,6 @@
     <string name="essay_skipped">Pominięto to wypracowanie.</string>
     <string name="essay_back_to_today">Wróć do „Dziś”</string>
     <string name="essay_send_failed">Nie udało się wysłać. Twój tekst nadal tu jest. Spróbuj ponownie za chwilę.</string>
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
-    <string name="essay_daily_limit_reached">Twój czas nauki na dziś się skończył. Twój tekst zostaje tutaj.</string>
     <string name="essay_limit_reached">Wykorzystano już limit ocen wypracowań na dziś. Twój tekst zostaje tutaj; wyślij go jutro.</string>
     <string name="essay_grading">Sprawdzamy twoje wypracowanie według każdego kryterium. Może to potrwać do 30 sekund.</string>
     <string name="essay_grading_slow">Nadal oceniamy. Trwa to dłużej niż zwykle.</string>

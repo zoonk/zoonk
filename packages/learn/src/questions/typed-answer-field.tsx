@@ -6,7 +6,7 @@ import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { ANSWER_GROUP_CLASS, putAwayOnScreenKeyboard } from "./answer-field";
+import { ANSWER_GROUP_CLASS, focusAnswerOnPointer, putAwayOnScreenKeyboard } from "./answer-field";
 
 export function TypedAnswerField({
   children,
@@ -47,7 +47,6 @@ export function TypedAnswerField({
           autoCapitalize="off"
           autoComplete="off"
           autoCorrect="off"
-          autoFocus
           className="text-lg md:text-lg"
           enterKeyHint="done"
           id={inputId}
@@ -58,6 +57,7 @@ export function TypedAnswerField({
           }}
           onKeyDown={ignoreHeldEnter}
           readOnly={locked}
+          ref={focusAnswerOnPointer}
           spellCheck={false}
           value={text}
         />

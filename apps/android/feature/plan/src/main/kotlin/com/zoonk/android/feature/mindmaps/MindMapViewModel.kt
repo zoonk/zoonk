@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.api.models.ChapterMindMapStatus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -17,93 +16,74 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeSource
 
 enum class PictureSave { Saved, Failed }
 
 /**
- * A screen's mind maps for one session: making one only from a tap, following one while it's drawn
- * (main's 4-second poll, which gives up after three misses in a row or ten minutes), and saving a
- * picture where the learner chose.
+ * A screen's mind maps for one session: making one only from a tap, following one while it's on its
+ * way (every 4 seconds while drawing, every 15 while its lessons are written, giving up after three
+ * misses in a row; the server fails a run that stops reporting), and saving a picture where the
+ * learner chose.
  */
 class MindMapViewModel(
     private val store: MindMapStore,
     private val session: AuthenticatedSession,
     private val goalId: UUID,
     private val currentSession: () -> AuthenticatedSession?,
-    private val pollEvery: Duration = POLL_EVERY,
-    private val timeSource: TimeSource = TimeSource.Monotonic,
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
+    private val stopWatching =
+        store.watchReads(goalId) { chapterIds, started ->
+            locals.update { all -> all.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
+        }
+
     private val saved = MutableStateFlow<PictureSave?>(null)
     val save: StateFlow<PictureSave?> = saved.asStateFlow()
 
+    /** Create and Try again. */
     fun create(chapterId: UUID) {
         if (locals.value[chapterId]?.pending == true) return
         locals.update { it + (chapterId to MindMapLocal(pending = true)) }
 
         viewModelScope.launch {
-            val key = ChapterKey(goalId, chapterId)
-            val created = store.create(key)
             val local =
-                when (created) {
-                    null -> MindMapLocal()
-                    MindMapCreated.Ready -> MindMapLocal(shown = MindMapShown.Ready)
-                    MindMapCreated.Generating -> MindMapLocal(shown = MindMapShown.Generating)
-                    MindMapCreated.Unavailable -> MindMapLocal(shown = MindMapShown.Unavailable)
-                    MindMapCreated.Failed -> MindMapLocal(shown = MindMapShown.Unreachable)
-                    is MindMapCreated.Refused -> MindMapLocal(shown = MindMapShown.Refused, limit = created.limit)
+                when (val created = store.create(ChapterKey(goalId, chapterId))) {
+                    null, MindMapCreated.Read -> null
+                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, since = store.readMark())
+                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, since = store.readMark())
                 }
-            locals.update { it + (chapterId to local) }
-        }
-    }
-
-    /** Try again: follows the map again after the poll got stuck, otherwise asks for it again. */
-    fun retry(chapterId: UUID) {
-        if (locals.value[chapterId]?.stuck == true) {
-            locals.update { it + (chapterId to MindMapLocal(shown = MindMapShown.Generating)) }
-        } else {
-            create(chapterId)
+            locals.update { if (local == null) it - chapterId else it + (chapterId to local) }
         }
     }
 
     /**
-     * Runs while the screen shows the map being drawn, until the screen's reads show how it ended; a
-     * status or a read that fails counts as a miss. The server ends a drawing that stalls.
+     * Runs while the screen shows the map on its way ([shown]): asks where the run stands, reads the
+     * map again whenever the reads show otherwise, and ends once they show it ended. It never writes
+     * what a status said, since an answer can land after a newer read (Plus bought meanwhile). A
+     * status or a read that fails, or reads that still disagree, count as a miss; three in a row say
+     * the server is out of reach.
      */
-    suspend fun follow(chapterId: UUID) {
+    suspend fun follow(
+        chapterId: UUID,
+        shown: MindMapShown,
+    ) {
         val key = ChapterKey(goalId, chapterId)
-        val started = timeSource.markNow()
+        var waiting = shown
         var misses = 0
 
         while (true) {
-            delay(pollEvery)
-            val status = store.status(session, key)
+            delay(waiting.pollEvery)
+            val status = store.status(session, key)?.shown
 
-            when {
-                status == null -> {
-                    misses++
-                }
-
-                status == ChapterMindMapStatus.Status.GENERATING -> {
-                    misses = 0
-                }
-
-                else -> {
-                    locals.update { it + (chapterId to MindMapLocal(shown = status.shown)) }
-                    if (store.reread(key, status.shown)) return
-                    misses++
-                }
-            }
-
-            if (misses >= MAX_MISSES || started.elapsedNow() >= GIVE_UP_AFTER) {
-                locals.update { it + (chapterId to MindMapLocal(stuck = true)) }
+            if (status != null && store.agrees(key, status)) {
+                if (!status.onItsWay) return
+                waiting = status
+                misses = 0
+            } else if (++misses >= MAX_MISSES) {
+                locals.update { it + (chapterId to MindMapLocal(unreachable = true, since = store.readMark())) }
                 return
             }
         }
@@ -124,6 +104,8 @@ class MindMapViewModel(
 
     private val isCurrent get() = currentSession() == session
 
+    override fun onCleared() = stopWatching()
+
     fun savedShown() {
         saved.value = null
     }
@@ -141,18 +123,6 @@ class MindMapViewModel(
         }
 
     private companion object {
-        val POLL_EVERY = 4.seconds
-        val GIVE_UP_AFTER = 10.minutes
         const val MAX_MISSES = 3
     }
 }
-
-private val ChapterMindMapStatus.Status.shown: MindMapShown
-    get() =
-        when (this) {
-            ChapterMindMapStatus.Status.UNAVAILABLE -> MindMapShown.Unavailable
-            ChapterMindMapStatus.Status.AVAILABLE -> MindMapShown.Available
-            ChapterMindMapStatus.Status.GENERATING -> MindMapShown.Generating
-            ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
-            ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
-        }

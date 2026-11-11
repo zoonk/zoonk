@@ -10,7 +10,7 @@ export const feedbackPaths = {
   "/feedback": {
     post: {
       description:
-        "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one; a signed-in learner's message is linked to their account.",
+        "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one without an email; a signed-in learner's message is linked to their account, including guests. Reports about answers that keep failing to save carry `context.reportType: saveFailure`.",
       operationId: "createFeedback",
       requestBody: {
         content: { "application/json": { schema: feedbackSubmissionSchema } },

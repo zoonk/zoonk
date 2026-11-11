@@ -17,20 +17,26 @@ function entry(
   return {
     cause: null,
     drill: { kind: "retry", lesson: null, timeLimitSeconds: null, ...drill },
+    lesson: null,
     mistakeId,
     questions: Array.from({ length: questions }, (_, index) => ({
       context: null,
+      entry: null,
       format: "multipleChoice" as const,
       image: null,
       itemId: `${mistakeId}-${index}`,
+      left: null,
       options: ["Right", "Wrong"],
       question: `Question ${index}?`,
+      right: null,
       select: 1 as const,
       set: null,
       skillId: "skill",
+      unit: null,
       visual: null,
     })),
     snapshot: { answer: "Wrong", question: "Question 0?" },
+    tutorAvailable: true,
   };
 }
 
@@ -44,9 +50,11 @@ function graded(answerId: string, fixed = false) {
     fixed,
     fixedMistakeIds: [],
     isCorrect: true,
+    lessonResult: null,
     mistakeStatus: fixed ? ("fixed" as const) : ("open" as const),
     reached: NOTHING_REACHED,
     trap: null,
+    workedSteps: [],
   };
 }
 
@@ -85,9 +93,13 @@ describe(createPracticeState, () => {
     });
   });
 
-  it("shows a misread's question before its answers", () => {
+  it("asks a misread's question with its answers straight away", () => {
     const practice = [entry("misread", { kind: "readCarefully" })];
-    expect(createPracticeState(practice).phase).toStrictEqual({ kind: "reading" });
+
+    expect(createPracticeState(practice).phase).toStrictEqual({
+      kind: "answering",
+      selected: null,
+    });
   });
 
   it("has nothing to play without mistakes", () => {
@@ -124,12 +136,10 @@ describe(practiceReducer, () => {
       answerIds: ["a1", "a2"],
       fixedIds: ["gap"],
       index: 2,
-      phase: { kind: "reading" },
+      phase: { kind: "answering", selected: null },
     });
 
-    expect(reduce(reduce(state, { type: "reveal" }), { type: "next" }).phase).toStrictEqual({
-      kind: "ending",
-    });
+    expect(reduce(state, { type: "next" }).phase).toStrictEqual({ kind: "ending" });
   });
 
   it("keeps an answer that failed to save, with its time, when the same pick is made again", () => {
@@ -269,7 +279,12 @@ describe(practiceReducer, () => {
         sender,
       });
 
-      expect(reduce(failed, { type: "retry" }).phase).toStrictEqual(checking.phase);
+      const retrying = reduce(failed, { type: "retry" });
+      expect(retrying.phase).toStrictEqual(checking.phase);
+
+      expect([failed.failures, reduce(retrying, { type: "answerFailed" }).failures]).toStrictEqual([
+        1, 2,
+      ]);
     },
   );
 });
@@ -343,10 +358,17 @@ describe(isMistakeQuestion, () => {
   const mistake = entry("lesson");
 
   function stepOn(question: { context: string | null; question: string }, saved: string) {
+    const original = mistake.questions[0]!;
+
+    if (original.format !== "multipleChoice") {
+      throw new Error("Expected the choice fixture");
+    }
+
     return {
       entry: { ...mistake, snapshot: { ...mistake.snapshot, question: saved } },
       firstOfEntry: true,
-      question: { ...mistake.questions[0]!, ...question },
+      lesson: null,
+      question: { ...original, ...question },
     };
   }
 

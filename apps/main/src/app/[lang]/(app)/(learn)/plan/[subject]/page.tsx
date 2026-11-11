@@ -2,7 +2,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
-import { hasGoalMindMaps } from "@zoonk/core/mind-maps/has-any";
+import { hasMindMapsPage } from "@zoonk/core/mind-maps/contract";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -59,14 +59,10 @@ async function SubjectBody({ params }: Props) {
     );
   }
 
-  const hasMindMaps = await hasGoalMindMaps({
-    chapterIds: subject.chapters.flatMap((chapter) => chapter.chapterId ?? []),
-  });
-
   return (
     <SubjectScreenClient
       goalId={result.syllabus.goal.id}
-      hasMindMaps={hasMindMaps}
+      hasMindMaps={hasMindMapsPage(result.syllabus.goal.kind)}
       subject={subject}
       syllabus={{
         examDocument: result.syllabus.examDocument,

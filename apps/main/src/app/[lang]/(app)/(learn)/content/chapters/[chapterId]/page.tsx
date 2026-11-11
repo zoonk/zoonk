@@ -4,7 +4,6 @@ import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { withQuery } from "@/lib/with-query";
-import { getReachedCap } from "@zoonk/core/entitlements/contract";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { getChapterMindMap } from "@zoonk/core/mind-maps/get-chapter";
 import { getChapterView } from "@zoonk/core/view-models/chapter/get";
@@ -98,7 +97,7 @@ async function ChapterBody({ params, searchParams }: Props) {
       back={back}
       chapter={result.chapter}
       mindMap={mindMap.status === "ready" ? mindMap.mindMap : null}
-      mindMapCap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
+      plus={allowance?.tier === "plus"}
       tutor={tutor}
     />
   );

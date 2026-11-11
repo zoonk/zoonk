@@ -15,7 +15,7 @@ export type RuleItem = Pick<
   | "skillId"
   | "status"
   | "titleSnapshot"
-> & { minutes?: number };
+> & { minutes?: number; facts?: unknown };
 
 export type RulePlan = {
   goal: { dailyMinutes: number; kind: GoalKind; targetDate: Date | null };

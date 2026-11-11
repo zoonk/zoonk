@@ -123,6 +123,11 @@ const CANONICAL_OPERATIONS = [
     operationId: "createLibraryLessonCompletion",
     path: "/library/lessons/{lessonId}/completions",
   },
+  {
+    method: "post",
+    operationId: "updateLibraryLessonClock",
+    path: "/library/lessons/{lessonId}/clock",
+  },
   { method: "post", operationId: "createStepCheck", path: "/steps/{stepId}/checks" },
   {
     method: "post",
@@ -130,7 +135,6 @@ const CANONICAL_OPERATIONS = [
     path: "/steps/{stepId}/answer-explanations",
   },
   { method: "get", operationId: "getCurrentUserAllowance", path: "/me/allowance" },
-  { method: "get", operationId: "getCurrentUserDailyTimeLimit", path: "/me/daily-time-limit" },
   { method: "get", operationId: "getCurrentUserLearningProfile", path: "/me/learning-profile" },
   {
     method: "patch",

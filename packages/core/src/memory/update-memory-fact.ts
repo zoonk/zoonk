@@ -1,5 +1,5 @@
 import "server-only";
-import { type MemoryFact } from "@zoonk/db";
+import { DbNull, type MemoryFact } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
@@ -83,7 +83,7 @@ export async function updateMemoryFact({
         confidence: LEARNER_CONFIDENCE,
         origin: "said",
         statement: input.statement,
-        ...(reworded ? { sensitive: true } : {}),
+        ...(reworded ? { profileAnswer: DbNull, sensitive: true } : {}),
       },
       where: { id: factId },
     });

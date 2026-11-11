@@ -98,7 +98,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance
+import com.zoonk.api.models.ActivityExpectedFormulaTolerance
 import kotlin.math.abs
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
@@ -301,8 +301,8 @@ private fun UnitText(unit: String) {
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
-            PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance.Kind.ABSOLUTE -> tolerance.`value`
-            PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
+            ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
+            ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
 
 /** Main's `ActivityExplore`: an explanation's activity, its canvas to explore with nothing to answer. */

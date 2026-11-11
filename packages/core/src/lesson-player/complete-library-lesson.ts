@@ -18,6 +18,7 @@ import {
   withStudyBlock,
 } from "./_utils/lesson-study-block";
 import { loadPlayedLesson } from "./_utils/load-played-lesson";
+import { findOwedPlanReveal } from "./_utils/owed-plan-reveal";
 import { getNextReviewAt, loadLessonAttempts } from "./_utils/plan-skill-review";
 import { type LibraryLessonCompletionInput } from "./completion-input-contract";
 import { type LibraryLessonCompletion } from "./contract";
@@ -118,8 +119,17 @@ export async function completeLibraryLesson({
     getLearnerTimeZone({ timeZone: input.timeZone, userId }),
   ]);
 
-  const settle = (completion: RunCompletion, progress?: LessonProgress) =>
-    withStudyBlock({ completion, progress, runId: run.id, timeZone, userId });
+  const settle = async (
+    completion: RunCompletion,
+    progress?: LessonProgress,
+  ): Promise<LibraryLessonCompletion> => {
+    const [settled, planReveal] = await Promise.all([
+      withStudyBlock({ completion, progress, runId: run.id, timeZone, userId }),
+      findOwedPlanReveal({ lessonId, userId }),
+    ]);
+
+    return { ...settled, planReveal };
+  };
 
   if (run.endedAt) {
     return {

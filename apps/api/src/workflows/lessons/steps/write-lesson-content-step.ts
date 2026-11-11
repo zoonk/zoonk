@@ -18,12 +18,18 @@ import {
   fixLessonContent,
   writeLessonContent,
 } from "@zoonk/core/library/lessons/write-content";
+import { getLessonWriterSpeed } from "@zoonk/core/library/lessons/writer-speed";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type LessonStreamStep } from "./lesson-progress-step";
 
 export type LessonWriteOutcome =
-  | { check: LessonCheckPlan | null; imageScope: ImageScope; status: "published" }
+  | {
+      check: LessonCheckPlan | null;
+      imageScope: ImageScope;
+      owesSentenceOrders: boolean;
+      status: "published";
+    }
   | { redraft: boolean; status: "heldBack" }
   | { status: "notWritten" };
 
@@ -38,7 +44,6 @@ export type LessonWriteStage = LessonWriteOutcome | Extract<WriteResult, { statu
 export type WriteInput = {
   analytics?: ContentAnalytics;
   forExam?: boolean;
-  forceReview?: boolean;
   lessonId: string;
   wait?: CallWait;
   workflowRunId: string;
@@ -79,16 +84,22 @@ async function write({
   const analytics = toContentAnalytics({ ...input, scope: lesson });
   const serviceTier = chooseServiceTier({ wait: input.wait ?? "soon" });
 
+  const speed = await getLessonWriterSpeed({
+    goalId: input.analytics?.goalId,
+    lessonId: input.lessonId,
+  });
+
   if (lesson.targetLanguage) {
     const result = await writeLanguageLessonContent({
       analytics,
       lessonId: input.lessonId,
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
     return result.status === "published"
-      ? { check: null, imageScope: null, status: "published" }
+      ? { check: null, imageScope: null, owesSentenceOrders: true, status: "published" }
       : toOutcome(result.status);
   }
 
@@ -98,16 +109,17 @@ async function write({
       lessonId: input.lessonId,
       model: getScopeModel(lesson),
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
     return challenge.status === "published"
-      ? { check: null, imageScope: null, status: "published" }
+      ? { check: null, imageScope: null, owesSentenceOrders: false, status: "published" }
       : toOutcome(challenge.status);
   }
 
   const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
-  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
+  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier, speed });
 
   if (result.status === "drafted") {
     return { ...result, imageScope: getImageScope(lesson) };
@@ -136,7 +148,12 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
   // The runtime runs a step's body again when its result was lost after the body ended, so a lesson
   // this run already saved isn't written again.
   if (await isLessonSavedByRun(input)) {
-    return { check: null, imageScope: getPublishedImageScope(lesson), status: "published" };
+    return {
+      check: null,
+      imageScope: getPublishedImageScope(lesson),
+      owesSentenceOrders: Boolean(lesson.targetLanguage),
+      status: "published",
+    };
   }
 
   await using stream = createStepStream<LessonStreamStep>();
@@ -177,7 +194,7 @@ export async function checkLessonContentStep({
   "use step";
 
   if (await isLessonSavedByRun(input)) {
-    return { check: null, imageScope, status: "published" };
+    return { check: null, imageScope, owesSentenceOrders: false, status: "published" };
   }
 
   const checked = await checkLessonContent({ ...input, draft });
@@ -190,7 +207,7 @@ export async function checkLessonContentStep({
   await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
   if (checked.status === "published") {
-    return { check: checked.check, imageScope, status: "published" };
+    return { check: checked.check, imageScope, owesSentenceOrders: false, status: "published" };
   }
 
   return checked.status === "heldBack"

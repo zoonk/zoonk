@@ -22,11 +22,9 @@ const lessonQuestionThreadCursorSchema = uuidSchema();
 
 const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock", "subject"] as const;
 
-const LESSON_SCREEN_SUGGESTIONS = ["simpler", "deeper", "example"] as const;
-
 /** Send id as suggestion; the server stores the question in the same localized words. */
 export const lessonTutorSuggestionSchema = z
-  .object({ id: z.enum(LESSON_SCREEN_SUGGESTIONS), label: z.string() })
+  .object({ id: z.enum(["simpler", "deeper", "example"]), label: z.string() })
   .strict()
   .meta({ id: "LessonTutorSuggestion" });
 
@@ -34,6 +32,7 @@ export const getLessonQuestionThreadInputSchema = z
   .object({
     contextKind: z.enum(["lesson", "step", "answer", "item", ...SCREEN_CONTEXT_KINDS]).optional(),
     cursor: lessonQuestionThreadCursorSchema.optional(),
+    mistakeId: uuidSchema().optional(),
     stepId: uuidSchema().optional(),
   })
   .strict();
@@ -48,6 +47,7 @@ const lessonQuestionStepNumberSchema = z.number().int().min(1).max(MAX_LESSON_QU
 const lessonQuestionStepContextInputSchema = z
   .object({
     kind: z.literal("step"),
+    mistakeId: uuidSchema().optional(),
     stepId: uuidSchema(),
     stepNumber: lessonQuestionStepNumberSchema,
   })
@@ -57,6 +57,7 @@ const lessonQuestionAnswerContextInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
     kind: z.literal("answer"),
+    mistakeId: uuidSchema().optional(),
     stepId: uuidSchema(),
     stepNumber: lessonQuestionStepNumberSchema,
   })
@@ -72,6 +73,7 @@ const lessonQuestionItemContextSchema = z
       .optional()
       .meta({ description: "The session block it's asked in; absent in mistakes practice" }),
     kind: z.literal("item"),
+    mistakeId: uuidSchema().optional(),
   })
   .strict();
 
@@ -89,7 +91,7 @@ export const createLessonQuestionInputSchema = z
     question: z.string().trim().min(1).max(MAX_LESSON_QUESTION_LENGTH),
     requestId: uuidSchema(),
     /** The server words suggestions and may share their answers; typed learner questions remain personal. */
-    suggestion: z.enum(LESSON_SCREEN_SUGGESTIONS).optional(),
+    suggestion: z.enum(["simpler", "deeper", "example"]).optional(),
   })
   .strict();
 
@@ -296,7 +298,7 @@ export type LessonScopeContextInput = Extract<
 export type LessonQuestionContextSummary = z.infer<typeof lessonQuestionContextSummarySchema>;
 export type LessonQuestionItemContext = z.infer<typeof lessonQuestionItemContextSchema>;
 export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
-export type LessonScreenSuggestion = (typeof LESSON_SCREEN_SUGGESTIONS)[number];
+export type LessonScreenSuggestion = z.infer<typeof lessonTutorSuggestionSchema>["id"];
 export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
 /** One thread per learner and target; mocks are addressed by their session block. */

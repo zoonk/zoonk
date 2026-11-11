@@ -3,6 +3,7 @@ import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { after } from "next/server";
 import {
   type AnalyticsGoalKind,
   type AnalyticsPlatform,
@@ -10,6 +11,7 @@ import {
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
+import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -17,7 +19,7 @@ import { withPlannableDate } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
 import { type FoundExam } from "./exam-facts";
-import { getLearnerToday, toUnderstandingView } from "./understanding-view";
+import { getLearnerToday, getUnderstoodAim, toUnderstandingView } from "./understanding-view";
 
 /** The learner's own draft; another learner's reads as missing. */
 export async function findOwnedDraft({
@@ -54,10 +56,25 @@ export async function findDraftGoalId(
 
 /** A stored understanding is read back through its contract, so an old shape can't leak out. */
 export function parseStoredUnderstanding(value: unknown): GoalUnderstandingView | null {
-  return goalUnderstandingViewSchema.safeParse(value).data ?? null;
+  const parsed = goalUnderstandingViewSchema.safeParse(value).data;
+
+  if (!parsed || parsed.status !== "goals") {
+    return parsed ?? null;
+  }
+
+  return {
+    ...parsed,
+    goals: parsed.goals.map((goal) => ({
+      ...goal,
+      draft: {
+        ...goal.draft,
+        displayName: goal.draft.displayName ?? defaultDisplayName(goal.draft),
+      },
+    })),
+  };
 }
 
-/** On read, not when the card is saved: a card's date can become today overnight. */
+/** On read, not when the card is saved: a card's date can become today overnight, and its aim's choices follow the level. */
 function withPlannableDates({
   today,
   understanding,
@@ -74,6 +91,7 @@ function withPlannableDates({
     goals: understanding.goals.map((goal) => ({
       ...goal,
       draft: withPlannableDate({ draft: goal.draft, today }),
+      languageAim: getUnderstoodAim(goal.draft),
     })),
   };
 }
@@ -149,20 +167,26 @@ export async function completeDraft({
   });
 
   if (saved.changed) {
-    await trackLearnerEvents({
-      events: [
-        {
-          name: "Goal Classified",
-          properties: {
-            duration_ms: Math.max(0, Date.now() - saved.draft.createdAt.getTime()),
-            result: getClassifiedKind(view),
+    const at = Date.now();
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Goal Classified",
+            properties: {
+              at,
+              duration_ms: Math.max(0, at - saved.draft.createdAt.getTime()),
+              onboarding_id: draft.id,
+              result: getClassifiedKind(view),
+            },
           },
-        },
-      ],
-      locale: draft.language,
-      platform,
-      userId: draft.userId,
-    });
+        ],
+        locale: draft.language,
+        platform,
+        userId: draft.userId,
+      }),
+    );
   }
 
   return saved.draft;

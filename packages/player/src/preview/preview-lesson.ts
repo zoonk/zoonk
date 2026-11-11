@@ -8,6 +8,7 @@ export const PREVIEW_LEARNER_ID = "preview";
 function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
   return {
     answers: [],
+    clockId: null,
     hyperdrive: { knownStepIds: [], streak: 0 },
     learnerId: PREVIEW_LEARNER_ID,
     reason: "started",
@@ -74,9 +75,11 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
           certificates: [],
           correctCount: 1,
           energyDelta: 1,
+          finishedChapter: null,
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,
+          planReveal: null,
           reached: NOTHING_REACHED,
           seconds: 60,
           studyBlock: null,

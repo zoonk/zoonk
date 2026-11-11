@@ -891,10 +891,45 @@ class LessonPlayerReducerTest {
 
     @Test
     fun waitsForADeliberateFinishOnAResumedRunWithEveryScreenAnswered() {
-        val done = play(listOf(explanationStep("e1"), checkStep("q1")), started(saved("q1", true)))
+        val steps = listOf(explanationStep("e1"), checkStep("q1"))
+        val done = play(steps, started(saved("q1", true)))
 
         assertEquals(LessonPhase.Completed to CompletionStatus.Ready, done.phase to done.completion?.status)
         assertEquals(CompletionStatus.Saving, done.then(LessonAction.CompletionRetried).completion?.status)
+
+        val answeredHere =
+            play(steps, LessonAction.Continue, *answerCheck("q1", false), started(saved("q1", true)).copy(keepsScreen = true))
+        assertEquals(LessonPhase.Feedback, answeredHere.phase)
+        assertEquals(mapOf("q1" to true), answeredHere.firstVerdicts)
+    }
+
+    @Test
+    fun aLateRunsFirstMissSurvivesCheckingAPreservedCorrectDraft() {
+        val steps = listOf(checkStep("q1"), checkStep("q2"))
+        val draft =
+            play(
+                steps,
+                LessonAction.SelectAnswer("q1", LessonAnswer.Check("right")),
+                started(saved("q1", false)).copy(keepsScreen = true),
+            )
+        assertEquals(LessonAnswer.Check("right"), draft.answers["q1"])
+        assertNull(draft.results["q1"])
+        val checked = draft.then(LessonAction.CheckResolved("q1", stepResult(true), counts = true))
+        assertEquals(false, checked.firstVerdicts["q1"])
+        assertEquals(true, checked.results["q1"]?.isCorrect)
+    }
+
+    @Test
+    fun aRunLandingAfterTheLearnerActedShowsItsAnswersOnlyOnScreensTheyHaveNotTouched() {
+        val steps = listOf(explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2"), checkStep("q3"))
+        val action = started(saved("q1", false), saved("q2", true), saved("q3", false)).copy(keepsScreen = true)
+        val acted = play(steps, LessonAction.Continue, *answerCheck("q1", true), action)
+
+        assertEquals("q1" to LessonPhase.Feedback, acted.currentId to acted.phase)
+        assertEquals(LessonAnswer.Check("right") to stepResult(true, "q1-attempt"), acted.answers["q1"] to acted.results["q1"])
+        assertEquals(LessonAnswer.Check("right") to stepResult(true), acted.answers["q2"] to acted.results["q2"])
+        assertEquals(mapOf("q1" to false, "q2" to true, "q3" to false), acted.firstVerdicts)
+        assertEquals(steps.map(LessonStep::id) + "q3", acted.queue)
     }
 
     @Test

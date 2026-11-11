@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "e71ecd1d364c25f7a90bcf7a6b1d336c5378d9bbb1e57c09fe63556b24f899c1",
   "conversation_answers_first": "9ca6979c984ab7c73214c01d1c59a3faaff9557c15e7bda47ec19a458d6ced09",
   "conversation_at_level": "37f04b9ea1e248bf9fe1e92004d5180e483864f2c45e20027842c1816044bb49",
-  "conversation_back_to_today": "a3a783410d31ad44d75dffa87b8998abaccdfadd16678c5c2c2bfa2d9c920dd8",
   "conversation_band": "c6515596468cffe98f306e99d6a7a8d733bf6452c571695743360153a8bf06de",
   "conversation_band_points": "31400c6ae1a98c7da21e35a7d09da3c0c884f4554a0138a09d467afd93ed3718",
   "conversation_below_level": "af55ba208e9792e7a259901c5966a47381ad31dca9df61d467540cff6b2f3258",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "06daed1770416273515317d3cae894ab153b7d42ccd1cbb1a9899c968a003737",
   "conversation_still_closing": "273752f549ceeb91137ce806a71ab1c8fabca7996a449cdf148f542bd413c14b",
   "conversation_still_to_get_across": "bdab040420d137407153f92b227cac9bd2cd91f4a1c0810919eec59062ff0a15",
-  "conversation_study_time_used_up": "b1d0a25de6f0596c73b0ff373bf4533ddf29fc46a1c13f7da45da90f5de77acd",
   "conversation_take_over": "f683f29b7e1857f17d7dce65e328303749a040a9fa83b2490dc0798529dd8d0e",
   "conversation_take_your_time": "c4b922da26f3775d14ce0c4264e33e43d35affca6ee010d2b71d6407fac4f06c",
   "conversation_taken_over": "41ed3612c3e2d9b8a8c9684da01a69e10ce2d86e6d7958fb9af2ce1d0f57e760",
@@ -311,9 +309,6 @@
     <string name="conversation_call_length">대화 시간</string>
     <string name="conversation_longer_calls_plus">Plus에서 더 오래 대화할 수 있어요.</string>
     <string name="conversation_opens_when_ready">준비가 끝나면 대화 화면이 바로 열려요.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">하루 학습 시간 제한에 도달했어요. 다음 학습 때 이 대화를 할 수 있어요.</string>
-    <string name="conversation_back_to_today">오늘로 돌아가기</string>
     <string name="conversation_get_ready">대화 준비하기</string>
     <string name="conversation_get_ready_description">이 챌린지는 단원 내용을 바탕으로 짧게 대화하는 활동이에요. 먼저 말하기 수준에 맞춰 내용을 만드는 데 최대 30초가 걸려요.</string>
     <string name="conversation_getting_ready">대화를 준비하고 있어요</string>

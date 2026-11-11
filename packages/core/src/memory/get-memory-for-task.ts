@@ -29,11 +29,14 @@ type MemoryTaskRequest = {
   /** Sensitive facts only reach tasks that help with them, such as the tutor. */
   includeSensitive?: boolean;
   analytics?: AiGenerationContext;
+  candidateIds?: readonly string[];
+  markUsed?: boolean;
 };
 
 type MemorySearch = { facts: MemoryFactForTask[] } | { terms: string[] };
 
 type FactScope = {
+  candidateIds?: readonly string[];
   categories: MemoryCategory[];
   includeSensitive: boolean;
   now: Date;
@@ -47,10 +50,11 @@ type FactSearch = {
   scope: FactScope;
 };
 
-function scopeWhere({ categories, includeSensitive, now, userId }: FactScope) {
+function scopeWhere({ candidateIds, categories, includeSensitive, now, userId }: FactScope) {
   return {
     ...currentFactsWhere({ now, userId }),
     category: { in: categories },
+    ...(candidateIds ? { id: { in: [...candidateIds] } } : {}),
     ...(includeSensitive ? {} : { sensitive: false }),
   };
 }
@@ -66,17 +70,25 @@ function findRecentFacts({ limit, scope }: { limit: number; scope: FactScope }) 
 
 async function lookUpMemory({
   analytics,
+  candidateIds,
   categories,
   includeSensitive = false,
   language,
   need,
   userId,
 }: MemoryTaskRequest): Promise<{ facts: MemoryFactForTask[] } | { search: FactSearch }> {
-  if (categories.length === 0 || !(await isMemoryEnabled(userId))) {
+  if (categories.length === 0 || candidateIds?.length === 0 || !(await isMemoryEnabled(userId))) {
     return { facts: [] };
   }
 
-  const scope = { categories: [...categories], includeSensitive, now: new Date(), userId };
+  const scope = {
+    candidateIds,
+    categories: [...categories],
+    includeSensitive,
+    now: new Date(),
+    userId,
+  };
+
   const total = await prisma.memoryFact.count({ where: scopeWhere(scope) });
 
   if (total <= FACT_LIMIT || !need) {
@@ -174,7 +186,12 @@ export async function startMemorySearch(request: MemoryTaskRequest): Promise<Mem
   const lookup = await lookUpMemory(request);
 
   if ("facts" in lookup) {
-    return { facts: await markUsed({ facts: lookup.facts, userId: request.userId }) };
+    return {
+      facts:
+        request.markUsed === false
+          ? lookup.facts
+          : await markUsed({ facts: lookup.facts, userId: request.userId }),
+    };
   }
 
   return { terms: await generateFactSearchTerms(lookup.search) };
@@ -189,5 +206,5 @@ export async function selectMemoryFacts({
   const facts =
     "facts" in lookup ? lookup.facts : await searchRelevantFacts({ ...lookup.search, terms });
 
-  return markUsed({ facts, userId: request.userId });
+  return request.markUsed === false ? facts : markUsed({ facts, userId: request.userId });
 }

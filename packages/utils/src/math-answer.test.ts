@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  currencyFor,
   formatMathAnswer,
   formatMoney,
   getUnitPosition,
   moneySignGap,
+  splitMoneyUnit,
   withUnit,
 } from "./math-answer";
 
@@ -67,14 +67,19 @@ describe(moneySignGap, () => {
   });
 });
 
-describe(currencyFor, () => {
+describe(splitMoneyUnit, () => {
   it("reads currency symbols and codes, and nothing else", () => {
-    expect(currencyFor("$")).toBe("USD");
-    expect(currencyFor("R$")).toBe("BRL");
-    expect(currencyFor("EUR")).toBe("EUR");
-    expect(currencyFor("months")).toBeNull();
-    expect(currencyFor("%")).toBeNull();
-    expect(currencyFor()).toBeNull();
+    expect(splitMoneyUnit("$")).toStrictEqual({ currency: "USD", rest: "" });
+    expect(splitMoneyUnit("R$")).toStrictEqual({ currency: "BRL", rest: "" });
+    expect(splitMoneyUnit("EUR")).toStrictEqual({ currency: "EUR", rest: "" });
+    expect(splitMoneyUnit("months")).toBeNull();
+    expect(splitMoneyUnit("%")).toBeNull();
+    expect(splitMoneyUnit()).toBeNull();
+  });
+
+  it("keeps the words after a currency apart from it", () => {
+    expect(splitMoneyUnit("R$ per month")).toStrictEqual({ currency: "BRL", rest: "per month" });
+    expect(splitMoneyUnit("hours per 1,000 letters")).toBeNull();
   });
 });
 
