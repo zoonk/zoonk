@@ -13,6 +13,45 @@ vi.mock("./get-staff-actor", () => ({
 }));
 
 describe("staff scalar queries", () => {
+  it("keeps null text literal on required fields and gives usable hints on nullable fields", async () => {
+    const user = await userFixture({ name: "null" });
+    await prisma.user.update({ data: { image: "null" }, where: { id: user.id } });
+    const id = { field: "id", op: "eq", value: user.id };
+
+    await expect(
+      countStaffRecords({ model: "User", where: [id, { field: "name", op: "eq", value: "null" }] }),
+    ).resolves.toMatchObject({ count: 1, status: "ready" });
+
+    await expect(
+      countStaffRecords({ model: "User", where: [id, { field: "name", op: "ne", value: "null" }] }),
+    ).resolves.toMatchObject({ count: 0, status: "ready" });
+
+    await Promise.all(
+      [null, undefined].map(async (value) => {
+        await expect(
+          countStaffRecords({ model: "User", where: [{ field: "name", op: "eq", value }] }),
+        ).resolves.toMatchObject({
+          message: "Invalid value for name. Expected String.",
+          status: "invalid",
+        });
+      }),
+    );
+
+    await expect(
+      countStaffRecords({ model: "User", where: [{ field: "image", op: "eq", value: "null" }] }),
+    ).resolves.toMatchObject({
+      message: "Use isNull or notNull for null checks.",
+      status: "invalid",
+    });
+
+    await expect(
+      countStaffRecords({
+        model: "User",
+        where: [id, { field: "image", op: "in", value: ["null"] }],
+      }),
+    ).resolves.toMatchObject({ count: 1, status: "ready" });
+  });
+
   it("refuses every excluded model and every stripped field for filters and ordering", async () => {
     await Promise.all(
       excludedModels.map(async (model) => {

@@ -1,22 +1,29 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { staffRead, staffTransaction } from "./read";
 import { countStaffRecords } from "./records";
+import { findStaffUser } from "./users";
 
 vi.mock("./get-staff-actor", () => ({
   getStaffActor: async () => ({ clientId: "zoonk-cli", status: "ready", userId: "staff-fixture" }),
 }));
 
-describe("staff filter failures", () => {
+describe("staff query failures", () => {
   it.each([
     { field: "hour", model: "LearningEvent", value: "40000" },
     { field: "name", model: "User", value: "private\0text" },
     { field: "createdAt", model: "User", value: "0000-01-01T00:00:00Z" },
-  ])("rejects a value outside $model.$field's database format", async ({ field, model, value }) => {
+  ])("rejects an invalid $model value in $field", async ({ field, model, value }) => {
     await expect(
       countStaffRecords({ model, where: [{ field, op: "eq", value }] }),
     ).resolves.toStrictEqual({
-      message: "A filter value doesn't fit its column.",
+      message: "A value in this request doesn't fit its column.",
+      status: "invalid",
+    });
+  });
+
+  it("uses a neutral value error for a NUL byte in user lookup", async () => {
+    await expect(findStaffUser({ query: "private\0text" })).resolves.toStrictEqual({
+      message: "A value in this request doesn't fit its column.",
       status: "invalid",
     });
   });
@@ -39,22 +46,20 @@ describe("staff filter failures", () => {
     ).resolves.toMatchObject({ message: expect.stringContaining("1000"), status: "invalid" });
   });
 
-  it("turns a real Prisma bind-limit failure into a value error", async () => {
+  it("reports a real Prisma bind-limit failure across individually valid filters", async () => {
     const ids = Array.from({ length: 70_000 }, () => randomUUID());
 
-    const result = await staffRead({
-      call: { model: "User", verb: "count" },
-      run: async () => {
-        const count = await staffTransaction((client) =>
-          client.user.count({ where: { id: { in: ids } } }),
-        );
-
-        return { data: { count }, rows: count };
-      },
+    const result = await countStaffRecords({
+      model: "User",
+      where: Array.from({ length: 70 }, (_, index) => ({
+        field: "id",
+        op: "in",
+        value: ids.slice(index * 1000, (index + 1) * 1000),
+      })),
     });
 
     expect(result).toStrictEqual({
-      message: "A filter value doesn't fit its column.",
+      message: "Too many filter values in one request.",
       status: "invalid",
     });
   });

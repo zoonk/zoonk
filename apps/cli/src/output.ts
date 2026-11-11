@@ -1,4 +1,4 @@
-import { usageError } from "./errors.ts";
+import { CliError, EXIT_CODES } from "./errors.ts";
 import { isRecord } from "./http.ts";
 
 export type OutputShape =
@@ -13,9 +13,10 @@ function pickFields(record: unknown, fields: string[]): unknown {
   const missing = fields.filter((field) => !(field in record));
 
   if (missing.length > 0) {
-    throw usageError(
+    throw new CliError(
       `--fields names ${missing.join(", ")}, which these records don't have. ` +
         `Fields: ${Object.keys(record).join(", ")}.`,
+      EXIT_CODES.usage,
     );
   }
 
@@ -40,8 +41,9 @@ function shapeModels(body: Record<string, unknown>, names: string[]) {
   const unknown = names.filter((name) => !models.some((model) => model.name === name));
 
   if (unknown.length > 0) {
-    throw usageError(
+    throw new CliError(
       `No readable model named ${unknown.join(", ")}. Run \`pnpm zoonk staff models\` to list them.`,
+      EXIT_CODES.usage,
     );
   }
 

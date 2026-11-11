@@ -17,16 +17,16 @@ Run `pnpm zoonk whoami` from the repository root first.
 
 - It prints the account: go on.
 - Exit code 3, not logged in: ask the user to run `pnpm zoonk login` in their terminal and approve the code in the browser it opens. One login per machine renews itself while it's used and ends after 30 days unused. If they'd rather you start it, run it in the background, give them the URL and code it prints, and wait for it to finish.
-- HTTP 403: the account isn't a platform admin. Tell the user; don't look for another way in.
+- It says the login has no staff access, or `pnpm zoonk login` says the login was denied in the browser: the account isn't a Zoonk staff account (a platform admin), or someone pressed Deny. Tell the user; don't look for another way in.
 
 Never read, print or copy `~/.config/zoonk/credentials.db` or any token.
 
 ## Query
 
-Data commands print JSON on stdout; messages and errors go to stderr. Exit codes: 0 done, 1 failed, 2 wrong usage, 3 not logged in.
+Data commands print JSON on stdout; messages and errors go to stderr. Exit codes: 0 done, 1 failed, 2 wrong command (fix it from the message), 3 not logged in.
 
 ```sh
-pnpm zoonk staff users find <email|username|id>    # one account: role, ban, guest, plan
+pnpm zoonk staff users find <email|username|id>    # one account by exact match (null if none): role, ban, guest, plan
 pnpm zoonk staff users search <text> [--limit n]   # names, emails or usernames containing the text
 pnpm zoonk staff models                            # readable model names
 pnpm zoonk staff models Goal Plan                  # those models' fields and relations
