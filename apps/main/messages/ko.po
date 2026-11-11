@@ -103,7 +103,6 @@ msgid "Help"
 msgstr "도움말"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -939,7 +938,6 @@ msgid "The questions you got wrong, why, and practice until you get them right."
 msgstr "어떤 문제를 왜 틀렸는지 살펴보고, 맞힐 때까지 연습해요."
 
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "OsH_hN"
 msgid "Mock exam, timed like the real one"
 msgstr "실제 시험과 같은 제한 시간으로 보는 모의고사"
@@ -1101,10 +1099,15 @@ msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "설정 중"
 
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
-msgctxt "irPOsS"
-msgid "A mock exam to find your level"
-msgstr "실력 진단 모의고사"
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "집중 진단"
+
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "ko7e4v"
+msgid "Quick questions that find where your study time should go"
+msgstr "짧은 문제로 어떤 부분에 학습 시간을 써야 할지 알아봐요"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
@@ -2536,11 +2539,6 @@ msgstr "과목 전체 학습 계획 세우기"
 msgctxt "xuyfqZ"
 msgid "I want to understand {topic} in depth"
 msgstr "{topic}에 대해 깊이 알고 싶어요"
-
-#: src/app/[lang]/focus-test/page.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "집중 진단"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx

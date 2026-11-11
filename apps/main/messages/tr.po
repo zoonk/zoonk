@@ -103,7 +103,6 @@ msgid "Help"
 msgstr "Yardım"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -939,7 +938,6 @@ msgid "The questions you got wrong, why, and practice until you get them right."
 msgstr "Yanlış yanıtladığın sorular, hatalarının nedenleri ve doğru yanıtlayana kadar yapabileceğin alıştırmalar."
 
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "OsH_hN"
 msgid "Mock exam, timed like the real one"
 msgstr "Gerçek sınavdaki gibi süreli bir deneme sınavı"
@@ -1101,10 +1099,15 @@ msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "Hazırlık aşamasında"
 
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
-msgctxt "irPOsS"
-msgid "A mock exam to find your level"
-msgstr "Seviyeni belirlemek için bir deneme sınavı"
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Odak testi"
+
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "ko7e4v"
+msgid "Quick questions that find where your study time should go"
+msgstr "Çalışma süreni nelere ayırman gerektiğini belirleyen kısa sorular"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
@@ -2536,11 +2539,6 @@ msgstr "Konunun tamamı için bir plan oluştur"
 msgctxt "xuyfqZ"
 msgid "I want to understand {topic} in depth"
 msgstr "{topic} konusunu derinlemesine anlamak istiyorum"
-
-#: src/app/[lang]/focus-test/page.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "Odak testi"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
