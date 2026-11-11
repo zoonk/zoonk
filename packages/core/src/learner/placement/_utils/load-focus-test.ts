@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type PlanChangeStatus, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlanChangeView } from "../../../plans/_utils/owned-plan";
@@ -37,16 +37,28 @@ function isTimeSaved(goal: TestSetup["goal"]): boolean {
   return goal.planRevealedAt !== null || getAnsweredQuestions(details).includes("schedule");
 }
 
-function getHandledSuggestion({ setup, suggested }: { setup: TestSetup; suggested: string[] }) {
+function getHandledSuggestion({
+  setup,
+  suggested,
+  status,
+}: {
+  setup: TestSetup;
+  suggested: string[];
+  status: PlanChangeStatus | undefined;
+}) {
   const handled = setup.record?.handled;
 
   if (!handled || !isSameFocus(handled.areas, suggested)) {
     return null;
   }
 
-  return handled.outcome === "proposed" || handled.planVersion === setup.plan.version
+  return status === "proposed" || status === "applied" || handled.planVersion === setup.plan.version
     ? handled
     : null;
+}
+
+function isDismissed(status: PlanChangeStatus | undefined): boolean {
+  return status === "declined" || status === "undone";
 }
 
 /**
@@ -74,7 +86,6 @@ async function loadFocusFacts({
   const proposes = asks && timeSaved && timeShort;
 
   const focus = setup.record?.focus ?? [];
-  const handled = getHandledSuggestion({ setup, suggested });
 
   const suggestion = proposes
     ? await tx.planChange.findFirst({
@@ -83,6 +94,8 @@ async function loadFocusFacts({
         where: { payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] }, planId: id },
       })
     : null;
+
+  const handled = getHandledSuggestion({ setup, status: suggestion?.status, suggested });
 
   const due =
     proposes && !handled && !isSameFocus(focusAreas, suggested) && isSameFocus(focusAreas, focus);
@@ -93,7 +106,7 @@ async function loadFocusFacts({
     focusAreas,
     handPicked:
       (focusAreas.length > 0 && !isSameFocus(focusAreas, focus)) ||
-      (handled?.outcome === "proposed" && suggestion?.status === "declined"),
+      (handled?.outcome === "proposed" && isDismissed(suggestion?.status)),
     proposal:
       suggestion?.status === "proposed"
         ? await loadPlanChangeView(suggestion.id, { timeZone })

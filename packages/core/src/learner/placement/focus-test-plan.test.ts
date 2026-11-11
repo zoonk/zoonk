@@ -387,4 +387,66 @@ describe("the Focus test on a plan whose time is short", () => {
       }),
     ).resolves.toStrictEqual([{ status: "declined" }]);
   });
+
+  it.each(["declined", "undone"] as const)(
+    "keeps a %s proposal dismissed until a committed replan",
+    async (status) => {
+      const { goal, plan, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+      const completion = await sit(goal.id, [DONT_KNOW]);
+      const changeId = completion.focusTest?.checkpoint?.focus?.proposal?.id ?? "";
+
+      if (status === "undone") {
+        await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+      }
+
+      await expect(
+        decidePlanChange({ changeId, goalId: goal.id, input: { status } }),
+      ).resolves.toMatchObject({ change: { status }, status: "updated" });
+
+      await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+        placement: {
+          focusTest: { checkpoint: { focus: { proposal: null, state: "handPicked" } } },
+        },
+      });
+
+      await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject({
+        today: { planChange: null },
+      });
+
+      await writeLearnerChange({ planInputs: true, userId: user.id }, async () => null);
+
+      await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+        placement: { focusTest: { checkpoint: { focus: { state: "handPicked" } } } },
+      });
+
+      await expect(
+        prisma.planChange.count({
+          where: { payload: { equals: "focusTest", path: ["source"] }, planId: plan.id },
+        }),
+      ).resolves.toBe(1);
+
+      await expect(
+        changeGoalPlan({
+          goalId: goal.id,
+          input: {
+            operations: [
+              {
+                kind: "setTargetDate",
+                targetDate: new Date(Date.now() + 40 * MS_PER_DAY).toISOString().slice(0, 10),
+              },
+            ],
+          },
+          trackAnalytics: false,
+        }),
+      ).resolves.toMatchObject({ status: "applied" });
+
+      await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+        completion: {
+          focusTest: {
+            checkpoint: { focus: { proposal: { source: "focusTest" }, state: "proposed" } },
+          },
+        },
+      });
+    },
+  );
 });

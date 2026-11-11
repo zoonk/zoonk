@@ -40364,7 +40364,7 @@
               "undone",
               "replaced"
             ],
-            "description": "proposed waits for the learner's answer, and waits again after they apply it and undo it; undone: the learner undid a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied"
+            "description": "proposed waits for the learner's answer, and waits again after they apply it and undo it, except a Focus test proposal; undone: the learner undid a Focus test proposal or a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied"
           },
           "todaySession": {
             "nullable": true,
@@ -80746,7 +80746,7 @@
               "alreadyFits",
               "handPicked"
             ],
-            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the plan has no focus and its time already covers these subjects, so no focus is needed. `handPicked`: the learner chose their own focus or declined the test's proposal"
+            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the plan has no focus and its time already covers these subjects, so no focus is needed. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it"
           }
         },
         "required": [

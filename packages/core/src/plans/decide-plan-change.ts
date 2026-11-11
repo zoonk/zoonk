@@ -120,6 +120,16 @@ async function decline({ change, context }: Decision) {
       where: { id: change.id, planId: context.plan.id, status: "proposed" },
     });
 
+    if (count > 0 && parsePlanChangePayload(change.payload).source === FOCUS_TEST_SOURCE) {
+      await keepTestFocus({
+        areas: context.state.settings.focusAreas,
+        goalId: context.goal.id,
+        planVersion: context.plan.version,
+        tx,
+        userId: context.goal.userId,
+      });
+    }
+
     return count === 0 ? unchanged({ status: "conflict" }) : null;
   });
 
