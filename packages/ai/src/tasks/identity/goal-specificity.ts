@@ -9,13 +9,13 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./goal-specificity.prompt.md";
 
 /**
- * On 21 cases (11 Nov 2026), Haiku cost $0.0773/1k versus Ember's $0.1298; both classified every
- * goal, but Haiku invented one occupation. Ember replaces Flash Lite as a fallback: 21/21 splits,
- * 0.91 s p50, and 3 blind wins with 18 ties versus Flash Lite's $2.4312/1k and one privacy miss.
+ * On 21 cases (11 Nov 2026), Ember scored EN/PT 10/10 versus Haiku's 9.78/10, with 2 blind
+ * wins, 19 ties and no losses. Its $0.1298/1k versus $0.0773 buys a 0.91 s p50 versus 1.63 s
+ * for onboarding, with no refusals in these cases.
  */
-const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "none";
-const fallbackModels = ["meta/muse-ember", "openai/gpt-6-luna"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
 
 const schema = z.object({
   generalGoal: z.string().nullable(),
