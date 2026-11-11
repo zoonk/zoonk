@@ -3,6 +3,7 @@ import { type IncomingMessage, type Server, type ServerResponse, createServer } 
 import { type AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { afterEach, describe, expect, it } from "vitest";
 import { WHOAMI_REQUEST } from "./args.ts";
 import { type StoredLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
@@ -11,8 +12,8 @@ import { sendAuthorized } from "./session.ts";
 
 type FakeApiOptions = {
   acceptedToken: string;
-  beforeRejecting?: () => void;
-  refresh: { body: unknown; headers?: Record<string, string>; status: number };
+  beforeRejecting?: () => Promise<unknown>;
+  refresh: { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number };
 };
 
 const HOUR_MS = 3_600_000;
@@ -72,6 +73,7 @@ async function startFakeApi(options: FakeApiOptions) {
   const server = createServer(async (request, response) => {
     if (request.url === "/v1/auth/oauth2/token") {
       refreshRequests.push(await readForm(request));
+      await delay(options.refresh.delayMs ?? 0);
       reply({ response, ...options.refresh });
       return;
     }
@@ -84,7 +86,7 @@ async function startFakeApi(options: FakeApiOptions) {
       return;
     }
 
-    options.beforeRejecting?.();
+    await options.beforeRejecting?.();
 
     reply({
       body: { error: { code: "UNAUTHORIZED", message: "Authentication required" } },
@@ -127,7 +129,7 @@ describe(sendAuthorized, () => {
       refresh: { body: tokenResponse("new"), status: 200 },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() + 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() + 1000), origin: api.origin });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -145,6 +147,25 @@ describe(sendAuthorized, () => {
     });
   });
 
+  it("lets one of two parallel commands refresh and hands the other the saved pair", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), delayMs: 100, status: 200 },
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    const results = await Promise.all([
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ]);
+
+    expect(results.map((result) => result.status)).toStrictEqual([200, 200]);
+    expect(api.refreshRequests).toHaveLength(1);
+  });
+
   it("refreshes once when the API rejects the access token, then retries", async () => {
     const file = createCredentialsFile();
 
@@ -153,7 +174,11 @@ describe(sendAuthorized, () => {
       refresh: { body: tokenResponse("new"), status: 200 },
     });
 
-    saveLogin({ file, login: storedLogin("revoked", Date.now() + HOUR_MS), origin: api.origin });
+    await saveLogin({
+      file,
+      login: storedLogin("revoked", Date.now() + HOUR_MS),
+      origin: api.origin,
+    });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -167,13 +192,12 @@ describe(sendAuthorized, () => {
 
     const api = await startFakeApi({
       acceptedToken: "access-other",
-      beforeRejecting: () => {
-        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin });
-      },
+      beforeRejecting: () =>
+        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin }),
       refresh: { body: { error: "invalid_grant" }, status: 400 },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 
@@ -190,7 +214,7 @@ describe(sendAuthorized, () => {
       refresh: { body: { error: "invalid_grant" }, status: 400 },
     });
 
-    saveLogin({ file, login: storedLogin("ended", Date.now() - 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("ended", Date.now() - 1000), origin: api.origin });
 
     await expect(
       sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
@@ -220,7 +244,7 @@ describe(sendAuthorized, () => {
       },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
     await expect(
       sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
@@ -241,7 +265,7 @@ describe(sendAuthorized, () => {
       },
     });
 
-    saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
     const failure = await sendAuthorized({
       file,

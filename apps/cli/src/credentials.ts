@@ -1,9 +1,19 @@
 import { randomUUID } from "node:crypto";
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import {
+  closeSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { CliError } from "./errors.ts";
-import { isRecord } from "./http.ts";
+import { OAUTH_TIMEOUT_MS, isRecord } from "./http.ts";
 
 export type StoredLogin = { accessToken: string; expiresAt: number; refreshToken: string };
 
@@ -11,9 +21,15 @@ export type LoginPlace = { file: string; origin: string };
 
 type CredentialsFile = Record<string, unknown>;
 
+type LoginChange<T> = { result: T; save?: StoredLogin | null };
+
 const PLAIN_TOKEN_PATTERN = /^[\w\-.~+/]+=*$/u;
 const OWNER_ONLY_DIRECTORY = 0o700;
 const OWNER_ONLY_FILE = 0o600;
+const LOCK_RETRY_MS = 50;
+
+/** A live command holds the lock for at most one OAuth request, so an older lock was abandoned. */
+const LOCK_STALE_MS = OAUTH_TIMEOUT_MS * 2;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
@@ -34,11 +50,15 @@ function isStoredLogin(value: unknown): value is StoredLogin {
   );
 }
 
+function hasErrorCode(error: unknown, code: string): boolean {
+  return error instanceof Error && "code" in error && error.code === code;
+}
+
 function readText(file: string): string | null {
   try {
     return readFileSync(file, "utf8");
   } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+    if (hasErrorCode(error, "ENOENT")) {
       return null;
     }
 
@@ -61,14 +81,50 @@ function readCredentials(file: string): CredentialsFile {
   }
 }
 
-/** Parallel commands read this file while others write it, so a write never shows half a file. */
-function writeCredentials(file: string, credentials: CredentialsFile) {
+/** Commands read this file without the lock, so a write never shows half a file. */
+function writeLogin({ file, login, origin }: LoginPlace & { login: StoredLogin | null }) {
+  const others = Object.entries(readCredentials(file)).filter(([key]) => key !== origin);
+  const credentials = Object.fromEntries(login ? [...others, [origin, login]] : others);
   const temporaryFile = `${file}.${randomUUID()}.tmp`;
-  const contents = `${JSON.stringify(credentials, null, 2)}\n`;
 
-  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
-  writeFileSync(temporaryFile, contents, { flag: "wx", mode: OWNER_ONLY_FILE });
+  writeFileSync(temporaryFile, `${JSON.stringify(credentials, null, 2)}\n`, {
+    flag: "wx",
+    mode: OWNER_ONLY_FILE,
+  });
+
   renameSync(temporaryFile, file);
+}
+
+function tryLock(lockFile: string): boolean {
+  try {
+    closeSync(openSync(lockFile, "wx", OWNER_ONLY_FILE));
+    return true;
+  } catch (error) {
+    if (hasErrorCode(error, "EEXIST")) {
+      return false;
+    }
+
+    throw error;
+  }
+}
+
+function isAbandoned(lockFile: string): boolean {
+  const lock = statSync(lockFile, { throwIfNoEntry: false });
+  return lock !== undefined && Date.now() - lock.mtimeMs > LOCK_STALE_MS;
+}
+
+async function acquireLock(lockFile: string): Promise<void> {
+  if (tryLock(lockFile)) {
+    return;
+  }
+
+  if (isAbandoned(lockFile)) {
+    rmSync(lockFile, { force: true });
+  } else {
+    await delay(LOCK_RETRY_MS);
+  }
+
+  return acquireLock(lockFile);
 }
 
 export function readLogin({ file, origin }: LoginPlace): StoredLogin | null {
@@ -76,21 +132,33 @@ export function readLogin({ file, origin }: LoginPlace): StoredLogin | null {
   return isStoredLogin(login) ? login : null;
 }
 
-export function saveLogin({ file, login, origin }: LoginPlace & { login: StoredLogin }) {
-  writeCredentials(file, { ...readCredentials(file), [origin]: login });
+/**
+ * Every read-then-write of the file runs here, one command at a time, so two commands never
+ * refresh with the same token or drop each other's write. `save: null` removes the login.
+ */
+export async function changeLogin<T>({
+  change,
+  file,
+  origin,
+}: LoginPlace & { change: (stored: StoredLogin | null) => Promise<LoginChange<T>> }): Promise<T> {
+  const lockFile = `${file}.lock`;
+
+  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
+  await acquireLock(lockFile);
+
+  try {
+    const { result, save } = await change(readLogin({ file, origin }));
+
+    if (save !== undefined) {
+      writeLogin({ file, login: save, origin });
+    }
+
+    return result;
+  } finally {
+    rmSync(lockFile, { force: true });
+  }
 }
 
-/** Leaves a newer login alone, such as one saved by a `pnpm zoonk login` that ran meanwhile. */
-export function removeLogin({ file, origin, refreshToken }: LoginPlace & { refreshToken: string }) {
-  const credentials = readCredentials(file);
-  const stored = credentials[origin];
-
-  if (!isStoredLogin(stored) || stored.refreshToken !== refreshToken) {
-    return;
-  }
-
-  writeCredentials(
-    file,
-    Object.fromEntries(Object.entries(credentials).filter(([key]) => key !== origin)),
-  );
+export function saveLogin({ file, login, origin }: LoginPlace & { login: StoredLogin }) {
+  return changeLogin({ change: async () => ({ result: login, save: login }), file, origin });
 }

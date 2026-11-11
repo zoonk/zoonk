@@ -1,13 +1,7 @@
 import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 import { loginCommand } from "./api-origin.ts";
-import {
-  type LoginPlace,
-  type StoredLogin,
-  readLogin,
-  removeLogin,
-  saveLogin,
-} from "./credentials.ts";
+import { type LoginPlace, type StoredLogin, changeLogin, saveLogin } from "./credentials.ts";
 import { CliError } from "./errors.ts";
 import { type DeviceCode, exchangeDeviceCode, requestDeviceCode, revokeLogin } from "./oauth.ts";
 
@@ -110,19 +104,26 @@ export async function logIn({ file, origin }: LoginPlace) {
     origin,
   });
 
-  saveLogin({ file, login, origin });
+  await saveLogin({ file, login, origin });
   process.stderr.write(`Logged in to ${origin}.\n`);
 }
 
+/** Revokes under the file's lock: revoking a token another command just rotated ends every login. */
 export async function logOut({ file, origin }: LoginPlace) {
-  const login = readLogin({ file, origin });
+  const wasLoggedIn = await changeLogin({
+    change: async (stored) => {
+      if (!stored) {
+        return { result: false };
+      }
 
-  if (!login) {
-    process.stderr.write(`Not logged in to ${origin}.\n`);
-    return;
-  }
+      await revokeLogin({ origin, refreshToken: stored.refreshToken });
+      return { result: true, save: null };
+    },
+    file,
+    origin,
+  });
 
-  await revokeLogin({ origin, refreshToken: login.refreshToken });
-  removeLogin({ file, origin, refreshToken: login.refreshToken });
-  process.stderr.write(`Logged out of ${origin}.\n`);
+  process.stderr.write(
+    wasLoggedIn ? `Logged out of ${origin}.\n` : `Not logged in to ${origin}.\n`,
+  );
 }

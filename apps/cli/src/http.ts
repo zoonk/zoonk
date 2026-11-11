@@ -1,6 +1,7 @@
 import { CliError } from "./errors.ts";
 
 export const UNAUTHORIZED = 401;
+export const OAUTH_TIMEOUT_MS = 10_000;
 
 const ERROR_CODE_PATTERN = /^[A-Z][A-Z0-9_]*$/u;
 
@@ -45,5 +46,9 @@ export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResu
 }
 
 export function postForm(url: URL, fields: Record<string, string>): Promise<HttpResult> {
-  return sendRequest(url, { body: new URLSearchParams(fields), method: "POST" });
+  return sendRequest(url, {
+    body: new URLSearchParams(fields),
+    method: "POST",
+    signal: AbortSignal.timeout(OAUTH_TIMEOUT_MS),
+  });
 }
