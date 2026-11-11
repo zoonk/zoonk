@@ -37,8 +37,9 @@ function isSessionScreen(location: string): boolean {
 }
 
 /**
- * A step that hasn't begun opens on its screen and waits for Start there, so the learner reads what
- * it is before it starts. An unopened day's address shows only its next step.
+ * A question block that hasn't begun opens on its screen and waits for Start there, so the learner
+ * reads what it is before it starts. A lesson's tap starts its writing at once. An unopened day's
+ * address shows only its next step.
  */
 function waitsForStart({
   day,
@@ -49,13 +50,12 @@ function waitsForStart({
   origin: string;
   step: TapStep;
 }): boolean {
-  const underWay = day.blocks.some(
-    (block) => block.position === step.position && block.status === "active",
-  );
+  const block = day.blocks.find((candidate) => candidate.position === step.position);
 
   return (
     !isSessionScreen(origin) &&
-    !underWay &&
+    block?.kind !== "learn" &&
+    block?.status !== "active" &&
     (step.blockId !== null || step.position === day.nextPosition)
   );
 }

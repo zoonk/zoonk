@@ -50,6 +50,15 @@ async function createFirstWeekDay() {
   return day;
 }
 
+/** Today opens a question block on its intro, which waits for the learner's Start. */
+async function startFromIntro(page: Page) {
+  await expect(
+    page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
+  ).toBeEnabled();
+
+  await page.keyboard.press("Enter");
+}
+
 async function answerPlacement(page: Page) {
   await expect(page).toHaveURL((url) => url.pathname === "/session");
   await expect(page.getByRole("heading", { name: /^Placement:/u })).toBeVisible();
@@ -188,6 +197,7 @@ test.describe("Today's session", () => {
     const start = page.getByRole("button", { name: /^Start/u });
     await expectHydrated(start);
     await start.press("Enter");
+    await startFromIntro(page);
     await answerPlacement(page);
 
     await playCapsules(page);
@@ -219,6 +229,7 @@ test.describe("Today's session", () => {
     const start = page.getByRole("button", { name: /^Start/u });
     await expectHydrated(start);
     await start.press("Enter");
+    await startFromIntro(page);
     await playCapsules(page);
     await expectMoment(page, "Review done");
 
