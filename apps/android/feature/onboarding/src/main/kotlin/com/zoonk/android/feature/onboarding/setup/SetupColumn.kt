@@ -25,9 +25,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -256,9 +259,14 @@ internal fun ColumnScope.QuestionPages(
         val page = LocalSetupPage.current
         val fold = page?.fold
         val answerScroll = rememberScrollState()
+        // Saved, so a recreated screen keeps the learner's place in the question it already showed.
+        var scrolledTo by rememberSaveable { mutableStateOf<String?>(null) }
         LaunchedEffect(questionId) {
-            page?.scroll?.scrollTo(0)
-            answerScroll.scrollTo(0)
+            if (scrolledTo != questionId) {
+                scrolledTo = questionId
+                page?.scroll?.scrollTo(0)
+                answerScroll.scrollTo(0)
+            }
         }
 
         Box(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
