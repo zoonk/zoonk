@@ -101,12 +101,7 @@ struct PracticeQuestionView: View {
 
   @ViewBuilder private var stimulusContent: some View {
     if question.placement {
-      QuestionNote(systemImage: "safari") {
-        Text(
-          "Fine-tuning your plan. A miss here is never saved as a mistake.",
-          tableName: "Practice",
-          comment: "Note above a placement question in the first week's sessions.")
-      }
+      PlacementNote(canSkipToday: result == nil)
     }
 
     if question.quoted, let citation = question.citation {
@@ -162,6 +157,65 @@ struct QuestionTitle: View {
       .typeStyle(.section)
       .foregroundStyle(isMuted ? .mutedForeground : .primary)
       .accessibilityAddTraits(.isHeader)
+  }
+}
+
+extension EnvironmentValues {
+  /// An exam goal's "Not today" on the Focus test's questions in a session: true when it saved.
+  @Entry var skipTestQuestionsToday: (@MainActor () async -> Bool)?
+}
+
+/// Main's `PlacementNote`: a Focus test question in a session, with "Not today" on an exam goal's
+/// question not answered yet.
+private struct PlacementNote: View {
+  let canSkipToday: Bool
+
+  @Environment(\.skipTestQuestionsToday) private var skipToday
+  @State private var isSkipping = false
+  @State private var failed = false
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      QuestionNote(systemImage: "safari") {
+        Text(
+          "Fine-tuning your plan. A miss here is never saved as a mistake.",
+          tableName: "Practice",
+          comment: "Note above a placement question in the first week's sessions.")
+      }
+
+      if canSkipToday, let skipToday {
+        BusyButton(isBusy: isSkipping) {
+          skip(skipToday)
+        } label: {
+          Text(
+            "Not today", tableName: "FocusTest",
+            comment: "Takes today's Focus test questions out of the session")
+        }
+        .buttonStyle(.ghost)
+        .controlSize(.small)
+      }
+
+      if failed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "FocusTest",
+            comment: "A Focus test switch couldn't be saved"))
+      }
+    }
+  }
+
+  private func skip(_ skipToday: @escaping @MainActor () async -> Bool) {
+    guard !isSkipping else {
+      return
+    }
+
+    isSkipping = true
+    failed = false
+
+    Task {
+      failed = await !skipToday()
+      isSkipping = false
+    }
   }
 }
 

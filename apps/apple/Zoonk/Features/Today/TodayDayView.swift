@@ -259,6 +259,8 @@ struct TodayDayView: View {
       TodayExamChoiceSection(
         goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,
         draft: $examChoiceDraft)
+    case .focusTest:
+      TodayFocusTestSection(goalID: view.goal.id, offer: view.focusTest)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)

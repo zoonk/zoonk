@@ -6,6 +6,9 @@ struct QuestionBlockScreen: View {
   let blockId: String
   var onFinished: ((Components.Schemas.StudyBlockCompletion) -> Void)?
   var onStop: (() async -> Bool)?
+  /// An exam goal's "Not today" on the Focus test's questions; `onGone` leaves a block it emptied.
+  var skipTestQuestions: (() async -> Bool)?
+  var onGone: (() -> Void)?
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
@@ -15,12 +18,16 @@ struct QuestionBlockScreen: View {
   init(
     sessionId: String, blockId: String,
     onFinished: ((Components.Schemas.StudyBlockCompletion) -> Void)? = nil,
-    onStop: (() async -> Bool)? = nil
+    onStop: (() async -> Bool)? = nil,
+    skipTestQuestions: (() async -> Bool)? = nil,
+    onGone: (() -> Void)? = nil
   ) {
     self.sessionId = sessionId
     self.blockId = blockId
     self.onFinished = onFinished
     self.onStop = onStop
+    self.skipTestQuestions = skipTestQuestions
+    self.onGone = onGone
   }
 
   var body: some View {
@@ -34,7 +41,9 @@ struct QuestionBlockScreen: View {
         case .loaded(let run):
           QuestionBlockView(
             run: run, sessionId: sessionId, onFinished: onFinished, onStop: onStop,
-            onRefresh: { Task { await read() } })
+            onRefresh: { Task { await read() } }
+          )
+          .environment(\.skipTestQuestionsToday, skipsToday)
         }
       }
       .taskClose {
@@ -54,6 +63,27 @@ struct QuestionBlockScreen: View {
     }
 
     return PracticeBlockTitle.title(for: run.detail.block)
+  }
+
+  /// After it, the block as the day now has it: one left with no questions is gone from the day.
+  private var skipsToday: (@MainActor () async -> Bool)? {
+    guard let skipTestQuestions else {
+      return nil
+    }
+
+    return {
+      guard await skipTestQuestions() else {
+        return false
+      }
+
+      await read()
+
+      if case .failed(.notFound) = load {
+        onGone?()
+      }
+
+      return true
+    }
   }
 
   /// Reads the block; a block not started yet starts first, since the learner's tap opened it.

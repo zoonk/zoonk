@@ -444,7 +444,11 @@ struct TodayPlanChangeSection: View {
       ? Text(
         "Use my date anyway", tableName: "Today",
         comment: "Applies a change that moves the exam off the notice's date")
-      : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
+      : change.source == "focusTest"
+        ? Text(
+          "Update my plan", tableName: "Today",
+          comment: "Applies the focus a learner's Focus test answers propose")
+        : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
   }
 
   private var declineLabel: Text {

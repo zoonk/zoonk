@@ -58,6 +58,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     case exam
     case examAccess
     case examChoice
+    case focusTest
     case insight
     case planChange
     case practice
@@ -148,6 +149,8 @@ struct TodayView: Decodable, Equatable, Sendable {
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
   let examChoice: ExamChoice?
+  /// The Focus test's first sitting, while Today suggests it.
+  let focusTest: FocusTestSummary.Size?
   let goal: Goal
   /// At most one, until it's answered.
   let insight: MemoryInsight?
