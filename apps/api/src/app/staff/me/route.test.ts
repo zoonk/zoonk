@@ -4,13 +4,13 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
-import { getAdminAccess } from "../../../../../../packages/core/src/users/get-admin-access";
-import { GET as getMe } from "../../v1/me/route";
 import {
   cliTokenFixture,
   otherCliClientFixture,
-  sendStaffAuthorization,
-} from "../_test-utils/cli-tokens";
+} from "../../../../../../packages/auth/src/_test-utils/cli-tokens";
+import { getAdminAccess } from "../../../../../../packages/core/src/users/get-admin-access";
+import { GET as getMe } from "../../v1/me/route";
+import { sendStaffAuthorization } from "../_test-utils/staff-authorization";
 import { GET as getStaffMe } from "./route";
 
 function whoami(authorization?: string) {

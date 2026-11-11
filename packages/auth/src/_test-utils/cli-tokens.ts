@@ -1,11 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { auth } from "@zoonk/auth";
-import { CLI_CLIENT_ID, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
+import { DEVICE_CODE_GRANT_TYPE } from "@better-auth/oauth-provider";
 import { prisma } from "@zoonk/db";
-import { headers } from "next/headers";
-import { vi } from "vitest";
-
-const DEVICE_CODE_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code";
+import { CLI_CLIENT_ID, STAFF_READ_SCOPE } from "../cli-login-contract";
+import { auth } from "../testing";
 
 type CliUser = { email: string; id: string; password: string };
 
@@ -41,7 +38,7 @@ export async function otherCliClientFixture(): Promise<string> {
 /**
  * Logs `user` in through the real device flow, as `pnpm zoonk login` does: the CLI asks for a code,
  * the user approves it signed in, and the CLI exchanges it. `state` then expires or revokes the
- * access token the way time or `pnpm zoonk logout` would.
+ * access token the way time or `pnpm zoonk logout` would. Each call is another machine's login.
  */
 export async function cliTokenFixture({
   clientId = CLI_CLIENT_ID,
@@ -87,10 +84,14 @@ export async function cliTokenFixture({
   return { accessToken: tokens.access_token, refreshToken: tokens.refresh_token };
 }
 
-/** Staff capabilities read the token from `headers()`, which Next.js answers from the request. */
-export function sendStaffAuthorization(authorization?: string): Headers {
-  const requestHeaders = new Headers(authorization ? { authorization } : {});
-  vi.mocked(headers).mockResolvedValue(requestHeaders);
+/** What the CLI does when its access token is about to expire. */
+export function refreshCliLogin(refreshToken: string) {
+  return auth.api.oauth2Token({
+    body: { client_id: CLI_CLIENT_ID, grant_type: "refresh_token", refresh_token: refreshToken },
+  });
+}
 
-  return requestHeaders;
+/** Whether the provider still accepts this access token for the CLI, as staff routes ask it. */
+export async function isCliAccessTokenActive(accessToken: string): Promise<boolean> {
+  return (await auth.api.verifyCliAccessToken({ body: { token: accessToken } })) !== null;
 }
