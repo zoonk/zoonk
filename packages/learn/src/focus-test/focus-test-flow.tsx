@@ -111,11 +111,12 @@ export function FocusTestFlow({
           readWarmUp={readWarmUp}
           run={run}
           skip={waitSkip}
+          skipFailed={failed}
           skipping={test.isPending}
         />
       );
     case "unavailable":
-      return <PlacementUnavailable onContinue={skip} pending={test.isPending} />;
+      return <PlacementUnavailable failed={failed} onContinue={skip} pending={test.isPending} />;
     case "invitation":
       return (
         <FocusTestInvitation

@@ -2,6 +2,7 @@
 
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../../_components/save-error";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import {
   OnboardingColumn,
@@ -67,11 +68,13 @@ export function PlacementIntro({
 function PlacementOutcome({
   children,
   done,
+  failed = false,
   onContinue,
   pending,
 }: {
   children: React.ReactNode;
   done?: string;
+  failed?: boolean;
   onContinue: () => void;
   pending: boolean;
 }) {
@@ -84,6 +87,7 @@ function PlacementOutcome({
         {children}
       </OnboardingHeading>
       <OnboardingFooter>
+        {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
           {t("See my plan")}
         </OnboardingPrimaryButton>
@@ -130,16 +134,18 @@ export function PlacementDone({
 }
 
 export function PlacementUnavailable({
+  failed,
   onContinue,
   pending,
 }: {
+  failed?: boolean;
   onContinue: () => void;
   pending: boolean;
 }) {
   const t = useExtracted();
 
   return (
-    <PlacementOutcome onContinue={onContinue} pending={pending}>
+    <PlacementOutcome failed={failed} onContinue={onContinue} pending={pending}>
       <OnboardingTitle>{t("Let's skip the questions")}</OnboardingTitle>
       <OnboardingDescription>
         {t(

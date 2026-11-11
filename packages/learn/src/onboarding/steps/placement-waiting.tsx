@@ -3,6 +3,7 @@
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
+import { ChangeSaveError } from "../../_components/save-error";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import {
@@ -114,12 +115,14 @@ function PlacementBar({
   holding,
   onSkip,
   skip,
+  skipFailed,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
   skip?: SkipCopy;
+  skipFailed: boolean;
   skipping: boolean;
 }) {
   const t = useExtracted();
@@ -148,6 +151,7 @@ function PlacementBar({
           <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
             {skip?.label ?? t("Skip for now")}
           </OnboardingSecondaryButton>
+          {skipFailed && <ChangeSaveError className="text-center lg:text-right" />}
           {skip?.note !== null && (
             <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
               {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
@@ -165,6 +169,7 @@ function PlacementWaitPage({
   onSkip,
   run,
   skip,
+  skipFailed,
   skipping,
 }: {
   canSkip: boolean;
@@ -172,6 +177,7 @@ function PlacementWaitPage({
   onSkip: () => void;
   run: GenerationRun;
   skip?: SkipCopy;
+  skipFailed: boolean;
   skipping: boolean;
 }) {
   const since = useMountTime().getTime();
@@ -187,6 +193,7 @@ function PlacementWaitPage({
             holding={holding}
             onSkip={onSkip}
             skip={skip}
+            skipFailed={skipFailed}
             skipping={skipping}
           />
         }
@@ -215,6 +222,7 @@ export function PlacementWaiting({
   readWarmUp,
   run,
   skip,
+  skipFailed = false,
   skipping,
 }: {
   buildFailed: boolean;
@@ -227,6 +235,8 @@ export function PlacementWaiting({
   run: GenerationRun | null;
   /** What leaving the wait is called and does, when it isn't placement's own skip. */
   skip?: SkipCopy;
+  /** Leaving didn't save: said beside the control, which stays the retry. */
+  skipFailed?: boolean;
   skipping: boolean;
 }) {
   const patient = usePatience();
@@ -252,6 +262,7 @@ export function PlacementWaiting({
         onSkip={onSkip}
         run={shown}
         skip={skip}
+        skipFailed={skipFailed}
         skipping={skipping}
       />
     </WaitScreen>

@@ -10,6 +10,7 @@ import {
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
+import { followRun } from "./generation-run";
 
 const CITATION = { passage: "passage", sourceId: "notice" };
 const SUBJECTS = ["Portuguese", "Administrative law", "Statistics"];
@@ -23,9 +24,13 @@ const AT_THE_TEST = [...PROFILE_QUESTIONS, "target", "targetDate", "level", "bud
 
 /**
  * `seen`: past its setup, on a plan the learner has seen whose time doesn't cover everything, so
- * the test proposes its focus instead of setting it.
+ * the test proposes its focus instead of setting it. `writingRunId`: its questions are still being
+ * written by that run, so the test waits for them.
  */
-async function createExamGoalAtFocusTest(userId: string, { seen = false } = {}) {
+async function createExamGoalAtFocusTest(
+  userId: string,
+  { seen = false, writingRunId = null }: { seen?: boolean; writingRunId?: string | null } = {},
+) {
   const suffix = randomUUID().slice(0, 6);
 
   const blueprint = await examBlueprintFixture({
@@ -53,6 +58,7 @@ async function createExamGoalAtFocusTest(userId: string, { seen = false } = {}) 
         examName: blueprint.name,
       },
       examBlueprintId: blueprint.id,
+      generationRunId: writingRunId,
       kind: "exam",
       planRevealedAt: seen ? new Date() : null,
       targetDate: new Date(Date.now() + DAYS_TO_EXAM * MS_PER_DAY),
@@ -78,7 +84,7 @@ async function createExamGoalAtFocusTest(userId: string, { seen = false } = {}) 
         weight: null,
       })),
     },
-    placementPreparedAt: new Date(),
+    placementPreparedAt: writingRunId ? null : new Date(),
   });
 
   await Promise.all([
@@ -86,7 +92,7 @@ async function createExamGoalAtFocusTest(userId: string, { seen = false } = {}) 
       planItemFixture({ phase: 0, planId: plan.id, position, skillId: skill.id }),
     ),
     ...skills.flatMap((skill) =>
-      Array.from({ length: QUESTIONS_PER_SUBJECT }, () =>
+      Array.from({ length: writingRunId ? 0 : QUESTIONS_PER_SUBJECT }, () =>
         itemFixture({
           content: choiceItemContent(),
           examBlueprintId: blueprint.id,
@@ -139,6 +145,26 @@ async function dropFirstAnswerResponse(page: Page) {
 
     await route.fallback();
   });
+}
+
+/** The completion never reaches the server, while every placement read still does. Returns what lifts it. */
+async function rejectCompletion(page: Page) {
+  const anyRequest = "**/*";
+
+  await page.route(anyRequest, async (route) => {
+    const request = route.request();
+    const isAction = request.method() === "POST" && request.headers()["next-action"];
+    const isCompletion = (request.postData() ?? "").includes('"fromScratch"');
+
+    if (isAction && isCompletion) {
+      await route.abort();
+      return;
+    }
+
+    await route.fallback();
+  });
+
+  return () => page.unroute(anyRequest);
 }
 
 function question(page: Page, number: number) {
@@ -249,4 +275,39 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
   expect(await readChangeStatus(change.id)).toBe("proposed");
+});
+
+test("a skip that doesn't save says so on the wait for questions, and the same button retries it", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const runId = `e2e-focus-test-${randomUUID()}`;
+  const goal = await createExamGoalAtFocusTest(noProgressUser.id, { writingRunId: runId });
+
+  await followRun({
+    events: [
+      { entityId: goal.id, status: "started", step: "preparePlacement" },
+      { entityId: goal.id, reason: "aiGenerationFailed", status: "error", step: "workflowError" },
+    ],
+    page,
+    runId,
+  });
+
+  const allowCompletion = await rejectCompletion(page);
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start the test" }).click();
+
+  await expect(page.getByRole("alert").filter({ hasText: "This didn't finish" })).toBeVisible();
+  const skip = page.getByRole("button", { name: "Skip for now" });
+  await skip.click();
+
+  await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();
+  await expect(skip).toBeEnabled();
+
+  await allowCompletion();
+  await skip.click();
+
+  await expect(
+    page.getByRole("heading", { name: "How much time can you study each day?" }),
+  ).toBeVisible();
 });
