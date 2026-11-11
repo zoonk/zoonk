@@ -1,6 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { getRegister } from "../_utils/language-context";
 import { withItemRules } from "./item-rules";
 import { toSetItem, writeItemSet } from "./write-item-set";
 import type * as Ai from "ai";
@@ -105,7 +106,8 @@ describe(writeItemSet, () => {
 
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).toContain("- Place: Italy");
-    expect(userPrompt).not.toMatch(/Brazil|Register/u);
+    expect(userPrompt).not.toContain("Place: Brazil");
+    expect(userPrompt).toContain(`REGISTER: ${getRegister("pt")}`);
   });
 });
 

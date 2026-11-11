@@ -104,6 +104,8 @@ When the lesson is about hearing or saying sounds, a question never asks about a
 
 Every learner of this language at this level reads the lesson, whatever their job or life. The learner's own lines, what they say, write or translate as themselves, never give them a job, field, employer or other personal fact ("my experience in sales", "I work in customer service"): keep them general ("my most recent role", "my last project", "the job I'm applying for"). Other people in the situation, such as a recruiter or a colleague, may have one.
 
+The learner's gender is unknown too, and a screen never says who speaks a sentence or to whom. So no sentence, translation or practice template has a word that agrees with the gender of the person speaking or spoken to ("Sono stanco", "Estoy listo", "Obrigado", "Are you ready?" as "Sei pronto?"): a woman would have to build, say or fill in the man's form, and her own would be marked wrong. Say it in a form that agrees with nothing ("Ho sonno", "Ya terminé"). When the lesson teaches forms that agree (the passato prossimo with "essere", adjectives that describe people), give them to someone the sentence names ("Giulia è uscita", "Mi hermano está cansado"); the learner uses their own form in the writing, whose answers list both.
+
 # Writing
 
 One sentence the learner writes in `TARGET_LANGUAGE`, something they'd really write in this situation (a message, a form, a note).
@@ -114,7 +116,7 @@ One sentence the learner writes in `TARGET_LANGUAGE`, something they'd really wr
 {{#sameLanguage}}
 - `prompt`: what to write, giving the information in other words, never a sentence to copy.
 {{/sameLanguage}}
-- `answers`: 1 to 4 correct `TARGET_LANGUAGE` answers, each a complete sentence with its punctuation (question marks, and the opening "¿" in Spanish), from the most natural to the most literal. Include the common correct variants a learner might write: the contracted and full forms ("I've had" and "I have had"), and the other natural wording, so a right answer isn't marked wrong.
+- `answers`: 1 to 4 correct `TARGET_LANGUAGE` answers, each a complete sentence with its punctuation (question marks, and the opening "¿" in Spanish), from the most natural to the most literal. Include the common correct variants a learner might write: the contracted and full forms ("I've had" and "I have had"), the other natural wording, and both genders' forms when the sentence agrees with the writer's ("Sono uscito presto" and "Sono uscita presto"), so a right answer isn't marked wrong.
 - `keyPoints`: 1 to 3 things a right answer must get right, in `LEARNER_LANGUAGE` ("Uses 'is' after 'how much'").
 
 # Summary
@@ -139,6 +141,7 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 - `TARGET_LANGUAGE` text never contains `LEARNER_LANGUAGE` words, not even small ones like "em" or "de" that look alike.
 - `LEARNER_LANGUAGE` text is natural and correct in its own variant, including grammatical gender ("a caução", not "o caução"). It may quote `TARGET_LANGUAGE` words in quotes or backticks when it talks about them.
 {{/bilingual}}
+- Text written to the learner in `LEARNER_LANGUAGE` (instructions, tips, notes, feedback, the summary): {{LEARNER_REGISTER}}.
 - Every target-language sentence is grammatical and something a native speaker of that variant would say.
 - People address each other the way their roles call for: with someone they don't know (a landlord, a doctor, a receptionist), both sides use the polite form where `TARGET_LANGUAGE` has one ("usted", "Sie", "vous", "Lei"); with a friend, a classmate or family, the informal one. The sentences, tip examples, practice and writing answers keep that form.
 {{#bilingual}}
@@ -165,3 +168,4 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 {{/sameLanguage}}
 9. The words and sentences cover every part of `LESSON_CAN_DO`.
 10. In a lesson about sounds, no practice question asks about a sound or a letter in writing.
+11. No sentence, translation or practice template, and nothing written to the learner, has a word that agrees with the learner's gender or with the gender of someone the sentence doesn't name.

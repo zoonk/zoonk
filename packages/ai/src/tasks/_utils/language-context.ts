@@ -63,7 +63,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "university admission exams: the EXANI-II (Ceneval), the UNAM's and the IPN's own (counted in aciertos, correct answers); the EGEL (Ceneval) to graduate, the ENARM for medical residencies, TOEFL and Cambridge exams for English",
     register:
-      'address the reader as "tú" (and "ustedes" for a group, never "vosotros" or "vos"), informal and warm, in Latin American Spanish with Mexico\'s vocabulary (computadora, celular, carro, jugo) and no regional slang',
+      'address the reader as "tú" (and "ustedes" for a group, never "vosotros" or "vos"), informal and warm, in Latin American Spanish with Mexico\'s vocabulary (computadora, celular, carro, jugo) and no regional slang; rephrase anything that would assume the reader\'s gender ("¿todo listo?" rather than "¿estás listo?", "te damos la bienvenida" rather than "bienvenido")',
   },
   fr: {
     place: "France",
@@ -78,7 +78,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
       "école maternelle; école élémentaire (CP to CM2, ages 6 to 11); collège (6e to 3e, ages 11 to 15); lycée (seconde, première, terminale, ages 15 to 18); then université, BTS, BUT or classes préparatoires and grandes écoles; grades out of 20, where 10 passes",
     exams:
       "the brevet, the baccalauréat (the bac), Parcoursup for university places, concours (grandes écoles, CRPE and CAPES for teachers, the civil service), the code de la route, DELF",
-    register: 'address the reader as "tu", informal and warm',
+    register:
+      'address the reader as "tu", informal and warm; rephrase anything that would assume the reader\'s gender ("on y va ?" rather than "tu es prêt ?")',
   },
   it: {
     place: "Italy",
@@ -166,7 +167,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
       "educação infantil; ensino fundamental (1st to 9th year, ages 6 to 14); ensino médio (3 years, ages 15 to 17); then faculdade or universidade; grades from 0 to 10; public universities admit through the ENEM (Sisu) or a vestibular",
     exams:
       "ENEM, vestibulares (Fuvest, Unicamp), concursos públicos (boards such as Cebraspe, FGV, Vunesp and FCC), the OAB exam, CNU, Revalida",
-    register: 'address the reader as "você", warm and informal, the way people speak in Brazil',
+    register:
+      'address the reader as "você", warm and informal, the way people speak in Brazil; rephrase anything that would assume the reader\'s gender ("isso mesmo" or "você acertou" rather than "você está certo" or "certa", "boas-vindas" rather than "bem-vindo")',
   },
   tr: {
     place: "Türkiye",
@@ -220,6 +222,14 @@ export function formatLocalContext(
   }
 
   return `LOCAL_CONTEXT:\n${formatPack(LOCAL_CONTEXT_PACKS[locale], { register })}`;
+}
+
+const DEFAULT_REGISTER =
+  "address the reader directly, warm and informal; rephrase anything that would assume the reader's gender";
+
+export function getRegister(language: string): string {
+  const locale = getContentLocale(language);
+  return locale ? LOCAL_CONTEXT_PACKS[locale].register : DEFAULT_REGISTER;
 }
 
 const MONEY_EXAMPLE = 2400;

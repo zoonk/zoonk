@@ -351,6 +351,25 @@ ${SHARED_EXPECTATIONS}
   },
   {
     expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- Same guess screen; the learner has seen its revealed answer, checks their own division and asks whether they did it right, without saying anything about themselves.
+- The app never knows the learner's gender, so no word written to them agrees with it. Confirming with "Você está certo", "Você está certa", "Você tem razão, está correto" about the learner, "Você foi preciso" or any other word that agrees with the learner: 6.5 or lower. "Isso mesmo", "Você acertou a conta", "Sua divisão está certa" are fine.
+- Confirm their division (5 and 3), then explain the odds the lesson uses (9 in both periods), as in the case before.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-confirms-reasoning-without-gender",
+    userInput: {
+      contextSnapshot: MOBILITY_GUESS_SCREEN,
+      priorTurns: [],
+      question:
+        "O app diz que permanece igual, mas dividi 50 por 10 e deu 5, depois 75 por 25 e deu 3. Fiz certo?",
+    },
+  },
+  {
+    expectations: `
 CASE-SPECIFIC GUIDANCE:
 - Explain that gravity still acts in orbit and continuously changes the direction of the satellite's forward motion.
 - Contrast the selected answer with the validated correct reasoning without shaming the learner.

@@ -1,5 +1,6 @@
 import { getTaughtRegion, getVarietyName } from "@zoonk/utils/language-regions";
 import { getLanguageName } from "@zoonk/utils/languages";
+import { getRegister } from "./language-context";
 
 const PROMPT_LANGUAGE_NAMES: Record<string, string> = {
   de: "Deutsch",
@@ -61,7 +62,8 @@ export function getLanguagePromptContext(params: {
 /**
  * Fills `{{TARGET_LANGUAGE}}` and `{{LEARNER_LANGUAGE}}` with the names, so a rule names its
  * language: told only to look up a `LEARNER_LANGUAGE` input, GPT-6 Luna wrote an English learner's
- * text in another language. A prompt with no practiced language passes no `targetLanguage`.
+ * text in another language. `{{LEARNER_REGISTER}}` is how text in the learner's language addresses
+ * them. A prompt with no practiced language passes no `targetLanguage`.
  */
 export function fillPromptLanguages({
   learnerLanguage,
@@ -73,7 +75,10 @@ export function fillPromptLanguages({
   template: string;
 }): string {
   const learnerLanguageName = getPromptLanguageName({ language: learnerLanguage });
-  const withLearner = template.replaceAll("{{LEARNER_LANGUAGE}}", () => learnerLanguageName);
+
+  const withLearner = template
+    .replaceAll("{{LEARNER_LANGUAGE}}", () => learnerLanguageName)
+    .replaceAll("{{LEARNER_REGISTER}}", () => getRegister(learnerLanguage));
 
   if (!targetLanguage) {
     return withLearner;

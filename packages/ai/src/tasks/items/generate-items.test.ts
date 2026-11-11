@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { formatCast } from "../_utils/cast";
+import { getRegister } from "../_utils/language-context";
 import { generateItems } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import type * as Ai from "ai";
@@ -65,7 +66,8 @@ describe(generateItems, () => {
 
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).toContain("- Place: Italy");
-    expect(userPrompt).not.toMatch(/Brazil|Register/u);
+    expect(userPrompt).not.toContain("Place: Brazil");
+    expect(userPrompt).toContain(`REGISTER: ${getRegister("pt")}`);
   });
 
   it("shows the exam's real past questions to match in difficulty, and none without them", async () => {
