@@ -14,7 +14,7 @@ struct GoalStartScreen: View {
   var body: some View {
     GoalStartFlow(
       sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
-      limit: settings.allowance.value?.goalStartLimit
+      limit: settings.allowance.value?.goalStartLimit, room: settings.allowance.value?.activeGoals
     )
     .loads(settings.allowance, refreshable: false)
   }
@@ -101,11 +101,13 @@ private enum DraftState {
 
 private struct GoalStartFlow: View {
   let limit: GoalLimitReason?
+  /// Goals followed at once against the plan's cap. Signing up, Plus or pausing a goal changes it,
+  /// and a draft whose room disagrees is read again.
+  let room: PlanAllowance.Cap?
   /// Decided when the flow opens: the goal this flow creates mustn't turn it into the gate.
   @State private var needsAccount: Bool
 
   @Environment(OnboardingStore.self) private var onboarding
-  @Environment(SessionStore.self) private var session
   @State private var path: [StartPage] = []
   @State private var words: String
   @State private var error: GoalError?
@@ -120,9 +122,10 @@ private struct GoalStartFlow: View {
 
   init(
     sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
-    limit: GoalLimitReason?
+    limit: GoalLimitReason?, room: PlanAllowance.Cap?
   ) {
     self.limit = limit
+    self.room = room
     _needsAccount = State(initialValue: needsAccount)
     _words = State(initialValue: sentGoal?.words ?? prefill ?? "")
     _material = State(initialValue: sentGoal?.material ?? [])
@@ -211,10 +214,11 @@ private struct GoalStartFlow: View {
           draft = nil
         }
       }
-      .onChange(of: session.authenticatedSession) { _, signedIn in
-        // A guest's draft moves to the account they sign in to, which has its own room for goals.
-        if signedIn != nil, case .draft(let value, _) = draft {
-          draft = .opening(id: value.id)
+      .onChange(of: room) { _, room in
+        if let room, case .draft(let value, let sentHere) = draft,
+          value.activeGoalsLeft != room.left
+        {
+          Task { await reread(value, sentHere: sentHere) }
         }
       }
       .onDisappear {
@@ -266,22 +270,36 @@ private struct GoalStartFlow: View {
     }
   }
 
-  /// One saved as a goal meanwhile goes on with that goal's setup; one that can't be read leaves
-  /// the box empty, as main's start page does.
+  /// One that can't be read leaves the box empty, as main's start page does.
   private func open(_ id: String) async {
     do {
-      let value = try await onboarding.understanding(id: id)
-
-      if let goalID = value.goalId {
-        self.goalID = goalID
-      } else {
-        words = value.prompt
-        draft = .draft(value, sentHere: false)
-      }
+      show(try await onboarding.understanding(id: id), sentHere: false)
     } catch {
       if !Task.isCancelled {
         path = []
       }
+    }
+  }
+
+  /// The card stays as it was when the read fails, and a read that lands after the learner left
+  /// it is dropped.
+  private func reread(_ shown: OnboardingDraft, sentHere: Bool) async {
+    guard let value = try? await onboarding.understanding(id: shown.id),
+      case .draft(let current, _) = draft, current.id == value.id
+    else {
+      return
+    }
+
+    show(value, sentHere: sentHere)
+  }
+
+  /// One saved as a goal meanwhile goes on with that goal's setup.
+  private func show(_ value: OnboardingDraft, sentHere: Bool) {
+    if let goalID = value.goalId {
+      self.goalID = goalID
+    } else {
+      words = value.prompt
+      draft = .draft(value, sentHere: sentHere)
     }
   }
 
