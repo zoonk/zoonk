@@ -4,10 +4,22 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
 
+export class ActiveGoalLimitError extends Error {
+  readonly limit: AllowanceLimit;
+
+  constructor(limit: AllowanceLimit) {
+    super("The learner's active goals are at their plan's limit.");
+    this.name = "ActiveGoalLimitError";
+    this.limit = limit;
+  }
+}
+
 export async function findActiveGoalLimit({
+  db = prisma,
   goalId,
   userId,
 }: {
+  db?: TransactionClient;
   goalId: string;
   userId: string;
 }): Promise<AllowanceLimit | null> {
@@ -18,7 +30,7 @@ export async function findActiveGoalLimit({
     return null;
   }
 
-  const active = await prisma.goal.count({
+  const active = await db.goal.count({
     where: { id: { not: goalId }, kind: { not: "explain" }, status: "active", userId },
   });
 

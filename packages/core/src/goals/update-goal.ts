@@ -25,7 +25,7 @@ import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { assertTargetDates } from "../plans/target-date-range";
 import { goalMetadata, saveMetadataInTransaction } from "./_utils/goal-metadata";
 import { isGoalRegion } from "./_utils/goal-region";
-import { findActiveGoalLimit } from "./_utils/goal-status";
+import { ActiveGoalLimitError, findActiveGoalLimit } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
 import { type GoalUpdateInput, type GoalView } from "./goal-contract";
@@ -150,6 +150,39 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
   });
 }
 
+async function saveGoal({
+  goal,
+  input,
+  userId,
+}: {
+  goal: Goal;
+  input: GoalUpdateInput;
+  userId: string;
+}) {
+  const planResult = await updatePlan({ goal, input });
+
+  if ("error" in planResult) {
+    return planResult;
+  }
+
+  const metadata = planResult.metadata ?? (await saveMetadata({ goal, input, userId }));
+
+  return {
+    ...metadata,
+    changeId: planResult.changeId,
+    savedWithPlan: planResult.metadata !== null,
+    status: "saved" as const,
+  };
+}
+
+function refuseOverLimit(error: unknown): { limit: AllowanceLimit; status: "limitReached" } {
+  if (error instanceof ActiveGoalLimitError) {
+    return { limit: error.limit, status: "limitReached" };
+  }
+
+  throw error;
+}
+
 export async function updateGoal({
   goalId,
   input,
@@ -170,23 +203,24 @@ export async function updateGoal({
   }
 
   const isActivating = input.status === "active" && goal.status !== "active";
+
+  /** Skips planning a resume that can't happen; the status write recounts under its lock. */
   const limit = isActivating ? await findActiveGoalLimit({ goalId, userId }) : null;
 
   if (limit) {
     return { limit, status: "limitReached" };
   }
 
-  const planResult = await updatePlan({ goal, input });
+  const saved = await saveGoal({ goal, input, userId }).catch(refuseOverLimit);
 
-  if ("error" in planResult) {
-    return planResult;
+  if (saved.status !== "saved") {
+    return saved;
   }
 
-  const { completed, goal: updated } =
-    planResult.metadata ?? (await saveMetadata({ goal, input, userId }));
+  const { changeId, completed, goal: updated, savedWithPlan } = saved;
 
   if (
-    !planResult.metadata &&
+    !savedWithPlan &&
     updated.status === "active" &&
     (input.details !== undefined || input.timeZone !== undefined)
   ) {
@@ -210,7 +244,7 @@ export async function updateGoal({
 
   return view
     ? {
-        change: planResult.changeId ? await loadPlanChangeView(planResult.changeId) : null,
+        change: changeId ? await loadPlanChangeView(changeId) : null,
         goal: view,
         status: "updated",
       }

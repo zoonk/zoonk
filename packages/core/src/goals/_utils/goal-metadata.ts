@@ -3,7 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type GoalUpdateInput, onlyCoreDetails, withoutCoreDetails } from "../goal-contract";
-import { moveActiveGoalAway } from "./goal-status";
+import { ActiveGoalLimitError, findActiveGoalLimit, moveActiveGoalAway } from "./goal-status";
 
 /** A learner's details replace theirs whole but keep what only core writes. */
 function mergeDetails({
@@ -39,12 +39,27 @@ function changesMetadata(goal: Goal, input: GoalUpdateInput): boolean {
   );
 }
 
-/** The caller's learner write marks plan inputs changed when the status, details or time zone change. */
+/**
+ * The caller's learner write marks plan inputs changed when the status, details or time zone
+ * change. Activating a goal throws `ActiveGoalLimitError` when the active goals are at the plan's
+ * limit, which rolls that write back; the count runs under the write's learner lock, which goal
+ * creation's claim takes too.
+ */
 export async function saveMetadataInTransaction(
   tx: TransactionClient,
   { goal, input, userId }: { goal: Goal; input: GoalUpdateInput; userId: string },
 ) {
   const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
+
+  const limit =
+    input.status === "active" && current.status !== "active"
+      ? await findActiveGoalLimit({ db: tx, goalId: current.id, userId })
+      : null;
+
+  if (limit) {
+    throw new ActiveGoalLimitError(limit);
+  }
+
   const changed = changesMetadata(current, input);
 
   const updated = changed
