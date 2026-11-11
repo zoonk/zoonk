@@ -4841,61 +4841,61 @@
         }
       }
     },
-    "Your next sessions ask a few more questions, starting with subjects not asked yet." : {
-      "comment" : "Under the Focus test's result: sessions keep asking a few test questions",
+    "Your next sessions ask a few more test questions." : {
+      "comment" : "Sessions keep asking a few Focus test questions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In deinen nächsten Lerneinheiten gibt es noch ein paar Fragen, zuerst zu Fächern, die noch nicht abgefragt wurden."
+            "value" : "In deinen nächsten Lerneinheiten bekommst du ein paar zusätzliche Testfragen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus próximas sesiones incluirán algunas preguntas más, empezando por las materias que aún no se evaluaron."
+            "value" : "En tus próximas sesiones habrá algunas preguntas más de la prueba."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes prochaines séances incluent quelques questions de plus, d’abord sur les matières pas encore abordées."
+            "value" : "Tu auras quelques questions du test en plus dans tes prochaines séances."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nelle prossime sessioni troverai qualche altra domanda, a partire dalle materie su cui non ne hai ancora ricevute."
+            "value" : "Nelle prossime sessioni troverai qualche domanda del test in più."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次回以降の学習では、まだ出題されていない科目から少しずつ問題を出します。"
+            "value" : "次回以降の学習では、重点診断の問題を少し多めに出します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다음 학습에서는 아직 다루지 않은 과목부터 몇 문제씩 더 나와요."
+            "value" : "다음 학습에서는 진단 문제가 조금 더 나와요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W kolejnych dniach nauki zadamy po kilka dodatkowych pytań, najpierw z przedmiotów, których jeszcze nie było w teście."
+            "value" : "W kolejnych dniach nauki pojawi się kilka dodatkowych pytań testowych."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas próximas sessões trazem mais algumas perguntas, começando pelas matérias que ainda não apareceram no teste."
+            "value" : "Suas próximas sessões vão ter mais algumas perguntas do teste."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sonraki çalışmalarında, henüz soru sorulmayan branşlardan başlayarak birkaç soru daha soracağız."
+            "value" : "Sonraki çalışmalarında birkaç test sorusu daha soracağız."
           }
         }
       }
@@ -5425,65 +5425,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın olduğu gibi kalıyor."
-          }
-        }
-      }
-    },
-    "Your sessions ask a few test questions until every subject has an answer." : {
-      "comment" : "Under the plan's Focus test row while sessions ask its questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In deinen Lerneinheiten gibt es ein paar Testfragen, bis du zu jedem Fach eine Frage beantwortet hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus sesiones incluyen algunas preguntas de la prueba hasta que respondas una de cada materia."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes séances incluent quelques questions du test jusqu’à ce que tu aies répondu à une question dans chaque matière."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nelle sessioni troverai qualche domanda del test finché non avrai dato una risposta per ogni materia."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "各科目の回答がそろうまで、毎回の学習でテストの問題を数問ずつ出します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모든 과목에서 한 번씩 답할 때까지 학습 중에 진단 문제가 몇 개씩 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Każdego dnia nauki zadamy kilka pytań z testu, aż odpowiesz na pytanie z każdego przedmiotu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas sessões trazem algumas perguntas do teste até você responder uma de cada matéria."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her branştan bir soruya cevap verene kadar çalışmalarında birkaç test sorusu soracağız."
           }
         }
       }

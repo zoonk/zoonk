@@ -49,12 +49,9 @@ struct FocusTestCheckpoint: View {
             comment: "Opens every subject with how its Focus test answers went")
         }
       } footer: {
-        if focusTest.sessionQuestions == .on, focusTest.counts.asked < focusTest.counts.quick {
+        if focusTest.sessionQuestions == .on {
           SectionFooter {
-            Text(
-              "Your next sessions ask a few more questions, starting with subjects not asked yet.",
-              tableName: "FocusTest",
-              comment: "Under the Focus test's result: sessions keep asking a few test questions")
+            Text(FocusTestCopy.sessionQuestions)
           }
         }
       }

@@ -88,6 +88,11 @@ enum FocusTestCopy {
     }
   }
 
+  /// Wherever it says sessions keep asking the test's questions, only while they do.
+  static let sessionQuestions = LocalizedStringResource(
+    "Your next sessions ask a few more test questions.", table: "FocusTest",
+    comment: "Sessions keep asking a few Focus test questions")
+
   static func reason(_ row: FocusTest.Row) -> String {
     switch row.reason {
     case .answers:

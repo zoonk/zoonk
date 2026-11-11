@@ -43,10 +43,7 @@ struct PlanFocusTestRow: View {
             "Test questions in your sessions are paused.", tableName: "FocusTest",
             comment: "Under the plan's Focus test row while its session questions are paused")
         } else {
-          Text(
-            "Your sessions ask a few test questions until every subject has an answer.",
-            tableName: "FocusTest",
-            comment: "Under the plan's Focus test row while sessions ask its questions")
+          Text(FocusTestCopy.sessionQuestions)
         }
       }
       .typeStyle(.note)
