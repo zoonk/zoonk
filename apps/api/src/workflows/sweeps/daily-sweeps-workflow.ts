@@ -41,6 +41,7 @@ type SweepCounts = {
   guestsDeleted: number;
   itemsRecalibrated: number;
   memoryFactsPurged: number;
+  oauthRecordsPurged: number;
   pictureChecks: number;
   retiredStepsDeleted: number;
   sentenceOrders: number;
@@ -180,6 +181,7 @@ async function sweep(): Promise<SweepCounts> {
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
     memoryFactsPurged: countOf(facts),
+    oauthRecordsPurged: access.status === "fulfilled" ? access.value.oauthRecordsPurged : 0,
     pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),
     sentenceOrders: countOf(sentenceOrders),

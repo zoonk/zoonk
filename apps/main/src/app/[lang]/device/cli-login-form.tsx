@@ -1,0 +1,251 @@
+"use client";
+
+import { Button } from "@zoonk/ui/components/button";
+import { Field, FieldLabel } from "@zoonk/ui/components/field";
+import { Input } from "@zoonk/ui/components/input";
+import {
+  CheckIcon,
+  CircleCheckIcon,
+  CircleXIcon,
+  ClockIcon,
+  EyeIcon,
+  PencilOffIcon,
+  ShieldAlertIcon,
+  XIcon,
+} from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useActionState, useId } from "react";
+import { useFormStatus } from "react-dom";
+import {
+  type CliLoginFailure,
+  type CliLoginOutcome,
+  type CliLoginState,
+  decideCliLogin,
+} from "./decide-cli-login";
+
+const LOGIN_COMMAND = "pnpm zoonk login";
+
+type FormState =
+  | { outcome: CliLoginOutcome }
+  | { failure: CliLoginFailure; userCode: string }
+  | null;
+
+function CodeReadout({ userCode }: { userCode: string }) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="font-mono text-3xl font-medium tracking-wider">{userCode}</p>
+      <p className="text-muted-foreground text-sm">
+        {t("Check that it matches the code in your terminal.")}
+      </p>
+      <input name="userCode" type="hidden" value={userCode} />
+    </div>
+  );
+}
+
+function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?: string }) {
+  const t = useExtracted();
+  const id = useId();
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{t("Code from your terminal")}</FieldLabel>
+      <Input
+        aria-describedby={errorId}
+        aria-invalid={errorId ? true : undefined}
+        autoCapitalize="characters"
+        autoComplete="off"
+        className="font-mono uppercase"
+        defaultValue={defaultValue}
+        id={id}
+        name="userCode"
+        required
+        spellCheck={false}
+      />
+    </Field>
+  );
+}
+
+function Grant({ email }: { email: string }) {
+  const t = useExtracted();
+  const id = useId();
+
+  return (
+    <section aria-labelledby={id} className="flex flex-col gap-3">
+      <h2 className="text-sm font-medium" id={id}>
+        {t("If you approve")}
+      </h2>
+
+      <ul className="flex flex-col gap-3 text-sm">
+        <li className="flex gap-3">
+          <EyeIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
+          {t("The CLI reads production data as {email}, such as accounts, plans and answers.", {
+            email,
+          })}
+        </li>
+        <li className="flex gap-3">
+          <PencilOffIcon
+            aria-hidden="true"
+            className="text-muted-foreground mt-0.5 size-4 shrink-0"
+          />
+          {t("It can't change anything.")}
+        </li>
+        <li className="flex gap-3">
+          <ClockIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
+          {t(
+            "It stays logged in on that computer until you log out there or leave it unused for 30 days.",
+          )}
+        </li>
+      </ul>
+    </section>
+  );
+}
+
+function DecisionButtons() {
+  const t = useExtracted();
+  const { data, pending } = useFormStatus();
+  const deciding = pending ? data?.get("decision") : null;
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        busy={deciding === "approve"}
+        disabled={deciding === "deny"}
+        icon={<CheckIcon aria-hidden="true" />}
+        name="decision"
+        size="lg"
+        type="submit"
+        value="approve"
+      >
+        {t("Approve")}
+      </Button>
+
+      <Button
+        busy={deciding === "deny"}
+        disabled={deciding === "approve"}
+        icon={<XIcon aria-hidden="true" />}
+        name="decision"
+        size="lg"
+        type="submit"
+        value="deny"
+        variant="outline"
+      >
+        {t("Deny")}
+      </Button>
+    </div>
+  );
+}
+
+function FailureNote({ failure, id }: { failure: CliLoginFailure; id: string }) {
+  const t = useExtracted();
+  const values = { command: LOGIN_COMMAND };
+
+  const messages: Record<CliLoginFailure, string> = {
+    expired: t("This code has expired. Run {command} again for a new one.", values),
+    failed: t("That didn't work. Try again in a moment."),
+    tooMany: t(
+      "Too many tries from this network. Wait 30 minutes, then run {command} again.",
+      values,
+    ),
+    used: t("This code was already used. Run {command} again for a new one.", values),
+    wrong: t(
+      "No login is waiting for this code. Check it against your terminal, or run {command} again.",
+      values,
+    ),
+  };
+
+  return (
+    <p className="text-destructive-text text-sm" id={id} role="alert">
+      {messages[failure]}
+    </p>
+  );
+}
+
+function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }) {
+  const t = useExtracted();
+  const approved = outcome === "approved";
+
+  const text: Record<CliLoginOutcome, { body: string; title: string }> = {
+    approved: {
+      body: t("Go back to your terminal. The CLI is ready to use."),
+      title: t("You're logged in"),
+    },
+    denied: {
+      body: t("The CLI got no access. You can close this page."),
+      title: t("Login denied"),
+    },
+    needsStaff: {
+      body: t(
+        "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again.",
+        { command: LOGIN_COMMAND, email },
+      ),
+      title: t("This login needs a Zoonk staff account"),
+    },
+  };
+
+  return (
+    <div className="flex flex-col items-start gap-2" role="status">
+      {approved ? (
+        <CircleCheckIcon aria-hidden="true" className="text-success mb-2 size-6" />
+      ) : (
+        <CircleXIcon aria-hidden="true" className="text-muted-foreground mb-2 size-6" />
+      )}
+
+      <h2 className="text-section outline-none" ref={(node) => node?.focus()} tabIndex={-1}>
+        {text[outcome].title}
+      </h2>
+      <p className="text-muted-foreground text-pretty">{text[outcome].body}</p>
+    </div>
+  );
+}
+
+export function CliLoginForm({ email, userCode }: { email: string; userCode?: string }) {
+  const t = useExtracted();
+
+  const errorId = useId();
+
+  const [state, formAction] = useActionState(
+    async (_previous: FormState, formData: FormData): Promise<FormState> => {
+      const decision = formData.get("decision") === "deny" ? "deny" : "approve";
+      const submittedCode = formData.get("userCode");
+      const typedCode = typeof submittedCode === "string" ? submittedCode.trim() : "";
+
+      const result = await decideCliLogin({ decision, userCode: typedCode }).catch(
+        (): CliLoginState => ({ failure: "failed" }),
+      );
+
+      return result && "failure" in result ? { ...result, userCode: typedCode } : result;
+    },
+    null,
+  );
+
+  const failed = state && "failure" in state ? state : null;
+
+  if (state && "outcome" in state) {
+    return <Outcome email={email} outcome={state.outcome} />;
+  }
+
+  return (
+    <form action={formAction} className="flex flex-col gap-8">
+      {userCode ? (
+        <CodeReadout userCode={userCode} />
+      ) : (
+        <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
+      )}
+
+      <Grant email={email} />
+
+      <div className="flex flex-col gap-4">
+        <p className="flex gap-3 text-sm text-pretty">
+          <ShieldAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
+          {t("Only approve a login you started yourself. If someone sent you this link, deny it.")}
+        </p>
+
+        <DecisionButtons />
+
+        {failed && <FailureNote failure={failed.failure} id={errorId} />}
+      </div>
+    </form>
+  );
+}

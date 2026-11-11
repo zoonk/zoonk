@@ -33,6 +33,7 @@
     "./auth/ott/state": "./src/auth/ott-state.ts",
     "./auth/purge-expired-auth-records": "./src/auth/purge-expired-auth-records.ts",
     "./auth/purge-verifications": "./src/auth/purge-expired-verifications.ts",
+    "./auth/revoke-cli-logins": "./src/auth/revoke-cli-logins.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/course-content-tags": "./src/cache/course-content-tags.ts",
     "./cache/course-content": "./src/cache/revalidate-course-content.ts",
@@ -633,6 +634,9 @@
     "./sessions/start-block": "./src/sessions/start-study-block.ts",
     "./sessions/stop": "./src/sessions/stop-study-session.ts",
     "./sessions/summary": "./src/sessions/get-study-session-summary.ts",
+    "./staff/actor": "./src/staff/get-staff-actor.ts",
+    "./staff/cli-login": "./src/staff/decide-cli-login.ts",
+    "./staff/me": "./src/staff/get-staff-me.ts",
     "./subscriptions/apple-contract": "./src/subscriptions/apple-contract.ts",
     "./subscriptions/apple-notification": "./src/subscriptions/process-apple-subscription-notification.ts",
     "./subscriptions/apple-store-error": "./src/subscriptions/apple-store-error.ts",
@@ -692,7 +696,13 @@
     "./profile/questions/contract": "./src/profile/questions/profile-question-contract.ts",
     "./profile/questions/get": "./src/profile/questions/get-profile-questions.ts",
     "./profile/questions/answer": "./src/profile/questions/answer-profile-question.ts",
-    "./profile/questions/skip": "./src/profile/questions/skip-profile-questions.ts"
+    "./profile/questions/skip": "./src/profile/questions/skip-profile-questions.ts",
+    "./staff/models": "./src/staff/models.ts",
+    "./staff/records": "./src/staff/records.ts",
+    "./staff/users": "./src/staff/users.ts",
+    "./staff/input": "./src/staff/input.ts",
+    "./staff/read": "./src/staff/read.ts",
+    "./users/user-search": "./src/users/user-search.ts"
   },
   "scripts": {
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
