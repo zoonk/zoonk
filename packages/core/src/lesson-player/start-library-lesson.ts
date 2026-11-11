@@ -48,6 +48,7 @@ export type LibraryLessonStartOutcome =
 
 type RunSource = {
   bindSession: boolean;
+  goalId: string | null;
   lesson: { homeChapterId: string | null; id: string; title: string };
   now: Date;
   studySessionId: string | null;
@@ -75,16 +76,14 @@ async function findRunGoalId({
 
 async function openLessonRun({
   bindSession,
+  goalId,
   lesson,
   now,
   studySessionId,
   timeZone,
   userId,
 }: RunSource) {
-  const [goalId, existing] = await Promise.all([
-    findRunGoalId({ studySessionId, userId }),
-    findResumableRun(prisma, { lessonId: lesson.id, now, userId }),
-  ]);
+  const existing = await findResumableRun(prisma, { lessonId: lesson.id, now, userId });
 
   if (existing && (!bindSession || getRunStudySessionId(existing) === studySessionId)) {
     const reopened = await reopenRunClock({ lessonId: lesson.id, run: existing, userId });
@@ -284,12 +283,15 @@ export async function startLibraryLesson({
         userId,
       });
 
+  const goalId = await findRunGoalId({ studySessionId, userId });
+
   const { clockId, isNew, run } = await openLessonRun({
     bindSession: opening !== null,
+    goalId,
     lesson,
     now,
     studySessionId,
-    timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+    timeZone: await getLearnerTimeZone({ goalId, timeZone: input.timeZone, userId }),
     userId,
   });
 

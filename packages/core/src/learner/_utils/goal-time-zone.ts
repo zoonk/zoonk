@@ -58,15 +58,17 @@ export async function canMoveGoalTimeZone({
   return !(await hasStudiedOn({ client, day, goalId: goal.id, userId: goal.userId }));
 }
 
-/** Uses the active goal's stored zone, then the request's zone, then UTC. */
+/** Uses the given goal's stored zone (the active goal's without one), then the request's zone, then UTC. */
 export async function getLearnerTimeZone({
+  goalId: givenGoalId,
   timeZone,
   userId,
 }: {
+  goalId?: string | null;
   timeZone?: string | null;
   userId: string;
 }): Promise<string> {
-  const goalId = await findActiveGoalId(userId);
+  const goalId = givenGoalId ?? (await findActiveGoalId(userId));
 
   const goal = goalId
     ? await prisma.goal.findUnique({ select: { timezone: true }, where: { id: goalId } })

@@ -116,7 +116,7 @@ export async function completeLibraryLesson({
           ],
           userId,
         }),
-    getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+    getLearnerTimeZone({ goalId: run.goalId, timeZone: input.timeZone, userId }),
   ]);
 
   const settle = async (

@@ -249,6 +249,45 @@ describe(completeLibraryLesson, () => {
     });
   });
 
+  it("dates a lesson in a goal's session by that goal's clock, whichever goal is active", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-11T00:30:00Z"));
+
+    const setup = await setupPlayableLesson({ steps: [...LESSON] });
+
+    const [active, other] = await Promise.all([
+      goalFixture({ timezone: "UTC", userId: setup.user.id }),
+      goalFixture({ timezone: "America/Los_Angeles", userId: setup.user.id }),
+    ]);
+
+    const session = await studySessionFixture({ goalId: other.id, userId: setup.user.id });
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: active.id, userId: setup.user.id }),
+      studySessionBlockFixture({ lessonId: setup.lesson.id, sessionId: session.id }),
+    ]);
+
+    const runId = await startRun(setup.lesson.id, session.id);
+
+    await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "check").id,
+      value: { kind: "check", optionId: "likely" },
+    });
+
+    await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "typedAnswer").id,
+      value: { kind: "typedAnswer", text: RIGHT_TYPED },
+    });
+
+    await complete({ lessonId: setup.lesson.id, runId });
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({ goalId: other.id, localDate: new Date("2026-11-10T00:00:00Z") });
+  });
+
   it("continues the session's Hyperdrive when the lesson is one of its blocks", async () => {
     const setup = await setupPlayableLesson({ steps: [...LESSON] });
     const earlier = await playableLessonFixture({ steps: ["check", "typedAnswer"] });
