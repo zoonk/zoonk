@@ -45,7 +45,6 @@ import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
@@ -159,7 +158,7 @@ internal fun TutorOffer(
                 tile = { OfferIcon(R.drawable.ic_auto_awesome) },
                 modifier = modifier,
             ) {
-                OfferButton(stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.tutor_offer_see_plus), routes.seePlus)
+                OfferButton(stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.tutor_offer_see_plus), onClick = routes.seePlus)
             }
         }
     }
@@ -401,10 +400,11 @@ private fun VarietyOffer(
             Text(
                 stringResource(R.string.tutor_offer_variety_applied),
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            Button(busy = save == VarietySave.Saving, onClick = onApply) { Text(stringResource(R.string.tutor_plan_change_apply)) }
+            OfferButton(stringResource(R.string.tutor_plan_change_apply), busy = save == VarietySave.Saving, onClick = onApply)
         }
         if (save == VarietySave.Failed) {
             Text(
@@ -480,10 +480,12 @@ private fun OfferIcon(
 @Composable
 private fun OfferButton(
     label: String,
+    busy: Boolean = false,
     onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
+        busy = busy,
     ) { Text(label) }
 }
 
