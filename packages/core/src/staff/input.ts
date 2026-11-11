@@ -1,3 +1,4 @@
+import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 
 const DEFAULT_LIMIT = 20;
@@ -47,8 +48,16 @@ export class StaffInputError extends Error {
   override name = "StaffInputError";
 }
 
-export function parseStaffInput<T>(schema: z.ZodType<T>, input: unknown): T {
-  const parsed = schema.safeParse(input);
+export async function parseStaffInput<T>(schema: z.ZodType<T>, input: unknown): Promise<T> {
+  const { data, error } = await safeAsync(async (): Promise<unknown> =>
+    typeof input === "function" ? Reflect.apply(input, undefined, []) : input,
+  );
+
+  if (error) {
+    throw new StaffInputError("Invalid JSON body");
+  }
+
+  const parsed = schema.safeParse(data);
 
   if (!parsed.success) {
     throw new StaffInputError(
