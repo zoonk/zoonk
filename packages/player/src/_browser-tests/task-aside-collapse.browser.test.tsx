@@ -196,7 +196,7 @@ describe("collapsing a task's sidebar", () => {
     await expect.poll(showsRecapRow).toBe(true);
   });
 
-  it("returns the session's rewards to the sidebar when it opens again on their step", async () => {
+  it("returns the session's rewards to the sidebar when it opens again on their step, focus staying on the toggle", async () => {
     renderSessionSummary();
     await page.getByRole("button", { name: "Collapse sidebar" }).click();
     await page.getByRole("button", { name: /^Continue/u }).click();
@@ -206,6 +206,12 @@ describe("collapsing a task's sidebar", () => {
 
     await expect.element(page.getByRole("complementary", { name: "Earned today" })).toBeVisible();
     await expect.poll(shownStreaks).toBe(1);
+    await expect.element(page.getByRole("button", { name: "Collapse sidebar" })).toHaveFocus();
+
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
+
+    await expect.poll(() => document.querySelector('[data-slot="step-dots"]')).not.toBeNull();
+    await expect.element(page.getByRole("button", { name: "Expand sidebar" })).toHaveFocus();
   });
 
   it("keeps focus on the session summary's heading when a wider window brings the sidebar back", async () => {

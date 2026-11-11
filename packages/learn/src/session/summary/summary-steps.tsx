@@ -4,7 +4,7 @@ import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { StepDots } from "../../_components/step-dots";
 import { StepsBackButton, focusStepTitle } from "../../_components/steps";
 import { useTaskAsideShown } from "../../_components/task-header";
@@ -35,7 +35,6 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const { summary } = useSessionSummary();
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(NO_STEP_LEFT);
-  const opened = useRef(false);
   const asideShown = useTaskAsideShown();
   const exists = !stopped && !asideShown && hasRewardsBeyondBrainPower(summary);
   const shown = exists && open;
@@ -47,12 +46,19 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
 
   useKeyboardCallback("ArrowLeft", () => (shown ? close() : false), { mode: "none", screen: true });
 
-  useEffect(() => {
-    if (opened.current || shown) {
-      opened.current = true;
+  const last = useRef({ open, shown });
+
+  // Before `TaskFrame`'s effect sends lost focus to the action bar, and only when the learner moved
+  // or the focused step left: the sidebar's toggle keeps focus when it swaps the steps.
+  useLayoutEffect(() => {
+    const moved = last.current.open !== open;
+    const swapped = last.current.shown !== shown;
+    last.current = { open, shown };
+
+    if (moved || (swapped && isFocusLost(document.activeElement))) {
       focusStepTitle(stepRef.current);
     }
-  }, [shown, stepRef]);
+  }, [open, shown, stepRef]);
 
   const show = () => {
     setLeft((steps) => ({ ...steps, done: true }));
