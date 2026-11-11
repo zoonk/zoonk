@@ -34,7 +34,7 @@ type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
 export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
 
-function getBand(level: CefrLevel): number {
+export function getBand(level: CefrLevel): number {
   return CEFR_LEVELS.indexOf(level);
 }
 
@@ -109,18 +109,20 @@ function countAsked({
   ).length;
 }
 
-/** A skipped question uses up its turn without moving the level. */
+/** A skipped question uses up its turn without moving the level. Without a skill, both count. */
 function scoreAnswers({
+  answers,
   bank,
-  progress,
   skill,
 }: {
+  answers: TestAnswers["answers"];
   bank: LevelTestBank;
-  progress: TestAnswers;
-  skill: QuestionSkill;
+  skill?: QuestionSkill;
 }): ScoredAnswer[] {
-  return progress.answers.flatMap((answer) => {
-    const question = bank.questions.find((item) => item.id === answer.id && item.skill === skill);
+  return answers.flatMap((answer) => {
+    const question = bank.questions.find(
+      (item) => item.id === answer.id && (!skill || item.skill === skill),
+    );
 
     if (!question || answer.skipped) {
       return [];
@@ -144,7 +146,23 @@ function getSkillScore({
   skill: QuestionSkill;
   start: number;
 }) {
-  return estimateSkillScore({ answers: scoreAnswers({ bank, progress, skill }), start });
+  return estimateSkillScore({
+    answers: scoreAnswers({ answers: progress.answers, bank, skill }),
+    start,
+  });
+}
+
+export function estimatePooledScore({
+  answers,
+  bank,
+  start,
+}: {
+  answers: TestAnswers["answers"];
+  bank: LevelTestBank;
+  start: number;
+}): { answered: number; score: number } {
+  const scored = scoreAnswers({ answers, bank });
+  return { answered: scored.length, score: estimateSkillScore({ answers: scored, start }) };
 }
 
 function pickQuestion({
@@ -203,10 +221,13 @@ export function getNextLevelTestStep({
 
   const targets = {
     listening: getTargetBand({
-      answers: scoreAnswers({ bank, progress, skill: "listening" }),
+      answers: scoreAnswers({ answers: progress.answers, bank, skill: "listening" }),
       start,
     }),
-    reading: getTargetBand({ answers: scoreAnswers({ bank, progress, skill: "reading" }), start }),
+    reading: getTargetBand({
+      answers: scoreAnswers({ answers: progress.answers, bank, skill: "reading" }),
+      start,
+    }),
   };
 
   const counts = QUESTION_SKILLS.map((skill) => ({

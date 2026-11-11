@@ -2,6 +2,7 @@ import { purgeExpiredAuthRecords } from "@zoonk/core/auth/purge-expired-auth-rec
 import { purgeExpiredVerifications } from "@zoonk/core/auth/purge-verifications";
 import { purgeEvaluationRuns } from "@zoonk/core/evaluation-runs/purge";
 import { deleteInactiveGuests } from "@zoonk/core/guests/delete-inactive";
+import { checkLevelTestAnswers } from "@zoonk/core/language/level-test/check-answers";
 import { listOwedLevelTestBankChecks } from "@zoonk/core/language/level-test/check-bank";
 import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness";
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
@@ -65,6 +66,13 @@ export async function listOwedSkillLevelsStep(): Promise<string[]> {
   "use step";
 
   return listOwedSkillLevels();
+}
+
+export async function checkLevelTestAnswersStep(): Promise<number> {
+  "use step";
+
+  const { removed } = await checkLevelTestAnswers();
+  return removed;
 }
 
 export async function recalibrateItemDifficultiesStep(): Promise<number> {

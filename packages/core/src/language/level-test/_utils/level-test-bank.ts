@@ -6,8 +6,13 @@ import {
   type GenerateLevelTestBankSchema,
 } from "@zoonk/ai/tasks/language/level-test-bank";
 import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { logError } from "@zoonk/utils/logger";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
-import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";
+import {
+  type LevelTestBank,
+  type LevelTestQuestion,
+  levelTestBankSchema,
+} from "../level-test-contract";
 
 const STALE_CLAIM_MS = 660_000;
 
@@ -19,7 +24,7 @@ export type LevelTestBankAnalytics = Omit<
 >;
 
 export type LevelTestBankState =
-  | { bank: LevelTestBank; status: "ready"; writtenAt: Date }
+  | { bank: LevelTestBank; runId: string; status: "ready"; writtenAt: Date }
   | { startedAt: Date | null; status: "preparing" };
 
 export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelTestBank | null {
@@ -29,6 +34,45 @@ export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelT
 
 export function findBankRow(pair: LanguagePair) {
   return prisma.languageLevelTest.findUnique({ where: { languagePair: pair } });
+}
+
+/**
+ * Keeps the stored bank's questions that `keep` accepts. Removals from different runs each see
+ * the other's result, so neither brings back a question the other took out. A bank is never
+ * emptied, since nothing writes a stored bank again.
+ */
+export async function keepBankQuestions({
+  keep,
+  pair,
+}: {
+  keep: (question: LevelTestQuestion) => boolean;
+  pair: LanguagePair;
+}): Promise<{ removed: number }> {
+  return prisma.$transaction(async (tx) => {
+    const [row] = await tx.$queryRaw<Pick<LanguageLevelTest, "content">[]>`
+      SELECT content FROM language_level_tests
+      WHERE language = ${pair.language} AND target_language = ${pair.targetLanguage}
+      FOR UPDATE`;
+
+    const bank = readBank(row ?? null);
+    const questions = bank?.questions.filter((question) => keep(question)) ?? [];
+
+    if (!bank || questions.length === bank.questions.length) {
+      return { removed: 0 };
+    }
+
+    if (questions.length === 0) {
+      logError("[level-test] Removing these questions would leave a stored bank empty", pair);
+      return { removed: 0 };
+    }
+
+    await tx.languageLevelTest.update({
+      data: { content: { ...bank, questions } },
+      where: { languagePair: pair },
+    });
+
+    return { removed: bank.questions.length - questions.length };
+  });
 }
 
 export type LevelTestBankLevel = {
@@ -133,7 +177,7 @@ export async function loadLevelTestBank(pair: LanguagePair): Promise<LevelTestBa
   const bank = readBank(row);
 
   if (bank && row) {
-    return { bank, status: "ready", writtenAt: row.generatedAt };
+    return { bank, runId: row.runId, status: "ready", writtenAt: row.generatedAt };
   }
 
   const running = row && row.generatedAt.getTime() > Date.now() - STALE_CLAIM_MS;
