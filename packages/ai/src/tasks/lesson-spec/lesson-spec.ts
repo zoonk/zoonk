@@ -197,16 +197,13 @@ async function planLesson(params: LessonSpecParams) {
 
 /**
  * A plan that breaks a shape rule is planned once more, and the one with fewer broken rules is
- * kept. Size is a target the prompt asks for, never checked here: a lesson a little long beats a
- * second plan, and code can't split one, since it can't write the new lessons' hooks and
- * applications.
+ * kept. Size and pacing are targets the prompt asks for, never checked here: a lesson a little off
+ * them beats a second plan, and code can't split one, since it can't write the new lessons' hooks
+ * and applications.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
-  const novice = readsNoviceRules(params);
-
   return draftAgainWhenFlawed({
-    countProblems: ({ data }) =>
-      data.lessons.flatMap((spec) => getLessonSpecIssues({ novice, spec })).length,
+    countProblems: ({ data }) => data.lessons.flatMap((spec) => getLessonSpecIssues(spec)).length,
     draft: () => planLesson(params),
   });
 }

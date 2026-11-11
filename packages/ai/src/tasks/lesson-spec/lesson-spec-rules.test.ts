@@ -50,8 +50,8 @@ const validScreens = [
   screen("application"),
 ];
 
-function getCodes(lesson: LessonSpec, novice = false) {
-  return getLessonSpecIssues({ novice, spec: lesson }).map((issue) => issue.code);
+function getCodes(lesson: LessonSpec) {
+  return getLessonSpecIssues(lesson).map((issue) => issue.code);
 }
 
 describe(estimateLessonMinutes, () => {
@@ -110,8 +110,8 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(applicationInMiddle)).toContain("application");
   });
 
-  it("flags more than four teaching screens without a check", () => {
-    const screens = [
+  it("leaves pacing to the planner's targets, so a long run, an early check or a missing or extra guess breaks no rule", () => {
+    const longRun = spec([
       screen("hook", []),
       screen("explanation"),
       screen("guess"),
@@ -121,93 +121,43 @@ describe(getLessonSpecIssues, () => {
       screen("explanation"),
       screen("check"),
       screen("application"),
-    ];
-
-    expect(getCodes(spec(screens))).toStrictEqual(["checkGap"]);
-  });
-
-  it("teaches before the first check at every level, and twice for a new learner", () => {
-    const early = spec([
-      screen("hook", []),
-      screen("explanation"),
-      screen("guess"),
-      screen("explanation"),
-      screen("check"),
-      screen("application"),
     ]);
 
-    const questionFirst = spec([
+    const checkFirst = spec([
       screen("hook", []),
       screen("check"),
       screen("explanation"),
       screen("guess"),
       screen("explanation"),
-      screen("check"),
       screen("application"),
     ]);
 
-    const oneScreenFirst = spec([
+    const lateGuess = spec([
       screen("hook", []),
       screen("explanation"),
-      screen("check"),
       screen("explanation"),
       screen("check"),
-      screen("application"),
-    ]);
-
-    expect(getCodes(early)).toStrictEqual([]);
-    expect(getCodes(questionFirst)).toContain("earlyCheck");
-
-    expect(
-      getLessonSpecIssues({ novice: true, spec: oneScreenFirst }).map((issue) => issue.code),
-    ).toContain("earlyCheck");
-
-    expect(getCodes(oneScreenFirst)).not.toContain("earlyCheck");
-    expect(getCodes(spec(validScreens), true)).toStrictEqual([]);
-  });
-
-  it("asks no lesson for a visual on its screens", () => {
-    expect(getCodes(spec(validScreens), true)).toStrictEqual([]);
-    expect(getCodes(spec(validScreens))).toStrictEqual([]);
-  });
-
-  it("places exactly one guess right after the first explanation, followed by another", () => {
-    const withoutGuess = validScreens.filter((item) => item.kind !== "guess");
-
-    const guessed = (at: number) => {
-      const screens = [...withoutGuess];
-      screens.splice(at, 0, screen("guess"));
-      return spec(screens);
-    };
-
-    expect(getCodes(guessed(2))).toStrictEqual([]);
-    expect(getCodes(guessed(1))).toStrictEqual(["guess"]);
-    expect(getCodes(guessed(4))).toStrictEqual(["guess"]);
-    expect(getCodes(spec(withoutGuess))).toStrictEqual(["guess"]);
-
-    const twice = [...validScreens];
-    twice.splice(4, 0, screen("guess"));
-
-    expect(getCodes(spec(twice))).toStrictEqual(["guess"]);
-  });
-
-  it("counts teaching on both sides of the guess as one run", () => {
-    const run = [
-      screen("hook", []),
-      screen("explanation"),
       screen("guess"),
       screen("explanation"),
-      screen("explanation"),
-      screen("explanation"),
-      screen("explanation"),
-      screen("check"),
       screen("application"),
-    ];
+    ]);
 
-    expect(getCodes(spec(run))).toStrictEqual(["checkGap"]);
+    const noGuess = spec(validScreens.filter((item) => item.kind !== "guess"));
+
+    const twoGuesses = spec([
+      ...validScreens.slice(0, 4),
+      screen("guess"),
+      ...validScreens.slice(4),
+    ]);
+
+    expect(getCodes(longRun)).toStrictEqual([]);
+    expect(getCodes(checkFirst)).toStrictEqual([]);
+    expect(getCodes(lateGuess)).toStrictEqual([]);
+    expect(getCodes(noGuess)).toStrictEqual([]);
+    expect(getCodes(twoGuesses)).toStrictEqual([]);
   });
 
-  it("requires a worked example for each hard skill and every skill taught and practiced", () => {
+  it("requires every skill taught and practiced, but leaves a hard skill's worked example to the planner", () => {
     const skills = [skill("Solve a linear equation", true), skill("Check a solution")];
 
     const screens = [
@@ -219,11 +169,7 @@ describe(getLessonSpecIssues, () => {
       screen("application", [0]),
     ];
 
-    expect(getCodes(spec(screens, skills))).toStrictEqual([
-      "workedExample",
-      "untaughtSkill",
-      "unpracticedSkill",
-    ]);
+    expect(getCodes(spec(screens, skills))).toStrictEqual(["untaughtSkill", "unpracticedSkill"]);
   });
 
   it("counts an activity as teaching and practice but requires its template", () => {

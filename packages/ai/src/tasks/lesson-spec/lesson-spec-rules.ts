@@ -52,12 +52,9 @@ export type LessonSpec = {
 /** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
 export const LESSON_SIZE = {
   maxMinutes: 5,
-  maxScreensWithoutCheck: 4,
   /** An advanced idea that can't be split, such as a derivation. */
   maxUnsplittableMinutes: 6,
   minMinutes: 2,
-  noviceTeachingBeforeFirstCheck: 2,
-  teachingBeforeFirstCheck: 1,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
@@ -73,8 +70,6 @@ const SCREEN_SECONDS: Record<LessonScreenKind, number> = {
   workedExample: 45,
 };
 
-const TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set(["explanation", "workedExample"]);
-
 const PRACTICE_KINDS: ReadonlySet<LessonScreenKind> = new Set(["check", "activity", "application"]);
 
 const SKILL_TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set([
@@ -86,24 +81,12 @@ const SKILL_TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set([
 type LessonSpecIssueCode =
   | "activityTemplate"
   | "application"
-  | "checkGap"
-  | "earlyCheck"
-  | "guess"
   | "hook"
   | "skillReference"
   | "unpracticedSkill"
-  | "untaughtSkill"
-  | "workedExample";
+  | "untaughtSkill";
 
 export type LessonSpecIssue = { code: LessonSpecIssueCode; detail: string };
-
-function isTeachingScreen(kind: LessonScreenKind): boolean {
-  return TEACHING_KINDS.has(kind);
-}
-
-function isPracticeScreen(kind: LessonScreenKind): boolean {
-  return PRACTICE_KINDS.has(kind);
-}
 
 export function estimateLessonMinutes(kinds: readonly LessonScreenKind[]): number {
   const seconds = kinds.reduce((total, kind) => total + SCREEN_SECONDS[kind], 0);
@@ -123,69 +106,10 @@ export function getMaxLessonMinutes({
     : LESSON_SIZE.maxMinutes;
 }
 
-/** The guess isn't practice, so teaching around it counts as one run. */
-function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
-  return screens.reduce(
-    (state, screen) => {
-      if (screen.kind === "guess") {
-        return state;
-      }
-
-      const current = isTeachingScreen(screen.kind) ? state.current + 1 : 0;
-      return { current, longest: Math.max(state.longest, current) };
-    },
-    { current: 0, longest: 0 },
-  ).longest;
-}
-
-function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
-  const firstPractice = screens.findIndex((screen) => isPracticeScreen(screen.kind));
-  const before = firstPractice === -1 ? screens : screens.slice(0, firstPractice);
-
-  return before.filter((screen) => isTeachingScreen(screen.kind)).length;
-}
-
-function getEarlyCheckIssue({
-  novice,
-  screens,
-}: {
-  novice: boolean;
-  screens: readonly LessonScreen[];
-}) {
-  const teaching = countTeachingBeforePractice(screens);
-
-  const needed = novice
-    ? LESSON_SIZE.noviceTeachingBeforeFirstCheck
-    : LESSON_SIZE.teachingBeforeFirstCheck;
-
-  return (
-    teaching < needed && {
-      code: "earlyCheck" as const,
-      detail: `Has ${teaching} explanations or worked examples before the first check; this lesson needs ${needed}.`,
-    }
-  );
-}
-
-function getGuessIssue(screens: readonly LessonScreen[]) {
-  const guesses = screens.filter((screen) => screen.kind === "guess").length;
-  const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
-  const at = screens.findIndex((screen) => screen.kind === "guess");
-  const next = screens[at + 1];
-
-  return (
-    (guesses !== 1 || at !== firstTeaching + 1 || !next || !isTeachingScreen(next.kind)) && {
-      code: "guess" as const,
-      detail:
-        "A lesson has exactly one guess, right after its first explanation or worked example and followed by another.",
-    }
-  );
-}
-
-function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
+function getShapeIssues(spec: LessonSpec) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
   const applications = screens.filter((screen) => screen.kind === "application").length;
-  const longestRun = getLongestTeachingRun(screens);
 
   return [
     (screens[0]?.kind !== "hook" || hooks !== 1) && {
@@ -196,16 +120,10 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "application" as const,
       detail: `Has ${applications} application screens; a lesson ends with exactly one.`,
     },
-    longestRun > LESSON_SIZE.maxScreensWithoutCheck && {
-      code: "checkGap" as const,
-      detail: `Has ${longestRun} teaching screens in a row; a check comes after at most ${LESSON_SIZE.maxScreensWithoutCheck}.`,
-    },
-    getEarlyCheckIssue({ novice, screens }),
     screens.some((screen) => screen.kind === "activity" && !screen.activityTemplate) && {
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
-    getGuessIssue(screens),
   ].filter((issue) => issue !== false);
 }
 
@@ -240,11 +158,6 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
         code: "unpracticedSkill" as const,
         detail: `No check or activity makes the learner use "${skill.name}".`,
       },
-      skill.hard &&
-        !screensFor({ kinds: new Set(["workedExample"]), screens, skill: index }) && {
-          code: "workedExample" as const,
-          detail: `"${skill.name}" is hard but has no worked example.`,
-        },
     ].filter((issue) => issue !== false),
   );
 
@@ -262,15 +175,10 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
 }
 
 /**
- * Size is a target the planner aims for, not a rule: a lesson a little past it is better than a
- * second plan. `novice` is `readsNoviceRules` for the lesson.
+ * Only a part the lesson can't do without, or a reference the writer can't follow, is a rule. Size
+ * and pacing (screens before a check, the guess, a worked example for a hard skill) are
+ * targets the prompt sets: a plan a little off them reads fine, and a second plan rarely changes it.
  */
-export function getLessonSpecIssues({
-  novice = false,
-  spec,
-}: {
-  novice?: boolean;
-  spec: LessonSpec;
-}): LessonSpecIssue[] {
-  return [...getShapeIssues({ novice, spec }), ...getSkillIssues(spec)];
+export function getLessonSpecIssues(spec: LessonSpec): LessonSpecIssue[] {
+  return [...getShapeIssues(spec), ...getSkillIssues(spec)];
 }
