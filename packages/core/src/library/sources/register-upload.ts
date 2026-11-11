@@ -12,6 +12,7 @@ import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { toSourceUrl } from "./fetch-document";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
+import { SOURCE_READ_VERSION } from "./source-contract";
 import { deleteUploadedBlob } from "./upload-blob";
 
 type UploadedSource = Omit<Source, "extractedText">;
@@ -128,6 +129,7 @@ function createPrivateSource({
         language: input.language,
         mimeType: content.contentType,
         ownerId: userId,
+        readVersion: SOURCE_READ_VERSION,
         structure: {
           images: content.parsed.images.length,
           pages: content.parsed.pages,

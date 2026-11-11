@@ -8,6 +8,9 @@ export const MAX_SOURCE_UPLOAD_BYTES = MAX_UPLOAD_SIZE_MB * BYTES_PER_MB;
 
 export const PAGE_BREAK = "\f";
 
+/** Moves on when a change to how pages are read changes their text, not what the page says. */
+export const SOURCE_READ_VERSION = 1;
+
 export const MAX_PASTED_TEXT_LENGTH = 200_000;
 
 export const DOCX_CONTENT_TYPE =

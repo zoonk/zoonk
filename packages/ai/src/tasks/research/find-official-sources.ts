@@ -135,7 +135,11 @@ export async function findOfficialSources({
 
   const systemPrompt = selectPromptVariants({
     template: promptTemplate,
-    variants: { exam: topic === "exam", unreadable: unreadable.length > 0 },
+    variants: {
+      exam: topic === "exam",
+      regulation: topic === "regulation",
+      unreadable: unreadable.length > 0,
+    },
   });
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({

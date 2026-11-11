@@ -352,6 +352,14 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/lessons/create-library-lesson.ts": [
     { verdict: "marks", why: "a new lesson teaching skills", writes: ["lesson.create"] },
   ],
+  "library/lessons/lesson-laws.ts": [
+    {
+      fields: ["specRunId", "specStatus", "updatedAt"],
+      verdict: "excluded",
+      why: "generation claims: a plan saved from memory is planned again once",
+      writes: ["raw:library_lessons"],
+    },
+  ],
   "library/lessons/lesson-versions.ts": [
     { verdict: "marks", why: "retires bank items no screen asks", writes: ["item.updateMany"] },
   ],
