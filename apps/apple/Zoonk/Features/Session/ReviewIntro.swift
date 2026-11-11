@@ -1,0 +1,90 @@
+import SwiftUI
+
+/// Main's `ReviewIntro`: what a review is and how it picks its questions, for a learner who never
+/// asked.
+struct ReviewIntro: View {
+  let block: StudyBlock
+  @Binding var isOpen: Bool
+
+  private static let startsKey = "reviewIntroStarts"
+
+  /// A daily learner reads it open a few times, then it folds to one row they can reopen.
+  static var opensAtFirst: Bool {
+    UserDefaults.standard.integer(forKey: startsKey) < 3
+  }
+
+  static func noteStart(of block: StudyBlock) {
+    if block.kind == .review, !block.capsules.isEmpty {
+      UserDefaults.standard.set(
+        UserDefaults.standard.integer(forKey: startsKey) + 1, forKey: startsKey)
+    }
+  }
+
+  var body: some View {
+    if block.capsules.isEmpty {
+      // The first week's warm-up is only placement's questions: it checks, it doesn't review.
+      Text(
+        "A few quick questions to check what you already know.", tableName: "Session",
+        comment: "Under the first week's warm-up, which checks what the learner knows"
+      )
+      .foregroundStyle(.mutedForeground)
+    } else {
+      DisclosureGroup(isExpanded: $isOpen) {
+        if block.weakest {
+          ListRow(
+            Text(
+              "Your hardest topics today", tableName: "Session",
+              comment: "How reviews work: a review of the weakest topics when nothing was due"),
+            description: Text(
+              "Nothing is close to being forgotten, so you practice what's been hardest for you.",
+              tableName: "Session",
+              comment: "How reviews work: a review of the weakest topics when nothing was due")
+          ) {
+            Image(systemName: "scope")
+          }
+        } else {
+          ListRow(
+            Text(
+              "Just before you forget", tableName: "Session",
+              comment: "How reviews work: when an idea comes back"),
+            description: Text(
+              "Each idea you study comes back right before you'd start to forget it.",
+              tableName: "Session", comment: "How reviews work: when an idea comes back")
+          ) {
+            Image(systemName: "hourglass")
+          }
+        }
+
+        ListRow(
+          Text(
+            "Right answers wait longer", tableName: "Session",
+            comment: "How reviews work: how answers move an idea's next review"),
+          description: Text(
+            "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner.",
+            tableName: "Session", comment: "How reviews work: how answers move an idea's next review")
+        ) {
+          Image(systemName: "calendar.badge.clock")
+        }
+
+        ListRow(
+          Text(
+            "First, and always short", tableName: "Session",
+            comment: "How reviews work: where reviews go in a session"),
+          description: Text(
+            "Reviews open your session and take a small part of it, even after days away.",
+            tableName: "Session", comment: "How reviews work: where reviews go in a session")
+        ) {
+          Image(systemName: "timer")
+        }
+      } label: {
+        ListRow(
+          Text(
+            "How reviews work", tableName: "Session",
+            comment: "Opens what a review is, on the session's next step when it's a review")
+        ) {
+          Image(systemName: "arrow.counterclockwise")
+        }
+      }
+    }
+  }
+}

@@ -161,9 +161,14 @@ private struct NextStopView: View {
   @State private var waitedFor: String?
   /// The goal's warm-up deck, while the lesson written is its first.
   @State private var warmUp: FirstLessonWarmUp?
+  @State private var isReviewIntroOpen = ReviewIntro.opensAtFirst
   @AccessibilityFocusState private var isStartFocused: Bool
 
   private var next: StudyBlock? { day.nextBlock }
+
+  private var isHeld: Bool {
+    next?.id != nil && next?.id == router.playback.heldBlockID
+  }
 
   var body: some View {
     // The session never opens the lesson on its own: moving on only takes the card away. It says
@@ -186,6 +191,11 @@ private struct NextStopView: View {
     .onChange(of: isWrittenWhileWaiting) { _, written in
       if written {
         offerWrittenLesson()
+      }
+    }
+    .onChange(of: isHeld, initial: true) { _, held in
+      if held {
+        isStartFocused = true
       }
     }
     .announcesStatus(notWrittenLine)
@@ -273,6 +283,10 @@ private struct NextStopView: View {
 
         if let lessonLine {
           lessonLine
+        }
+
+        if next.kind == .review {
+          ReviewIntro(block: next, isOpen: $isReviewIntroOpen)
         }
       } header: {
         SectionTitle(Text("Up next", tableName: "Session", comment: "The session's next block"))
@@ -386,7 +400,7 @@ private struct NextStopView: View {
         "Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
     }
 
-    return next?.status == .active
+    return next?.status == .active && !isHeld
       ? Text("Continue", tableName: "Session", comment: "Opens the session's next block")
       : Text(
         "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
@@ -457,6 +471,14 @@ private struct NextStopView: View {
   }
 
   private func open(_ block: StudyBlock) {
+    ReviewIntro.noteStart(of: block)
+
+    // The tap that held it already opened it.
+    if let blockID = block.id, blockID == router.playback.heldBlockID {
+      router.playback.play(blockID: blockID)
+      return
+    }
+
     isOpening = true
     failed = false
 

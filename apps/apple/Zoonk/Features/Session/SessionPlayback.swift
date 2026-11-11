@@ -7,11 +7,21 @@ import Observation
 @Observable
 final class SessionPlayback {
   private(set) var playingBlockID: String?
+  /// A block a tap on another screen opened, waiting on the next stop for the learner's Start.
+  private(set) var heldBlockID: String?
   private(set) var moment: BlockMoment?
   private(set) var stoppedSessionID: String?
 
   func play(blockID: String) {
     playingBlockID = blockID
+    heldBlockID = nil
+    moment = nil
+    stoppedSessionID = nil
+  }
+
+  func hold(blockID: String) {
+    playingBlockID = nil
+    heldBlockID = blockID
     moment = nil
     stoppedSessionID = nil
   }
@@ -23,6 +33,7 @@ final class SessionPlayback {
 
   func stop(sessionID: String) {
     playingBlockID = nil
+    heldBlockID = nil
     stoppedSessionID = sessionID
   }
 
@@ -35,6 +46,7 @@ final class SessionPlayback {
 
   func leave() {
     playingBlockID = nil
+    heldBlockID = nil
     moment = nil
     stoppedSessionID = nil
   }
