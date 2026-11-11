@@ -330,8 +330,13 @@ struct FocusTestFlow: View {
     let followed = await PlacementWaitScreen.follow(
       generationID: onboarding?.generationId, store: store, apply: { run.apply($0) },
       isWaiting: {
-        guard phase.isWaiting, pressed == nil else {
+        guard phase.isWaiting else {
           return false
+        }
+
+        // A save leaving the wait skips this read, and the wait goes on in case that save fails.
+        guard pressed == nil else {
+          return true
         }
 
         if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
