@@ -246,7 +246,9 @@ struct ChartTooltipPlacement: Layout {
     let point = point.offsetBy(dx: 0, dy: chart.minY)
     let sight = CGRect(x: chart.minX, y: 0, width: chart.width, height: pageHeight)
 
-    guard point.maxY > sight.minY, point.minY < sight.maxY else {
+    guard point.maxX > 0, point.minX < sight.width, point.maxY > sight.minY,
+      point.minY < sight.maxY
+    else {
       return nil
     }
 

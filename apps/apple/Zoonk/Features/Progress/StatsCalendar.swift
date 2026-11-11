@@ -118,12 +118,10 @@ struct StatsCalendar: View {
       }
 
       viewport
-        .overlay {
-          if let inspected {
-            CalendarTooltip(
-              detail: days[inspected].detail, square: square(inspected),
-              scroll: fits ? nil : scroll, width: fits ? width : wholeWeeksWidth)
-          }
+        .background {
+          CalendarTooltip(
+            detail: inspected.map { days[$0].detail }, square: square(inspected ?? 0),
+            scroll: fits ? nil : scroll)
         }
         .frame(maxWidth: .infinity, alignment: fits ? .leading : .trailing)
     }
@@ -332,19 +330,15 @@ private final class CalendarScroll {
   var offset = 0.0
 }
 
-/// Follows its day as the calendar scrolls, and hides once the day leaves sight.
+/// Spans what shows of the grid, so the page's tooltip follows its day as the calendar scrolls
+/// and stays inside the visible weeks.
 private struct CalendarTooltip: View {
-  let detail: ChartPointDetail
+  let detail: ChartPointDetail?
   let square: CGRect
   let scroll: CalendarScroll?
-  let width: Double
 
   var body: some View {
-    let anchor = square.offsetBy(dx: -(scroll?.offset ?? 0), dy: 0)
-
-    if anchor.maxX > 0, anchor.minX < width {
-      ChartTooltip(detail: detail).placed(at: anchor)
-    }
+    Color.clear.chartTooltip(detail, at: square.offsetBy(dx: -(scroll?.offset ?? 0), dy: 0))
   }
 }
 

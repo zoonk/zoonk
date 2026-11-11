@@ -65,6 +65,32 @@ final class ChartTooltipPlacementTests: XCTestCase {
         pageHeight: 600))
   }
 
+  func testKeepsACalendarDayInSightWithTheCalendarsTopScrolledAway() throws {
+    let calendar = CGRect(x: 16, y: -50, width: 318, height: 170)
+    let page = try XCTUnwrap(
+      ChartTooltipPlacement.onPage(
+        CGRect(x: 100, y: 80, width: 16, height: 16), chart: calendar, pageHeight: 400))
+
+    XCTAssertEqual(
+      ChartTooltipPlacement.origin(
+        of: size, anchor: page.point, in: CGRect(origin: .zero, size: page.sight.size)),
+      CGPoint(x: 53, y: 54))
+  }
+
+  func testHidesACalendarDayScrolledOutSideways() {
+    let calendar = CGRect(x: 16, y: 100, width: 318, height: 170)
+
+    XCTAssertNil(
+      ChartTooltipPlacement.onPage(
+        CGRect(x: -30, y: 80, width: 16, height: 16), chart: calendar, pageHeight: 400))
+    XCTAssertNil(
+      ChartTooltipPlacement.onPage(
+        CGRect(x: 320, y: 80, width: 16, height: 16), chart: calendar, pageHeight: 400))
+    XCTAssertNotNil(
+      ChartTooltipPlacement.onPage(
+        CGRect(x: -8, y: 80, width: 16, height: 16), chart: calendar, pageHeight: 400))
+  }
+
   private func origin(anchor: CGRect) -> CGPoint {
     ChartTooltipPlacement.origin(of: size, anchor: anchor, in: bounds)
   }
