@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
-import { WRONG_PARAGRAPH_PLAN } from "../lesson-fix/wrong-paragraph-plan";
+import { LEI_12813_ARTICLES, WRONG_PARAGRAPH_PLAN } from "../lesson-fix/wrong-paragraph-plan";
 import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { MOBILITY_LESSON } from "../lesson-writer/mobility-lesson-spec";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
@@ -19,6 +19,22 @@ const SHARED_EXPECTATIONS = `
 const { "en-tax-deadlines": taxDeadlines, "pt-estabilidade": estabilidade } = SOURCED_LESSONS;
 
 const { spec: conflictOfInterest } = WRONG_PARAGRAPH_PLAN;
+
+const CONFLICT_OF_INTEREST_LESSON: LessonSpecParams = {
+  activityTemplates: ACTIVITY_TEMPLATES,
+  chapterLessons: WRONG_PARAGRAPH_PLAN.chapterLessons,
+  chapterTitle: WRONG_PARAGRAPH_PLAN.chapterTitle,
+  courseTitle: WRONG_PARAGRAPH_PLAN.courseTitle,
+  exams: WRONG_PARAGRAPH_PLAN.exams,
+  language: "pt",
+  lessonCanDo: conflictOfInterest.canDo,
+  lessonDescription: conflictOfInterest.description,
+  lessonTitle: conflictOfInterest.title,
+  level: WRONG_PARAGRAPH_PLAN.level,
+  skills: conflictOfInterest.skills.map((skill) => skill.name),
+};
+
+const CONFLICT_OF_INTEREST_RULES = `- The rules are right: a conflict of interest needs no harm to public property and no advantage received; working for a company interested in one's own decision is a conflict; a direct or indirect interest in the matter is an impedimento, which the servant communicates and then stops acting; amizade íntima or inimizade notória with an interested party allows suspeição, which mere acquaintance doesn't`;
 
 type ChapterLessons = NonNullable<LessonSpecParams["chapterLessons"]>;
 
@@ -1493,25 +1509,54 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who studied law
       - With no SOURCES, briefs state each rule by what it says, without its article, paragraph or item number. A regression to avoid (production, 8 Nov 2026): this lesson's plan cited "Lei nº 12.813/2013, art. 4º, § 1º" for the rule that a conflict of interest doesn't depend on harm to public property or on an advantage received, which is in § 2º, and the wrong paragraph reached learners. A brief that names any article, paragraph or item number is the regression, even a right one
-      - The rules are right: a conflict of interest needs no harm to public property and no advantage received; working for a company interested in one's own decision is a conflict; a direct or indirect interest in the matter is an impedimento, which the servant communicates and then stops acting; amizade íntima or inimizade notória with an interested party allows suspeição, which mere acquaintance doesn't
+      ${CONFLICT_OF_INTEREST_RULES}
       - No screen names the exam, its board or its notice
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-conflito-interesses-no-provision-numbers",
     origin: "production",
+    userInput: CONFLICT_OF_INTEREST_LESSON,
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who studied law
+      - SOURCES holds arts. 3º to 5º of Lei 12.813/2013, and a brief that names one of their provisions names it as SOURCES does. The rule that a conflict of interest doesn't depend on harm to public property or on an advantage received is art. 4º, § 2º. A regression to avoid (production, 8 Nov 2026): a plan cited § 1º for it, which says to consult the Comissão de Ética Pública or the CGU when in doubt
+      - Rules SOURCES doesn't show (impedimento and suspeição in Lei 9.784/1999) are briefed without their article, paragraph or item number
+      ${CONFLICT_OF_INTEREST_RULES}
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-conflito-interesses-sourced-provisions",
+    origin: "production",
+    userInput: { ...CONFLICT_OF_INTEREST_LESSON, sources: LEI_12813_ARTICLES },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for one HR analyst learning the LGPD for their job
+      - With no SOURCES, briefs state each rule by what it says, without its article, paragraph or item number, although the lesson isn't for an exam: a brief that names any article, paragraph or item number of the LGPD is the regression, even a right one
+      - The rules are right: an employee's personal data can be processed without consent to fulfil the employment contract, to comply with a legal obligation (such as payroll reporting) or for the employer's legitimate interest; sensitive data (health, biometrics, union membership) has its own narrower list, with no legitimate interest, so a medical certificate is processed to comply with a legal obligation, not on legitimate interest
+      - Checks plan confusions an HR analyst really makes: asking consent for everything, treating sensitive data like any other, or using legitimate interest for health data
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-lgpd-employee-data-private",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
-      chapterLessons: WRONG_PARAGRAPH_PLAN.chapterLessons,
-      chapterTitle: WRONG_PARAGRAPH_PLAN.chapterTitle,
-      courseTitle: WRONG_PARAGRAPH_PLAN.courseTitle,
-      exams: WRONG_PARAGRAPH_PLAN.exams,
+      chapterTitle: "Dados de funcionários",
+      courseTitle: "LGPD para o RH",
+      isPrivate: true,
       language: "pt",
-      lessonCanDo: conflictOfInterest.canDo,
-      lessonDescription: conflictOfInterest.description,
-      lessonTitle: conflictOfInterest.title,
-      level: WRONG_PARAGRAPH_PLAN.level,
-      skills: conflictOfInterest.skills.map((skill) => skill.name),
+      lessonCanDo: "Escolher a base legal para tratar um dado de funcionário",
+      lessonDescription:
+        "Em que hipóteses a lei permite tratar dados pessoais e dados sensíveis de funcionários sem o consentimento deles.",
+      lessonTitle: "Bases legais para tratar dados de funcionários",
+      level: "beginner",
+      skills: [
+        "Identificar a base legal para dados pessoais",
+        "Identificar a base legal para dados sensíveis",
+      ],
     },
   },
 ];
