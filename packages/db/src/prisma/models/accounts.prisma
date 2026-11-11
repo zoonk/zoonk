@@ -69,6 +69,7 @@ model User {
   goalUnderstandings    GoalUnderstanding[]
   followUps             FollowUp[]
   studyReminder         StudyReminder?
+  savedMindMaps         SavedMindMap[]
 
   @@unique([email])
   @@unique([username])
