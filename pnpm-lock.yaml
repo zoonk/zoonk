@@ -1232,6 +1232,9 @@ importers:
         specifier: 'catalog:'
         version: 0.0.1
     devDependencies:
+      '@prisma/generator-helper':
+        specifier: 7.10.1
+        version: 7.10.1
       '@types/pg':
         specifier: 8.23.1
         version: 8.23.1
@@ -4032,6 +4035,9 @@ packages:
   '@prisma/dev@0.24.17':
     resolution: {integrity: sha512-UvdZzmpFwknnfreh6Jije84ekkYGPYEJhXG1tFzCsCfQyzJifrOo38eZc0qajzvaC6OLUOrN9ML5XfCnEZL9DA==}
 
+  '@prisma/dmmf@7.10.1':
+    resolution: {integrity: sha512-56mAUF8wlLAqe9jCVBJKwo5UgaAksctB4vGrIK34X6+8UOUU2gDNVz8I+CNra9BeqFrRiCZUWvQJJu88ukPsmA==}
+
   '@prisma/driver-adapter-utils@7.10.1':
     resolution: {integrity: sha512-DJ4c6xvVnm3s9ZUyql9nCUicADSqyvH+CjXRCM9L6m5zJxCNmebCElG6X4irICq3rosBwlX+S19Dxq/4IrZk3A==}
 
@@ -4043,6 +4049,12 @@ packages:
 
   '@prisma/fetch-engine@7.10.1':
     resolution: {integrity: sha512-qZezeaExLWG2ptbHOrMxdiWluKHgqEclTdJbvY6pk6+Wg7EiVkeq5U3cXz9ti8nd0bngNvsDgledLHVRg5LF1w==}
+
+  '@prisma/generator-helper@7.10.1':
+    resolution: {integrity: sha512-JnejJ/ricWKO+yCrNEkHa0zLo7VyNRvlHtA6O5AmCPgAp8XUcoGdonssdOauNjTgXCUzQ1YOBWNryNM9y6Ivdg==}
+
+  '@prisma/generator@7.10.1':
+    resolution: {integrity: sha512-SGrXz4CmQgoxQVoT70wzhL5vD5XLEhMYT7keQQL2zMNFE0WYO9hQ2HJHKHAsMYI9LyordFRrjYj/W9EpN/YyQw==}
 
   '@prisma/get-platform@7.10.1':
     resolution: {integrity: sha512-iVnghHne5vcaobBjPVCMEjh5r/1UCj394EIGTUclasFRatpR/MQwcM2veLv5kgoFSyYP54nch/lNFCQRYcDxvg==}
@@ -11326,6 +11338,8 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  '@prisma/dmmf@7.10.1': {}
+
   '@prisma/driver-adapter-utils@7.10.1':
     dependencies:
       '@prisma/debug': 7.10.1
@@ -11344,6 +11358,14 @@ snapshots:
       '@prisma/debug': 7.10.1
       '@prisma/engines-version': 8.1.0-1.d1b3f377ca835d73fd50954a5e22128b9ebdd6b8
       '@prisma/get-platform': 7.10.1
+
+  '@prisma/generator-helper@7.10.1':
+    dependencies:
+      '@prisma/debug': 7.10.1
+      '@prisma/dmmf': 7.10.1
+      '@prisma/generator': 7.10.1
+
+  '@prisma/generator@7.10.1': {}
 
   '@prisma/get-platform@7.10.1':
     dependencies:
