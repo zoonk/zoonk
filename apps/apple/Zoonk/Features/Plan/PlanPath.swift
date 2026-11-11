@@ -5,12 +5,14 @@ struct PlanPathSection: View {
 
   let context: PlanContext
   var course: GoalPlan.Course?
+  var focusTest: PlanFocusTestRow?
 
   var body: some View {
     let phases = context.plan.roadPhases
     let done = phases.filter { $0.state == .done }.count
 
     Section {
+      focusTest
       PlanStudyPlaceRows()
 
       if context.goal.kind == .language,
@@ -567,12 +569,14 @@ struct PlanSyllabusSection: View {
   /// `PlanChoiceLines`; beside the page the plan's settings name them instead.
   var choices: [GoalPlan.ExamChoice] = []
   var change: (_ group: String) -> Void = { _ in }
+  var focusTest: PlanFocusTestRow?
 
   var body: some View {
     let isExam = goalKind == .exam
 
     Section {
       SharedExamsNote(exams: syllabus.sharedExams)
+      focusTest
       PlanStudyPlaceRows()
 
       ForEach(choices) { choice in

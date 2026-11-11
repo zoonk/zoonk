@@ -194,17 +194,27 @@ private struct PlanFocusSection: View {
       let selection = picked ?? focused
 
       Section {
-        Button {
-          router.open(.focusTest(goalId: goal.id))
-        } label: {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("Take a short test", tableName: "Plan", comment: "Opens the focus test")
-            Text(
-              "Your answers choose for you", tableName: "Plan", comment: "What the focus test does"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+        if let focusTest = plan.focusTest {
+          Button {
+            router.open(.focusTest(goalId: goal.id))
+          } label: {
+            ListRow(
+              Text(
+                "Focus test", tableName: "FocusTest",
+                comment: "Title of an exam goal's Focus test"),
+              description: Text(FocusTestCopy.stateFacts(focusTest).joinedFacts())
+            ) {
+              Image(systemName: "scope")
+            }
+            .disclosureChevron()
           }
+
+          Text(
+            "Or choose them yourself", tableName: "Plan",
+            comment: "Above the subjects to focus on, under the Focus test that suggests them")
+            .typeStyle(.note.weight(.medium))
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden, edges: .bottom)
         }
 
         ForEach(choices) { area in
@@ -224,9 +234,15 @@ private struct PlanFocusSection: View {
         Button {
           Task { await focus(on: selection, choices: choices) }
         } label: {
-          Text("Focus on these", tableName: "Plan", comment: "Saves the subjects to focus on")
+          if selection.isEmpty, !focused.isEmpty {
+            Text(
+              "Remove focus", tableName: "Plan",
+              comment: "Saves no subject to focus on, so the plan has no focus")
+          } else {
+            Text("Focus on these", tableName: "Plan", comment: "Saves the subjects to focus on")
+          }
         }
-        .disabled(selection.isEmpty || selection == focused)
+        .disabled(selection == focused)
       } header: {
         SectionTitle(
           Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
@@ -246,9 +262,13 @@ private struct PlanFocusSection: View {
 
     await editor.change(
       [.focusAreas(areas)],
-      sentence: String(
-        localized: "More time for \(names).", table: "Plan",
-        comment: "Says the plan gives more time to these subjects"))
+      sentence: areas.isEmpty
+        ? String(
+          localized: "Your plan has no focus.", table: "Plan",
+          comment: "Says the plan no longer gives any subject more time")
+        : String(
+          localized: "More time for \(names).", table: "Plan",
+          comment: "Says the plan gives more time to these subjects"))
     picked = nil
   }
 }

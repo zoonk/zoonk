@@ -202,6 +202,10 @@ struct FocusTestSummary: Decodable, Equatable, Sendable {
   let setsFocus: Bool
   let state: State
   let subjects: Subjects?
+
+  /// The first sitting, for a learner who hasn't started the test: what a plan whose time is short
+  /// offers.
+  var notStartedOffer: Size? { state == .notStarted ? offer : nil }
 }
 
 /// The learner's switches on the test.

@@ -262,14 +262,17 @@ private struct PlanContent: View {
   private func structureSections(
     context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
   ) -> some View {
+    let focusTest = context.plan.focusTest.map { PlanFocusTestRow(goalId: goal.id, summary: $0) }
+
     if let structure {
       // Unpicked choices are the suggestion's; beside the page its settings name the pick.
       PlanSyllabusSection(
         goalKind: goal.kind, syllabus: structure,
         choices: namesChoices ? context.plan.examChoices.filter { !$0.subjects.isEmpty } : [],
-        change: { context.adjust(.choice($0)) })
+        change: { context.adjust(.choice($0)) }, focusTest: focusTest)
     } else {
-      PlanPathSection(context: context, course: context.plan.libraryCourse)
+      PlanPathSection(
+        context: context, course: context.plan.libraryCourse, focusTest: focusTest)
     }
   }
 }
