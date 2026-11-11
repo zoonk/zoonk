@@ -141,7 +141,7 @@ private struct FocusTestSuggestedFocus: View {
         FocusTestProposal(proposal: proposal, goalID: goalID, decision: $answer)
       }
 
-      if let changeFocus, focus.state == .current || focus.state == .handPicked {
+      if let changeFocus, [.current, .handPicked, .declined].contains(focus.state) {
         Button(action: changeFocus) {
           Text(
             "Change focus", tableName: "FocusTest",
@@ -194,6 +194,10 @@ private struct FocusTestSuggestedFocus: View {
           localized:
             "You chose your own focus, and your plan keeps it. This is what the test suggests.",
           table: "FocusTest", comment: "Suggested focus beside a focus the learner chose")
+      case .declined:
+        String(
+          localized: "You kept your plan as it is.", table: "FocusTest",
+          comment: "Suggested focus the learner said Not now to, or undid")
       }
 
     guard focus.basis == .importance else {

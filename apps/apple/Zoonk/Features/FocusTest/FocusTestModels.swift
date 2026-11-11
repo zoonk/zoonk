@@ -118,6 +118,8 @@ struct FocusTest: Decodable, Equatable, Sendable {
       /// The plan has no focus, and its time already covers these.
       case alreadyFits
       case handPicked
+      /// The learner dismissed this suggestion with "Not now" or Undo.
+      case declined
     }
 
     let basis: Basis
