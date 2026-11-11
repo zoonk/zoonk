@@ -17,7 +17,7 @@ export const weeklyStudyTimeSchema = z.object({
     .min(0)
     .meta({
       description:
-        "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+        "The sum of the week's days' goalMinutes: the learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
       examples: [EXAMPLE_WEEKLY_MINUTES],
     }),
 }) satisfies z.ZodType<WeeklyStudyTime>;

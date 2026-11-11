@@ -114,7 +114,7 @@ export const studySessionResponseSchema = z
               .min(0)
               .meta({
                 description:
-                  "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                  "What the learner's plans give the day; 0 on a day without study. Past a free exam goal's free week, that goal adds only what its saved or planned session for the day holds, and nothing for a later day. Exact minutes may be fractional; format them as a human duration for display.",
                 examples: [EXAMPLE_DAILY_MINUTES],
               }),
             hitGoal: z.boolean(),

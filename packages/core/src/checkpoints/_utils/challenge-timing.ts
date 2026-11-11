@@ -32,7 +32,7 @@ export function getChallengeTimings({
   results?: ReadonlyMap<string, CheckpointResult>;
   settings: PlanSettings;
   today: Date;
-  /** Today's saved blocks once Start built the day, else the day Today plans (`previewTodayBlocks`). */
+  /** Today's saved blocks once Start built the day, else the day Today plans (`previewToday`). */
   todayBlocks: readonly Pick<StudySessionBlock, "payload" | "status">[];
   todaySessionDate?: Date;
 }): ReadonlyMap<string, ChallengeTiming> {

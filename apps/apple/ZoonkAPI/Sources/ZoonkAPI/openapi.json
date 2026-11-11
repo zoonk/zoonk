@@ -83594,7 +83594,7 @@
               "targetMinutes": {
                 "type": "number",
                 "minimum": 0,
-                "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "description": "The sum of the week's days' goalMinutes: the learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                 "example": 105
               }
             },
@@ -91305,7 +91305,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What the learner's plans give the day; 0 on a day without study. Past a free exam goal's free week, that goal adds only what its saved or planned session for the day holds, and nothing for a later day. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91368,7 +91368,7 @@
                   "targetMinutes": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                    "description": "The sum of the week's days' goalMinutes: the learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                     "example": 105
                   }
                 },
@@ -91673,7 +91673,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What the learner's plans give the day; 0 on a day without study. Past a free exam goal's free week, that goal adds only what its saved or planned session for the day holds, and nothing for a later day. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91736,7 +91736,7 @@
                   "targetMinutes": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                    "description": "The sum of the week's days' goalMinutes: the learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                     "example": 105
                   }
                 },

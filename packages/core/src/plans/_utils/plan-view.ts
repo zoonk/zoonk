@@ -13,7 +13,6 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
-import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanDayView, type PlanView } from "../plan-view-contract";
@@ -30,7 +29,7 @@ import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
-import { buildPlanPath, readPlanToday } from "./plan-path-view";
+import { buildPlanPath, readPlanToday, readPlanWeek } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
@@ -208,7 +207,7 @@ export async function buildPlanView({
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
     loadPlanTools({ currentPhase, goal, items }),
-    loadStudyWeek({ localDate: context.today, userId: goal.userId }),
+    readPlanWeek({ context }),
     loadGoalDateKind(goal),
     loadNoticeDates({
       goal,

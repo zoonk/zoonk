@@ -9,7 +9,7 @@ import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
-import { previewTodayBlocks } from "../sessions/_utils/read-study-day";
+import { previewToday } from "../sessions/_utils/read-study-day";
 import { type StudySessionRow } from "../sessions/_utils/study-session-access";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
@@ -146,12 +146,15 @@ function isOfferedBeforeOpen({
 }
 
 /** The day Today plans while Start hasn't built today; only a phase challenge's offer reads it. */
-function previewChallengeDay(challenge: OwnedChallenge) {
+async function previewChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, timeZone, userId } = challenge;
 
-  return item.kind === "boss" && item.status === "todo"
-    ? previewTodayBlocks(userId, goal.id, timeZone)
-    : [];
+  if (item.kind !== "boss" || item.status !== "todo") {
+    return [];
+  }
+
+  const day = await previewToday(userId, goal.id, timeZone);
+  return day.blocks;
 }
 
 async function loadChallengeDay(challenge: OwnedChallenge) {
