@@ -45,6 +45,20 @@ enum LessonChartTicks {
   }
 }
 
+/// Upright bars share their category's band, so each series thins them. Under `minWidth` they're
+/// slivers, and the chart lays its bars sideways instead, as main's `fitsBarsSideBySide`.
+enum LessonChartBars {
+  /// The share of its band a category's bars take together, and the room trimmed off each bar's
+  /// sides, as main's.
+  static let groupShare = 0.68
+  static let inset = 1.0
+  static let minWidth = 4.0
+
+  static func fitSideBySide(band: Double, series: Int) -> Bool {
+    band * groupShare / Double(max(series, 1)) - inset * 2 >= minWidth
+  }
+}
+
 /// Whether a bar chart's category names fit under its bars: each wraps at spaces and after hyphens
 /// within its bar's width in at most two lines, with no word wider than that. When one doesn't,
 /// the chart lays its bars sideways with every name in full above its bars.

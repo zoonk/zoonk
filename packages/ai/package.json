@@ -47,6 +47,7 @@
     "./tasks/explain/question-generality": "./src/tasks/explain/question-generality.ts",
     "./tasks/explain/quick-explanation": "./src/tasks/explain/quick-explanation.ts",
     "./tasks/explain/quick-explanation-checks": "./src/tasks/explain/quick-explanation-checks.ts",
+    "./tasks/fit-options": "./src/tasks/_utils/fit-options.ts",
     "./tasks/goals/find-exam-date": "./src/tasks/goals/find-exam-date.ts",
     "./tasks/goals/understand-goal": "./src/tasks/goals/understand-goal.ts",
     "./tasks/grading/explain-wrong-answer": "./src/tasks/grading/explain-wrong-answer.ts",

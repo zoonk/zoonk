@@ -8,7 +8,9 @@ import { useExtracted } from "next-intl";
 import { useFormatNumber } from "../_utils/use-format-number";
 import { clampLabelCenter } from "./_utils/category-labels";
 import {
+  BAR_GAP,
   type ColumnLayout,
+  GROUP_SHARE,
   HEIGHT,
   LABEL_GAP,
   LABEL_LINE_HEIGHT,
@@ -16,16 +18,16 @@ import {
   fitsLabel,
   getLayout,
 } from "./_utils/chart-layout";
-import { getTone } from "./_utils/series-tones";
+import { getSeriesMark } from "./_utils/series-marks";
 import { LABEL_FONT_SIZE, useTextScale } from "./_utils/use-text-scale";
 import { BarRows } from "./chart-bar-rows";
+import { SeriesBar, SeriesLine, SeriesPoint, SeriesSwatch } from "./series-marks";
 
 const FALLBACK_WIDTH = 318;
-const GROUP_SHARE = 0.68;
 const MIN_LABEL_WIDTH = 30;
 const MIN_POINT_LABEL_BAND = 45;
 const LABEL_OFFSET = 16;
-const DOT_RADIUS = 3.5;
+const POINT_RADIUS = 3.5;
 
 function Grid({ layout, width }: { layout: ColumnLayout; width: number }) {
   return layout.yTicks.map((tick) => {
@@ -121,12 +123,11 @@ function Bars({
 
       return (
         <g key={key}>
-          <rect
-            className={getTone(seriesIndex).fill}
+          <SeriesBar
             height={Math.max(Math.abs(zero - top), 1)}
-            rx={3}
-            width={Math.max(barWidth - 2, 1)}
-            x={x + 1}
+            mark={getSeriesMark(seriesIndex)}
+            width={Math.max(barWidth - BAR_GAP, 1)}
+            x={x + BAR_GAP / 2}
             y={Math.min(zero, top)}
           />
           {showValues && (
@@ -164,7 +165,7 @@ function Lines({
     );
 
   return visual.series.map((series, seriesIndex) => {
-    const tone = getTone(seriesIndex);
+    const mark = getSeriesMark(seriesIndex);
 
     const points = series.values.map((value, index) => ({
       x: layout.center(index),
@@ -173,23 +174,19 @@ function Lines({
 
     return (
       <g key={series.name}>
-        <polyline
-          className={cn("fill-none stroke-2", tone.stroke)}
-          points={points.map((point) => `${point.x},${point.y}`).join(" ")}
-          strokeLinejoin="round"
-        />
+        <SeriesLine mark={mark} points={points} />
         {points.map((point, index) => {
           const key = `${series.name}-${visual.categories[index] ?? index}`;
 
           return (
             <g key={key}>
-              <circle className={tone.fill} cx={point.x} cy={point.y} r={DOT_RADIUS} />
+              <SeriesPoint mark={mark} x={point.x} y={point.y} />
               {showValues && (
                 <text
                   className="fill-foreground font-medium"
                   textAnchor="middle"
                   x={point.x}
-                  y={point.y - LABEL_GAP - DOT_RADIUS}
+                  y={point.y - LABEL_GAP - POINT_RADIUS}
                 >
                   {format(series.values[index] ?? 0, { unit: unit ?? undefined })}
                 </text>
@@ -211,7 +208,7 @@ function Legend({ visual }: { visual: ChartVisual }) {
     <ul aria-hidden="true" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
       {visual.series.map((series, index) => (
         <li className="flex items-center gap-1.5" key={series.name}>
-          <span className={cn("size-2.5 rounded-sm", getTone(index).swatch)} />
+          <SeriesSwatch chart={visual.chart} mark={getSeriesMark(index)} />
           {series.name}
         </li>
       ))}

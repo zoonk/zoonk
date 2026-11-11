@@ -10,7 +10,6 @@ type LevelTestQuestion = GenerateLevelTestBankSchema["questions"][number];
 
 const TEST_LEVELS: LevelTestQuestion["level"][] = ["A1", "A2", "B1", "B2", "C1"];
 const SKILLS: LevelTestQuestion["skill"][] = ["reading", "listening"];
-const QUESTIONS_PER_SKILL = 2;
 const OPTIONS_PER_QUESTION = 4;
 
 function countWords(text: string): number {
@@ -49,9 +48,7 @@ function getGroupProblems({
   );
 
   return [
-    ...(questions.length === QUESTIONS_PER_SKILL
-      ? []
-      : [`${level} ${skill}: ${questions.length} questions instead of ${QUESTIONS_PER_SKILL}.`]),
+    ...(questions.length > 0 ? [] : [`${level} ${skill}: no questions.`]),
     ...questions.flatMap((question) => getQuestionProblems(question)),
   ];
 }

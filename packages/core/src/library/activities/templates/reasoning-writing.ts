@@ -7,29 +7,29 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { expressionSchema } from "../activity-schemas";
+import { aimForItems, expressionSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { duplicateIssues, evaluateOrNull, isClose, issue } from "./_utils/template-helpers";
 
-const MAX_GROUPS = 4;
-const MAX_ITEMS = 10;
-const MAX_PAIRS = 6;
-const MAX_DISTRACTORS = 3;
-const MAX_CANDIDATES = 4;
-const MAX_STEPS = 6;
+const GROUPS_TARGET = 4;
+const ITEMS_TARGET = 10;
+const PAIRS_TARGET = 6;
+const DISTRACTORS_TARGET = 3;
+const CANDIDATES_TARGET = 4;
+const STEPS_TARGET = 6;
 
 const categorizeFields = z
   .object({
     groups: uniqueIdsSchema(
       z.object({ id: idSchema, label: labelSchema, rule: explanationSchema }).strict(),
-      { max: MAX_GROUPS, min: 2 },
-    ),
+      { min: 2 },
+    ).describe(aimForItems(GROUPS_TARGET)),
     items: uniqueIdsSchema(
       z
         .object({ groupId: idSchema, id: idSchema, text: optionTextSchema, why: explanationSchema })
         .strict(),
-      { max: MAX_ITEMS, min: 3 },
-    ),
+      { min: 3 },
+    ).describe(aimForItems(ITEMS_TARGET)),
   })
   .strict();
 
@@ -69,7 +69,7 @@ const matchPairsFields = z
           })
           .strict(),
       )
-      .max(MAX_DISTRACTORS),
+      .describe(aimForItems(DISTRACTORS_TARGET)),
     pairs: uniqueIdsSchema(
       z
         .object({
@@ -79,8 +79,8 @@ const matchPairsFields = z
           why: explanationSchema.optional(),
         })
         .strict(),
-      { max: MAX_PAIRS, min: 2 },
-    ),
+      { min: 2 },
+    ).describe(aimForItems(PAIRS_TARGET)),
   })
   .strict();
 
@@ -122,12 +122,11 @@ const argumentFields = z
     claim: optionTextSchema,
     evidence: uniqueIdsSchema(
       z.object({ ...candidateShape, citation: labelSchema, quote: optionTextSchema }).strict(),
-      { max: MAX_CANDIDATES, min: 2 },
-    ),
+      { min: 2 },
+    ).describe(aimForItems(CANDIDATES_TARGET)),
     reasoning: uniqueIdsSchema(z.object({ ...candidateShape, text: optionTextSchema }).strict(), {
-      max: MAX_CANDIDATES,
       min: 2,
-    }),
+    }).describe(aimForItems(CANDIDATES_TARGET)),
   })
   .strict();
 
@@ -168,8 +167,8 @@ const findErrorFields = z
           text: optionTextSchema,
         })
         .strict(),
-      { max: MAX_STEPS, min: 3 },
-    ),
+      { min: 3 },
+    ).describe(aimForItems(STEPS_TARGET)),
     why: explanationSchema,
   })
   .strict();

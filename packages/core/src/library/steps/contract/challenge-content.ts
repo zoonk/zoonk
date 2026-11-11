@@ -9,18 +9,7 @@ import {
   uniqueIdsSchema,
 } from "./content-schemas";
 
-const MAX_TEAM = 4;
-const MAX_METERS = 3;
-const MAX_PANELS = 2;
-const MAX_METRICS = 4;
-const MAX_MESSAGES = 4;
-const MAX_REPLIES = 3;
 const MIN_CHOICES = 2;
-const MAX_CHOICES = 4;
-const MAX_NODES = 10;
-const MAX_ENDINGS = 4;
-const MAX_SKILLS = 4;
-const MAX_NOTES = 2;
 const METER_MAX = 100;
 const MAX_METER_CHANGE = 50;
 
@@ -36,7 +25,7 @@ const metricSchema = z
 
 const panelSchema = z
   .object({
-    metrics: z.array(metricSchema).min(1).max(MAX_METRICS),
+    metrics: z.array(metricSchema).min(1),
     note: optionTextSchema.optional(),
     title: optionTextSchema.optional(),
   })
@@ -68,18 +57,16 @@ const timeJumpSchema = z.object({ label: labelSchema, panel: panelSchema.optiona
 
 const choiceSchema = z
   .object({
-    effects: z
-      .array(
-        z
-          .object({ change: z.int().min(-MAX_METER_CHANGE).max(MAX_METER_CHANGE), meter: idSchema })
-          .strict(),
-      )
-      .max(MAX_METERS),
+    effects: z.array(
+      z
+        .object({ change: z.int().min(-MAX_METER_CHANGE).max(MAX_METER_CHANGE), meter: idSchema })
+        .strict(),
+    ),
     id: idSchema,
     next: idSchema,
-    notes: z.array(noteSchema).max(MAX_NOTES),
+    notes: z.array(noteSchema),
     quality: z.enum(CHALLENGE_CHOICE_QUALITIES),
-    replies: z.array(messageSchema).max(MAX_REPLIES),
+    replies: z.array(messageSchema),
     text: optionTextSchema,
     timeJump: timeJumpSchema.optional(),
   })
@@ -87,9 +74,9 @@ const choiceSchema = z
 
 const nodeSchema = z
   .object({
-    choices: uniqueIdsSchema(choiceSchema, { max: MAX_CHOICES, min: MIN_CHOICES }),
+    choices: uniqueIdsSchema(choiceSchema, { min: MIN_CHOICES }),
     id: idSchema,
-    messages: z.array(messageSchema).max(MAX_MESSAGES),
+    messages: z.array(messageSchema),
     prompt: promptSchema,
   })
   .strict();
@@ -103,15 +90,15 @@ const skillSchema = z
 const challengeShapeSchema = z
   .object({
     deadline: optionTextSchema.optional(),
-    endings: uniqueIdsSchema(endingSchema, { max: MAX_ENDINGS, min: 1 }),
-    meters: uniqueIdsSchema(meterSchema, { max: MAX_METERS, min: 0 }),
+    endings: uniqueIdsSchema(endingSchema, { min: 1 }),
+    meters: uniqueIdsSchema(meterSchema, { min: 0 }),
     mission: explanationSchema,
-    nodes: uniqueIdsSchema(nodeSchema, { max: MAX_NODES, min: 1 }),
-    panels: z.array(panelSchema).max(MAX_PANELS),
+    nodes: uniqueIdsSchema(nodeSchema, { min: 1 }),
+    panels: z.array(panelSchema),
     setting: labelSchema,
-    skills: uniqueIdsSchema(skillSchema, { max: MAX_SKILLS, min: 1 }),
+    skills: uniqueIdsSchema(skillSchema, { min: 1 }),
     startNodeId: idSchema,
-    team: uniqueIdsSchema(teamSlotSchema, { max: MAX_TEAM, min: 1 }),
+    team: uniqueIdsSchema(teamSlotSchema, { min: 1 }),
     title: promptSchema,
     variant: z.enum(CHALLENGE_VARIANTS),
   })

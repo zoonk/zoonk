@@ -36811,7 +36811,6 @@
                   },
                   "categories": {
                     "minItems": 2,
-                    "maxItems": 12,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -36820,7 +36819,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -36831,7 +36829,6 @@
                         },
                         "values": {
                           "minItems": 2,
-                          "maxItems": 12,
                           "type": "array",
                           "items": {
                             "type": "number"
@@ -36880,7 +36877,6 @@
                   },
                   "events": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -36972,7 +36968,6 @@
               },
               "categories": {
                 "minItems": 2,
-                "maxItems": 12,
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -36981,7 +36976,6 @@
               },
               "series": {
                 "minItems": 1,
-                "maxItems": 3,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -36992,7 +36986,6 @@
                     },
                     "values": {
                       "minItems": 2,
-                      "maxItems": 12,
                       "type": "array",
                       "items": {
                         "type": "number"
@@ -37041,7 +37034,6 @@
               },
               "events": {
                 "minItems": 2,
-                "maxItems": 8,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -37077,7 +37069,7 @@
             "additionalProperties": false
           }
         ],
-        "description": "A bar or line chart (categories with up to three series of values) or a timeline of dated events, drawn from its data"
+        "description": "A bar or line chart (categories with one or more series of values) or a timeline of dated events, drawn from its data"
       },
       "TrueFalseLabels": {
         "type": "string",
@@ -43645,7 +43637,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "At most two words the learner said that are often hard to say"
+            "description": "Words the learner said that are often hard to say, usually none to two"
           },
           "wentWell": {
             "type": "array",
@@ -46074,7 +46066,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -46181,7 +46172,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -46327,7 +46317,6 @@
                             "type": "number"
                           },
                           "events": {
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -46347,11 +46336,11 @@
                                 "name"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "outputs": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -46383,7 +46372,8 @@
                                 "label"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "plot": {
                             "type": "object",
@@ -46411,7 +46401,6 @@
                           },
                           "variables": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -46454,7 +46443,8 @@
                                 "step"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           }
                         },
                         "required": [
@@ -46478,7 +46468,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -46522,7 +46511,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -46629,7 +46617,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -46784,7 +46771,6 @@
                           },
                           "moves": {
                             "minItems": 1,
-                            "maxItems": 5,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -46802,7 +46788,8 @@
                                 "by"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 5 or fewer."
                           },
                           "start": {
                             "type": "number"
@@ -46843,7 +46830,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -46887,7 +46873,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -46994,7 +46979,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -47148,13 +47132,13 @@
                                   },
                                   "parts": {
                                     "minItems": 1,
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "number",
                                       "minimum": 0,
                                       "exclusiveMinimum": true
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "total": {
                                     "type": "number",
@@ -47189,13 +47173,13 @@
                                   },
                                   "parts": {
                                     "minItems": 1,
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "number",
                                       "minimum": 0,
                                       "exclusiveMinimum": true
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "total": {
                                     "type": "number",
@@ -47230,13 +47214,13 @@
                                   },
                                   "parts": {
                                     "minItems": 1,
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "number",
                                       "minimum": 0,
                                       "exclusiveMinimum": true
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "total": {
                                     "type": "number",
@@ -47286,7 +47270,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -47330,7 +47313,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -47437,7 +47419,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -47601,7 +47582,6 @@
                           },
                           "hints": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -47622,11 +47602,11 @@
                                 "move"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "objects": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -47651,7 +47631,6 @@
                           },
                           "steps": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -47678,7 +47657,8 @@
                                 "move"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "variable": {
                             "type": "string",
@@ -47709,7 +47689,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -47753,7 +47732,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -47860,7 +47838,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -48009,7 +47986,6 @@
                           },
                           "steps": {
                             "minItems": 2,
-                            "maxItems": 5,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -48087,7 +48063,8 @@
                                 "value"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 5 or fewer."
                           }
                         },
                         "required": [
@@ -48111,7 +48088,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -48155,7 +48131,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -48262,7 +48237,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -48445,7 +48419,6 @@
                                   },
                                   "workings": {
                                     "minItems": 1,
-                                    "maxItems": 5,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
@@ -48466,7 +48439,8 @@
                                         "label"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 5 or fewer."
                                   }
                                 },
                                 "required": [
@@ -48529,7 +48503,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -48573,7 +48546,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -48680,7 +48652,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -48838,7 +48809,6 @@
                           },
                           "points": {
                             "minItems": 3,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -48877,7 +48847,8 @@
                                 "y"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           }
                         },
                         "required": [
@@ -48902,7 +48873,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -48946,7 +48916,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -49053,7 +49022,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -49247,7 +49215,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -49291,7 +49258,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -49398,7 +49364,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -49783,13 +49748,13 @@
                               },
                               "sampleSizes": {
                                 "minItems": 2,
-                                "maxItems": 5,
                                 "type": "array",
                                 "items": {
                                   "type": "integer",
                                   "minimum": 2,
                                   "maximum": 100000
-                                }
+                                },
+                                "description": "Aim for 5 or fewer."
                               },
                               "sizeLabel": {
                                 "type": "string",
@@ -49829,7 +49794,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -49873,7 +49837,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -49980,7 +49943,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -50242,7 +50204,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -50286,7 +50247,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -50393,7 +50353,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -50537,7 +50496,6 @@
                         "properties": {
                           "points": {
                             "minItems": 3,
-                            "maxItems": 200,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -50554,11 +50512,11 @@
                                 "y"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 200 or fewer."
                           },
                           "spans": {
                             "minItems": 1,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -50587,7 +50545,8 @@
                                 "to"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "statistic": {
                             "type": "string",
@@ -50637,7 +50596,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -50681,7 +50639,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -50788,7 +50745,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -50931,16 +50887,15 @@
                         "type": "object",
                         "properties": {
                           "distractors": {
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "string",
                               "minLength": 1,
                               "description": "Aim for 40 characters or fewer."
-                            }
+                            },
+                            "description": "Aim for 3 or fewer."
                           },
                           "mixUps": {
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -50966,11 +50921,11 @@
                                 "labels"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -50991,7 +50946,8 @@
                                 "part"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "picture": {
                             "type": "object",
@@ -51037,7 +50993,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -51081,7 +51036,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -51188,7 +51142,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -51332,7 +51285,6 @@
                         "properties": {
                           "steps": {
                             "minItems": 3,
-                            "maxItems": 7,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -51480,7 +51432,8 @@
                                 "text"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 7 or fewer."
                           }
                         },
                         "required": [
@@ -51503,7 +51456,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -51547,7 +51499,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -51654,7 +51605,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -51798,12 +51748,12 @@
                         "properties": {
                           "elements": {
                             "minItems": 1,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
                               "pattern": "^[A-Z][a-z]?$"
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "formula": {
                             "type": "string",
@@ -51832,7 +51782,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -51876,7 +51825,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -51983,7 +51931,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -52229,11 +52176,11 @@
                                   },
                                   "values": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "number"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -52252,11 +52199,11 @@
                                   },
                                   "values": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "number"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -52298,11 +52245,11 @@
                                   },
                                   "values": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "number"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -52321,11 +52268,11 @@
                                   },
                                   "values": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "number"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -52372,7 +52319,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -52416,7 +52362,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -52523,7 +52468,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -52789,7 +52733,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -52833,7 +52776,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -52940,7 +52882,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -53084,14 +53025,14 @@
                         "properties": {
                           "editableLines": {
                             "minItems": 1,
-                            "maxItems": 10,
                             "type": "array",
                             "items": {
                               "type": "integer",
                               "minimum": 0,
                               "exclusiveMinimum": true,
                               "maximum": 9007199254740991
-                            }
+                            },
+                            "description": "Aim for 10 or fewer."
                           },
                           "expectedOutput": {
                             "type": "string",
@@ -53111,7 +53052,6 @@
                             ]
                           },
                           "mistakes": {
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -53131,7 +53071,8 @@
                                 "output"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "solution": {
                             "type": "string",
@@ -53169,7 +53110,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -53213,7 +53153,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -53320,7 +53259,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -53476,14 +53414,12 @@
                           },
                           "pauses": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
                                 "options": {
                                   "minItems": 2,
-                                  "maxItems": 4,
                                   "type": "array",
                                   "items": {
                                     "type": "object",
@@ -53504,7 +53440,8 @@
                                       "text"
                                     ],
                                     "additionalProperties": false
-                                  }
+                                  },
+                                  "description": "Aim for 4 or fewer."
                                 },
                                 "question": {
                                   "type": "string",
@@ -53528,11 +53465,11 @@
                                 "variable"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "trace": {
                             "minItems": 2,
-                            "maxItems": 40,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -53544,7 +53481,6 @@
                                   "maximum": 9007199254740991
                                 },
                                 "values": {
-                                  "maxItems": 4,
                                   "type": "array",
                                   "items": {
                                     "type": "object",
@@ -53581,16 +53517,17 @@
                                 "values"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 40 or fewer."
                           },
                           "watch": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "string",
                               "pattern": "^[A-Z_a-z]\\w*$"
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           }
                         },
                         "required": [
@@ -53617,7 +53554,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -53661,7 +53597,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -53768,7 +53703,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -53915,19 +53849,18 @@
                             "properties": {
                               "columns": {
                                 "minItems": 1,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "minLength": 1,
                                   "description": "Aim for 40 characters or fewer."
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "orderMatters": {
                                 "type": "boolean"
                               },
                               "rows": {
-                                "maxItems": 30,
                                 "type": "array",
                                 "items": {
                                   "type": "array",
@@ -53949,7 +53882,8 @@
                                       }
                                     ]
                                   }
-                                }
+                                },
+                                "description": "Aim for 30 or fewer."
                               }
                             },
                             "required": [
@@ -53960,7 +53894,6 @@
                             "additionalProperties": false
                           },
                           "mistakes": {
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -53981,7 +53914,8 @@
                                 "mistake"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "solution": {
                             "type": "string",
@@ -53990,14 +53924,12 @@
                           },
                           "tables": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
                                 "columns": {
                                   "minItems": 1,
-                                  "maxItems": 6,
                                   "type": "array",
                                   "items": {
                                     "type": "object",
@@ -54020,7 +53952,8 @@
                                       "type"
                                     ],
                                     "additionalProperties": false
-                                  }
+                                  },
+                                  "description": "Aim for 6 or fewer."
                                 },
                                 "name": {
                                   "type": "string",
@@ -54028,7 +53961,6 @@
                                 },
                                 "rows": {
                                   "minItems": 1,
-                                  "maxItems": 30,
                                   "type": "array",
                                   "items": {
                                     "type": "array",
@@ -54050,7 +53982,8 @@
                                         }
                                       ]
                                     }
-                                  }
+                                  },
+                                  "description": "Aim for 30 or fewer."
                                 }
                               },
                               "required": [
@@ -54059,7 +53992,8 @@
                                 "rows"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 3 or fewer."
                           }
                         },
                         "required": [
@@ -54085,7 +54019,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -54129,7 +54062,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54236,7 +54168,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54381,7 +54312,6 @@
                             "type": "object",
                             "properties": {
                               "hints": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54402,7 +54332,8 @@
                                     "mistake"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "mode": {
                                 "type": "string",
@@ -54412,21 +54343,21 @@
                               },
                               "shouldMatch": {
                                 "minItems": 1,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "description": "Aim for 40 characters or fewer."
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "shouldNotMatch": {
                                 "minItems": 1,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "description": "Aim for 40 characters or fewer."
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "solution": {
                                 "type": "string",
@@ -54454,14 +54385,12 @@
                             "properties": {
                               "examples": {
                                 "minItems": 2,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
                                     "inputs": {
                                       "minItems": 1,
-                                      "maxItems": 6,
                                       "type": "array",
                                       "items": {
                                         "type": "object",
@@ -54490,10 +54419,10 @@
                                     "output"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "hints": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54514,7 +54443,8 @@
                                     "mistake"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "mode": {
                                 "type": "string",
@@ -54582,7 +54512,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -54626,7 +54555,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54733,7 +54661,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -54877,13 +54804,13 @@
                         "properties": {
                           "choices": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
                               "minLength": 1,
                               "description": "Aim for 40 characters or fewer."
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "modelMeaning": {
                             "type": "string",
@@ -54907,7 +54834,6 @@
                           },
                           "rows": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -54943,7 +54869,8 @@
                                 "model"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 8 or fewer."
                           }
                         },
                         "required": [
@@ -54969,7 +54896,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -55013,7 +54939,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -55120,7 +55045,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -55268,7 +55192,6 @@
                           },
                           "lines": {
                             "minItems": 1,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -55297,11 +55220,11 @@
                                 "translation"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "replies": {
                             "minItems": 2,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -55338,7 +55261,8 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "scene": {
                             "type": "string",
@@ -55369,7 +55293,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -55413,7 +55336,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -55520,7 +55442,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -55664,7 +55585,6 @@
                         "properties": {
                           "anchors": {
                             "minItems": 1,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -55685,7 +55605,8 @@
                                 "year"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "end": {
                             "type": "integer",
@@ -55694,7 +55615,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -55721,7 +55641,8 @@
                                 "year"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "start": {
                             "type": "integer",
@@ -55752,7 +55673,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -55796,7 +55716,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -55903,7 +55822,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -56052,7 +55970,6 @@
                           },
                           "places": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -56091,7 +56008,8 @@
                                 "reveals"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 8 or fewer."
                           }
                         },
                         "required": [
@@ -56115,7 +56033,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56159,7 +56076,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -56266,7 +56182,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -56410,7 +56325,6 @@
                         "properties": {
                           "links": {
                             "minItems": 1,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -56437,11 +56351,11 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 8 or fewer."
                           },
                           "nodes": {
                             "minItems": 3,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -56467,7 +56381,8 @@
                                 "label"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 8 or fewer."
                           }
                         },
                         "required": [
@@ -56491,7 +56406,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56535,7 +56449,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -56642,7 +56555,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -56846,7 +56758,6 @@
                                 },
                                 "passages": {
                                   "minItems": 1,
-                                  "maxItems": 4,
                                   "type": "array",
                                   "items": {
                                     "type": "object",
@@ -56871,7 +56782,8 @@
                                       "text"
                                     ],
                                     "additionalProperties": false
-                                  }
+                                  },
+                                  "description": "Aim for 4 or fewer."
                                 }
                               },
                               "required": [
@@ -56907,7 +56819,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56951,7 +56862,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57058,7 +56968,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57202,7 +57111,6 @@
                         "properties": {
                           "groups": {
                             "minItems": 2,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -57229,11 +57137,11 @@
                                 "rule"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "items": {
                             "minItems": 3,
-                            "maxItems": 10,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -57266,7 +57174,8 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 10 or fewer."
                           }
                         },
                         "required": [
@@ -57290,7 +57199,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -57334,7 +57242,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57441,7 +57348,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57584,7 +57490,6 @@
                         "type": "object",
                         "properties": {
                           "distractors": {
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -57613,11 +57518,11 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 3 or fewer."
                           },
                           "pairs": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -57649,7 +57554,8 @@
                                 "right"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           }
                         },
                         "required": [
@@ -57673,7 +57579,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -57717,7 +57622,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57824,7 +57728,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -57973,7 +57876,6 @@
                           },
                           "evidence": {
                             "minItems": 2,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -58010,11 +57912,11 @@
                                 "quote"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           },
                           "reasoning": {
                             "minItems": 2,
-                            "maxItems": 4,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -58045,7 +57947,8 @@
                                 "text"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 4 or fewer."
                           }
                         },
                         "required": [
@@ -58070,7 +57973,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -58114,7 +58016,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -58221,7 +58122,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -58386,7 +58286,6 @@
                           },
                           "steps": {
                             "minItems": 3,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -58415,7 +58314,8 @@
                                 "text"
                               ],
                               "additionalProperties": false
-                            }
+                            },
+                            "description": "Aim for 6 or fewer."
                           },
                           "why": {
                             "type": "string",
@@ -58447,7 +58347,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -58491,7 +58390,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -58598,7 +58496,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -58801,12 +58698,12 @@
                                   },
                                   "notes": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "string",
                                       "pattern": "^[A-G](?:#|b)?[0-8]?$"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -58864,12 +58761,12 @@
                                   },
                                   "notes": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "string",
                                       "pattern": "^[A-G](?:#|b)?[0-8]?$"
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   }
                                 },
                                 "required": [
@@ -58903,7 +58800,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -58947,7 +58843,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59054,7 +58949,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59236,7 +59130,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -59280,7 +59173,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59387,7 +59279,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59580,7 +59471,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -59624,7 +59514,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59731,7 +59620,6 @@
                             "type": "object",
                             "properties": {
                               "inputs": {
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59883,7 +59771,6 @@
                               },
                               "facts": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59913,7 +59800,8 @@
                                     "value"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "label": {
                                 "type": "string",
@@ -59938,7 +59826,6 @@
                               },
                               "facts": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -59968,7 +59855,8 @@
                                     "value"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "label": {
                                 "type": "string",
@@ -60011,7 +59899,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -60319,7 +60206,6 @@
                   },
                   "endings": {
                     "minItems": 1,
-                    "maxItems": 4,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -60344,7 +60230,6 @@
                   },
                   "meters": {
                     "minItems": 0,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -60388,20 +60273,17 @@
                   },
                   "nodes": {
                     "minItems": 1,
-                    "maxItems": 10,
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
                         "choices": {
                           "minItems": 2,
-                          "maxItems": 4,
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
                               "effects": {
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -60435,7 +60317,6 @@
                                 "maxLength": 40
                               },
                               "notes": {
-                                "maxItems": 2,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -60480,7 +60361,6 @@
                                 ]
                               },
                               "replies": {
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -60521,7 +60401,6 @@
                                     "properties": {
                                       "metrics": {
                                         "minItems": 1,
-                                        "maxItems": 4,
                                         "type": "array",
                                         "items": {
                                           "type": "object",
@@ -60590,7 +60469,6 @@
                           "maxLength": 40
                         },
                         "messages": {
-                          "maxItems": 4,
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -60629,14 +60507,12 @@
                     }
                   },
                   "panels": {
-                    "maxItems": 2,
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
                         "metrics": {
                           "minItems": 1,
-                          "maxItems": 4,
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -60688,7 +60564,6 @@
                   },
                   "skills": {
                     "minItems": 1,
-                    "maxItems": 4,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -60724,7 +60599,6 @@
                   },
                   "team": {
                     "minItems": 1,
-                    "maxItems": 4,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -61061,7 +60935,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -61177,7 +61050,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -61186,7 +61058,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -61197,7 +61068,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -61246,7 +61116,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -61608,7 +61477,6 @@
                                 "type": "number"
                               },
                               "events": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -61628,11 +61496,11 @@
                                     "name"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "outputs": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -61664,7 +61532,8 @@
                                     "label"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "plot": {
                                 "type": "object",
@@ -61692,7 +61561,6 @@
                               },
                               "variables": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -61735,7 +61603,8 @@
                                     "step"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               }
                             },
                             "required": [
@@ -61832,7 +61701,6 @@
                               },
                               "moves": {
                                 "minItems": 1,
-                                "maxItems": 5,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -61850,7 +61718,8 @@
                                     "by"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 5 or fewer."
                               },
                               "start": {
                                 "type": "number"
@@ -61963,13 +61832,13 @@
                                       },
                                       "parts": {
                                         "minItems": 1,
-                                        "maxItems": 4,
                                         "type": "array",
                                         "items": {
                                           "type": "number",
                                           "minimum": 0,
                                           "exclusiveMinimum": true
-                                        }
+                                        },
+                                        "description": "Aim for 4 or fewer."
                                       },
                                       "total": {
                                         "type": "number",
@@ -62004,13 +61873,13 @@
                                       },
                                       "parts": {
                                         "minItems": 1,
-                                        "maxItems": 4,
                                         "type": "array",
                                         "items": {
                                           "type": "number",
                                           "minimum": 0,
                                           "exclusiveMinimum": true
-                                        }
+                                        },
+                                        "description": "Aim for 4 or fewer."
                                       },
                                       "total": {
                                         "type": "number",
@@ -62045,13 +61914,13 @@
                                       },
                                       "parts": {
                                         "minItems": 1,
-                                        "maxItems": 4,
                                         "type": "array",
                                         "items": {
                                           "type": "number",
                                           "minimum": 0,
                                           "exclusiveMinimum": true
-                                        }
+                                        },
+                                        "description": "Aim for 4 or fewer."
                                       },
                                       "total": {
                                         "type": "number",
@@ -62183,7 +62052,6 @@
                               },
                               "hints": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -62204,11 +62072,11 @@
                                     "move"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "objects": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -62233,7 +62101,6 @@
                               },
                               "steps": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -62260,7 +62127,8 @@
                                     "move"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "variable": {
                                 "type": "string",
@@ -62367,7 +62235,6 @@
                               },
                               "points": {
                                 "minItems": 3,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -62406,7 +62273,8 @@
                                     "y"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               }
                             },
                             "required": [
@@ -62846,13 +62714,13 @@
                                   },
                                   "sampleSizes": {
                                     "minItems": 2,
-                                    "maxItems": 5,
                                     "type": "array",
                                     "items": {
                                       "type": "integer",
                                       "minimum": 2,
                                       "maximum": 100000
-                                    }
+                                    },
+                                    "description": "Aim for 5 or fewer."
                                   },
                                   "sizeLabel": {
                                     "type": "string",
@@ -63134,7 +63002,6 @@
                             "properties": {
                               "points": {
                                 "minItems": 3,
-                                "maxItems": 200,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -63151,11 +63018,11 @@
                                     "y"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 200 or fewer."
                               },
                               "spans": {
                                 "minItems": 1,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -63184,7 +63051,8 @@
                                     "to"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "statistic": {
                                 "type": "string",
@@ -63295,16 +63163,15 @@
                             "type": "object",
                             "properties": {
                               "distractors": {
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "minLength": 1,
                                   "description": "Aim for 40 characters or fewer."
-                                }
+                                },
+                                "description": "Aim for 3 or fewer."
                               },
                               "mixUps": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -63330,11 +63197,11 @@
                                     "labels"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "parts": {
                                 "minItems": 2,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -63355,7 +63222,8 @@
                                     "part"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "picture": {
                                 "type": "object",
@@ -63463,7 +63331,6 @@
                             "properties": {
                               "steps": {
                                 "minItems": 3,
-                                "maxItems": 7,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -63611,7 +63478,8 @@
                                     "text"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 7 or fewer."
                               }
                             },
                             "required": [
@@ -63696,12 +63564,12 @@
                             "properties": {
                               "elements": {
                                 "minItems": 1,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "pattern": "^[A-Z][a-z]?$"
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "formula": {
                                 "type": "string",
@@ -63894,11 +63762,11 @@
                                       },
                                       "values": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "number"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -63917,11 +63785,11 @@
                                       },
                                       "values": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "number"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -63963,11 +63831,11 @@
                                       },
                                       "values": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "number"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -63986,11 +63854,11 @@
                                       },
                                       "values": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "number"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -64283,14 +64151,14 @@
                             "properties": {
                               "editableLines": {
                                 "minItems": 1,
-                                "maxItems": 10,
                                 "type": "array",
                                 "items": {
                                   "type": "integer",
                                   "minimum": 0,
                                   "exclusiveMinimum": true,
                                   "maximum": 9007199254740991
-                                }
+                                },
+                                "description": "Aim for 10 or fewer."
                               },
                               "expectedOutput": {
                                 "type": "string",
@@ -64310,7 +64178,6 @@
                                 ]
                               },
                               "mistakes": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -64330,7 +64197,8 @@
                                     "output"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "solution": {
                                 "type": "string",
@@ -64442,14 +64310,12 @@
                               },
                               "pauses": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
                                     "options": {
                                       "minItems": 2,
-                                      "maxItems": 4,
                                       "type": "array",
                                       "items": {
                                         "type": "object",
@@ -64470,7 +64336,8 @@
                                           "text"
                                         ],
                                         "additionalProperties": false
-                                      }
+                                      },
+                                      "description": "Aim for 4 or fewer."
                                     },
                                     "question": {
                                       "type": "string",
@@ -64494,11 +64361,11 @@
                                     "variable"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "trace": {
                                 "minItems": 2,
-                                "maxItems": 40,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -64510,7 +64377,6 @@
                                       "maximum": 9007199254740991
                                     },
                                     "values": {
-                                      "maxItems": 4,
                                       "type": "array",
                                       "items": {
                                         "type": "object",
@@ -64547,16 +64413,17 @@
                                     "values"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 40 or fewer."
                               },
                               "watch": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
                                   "pattern": "^[A-Z_a-z]\\w*$"
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               }
                             },
                             "required": [
@@ -64648,19 +64515,18 @@
                                 "properties": {
                                   "columns": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "string",
                                       "minLength": 1,
                                       "description": "Aim for 40 characters or fewer."
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   },
                                   "orderMatters": {
                                     "type": "boolean"
                                   },
                                   "rows": {
-                                    "maxItems": 30,
                                     "type": "array",
                                     "items": {
                                       "type": "array",
@@ -64682,7 +64548,8 @@
                                           }
                                         ]
                                       }
-                                    }
+                                    },
+                                    "description": "Aim for 30 or fewer."
                                   }
                                 },
                                 "required": [
@@ -64693,7 +64560,6 @@
                                 "additionalProperties": false
                               },
                               "mistakes": {
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -64714,7 +64580,8 @@
                                     "mistake"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "solution": {
                                 "type": "string",
@@ -64723,14 +64590,12 @@
                               },
                               "tables": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
                                     "columns": {
                                       "minItems": 1,
-                                      "maxItems": 6,
                                       "type": "array",
                                       "items": {
                                         "type": "object",
@@ -64753,7 +64618,8 @@
                                           "type"
                                         ],
                                         "additionalProperties": false
-                                      }
+                                      },
+                                      "description": "Aim for 6 or fewer."
                                     },
                                     "name": {
                                       "type": "string",
@@ -64761,7 +64627,6 @@
                                     },
                                     "rows": {
                                       "minItems": 1,
-                                      "maxItems": 30,
                                       "type": "array",
                                       "items": {
                                         "type": "array",
@@ -64783,7 +64648,8 @@
                                             }
                                           ]
                                         }
-                                      }
+                                      },
+                                      "description": "Aim for 30 or fewer."
                                     }
                                   },
                                   "required": [
@@ -64792,7 +64658,8 @@
                                     "rows"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 3 or fewer."
                               }
                             },
                             "required": [
@@ -64881,7 +64748,6 @@
                                 "type": "object",
                                 "properties": {
                                   "hints": {
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
@@ -64902,7 +64768,8 @@
                                         "mistake"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "mode": {
                                     "type": "string",
@@ -64912,21 +64779,21 @@
                                   },
                                   "shouldMatch": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "string",
                                       "description": "Aim for 40 characters or fewer."
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   },
                                   "shouldNotMatch": {
                                     "minItems": 1,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "string",
                                       "description": "Aim for 40 characters or fewer."
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   },
                                   "solution": {
                                     "type": "string",
@@ -64954,14 +64821,12 @@
                                 "properties": {
                                   "examples": {
                                     "minItems": 2,
-                                    "maxItems": 6,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
                                       "properties": {
                                         "inputs": {
                                           "minItems": 1,
-                                          "maxItems": 6,
                                           "type": "array",
                                           "items": {
                                             "type": "object",
@@ -64990,10 +64855,10 @@
                                         "output"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 6 or fewer."
                                   },
                                   "hints": {
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
@@ -65014,7 +64879,8 @@
                                         "mistake"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "mode": {
                                     "type": "string",
@@ -65144,7 +65010,6 @@
                             "properties": {
                               "anchors": {
                                 "minItems": 1,
-                                "maxItems": 4,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -65165,7 +65030,8 @@
                                     "year"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 4 or fewer."
                               },
                               "end": {
                                 "type": "integer",
@@ -65174,7 +65040,6 @@
                               },
                               "events": {
                                 "minItems": 2,
-                                "maxItems": 6,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -65201,7 +65066,8 @@
                                     "year"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 6 or fewer."
                               },
                               "start": {
                                 "type": "integer",
@@ -65299,7 +65165,6 @@
                               },
                               "places": {
                                 "minItems": 2,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -65338,7 +65203,8 @@
                                     "reveals"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 8 or fewer."
                               }
                             },
                             "required": [
@@ -65424,7 +65290,6 @@
                             "properties": {
                               "links": {
                                 "minItems": 1,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -65451,11 +65316,11 @@
                                     "why"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 8 or fewer."
                               },
                               "nodes": {
                                 "minItems": 3,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -65481,7 +65346,8 @@
                                     "label"
                                   ],
                                   "additionalProperties": false
-                                }
+                                },
+                                "description": "Aim for 8 or fewer."
                               }
                             },
                             "required": [
@@ -65626,12 +65492,12 @@
                                       },
                                       "notes": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "string",
                                           "pattern": "^[A-G](?:#|b)?[0-8]?$"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -65689,12 +65555,12 @@
                                       },
                                       "notes": {
                                         "minItems": 1,
-                                        "maxItems": 6,
                                         "type": "array",
                                         "items": {
                                           "type": "string",
                                           "pattern": "^[A-G](?:#|b)?[0-8]?$"
-                                        }
+                                        },
+                                        "description": "Aim for 6 or fewer."
                                       }
                                     },
                                     "required": [
@@ -65898,7 +65764,6 @@
                                   },
                                   "facts": {
                                     "minItems": 1,
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
@@ -65928,7 +65793,8 @@
                                         "value"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "label": {
                                     "type": "string",
@@ -65953,7 +65819,6 @@
                                   },
                                   "facts": {
                                     "minItems": 1,
-                                    "maxItems": 4,
                                     "type": "array",
                                     "items": {
                                       "type": "object",
@@ -65983,7 +65848,8 @@
                                         "value"
                                       ],
                                       "additionalProperties": false
-                                    }
+                                    },
+                                    "description": "Aim for 4 or fewer."
                                   },
                                   "label": {
                                     "type": "string",
@@ -66042,7 +65908,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -66108,7 +65973,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -66117,7 +65981,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66128,7 +65991,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -66177,7 +66039,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66498,7 +66359,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -66599,7 +66459,6 @@
                               },
                               "categories": {
                                 "minItems": 2,
-                                "maxItems": 12,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
@@ -66608,7 +66467,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -66619,7 +66477,6 @@
                                     },
                                     "values": {
                                       "minItems": 2,
-                                      "maxItems": 12,
                                       "type": "array",
                                       "items": {
                                         "type": "number"
@@ -66668,7 +66525,6 @@
                               },
                               "events": {
                                 "minItems": 2,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -66732,7 +66588,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -66799,7 +66654,6 @@
                               },
                               "categories": {
                                 "minItems": 2,
-                                "maxItems": 12,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
@@ -66808,7 +66662,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -66819,7 +66672,6 @@
                                     },
                                     "values": {
                                       "minItems": 2,
-                                      "maxItems": 12,
                                       "type": "array",
                                       "items": {
                                         "type": "number"
@@ -66868,7 +66720,6 @@
                               },
                               "events": {
                                 "minItems": 2,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -70395,7 +70246,6 @@
                 "properties": {
                   "ideas": {
                     "minItems": 1,
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -70654,7 +70504,6 @@
                 "type": "object",
                 "properties": {
                   "acceptedAnswers": {
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -70690,7 +70539,6 @@
                   },
                   "keyPoints": {
                     "minItems": 1,
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -70749,7 +70597,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -70758,7 +70605,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -70769,7 +70615,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -70818,7 +70663,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -71114,7 +70958,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -71141,7 +70984,6 @@
                   },
                   "steps": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -71209,7 +71051,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -71218,7 +71059,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -71229,7 +71069,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -71278,7 +71117,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -86974,7 +86812,6 @@
                   },
                   "categories": {
                     "minItems": 2,
-                    "maxItems": 12,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -86983,7 +86820,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -86994,7 +86830,6 @@
                         },
                         "values": {
                           "minItems": 2,
-                          "maxItems": 12,
                           "type": "array",
                           "items": {
                             "type": "number"
@@ -87043,7 +86878,6 @@
                   },
                   "events": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",

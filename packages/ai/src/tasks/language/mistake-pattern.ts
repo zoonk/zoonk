@@ -16,12 +16,7 @@ import promptTemplate from "./mistake-pattern.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
-const MAX_CONTRAST_ROWS = 3;
-const DRILL_QUESTIONS = 5;
-
-/** Only the forms the pattern confuses: two for "since" and "for", three at most. */
 const MIN_DRILL_OPTIONS = 2;
-const MAX_DRILL_OPTIONS = 3;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the verdict and the mistakes that show it come before the rule and the drill. */
 const schema = z.object({
@@ -29,17 +24,15 @@ const schema = z.object({
   mistakeNumbers: z.array(z.number().int()),
   title: z.string(),
   rule: z.string(),
-  contrast: z.array(z.object({ label: z.string(), example: z.string() })).max(MAX_CONTRAST_ROWS),
-  drill: z
-    .array(
-      z.object({
-        sentence: z.string(),
-        answer: z.string(),
-        options: z.array(z.string()).min(MIN_DRILL_OPTIONS).max(MAX_DRILL_OPTIONS),
-        feedback: z.string(),
-      }),
-    )
-    .max(DRILL_QUESTIONS),
+  contrast: z.array(z.object({ label: z.string(), example: z.string() })),
+  drill: z.array(
+    z.object({
+      sentence: z.string(),
+      answer: z.string(),
+      options: z.array(z.string()).min(MIN_DRILL_OPTIONS),
+      feedback: z.string(),
+    }),
+  ),
 });
 /* oxlint-enable eslint/sort-keys */
 

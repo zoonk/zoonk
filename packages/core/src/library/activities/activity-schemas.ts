@@ -14,7 +14,11 @@ const EXPRESSION_TARGET = 300;
 const CODE_TARGET = 2000;
 const UNIT_TARGET = 16;
 const SLUG_TARGET = 60;
-const MAX_CHECK_INPUTS = 6;
+
+/** A list's count the writer reads in the template's schema. Nothing rejects a list that runs over it. */
+export function aimForItems(items: number): string {
+  return `Aim for ${items} or fewer.`;
+}
 
 export const expressionSchema = aimForCharacters(z.string().min(1), EXPRESSION_TARGET);
 
@@ -61,7 +65,7 @@ export const activityDataSchema = z.union([
 ]);
 
 const checkTargetShape = {
-  inputs: z.array(namedValueSchema).max(MAX_CHECK_INPUTS).optional(),
+  inputs: z.array(namedValueSchema).optional(),
   output: idSchema.optional(),
 };
 

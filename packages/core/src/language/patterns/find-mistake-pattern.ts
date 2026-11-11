@@ -9,6 +9,7 @@ import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { toProvenanceData } from "../../library/_utils/library-rows";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
+import { MAX_DRILL_QUESTIONS } from "./pattern-contract";
 
 const MAX_MISTAKES = 20;
 const MISTAKES_PER_CHECK = 3;
@@ -97,7 +98,7 @@ export async function checkMistakePattern({ language, userId }: LearnerLanguage)
   const pattern = {
     content: {
       contrast: data.contrast,
-      drill: data.drill,
+      drill: data.drill.slice(0, MAX_DRILL_QUESTIONS),
       examples: shown.map(({ snapshot }) => ({
         answer: snapshot.answer ?? "",
         correctAnswer: snapshot.correctAnswer ?? "",

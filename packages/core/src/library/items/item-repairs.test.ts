@@ -63,6 +63,24 @@ describe(repairItem, () => {
     expect(repairItem({ item: short, language: "pt", optionCount: 5 })).toStrictEqual(short);
   });
 
+  it("drops wrong options past the exam's count, or past eight, instead of failing the item", () => {
+    const options = ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"].map(
+      (text, index) => option(text, index === 0),
+    );
+
+    const exam = repairItem({
+      item: generatedMultipleChoice({ options }),
+      language: "pt",
+      optionCount: 5,
+    });
+
+    const free = repairItem({ item: generatedMultipleChoice({ options }), language: "pt" });
+
+    expect(exam.options.map((item) => item.text)).toStrictEqual(["10", "20", "30", "40", "50"]);
+    expect(free.options).toHaveLength(8);
+    expect(checkItem({ item: exam, language: "pt", optionCount: 5 })).toStrictEqual([]);
+  });
+
   it("drops key points, accepted answers and pairs written twice", () => {
     const typed = repairItem({
       item: generatedTypedItem({

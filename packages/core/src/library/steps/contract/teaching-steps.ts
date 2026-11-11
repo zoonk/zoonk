@@ -1,3 +1,4 @@
+import { MAX_PICTURE_OPTIONS } from "@zoonk/ai/tasks/images/request";
 import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
@@ -15,9 +16,6 @@ import {
   stepImageRequestSchema,
 } from "./content-schemas";
 
-const MAX_WORKED_STEPS = 8;
-const MAX_KEY_POINTS = 5;
-const MAX_SUMMARY_IDEAS = 5;
 const MATH_TARGET = 300;
 
 const mathSchema = aimForCharacters(z.string().min(1), MATH_TARGET);
@@ -65,8 +63,7 @@ export const workedExampleContentSchema = z
     result: explanationSchema,
     steps: z
       .array(z.object({ math: mathSchema.optional(), text: explanationSchema }).strict())
-      .min(2)
-      .max(MAX_WORKED_STEPS),
+      .min(2),
     title: promptSchema.optional(),
     visual: visualSchema,
   })
@@ -75,8 +72,6 @@ export const workedExampleContentSchema = z
 const questionBasisSchema = z
   .object({ position: z.number().int().min(0), quote: explanationSchema })
   .strict();
-
-const MAX_PICTURE_OPTIONS = 4;
 
 const checkOptionSchema = choiceOptionSchema
   .extend({ picture: pictureRequestSchema.optional() })
@@ -157,10 +152,10 @@ export const checkContentSchema = z
 
 export const typedAnswerContentSchema = z
   .object({
-    acceptedAnswers: z.array(optionTextSchema).max(MAX_KEY_POINTS).optional(),
+    acceptedAnswers: z.array(optionTextSchema).optional(),
     basis: questionBasisSchema.nullable(),
     context: richTextSchema.optional(),
-    keyPoints: z.array(explanationSchema).min(1).max(MAX_KEY_POINTS),
+    keyPoints: z.array(explanationSchema).min(1),
     question: promptSchema,
     sampleAnswer: richTextSchema,
     visual: visualSchema,
@@ -178,10 +173,5 @@ export const spokenAnswerContentSchema = z
   .strict();
 
 export const summaryContentSchema = z
-  .object({
-    ideas: z
-      .array(z.object({ text: explanationSchema }).strict())
-      .min(1)
-      .max(MAX_SUMMARY_IDEAS),
-  })
+  .object({ ideas: z.array(z.object({ text: explanationSchema }).strict()).min(1) })
   .strict();
