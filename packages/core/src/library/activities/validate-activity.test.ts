@@ -19,6 +19,19 @@ function issueCodes(content: unknown): string[] {
   return result.ok ? [] : result.issues.map((item) => item.code);
 }
 
+function processOf(count: number) {
+  const longProcess = structuredClone(fixtures.processOrder);
+
+  longProcess.fields.steps = Array.from({ length: count }, (_, index) => ({
+    icon: DEFAULT_PROCESS_ICON,
+    id: `step-${index}`,
+    text: `Step ${index + 1}`,
+    why: `It needs step ${index}.`,
+  }));
+
+  return longProcess;
+}
+
 describe(validateActivity, () => {
   it.each(activityTemplates.map((template) => template.id))("accepts the %s fixture", (id) => {
     const result = validateActivity(fixtures[id]);
@@ -219,19 +232,15 @@ describe(validateActivity, () => {
     expect(validateActivity(longLabel).ok).toBe(true);
   });
 
-  it("keeps a list past its target as written", () => {
-    const longProcess = structuredClone(fixtures.processOrder);
+  it("keeps a list past its target as written, up to what an answer can send back", () => {
+    const kept = validateActivity(processOf(9));
+    const unanswerable = validateActivity(processOf(201));
 
-    longProcess.fields.steps = Array.from({ length: 9 }, (_, index) => ({
-      icon: DEFAULT_PROCESS_ICON,
-      id: `step-${index}`,
-      text: `Step ${index + 1}`,
-      why: `It needs step ${index}.`,
-    }));
+    expect(kept.ok ? [] : kept.issues).toStrictEqual([]);
 
-    const result = validateActivity(longProcess);
-
-    expect(result.ok ? [] : result.issues).toStrictEqual([]);
+    expect(unanswerable.ok ? [] : unanswerable.issues).toContainEqual(
+      expect.objectContaining({ code: "invalidSchema", path: "fields.steps" }),
+    );
   });
 
   it("rejects inconsistent template data", () => {

@@ -1,5 +1,6 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type z } from "zod";
+import { MAX_ANSWER_ITEMS } from "./activity-answer-schema";
 import { type ActivityCheck } from "./activity-schemas";
 import {
   type ActivityStepContent,
@@ -165,6 +166,22 @@ function fieldIssues(
   ];
 }
 
+/** A list's count is a target, but an answer that lists its items can send back only so many. */
+function oversizedListIssues(value: unknown, path: string): ActivityIssue[] {
+  if (Array.isArray(value)) {
+    return [
+      ...(value.length > MAX_ANSWER_ITEMS
+        ? [issue("invalidSchema", path, `A list holds more than ${MAX_ANSWER_ITEMS} items`)]
+        : []),
+      ...value.flatMap((item, index) => oversizedListIssues(item, `${path}.${index}`)),
+    ];
+  }
+
+  return isJsonObject(value)
+    ? Object.entries(value).flatMap(([key, item]) => oversizedListIssues(item, `${path}.${key}`))
+    : [];
+}
+
 function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
   const template = getActivityTemplate(content.template);
 
@@ -172,7 +189,11 @@ function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
     return [issue("unknownTemplate", "template", `Unknown template "${content.template}"`)];
   }
 
-  return [...fieldIssues(template, content), ...checkIssues(template, content)];
+  return [
+    ...oversizedListIssues(content.fields, "fields"),
+    ...fieldIssues(template, content),
+    ...checkIssues(template, content),
+  ];
 }
 
 export function validateActivity(input: unknown): ActivityValidationResult {
