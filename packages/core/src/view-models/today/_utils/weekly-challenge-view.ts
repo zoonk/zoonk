@@ -81,12 +81,18 @@ export async function readTodayWeeklyChallenge({
   timeZone?: string;
   session: DayView;
 }): Promise<TodayView["weeklyChallenge"]> {
-  const item = selection
-    ? findNextWeeklyItem(selection.items)
-    : await prisma.planItem.findFirst({
+  const items: readonly SessionPlanItem[] = selection
+    ? selection.items
+    : await prisma.planItem.findMany({
         orderBy: { position: "asc" },
         where: { kind: { in: ["checkpoint", "mock"] }, plan: { goalId }, status: "todo" },
       });
+
+  const item = findNextWeeklyItem({
+    includesMockExams: session.examAccess.includesMockExams,
+    items,
+    today: session.localDate,
+  });
 
   if (!item) {
     return null;
