@@ -7,13 +7,16 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type ConversationTurn,
   formatConversationTranscript,
 } from "./_utils/conversation-transcript";
-import systemPrompt from "./conversation-feedback.prompt.md";
+import taskPrompt from "./conversation-feedback.prompt.md";
 
 export type { ConversationTurn } from "./_utils/conversation-transcript";
+
+const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * Flash Lite over Luna, which costs less: the learner waits on this after a call, and Flash Lite
