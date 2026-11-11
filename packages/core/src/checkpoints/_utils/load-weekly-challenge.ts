@@ -30,10 +30,41 @@ export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
   return WEEKLY_KINDS.has(item.kind);
 }
 
-export function findNextWeeklyItem<Item extends Pick<PlanItem, "kind" | "status">>(
-  items: readonly Item[],
-): Item | undefined {
-  return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
+type WeeklyItem = Pick<PlanItem, "kind" | "scheduledFor" | "status">;
+
+/** A mock the learner can't take stands for its own day only, as a full review, so it is over once that day passes. */
+function isPastPlusOnlyMock({
+  includesMockExams,
+  item,
+  today,
+}: {
+  includesMockExams: boolean;
+  item: WeeklyItem;
+  today: Date;
+}): boolean {
+  return (
+    !includesMockExams &&
+    item.kind === "mock" &&
+    item.scheduledFor !== null &&
+    item.scheduledFor < today
+  );
+}
+
+export function findNextWeeklyItem<Item extends WeeklyItem>({
+  includesMockExams,
+  items,
+  today,
+}: {
+  includesMockExams: boolean;
+  items: readonly Item[];
+  today: Date;
+}): Item | undefined {
+  return items.find(
+    (item) =>
+      isWeeklyChallengeItem(item) &&
+      item.status === "todo" &&
+      !isPastPlusOnlyMock({ includesMockExams, item, today }),
+  );
 }
 
 export function isPlusOnlyMockDay({
@@ -42,10 +73,10 @@ export function isPlusOnlyMockDay({
   today,
 }: {
   includesMockExams: boolean;
-  items: readonly Pick<PlanItem, "kind" | "scheduledFor" | "status">[];
+  items: readonly WeeklyItem[];
   today: Date;
 }): boolean {
-  const item = findNextWeeklyItem(items);
+  const item = findNextWeeklyItem({ includesMockExams, items, today });
 
   return (
     !includesMockExams &&
@@ -168,7 +199,7 @@ export async function loadSessionWeeklyChallenge({
   today: Date;
   userId: string;
 }): Promise<SessionWeeklyChallenge> {
-  const item = findNextWeeklyItem(items);
+  const item = findNextWeeklyItem({ includesMockExams, items, today });
 
   if (!item || !item.scheduledFor || item.scheduledFor > today) {
     return { checkpoint: null, plusRequired: false };
