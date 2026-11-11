@@ -35,7 +35,6 @@ export function isSameSpokenWord(expected: string, heard: string): boolean {
   return expected === heard || isLongFormOf(expected, heard) || isLongFormOf(heard, expected);
 }
 
-/** Puts an 's or 'd back on the word it was split from. */
 export function joinContractions(text: string): string {
   return text.replaceAll(/ (?='[ds]\b)/gu, "");
 }
