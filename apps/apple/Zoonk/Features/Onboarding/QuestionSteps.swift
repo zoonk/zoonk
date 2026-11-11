@@ -332,6 +332,23 @@ private struct CountryQuestion: View {
         .disclosureChevron()
         .contentShape(.rect)
       }
+      // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
+      .sheet(isPresented: $isPickingAnother) {
+        CountryPickerSheet(
+          title: Text(
+            "Country", tableName: "Plan",
+            comment:
+              "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+          ),
+          language: view.goal.language,
+          suggested: suggested,
+          selected: picked?.code
+        ) { choice in
+          picked = choice
+          return true
+        }
+        .zoonkStyles()
+      }
     } footer: {
       // Above the buttons, so the list never moves when it changes.
       SectionFooter {
@@ -342,22 +359,6 @@ private struct CountryQuestion: View {
       .announcesStatus(notice)
     }
     .locksWhileSaving()
-    .sheet(isPresented: $isPickingAnother) {
-      CountryPickerSheet(
-        title: Text(
-          "Country", tableName: "Plan",
-          comment:
-            "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
-        ),
-        language: view.goal.language,
-        suggested: suggested,
-        selected: picked?.code
-      ) { choice in
-        picked = choice
-        return true
-      }
-      .zoonkStyles()
-    }
 
     StepButtons(canContinue: picked != nil) {
       if let picked {
