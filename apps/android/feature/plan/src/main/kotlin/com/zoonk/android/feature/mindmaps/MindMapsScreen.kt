@@ -214,8 +214,8 @@ internal data class MindMapsActions(
 /**
  * Main's Mind maps page: the goal, Study, and three tabs (chapters' maps, lessons' maps and the saved
  * ones), each a bounded index of the maps that exist; the chapters whose maps aren't made yet end the
- * Chapters tab. It opens at the tab the server picks, and at [subject]'s chapters the first time, as
- * main's `#key` does.
+ * Chapters tab. It opens at the tab the server picks, and the first time at [subject]'s maps there,
+ * unfolded, as main's `?subject=` does.
  */
 @Composable
 internal fun MindMapsPage(
@@ -232,7 +232,7 @@ internal fun MindMapsPage(
     var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
     var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown) }
     val decks = StudyTab.entries.associateWith { mindMaps.deck(it).size }
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = if (subject != null && tab == StudyTab.Chapters) 2 else 0)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = mindMaps.subjectItem(tab, subject) ?: 0)
     val title = stringResource(R.string.navigation_mind_maps)
 
     val tabActions =
@@ -263,6 +263,25 @@ internal fun MindMapsPage(
             }
         }
     }
+}
+
+/** The hero and the tabs come before a tab's index. */
+private const val ITEMS_BEFORE_INDEX = 2
+
+/** Where [subject]'s title sits in [tab]'s list as the page opens, with its maps unfolded; null when the tab doesn't list it. */
+internal fun GoalMindMaps.subjectItem(
+    tab: StudyTab,
+    subject: String?,
+): Int? {
+    val opened = setOfNotNull(subject)
+    val entries =
+        when (tab) {
+            StudyTab.Chapters -> boundedIndex(chapterIndex(), opened, showAll = false)
+            StudyTab.Lessons -> boundedIndex(lessonIndex(), opened, showAll = false)
+            StudyTab.Saved -> return null
+        }
+    val at = entries.indexOfFirst { it is IndexEntry.Subject && it.key == subject }
+    return if (at < 0) null else ITEMS_BEFORE_INDEX + at
 }
 
 internal data class IndexState(

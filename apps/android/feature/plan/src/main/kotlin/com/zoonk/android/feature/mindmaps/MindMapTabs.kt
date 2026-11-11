@@ -57,6 +57,23 @@ import kotlinx.coroutines.launch
 private val NOT_MADE =
     setOf(GoalMindMap.Status.AVAILABLE, GoalMindMap.Status.WRITING_LESSONS, GoalMindMap.Status.DRAWING, GoalMindMap.Status.FAILED)
 
+/** The Chapters tab's index: the ready maps and the Plus-locked ones, by subject. */
+internal fun GoalMindMaps.chapterIndex(): List<IndexGroup<GoalMindMap>> =
+    chapters
+        .filter { it.status == GoalMindMap.Status.READY || it.status == GoalMindMap.Status.PLUS_REQUIRED }
+        .groupBy { it.subject?.key.orEmpty() }
+        .map { (key, maps) -> IndexGroup(key, maps.first().subject?.name, maps) }
+
+/** The Lessons tab's index: each chapter with lesson maps, by subject. */
+internal fun GoalMindMaps.lessonIndex(): List<IndexGroup<Pair<LessonMapGroup, GoalMindMap>>> {
+    val byId = chapters.associateBy { it.chapterId }
+
+    return lessonGroups
+        .mapNotNull { group -> byId[group.chapterId]?.let { group to it } }
+        .groupBy { (_, chapter) -> chapter.subject?.key.orEmpty() }
+        .map { (key, rows) -> IndexGroup(key, rows.first().second.subject?.name, rows) }
+}
+
 /** Chapters: the ready maps and the Plus-locked ones by subject, then the maps not made yet. */
 internal fun LazyListScope.chaptersTab(
     mindMaps: GoalMindMaps,
@@ -64,10 +81,10 @@ internal fun LazyListScope.chaptersTab(
     notMadeOpen: Boolean,
     actions: TabActions,
 ) {
-    val indexed = mindMaps.chapters.filter { it.status == GoalMindMap.Status.READY || it.status == GoalMindMap.Status.PLUS_REQUIRED }
+    val groups = mindMaps.chapterIndex()
     val notMade = mindMaps.chapters.filter { it.status in NOT_MADE }
 
-    if (indexed.isEmpty() && notMade.isEmpty()) {
+    if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
             TabEmpty(R.drawable.ic_lan, R.string.mindmaps_empty_title, R.string.mindmaps_empty_description) {
                 KeepStudying(actions.page.keepStudying)
@@ -76,7 +93,6 @@ internal fun LazyListScope.chaptersTab(
         return
     }
 
-    val groups = indexed.groupBy { it.subject?.key.orEmpty() }.map { (key, maps) -> IndexGroup(key, maps.first().subject?.name, maps) }
     index(StudyTab.Chapters, boundedIndex(groups, shown.opened, shown.showAll), actions, { it.chapterId.toString() }) { map, divided ->
         Divided(divided) { ChapterRow(map, actions) }
     }
@@ -274,23 +290,7 @@ internal fun LazyListScope.lessonsTab(
         return
     }
 
-    val chapters = mindMaps.chapters.associateBy { it.chapterId }
-    val rows = mindMaps.lessonGroups.mapNotNull { group -> chapters[group.chapterId]?.let { group to it } }
-    val groups =
-        rows
-            .groupBy { (_, chapter) -> chapter.subject?.key.orEmpty() }
-            .map { (key, inGroup) ->
-                IndexGroup(
-                    key,
-                    inGroup
-                        .first()
-                        .second.subject
-                        ?.name,
-                    inGroup,
-                )
-            }
-
-    index(StudyTab.Lessons, boundedIndex(groups, shown.opened, shown.showAll), actions, {
+    index(StudyTab.Lessons, boundedIndex(mindMaps.lessonIndex(), shown.opened, shown.showAll), actions, {
         it.first.chapterId.toString()
     }) { (group, chapter), divided ->
         Divided(divided) { LessonGroupRow(group, chapter, actions) }
