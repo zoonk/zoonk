@@ -518,6 +518,49 @@
         }
       ],
       "text": "Compare $a$, $$b$$, \\(c\\) and \\[d\\] at once"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "A byte order mark after $﻿x$ isn't math"
+        }
+      ],
+      "text": "A byte order mark after $﻿x$ isn't math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "A next-line mark after "
+        },
+        {
+          "kind": "math",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": " is math"
+        }
+      ],
+      "text": "A next-line mark after $x$ is math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Display "
+        },
+        {
+          "kind": "displayMath",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": " trims like JavaScript"
+        }
+      ],
+      "text": "Display $$x﻿$$ trims like JavaScript"
     }
   ]
 }

@@ -88,6 +88,22 @@ describe(repairMarkdown, () => {
     ).toBe(String.raw`Se \(0<a\), veja isto e $b>0$.`);
   });
 
+  it("reads a table cell as the player does, keeping math with an escaped pipe whole", () => {
+    const text = String.raw`| Value |
+| --- |
+| $\|x^{**}\|$ |
+| **norm** $\|v\|$ ** |`;
+
+    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([
+      expect.stringContaining(String.raw`"**norm** $\|v\|$ **"`),
+    ]);
+
+    expect(repairMarkdown({ layout: "blocks", text })).toBe(String.raw`| Value |
+| --- |
+| $\|x^{**}\|$ |
+| **norm** $\|v\|$  |`);
+  });
+
   it("turns headings, quote marks, links and styling tags into plain words", () => {
     const text = [
       "## Resumo",

@@ -33,6 +33,9 @@ const CASES = [
   "$x$5 is not math",
   String.raw`Größe $\alpha$ ist ß, 東京 $β$ 🚀`,
   String.raw`Compare $a$, $$b$$, \(c\) and \[d\] at once`,
+  "A byte order mark after $\uFEFFx$ isn't math",
+  "A next-line mark after $\u0085x$ is math",
+  "Display $$\u0085x\uFEFF$$ trims like JavaScript",
 ] as const;
 
 describe("lesson math as native players must split it", () => {

@@ -1,5 +1,5 @@
 import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup";
-import { findMarkdownTableLines } from "./markdown-table";
+import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
 import { splitAtMath } from "./math-spans";
 import { replaceEmDashes } from "./string";
 import {
@@ -64,8 +64,7 @@ function repairBlocks(text: string): string {
   return lines
     .map((line, index) =>
       tableLines.has(index)
-        ? line
-            .split("|")
+        ? splitTableCells(line)
             .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
             .join("|")
         : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) }),

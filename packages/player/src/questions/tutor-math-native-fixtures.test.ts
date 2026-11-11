@@ -20,6 +20,14 @@ const CASES = [
   "Compare $$a^2$$ with $$b^2$$.",
   "- First, $$x^2$$\n- Then the rest",
   "**Bold** words, a [link](https://example.com) and $$E = mc^2$$ in one answer.",
+  "Some code:\n\n    $$x^2$$",
+  "1. Use\n   $$\n   x^2\n   $$",
+  "> $$\n> x^2\n> $$",
+  "> The area is $$x^2$$ here.",
+  "> It is $$x\n> y$$ in a quote.",
+  "> It is $$x\n> + y$$ in a quote.",
+  "Before $$x\n## Heading\ny$$ end",
+  "Before $$x\n\nAfter y$$ end",
 ] as const;
 
 type MarkdownNode = { children?: MarkdownNode[]; type: string; value?: string };

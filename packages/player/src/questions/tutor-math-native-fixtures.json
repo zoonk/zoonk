@@ -113,6 +113,58 @@
         }
       ],
       "text": "**Bold** words, a [link](https://example.com) and $$E = mc^2$$ in one answer."
+    },
+    {
+      "formulas": [],
+      "text": "Some code:\n\n    $$x^2$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": true,
+          "latex": "x^2"
+        }
+      ],
+      "text": "1. Use\n   $$\n   x^2\n   $$"
+    },
+    {
+      "formulas": [
+        {
+          "display": true,
+          "latex": "x^2"
+        }
+      ],
+      "text": "> $$\n> x^2\n> $$"
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "x^2"
+        }
+      ],
+      "text": "> The area is $$x^2$$ here."
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "x\ny"
+        }
+      ],
+      "text": "> It is $$x\n> y$$ in a quote."
+    },
+    {
+      "formulas": [],
+      "text": "> It is $$x\n> + y$$ in a quote."
+    },
+    {
+      "formulas": [],
+      "text": "Before $$x\n## Heading\ny$$ end"
+    },
+    {
+      "formulas": [],
+      "text": "Before $$x\n\nAfter y$$ end"
     }
   ]
 }

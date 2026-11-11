@@ -1,6 +1,6 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
-import { findMarkdownTableLines } from "./markdown-table";
+import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
 import { hideMath, splitAtMath } from "./math-spans";
 
 /**
@@ -105,7 +105,7 @@ function findBlockProblems(text: string): string[] {
 
   return lines.flatMap((line, index) => {
     if (tableLines.has(index)) {
-      return line.split("|").flatMap((cell) => findLineProblems(cell));
+      return splitTableCells(line).flatMap((cell) => findLineProblems(cell));
     }
 
     return [
