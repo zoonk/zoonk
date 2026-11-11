@@ -145,6 +145,8 @@ extension AppRoute {
       PlacementMockScreen(goalId: goalId)
     case .mindMap(let chapterId):
       MindMapScreen(chapterId: chapterId)
+    case .mindMapStudy(let tab, let start):
+      MindMapReader(tab: tab, start: start)
     case .pronunciation(let goalId):
       PronunciationScreen(goalId: goalId)
     case .conversation(let conversationId):

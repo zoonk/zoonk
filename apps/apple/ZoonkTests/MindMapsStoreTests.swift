@@ -188,6 +188,132 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(calls.list, 0)
   }
 
+  func testSavingShowsAtOnceAndEveryCopyOfTheMapSaysSoOnceDone() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextSave()
+
+    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    XCTAssertTrue(store.isSaved(Self.chapterKey, server: false))
+    while await !api.isHoldingSave {
+      await Task.yield()
+    }
+
+    await api.releaseSave()
+    while store.pendingSaves[Self.chapterKey] != nil {
+      await Task.yield()
+    }
+
+    XCTAssertEqual(list.value?.chapters.first?.saved, true)
+    XCTAssertEqual(list.value?.saved.map(\.targetId), ["chapter"])
+    XCTAssertFalse(store.saveFailed(goalId: "goal"))
+  }
+
+  func testAFailedSaveGoesBackAndSaysSo() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failSaves(1)
+
+    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    while store.pendingSaves[Self.chapterKey] != nil {
+      await Task.yield()
+    }
+
+    XCTAssertFalse(
+      store.isSaved(Self.chapterKey, server: list.value?.chapters.first?.saved ?? true))
+    XCTAssertTrue(store.saveFailed(goalId: "goal"))
+    XCTAssertFalse(store.saveFailed(goalId: "another goal"))
+  }
+
+  func testTapsFasterThanTheSaveEndInTheLastOneAskedFor() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextSave()
+
+    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    while await !api.isHoldingSave {
+      await Task.yield()
+    }
+
+    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
+    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
+    await api.releaseSave()
+    while store.pendingSaves[Self.chapterKey] != nil {
+      await Task.yield()
+    }
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.saves, [true, false])
+    XCTAssertEqual(list.value?.chapters.first?.saved, false)
+    XCTAssertEqual(list.value?.saved, [])
+  }
+
+  func testCreatingAllReadsTheListAgainToShowWhatStarted() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+
+    await store.createAll(goalId: "goal")
+
+    XCTAssertEqual(list.value?.chapters.first?.status, .drawing)
+    XCTAssertNil(store.createAllFailures["goal"])
+    XCTAssertFalse(store.creatingAll.contains("goal"))
+  }
+
+  func testCreatingAllThatDoesntReachTheServerSaysSo() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failCreateAll(1)
+
+    await store.createAll(goalId: "goal")
+
+    XCTAssertEqual(store.createAllFailures["goal"], .unreachable)
+    XCTAssertEqual(list.value?.chapters.first?.status, .available)
+  }
+
+  func testTheListIsFollowedUntilNothingIsOnItsWay() async throws {
+    let api = MindMapsAPIStub(server: .drawing, statuses: [.success(.ready)])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    // The stub's list says what its status route last answered: the map is drawn meanwhile.
+    _ = try await api.status(token: "", goalId: "goal", chapterId: "chapter")
+
+    await store.followList(goalId: "goal")
+
+    let calls = await api.calls
+    XCTAssertEqual(list.value?.chapters.first?.status, .ready)
+    XCTAssertEqual(calls.list, 2)
+  }
+
+  func testAPlaceInADeckIsEachLearnersAndEachTabs() throws {
+    let defaults = try XCTUnwrap(UserDefaults(suiteName: "MindMapPositionsTests"))
+    defaults.removePersistentDomain(forName: "MindMapPositionsTests")
+    let positions = MindMapPositions(defaults: defaults)
+    let place = MindMapPosition(chapterId: "c2", key: MindMapKey(kind: .lesson, targetId: "l3"))
+
+    positions.save(place, userId: "ana", goalId: "goal", tab: .lessons)
+
+    XCTAssertEqual(positions.position(userId: "ana", goalId: "goal", tab: .lessons), place)
+    XCTAssertNil(positions.position(userId: "ana", goalId: "goal", tab: .saved))
+    XCTAssertNil(positions.position(userId: "bia", goalId: "goal", tab: .lessons))
+    XCTAssertNil(positions.position(userId: "ana", goalId: "other", tab: .lessons))
+  }
+
+  private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
+  private static let chapterTarget = SaveTarget(
+    key: chapterKey, title: "Chapter", chapterId: "chapter")
+
   private func makeStore(api: MindMapsAPIStub) -> MindMapsStore {
     MindMapsStore(
       api: api, cache: AppCache(session: .preview(account: .mindMapsTestAccount)),
@@ -200,7 +326,9 @@ final class MindMapsStoreTests: XCTestCase {
 private actor MindMapsAPIStub: MindMapsAPIClient {
   struct Calls {
     var create = 0
+    var createAll = 0
     var list = 0
+    var saves: [Bool] = []
     var status = 0
   }
 
@@ -214,6 +342,11 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private var holdsNextList = false
   private var heldList: CheckedContinuation<Void, Never>?
   private var listFailures = 0
+  private var saved = false
+  private var saveFailures = 0
+  private var holdsNextSave = false
+  private var heldSave: CheckedContinuation<Void, Never>?
+  private var createAllFailures = 0
 
   init(
     server: ChapterMindMap.Status, statuses: [Result<ChapterMindMap.Status, APIError>],
@@ -249,6 +382,25 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     heldList = nil
   }
 
+  func failSaves(_ count: Int) {
+    saveFailures = count
+  }
+
+  func failCreateAll(_ count: Int) {
+    createAllFailures = count
+  }
+
+  var isHoldingSave: Bool { heldSave != nil }
+
+  func holdNextSave() {
+    holdsNextSave = true
+  }
+
+  func releaseSave() {
+    heldSave?.resume()
+    heldSave = nil
+  }
+
   func list(token: String, goalId: String) async throws -> GoalMindMaps {
     calls.list += 1
 
@@ -262,7 +414,50 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
       throw APIError.network
     }
 
-    return GoalMindMaps(chapters: [chapter])
+    return GoalMindMaps(
+      chapters: [chapter],
+      createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
+      firstTab: .chapters, lessonGroups: [],
+      saved: saved
+        ? [
+          SavedMindMap(
+            available: true, chapterId: "chapter", kind: .chapter, targetId: "chapter",
+            title: "Chapter")
+        ] : [])
+  }
+
+  func lessonMaps(token: String, goalId: String, chapterId: String) async throws
+    -> ChapterLessonMaps
+  {
+    ChapterLessonMaps(chapter: .init(id: chapterId, position: 1, title: "Chapter"), lessons: [])
+  }
+
+  func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool {
+    calls.saves.append(saved)
+
+    if holdsNextSave {
+      holdsNextSave = false
+      await withCheckedContinuation { heldSave = $0 }
+    }
+
+    if saveFailures > 0 {
+      saveFailures -= 1
+      throw APIError.network
+    }
+
+    self.saved = saved
+    return saved
+  }
+
+  func createAll(token: String, goalId: String) async throws {
+    calls.createAll += 1
+
+    if createAllFailures > 0 {
+      createAllFailures -= 1
+      throw APIError.network
+    }
+
+    server = .drawing
   }
 
   func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap {
@@ -298,7 +493,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private var chapter: ChapterMindMap {
     ChapterMindMap(
       chapterId: "chapter", image: nil, lessonsToWrite: 0, outline: nil, position: 1,
-      status: server, subject: nil, title: "Chapter")
+      saved: saved, status: server, subject: nil, title: "Chapter")
   }
 }
 

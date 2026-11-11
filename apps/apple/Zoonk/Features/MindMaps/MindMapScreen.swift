@@ -15,7 +15,7 @@ struct MindMapScreen: View {
         if let goal = learner.summary.value?.shownGoal {
           let map = store.map(goalId: goal.id, chapterId: chapterId)
 
-          content(map)
+          content(map, goalId: goal.id)
             .navigationTitle(
               map.value.map { Text($0.title) }
                 ?? Text(
@@ -43,7 +43,7 @@ struct MindMapScreen: View {
   }
 
   @ViewBuilder
-  private func content(_ map: Resource<ChapterMindMap>) -> some View {
+  private func content(_ map: Resource<ChapterMindMap>, goalId: String) -> some View {
     switch map.state {
     case .loaded(let value):
       let url = value.image.flatMap { URL(string: $0.url) }
@@ -53,7 +53,7 @@ struct MindMapScreen: View {
           ZoomableRemoteImage(url: url, title: value.title)
             .ignoresSafeArea(edges: .bottom)
         } else if let outline = value.outline {
-          MindMapOutlineView(outline: outline)
+          MindMapOutlineView(outline: outline) { EmptyView() }
         } else {
           ContentUnavailableView {
             Label {
@@ -67,7 +67,17 @@ struct MindMapScreen: View {
           .lonePage()
         }
       }
+      .mindMapSaveFailureAlert(goalId: goalId)
       .toolbar {
+        if value.status == .ready {
+          ToolbarItem(placement: .primaryAction) {
+            MindMapSaveButton(
+              target: SaveTarget(
+                key: MindMapKey(kind: .chapter, targetId: value.chapterId), title: value.title,
+                chapterId: value.chapterId), goalId: goalId, server: value.saved)
+          }
+        }
+
         if url != nil, value.outline != nil {
           ToolbarItem(placement: .primaryAction) {
             Toggle(isOn: $showsOutline) {
@@ -106,11 +116,15 @@ struct MindMapScreen: View {
   }
 }
 
-private struct MindMapOutlineView: View {
+/// A map's outline in words, with `leading` (the reader's picture) before it in the same scroll.
+struct MindMapOutlineView<Leading: View>: View {
   let outline: ChapterMindMap.Outline
+  @ViewBuilder var leading: Leading
 
   var body: some View {
     ZoonkList {
+      leading
+
       Section {
         Text(outline.centralIdea)
           .typeStyle(.body.weight(.semibold))
@@ -144,7 +158,7 @@ private struct MindMapOutlineView: View {
   }
 }
 
-private struct ZoomableRemoteImage: View {
+struct ZoomableRemoteImage: View {
   @State private var image: UIImage?
   @State private var failed = false
 
