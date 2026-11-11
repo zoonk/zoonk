@@ -38,36 +38,28 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const opened = useRef(false);
   const asideShown = useTaskAsideShown();
   const exists = !stopped && !asideShown && hasRewardsBeyondBrainPower(summary);
+  const shown = exists && open;
 
   const close = () => {
     setLeft((steps) => ({ ...steps, rewards: true }));
     setOpen(false);
   };
 
-  useKeyboardCallback("ArrowLeft", () => (exists && open ? close() : false), {
-    mode: "none",
-    screen: true,
-  });
+  useKeyboardCallback("ArrowLeft", () => (shown ? close() : false), { mode: "none", screen: true });
 
   useEffect(() => {
-    if (opened.current || open) {
+    if (opened.current || shown) {
       opened.current = true;
       focusStepTitle(stepRef.current);
     }
-  }, [open, stepRef]);
+  }, [shown, stepRef]);
 
   const show = () => {
     setLeft((steps) => ({ ...steps, done: true }));
     setOpen(true);
   };
 
-  return {
-    close,
-    exists,
-    open: exists && open,
-    revisited: exists && open ? left.rewards : left.done,
-    show,
-  };
+  return { close, exists, open: shown, revisited: shown ? left.rewards : left.done, show };
 }
 
 function SummaryButtons({

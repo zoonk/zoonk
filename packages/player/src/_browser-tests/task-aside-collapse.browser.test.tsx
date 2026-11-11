@@ -4,7 +4,8 @@ import { SessionSummary } from "@zoonk/learn/session/summary";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { render } from "../_test-utils/render";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { stubTutorApi } from "../_test-utils/tutor-api";
@@ -109,6 +110,10 @@ function renderSessionSummary() {
   );
 }
 
+function stepTitle() {
+  return document.querySelector('[data-slot="steps-step"] [data-slot="step-title"]');
+}
+
 function shownStreaks(): number {
   return [...document.querySelectorAll("span")].filter(
     (span) => span.textContent === "4 right in a row" && span.checkVisibility(),
@@ -201,5 +206,20 @@ describe("collapsing a task's sidebar", () => {
 
     await expect.element(page.getByRole("complementary", { name: "Earned today" })).toBeVisible();
     await expect.poll(shownStreaks).toBe(1);
+  });
+
+  it("keeps focus on the session summary's heading when a wider window brings the sidebar back", async () => {
+    await atViewport({ height: 720, width: 900 }, async () => {
+      renderSessionSummary();
+      await userEvent.keyboard("{Enter}");
+      await expect.poll(shownStreaks).toBe(1);
+      expect(document.activeElement).toBe(stepTitle());
+
+      await page.viewport(1280, 720);
+
+      await expect.poll(() => document.querySelector('[data-slot="step-dots"]')).toBeNull();
+      await expect.poll(shownStreaks).toBe(1);
+      await expect.poll(() => document.activeElement === stepTitle()).toBe(true);
+    });
   });
 });
