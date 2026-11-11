@@ -4,7 +4,7 @@ description: Create or update problem-focused Zoonk GitHub issues, their type, p
 license: MIT
 metadata:
   author: zoonk
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # GitHub issues
@@ -60,7 +60,7 @@ Give every new issue one of the organization's issue types: `gh issue create --t
 
 ## Priority
 
-Give every new issue a priority from its severity in GitHub's Priority issue field, not in a label or the body. Severity is the harm the problem does today, judged from what you verified: how many learners it reaches, how badly, and whether they can get around it. How hard the fix is doesn't change it.
+Give every new issue a priority from its severity in GitHub's Priority issue field, not in a label or the body. Severity is the harm the problem does today, judged from what you verified: how many learners it reaches, how badly, and whether they can get around it. How hard the fix is doesn't change it, but what the fix must change can raise it (below).
 
 | Priority    | Severity                                                                                                                                                                 |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -69,7 +69,9 @@ Give every new issue a priority from its severity in GitHub's Priority issue fie
 | Medium (P2) | A problem learners can get around, a failure in a less-used flow, or UX that confuses or slows them down.                                                                |
 | Low (P3)    | Cosmetic issues, rare edge cases, developer tooling and tests, and follow-ups such as removing a workaround once a dependency ships.                                     |
 
-When an issue sits between two levels, pick the lower one; priorities that drift up stop meaning anything. Set it right after creating the issue, with a rationale under 280 characters saying who it affects and how badly. Look up the field and option IDs, then set the value:
+An issue whose fix changes an AI prompt, the database schema or how course content is generated, or makes content we already generated get regenerated, edited or reset, is at least High, whatever its severity. Every day it waits, more content is generated the old way and more learners study it, so its migration and regeneration keep growing.
+
+When an issue sits between two levels, pick the lower one; priorities that drift up stop meaning anything. Set it right after creating the issue, with a rationale under 280 characters saying who it affects and how badly, or which of those changes its fix needs. Look up the field and option IDs, then set the value:
 
 ```sh
 gh api graphql -f query='{ organization(login: "zoonk") { issueFields(first: 20) { nodes { ... on IssueFieldSingleSelect { id name options { id name } } } } } }' \
@@ -84,7 +86,7 @@ gh api graphql -f query='
   -f fieldId=<field id> -f optionId=<option id> -f rationale="<who it affects and how badly>"
 ```
 
-When updating an issue, change its priority only when what you learned changes its severity.
+When updating an issue, change its priority only when what you learned changes its severity or shows its fix needs one of the changes above.
 
 ## Labels
 

@@ -107,11 +107,11 @@ describe("Today's pattern card", () => {
     },
   );
 
-  it("keeps the drill's entry when another goal's earned bonus hides these mission rows", async () => {
-    const { goal, pattern, user } = await setup("same");
+  it("does not repeat the drill when another goal earned its own missions bonus", async () => {
+    const { goal, user } = await setup("same");
     const otherGoal = await goalFixture({ userId: user.id });
     await studySessionFixture({ fullMealAt: new Date(), goalId: otherGoal.id, userId: user.id });
-    await expect(readTodayPattern(goal.id)).resolves.toMatchObject({ id: pattern.id });
+    await expect(readTodayPattern(goal.id)).resolves.toBeNull();
   });
 
   it("keeps a suggestion for a different pattern", async () => {

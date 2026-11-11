@@ -41,6 +41,7 @@
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
   "session_lessons_deferred": "dfed8ada294ef6b08f3d93cdeb6daf75e1c6d3dbb99f0d896b47c259437699f4",
   "session_level_up": "103aaec73ea808e508820a536e7a91945b02c0f7dd52e0a966b19af43d8b59cc",
+  "session_next_continue": "dd797e6439ba7fbad564cbdd266684dba4e0ea9681d4727e2b1852815ce24974",
   "session_next_eyebrow": "85d4f662cf5696db68110c59f47ee87fe590679824969d65fa8694d5563bc326",
   "session_next_instead": "656d26b0d6d095fe89bc9ae59f053f090d58eeede384c457635b12aaa0e183fd",
   "session_next_lesson_ready": "7a01d4ec2b9d495db83acd08b9257b7aee015cf4a62988295b67966c1c4a9c81",
@@ -52,6 +53,16 @@
   "session_no_catch_up_left": "51394b3fbf9f8feb98b45fbb4c8d6d5335b84888b48314b6341cc4d8327fba46",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
+  "session_review_intro_first_week": "700941929601f24413421e173187bac69adcbab4db7299acfc52a48faf7b9faa",
+  "session_review_intro_forget": "0182efdb85ad55b1ed7576dac2a89102ac3d9f99feb6425273ae1524e2f02ad3",
+  "session_review_intro_forget_title": "8a5a900009f4c377a2873bb2984b8daa96ae719fe95c97469369001a246098e8",
+  "session_review_intro_short": "1fab07d319ea8b038e35613314ac221e5a16812a64323fd1d39f16d916759aa1",
+  "session_review_intro_short_title": "e352ea76cfbcc29d478abe5b843f19a8fc6ae89ee66293c7db3e000703b6a898",
+  "session_review_intro_spacing": "879c9edb01644e490bd546c31439098a2d755c50b624901bb1b9700ba16160f5",
+  "session_review_intro_spacing_title": "5382393b4b4a75d8e9373ae6a1f34e4a794b15a1f9a3c78de631cd31d32ae856",
+  "session_review_intro_title": "c443c8655d5dc62553b37da7dfcf23bad50ea00345adaac64eab10384e1e54e9",
+  "session_review_intro_weakest": "73df201fb1650d57451e784a25bfe2620f258d3aed45cdfadffeff28314ace21",
+  "session_review_intro_weakest_title": "a06c551af3ea9676341bc8a97c96173b6711731a8af4391694c565007ff47a80",
   "session_summary_back_on": "7dd438ecebf23d1dbfd1c66c195cf8aac7690d3c5399ddeb60013b234b40460c",
   "session_summary_brain_power": "6443ff68d21a1da19547ce8f3b6a48319ba12471d5f6519d7e3067eb9c8bf10d",
   "session_summary_buddy_happy": "696fe993fb0c6d397ee892703f736ff6423cf8bd96622972b519d712b91d9819",
@@ -202,6 +213,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Als Nächstes</string>
     <string name="session_next_start">Starten</string>
+    <string name="session_next_continue">Weiter</string>
+    <string name="session_review_intro_title">So funktionieren Wiederholungen</string>
+    <string name="session_review_intro_forget_title">Kurz bevor du es vergisst</string>
+    <string name="session_review_intro_forget">Alles, was du lernst, kommt wieder dran, kurz bevor du anfängst, es zu vergessen.</string>
+    <string name="session_review_intro_spacing_title">Richtig beantwortet, später wiederholt</string>
+    <string name="session_review_intro_spacing">Antwortest du richtig, kommt der Inhalt nach Tagen, dann nach Wochen, dann nach Monaten wieder dran. Bei einer falschen Antwort kommt er früher wieder.</string>
+    <string name="session_review_intro_short_title">Am Anfang und immer kurz</string>
+    <string name="session_review_intro_short">Wiederholungen stehen am Anfang deiner Lerneinheit und nehmen nur einen kleinen Teil davon ein, auch nach mehreren Tagen Pause.</string>
+    <string name="session_review_intro_weakest_title">Deine schwierigsten Themen heute</string>
+    <string name="session_review_intro_weakest">Du hast noch alles gut im Gedächtnis. Deshalb übst du, was dir bisher am schwersten gefallen ist.</string>
+    <string name="session_review_intro_first_week">Ein paar kurze Fragen, um zu prüfen, was du schon weißt.</string>
     <string name="session_next_writing_note">Wir erstellen diese Lektion für dich. Sie ist normalerweise in ein paar Minuten fertig.</string>
     <string name="session_next_lesson_ready">Deine Lektion ist bereit.</string>
     <string name="session_next_stop">Für heute aufhören</string>

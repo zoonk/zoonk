@@ -41,6 +41,7 @@
   "session_energy_max": "2989a6614b8b626ed9361defeab1a1000ea2f5c7d0f39bdd2ebcd9ead6a793c9",
   "session_lessons_deferred": "2e9384f9309d1a11fdb57f78cdb3e6c423145aa787e22cc78248db13f21404ba",
   "session_level_up": "b11c966a1fdc28af53818eab0d694f37c1588a9fd51f2b125d779ef61060f9ba",
+  "session_next_continue": "a5308726d6243d7d6f89b34ee3b7d858381eef6f42d2a9fe91bf4306cf5a2e5f",
   "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
   "session_next_instead": "89da6d38cac031e901f6d8a03efb8d0df0f2101e97fe38b321f4b5580395ace6",
   "session_next_lesson_ready": "33fbd98216ad37d4342ee22ed126450634a737040aaf70c5931b2046d030c2ce",
@@ -52,6 +53,16 @@
   "session_no_catch_up_left": "857f93d74c490b92542ddc166293bbfed79ca3e33aeb207b04a88bdbe9abc038",
   "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
   "session_opening_very_slow": "db62f4bf88f9522ac8b876b8e0216011ec76fe72fedf55ecaf41a4fe72ee77e2",
+  "session_review_intro_first_week": "2de7654d1f7efb1893eeb489203652a67ca9408984d43d73d4f1146d720ed3dd",
+  "session_review_intro_forget": "ccb7a2ba0ae2603614969d911211431a53a6a6457ed56928724a72e0c7aa64b2",
+  "session_review_intro_forget_title": "20dbb9693ed11e86b8aaa5583bd004b5b74077677c6a9c0f5a3d619b469199d6",
+  "session_review_intro_short": "2abd16673853c87524f5e6547cc96b56f98ea8a837f4ceece61105f06e74beff",
+  "session_review_intro_short_title": "511c3096d655a3764f5bf89faab9d56a0be12a957a2a47b8e708dfa3687401bf",
+  "session_review_intro_spacing": "7a8e107603980d23f4e6d6881fa28fcfae31b7365a93606f00ac97ce93c4fc29",
+  "session_review_intro_spacing_title": "1f93bb08ab3d1b6893cf87b48177beb016de7d4f02aeefe68285be12f01bf0ec",
+  "session_review_intro_title": "3493ccc3bbe7d31c91d15c5c5b8f57a63e3e06d4c93cdf6bd9650c8d9ee10da8",
+  "session_review_intro_weakest": "f4b371c5ec018cc70ab75c6cdb12ee5f318ecbc518e87e09475c64df39fe03a0",
+  "session_review_intro_weakest_title": "0ba791eaebf8346c3c8411ae46c69bbd7fdd89ad96872820635a77b223fe9dd9",
   "session_summary_back_on": "12006d67abedff1315b90191483ca472da61f984982a6ecc069ae33c2829b986",
   "session_summary_brain_power": "89f7f72963b04922627746a0202c96a5f0726b72364869e0c3b9707063fac26d",
   "session_summary_buddy_happy": "fcdc5ef09af23f6add015dbe503c9c53cf7d69ee73ee531663ef016fbaac401d",
@@ -192,6 +203,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">다음 단계</string>
     <string name="session_next_start">시작하기</string>
+    <string name="session_next_continue">계속하기</string>
+    <string name="session_review_intro_title">복습 진행 방식</string>
+    <string name="session_review_intro_forget_title">잊기 바로 전에</string>
+    <string name="session_review_intro_forget">공부한 내용은 잊기 직전에 다시 나와요.</string>
+    <string name="session_review_intro_spacing_title">맞히면 길어지는 복습 간격</string>
+    <string name="session_review_intro_spacing">맞히면 복습 간격이 며칠에서 몇 주, 몇 달로 늘어나요. 틀리면 더 빨리 다시 나와요.</string>
+    <string name="session_review_intro_short_title">맨 먼저, 언제나 짧게</string>
+    <string name="session_review_intro_short">며칠 쉬었다 와도 학습은 짧은 복습으로 시작해요.</string>
+    <string name="session_review_intro_weakest_title">오늘 가장 어려운 주제</string>
+    <string name="session_review_intro_weakest">아직 기억이 흐려질 만한 내용이 없어서 가장 어려웠던 내용을 연습해요.</string>
+    <string name="session_review_intro_first_week">짧은 문제 몇 개로 이미 아는 내용을 확인해요.</string>
     <string name="session_next_writing_note">맞춤 레슨을 만들고 있어요. 보통 몇 분이면 준비돼요.</string>
     <string name="session_next_lesson_ready">레슨이 준비됐어요.</string>
     <string name="session_next_stop">오늘 학습 마치기</string>

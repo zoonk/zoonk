@@ -1,0 +1,157 @@
+{
+  "modelId": "meta/muse-ember",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1440,
+          "outputTokens": 183,
+          "reasoningTokens": 126
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"es\"; translations for en, pt, fr and de.\n- Each says a minimum of 30 points in Group 1 and 30 points in Group 2 (\"Grupo 1\" becomes that language's word for group), and keeps the official grade \"Apto\" in quotation marks after its translation (Portuguese \"Aprovado\", English \"Pass\").",
+        "id": "es-dele-b2-groups-1",
+        "userInput": {
+          "languages": [
+            "en",
+            "es",
+            "pt",
+            "fr",
+            "de",
+            "it",
+            "ja",
+            "ko",
+            "tr",
+            "pl"
+          ],
+          "texts": [
+            "Apto con un mínimo de 30 puntos en el Grupo 1 y 30 puntos en el Grupo 2."
+          ]
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1555,
+          "outputTokens": 527,
+          "reasoningTokens": 285
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Every translation adds the parenthetical Portuguese label (\"Aprovado\"), which the source does not contain. This introduces explanatory material contrary to the requirement to translate only what the line says. Otherwise, the language identification, passing threshold, and numerical values are correct.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several translations are unnatural sentence fragments. English \"Pass ... for anyone,\" French \"Réussi ... quiconque,\" and German \"Bestanden ... für alle\" should directly state who passes. Polish \"Zdany ... jest osoba\" also has incorrect agreement and predicate construction. These issues weaken readability despite preserving the intended threshold.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Localize percentage typography without changing the value: use conventional spacing before % in French and German, and write %50 rather than 50% in Turkish.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"pt\"; translations for en, es, fr and de.\n- Each says candidates pass the objective test with at least 50% right answers, that is a score of 40.00 points or more (the decimal written as that language writes it).",
+        "id": "pt-oab-objective-1",
+        "userInput": {
+          "languages": [
+            "en",
+            "es",
+            "pt",
+            "fr",
+            "de",
+            "it",
+            "ja",
+            "ko",
+            "tr",
+            "pl"
+          ],
+          "texts": [
+            "Aprovado na prova objetiva quem obtiver no mínimo 50% de acertos, ou seja, nota igual ou superior a 40,00 pontos."
+          ]
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1660,
+          "outputTokens": 351,
+          "reasoningTokens": 147
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The Japanese translation switches from polite style in the first line (必要です) to plain style in the second (ならない). This is a minor consistency issue. Otherwise, all requested languages have both lines, preserve the numerical requirements, and identify the four skills clearly without adding advice or promises.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The German second line would read more naturally with 'in jedem der Bereiche Lesen, Hören, Schreiben und Sprechen' instead of 'in jedem Bereich Lesen, Hören, Schreiben und Sprechen'. The existing wording remains understandable and preserves the requirement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"en\"; translations for es, pt, fr and de, each with both lines.\n- The first line keeps 60 of the 100 points; the second keeps the minimum of 20 points in each of the four tests, and keeps \"Reading\", \"Listening\", \"Writing\" and \"Speaking\" understandable (translated or kept as names).",
+        "id": "en-two-pass-marks-1",
+        "userInput": {
+          "languages": [
+            "en",
+            "es",
+            "pt",
+            "fr",
+            "de",
+            "it",
+            "ja",
+            "ko",
+            "tr",
+            "pl"
+          ],
+          "texts": [
+            "To pass, candidates need at least 60 of the 100 points.",
+            "Candidates must also score at least 20 points in each of Reading, Listening, Writing and Speaking."
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "translate-pass-marks"
+}

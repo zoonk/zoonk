@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -21,7 +21,11 @@ import { loadMissionMoment } from "./mission-moment";
 async function learner() {
   const user = await userFixture();
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-  await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+  await Promise.all([
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    planFixture({ goalId: goal.id }),
+  ]);
 
   const session = await studySessionFixture({
     goalId: goal.id,

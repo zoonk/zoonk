@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -165,20 +166,84 @@ private fun DayCell(
             else -> stringResource(R.string.today_week_challenge_day, weekday, challengeDayName(challenge), status)
         }
 
-    Column(
-        modifier = modifier.heightIn(min = 48.dp).clearAndSetSemantics { contentDescription = description },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        DayRing(day, weekDate) {
-            if (challenge != null && day.share == 0f) KindMark(challenge.kind())
+    TodayPopover(
+        title = weekday,
+        facts = dayTime(day),
+        note = dayNote(day, weekDate, status),
+        modifier = modifier,
+        footer = { if (challenge != null) ChallengeLine(challenge) },
+    ) { open ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
+                    .then(open)
+                    .clearAndSetSemantics { contentDescription = description }
+                    .heightIn(min = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            DayRing(day, weekDate) {
+                if (challenge != null && day.share == 0f) KindMark(challenge.kind())
+            }
+            Text(
+                text = names.narrow.getValue(dayOfWeek),
+                color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = if (day.isToday) FontWeight.Medium else null,
+                style = MaterialTheme.typography.labelSmall,
+            )
         }
-        Text(
-            text = names.narrow.getValue(dayOfWeek),
-            color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = if (day.isToday) FontWeight.Medium else null,
-            style = MaterialTheme.typography.labelSmall,
-        )
+    }
+}
+
+/** The day's time studied against its plan, or its plan while nothing is studied. */
+@Composable
+private fun dayTime(day: WeekDay): String? {
+    val locale = currentLocale()
+
+    return when {
+        day.minutes > 0 && day.goalMinutes > 0 -> {
+            stringResource(
+                R.string.today_week_day_studied_of,
+                formatMinutes(day.minutes.toInt(), locale),
+                formatMinutes(day.goalMinutes, locale),
+            )
+        }
+
+        day.minutes > 0 -> {
+            stringResource(R.string.today_time_studied, formatMinutes(day.minutes.toInt(), locale))
+        }
+
+        day.goalMinutes > 0 -> {
+            stringResource(R.string.today_week_day_planned, formatMinutes(day.goalMinutes, locale))
+        }
+
+        else -> {
+            null
+        }
+    }
+}
+
+/** The day's status, only where its time doesn't already say it. */
+@Composable
+private fun dayNote(
+    day: WeekDay,
+    weekDate: LocalDate,
+    status: String,
+): String? {
+    val locale = currentLocale()
+    val saidByTime = !day.hitGoal && (day.studied || (day.kind == StudySessionWeekDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
+
+    return if (saidByTime) null else status.replaceFirstChar { it.titlecase(locale) }
+}
+
+@Composable
+private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        KindMark(challenge.kind())
+        val locale = currentLocale()
+        Text(challengeDayName(challenge).replaceFirstChar { it.titlecase(locale) })
     }
 }
 

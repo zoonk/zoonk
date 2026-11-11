@@ -71,7 +71,8 @@ fun dayParts(
 /**
  * Today's session as one equal part per block, so the bar, the count and the percent agree. [held]
  * adds a part for time the day keeps for lessons not on the list yet, so the bar never looks full
- * while it waits for them. The done part whose block is [fillingId] fills in from empty.
+ * while it waits for them. The done part whose block is [fillingId] fills in from empty. [segment]
+ * lays a control over each part, the held one last, as `MeterParts` does.
  */
 @Composable
 fun DayProgress(
@@ -80,6 +81,7 @@ fun DayProgress(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     fillingId: UUID? = null,
+    segment: (@Composable (index: Int) -> Unit)? = null,
 ) {
     val filling = remember { Animatable(if (fillingId == null) 1f else 0f) }
     LaunchedEffect(fillingId) {
@@ -97,7 +99,12 @@ fun DayProgress(
             }
         }
 
-    MeterParts(fills.map { MeterPart(it) } + listOfNotNull(MeterPart(MeterPart.Fill.Track).takeIf { held }), modifier, contentDescription)
+    MeterParts(
+        fills.map { MeterPart(it) } + listOfNotNull(MeterPart(MeterPart.Fill.Track).takeIf { held }),
+        modifier,
+        contentDescription,
+        segment,
+    )
 }
 
 /** A day of one part draws no meter: the words already say "1 of 1". */

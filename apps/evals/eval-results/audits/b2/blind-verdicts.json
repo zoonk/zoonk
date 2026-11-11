@@ -1,0 +1,272 @@
+[
+  {
+    "id": "93829d2b-972b-4a26-88f1-60345b924257",
+    "task": "image-scene",
+    "case": "electron-cloud-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "Both plan a dot cloud densest at the nucleus, fading outward, with the labels 'núcleo' and 'nuvem eletrônica' in Portuguese and no orbit path. A gives colors (blue dots, red nucleus), which reads faster. B puts the nucleus inside the focal object and says 'no single orbit path', which matches the screen text 'não gira como um planeta'. Neither has an error, and the gains cancel out."
+  },
+  {
+    "id": "0d8681bc-dd3a-44f0-8d4e-fe0eeba287b6",
+    "task": "image-scene",
+    "case": "language-house-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "A",
+    "reason": "TEXT_ALLOWED is no, and both return empty labels. A's sign carries a key icon, so the picture still says 'for rent' without words. B's sign is a blank board, so a learner can't tell that the house is for rent, which is the screen's idea ('Se alquila')."
+  },
+  {
+    "id": "68db609a-209b-4f23-9c90-bae606a47de7",
+    "task": "image-scene",
+    "case": "discount-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "Both use exactly $80 and $60. B is a clear before-and-after: the jacket at $80, an arrow labeled '25% off', then the same jacket at $60. A puts three labels ($80, -25%, $60) on one small tag, against the rule about several small labels inside the scene. It also places '$80' 'above the strike-through line', so the old price may not appear crossed out."
+  },
+  {
+    "id": "5e434f05-3d8f-4026-9c91-f1ad248b4a6b",
+    "task": "past-questions",
+    "case": "en-algebra-one-regents-june-2025-full-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna",
+    "winner": "tie",
+    "reason": "Both pick the right questions (3, 4 and 7, skills 1/2/3) with the right keys: Dylan's 5% growth; Andrea's mean 85.75 > Joe's 82.5 while Joe's SD is higher; (60-12)/(12-4) = 6. Both leave out the garbled questions 14 and 16 and the box-plot question 12. A's question 3 is better: it gives the x1.05 step, and its misconceptions differ by option, while B repeats the same misconception on three options. B's 58 option is better: it names a concrete slip (60 − 2, using a time value as h), while A falls back to 'would need a 464-inch increase'. Overall the two are even."
+  },
+  {
+    "id": "db5e1866-6bc2-40a5-bc56-c4823cb01a8d",
+    "task": "image-scene",
+    "case": "rule-of-three-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "Both are a comparison of a smaller and a larger rice bag with the exact labels 2 kg / R$ 10 and 3 kg / R$ 15. They are nearly identical. A describes the sacks by material ('cloth sack'), which the instructions forbid ('never by material'). B describes them only by size and position, so B wins by a small margin."
+  },
+  {
+    "id": "3c37ad12-2115-4169-81c6-7c0176f8c20c",
+    "task": "extract-question-formats",
+    "case": "pt-camara-2026-registro-redacao-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "tie",
+    "reason": "I checked both against the edital. Both are correct: CERTO/ERRADO items quoting 8.2, 90 items per objective test (the table row 'Prova objetiva (P1) Conhecimentos básicos 90 … (P2) Conhecimentos específicos 90'), and the two Registro e Redação essays from 9.1 a) and b), which apply to Cargo 11. A's per='paper' is the better unit, but its countPassage cites only P1. B's countPassage covers both P1 and P2, but it uses per='subject'. Neither error is material."
+  },
+  {
+    "id": "61da56df-3d22-437e-8585-2df4a3b8df85",
+    "task": "image-scene",
+    "case": "one-place-not-two-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "A",
+    "reason": "Both are a single scene at work with the toolbox beside Igor, as the ALT says. A shows the envelope being handed over by a coworker, which carries REQUEST's 'de outra pessoa' and makes 'receives' drawable. B only has Igor holding an envelope, so the act of receiving salary is less clear. Neither adds anything the ALT contradicts."
+  },
+  {
+    "id": "ab75a7a9-5763-4502-aaf6-06b32fc337b3",
+    "task": "extract-question-formats",
+    "case": "pt-oab-48-1a-fase-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "I checked both against the OAB edital. Both are identical in substance: 3.4.1.4 (multiple choice, four options A–D, one answer) and 3.4.1 (80 questions, per exam). They only differ in whether the clause numbers are kept in the quote, and both quotes are exact."
+  },
+  {
+    "id": "b3ddbead-74d7-4cb2-8dac-0575704990e7",
+    "task": "image-scene",
+    "case": "microwave-en-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "A",
+    "reason": "The screen text says 'millions of times… That motion is heat'. A shows a group of molecules spinning back and forth, the incoming microwaves, and heat lines labeled 'heat', so the cause and its effect are both visible. B shows one molecule rotating in a sine wave with no heat at all, so the learner misses the second half of the idea."
+  },
+  {
+    "id": "dbb930b0-203f-43be-b67f-7656a122ff0c",
+    "task": "image-scene",
+    "case": "alt-names-two-moments-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "Both use a comparison of the two moments, with no labels. The ALT says 'à noite, ele anota a venda num caderno em casa'. B keeps 'at home', but A turns it into a generic 'desk scene', which drops a place the ALT names (the instructions say never drop one). A's sun and moon icons are a nice cue for the time of day, but ALT fidelity decides it."
+  },
+  {
+    "id": "2405b858-09a9-4751-bc38-0610fd85eed3",
+    "task": "extract-question-formats",
+    "case": "en-jee-choice-everywhere-numeric-section-b-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "tie",
+    "reason": "Both are identical: multiple choice everywhere with 4 options and a single answer, plus Section B numeric with an integer entry. Both quote the source exactly. Only the descriptions' wording differs."
+  },
+  {
+    "id": "f6e68c9b-c068-4f9d-9958-f0e9beb73aeb",
+    "task": "image-scene",
+    "case": "two-scenes-to-compare-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "A",
+    "reason": "Both are a comparison labeled only 1 and 2, with an adult woman and the same red box. A adds a down arrow into the box in scene 1 and an up arrow out of it in scene 2. In a still image, placing and taking out look almost the same, so A's arrows make the action the question depends on readable without giving away the answer. B's scenes risk looking identical."
+  },
+  {
+    "id": "1324de5b-51b9-4100-879f-9066ce3deadd",
+    "task": "extract-question-formats",
+    "case": "en-gre-general-test-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "A",
+    "reason": "A covers more of the required formats. It has the Quantitative Comparison format (4 options, Quantitative), which B misses entirely. It also has single-answer MC, select-2 with 6 options in Verbal, select-all, Verbal column blanks with select null, and Quantitative numeric with fraction entry, with 7/7 passages found. B has only 5/6 passages found. It sets partialCredit 'allOrNothing' on the column format even though select is null, which the rules forbid. It gives that format options 3, but the one-blank rule implies 5. A's flaws are smaller: its essay quote is a timing line ('You have 30 minutes…'), and it leaves markingPassage null even though its allOrNothing comes from 'In either case, to receive credit you must mark all…'."
+  },
+  {
+    "id": "527d8933-b863-4ca2-8b70-95f5567fac65",
+    "task": "extract-question-formats",
+    "case": "en-valid-mixed-known-and-unknown-scope-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "Both are identical: Paper 1 multiple choice with 4 options, plus an essay with no section, because the source says the paper isn't stated. They differ only in the wording 'Essay question.' vs 'An essay.'"
+  },
+  {
+    "id": "9c895e90-d7b2-4a35-841e-77c836c67203",
+    "task": "past-questions",
+    "case": "pt-enem-style-percentages-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "A's question 144 is unanswerable. Its question is only 'O aumento percentual no preço foi de' with context null, so it drops the printed sentence 'Um produto que custava R$ 250,00 passou a custar R$ 300,00.' and with it the numbers the learner needs. B copies the full stem. B also turns the paper's line breaks into spaces, as instructed, while A keeps \\n. Both have the right keys (141 B, 144 C) and good reasons. B's 50% misconception ('confusing R$ 50 with 50%') is more plausible than A's 'dividing by R$ 100'."
+  },
+  {
+    "id": "f8d0ddf1-8f60-4dd4-9258-08a0c3c0537b",
+    "task": "past-questions",
+    "case": "pt-cebraspe-style-principios-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "Both judge the items correctly: 41 C (impessoalidade), 42 E (legalidade for the administration means acting only as the law allows), 43 C (publicity is a condition of efficacy). Both correctly drop 44, which depends on a figure. B attaches the shared support text 'Texto para os itens de 41 a 44' to every item. A gives it only on 41 and sets null on 42 and 43. B's legal reasons are fuller, and both are accurate."
+  },
+  {
+    "id": "7a1bddf2-10d6-422c-924a-b045354accd3",
+    "task": "extract-question-formats",
+    "case": "pt-class-notes-in-passing-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "tie",
+    "reason": "Both are identical: shortAnswer (label the climate map) and essay (a text on the semi-arid drought), each from the same exact sentence. B's description adds 'do Brasil', which the notes' title supports. That's a negligible difference."
+  },
+  {
+    "id": "4dab7b58-2dd9-4359-822f-47311a3b1b7f",
+    "task": "extract-question-formats",
+    "case": "en-jee-advanced-2026-paper-1-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "B",
+    "reason": "Both list the same four formats with correct options and counts. The difference is the multi-correct marking, which I checked in the source paper: +4 for all, +3, +2 or +1 for 3, 2 or 1 correct picks, and −1 otherwise. That is +1 per right pick, full marks for all, and a loss for any wrong pick, which is exactly 'perOption' (the instructions' own example). B says perOption. A says 'perRightPick', which is wrong, since the score is not a share of the marks. B also copies the countPassage lines exactly from the paper."
+  },
+  {
+    "id": "4356acac-fbcd-4fbe-99f9-8f8113ceea13",
+    "task": "past-questions",
+    "case": "pt-enem-2023-full-day-2-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna",
+    "winner": "A",
+    "reason": "The paper has no answer key, so the models had to solve it. Every A key is correct: 137 C 3 250; 138 C 64, from 0.2·4/(16+x) ≤ 0.01; 143 B 11; 150 A; 160 A, since 68·67·66·65 > 52·51·50·10·6 > 52·51·10·9·6·5; 167 A 5.17%; 180 C. B has three wrong keys. On 138 it marks 80, using 4/(4+x) and ignoring the 12 white balls already in urn B. On 158 it marks 2 (official D, 4 helpers: 4.8·600 − 900 − 1000 = 980), because it misreads 'a partir do segundo… aumenta-se em 100 kg' as the second helper adding 200 kg. On 160 it marks 'tipo II', falsely claiming type II has more combinations than type I. B's 137 reason for 2 500 also wrongly calls it 'média simples' (that's 4 500). A's flaws: it leaves the glued words unspaced, its 137 context carries stray layout text ('6 cm QUESTÃO 137'), it drops the options' final periods, and its 117 is a Ciências da Natureza question (its key, 8, is correct). These are minor next to B's wrong answers."
+  },
+  {
+    "id": "87c34f3a-5893-4e7c-abda-f778137bd3ce",
+    "task": "past-questions",
+    "case": "en-clerical-exam-money-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember",
+    "winner": "A",
+    "reason": "Both pick 12 (B, $666.00) and 14 (B, $26.35), leave out 13 (it needs a table), and trace every distractor correctly: 18.50+36, ×37, ×40; 4.25+6.80, 2×11.05, pens only. A's correct-option reasons show the arithmetic ('$18.50 × 36 = $666.00'; '$12.75 + $13.60 = $26.35'). B's only restate the method ('which gives the total pay'), which the instructions say not to do."
+  },
+  {
+    "id": "f52f4273-0a17-4f21-8999-7ff40bba76f7",
+    "task": "image-scene",
+    "case": "printing-press-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "A",
+    "reason": "CONTEXT is The Renaissance. A specifies a screw press with a lever handle and a sliding bed, so the press reads as a period one. B's 'large printing press with a printed sheet passing through it' gives no era and could easily be drawn as a modern sheet-fed or rotary press. A has one small inaccuracy: it puts an 'inked plate' on the bed where Renaissance presses inked locked movable type. Both pair the press with a stack of identical books, and neither shows the scribe."
+  },
+  {
+    "id": "c3f087bc-b49b-4d9b-bf06-98e41ef2bbf9",
+    "task": "image-scene",
+    "case": "syntax-tree-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "Both draw S branching into NP and VP, with 'the cat' under NP and 'slept' under VP, and all five labels match SCREEN_TEXT. B also draws lines down to the word nodes, while A only places the words below the phrase nodes. Neither is wrong."
+  },
+  {
+    "id": "b60fccc6-b038-4fd3-a05d-9038963077e6",
+    "task": "image-scene",
+    "case": "paintings-comparison-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "Both use a comparison with labels 1 and 2 only and never write the answer ('barroca'). Painting 1 is calm, symmetrical and softly lit, and painting 2 has a strong diagonal with hard light against deep shadow, matching REQUEST in both. Neither has a factual error."
+  },
+  {
+    "id": "3e76e55e-7ebc-494f-b31f-8330ce1bbf24",
+    "task": "image-scene",
+    "case": "question-cell-diagram-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "tie",
+    "reason": "Both put A on the thick outer border, B on the large clear central region and C on a small green oval, and neither names a structure, so the vacuole question stays answerable without giving the answer away. A adds a nucleus and cytoplasm, which the rules allow in a fuller drawing, and its 'rigid' is a non-visual word. B follows REQUEST literally. Neither has an error that matters."
+  },
+  {
+    "id": "12a9bfad-9db3-4934-b3c3-dc2a486fc950",
+    "task": "image-scene",
+    "case": "hand-cut-microbes-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "ALT says 'Mão com um pequeno corte na pele', but A replaces the hand with a skin cross section, dropping the object ALT names. The rules forbid dropping one. B keeps the adult man's hand, the small cut and the rod-shaped and spherical microbes entering it."
+  },
+  {
+    "id": "28f21e19-82d5-4b29-8af6-60fd947136b4",
+    "task": "image-scene",
+    "case": "lever-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember",
+    "winner": "B",
+    "reason": "A's relation says the fulcrum sits 'beneath a heavy gray boulder', which can be drawn with the fulcrum right under the rock and no lever action. A also never shows the rock lifting, though REQUEST says 'lifting a heavy rock'. It uses two arrows where the rules allow one, and names a material ('wooden'). B puts the fulcrum close to the rock, shows the rock rising as the far end goes down with one arrow, and labels load, fulcrum and effort."
+  },
+  {
+    "id": "a4fec070-9f50-4f5b-a2fd-1c16d7436d38",
+    "task": "image-scene",
+    "case": "brain-lobes-en-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "tie",
+    "reason": "Both draw a side-view brain with four colored lobes and label frontal (front), parietal (top), temporal (lower side) and occipital (back), as SCREEN_TEXT places them. B also says which way the brain faces. Neither has an error."
+  },
+  {
+    "id": "057474c2-e941-4366-9c67-ab856b542c91",
+    "task": "image-scene",
+    "case": "overloaded-water-cycle-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "B",
+    "reason": "Both correctly reduce the overloaded whole-cycle REQUEST to evaporation, which is all SCREEN_TEXT is about. A also labels 'sun' and 'ocean', which the rule of as few labels as the idea needs rules out, and its focalObject asks for 'invisible water vapor', which can't be drawn. B shows the sun, the ocean and rising dashed arrows with only the 'Evaporation' label."
+  },
+  {
+    "id": "a33f0873-5884-4380-b09b-e0c60b6343fb",
+    "task": "image-scene",
+    "case": "hand-cut-microbes-findings-pt-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "tie",
+    "reason": "Both fix the FINDINGS: each makes the enlarged adult hand with the cut the focal object (dropping the skin cross section) and keeps the rod-shaped and spherical microbes entering the cut, with no text. A says 'man' as REQUEST does, while B says 'human' and places the cut on the palm's edge. Neither is wrong."
+  },
+  {
+    "id": "5ba43c33-7986-484e-8374-a7f35cbe9d81",
+    "task": "image-scene",
+    "case": "two-moments-become-one-pt-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash",
+    "winner": "B",
+    "reason": "ALT names only the payment at work, so both correctly use one scene (single) and drop the bicycle scene. A is faithful but bare ('Igor receiving banknotes'), and nothing in it shows the payment repeats. B's desk calendar with a monthly day checked shows the 'todo mês' recurrence that SCREEN_TEXT contrasts with the one-time sale. A small risk: an illustrator could draw tiny dates on the calendar."
+  }
+]

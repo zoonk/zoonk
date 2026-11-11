@@ -819,6 +819,23 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(work.value("pairs") as [String: String]?)
   }
 
+  /// A retry's canvas work stays while the learner looks back at the question's first attempt.
+  func testARetrysCanvasWorkStaysWhileItsFirstAttemptShows() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try pictureLesson(isDrawn: true))
+    }
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false))
+    await store.load()
+    store.work(for: "check", round: 1).set(["left": "right"], for: "pairs")
+
+    _ = store.work(for: "check", round: 0)
+
+    let retry = store.work(for: "check", round: 1)
+    XCTAssertEqual(retry.value("pairs") as [String: String]?, ["left": "right"])
+  }
+
   func testASessionLessonEndsWithTheMissionsItCompletedAndItsOwnBrainPower() async throws {
     let api = LessonPlayerAPI(
       clients: APIClientFactory(

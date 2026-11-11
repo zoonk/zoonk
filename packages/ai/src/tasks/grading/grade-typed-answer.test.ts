@@ -6,6 +6,7 @@ import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
 vi.mock("./grade-typed-answer.prompt.md", () => ({ default: "Grade the answer." }));
+vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
 
 vi.mock("./grade-typed-answer-language-practice.prompt.md", () => ({
   default: "Language practice rules.",
@@ -138,6 +139,7 @@ describe(gradeTypedAnswer, () => {
         feedback: "Right.",
         isCorrect: true,
         keyPoints: [{ met: true, number: 1 }],
+        spelling: "apartment",
       }),
     );
 
@@ -154,6 +156,32 @@ describe(gradeTypedAnswer, () => {
     expect(result.data).toMatchObject({ isCorrect: true, method: "model", spelling: "apartment" });
   });
 
+  it.each([
+    { answer: "¿Querés venir?", spelling: null },
+    { answer: "please reply on thursday", spelling: "Please reply on Thursday." },
+  ])("shows no spelling for $answer, which has no slip", async ({ answer, spelling }) => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({
+        corrections: [],
+        feedback: "Right.",
+        isCorrect: true,
+        keyPoints: [{ met: true, number: 1 }],
+        spelling,
+      }),
+    );
+
+    const result = await gradeTypedAnswer({
+      acceptedAnswers: ["¿Quieres venir?", "Please reply by Thursday."],
+      answer,
+      keyPoints: ["Asks the question"],
+      language: "pt",
+      practicedLanguage: "es",
+      question: "Write the message.",
+    });
+
+    expect(result.data).toMatchObject({ isCorrect: true, method: "model", spelling: null });
+  });
+
   it("lets the model judge a spelling difference when spelling is being practiced", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
@@ -161,6 +189,7 @@ describe(gradeTypedAnswer, () => {
         feedback: "Watch the ending.",
         isCorrect: false,
         keyPoints: [{ met: false, number: 1 }],
+        spelling: null,
       }),
     );
 
@@ -180,7 +209,7 @@ describe(gradeTypedAnswer, () => {
       isCorrect: false,
       method: "model",
       score: 0,
-      spelling: "bonita",
+      spelling: null,
     });
   });
 
@@ -407,7 +436,10 @@ describe(gradeTypedAnswer, () => {
 
     const practice = await gradeTypedAnswer({ ...params, practicedLanguage: "en" });
 
-    expect(practice.systemPrompt).toBe("Grade the answer.\nLanguage practice rules.");
+    expect(practice.systemPrompt).toBe(
+      "Grade the answer.\nLanguage practice rules.\nRegional forms.",
+    );
+
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(practice.systemPrompt);
 
     // The verdict comes first: after the key points, the model read them as a checklist and called
@@ -417,6 +449,7 @@ describe(gradeTypedAnswer, () => {
       "isCorrect",
       "keyPoints",
       "corrections",
+      "spelling",
       "feedback",
     ]);
 

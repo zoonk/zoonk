@@ -49,7 +49,6 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.BlockMark
-import com.zoonk.android.feature.session.DayProgress
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
@@ -58,7 +57,6 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
-import com.zoonk.android.feature.session.dayParts
 import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
@@ -522,26 +520,6 @@ private fun FoldRow(
         if (minutes != null && minutes > 0) DayMinutes(minutes)
     }
 }
-
-/** Main's `DayProgress`: one equal part per counted block, the ones ahead in their kind's color. */
-@Composable
-private fun TodayDayProgress(
-    model: TodayDayModel,
-    modifier: Modifier,
-) {
-    val day = model.day
-    val next = day.steps.firstOrNull { it.position == day.nextPosition }
-
-    DayProgress(
-        dayParts(day.steps, isNext = { it.position == day.nextPosition }, nextShare = next?.share ?: 0f),
-        held = day.heldMinutes > 0,
-        modifier,
-        contentDescription = stepsDone(day.sessionBar),
-    )
-}
-
-private val DayStep.share: Float
-    get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 /** Skipped steps fold in with the done ones, so the row says which is which. */
 @Composable

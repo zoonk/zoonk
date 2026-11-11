@@ -18,9 +18,12 @@ let learnerSummaryUITestJSON = """
         "isActive": true,
         "isSettingUp": false,
         "kind": "learn",
+        "languageFlag": null,
+        "regionChoices": [],
         "status": "active",
         "targetDate": null,
         "targetLanguage": null,
+        "targetRegion": null,
         "title": "Learn how plants grow",
         "displayName": "Plant growth"
       }

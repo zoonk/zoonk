@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
+import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { z } from "zod";
@@ -7,10 +7,13 @@ import { ownLevelSchema } from "../../../learner/placement/placement-contract";
 import { ONBOARDING_PURPOSES } from "../onboarding-contract";
 import { isNamedExam } from "./exam-facts";
 
-const understoodGoalSchema = z.object({
+/** Every field the reading keeps, so a reused reading loses none of them. */
+const understoodGoalFields = {
+  displayName: z.string().optional(),
   examDay: z.enum(["booked", "official"]).optional(),
   examMonth: z.number().optional(),
   examName: z.string().optional(),
+  examSubjects: z.array(z.string()).optional(),
   examTarget: z.enum(["admission", "position", "score"]).optional(),
   examYear: z.number().optional(),
   institution: z.string().optional(),
@@ -26,9 +29,12 @@ const understoodGoalSchema = z.object({
   targetDate: z.string().optional(),
   targetLanguage: z.string().optional(),
   targetPosition: z.string().optional(),
+  targetRegion: z.string().optional(),
   targetScore: z.string().optional(),
   title: z.string(),
-});
+} satisfies Record<keyof UnderstoodGoal, z.ZodType>;
+
+const understoodGoalSchema = z.object(understoodGoalFields);
 
 const storedUnderstandingSchema = z.discriminatedUnion("route", [
   z.object({ question: z.string(), route: z.literal("explain") }),

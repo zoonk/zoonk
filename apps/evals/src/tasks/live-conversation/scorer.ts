@@ -1,6 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
 import { toWords } from "@/lib/words";
+import { hasLiveCallVariety } from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type CallTurn } from "./learner";
 import { type LiveConversationInput } from "./run-call";
 import {
@@ -37,13 +38,14 @@ function toSentences(text: string): string[] {
     .filter(Boolean);
 }
 
+/** A call in the learner's country's variety may reword its opening line; the judge reads it. */
 function checkOpening({ input, turns }: { input: LiveConversationInput; turns: CallTurn[] }) {
   const opening = toWords(input.call.scenario.openingLine);
   const first = new Set(toWords(turns[0]?.text ?? ""));
   const said = opening.filter((word) => first.has(word)).length;
 
   return {
-    passed: said >= opening.length * OPENING_WORDS_SHARE,
+    passed: hasLiveCallVariety(input.call) || said >= opening.length * OPENING_WORDS_SHARE,
     problem: "The character didn't open with its opening line.",
   };
 }

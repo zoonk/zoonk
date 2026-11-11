@@ -28,7 +28,7 @@ import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
 import { type Mission, getMissionBonus } from "../sessions/missions";
 import { type FirstSteps } from "../sessions/missions/first-steps";
 import { getDayFirstSteps } from "../sessions/missions/get-day-first-steps";
-import { getDayMissions, hasDayMissionBonus } from "../sessions/missions/get-day-missions";
+import { getDayMissions } from "../sessions/missions/get-day-missions";
 import { getSession } from "../users/get-session";
 import { type BuddyDiet, loadBuddyDiet } from "./_utils/buddy-diet";
 import { loadMilestoneCounts } from "./award-milestones";
@@ -94,17 +94,14 @@ async function loadToday({
     return null;
   }
 
-  const [missions, earned] = await Promise.all([
-    getDayMissions({ session, through: now, timeZone }),
-    hasDayMissionBonus({ now, session, timeZone }),
-  ]);
+  const missions = await getDayMissions({ session, through: now, timeZone });
 
   const firstSteps = await getDayFirstSteps({ missions, session, timeZone });
 
   return {
     firstSteps,
     today: {
-      fullMeal: { bonus: getMissionBonus(missions), earned },
+      fullMeal: { bonus: getMissionBonus(missions), earned: session.fullMealAt !== null },
       goalId,
       localDate: toIsoDate(session.localDate),
       missions,

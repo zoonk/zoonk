@@ -8,6 +8,7 @@ import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar"
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalView } from "../goal-contract";
 import { getGoalLanguageFlag } from "./goal-language-flag";
+import { getGoalRegionChoices } from "./goal-region";
 import {
   type PlanPhaseFacts,
   getCurrentPhaseFromFacts,
@@ -132,11 +133,13 @@ function toGoalView({
     plan: plan ? toPlanSummary({ plan, progress }) : null,
     primaryCourseId: goal.primaryCourseId,
     prompt: goal.prompt,
+    regionChoices: getGoalRegionChoices(goal),
     status: goal.status,
     studyDays: getStudyDays({ dailyMinutes: goal.dailyMinutes, settings: plan?.settings }),
     studyTime: goal.studyTime,
     targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     targetLanguage: goal.targetLanguage,
+    targetRegion: goal.targetRegion,
     timezone: goal.timezone,
     title: goal.title,
   };

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "real-1-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "real-2-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "real-3-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "real-4-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "real-5-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "real-6-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "en-temperature-clean-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "pt-regra-clean-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "en-temperature-wrong-math-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "pt-regra-case-before-shown-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "pt-regra-worked-example-trap-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "en-temperature-mismatched-reason-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "pt-regra-wrong-summary-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "en-temperature-numbered-picture-clean-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "pt-regra-jargon-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "pt-regra-real-brand-failure-1",
+    "A": "fable",
+    "B": "astra"
+  },
+  {
+    "id": "en-temperature-two-right-options-1",
+    "A": "astra",
+    "B": "fable"
+  },
+  {
+    "id": "pt-regra-over-broad-summary-1",
+    "A": "astra",
+    "B": "fable"
+  }
+]

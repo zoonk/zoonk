@@ -1,4 +1,4 @@
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { type TutorCardActions, getTutorCards } from "@zoonk/learn/tutor-cards";
 import { describe, expect, it, vi } from "vitest";
@@ -41,6 +41,7 @@ function renderOffer(
   );
 
   const tools: TutorCardActions["tools"] = {
+    getGoalRegion: () => null,
     hrefs: {
       chooseFocus: "/focus",
       chooseMock: "/mock",
@@ -53,6 +54,7 @@ function renderOffer(
       stats: "/stats",
       subject: () => "/subject",
     },
+    setGoalRegion: vi.fn(),
     startConversation,
     startTestOut: vi.fn(),
   };

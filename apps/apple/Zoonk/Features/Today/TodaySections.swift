@@ -658,7 +658,6 @@ struct TodayWeekSection: View {
             day: day, localDate: localDate,
             challenge: view.weeklyChallenge.flatMap { $0.date == day.date ? $0 : nil }
           )
-          .frame(maxWidth: .infinity)
         }
       }
       .dynamicTypeSize(...DynamicTypeSize.accessibility1)
@@ -755,20 +754,67 @@ private struct WeekDayMark: View {
   let challenge: TodayView.WeeklyChallenge?
 
   @ScaledMetric(relativeTo: .title3) private var ringSize = 26.0
+  @State private var isShown = false
 
   var body: some View {
     let date = studyDate(day.date)
+    let weekday = date?.formatted(.studyDay.weekday(.wide)) ?? day.date
 
-    VStack(spacing: 4) {
-      ring
-        .frame(width: ringSize, height: ringSize)
+    Button {
+      isShown = true
+    } label: {
+      VStack(spacing: 4) {
+        ring
+          .frame(width: ringSize, height: ringSize)
 
-      Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-        .typeStyle(.small.weight(day.isToday ? .bold : .regular))
-        .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
+        Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
+          .typeStyle(.small.weight(day.isToday ? .bold : .regular))
+          .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
+      }
+      .frame(maxWidth: .infinity)
+      .contentShape(.rect)
     }
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(label(weekday: date?.formatted(.studyDay.weekday(.wide)) ?? day.date))
+    .buttonStyle(.plain)
+    .accessibilityLabel(label(weekday: weekday))
+    .popover(isPresented: $isShown, arrowEdge: .top) {
+      TodayFactsPopover(
+        title: weekday.labelCased(), facts: time, factsStyle: Color(.foreground), note: note,
+        challenge: challengeLine)
+    }
+  }
+
+  /// Main's `useDayTime`.
+  private var time: String? {
+    if day.minutes > 0 {
+      return day.goalMinutes > 0
+        ? String(
+          localized:
+            "\(studyDuration(minutes: day.minutes)) of \(studyDuration(minutes: day.goalMinutes)) studied",
+          table: "Today", comment: "A day's time studied of the time its plan gave it")
+        : String(
+          localized: "\(studyDuration(minutes: day.minutes)) studied", table: "Today",
+          comment: "Time studied on a day; the argument is a duration like '23 min'")
+    }
+
+    return day.goalMinutes > 0
+      ? String(
+        localized: "\(studyDuration(minutes: day.goalMinutes)) planned", table: "Today",
+        comment: "The time a day's plan gives it, on a day not studied yet")
+      : nil
+  }
+
+  private var challengeLine: (kind: LearnKind, name: String)? {
+    guard let challengeKind, let challengeName else {
+      return nil
+    }
+
+    return (challengeKind, challengeName.labelCased())
+  }
+
+  /// Main's `useDayNote`: the day's status, unless its time already says it.
+  private var note: String? {
+    let saidByTime = !day.hitGoal && (day.studied || (day.kind == "study" && !isMissed))
+    return saidByTime ? nil : status.labelCased()
   }
 
   /// Main's `DayRing`: a dash for a day outside the plan.

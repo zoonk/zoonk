@@ -10,20 +10,12 @@ struct MissionsSummary: View {
   var body: some View {
     let left = missions.filter { !$0.isDone }
 
-    if earned {
-      if left.isEmpty {
-        AccessibilityStack(spacing: 8) {
-          Text("Missions done", tableName: "Today", comment: "Today's missions are done")
-            .typeStyle(.body.weight(.medium))
-            .frame(maxWidth: .infinity, alignment: .leading)
-          BrainPowerReward(points: bonus, earned: true)
-        }
-      } else {
-        Text(
-          "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
-          comment: "Another goal already earned the day's missions reward"
-        )
-        .foregroundStyle(.mutedForeground)
+    if earned && left.isEmpty {
+      AccessibilityStack(spacing: 8) {
+        Text("Missions done", tableName: "Today", comment: "Today's missions are done")
+          .typeStyle(.body.weight(.medium))
+          .frame(maxWidth: .infinity, alignment: .leading)
+        BrainPowerReward(points: bonus, earned: true)
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {

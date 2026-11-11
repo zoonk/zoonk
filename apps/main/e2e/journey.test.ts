@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
@@ -69,6 +70,46 @@ test.describe("Journey", () => {
       await expect(
         prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }),
       ).resolves.toMatchObject({ dailyMinutes: goal.dailyMinutes });
+    });
+  });
+
+  test("saves a language goal's country from the plan's Language row, and takes it back", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const readCountry = async () => {
+        const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+        return goal.targetRegion;
+      };
+
+      await openJourney(page);
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const row = properties.getByRole("button", { name: /^Language/u });
+      await expectHydrated(row);
+      await expect(row).toHaveText(/English$/u);
+      await row.click();
+
+      const country = page
+        .getByRole("dialog", { name: "Adjust your plan" })
+        .getByLabel("Country", { exact: true });
+
+      await expect(country).toBeFocused();
+      await country.selectOption("CA");
+      await expect.poll(readCountry).toBe("CA");
+
+      await page.keyboard.press("Escape");
+      await expect(row).toHaveText(/English \(Canada\)$/u);
+
+      await expect(
+        page.getByRole("button", { name: /English \(Canada\).*Switch goal$/u }),
+      ).toBeVisible();
+
+      await row.click();
+      await country.selectOption("");
+      await expect.poll(readCountry).toBeNull();
+
+      await page.keyboard.press("Escape");
+      await expect(row).toHaveText(/English$/u);
     });
   });
 });

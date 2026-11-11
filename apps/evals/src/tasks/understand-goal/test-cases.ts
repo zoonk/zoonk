@@ -119,6 +119,54 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
     language: "pt",
   }),
+  testCase("pt-language-country-destination", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "es", targetRegion: "UY" }],
+      route: "goals",
+    },
+    goal: "quero aprender espanhol porque vou me mudar para Montevidéu no ano que vem",
+    language: "pt",
+  }),
+  testCase("en-language-country-destination-portugal", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "pt", targetRegion: "PT" }],
+      route: "goals",
+    },
+    goal: "I want to learn Portuguese before I move to Porto",
+    language: "en",
+  }),
+  testCase("es-language-country-work-city", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "en", targetRegion: "AU" }],
+      route: "goals",
+    },
+    goal: "Quiero aprender inglés para trabajar en Sídney",
+    language: "es",
+  }),
+  testCase("en-language-country-named-variety", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "de", targetRegion: "AT" }],
+      route: "goals",
+    },
+    goal: "I'd like to learn Austrian German",
+    language: "en",
+  }),
+  testCase("en-language-no-country-from-nationality", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "fr", targetRegion: null }],
+      route: "goals",
+    },
+    goal: "I'm Canadian and I want to finally learn French",
+    language: "en",
+  }),
+  testCase("en-language-no-country-named", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "es", targetRegion: null }],
+      route: "goals",
+    },
+    goal: "I want to learn Spanish",
+    language: "en",
+  }),
   testCase("en-language-reason-trip-a2", {
     expected: {
       goals: [{ kind: "language", targetLanguage: "it", targetScore: /^A2$/u }],

@@ -256,67 +256,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts 4/4. passages found 4/4",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts 4/4. passages found 4/4",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts 4/4. passages found 4/4",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "absent": [
-            {
-              "kind": "essay"
-            }
-          ],
-          "present": [
-            {
-              "kind": "multipleChoice",
-              "options": 4,
-              "section": null,
-              "select": null
-            },
-            {
-              "kind": "multipleChoice",
-              "options": 4,
-              "section": null,
-              "select": "all"
-            },
-            {
-              "kind": "numeric",
-              "section": null
-            }
-          ]
-        },
-        "id": "en-jee-advanced-2026-paper-1-1",
-        "userInput": {
-          "documents": [
-            {
-              "title": "JEE (Advanced) 2026 Paper 1 (English)",
-              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
-            }
-          ],
-          "exam": "JEE (Advanced) 2026, Paper 1",
-          "parts": [
-            "Physics",
-            "Chemistry",
-            "Mathematics"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts 4/4. passages found 3/3",
           "kind": "majorErrors",
           "score": 10
@@ -407,6 +346,164 @@
             }
           ],
           "exam": "48º Exame de Ordem Unificado, 1ª fase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "essay"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "section": null,
+              "select": null
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "section": null,
+              "select": "all"
+            },
+            {
+              "kind": "numeric",
+              "section": null
+            }
+          ]
+        },
+        "id": "en-jee-advanced-2026-paper-1-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "JEE (Advanced) 2026 Paper 1 (English)",
+              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
+            }
+          ],
+          "exam": "JEE (Advanced) 2026, Paper 1",
+          "parts": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice",
+              "partialCredit": "perRightPick",
+              "select": "all"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "en-fixed-credit-per-correct-option-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Each question has four options; one or more options can be correct. Select all correct options. Each correct selected option earns 1 point, selecting all correct options earns 4 points, and selecting any incorrect option scores -1 point for the entire question.",
+              "title": "Multiple-correct practice exam"
+            }
+          ],
+          "exam": "Multiple-correct practice exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice",
+              "partialCredit": "perRightPick",
+              "select": "all"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "pt-fixed-credit-per-correct-option-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Cada questão tem quatro alternativas; uma ou mais podem estar corretas. Selecione todas as alternativas corretas. Cada alternativa correta selecionada vale 1 ponto, selecionar todas as corretas vale 4 pontos e selecionar qualquer alternativa incorreta resulta em -1 ponto para a questão inteira.",
+              "title": "Prova de múltiplas respostas"
+            }
+          ],
+          "exam": "Prova de múltiplas respostas"
         }
       }
     }

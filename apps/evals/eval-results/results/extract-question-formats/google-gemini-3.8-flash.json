@@ -3,8 +3,64 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Facts 3/3. passages found 2/2", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 2/2. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "section": {}
+            },
+            {
+              "kind": "essay",
+              "section": null
+            }
+          ]
+        },
+        "id": "en-valid-mixed-known-and-unknown-scope-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Paper 1 has multiple-choice questions with four options. There will also be an essay; this announcement does not state which paper contains the essay.",
+              "title": "Exam announcement"
+            }
+          ],
+          "exam": "School exam",
+          "parts": [
+            "Paper 1",
+            "Paper 2"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Facts 3/3. passages found 2/2",
           "kind": "potentialImprovements",
@@ -13,10 +69,23 @@
       ],
       "testCase": {
         "expected": {
-          "absent": [{ "kind": "numeric", "section": {} }],
+          "absent": [
+            {
+              "kind": "numeric",
+              "section": {}
+            }
+          ],
           "present": [
-            { "kind": "multipleChoice", "options": 4, "section": null, "select": null },
-            { "kind": "numeric", "section": {} }
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "section": null,
+              "select": null
+            },
+            {
+              "kind": "numeric",
+              "section": {}
+            }
           ]
         },
         "id": "en-jee-choice-everywhere-numeric-section-b-1",
@@ -28,44 +97,89 @@
             }
           ],
           "exam": "JEE-style practice test",
-          "parts": ["Section A", "Section B"]
+          "parts": [
+            "Section A",
+            "Section B"
+          ]
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "conclusion": "Facts 9/11. passages found 5/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}",
           "kind": "majorErrors",
-          "score": 8.254545454545456
+          "score": 8.56969696969697
         },
         {
-          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "conclusion": "Facts 9/11. passages found 5/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}",
           "kind": "minorErrors",
-          "score": 8.254545454545456
+          "score": 8.56969696969697
         },
         {
-          "conclusion": "Facts 8/11. passages found 6/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}; {\"kind\":\"multipleChoice\",\"passage\":\"column|blank\",\"section\":\"^Verbal\",\"select\":null}",
+          "conclusion": "Facts 9/11. passages found 5/6. missing: {\"kind\":\"multipleChoice\",\"options\":4,\"section\":\"^Quantitative\",\"select\":null}; {\"kind\":\"multipleChoice\",\"options\":5,\"select\":null}",
           "kind": "potentialImprovements",
-          "score": 8.254545454545456
+          "score": 8.56969696969697
         }
       ],
       "testCase": {
         "expected": {
           "absent": [
-            { "kind": "multipleChoice", "passage": {}, "select": "all" },
-            { "description": {}, "kind": "numeric" },
-            { "kind": "multipleChoice", "passage": {}, "section": {} },
-            { "kind": "multipleChoice", "options": 4, "section": {} }
+            {
+              "kind": "multipleChoice",
+              "passage": {},
+              "select": "all"
+            },
+            {
+              "description": {},
+              "kind": "numeric"
+            },
+            {
+              "kind": "multipleChoice",
+              "passage": {},
+              "section": {}
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "section": {}
+            }
           ],
           "present": [
-            { "kind": "essay" },
-            { "kind": "multipleChoice", "options": 4, "section": {}, "select": null },
-            { "kind": "multipleChoice", "options": 5, "select": null },
-            { "kind": "multipleChoice", "passage": {}, "section": {}, "select": null },
-            { "kind": "multipleChoice", "options": 6, "section": {}, "select": 2 },
-            { "kind": "multipleChoice", "select": "all" },
-            { "kind": "numeric", "section": {} }
+            {
+              "kind": "essay"
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "section": {},
+              "select": null
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 5,
+              "select": null
+            },
+            {
+              "kind": "multipleChoice",
+              "passage": {},
+              "section": {},
+              "select": null
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 6,
+              "section": {},
+              "select": 2
+            },
+            {
+              "kind": "multipleChoice",
+              "select": "all"
+            },
+            {
+              "kind": "numeric",
+              "section": {}
+            }
           ]
         },
         "id": "en-gre-general-test-1",
@@ -90,6 +204,306 @@
             "Verbal Reasoning",
             "Quantitative Reasoning"
           ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 3/3. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice"
+            }
+          ],
+          "present": [
+            {
+              "kind": "shortAnswer"
+            },
+            {
+              "kind": "essay"
+            }
+          ]
+        },
+        "id": "pt-class-notes-in-passing-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Geografia – Climas do Brasil\n\nO clima equatorial é quente e úmido o ano todo. O semiárido tem chuvas escassas e mal distribuídas, e o subtropical tem as quatro estações bem definidas.\n\nMassas de ar: a Equatorial Continental traz umidade para o interior no verão, e a Polar Atlântica traz as frentes frias.\n\nAvisos: trabalho em dupla até quarta. Na avaliação de sexta, o professor disse que vai pedir para legendar o mapa dos climas e escrever um texto explicando a seca no semiárido.",
+              "title": "Anotações de geografia"
+            }
+          ],
+          "exam": "Avaliação de geografia"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 4/4. passages found 3/3",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 3/3",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 3/3",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice"
+            }
+          ],
+          "present": [
+            {
+              "kind": "trueFalse"
+            },
+            {
+              "description": {},
+              "kind": "essay"
+            },
+            {
+              "description": {},
+              "kind": "essay"
+            }
+          ]
+        },
+        "id": "pt-camara-2026-registro-redacao-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf"
+            }
+          ],
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "essay"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "select": null
+            }
+          ]
+        },
+        "id": "pt-oab-48-1a-fase-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "48º Exame de Ordem Unificado, 1ª fase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 4/4. passages found 4/4",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "essay"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "section": null,
+              "select": null
+            },
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "section": null,
+              "select": "all"
+            },
+            {
+              "kind": "numeric",
+              "section": null
+            }
+          ]
+        },
+        "id": "en-jee-advanced-2026-paper-1-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "JEE (Advanced) 2026 Paper 1 (English)",
+              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
+            }
+          ],
+          "exam": "JEE (Advanced) 2026, Paper 1",
+          "parts": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice",
+              "partialCredit": "perRightPick",
+              "select": "all"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "en-fixed-credit-per-correct-option-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Each question has four options; one or more options can be correct. Select all correct options. Each correct selected option earns 1 point, selecting all correct options earns 4 points, and selecting any incorrect option scores -1 point for the entire question.",
+              "title": "Multiple-correct practice exam"
+            }
+          ],
+          "exam": "Multiple-correct practice exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 2/2. passages found 1/1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "absent": [
+            {
+              "kind": "multipleChoice",
+              "partialCredit": "perRightPick",
+              "select": "all"
+            }
+          ],
+          "present": [
+            {
+              "kind": "multipleChoice",
+              "options": 4,
+              "partialCredit": "perOption",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "pt-fixed-credit-per-correct-option-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Cada questão tem quatro alternativas; uma ou mais podem estar corretas. Selecione todas as alternativas corretas. Cada alternativa correta selecionada vale 1 ponto, selecionar todas as corretas vale 4 pontos e selecionar qualquer alternativa incorreta resulta em -1 ponto para a questão inteira.",
+              "title": "Prova de múltiplas respostas"
+            }
+          ],
+          "exam": "Prova de múltiplas respostas"
         }
       }
     }

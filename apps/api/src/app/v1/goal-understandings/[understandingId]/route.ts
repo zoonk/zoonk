@@ -2,7 +2,7 @@ import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalUnderstandingPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { onboardingDraftEditSchema } from "@zoonk/core/view-models/onboarding/contract";
+import { onboardingDraftEditSchema } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { reviseOnboardingDraft } from "@zoonk/core/view-models/onboarding/revise-draft";
 import { type NextRequest, NextResponse } from "next/server";

@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -1622,10 +1623,11 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "많음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "-eNLo_"
-msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {학습 없음} other {활동 #개}}"
+msgctxt "FjcEak"
+msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{count, plural, =0 {학습 없음} other {활동 #개}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1684,15 +1686,17 @@ msgctxt "AxMhQr"
 msgid "High"
 msgstr "높음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "5ZmEgv"
-msgid "{date} · No Energy recorded"
-msgstr "{date} · 에너지 기록 없음"
+msgctxt "VmQeBl"
+msgid "No Energy recorded"
+msgstr "에너지 기록 없음"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "beOKv0"
-msgid "{date} · {percentage} Energy"
-msgstr "{date} · 에너지 {percentage}"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
+msgstr "에너지 {percentage}"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1822,6 +1826,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "최근 90일 동안 정답률이 가장 높았던 때예요."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, other {응답 #개}}, 패턴 파악에 {minimum, number}개 필요"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "정답률이 가장 높은 요일"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "요일별"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "가장 잘하는 시간대"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "시간대별"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1841,21 +1880,6 @@ msgstr "오후"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "저녁"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {답변 없음} other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "요일별"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "시간대별"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1896,18 +1920,6 @@ msgstr "아직 답변이 부족해요"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, other {답변 #개}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "정답률이 가장 높은 요일"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "가장 잘하는 시간대"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"
@@ -2510,6 +2522,117 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "챌린지"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "터미널에 표시된 코드와 같은지 확인해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "터미널에 표시된 코드"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "승인하면"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "CLI는 {email} 계정으로 계정, 계획, 답안 등 실제 서비스 데이터를 조회해요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "아무것도 변경할 수 없어요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "그 컴퓨터에서 로그아웃하기 전까지 로그인 상태가 유지돼요. 다만 30일 동안 사용하지 않으면 자동으로 로그아웃돼요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "승인"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "거부"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "이 코드는 만료됐어요. 새 코드를 받으려면 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "이 네트워크에서 너무 많이 시도했어요. 30분 후에 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "이미 사용된 코드예요. 새 코드를 받으려면 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "이 코드로 승인을 기다리는 로그인 요청이 없어요. 터미널에 표시된 코드와 같은지 확인하거나 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "터미널로 돌아가세요. 이제 CLI를 사용할 수 있어요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "로그인했어요"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLI 접근이 허용되지 않았어요. 이 페이지를 닫아도 돼요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "로그인 거부됨"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "{email} 계정은 직원 계정이 아니어서 CLI에 접근 권한이 부여되지 않았어요. 직원 계정으로 로그인한 다음 {command} 명령을 다시 실행해 보세요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "로그인하려면 Zoonk 직원 계정이 필요해요"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "직접 시작한 로그인만 승인하세요. 다른 사람이 보낸 링크라면 거부하세요."
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Zoonk CLI 로그인"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "먼저 Zoonk 직원 계정으로 로그인하세요. 로그인하면 이 페이지로 돌아와 CLI 로그인을 승인할 수 있어요."
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2666,11 +2789,6 @@ msgstr "하루에 얼마나 공부할까요?"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 완료하거나 일시 중지하세요."
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"

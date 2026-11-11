@@ -65,8 +65,6 @@ struct MistakePracticeEntry: Equatable, Identifiable {
   var drill: PracticeDrill
   var mistakeId: String
   var questions: [PracticeQuestion]
-  var snapshotQuestion: String
-  var snapshotAnswer: String?
   var lesson: MistakeLessonReplay? = nil
   var tutorAvailable = true
 
@@ -231,8 +229,6 @@ struct PracticeAPI: Sendable {
               drill: try PracticeJSON.recode(entry.drill),
               mistakeId: entry.mistakeId,
               questions: try entry.questions.map { try PracticeJSON.recode($0) },
-              snapshotQuestion: entry.snapshot.question,
-              snapshotAnswer: entry.snapshot.answer,
               lesson: try entry.lesson.map { try PracticeJSON.recode($0) },
               tutorAvailable: entry.tutorAvailable)
           },

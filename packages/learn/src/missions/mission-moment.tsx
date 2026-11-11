@@ -151,9 +151,7 @@ export function MissionMoment({
       );
     }
 
-    return fullMeal.paid
-      ? t("You earned +{points} Brain Power.", { points })
-      : t("Today's +{points} Brain Power is already earned.", { points });
+    return t("You earned +{points} Brain Power.", { points });
   };
 
   return (

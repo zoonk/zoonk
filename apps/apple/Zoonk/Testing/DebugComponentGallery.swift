@@ -426,6 +426,13 @@
         Label(String("A notice"), systemImage: "sparkle")
       }
 
+      HStack(alignment: .top, spacing: 12) {
+        ChartTooltip(detail: ChartPointDetail(label: "25 Oct", value: "13 activities"))
+        ChartTooltip(
+          detail: ChartPointDetail(
+            label: "Friday", value: "71%", note: "7 answers, needs 10 to count"))
+      }
+
       StatTileGrid(columns: [2, 1], minimumWidth: 140) {
         StatTile(
           label: Text(verbatim: "Preparation"), value: Text(verbatim: "16%"),

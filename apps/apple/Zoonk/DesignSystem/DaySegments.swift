@@ -11,17 +11,20 @@ struct DaySegments: View {
     case kind(Color)
   }
 
+  static let height = 6.0
+  static let gap = 2.0
+
   let segments: [Segment]
   /// The block that just finished, which fills from empty on the moment's first beat.
   var finished: Int?
 
   var body: some View {
-    HStack(spacing: 2) {
+    HStack(spacing: Self.gap) {
       ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
         mark(segment, fills: index == finished)
       }
     }
-    .frame(height: 6)
+    .frame(height: Self.height)
     .accessibilityHidden(true)
   }
 

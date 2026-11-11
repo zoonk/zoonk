@@ -1,4 +1,9 @@
 import { GoalKind } from "@zoonk/db";
+import {
+  type RegionChoice,
+  isLanguageRegion,
+  splitTargetLanguage,
+} from "@zoonk/utils/language-regions";
 import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -16,11 +21,24 @@ const MAX_GOALS_AT_ONCE = 3;
 const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
 
-const languageSchema = z
+const languageTagSchema = z
   .string()
   .max(MAX_LANGUAGE_LENGTH)
-  .regex(LANGUAGE_CODE_PATTERN, { abort: true })
-  .overwrite((language) => toCanonicalLanguage(language));
+  .regex(LANGUAGE_CODE_PATTERN, { abort: true });
+
+const languageSchema = languageTagSchema.overwrite((language) => toCanonicalLanguage(language));
+
+export const targetRegionSchema = z.string().regex(/^[A-Z]{2}$/u);
+
+export const regionChoiceSchema = z
+  .object({
+    code: z.string(),
+    name: z.string().meta({ description: "The country's name in the goal's language" }),
+    taught: z
+      .boolean()
+      .meta({ description: "The country whose variety lessons and their audio teach" }),
+  })
+  .meta({ id: "RegionChoice" }) satisfies z.ZodType<RegionChoice>;
 
 export const dailyMinutesSchema = z
   .int()
@@ -79,6 +97,32 @@ const detailsSchema = z
     description: `What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
   });
 
+type DraftLanguage = { kind: GoalKind; targetLanguage?: string; targetRegion?: string };
+
+function isDraftRegion({ kind, targetLanguage, targetRegion }: DraftLanguage): boolean {
+  if (kind !== "language" || !targetLanguage || !targetRegion) {
+    return false;
+  }
+
+  const written = new Intl.Locale(targetLanguage).region;
+  const { targetLanguage: language } = splitTargetLanguage(targetLanguage);
+
+  return (
+    (!written || written === targetRegion) && isLanguageRegion({ language, region: targetRegion })
+  );
+}
+
+function withTargetRegion<Draft extends DraftLanguage>(goal: Draft): Draft {
+  if (!goal.targetLanguage) {
+    return goal;
+  }
+
+  const { targetLanguage, targetRegion } = splitTargetLanguage(goal.targetLanguage);
+  const region = goal.targetRegion ?? (goal.kind === "language" ? targetRegion : null);
+
+  return { ...goal, targetLanguage, ...(region && { targetRegion: region }) };
+}
+
 export const goalDraftSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
@@ -101,7 +145,18 @@ export const goalDraftSchema = z
         description:
           "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
       }),
-    targetLanguage: languageSchema.optional().meta({ description: "The language being learned" }),
+    targetLanguage: languageTagSchema
+      .optional()
+      .meta({
+        description:
+          "The language being learned. A tag with one of the language's countries (`es-AR`) is stored as the language (`es`) with that `targetRegion`",
+      }),
+    targetRegion: targetRegionSchema
+      .optional()
+      .meta({
+        description:
+          "A language goal's country, as an ISO 3166-1 alpha-2 code: the buddy and practice calls use its variety, while lessons and their audio stay those of the language. One the language doesn't list, or that contradicts the country in `targetLanguage`, is refused as invalid",
+      }),
     title: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH),
   })
   .strict()
@@ -109,6 +164,11 @@ export const goalDraftSchema = z
     message: "Language goals need a target language",
     path: ["targetLanguage"],
   })
+  .refine((goal) => !goal.targetRegion || isDraftRegion(goal), {
+    message: "A country must be one of a language goal's countries and agree with its tag",
+    path: ["targetRegion"],
+  })
+  .overwrite((goal) => withTargetRegion(goal))
   .meta({ id: "GoalDraft" });
 
 export const goalCreateInputSchema = z
@@ -154,6 +214,13 @@ export const goalUpdateInputSchema = z
         description:
           "The goal's new deadline, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE). The goal's current date, even a passed one, can be sent again",
       }),
+    targetRegion: targetRegionSchema
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "A language goal's country from its `regionChoices`, or null for none. Lessons and the plan don't change. Another country, or one on a goal that isn't a language goal, is refused with 422 TARGET_REGION_NOT_OFFERED",
+      }),
     timeZone: timeZoneSchema.optional(),
     title: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH).optional(),
     weekendMinutes: dailyMinutesSchema
@@ -181,7 +248,7 @@ export type GoalView = {
   isActive: boolean;
   kind: GoalKind;
   language: string;
-  /** The language's flag, as a language course's: a `flag-icons` code; null without one. */
+  /** A `flag-icons` code: the goal's country's flag, else its language's; null without one. */
   languageFlag: string | null;
   plan: {
     /** False until the planner has written the plan's phases. */
@@ -195,11 +262,15 @@ export type GoalView = {
   } | null;
   primaryCourseId: string | null;
   prompt: string;
+  /** The countries a language goal can pick, named in its language; empty for other goals. */
+  regionChoices: RegionChoice[];
   status: "active" | "archived" | "completed" | "paused";
   studyDays: number[];
   studyTime: string | null;
   targetDate: string | null;
   targetLanguage: string | null;
+  /** Set only when the learner asked for a country. */
+  targetRegion: string | null;
   timezone: string | null;
   title: string;
 };

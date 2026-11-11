@@ -56,6 +56,15 @@ const RECRUITER_MESSAGE = {
   sampleAnswer: "Could you tell me who I should contact about registration requirements?",
 };
 
+const PARTY_INVITATION = {
+  acceptedAnswers: ["¿Quieres venir a la fiesta el sábado?"],
+  keyPoints: ["Pergunta se a pessoa quer vir à festa", "Diz que a festa é no sábado"],
+  language: "pt",
+  practicedLanguage: "es",
+  question: "Escreva em espanhol: «Você quer vir à festa no sábado?»",
+  sampleAnswer: "¿Quieres venir a la fiesta el sábado?",
+};
+
 const OHMS_LAW = {
   keyPoints: [
     "Escolher o resistor, pois ele mantém a resistência constante",
@@ -331,6 +340,44 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
       practicedLanguage: "pt",
       question: "Write in Portuguese: “Please confirm your attendance by Friday.”",
       sampleAnswer: "Por favor, confirme sua presença até sexta-feira.",
+    },
+  },
+  {
+    expected: { isCorrect: true, keyPoints: [true, true] },
+    id: "pt-language-argentine-voseo-right",
+    userInput: { ...PARTY_INVITATION, answer: "¿Querés venir a la fiesta el sábado?" },
+  },
+  {
+    expected: { corrections: ["venir"], isCorrect: false, keyPoints: [true, true] },
+    id: "pt-language-argentine-voseo-mistake-kept-in-vos",
+    userInput: { ...PARTY_INVITATION, answer: "¿Vos querés vení a la fiesta el sábado?" },
+  },
+  {
+    expected: { corrections: ["quieres"], isCorrect: false, keyPoints: [true, false] },
+    id: "pt-language-asked-tu-answered-vos",
+    userInput: {
+      ...PARTY_INVITATION,
+      acceptedAnswers: ["¿Quieres venir a la fiesta el sábado?"],
+      answer: "¿Querés venir a la fiesta el sábado?",
+      keyPoints: [
+        "Pergunta se a pessoa quer vir à festa no sábado",
+        "Usa a forma de «tú»: `quieres`",
+      ],
+      question:
+        "Escreva em espanhol, tratando a pessoa por «tú»: «Você quer vir à festa no sábado?»",
+    },
+  },
+  {
+    expected: { isCorrect: true, keyPoints: [true, true] },
+    id: "en-language-european-portuguese-right",
+    userInput: {
+      acceptedAnswers: ["Estou estudando no trem."],
+      answer: "Estou a estudar no comboio.",
+      keyPoints: ["Says they are studying right now", "Says where: on the train"],
+      language: "en",
+      practicedLanguage: "pt",
+      question: "Write in Portuguese: “I'm studying on the train.”",
+      sampleAnswer: "Estou estudando no trem.",
     },
   },
   {

@@ -179,7 +179,7 @@ extension BlockMoment {
   /// A day holding time for lessons not listed yet ends in one part for them, so the meter never
   /// looks full while time is still held.
   var daySegments: [DaySegments.Segment] {
-    let parts = countedBlocks.map { $0.daySegment(nextPosition: next?.block.position) }
+    let parts = countedBlocks.map { $0.daySegment(nextPosition: next?.block.position).mark }
     return dayProgress.lead == .open ? parts + [.ahead] : parts
   }
 

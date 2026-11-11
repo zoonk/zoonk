@@ -10,7 +10,8 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(session.minutes.left, 240)
     XCTAssertEqual(session.blocks.map(\.estimatedMinutes), [61])
     XCTAssertEqual(session.daySegments.count, 2)
-    XCTAssertEqual(session.daySegments.last, .ahead, "Reserved lessons take one equal ahead part")
+    XCTAssertEqual(
+      session.daySegments.last?.mark, .ahead, "Reserved lessons take one equal ahead part")
   }
 
   func testASkippedBlockIsNeitherDoneNorCountedNorDrawn() throws {
@@ -20,7 +21,7 @@ final class TodayStoreTests: XCTestCase {
 
     XCTAssertEqual(session.sessionBar, SessionBar(completed: 1, total: 2))
     XCTAssertEqual(session.daySegments.count, 2)
-    XCTAssertEqual(session.daySegments.first, .done)
+    XCTAssertEqual(session.daySegments.first?.mark, .done)
   }
 
   func testABlockDoneBeforeTheNextOneFillsItsOwnPartOfTheMomentsMeter() throws {

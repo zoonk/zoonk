@@ -157,16 +157,42 @@ struct StudyDay: Decodable, Equatable, Sendable {
       total: blocks.filter { $0.status != .skipped }.count)
   }
 
-  var daySegments: [DaySegments.Segment] {
+  /// Mirrors main's `DayProgress`: each block core counts, then one part for the time the day holds
+  /// for lessons not written yet.
+  var daySegments: [DaySegment] {
     var segments = blocks.filter { $0.status != .skipped }.map {
       $0.daySegment(nextPosition: nextPosition)
     }
 
-    if lessonsComing || lessonsToPrepare, foldedMinutes(showing: blocks) > 0 {
-      segments.append(.ahead)
+    if let comingLessons {
+      let held = foldedMinutes(showing: blocks)
+      if held > 0 { segments.append(.held(minutes: held, comingLessons)) }
     }
 
     return segments
+  }
+}
+
+/// One equal part of today's meter, and what its popover on Today says.
+enum DaySegment {
+  enum State {
+    case ahead
+    case current
+    case done
+  }
+
+  case block(StudyBlock, State)
+  case held(minutes: Double, ComingLessons)
+
+  /// How the part is drawn: done, next up, or waiting in its kind's color.
+  var mark: DaySegments.Segment {
+    switch self {
+    case .block(_, .done): .done
+    case .block(_, .current): .current
+    case .block(let block, .ahead):
+      block.learnKind == .lesson ? .ahead : .kind(block.learnKind.color)
+    case .held: .ahead
+    }
   }
 }
 
@@ -207,6 +233,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case lessons
   }
 
+  /// Where a tap on the block opens it, as core decides.
+  enum Screen: String, Decodable, Sendable {
+    case challenge
+    case essay
+    case lesson
+    case session
+    case unknown
+  }
+
   struct Capsule: Decodable, Hashable, Sendable {
     let questions: Int
     let title: String?
@@ -229,6 +264,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
 
   /// The saved block's id; nil on a day not opened yet.
   let id: String?
+  let answered: Int
   let areaId: String?
   let areas: [String]
   let brainPower: Int
@@ -251,6 +287,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
+  let screen: Screen
   var status: Status
   let subject: String?
   let title: String?
@@ -268,17 +305,13 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     status == .completed && kind == .learn ? lessonId : nil
   }
 
-  /// Its part of the day's meter: done, next up, or waiting in its kind's color.
-  func daySegment(nextPosition: Int?) -> DaySegments.Segment {
+  /// Main's `getDayMeterParts` for one counted block: done, next up, or ahead.
+  func daySegment(nextPosition: Int?) -> DaySegment {
     if status == .completed {
-      return .done
+      return .block(self, .done)
     }
 
-    if position == nextPosition {
-      return .current
-    }
-
-    return learnKind == .lesson ? .ahead : .kind(learnKind.color)
+    return .block(self, position == nextPosition ? .current : .ahead)
   }
 
   /// Mirrors main's `getBlockKind`.

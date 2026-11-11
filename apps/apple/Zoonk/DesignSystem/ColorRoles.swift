@@ -20,6 +20,7 @@ extension ShapeStyle where Self == Color {
   static var mutedForeground: Color { Color(.mutedForeground) }
   static var faint: Color { Color(.faint) }
   static var card: Color { Color(.card) }
+  static var popover: Color { Color(.popover) }
   static var muted: Color { Color(.muted) }
   static var surface3: Color { Color(.surface3) }
   static var border: Color { Color(.border) }

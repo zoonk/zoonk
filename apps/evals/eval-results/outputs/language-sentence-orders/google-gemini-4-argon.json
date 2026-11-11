@@ -1,0 +1,163 @@
+{
+  "generatedAt": "2026-11-11T02:29:41.035Z",
+  "modelId": "google/gemini-4-argon",
+  "outputs": [
+    {
+      "cacheReadTokens": 0,
+      "inputTokens": 651,
+      "outputTokens": 140,
+      "reasoningTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-argon",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 651,
+            "outputTokens": 140,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 634,
+            "outputTokens": 487,
+            "reasoningTokens": 443
+          }
+        }
+      ],
+      "duration": 8833.611792000003,
+      "output": "{\n  \"sentences\": [\n    {\n      \"otherOrders\": [\n        \"Quando pioveva è arrivato l'autobus\",\n        \"l'autobus è arrivato Quando pioveva\",\n        \"è arrivato l'autobus Quando pioveva\"\n      ],\n      \"otherTranslationOrders\": [\n        \"o ônibus chegou Quando chovia,\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Quando pioveva è arrivato l'autobus\",\n          \"L'autobus è arrivato quando pioveva\",\n          \"È arrivato l'autobus quando pioveva\"\n        ],\n        \"otherTranslationOrders\": [\n          \"O ônibus chegou quando chovia\"\n        ]\n      }\n    },\n    {\n      \"otherOrders\": [\n        \"non ho preso l'ombrello Oggi\"\n      ],\n      \"otherTranslationOrders\": [\n        \"eu não peguei o guarda-chuva Hoje\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Non ho preso l'ombrello oggi\"\n        ],\n        \"otherTranslationOrders\": [\n          \"Eu não peguei o guarda-chuva hoje\",\n          \"Não peguei o guarda-chuva hoje, eu\"\n        ]\n      }\n    },\n    {\n      \"otherOrders\": [\n        \"è arrivato in ritardo L'autobus\"\n      ],\n      \"otherTranslationOrders\": [\n        \"chegou atrasado O ônibus\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"È arrivato in ritardo l'autobus\",\n          \"In ritardo è arrivato l'autobus\"\n        ],\n        \"otherTranslationOrders\": [\n          \"Chegou atrasado o ônibus\"\n        ]\n      }\n    }\n  ]\n}",
+      "systemPrompt": "# Role\n\nYou are an expert language teacher helping a language learning app. A learner builds each sentence below from its word tiles, and the app accepts other orders of the same tiles. Your job is to find candidate orders: a second reviewer checks each one afterwards, so don't hold back an order a native speaker might plausibly say.\n\n# Inputs\n\n- `TARGET_LANGUAGE`: the language being learned, with its variant.\n- `LEARNER_LANGUAGE`: the learner's language.\n- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and its `translation` in `LEARNER_LANGUAGE`.\n\n# What you write\n\nOne entry for each sentence in `SENTENCES`, in the same order:\n\n- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of `TARGET_LANGUAGE` might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.\n- `otherTranslationOrders`: the same for `translation`, in `LEARNER_LANGUAGE`.\n\nNever change, fix or add a word.\n",
+      "testCaseId": "pt-it-rain-and-bus-1",
+      "userPrompt": "\n    TARGET_LANGUAGE: Italiano\n    LEARNER_LANGUAGE: Português Brasileiro\n    SENTENCES:\n    1. sentence: Quando pioveva l'autobus è arrivato\n       translation: Quando chovia, o ônibus chegou\n    2. sentence: Oggi non ho preso l'ombrello\n       translation: Hoje eu não peguei o guarda-chuva\n    3. sentence: L'autobus è arrivato in ritardo\n       translation: O ônibus chegou atrasado\n  "
+    },
+    {
+      "cacheReadTokens": 0,
+      "inputTokens": 624,
+      "outputTokens": 157,
+      "reasoningTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-argon",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 624,
+            "outputTokens": 157,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 606,
+            "outputTokens": 1186,
+            "reasoningTokens": 1074
+          }
+        }
+      ],
+      "duration": 18204.665042,
+      "output": "{\n  \"sentences\": [\n    {\n      \"otherOrders\": [\n        \"ich fahre Morgen mit dem Zug nach Berlin\",\n        \"mit dem Zug fahre ich Morgen nach Berlin\",\n        \"nach Berlin fahre ich Morgen mit dem Zug\"\n      ],\n      \"otherTranslationOrders\": [\n        \"I'm taking the train to Berlin Tomorrow\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Ich fahre morgen mit dem Zug nach Berlin\",\n          \"Ich fahre mit dem Zug morgen nach Berlin\",\n          \"Morgen fahre ich nach Berlin mit dem Zug\",\n          \"Ich fahre morgen nach Berlin mit dem Zug\",\n          \"Mit dem Zug fahre ich morgen nach Berlin\",\n          \"Nach Berlin fahre ich morgen mit dem Zug\",\n          \"Nach Berlin fahre ich mit dem Zug morgen\"\n        ],\n        \"otherTranslationOrders\": [\n          \"I'm taking the train to Berlin tomorrow\",\n          \"I'm taking the train tomorrow to Berlin\"\n        ]\n      }\n    },\n    {\n      \"otherOrders\": [\n        \"ich besuche Am Wochenende meine Eltern\",\n        \"ich besuche meine Eltern Am Wochenende\",\n        \"meine Eltern besuche ich Am Wochenende\"\n      ],\n      \"otherTranslationOrders\": [\n        \"I visit my parents On the weekend\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Ich besuche am Wochenende meine Eltern\",\n          \"Ich besuche meine Eltern am Wochenende\",\n          \"Meine Eltern besuche ich am Wochenende\"\n        ],\n        \"otherTranslationOrders\": [\n          \"I visit my parents on the weekend\"\n        ]\n      }\n    }\n  ]\n}",
+      "systemPrompt": "# Role\n\nYou are an expert language teacher helping a language learning app. A learner builds each sentence below from its word tiles, and the app accepts other orders of the same tiles. Your job is to find candidate orders: a second reviewer checks each one afterwards, so don't hold back an order a native speaker might plausibly say.\n\n# Inputs\n\n- `TARGET_LANGUAGE`: the language being learned, with its variant.\n- `LEARNER_LANGUAGE`: the learner's language.\n- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and its `translation` in `LEARNER_LANGUAGE`.\n\n# What you write\n\nOne entry for each sentence in `SENTENCES`, in the same order:\n\n- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of `TARGET_LANGUAGE` might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.\n- `otherTranslationOrders`: the same for `translation`, in `LEARNER_LANGUAGE`.\n\nNever change, fix or add a word.\n",
+      "testCaseId": "en-de-verb-second-1",
+      "userPrompt": "\n    TARGET_LANGUAGE: Deutsch\n    LEARNER_LANGUAGE: US English\n    SENTENCES:\n    1. sentence: Morgen fahre ich mit dem Zug nach Berlin\n       translation: Tomorrow I'm taking the train to Berlin\n    2. sentence: Am Wochenende besuche ich meine Eltern\n       translation: On the weekend I visit my parents\n  "
+    },
+    {
+      "cacheReadTokens": 0,
+      "inputTokens": 633,
+      "outputTokens": 137,
+      "reasoningTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-argon",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 633,
+            "outputTokens": 137,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 584,
+            "outputTokens": 294,
+            "reasoningTokens": 261
+          }
+        }
+      ],
+      "duration": 12494.943249999997,
+      "output": "{\n  \"sentences\": [\n    {\n      \"otherOrders\": [\n        \"eu fico em casa Se chover amanhã,\",\n        \"Se amanhã, chover eu fico em casa\",\n        \"eu fico em casa Se amanhã, chover\",\n        \"amanhã, Se chover eu fico em casa\"\n      ],\n      \"otherTranslationOrders\": [\n        \"I'll stay home If it rains tomorrow,\",\n        \"tomorrow, If it rains I'll stay home\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Eu fico em casa se chover amanhã\",\n          \"Se amanhã chover, eu fico em casa\",\n          \"Eu fico em casa se amanhã chover\",\n          \"Amanhã, se chover, eu fico em casa\"\n        ],\n        \"otherTranslationOrders\": [\n          \"I'll stay home if it rains tomorrow\",\n          \"Tomorrow, if it rains, I'll stay home\"\n        ]\n      }\n    },\n    {\n      \"otherOrders\": [\n        \"tomo um banho Quando chego em casa,\"\n      ],\n      \"otherTranslationOrders\": [\n        \"I take a shower When I get home,\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"Tomo um banho quando chego em casa\"\n        ],\n        \"otherTranslationOrders\": [\n          \"I take a shower when I get home\"\n        ]\n      }\n    }\n  ]\n}",
+      "systemPrompt": "# Role\n\nYou are an expert language teacher helping a language learning app. A learner builds each sentence below from its word tiles, and the app accepts other orders of the same tiles. Your job is to find candidate orders: a second reviewer checks each one afterwards, so don't hold back an order a native speaker might plausibly say.\n\n# Inputs\n\n- `TARGET_LANGUAGE`: the language being learned, with its variant.\n- `LEARNER_LANGUAGE`: the learner's language.\n- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and its `translation` in `LEARNER_LANGUAGE`.\n\n# What you write\n\nOne entry for each sentence in `SENTENCES`, in the same order:\n\n- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of `TARGET_LANGUAGE` might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.\n- `otherTranslationOrders`: the same for `translation`, in `LEARNER_LANGUAGE`.\n\nNever change, fix or add a word.\n",
+      "testCaseId": "en-pt-clause-order-1",
+      "userPrompt": "\n    TARGET_LANGUAGE: Português Brasileiro\n    LEARNER_LANGUAGE: US English\n    SENTENCES:\n    1. sentence: Se chover amanhã, eu fico em casa\n       translation: If it rains tomorrow, I'll stay home\n    2. sentence: Quando chego em casa, tomo um banho\n       translation: When I get home, I take a shower\n  "
+    },
+    {
+      "cacheReadTokens": 0,
+      "inputTokens": 596,
+      "outputTokens": 81,
+      "reasoningTokens": 0,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-4-argon",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 596,
+            "outputTokens": 81,
+            "reasoningTokens": 0
+          }
+        },
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 0,
+            "inputTokens": 489,
+            "outputTokens": 367,
+            "reasoningTokens": 345
+          }
+        }
+      ],
+      "duration": 12040.068165999997,
+      "output": "{\n  \"sentences\": [\n    {\n      \"otherOrders\": [\n        \"毎朝 私 は コーヒー を 飲 み ます\",\n        \"私 は コーヒー を 毎朝 飲 み ます\",\n        \"毎朝 コーヒー を 私 は 飲 み ます\",\n        \"コーヒー を 私 は 毎朝 飲 み ます\",\n        \"コーヒー を 毎朝 私 は 飲 み ます\"\n      ],\n      \"otherTranslationOrders\": [\n        \"every morning I drink coffee\"\n      ],\n      \"candidates\": {\n        \"otherOrders\": [\n          \"毎朝私はコーヒーを飲みます\",\n          \"私はコーヒーを毎朝飲みます\",\n          \"毎朝コーヒーを私は飲みます\",\n          \"コーヒーを私は毎朝飲みます\",\n          \"コーヒーを毎朝私は飲みます\"\n        ],\n        \"otherTranslationOrders\": [\n          \"Every morning I drink coffee\"\n        ]\n      }\n    }\n  ]\n}",
+      "systemPrompt": "# Role\n\nYou are an expert language teacher helping a language learning app. A learner builds each sentence below from its word tiles, and the app accepts other orders of the same tiles. Your job is to find candidate orders: a second reviewer checks each one afterwards, so don't hold back an order a native speaker might plausibly say.\n\n# Inputs\n\n- `TARGET_LANGUAGE`: the language being learned, with its variant.\n- `LEARNER_LANGUAGE`: the learner's language.\n- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and its `translation` in `LEARNER_LANGUAGE`.\n\n# What you write\n\nOne entry for each sentence in `SENTENCES`, in the same order:\n\n- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of `TARGET_LANGUAGE` might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.\n- `otherTranslationOrders`: the same for `translation`, in `LEARNER_LANGUAGE`.\n\nNever change, fix or add a word.\n",
+      "testCaseId": "en-ja-phrase-order-1",
+      "userPrompt": "\n    TARGET_LANGUAGE: 日本語\n    LEARNER_LANGUAGE: US English\n    SENTENCES:\n    1. sentence: 私は毎朝コーヒーを飲みます\n       translation: I drink coffee every morning\n  "
+    }
+  ],
+  "taskId": "language-sentence-orders"
+}

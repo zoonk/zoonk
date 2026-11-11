@@ -30,7 +30,14 @@ function subscribe(userId: string) {
   });
 }
 
-type CardGoal = { subject: string; targetDate?: string; title: string };
+type CardGoal = {
+  kind?: "language";
+  subject: string;
+  targetDate?: string;
+  targetLanguage?: string;
+  targetRegion?: string;
+  title: string;
+};
 
 const STATISTICS: CardGoal = { subject: "Statistics", title: "Learn statistics" };
 
@@ -50,7 +57,7 @@ async function readCard(userId: string, others: CardGoal[] = [STATISTICS]) {
           targetLanguage: "en",
           title: "Learn English",
         },
-        ...others.map((goal) => ({ ...goal, kind: "learn" as const, ownLevel: "none" as const })),
+        ...others.map((goal) => ({ kind: "learn" as const, ownLevel: "none" as const, ...goal })),
       ],
       route: "goals",
     },
@@ -171,6 +178,33 @@ describe("goals typed together beyond the goals a plan follows at once", () => {
 
     await expect(readWaitingGoals()).resolves.toMatchObject([
       { input: { goals: [{ title: STATISTICS.title }] } },
+    ]);
+  });
+
+  it("gives a waiting language goal its country's flag and other goals none", async () => {
+    const user = await useLearner();
+
+    const spanish: CardGoal = {
+      kind: "language",
+      subject: "Spanish",
+      targetLanguage: "es",
+      targetRegion: "AR",
+      title: "Learn Argentine Spanish",
+    };
+
+    const french: CardGoal = {
+      kind: "language",
+      subject: "French",
+      targetLanguage: "fr",
+      title: "Learn French",
+    };
+
+    await confirm(await readCard(user.id, [STATISTICS, spanish, french]));
+
+    await expect(readWaitingGoals()).resolves.toMatchObject([
+      { languageFlag: null },
+      { languageFlag: "ar" },
+      { languageFlag: "fr" },
     ]);
   });
 

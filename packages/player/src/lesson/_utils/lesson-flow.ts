@@ -2,6 +2,7 @@ import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { getChallengeProgress } from "./challenge-progress";
+import { hasAttemptAt } from "./lesson-attempts";
 import { finishScreens, isAtEnd } from "./lesson-end";
 import {
   canSelfCorrect,
@@ -15,9 +16,17 @@ import { omitKeys } from "./records";
 function startOver(state: LessonPlayerState, ids: readonly string[]): LessonPlayerState {
   const rounds = ids.map((id) => [id, (state.rounds[id] ?? 0) + 1] as const);
 
+  const attempts = ids.flatMap((id) => {
+    const result = state.results[id];
+    const round = state.rounds[id] ?? 0;
+    const isFirst = result && !(id in state.firstAttempts);
+    return isFirst ? [[id, { answer: state.answers[id], result, round }] as const] : [];
+  });
+
   return {
     ...state,
     answers: omitKeys(state.answers, ids),
+    firstAttempts: { ...state.firstAttempts, ...Object.fromEntries(attempts) },
     results: omitKeys(state.results, ids),
     rounds: { ...state.rounds, ...Object.fromEntries(rounds) },
   };
@@ -27,16 +36,14 @@ function isLaterCopy(state: LessonPlayerState, position: number): boolean {
   return state.queue.indexOf(state.queue[position] ?? "") < position;
 }
 
+/** A retry starts over once, when the learner first reaches it, so Previous and Next only revisit it. */
 function startsOver(state: LessonPlayerState, position: number): boolean {
   const id = state.queue[position] ?? "";
-  return id in state.results && (state.quickCheck !== null || isLaterCopy(state, position));
+  const isFirstRetry = isLaterCopy(state, position) && !(id in state.firstAttempts);
+  return id in state.results && (state.quickCheck !== null || isFirstRetry);
 }
 
 function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState["notice"] {
-  if (id in state.results) {
-    return null;
-  }
-
   if (state.selfCorrected.includes(id)) {
     return "selfCorrect";
   }
@@ -44,15 +51,15 @@ function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState
   return id in state.firstVerdicts ? null : (state.missing[id] ?? null);
 }
 
-function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
+export function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
-  const reviewing = id in state.results;
+  const reviewing = hasAttemptAt(state, position);
 
   return {
     ...state,
     checkFailed: false,
     checkIssue: null,
-    notice: getEntryNotice(state, id),
+    notice: reviewing ? null : getEntryNotice(state, id),
     phase: reviewing ? "feedback" : "playing",
     position,
     reviewing,
@@ -215,42 +222,6 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
     progress.stage === "intro" || (progress.stage === "deciding" && progress.pendingChoiceId);
 
   return canMove ? { ...state, revealed: { ...state.revealed, [step.id]: shown + 1 } } : state;
-}
-
-export function goBack(state: LessonPlayerState): LessonPlayerState {
-  const position = state.phase === "map" ? state.position : state.position - 1;
-
-  if (!canGoBack(state) || !state.queue[position]) {
-    return state;
-  }
-
-  return showPosition(state, position);
-}
-
-/**
- * A missed question that came back holds its attempt in the later copy, so the earlier one, its
- * result cleared, would show it unanswered and let the learner answer it twice.
- */
-function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
-  const id = state.queue[position] ?? "";
-  return !(id in state.results) && state.queue.includes(id, position + 1);
-}
-
-export function canGoBack(state: LessonPlayerState): boolean {
-  if (state.run.status === "refused") {
-    return false;
-  }
-
-  if (state.phase === "map") {
-    return true;
-  }
-
-  return (
-    state.phase === "playing" &&
-    state.position > 0 &&
-    !state.quickCheck &&
-    !isEarlierCopy(state, state.position - 1)
-  );
 }
 
 function offerSelfCorrection({

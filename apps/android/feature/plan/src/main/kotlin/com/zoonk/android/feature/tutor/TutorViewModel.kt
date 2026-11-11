@@ -55,6 +55,8 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
+    /** A variety card's Apply in flight or failed, by its turn; whether it's saved is the goal's country. */
+    val varieties: Map<String, VarietySave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
     val loadingEarlier: Boolean = false,
     val earlierFailed: Boolean = false,
@@ -103,6 +105,10 @@ class TutorViewModel internal constructor(
         internal set
 
     internal val goalId: String? get() = scope.goalId ?: activeGoalId
+
+    /** Each goal's chosen country, from the learner summary, so a variety card already in effect shows applied. */
+    var goalRegions: Map<UUID, String?> by mutableStateOf(emptyMap())
+        internal set
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
 
@@ -287,6 +293,39 @@ class TutorViewModel internal constructor(
             }
         }
     }
+
+    /** Saves the country a variety card offers; nothing changed before this tap. */
+    fun applyVariety(
+        turnId: String,
+        goalId: UUID,
+        region: String,
+    ) {
+        if (state.value.varieties[turnId] == VarietySave.Saving) return
+        mutableState.update { it.copy(varieties = it.varieties + (turnId to VarietySave.Saving)) }
+        viewModelScope.launch {
+            val result = store.setRegion(goalId, region)
+            // Ahead of the summary's own update, so the card never shows Apply between the save and it.
+            if (result is MutationResult.Done) goalRegions = goalRegions + (goalId to region)
+            mutableState.update {
+                it.copy(
+                    varieties =
+                        if (result is MutationResult.Failed) {
+                            it.varieties + (turnId to VarietySave.Failed)
+                        } else {
+                            it.varieties -
+                                turnId
+                        },
+                )
+            }
+        }
+    }
+
+    /** A variety card reads saved exactly while its goal has the country it offers, so a later card's country takes over. */
+    fun varietySave(
+        turnId: String,
+        goalId: UUID,
+        region: String,
+    ): VarietySave? = VarietySave.Saved.takeIf { goalRegions[goalId] == region } ?: state.value.varieties[turnId]
 
     fun loadEarlier() {
         val page = thread.state.value.value ?: return
@@ -610,6 +649,8 @@ private const val INITIAL_POLL_MILLIS = 1_000.0
 private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
+
+enum class VarietySave { Saving, Saved, Failed }
 
 @Immutable
 data class BlockNotice(

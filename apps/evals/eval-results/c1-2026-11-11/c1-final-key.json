@@ -1,0 +1,82 @@
+[
+  {
+    "id": "lesson-spec:en-tax-deadlines-sourced-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "lesson-spec:pt-estabilidade-sourced-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "lesson-spec:es-tablas-dinamicas-beginner-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "lesson-spec:pt-enzimas-exam-prep-activities-1",
+    "A": "openai-gpt-6.1-sol",
+    "B": "carbon"
+  },
+  {
+    "id": "challenge-case:en-ab-test-work-1",
+    "A": "openai-gpt-6.1-sol",
+    "B": "carbon"
+  },
+  {
+    "id": "challenge-case:pt-quantum-what-if-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "challenge-case:pt-nursing-dose-work-1",
+    "A": "openai-gpt-6.1-sol",
+    "B": "carbon"
+  },
+  {
+    "id": "challenge-case:en-career-change-data-cleaning-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "challenge-case:en-statistics-field-nursing-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "challenge-case:pt-porcentagem-field-retail-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-sol"
+  },
+  {
+    "id": "lesson-fix:real-citation-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-terra"
+  },
+  {
+    "id": "lesson-fix:real-term-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-terra"
+  },
+  {
+    "id": "lesson-fix:en-temperature-code-problems-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-terra"
+  },
+  {
+    "id": "lesson-fix:en-temperature-basis-follows-1",
+    "A": "openai-gpt-6.1-terra",
+    "B": "carbon"
+  },
+  {
+    "id": "lesson-fix:en-temperature-activity-answer-1",
+    "A": "openai-gpt-6.1-terra",
+    "B": "carbon"
+  },
+  {
+    "id": "lesson-fix:en-scientific-notation-keeps-math-1",
+    "A": "carbon",
+    "B": "openai-gpt-6.1-terra"
+  }
+]

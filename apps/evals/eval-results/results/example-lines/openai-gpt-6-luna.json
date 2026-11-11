@@ -5,472 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The line directly uses the learner's shared rent with two friends, which naturally fits equal division. It invents no location or other personal fact, and there is no repeated scene.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The learner and two friends make three people, so each pays one third when the rent is divided equally. The condition is stated explicitly, and the mathematics matches the screen.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "This is one short, natural Brazilian Portuguese sentence addressed to você, with no question, praise, promise, prohibited opening, or unsupported personal claim.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1722,
-          "outputTokens": 577,
-          "reasoningTokens": 254
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "An explicitly hypothetical amount could make the calculation more tangible: a rent of R$ 1.200 divided among you and your two friends gives R$ 400 per person, without claiming this is your actual rent.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner shares the rent with two friends: a line splitting a rent in reais three ways fits, with the money written the Brazilian way (R$ 1.200, R$ 400) and correct math\n      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-rent-split-no-city-1",
-        "userInput": {
-          "facts": ["Faz faculdade à noite", "Divide o aluguel com duas amigas"],
-          "goal": "Organizar as finanças pessoais",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Uma conta dividida em partes iguais.",
-              "text": "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The line concretely connects percentages to the learner's car-saving goal. The amount is explicitly hypothetical, no location or other personal fact is invented, and no earlier moment is repeated.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The line correctly applies the screen's percent-of-an-amount concept: 20% of $500 is $100. Dollar amounts use US notation.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "It is one short US English sentence addressed to \"you,\" with no prohibited opening, question, praise, promise, or unsupported personal assumption. The phrase \"an example $500\" could be made smoother.",
-          "score": 9,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1712,
-          "outputTokens": 482,
-          "reasoningTokens": 144
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "For smoother phrasing, replace \"set aside an example $500\" with \"save $500\": \"If you save $500 toward your car, 20% of that is $100.\" The conditional still makes clear that $500 is hypothetical.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a car: a line with a percent of what they save, in dollars written the US way ($2,500), with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city or state\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-car-savings-no-city-1",
-        "userInput": {
-          "facts": ["Works night shifts as a nurse", "Saving for a car"],
-          "goal": null,
-          "language": "en",
-          "screens": [
-            {
-              "idea": "A percent of an amount the learner saves or spends.",
-              "text": "A percent is a number out of 100. 20% of $500 is 20 out of every 100 dollars: $100."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The line naturally connects the discount to the learner's pharmacy work in Recife. The hypothetical product price does not invent a personal fact, and no earlier moment is repeated.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The discount is correctly calculated on the original price: 25% of R$ 40 is R$ 10, matching the screen's idea.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The line is one natural Brazilian Portuguese sentence under 200 characters, addresses the learner as você, and contains no prohibited opening, question, praise, promise, or personal assumption.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1701,
-          "outputTokens": 344,
-          "reasoningTokens": 63
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner works at a pharmacy: a line about a discount on something sold at a pharmacy fits, with the discount computed on the original price\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-pharmacy-discount-1",
-        "userInput": {
-          "facts": ["Trabalha numa farmácia em Recife", "Gosta de exemplos com números"],
-          "goal": "Revisar matemática básica",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Um desconto em algo que a pessoa compra ou vende.",
-              "text": "Um desconto de 25% tira um quarto do preço original. Num produto de R$ 80, isso é R$ 20 a menos: você paga R$ 60."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The learner's bike commute clearly supports the screen's price-change idea, and no other line has used it. Returning null triggers the explicit maximum score of 7.",
-          "score": 7,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "There are no factual, numerical, or conceptual claims to be incorrect. The missing example is assessed under fit.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The null entry contains no writing-rule violations. Its inappropriate omission of a fitting example is assessed under fit rather than as a sentence or language error.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1670,
-          "outputTokens": 499,
-          "reasoningTokens": 148
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The only screen receives null even though the learner's daily bike commute in Toronto clearly fits a price-change example involving a bike part. No earlier line uses that context, so the result omits the requested personalization.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "A conditional example could use the commute without inventing a purchase: \"If a bike light for your daily commute in Toronto rises from $20 to $25, the $5 increase is 25% of the starting price.\"",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - The learner bikes to work in Toronto: a percent change on something from their commute or city fits (a transit fare, a bike part), with correct numbers\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-toronto-percent-change-1",
-        "userInput": {
-          "facts": ["Lives in Toronto", "Bikes to work every day"],
-          "goal": null,
-          "language": "en",
-          "screens": [
-            {
-              "idea": "A price the learner pays that went up or down.",
-              "text": "Percent change compares a change with the starting value. A ticket going from $80 to $100 changed by $20, which is 25% of $80."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "Neither studying at night nor passing a driving test naturally fits the photosynthesis screen. The single null entry is exactly the expected response and invents nothing about the learner.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The permitted null entry makes no factual or numerical claims and introduces no errors.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "Null is explicitly appropriate when no learner information fits, so no sentence is required. There are no language or writing violations.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1648,
-          "outputTokens": 253,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Nothing the learner shared (studying at night, a driving test) fits photosynthesis naturally, so the right answer is null\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-no-fit-null-1",
-        "userInput": {
-          "facts": ["Prefers to study at night"],
-          "goal": "Pass the driving test",
-          "language": "en",
-          "screens": [
-            {
-              "idea": "A plant the learner sees every day.",
-              "text": "Leaves use sunlight to turn water and carbon dioxide into sugar. The oxygen we breathe is what's left over."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The hospital example naturally uses the learner's nursing work. The patient and dressing quantities are explicitly hypothetical, not invented personal facts, and no earlier moment is repeated.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "At a constant two dressings per patient, five patients require ten dressings. This correctly illustrates direct proportion and stays within arithmetic without giving medical advice.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The line is one short, natural sentence in Brazilian Portuguese, addresses the learner through 'seu plantão', and contains no question, praise, promise, or unsupported personal assumption.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1715,
-          "outputTokens": 419,
-          "reasoningTokens": 138
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner is a nurse: a dose or drip calculation fits the rule of three, and the numbers must be right (more medicine per dose in the same proportion)\n      - It must not give medical advice beyond the arithmetic\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-nurse-rule-of-three-1",
-        "userInput": {
-          "facts": ["É enfermeira num hospital público"],
-          "goal": "Passar no concurso da prefeitura",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Uma proporção direta no trabalho da pessoa.",
-              "text": "Se 2 kg de farinha rendem 30 pães, 4 kg rendem 60: as duas quantidades crescem juntas, na mesma proporção. Isso é uma proporção direta."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "Both null entries are exactly appropriate: frontend engineering and speaking some Italian do not naturally fit either screen. The result correctly avoids forcing the concurso goal into a generic preparation scenario.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The result makes no incorrect claims or calculations and supplies the expected null entry for each screen in order.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "Null is explicitly permitted when nothing fits. Neither entry introduces any sentence-level or Brazilian Portuguese writing violation.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1838,
-          "outputTokens": 289,
-          "reasoningTokens": 32
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Both screens teach an everyday reading skill with their own everyday examples (a message about a theater's entry time, a shop sign). Being a frontend engineer who speaks some Italian adds nothing to them, so both lines are null\n      - The concurso is not a moment of the learner's life: a line about preparing for it, its notice or its questions (\"Ao se preparar para o concurso…\") is filler and scores at most 6\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-everyday-reading-lesson-null-1",
-        "userInput": {
-          "facts": [
-            "É engenheiro de software, principalmente de frontend",
-            "Já fala um pouco de italiano"
-          ],
-          "goal": "Passar no concurso da Câmara dos Deputados",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Uma mensagem que confirma o horário de entrada em um evento.",
-              "text": "Igor recebe a mensagem: “A entrada no teatro será às 15h30. O ensaio começa às 16h.” Para conferir “É possível entrar às 15h30”, ele aponta a frase sobre a entrada. Esse trecho funciona como um comprovante da resposta: é uma **evidência textual**."
-            },
-            {
-              "idea": "Uma placa com o horário de funcionamento de um lugar.",
-              "text": "Na porta da loja, a placa diz: “Fechado para almoço das 12h às 13h.” Quem chega às 12h30 encontra a loja fechada. Para conferir, Igor aponta o horário escrito na placa: a resposta está no próprio texto."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The single null entry is exactly appropriate: neither frontend work nor knowing some Italian naturally fits calculating current through a resistor. The result also avoids forcing the ENEM goal into a life moment.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The permitted null entry makes no factual or numerical claims and introduces no errors.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "Null is explicitly required when nothing fits, so no sentence is needed. There is no language or writing violation.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1763,
-          "outputTokens": 255,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Nothing the learner shared (frontend work, some Italian) is a real moment for Ohm's law, so the right answer is null\n      - Studying for the ENEM or solving one of its questions is not a moment of the learner's life: a line like \"Ao estudar para o ENEM, se uma questão trouxer uma fonte de 12 V…\" is filler and scores at most 6\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-ohm-no-exam-framing-1",
-        "userInput": {
-          "facts": [
-            "É engenheiro de software, principalmente de frontend",
-            "Já fala um pouco de italiano"
-          ],
-          "goal": "ENEM 2026",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "A corrente em um resistor ligado a uma fonte de tensão.",
-              "text": "Se a resistência de um componente permanece constante, você pode calcular a corrente pela **lei de Ohm**: $V = R \\times I$. Aqui, $V$ é a tensão, $R$ é a resistência e $I$ é a corrente. Para achar a corrente, divida a tensão pela resistência: $I = V \\div R$."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
           "reasoning": "The single null is the expected answer: the software-work context was already used in EARLIER_LINES, and knowing some Italian does not naturally fit the financing choice on this screen.",
           "score": 10,
           "label": "Uses what fits, never the same moment twice",
@@ -502,9 +36,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner already read a line that set the previous idea in a software company (EARLIER_LINES). Their only other fact (some Italian) doesn't fit, so the right answer is null\n      - A line set in a software or technology company again, or starting like the earlier line, repeats the same moment and scores at most 6\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
@@ -568,14 +114,25 @@
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Two different examples are warranted: the learner works at a pharmacy and is paying a motorcycle in 12 installments. The first line applies the discount to something sold or bought at the pharmacy, and the second applies installment interest to the motorcycle, each with correct math and money written the Brazilian way\n      - A null on either screen scores at most 7 here, and two lines set in the same moment (both at the pharmacy, or both about the motorcycle) score at most 6\n      - The learner never said where they live, so no line names a city\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-two-moments-discount-installments-1",
         "userInput": {
-          "facts": ["Trabalha numa farmácia", "Está pagando uma moto em 12 parcelas"],
+          "facts": [
+            "Trabalha numa farmácia",
+            "Está pagando uma moto em 12 parcelas"
+          ],
           "goal": "Revisar matemática financeira",
           "language": "pt",
           "screens": [
@@ -626,13 +183,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Screen 1 calls the supermarket a chain (“rede”), although the learner only mentioned a supermarket. This is a small unsupported detail; removing “rede” would keep the example grounded.",
           "kind": "minorErrors",
           "score": 9
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The lines that are present each tell a different moment: the supermarket where she shops can appear in one line only, and her index fund in one line only. A second line in the same place or with the same money scores at most 6\n      - The index-fund screen fits her R$ 200 a month in a fund that follows the Ibovespa, with correct math (an example total, if any, is said to be an example)\n      - She works at a public hospital, but a line that only names the hospital without the idea happening there (\"No hospital onde você trabalha, uma empresa…\") is forced and scores at most 6\n      - A null on a screen where every fitting moment was already used is right\n      - No line recommends buying, selling or holding anything or promises returns\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
@@ -697,15 +262,29 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The learner's only fact is their barista job, which fits both percent ideas. Two lines set at the café repeat the same job and score at most 6: exactly one line uses the café (a tip or a menu price), with correct math in dollars written the US way, and the other line is null\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-one-fact-two-screens-1",
         "userInput": {
-          "facts": ["Works as a barista"],
+          "facts": [
+            "Works as a barista"
+          ],
           "goal": null,
           "language": "en",
           "screens": [
@@ -756,15 +335,30 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner's facts are about their routine: two buses to work every morning. A line about a bus fare going up, as a percent change in reais written the Brazilian way (R$ 4,40 → R$ 5,00), with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-routine-commute-fare-1",
         "userInput": {
-          "facts": ["Pega dois ônibus para ir ao trabalho toda manhã", "Estuda depois do jantar"],
+          "facts": [
+            "Pega dois ônibus para ir ao trabalho toda manhã",
+            "Estuda depois do jantar"
+          ],
           "goal": "Revisar matemática básica",
           "language": "pt",
           "screens": [
@@ -811,13 +405,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "“Save an example $10,000” is slightly awkward US English; “save $10,000” within the existing conditional would sound more natural while remaining hypothetical.",
           "kind": "minorErrors",
           "score": 9
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - The learner is saving for a house down payment within five years: a line where that saving earns compound interest, in dollars written the US way, with correct math, fits\n      - \"Understands faster with numbers\" is how they learn, not a moment of their life: it may shape the line's numbers but is never its situation\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
@@ -873,9 +475,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - The learner only shared how they learn (worked examples, short explanations): no moment of their life fits, so the line MUST be null. A sentence about how they study or learn scores at most 4\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
@@ -931,9 +545,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Maya is a night-shift nurse who wants to read papers about quantum computers: a tiny quantity from her work (a dose in micrograms, a drop's volume) or from quantum hardware fits, written with a negative power of ten\n      - The power must be right (a microgram is 1 × 10⁻⁶ g) and the line must keep \"negative power means small\"\n      - It must not give medical advice beyond the arithmetic\n    \n\n  - The output is `lines`: one entry for the one screen, a sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n",
@@ -991,15 +617,29 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Sam just started investing through an index fund: a line saying that an index up 2% moves his fund by about 2% that day, with correct numbers (for example, $500 becomes about $510), fits\n      - It must not recommend buying, selling or holding anything, nor promise returns\n    \n\n  - The output is `lines`: one entry for the one screen, a sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n",
         "id": "en-persona-sam-index-fund-1",
         "userInput": {
-          "facts": ["Just started investing through an index fund"],
+          "facts": [
+            "Just started investing through an index fund"
+          ],
           "goal": "What does “the market is up 2%” mean?",
           "language": "en",
           "screens": [
@@ -1051,7 +691,11 @@
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Replace null with one short Brazilian Portuguese sentence addressed to você, using a hypothetical prep-course discount and showing correct 10% shortcut arithmetic without promising admission to Medicine.",
           "kind": "potentialImprovements",
@@ -1114,8 +758,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The science-fiction connection could be more vivid by locating the glow in a hypothetical ship engine or lightsaber, while preserving the concise, calculation-free comparison.",
           "kind": "potentialImprovements",
@@ -1177,7 +829,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The line connects investing the allowance to owning a small company stake, but stops short of explaining what that stake gives the learner, such as potential dividends, voting rights, or participation in growth.",
           "kind": "minorErrors",
@@ -1193,7 +849,9 @@
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Pedro, a teenager, wants to learn to invest his allowance: a line about owning a small slice of a company he knows with his allowance, and what that slice gives him (a share of dividends, a vote or its growth), fits\n      - It must not recommend a specific stock, must not promise returns and must say or imply that returns aren't guaranteed if it mentions money made\n    \n\n  - The output is `lines`: one entry for the one screen, a sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n",
         "id": "pt-persona-pedro-allowance-shareholder-1",
         "userInput": {
-          "facts": ["Quer aprender a investir a mesada"],
+          "facts": [
+            "Quer aprender a investir a mesada"
+          ],
           "goal": "Entender a bolsa de valores",
           "language": "pt",
           "screens": [
@@ -1240,9 +898,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese, with the English question in English\n      - Marcos is moving to Toronto with his wife and works in IT: a question he will ask there (the rent or deposit of an apartment, a laptop, how many rooms) fits, with how much for prices and uncountable things and how many for things counted\n      - The English must be correct\n    \n\n  - The output is `lines`: one entry for the one screen, a sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n",
@@ -1260,6 +930,711 @@
             {
               "idea": "Uma pergunta em inglês que a pessoa vai fazer na nova cidade.",
               "text": "Em português, “quanto” serve para tudo. Em inglês, depende:\n\n- **How much** para preço e para o que não se conta: *How much is the rent?*\n- **How many** para o que se conta: *How many bedrooms are there?*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "Uses the learner's soccer interest naturally through a concrete match situation, without inventing personal details or repeating an earlier moment.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Two teams of 11 players correctly illustrate equal groups: 2 × 11 = 22, the standard starting total on the field.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The line is one concise, natural US English sentence, but it does not address the reader as \"you,\" triggering the maximum score of 7.",
+          "score": 7,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1776,
+          "outputTokens": 451,
+          "reasoningTokens": 174
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The sentence does not address the learner as \"you,\" as required.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Write one non-null sentence using at least one supplied fact naturally. Connect a concrete situation from software work, journalism, soccer, news or a named fictional show to the screen's multiplication rule. Use correct arithmetic. Do not invent biographical details.",
+        "id": "en-founder-first-lesson-1",
+        "userInput": {
+          "facts": [
+            "Watches sci-fi and anime, especially Star Trek, Fringe and Dragon Ball",
+            "Plays soccer",
+            "Reads news and politics",
+            "Works as: software engineer",
+            "Studied journalism"
+          ],
+          "goal": "Understand mathematics from the beginning",
+          "language": "en",
+          "screens": [
+            {
+              "idea": "Several equal-sized groups in the learner's work or interests, counted by multiplication.",
+              "text": "Multiplication counts equal groups: 4 groups of 3 objects contain 12 objects."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "Naturally connects equal division to the learner sharing rent with two friends. The rent amount is explicitly hypothetical, no location is invented, and no earlier moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly divides R$ 1.500 among three people to give R$ 500 each, using Brazilian currency notation and the screen's equal-sharing concept.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "One short, natural sentence in Brazilian Portuguese directly addresses the learner as você, without a question, praise, promise, or unsupported personal claim.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1843,
+          "outputTokens": 414,
+          "reasoningTokens": 138
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner shares the rent with two friends: a line splitting a rent in reais three ways fits, with the money written the Brazilian way (R$ 1.200, R$ 400) and correct math\n      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-rent-split-no-city-1",
+        "userInput": {
+          "facts": [
+            "Faz faculdade à noite",
+            "Divide o aluguel com duas amigas"
+          ],
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Uma conta dividida em partes iguais.",
+              "text": "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "Software engineering clearly fits a discount on software used for work, and EARLIER_LINES contains no competing example. Returning null triggers the explicit maximum score of 7 and leaves the required example missing.",
+          "score": 7,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The result makes no numerical or conceptual claims, so it contains no mathematical error triggering this category's cap. The missing example is assessed under fit.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "There is no generated prose containing a sentence-length, language, address, or literal-language violation. The inappropriate choice to return null is assessed under fit rather than treated as a prose-writing error.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1690,
+          "outputTokens": 593,
+          "reasoningTokens": 263
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result returns null despite the explicit requirement for a concrete, non-null discount example. The learner's software-engineering work directly fits the screen's software-for-work idea, and no earlier line has used that context.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Write a concrete, non-null discount example using software work, with correct numbers. Use literal language, without idioms, metaphors or figures of speech.",
+        "id": "en-plain-words-example-1",
+        "userInput": {
+          "facts": [
+            "Works as: software engineer"
+          ],
+          "goal": null,
+          "language": "en",
+          "plainWords": true,
+          "screens": [
+            {
+              "idea": "A discount on software used for work.",
+              "text": "A 25% discount removes a quarter of the original price."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line concretely uses the learner's pharmacy work and preference for numerical examples. Sunscreen is naturally sold at a pharmacy, and the conditional wording introduces a hypothetical price without inventing a fact about the learner. No earlier moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The discount is correctly calculated on the original price: 20% of R$ 50 is R$ 10, leaving R$ 40. This accurately applies the screen's discount concept.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The entry is one natural sentence in Brazilian Portuguese, comfortably under 200 characters and addressed to the learner through 'você trabalha'. It contains no prohibited opening, question, praise, promise, or personal assumption.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1824,
+          "outputTokens": 384,
+          "reasoningTokens": 72
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner works at a pharmacy: a line about a discount on something sold at a pharmacy fits, with the discount computed on the original price\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-pharmacy-discount-1",
+        "userInput": {
+          "facts": [
+            "Trabalha numa farmácia em Recife",
+            "Gosta de exemplos com números"
+          ],
+          "goal": "Revisar matemática básica",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Um desconto em algo que a pessoa compra ou vende.",
+              "text": "Um desconto de 25% tira um quarto do preço original. Num produto de R$ 80, isso é R$ 20 a menos: você paga R$ 60."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line naturally uses the learner's car-saving goal without inventing a location or asserting an actual savings balance. The amount is explicitly hypothetical, and no earlier moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The line correctly applies a percentage to savings: 10% of $1,000 is $100. Dollar amounts use US formatting.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "It is one short US English sentence addressed to \"you,\" with no question, praise, promise, or unsupported personal assumption. The only small polish issue is the awkward phrase \"an example $1,000.\"",
+          "score": 9,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1821,
+          "outputTokens": 439,
+          "reasoningTokens": 119
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The phrase \"set aside an example $1,000\" sounds awkward; \"set aside $1,000\" already reads as hypothetical because it follows \"if.\"",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a car: a line with a percent of what they save, in dollars written the US way ($2,500), with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city or state\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-car-savings-no-city-1",
+        "userInput": {
+          "facts": [
+            "Works night shifts as a nurse",
+            "Saving for a car"
+          ],
+          "goal": null,
+          "language": "en",
+          "screens": [
+            {
+              "idea": "A percent of an amount the learner saves or spends.",
+              "text": "A percent is a number out of 100. 20% of $500 is 20 out of every 100 dollars: $100."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The glove-use example naturally connects direct proportion to the learner's work in a public hospital. The conditional wording introduces a hypothetical calculation rather than inventing a workplace practice. No earlier moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "At a constant rate of 2 pairs of gloves per appointment, 4 appointments require 8 pairs. This correctly illustrates direct proportion and gives no medical advice.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The line is one sentence under 200 characters, uses Brazilian Portuguese, and addresses the learner as você. It does not start with 'For example' or contain a question, praise, promise, or unsupported personal assumption.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1838,
+          "outputTokens": 424,
+          "reasoningTokens": 126
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner is a nurse: a dose or drip calculation fits the rule of three, and the numbers must be right (more medicine per dose in the same proportion)\n      - It must not give medical advice beyond the arithmetic\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-nurse-rule-of-three-1",
+        "userInput": {
+          "facts": [
+            "É enfermeira num hospital público"
+          ],
+          "goal": "Passar no concurso da prefeitura",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Uma proporção direta no trabalho da pessoa.",
+              "text": "Se 2 kg de farinha rendem 30 pães, 4 kg rendem 60: as duas quantidades crescem juntas, na mesma proporção. Isso é uma proporção direta."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The daily bike commute naturally supports this price-change screen, and no earlier line used that context. Returning null triggers the explicit cap of 7. A conditional example involving a bike part could use the routine without inventing an actual purchase.",
+          "score": 7,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The null entry contains no factual, numerical, or conceptual error. The missing applicable example is assessed under fit.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Null is an allowed entry type and contains no language, sentence-length, tone, or personal-assumption violation. Its inappropriate selection is a fit issue rather than a writing slip.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1773,
+          "outputTokens": 469,
+          "reasoningTokens": 137
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The only screen receives null even though the learner's daily bike commute clearly fits a bike-part price-change example. This omits the requested personalization and triggers the fit category's maximum score of 7 for an unused, clearly fitting fact.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The learner bikes to work in Toronto: a percent change on something from their commute or city fits (a transit fare, a bike part), with correct numbers\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-toronto-percent-change-1",
+        "userInput": {
+          "facts": [
+            "Lives in Toronto",
+            "Bikes to work every day"
+          ],
+          "goal": null,
+          "language": "en",
+          "screens": [
+            {
+              "idea": "A price the learner pays that went up or down.",
+              "text": "Percent change compares a change with the starting value. A ticket going from $80 to $100 changed by $20, which is 25% of $80."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "Both null entries match the explicit expectations: frontend work and some Italian do not naturally fit either everyday reading example, and the concurso goal should not be forced into a line.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The required null entries introduce no incorrect applications of the screens' ideas or numerical errors.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Null is explicitly permitted when nothing fits. Both entries appropriately use it, so there are no sentence, language, or style violations.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1956,
+          "outputTokens": 173,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Both screens teach an everyday reading skill with their own everyday examples (a message about a theater's entry time, a shop sign). Being a frontend engineer who speaks some Italian adds nothing to them, so both lines are null\n      - The concurso is not a moment of the learner's life: a line about preparing for it, its notice or its questions (\"Ao se preparar para o concurso…\") is filler and scores at most 6\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-everyday-reading-lesson-null-1",
+        "userInput": {
+          "facts": [
+            "É engenheiro de software, principalmente de frontend",
+            "Já fala um pouco de italiano"
+          ],
+          "goal": "Passar no concurso da Câmara dos Deputados",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Uma mensagem que confirma o horário de entrada em um evento.",
+              "text": "Igor recebe a mensagem: “A entrada no teatro será às 15h30. O ensaio começa às 16h.” Para conferir “É possível entrar às 15h30”, ele aponta a frase sobre a entrada. Esse trecho funciona como um comprovante da resposta: é uma **evidência textual**."
+            },
+            {
+              "idea": "Uma placa com o horário de funcionamento de um lugar.",
+              "text": "Na porta da loja, a placa diz: “Fechado para almoço das 12h às 13h.” Quem chega às 12h30 encontra a loja fechada. Para conferir, Igor aponta o horário escrito na placa: a resposta está no próprio texto."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The single null entry is correct: neither studying at night nor passing a driving test naturally fits the photosynthesis screen or identifies a plant the learner sees daily.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The required null entry makes no factual or numerical claims and introduces no errors.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Null is explicitly permitted when nothing fits. There is no generated sentence that violates the writing or US English requirements.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1751,
+          "outputTokens": 249,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Nothing the learner shared (studying at night, a driving test) fits photosynthesis naturally, so the right answer is null\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-no-fit-null-1",
+        "userInput": {
+          "facts": [
+            "Prefers to study at night"
+          ],
+          "goal": "Pass the driving test",
+          "language": "en",
+          "screens": [
+            {
+              "idea": "A plant the learner sees every day.",
+              "text": "Leaves use sunlight to turn water and carbon dioxide into sugar. The oxygen we breathe is what's left over."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The single null entry is exactly appropriate: frontend work and some Italian provide no natural connection to Ohm's law, and the ENEM goal does not justify an invented everyday moment.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The permitted null response makes no factual or numerical claims and introduces no errors.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Null is explicitly required when nothing fits, so no sentence is needed. There is no text that violates the Brazilian Portuguese or writing requirements.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1881,
+          "outputTokens": 259,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Nothing the learner shared (frontend work, some Italian) is a real moment for Ohm's law, so the right answer is null\n      - Studying for the ENEM or solving one of its questions is not a moment of the learner's life: a line like \"Ao estudar para o ENEM, se uma questão trouxer uma fonte de 12 V…\" is filler and scores at most 6\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-ohm-no-exam-framing-1",
+        "userInput": {
+          "facts": [
+            "É engenheiro de software, principalmente de frontend",
+            "Já fala um pouco de italiano"
+          ],
+          "goal": "ENEM 2026",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "A corrente em um resistor ligado a uma fonte de tensão.",
+              "text": "Se a resistência de um componente permanece constante, você pode calcular a corrente pela **lei de Ohm**: $V = R \\times I$. Aqui, $V$ é a tensão, $R$ é a resistência e $I$ é a corrente. Para achar a corrente, divida a tensão pela resistência: $I = V \\div R$."
             }
           ]
         }

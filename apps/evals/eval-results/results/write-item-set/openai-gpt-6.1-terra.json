@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The first option correctly answers each question: effective improvements depend on actual use; less scheduling control can increase exposure to discomfort; and 'abrigo no papel' contrasts formal provision with effective protection. No second option is defensible, and every evidence excerpt is copied exactly from the passage. However, Questions 1 and 2 are substantially answerable through common sense and cues in their stems and alternatives, so the explicit cap of 7 applies.",
+          "reasoning": "All three keyed answers are uniquely supported: the comparison includes waiting within the transport experience; the central argument integrates waiting conditions into transport planning; and passenger accounts complement technical analysis. Every evidence passage is copied verbatim. However, questions[1] and questions[2] can be answered through common-sense elimination because only their correct options present balanced, reasonable proposals. The cap of 7 for several questions answerable without the stimulus applies.",
           "score": 7,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The short opinion text, everyday public-transport issue, formal register, clear commands and five-option format fit the requested ENEM-style set. The three questions cover the required main idea, inference and language effect. Distractors generally represent recognizable reading mistakes, but several categorical or conspicuously literal alternatives make the set less discriminating than a strong ENEM-style exercise. The set is not broadly out of place, so the out-of-place cap does not apply.",
+          "reasoning": "The short opinion text, contextualized formal Portuguese, clear commands, and five-option questions fit the requested ENEM-style set. The questions cover language effect, central idea, and an inference/application. Distractors represent recognizable mistakes such as literal interpretation, unsupported comparison, and confusing supplementation with replacement. Nevertheless, several are too obviously extreme, and the final question mostly restates an explicit recommendation rather than requiring substantial inference.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The passage is a clear, natural Brazilian Portuguese opinion piece with a coherent thesis and concrete supporting examples. It explicitly uses a fictional city, claims no real source, presents no invented facts about identifiable real entities and contains no em dashes. Reasons and misconceptions are in Portuguese and accurately connect the options to the passage. No concrete weakness under this category is evident.",
+          "reasoning": "The stimulus is a coherent, natural Brazilian Portuguese opinion piece about an everyday public-service experience. It has no real-source attribution, fabricated statistics, identifiable factual inventions, or em dashes. The Portuguese explanations and misconceptions consistently connect the options to the text. No concrete stimulus defect or applicable cap is present.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -32,29 +32,31 @@
           "weight": 30
         }
       ],
+      "itemsScored": 3,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1121,
           "cacheWriteTokens": 0,
-          "inputTokens": 3116,
-          "outputTokens": 1012,
-          "reasoningTokens": 378
+          "inputTokens": 3538,
+          "outputTokens": 864,
+          "reasoningTokens": 298
         }
       },
+      "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Several questions have weak stimulus dependence. In Question 1, considering users' actual experience is the obvious common-sense answer against unsupported or counterproductive proposals. In Question 2, the stem's reference to scheduling flexibility largely reveals the correct inference, while the alternatives make readily dismissible claims. These questions can be answered reliably without reading the passage, triggering the keys score cap of 7. All three intended keys are nevertheless correct and uniquely supported.",
+          "conclusion": "Questions[1] and questions[2] have weak stimulus dependence: their correct answers are the only broadly reasonable, integrative proposals, while the alternatives recommend substitution, neglect, or indiscriminate standardization. A learner can select both through common-sense elimination without establishing what this particular text argues.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Some distractors weaken ENEM-level discrimination. Question 2 repeatedly uses categorical claims such as 'sempre', 'elimina' and 'apenas'; Question 3 includes the particularly easy literal interpretation that the shelters are made from insufficiently resistant materials. These choices make elimination easier than careful interpretation.",
+          "conclusion": "The final question offers limited inferential demand despite its 'hard' label: using passenger reports to guide technical analysis closely paraphrases the final sentence. Several distractors are also conspicuously categorical, reducing the set's challenge and discrimination.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the main-idea alternatives comparably plausible by presenting competing interpretations of the passage's emphasis. For the inference question, distinguish what the scheduling comparison supports from nearby, plausible overinterpretations without relying on categorical wording. Preserve the exact textual evidence and the clear Portuguese explanations.",
+          "conclusion": "Make the distractors plausible competing readings rather than obviously poor transport policies. For the inference question, introduce a concrete planning situation whose resolution requires combining the text's points about user routines, technical data, and complementary improvements.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -90,22 +92,22 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The judgments Errado, Certo, Certo, Errado are correct and unambiguous. However, items 1, 2, and 4 are answerable from administrative-law knowledge and their own wording. Item 3 more meaningfully depends on the authorization being lawful, precarious, and subsequently inconvenient. The cap of 7 for several stimulus-independent questions applies.",
+          "reasoning": "Independent resolution gives Certo, Errado, Certo, Errado, matching every key. An illegal license is generally annulled with retroactive effects; withdrawal of a valid precarious permission for public-interest reasons is revocation with prospective effects; the presumption of legitimacy admits contrary evidence; and forced collection of a fine does not permit unilateral bank-account seizure. However, several statements are answerable without reading the stimulus, triggering the explicit maximum of 7.",
           "score": 7,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The set plausibly resembles Cebraspe: four declarative Certo/Errado items share a hypothetical administrative setting, with two true and two false judgments. It uses recognizable traps involving presumption of legitimacy, imperativity versus direct enforcement, and the absolute claim of exclusive judicial competence. The register, length, and legal distinctions are suitable, and no real law is misquoted.",
-          "score": 9,
+          "reasoning": "The formal Portuguese, four binary judgments, balanced true/false distribution, reversal of annulment and revocation effects, and overstatement of autoexecutoriedade are credible Cebraspe features. The set would not look out of place in that exam. Its weaker task fit is the collection of four largely independent mini-cases without an identified public servant; it also leaves imperatividade untested.",
+          "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The stimulus is original, clearly fictional, natural Brazilian Portuguese, and free of em dashes or purported real sources. Its explanations are in Portuguese and connect the governing distinctions to the case. However, the required public servant is absent: the agency acts impersonally, while the named individuals are recipients of its decisions.",
-          "score": 8,
+          "reasoning": "The municipality is expressly fictional, and no real source or invented factual claim about a real entity is presented. The stimulus is clear, natural Brazilian Portuguese, with no em dashes. The explanations and misconceptions use the learner's language and accurately address the legal situations described.",
+          "score": 9,
           "label": "Original, clear stimulus",
           "weight": 30
         },
@@ -117,27 +119,33 @@
           "weight": 30
         }
       ],
+      "itemsScored": 4,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1126,
           "cacheWriteTokens": 0,
-          "inputTokens": 2466,
-          "outputTokens": 812,
-          "reasoningTokens": 290
+          "inputTokens": 2865,
+          "outputTokens": 834,
+          "reasoningTokens": 269
         }
       },
+      "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Items 1, 2, and 4 can be judged without reading the case: they respectively test whether an appeal alone removes presumed legitimacy, whether imperativity requires direct enforcement, and whether the administration may annul its own acts. This violates the required stimulus dependence. The hypothetical also does not identify any public servant, although one is explicitly required. All four supplied judgments are legally correct.",
+          "conclusion": "Several items do not genuinely require the shared case. Questions[0], [2], and [3] state enough of the relevant legal proposition to be judged independently: annulment generally operates retroactively, the presumption of legitimacy is rebuttable, and a fine does not itself authorize direct bank-account seizure. All four keys are nevertheless legally correct.",
           "kind": "majorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Make the judgments turn on case-specific facts rather than categorical doctrinal claims, and identify a public servant responsible for an administrative decision. A case-dependent comparison of the effects of annulment and revocation would also strengthen coverage of the requested skill.",
+          "conclusion": "The requested public servant is not explicitly identified. The stimulus instead presents four citizens' separate interactions with a municipal secretariat. This remains plausible administrative-law material, but fits the requested single hypothetical case less closely.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Connect the events through an identified public servant and make the judgments turn on facts supplied only in the stimulus. Broaden attribute coverage to include imperatividade, and make the explanations explicitly connect each governing rule to the relevant case facts.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -170,21 +178,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The independently supported judgments are TRUE, FALSE, NOT GIVEN and TRUE, matching every key. The passage explicitly supports questions 1 and 4 and supplies a counterexample to question 2. It describes both methods without comparing their durations, making question 3 genuinely NOT GIVEN. No second answer is defensible, and the judgments require passage information rather than common knowledge.",
+          "reasoning": "All four keys follow from the passage: light can trigger germination; seeds can survive the disappearance of their source plants; no comparison of germination times by soil depth is reported; and predictions require site conditions as well as seed-bank evidence. Each judgment is grounded in the stimulus, with no second defensible answer. The NOT GIVEN item correctly distinguishes an unreported finding from a contradiction.",
           "score": 10,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The academic topic, register and sequential statements fit IELTS reading practice. All four questions use exactly TRUE, FALSE and NOT GIVEN in that order with fixedOrder true, and the explanations address plausible reading mistakes. However, the 220-word passage falls below the required 250–350-word range and is unusually brief for the intended academic reading set. The questions also rely predominantly on local detail rather than a broader range of reading demands.",
-          "score": 7,
+          "reasoning": "The 215-word passage violates the requested 250–350-word range and makes the reading task noticeably abbreviated. The out-of-place-set cap of 7 applies; the explicit length shortfall warrants 6. Otherwise, four questions share the passage, all use exactly TRUE, FALSE, NOT GIVEN in that order with fixedOrder true, and the statements test a cause, a historical detail, an unsupported comparison, and a methodological conclusion.",
+          "score": 6,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The passage is clear, natural academic English with scientifically sound, appropriately qualified descriptions of wetland seed banks. It contains no em dashes, claimed real source, or invented facts about named real entities. Every evidence excerpt is copied exactly from the passage, and the English reasons and misconceptions accurately explain the relevant textual support or missing information.",
+          "reasoning": "The passage is clear, natural academic English with no em dashes, claimed real source, or invented facts about named real entities. Its ecological explanations are sound. All evidence excerpts are copied directly from the passage, and the English reasons and misconceptions accurately explain the relevant textual distinctions.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -197,25 +205,31 @@
           "weight": 30
         }
       ],
+      "itemsScored": 4,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1126,
           "cacheWriteTokens": 0,
-          "inputTokens": 2738,
-          "outputTokens": 1092,
-          "reasoningTokens": 612
+          "inputTokens": 3291,
+          "outputTokens": 1168,
+          "reasoningTokens": 671
         }
       },
+      "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "The passage contains 220 words, below the explicitly required 250–350 words. It needs at least 30 additional words of substantive academic content.",
+          "conclusion": "The passage contains 215 words, below the explicitly required 250–350 words. This materially reduces the reading load and makes the set less representative of the requested IELTS Academic Reading practice.",
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Increase the range of reading demands. Questions 1, 2 and 4 largely restate individual sentences; one could instead require integrating information across sentences while retaining an unambiguous True/False/Not Given judgment.",
+          "conclusion": "The full group instruction is repeated inside every question, adding unnecessary clutter rather than presenting each statement cleanly.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Develop the discussion of sampling limitations further to provide richer academic reading and inference opportunities for advanced learners, while preserving the unambiguous TRUE/FALSE/NOT GIVEN distinctions.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -246,22 +260,22 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All three keys follow uniquely from the shared stimulus. The initial acceleration is (30 − 12 − 4)/5 = 2.8 m/s² and the tension is 21.6 N, giving the support force 86.4/√5 N. Detachment occurs after 1 s at 2.8 m/s; the subsequent deceleration is 8 m/s², giving a total stopping time of 1.35 s. The additional ascent is 0.49 m, so friction dissipates 4 × 2 × (1.4 + 0.49) = 15.12 J over the return journey. Every question requires stimulus-specific information, and no competing option is correct.",
-          "score": 10,
+          "reasoning": "All three numerical keys are correct under the intended sliding motion. Friction is 4 N, the initial acceleration is 2.8 m/s², and the cutting speed is 5.6 m/s. The return time is 0.7(1 + √2) s. Tension is 21.6 N, giving a pulley load of 432√5/25 N. The upward stopping distance is 1.96 m, giving frictional dissipation of 392/25 J over both legs. Each question requires the stimulus, and no second numerical option is defensible under that motion. The remaining weakness is that the stimulus does not explicitly exclude static sticking, especially at the turning point.",
+          "score": 8,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The concise shared mechanics setup, three single-answer questions, four options each, and SI quantities fit the requested paragraph format. Each question combines multiple steps: coupled-body dynamics with vector addition, dynamics with two-stage kinematics, or stage-dependent motion with frictional work. The questions target distinct skills and mostly use plausible misconception-based distractors. However, the 1.70 s distractor's stated derivation is mathematically inconsistent with the setup, weakening the requested diagnostic quality.",
+          "reasoning": "The concise mechanics paragraph, three single-answer questions, four options each, and physically motivated distractors fit the requested exam format. Each problem combines multiple ideas: coupled dynamics with piecewise kinematics, tension with vector addition, or dynamics with frictional work. However, the energy question substantially repeats the post-cut motion already analyzed in the kinematics question, weakening the requested distinct use of the shared setup.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The stimulus is a clear, self-contained hypothetical experiment in natural English. It supplies the masses, geometry, both friction coefficients, gravitational acceleration, travel distance, and impulse-free detachment needed throughout. It contains no real-source attribution, invented factual claims about real entities, or em dashes. The numerical setup remains consistent across all three questions.",
-          "score": 10,
+          "reasoning": "The setup is self-contained in its numerical data, naturally written in English, uses SI units, contains no em dashes, and makes no real-source attribution or invented claims about real entities. Explanations and misconceptions accurately reference the setup. Its principal clarity gap is the missing assurance that static friction cannot prevent the intended motion or restart; stating μ_s < 3/4 would resolve this.",
+          "score": 8,
           "label": "Original, clear stimulus",
           "weight": 30
         },
@@ -273,27 +287,33 @@
           "weight": 30
         }
       ],
+      "itemsScored": 3,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 0,
+          "cacheReadTokens": 1121,
           "cacheWriteTokens": 0,
-          "inputTokens": 3110,
-          "outputTokens": 1080,
-          "reasoningTokens": 443
+          "inputTokens": 3712,
+          "outputTokens": 1640,
+          "reasoningTokens": 1034
         }
       },
+      "keyFlaws": [],
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Question 2's explanation for 1.70 s is incorrect. Friction alone would produce a deceleration of 2 m/s² and a total time of 2.40 s, not 1.70 s. The listed value instead follows from incorrectly subtracting friction from the downslope gravitational component: 1 + 2.8/(6 − 2) = 1.70 s. Its reason and misconception should describe that sign error.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Only kinetic friction is specified, leaving the intended immediate sliding and restart after the turning point implicit. Explicitly ruling out sticking would make the setup rigorous. Also, questions[0] and questions[2] substantially reuse the same post-cut journey and stopping-distance calculation, rather than needing different parts of the setup as requested.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Strengthen Question 3's explanation by explicitly deriving the additional 0.49 m using the work-energy theorem and noting that the downslope gravitational force, 12 N, exceeds the maximum static friction, 4 N, so the block does return.",
+          "conclusion": "Specify that the coefficient of static friction is less than 3/4, ensuring both initial motion and downhill restart. Give the energy question a distinct subsequent stage or energy comparison so that it tests more than reusing the first question's stopping distance.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {

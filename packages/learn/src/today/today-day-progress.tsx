@@ -3,13 +3,16 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
+import { METER_PARTS_CLASS } from "../_components/meter";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatDuration } from "../_utils/time-format";
 import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { DayMeter } from "./day-segments";
+import { drawsDayMeter } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
+import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
@@ -20,23 +23,43 @@ function getBlockShare(block: DayStep): number {
   return Math.min(1, block.answered / block.questions);
 }
 
+const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
+
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, nextPosition, sessionBar } = today.session;
-  const rows = getSessionQueue({ blocks, nextPosition });
   const next = blocks.find((block) => block.position === nextPosition);
+  const held = getHeldMinutes(today.session);
+
+  const parts = getDayMeterParts({
+    nextShare: next ? getBlockShare(next) : 0,
+    rows: getSessionQueue({ blocks, nextPosition }),
+  });
+
+  const focusPosition = next?.position ?? parts[0]?.block.position;
+
+  if (!drawsDayMeter({ held: held > 0, parts })) {
+    return null;
+  }
 
   return (
-    <DayMeter
-      className={className}
-      held={getHeldMinutes(today.session) > 0}
-      label={t(
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
+    <div
+      aria-label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
         { done: sessionBar.completed, total: sessionBar.total },
       )}
-      parts={getDayMeterParts({ nextShare: next ? getBlockShare(next) : 0, rows })}
-    />
+      className={cn(METER_PARTS_CLASS, className)}
+      data-slot="today-day-progress"
+      onKeyDown={moveBetweenSegments}
+      role="group"
+    >
+      {parts.map((part) => (
+        <BlockSegment focusable={part.block.position === focusPosition} key={part.id} part={part} />
+      ))}
+      {held > 0 && <HeldSegment minutes={held} />}
+    </div>
   );
 }
 

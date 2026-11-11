@@ -4,17 +4,17 @@
     {
       "steps": [
         {
-          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-3 (A2, expected A1), en-en-ielts-foundations-18 (B2, expected B1)",
           "kind": "majorErrors",
           "score": 9.619047619047619
         },
         {
-          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-3 (A2, expected A1), en-en-ielts-foundations-18 (B2, expected B1)",
           "kind": "minorErrors",
           "score": 9.619047619047619
         },
         {
-          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-18 (B2, expected B1), en-en-ielts-foundations-32 (B2, expected B1)",
+          "conclusion": "19/21 right. Wrong: en-en-ielts-foundations-3 (A2, expected A1), en-en-ielts-foundations-18 (B2, expected B1)",
           "kind": "potentialImprovements",
           "score": 9.619047619047619
         }
@@ -1182,19 +1182,19 @@
     {
       "steps": [
         {
-          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "conclusion": "22/24 right. Wrong: pt-es-dele-foundations-7 (A2, expected A1), pt-es-dele-foundations-15 (B1, expected B2)",
           "kind": "majorErrors",
-          "score": 9.833333333333334
+          "score": 9.666666666666666
         },
         {
-          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "conclusion": "22/24 right. Wrong: pt-es-dele-foundations-7 (A2, expected A1), pt-es-dele-foundations-15 (B1, expected B2)",
           "kind": "minorErrors",
-          "score": 9.833333333333334
+          "score": 9.666666666666666
         },
         {
-          "conclusion": "23/24 right. Wrong: pt-es-dele-foundations-6 (A1, expected A2)",
+          "conclusion": "22/24 right. Wrong: pt-es-dele-foundations-7 (A2, expected A1), pt-es-dele-foundations-15 (B1, expected B2)",
           "kind": "potentialImprovements",
-          "score": 9.833333333333334
+          "score": 9.666666666666666
         }
       ],
       "testCase": {

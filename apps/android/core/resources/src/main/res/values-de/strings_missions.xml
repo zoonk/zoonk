@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "a69e57b6845145216049c49c091d3e1fe2a95c5ded4e65bd964abedb142a66cd",
-  "missions_already_earned": "87f72e04144d99f31e9a78661e5a1056aa54559cca7681b8bf019c687a31f769",
   "missions_ask_anything": "24b9892e07f9c0f849cd9aa385f10bfbb3e0239bac7b59d97961c51428a7883b",
   "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
   "missions_brain_power": "86997b83168b52a5096e6188ab9f26ec032565367c9795f849707ce2276e768b",
@@ -66,7 +65,6 @@
     <string name="missions_done">Missionen abgeschlossen</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">Du hast +%1$s Brain Power verdient.</string>
-    <string name="missions_already_earned">Du hast die heutigen +%1$s Brain Power bereits verdient.</string>
     <plurals name="missions_count">
         <item quantity="one">%d Mission</item>
         <item quantity="other">%d Missionen</item>

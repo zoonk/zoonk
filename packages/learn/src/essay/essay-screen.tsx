@@ -12,6 +12,7 @@ import { AnswersSaveError } from "../_components/save-error";
 import { focusStepTitle } from "../_components/steps";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { subscribeToDeviceStorage } from "../_utils/device-storage";
 import { isLongText } from "../questions/long-text";
 import { TaskFrame } from "../shell/task-frame";
 import { ClosedEssay } from "./essay-closed";
@@ -32,14 +33,9 @@ import { useFinishEssay } from "./use-finish-essay";
 
 export type { EssayActions } from "./essay-context";
 
-function subscribeToStorage(onChange: () => void) {
-  globalThis.addEventListener("storage", onChange);
-  return () => globalThis.removeEventListener("storage", onChange);
-}
-
 function useKeptText(blockId: string): string | null {
   return useSyncExternalStore(
-    subscribeToStorage,
+    subscribeToDeviceStorage,
     () => readUnsentText(blockId),
     () => null,
   );

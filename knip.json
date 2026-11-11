@@ -44,7 +44,12 @@
     },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
-      "entry": ["prisma.config.ts", "src/prisma/seed-library.ts", "src/prisma/sync-content.ts!"],
+      "entry": [
+        "prisma.config.ts",
+        "src/prisma/generate-metadata.mts!",
+        "src/prisma/seed-library.ts",
+        "src/prisma/sync-content.ts!"
+      ],
       "project": [
         "**/*.{ts,mts}!",
         "!src/prisma/seed{,-library}.ts!",

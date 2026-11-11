@@ -41,6 +41,7 @@ msgstr "Doğru"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "Sıradaki"
@@ -69,6 +70,7 @@ msgstr "Atlandı"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -820,6 +822,7 @@ msgstr "Hafta sonları farklı çalışma süresi"
 
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
+#: src/today/today-week-day.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
 msgstr "{time} çalıştın"
@@ -984,6 +987,7 @@ msgstr "Sesler"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Dil"
@@ -2905,6 +2909,7 @@ msgid "Use my date anyway"
 msgstr "Yine de benim tarihimi kullan"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -2972,6 +2977,17 @@ msgstr "Seviyene uygun kısa bir sesli sohbet."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Deneme sınavına gir"
+
+#. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "axUi06"
+msgid "Your buddy and practice calls use {variety}."
+msgstr "Ders arkadaşınla ve pratik sohbetlerinde {variety} kullanılır."
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "n-Iy44"
+msgid "Saved. You can change it in your plan."
+msgstr "Kaydedildi. Planında değiştirebilirsin."
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -4808,25 +4824,25 @@ msgid "Next on your path"
 msgstr "Yolculuğunda sıradaki adım"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
 msgstr "çalışılmadı"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "1sq74z"
 msgid "rest day"
 msgstr "dinlenme günü"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "kkpP2k"
 msgid "today"
 msgstr "bugün"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
 msgstr "planlandı"
@@ -4843,7 +4859,7 @@ msgid "This week"
 msgstr "Bu hafta"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
@@ -5404,6 +5420,23 @@ msgstr "Kendi sözlerinle. Hedef seviye: {level}"
 msgctxt "qm_eL5"
 msgid "Something else"
 msgstr "Başka bir şey"
+
+#: src/language-variety/country-field.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "Tercihim yok"
+
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre uyarlanır. Derslerde ve ses kayıtlarında {taughtVariety} kullanılır."
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
+#: src/language-variety/use-variety-words.ts
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "Ders arkadaşınla ve pratik sohbetlerinde {variety} kullanılır. Derslerde ve seslendirmelerinde {taughtVariety} kullanılır."
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -7674,12 +7707,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "+{points} Beyin Gücü kazandın."
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "Bugünkü +{points} Beyin Gücünü zaten kazandın."
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "Az önce tamamlandı"
@@ -7751,25 +7778,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "Sorulara başla"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "Geçen seferki cevabın: {answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "Önce kavramı öğren, sonra uygula."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "Gözden kaçırdığın bir kavrama geri dönelim."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "Cevaplamadan önce her kelimeyi oku."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7785,11 +7797,6 @@ msgstr "Sınav günündeki gibi, soru başına {seconds, number} saniye."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "Tekrar dene."
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
@@ -10780,6 +10787,12 @@ msgid "Read it again"
 msgstr "Tekrar oku"
 
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Ülke"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
 msgstr "Konuştuğun diller"
@@ -13648,6 +13661,56 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Enerji: {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "Şu an unutmak üzere olduğun bir konu yok, bu yüzden en çok zorlandığın konuları çalışıyorsun."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "Bugün en çok zorlandığın konular"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "Çalıştığın her kavram, tam unutmaya başlayacakken tekrar karşına çıkar."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "Unutmadan hemen önce"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "Zaten bildiklerini kontrol etmek için birkaç kısa soru."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "Tekrarlar nasıl işler"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "Doğru cevapladıkça tekrarlar arasındaki süre günlerden haftalara, sonra aylara uzar. Yanlış cevaplarsan daha erken karşına çıkar."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "Doğru cevapladıkların daha geç tekrarlanır"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "Günlerce ara versen bile tekrarlar çalışmanın başında yer alır ve yalnızca küçük bir kısmını kaplar."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "En başta ve her zaman kısa"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
@@ -13867,6 +13930,12 @@ msgstr "Tekrarlar"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Hızlı tekrar"
+
+#. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
+#: src/shell/goal-mark.tsx
+msgctxt "goalSwitcher.4dyYDe"
+msgid ", {variety}"
+msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
@@ -14386,6 +14455,7 @@ msgstr ", atlandı"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "Senin için hazırlıyoruz…"
@@ -14416,16 +14486,19 @@ msgid "What changed"
 msgstr "Neler değişti"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Ay_6I8"
 msgid "Not written yet."
 msgstr "Henüz hazırlanmadı."
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Sıradaki derslerin"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Her zamankinden uzun sürüyor"
@@ -14703,6 +14776,41 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Haftan"
 
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "Şimdiye kadar öğrendiklerini kontrol eder."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "Öğrendiklerini kendi cümlelerinle anlatırsın."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "Yanlış yaptığın soruları bir kez daha denersin."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "Gerçek sınava benzeyen bir deneme sınavı."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "Öğrendiklerini bir araya getiren yeni sorular."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "Çalıştığın konuları unutmadan önce hatırlatır."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} / {count, plural, other {#}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
@@ -14765,45 +14873,55 @@ msgctxt "MuwOz5"
 msgid "every topic, your weakest first"
 msgstr "tüm konular, önce en çok zorlandıkların"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
 msgstr "günlük çalışma süresi tamamlandı"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "F8phHs"
 msgid "studied"
 msgstr "çalışıldı"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "uMBOLl"
 msgid "exam day"
 msgstr "sınav günü"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
 msgstr "hedef tarihin"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
 msgid "before your plan"
 msgstr "planının başlangıcından önce"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "fy2sc9"
 msgid "after your date"
 msgstr "hedef tarihinden sonra"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
 msgid "{day}: {name}"
 msgstr "{day}: {name}"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "JsGsZi"
 msgid "{day}: {name}, {status}"
 msgstr "{day}: {name}, {status}"
+
+#: src/today/today-week-day.tsx
+msgctxt "KPis2L"
+msgid "{studied} of {planned} studied"
+msgstr "{studied} / {planned} çalışıldı"
+
+#: src/today/today-week-day.tsx
+msgctxt "9PPMqu"
+msgid "{time} planned"
+msgstr "{time} planlandı"
 
 #: src/today/today-week.tsx
 msgctxt "sq7Fxi"

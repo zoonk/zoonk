@@ -65,11 +65,22 @@ export type DayMeterPart = {
   state: DaySegmentState;
 };
 
+/** A day of one part draws no meter. */
+export function drawsDayMeter({
+  held,
+  parts,
+}: {
+  held: boolean;
+  parts: readonly unknown[];
+}): boolean {
+  return parts.length + Number(held) >= 2;
+}
+
 /**
  * The day's blocks as equal parts, so the meter, the count and the percent say one thing. `held`
  * adds one part for time the day keeps for lessons not on the list yet, so the meter never looks
- * full while more is coming. A day of one part draws no meter. Without a `label` it hides from
- * assistive tech, for a screen whose words already say it.
+ * full while more is coming. Without a `label` it hides from assistive tech, for a screen whose
+ * words already say it.
  */
 export function DayMeter({
   className,
@@ -84,7 +95,7 @@ export function DayMeter({
   label?: string;
   parts: readonly DayMeterPart[];
 }) {
-  if (parts.length + Number(held) < 2) {
+  if (!drawsDayMeter({ held, parts })) {
     return null;
   }
 

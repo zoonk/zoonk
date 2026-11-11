@@ -1,0 +1,18 @@
+{
+  "pt-en-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  "en-pt-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  "es-en-1": {
+    "A": "anthropic-claude-opus-5.5",
+    "B": "anthropic-claude-fable-5.2"
+  },
+  "de-en-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  }
+}
