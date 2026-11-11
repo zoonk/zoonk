@@ -15,15 +15,15 @@ struct FocusTestCheckpoint: View {
   let onContinueTest: () -> Void
 
   @State private var showsSubjects = false
-  /// The learner answered the focus the test proposes, so "Done" is the filled button again.
-  @State private var answeredProposal = false
+  /// How the learner answered the focus the test proposes; once answered, "Done" is filled again.
+  @State private var proposalAnswer: PlanChangeDecision?
 
   var body: some View {
     let next = focusTest.offer
     let focus = focusTest.checkpoint?.focus
     let proposalWaits =
       host == .plan && focus?.state == .proposed && focus?.proposal?.canApply == true
-      && !answeredProposal
+      && proposalAnswer == nil
 
     ZoonkList {
       StepHeader(
@@ -43,7 +43,7 @@ struct FocusTestCheckpoint: View {
         if let focus = checkpoint.focus, !focus.rows.isEmpty {
           FocusTestSuggestedFocus(
             focus: focus, goalID: goalID, decides: host == .plan, changeFocus: changeFocus,
-            isAnswered: $answeredProposal)
+            answer: $proposalAnswer)
         }
       }
 
@@ -129,7 +129,7 @@ private struct FocusTestSuggestedFocus: View {
   /// On a plan already there, the proposal is answered here.
   let decides: Bool
   var changeFocus: (() -> Void)?
-  @Binding var isAnswered: Bool
+  @Binding var answer: PlanChangeDecision?
 
   var body: some View {
     Section {
@@ -138,7 +138,7 @@ private struct FocusTestSuggestedFocus: View {
       }
 
       if decides, focus.state == .proposed, let proposal = focus.proposal {
-        FocusTestProposal(proposal: proposal, goalID: goalID, isAnswered: $isAnswered)
+        FocusTestProposal(proposal: proposal, goalID: goalID, decision: $answer)
       }
 
       if let changeFocus, focus.state == .current || focus.state == .handPicked {
@@ -155,15 +155,21 @@ private struct FocusTestSuggestedFocus: View {
             "Suggested focus", tableName: "FocusTest",
             comment: "Section of the Focus test's result: subjects the plan could give more time"))
 
-        Text(intro)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .textCase(nil)
+        if let intro {
+          Text(intro)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .textCase(nil)
+        }
       }
     }
   }
 
-  private var intro: String {
+  private var intro: String? {
+    guard answer != .applied else {
+      return nil
+    }
+
     let state =
       switch focus.state {
       case .ifTimeShort:
@@ -208,10 +214,9 @@ private struct FocusTestSuggestedFocus: View {
 private struct FocusTestProposal: View {
   let proposal: TodayView.PlanChange
   let goalID: String
-  @Binding var isAnswered: Bool
+  @Binding var decision: PlanChangeDecision?
 
   @Environment(PlanStore.self) private var plans
-  @State private var decision: PlanChangeDecision?
   /// The change as the answer left it, which says whether it can still be undone.
   @State private var answered: TodayView.PlanChange?
   @State private var pressed: PlanChangeDecision?
@@ -323,7 +328,6 @@ private struct FocusTestProposal: View {
       case .done(let change?):
         answered = change
         decision = status
-        isAnswered = true
       case .done(nil), .failed:
         failed = true
       case .obsolete:
