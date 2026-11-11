@@ -132,13 +132,16 @@ function useAppliedEndText() {
   };
 }
 
+/** A memory insight's change has no operations: it only adds skills, so it is never a focus. */
+type EffectChange = Pick<PlanChangeView, "effect"> & Partial<Pick<PlanChangeView, "operations">>;
+
 export function useProposalEffectText() {
   const effectText = useChangeEffectText();
   const planEndEffect = usePlanEndEffectText();
   const sentences = useEffectSentences();
 
   return function proposalEffectText(
-    change: Pick<PlanChangeView, "effect">,
+    change: EffectChange,
     current?: CurrentEnd,
     { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
@@ -176,7 +179,7 @@ function useEffectSentences() {
   const space = useSentenceSpace();
 
   return function effectSentences(
-    change: Pick<PlanChangeView, "effect">,
+    change: EffectChange,
     endText: string | null,
     { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
@@ -188,10 +191,19 @@ function useEffectSentences() {
         (!change.effect?.reviewFirst && !ends.some((end) => end.area === start.area)),
     );
 
-    const sentences = [
-      ...areaStartTexts(starts),
+    const startTexts = areaStartTexts(starts);
+
+    const lessonTexts = [
       ...areaEndTexts(ends, { estimated: change.effect?.lessonsAddedEstimated }),
       ...areaLessonTexts(change.effect?.areaLessons ?? []),
+    ];
+
+    // A focus gives its subjects more lessons, so what they gain leads: opening on a later start
+    // read as the focus costing them time.
+    const focuses = change.operations?.some((operation) => operation.kind === "focusAreas");
+
+    const sentences = [
+      ...(focuses ? [...lessonTexts, ...startTexts] : [...startTexts, ...lessonTexts]),
       reviewFirstText(change.effect),
       weeklyEventsText(change.effect),
       nextMockText(change.effect),

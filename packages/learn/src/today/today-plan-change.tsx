@@ -49,7 +49,7 @@ export function ProposalEffect({
   change,
 }: {
   byDate?: boolean;
-  change: Pick<PlanChangeView, "effect">;
+  change: Pick<PlanChangeView, "effect" | "operations">;
 }) {
   const proposalEffectText = useProposalEffectText();
   const { planEnd, today } = useTodayScreen();
