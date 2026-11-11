@@ -27,7 +27,7 @@ import { type ProfileQuestion } from "./profile-draft";
 const GROUPS = [
   { id: "day", questions: ["work", "tools", "studies"] },
   { id: "fun", questions: ["watch", "listen", "play", "read", "activities"] },
-  { id: "learn", questions: ["conditions", "learningSupport"] },
+  { id: "learn", questions: ["addressForm", "conditions", "learningSupport"] },
 ] as const satisfies { id: string; questions: ProfileQuestion[] }[];
 
 type GroupId = (typeof GROUPS)[number]["id"];
@@ -101,6 +101,12 @@ function QuestionName({ question }: { question: ProfileQuestion }) {
       });
     case "learningSupport":
       return t("What helps you learn");
+    case "addressForm":
+      return t({
+        description:
+          "Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.",
+        message: "How we address you",
+      });
     default:
       return question satisfies never;
   }
@@ -110,7 +116,10 @@ function labelsOf(question: ProfileQuestionView, ids: readonly string[]): string
   return ids.map((id) => question.options.find((option) => option.id === id)?.label ?? id);
 }
 
-/** What's saved, short: conditions only count, so the list is safe on a shared screen. */
+/**
+ * What's saved, short: conditions only count and the address form only says it's saved, so the
+ * list is safe on a shared screen.
+ */
 function useSavedSummary(question: ProfileQuestionView): string {
   const t = useExtracted();
   const { picks, studies, text } = question.saved;
@@ -128,6 +137,11 @@ function useSavedSummary(question: ProfileQuestionView): string {
   switch (question.id) {
     case "conditions":
       return t("{count, plural, one {# saved} other {# saved}}", { count: picks.length });
+    case "addressForm":
+      return t({
+        description: "An answer the learner saved, without showing it.",
+        message: "Saved",
+      });
     case "work":
       return text || labelsOf(question, picks).join(", ");
     case "studies":
