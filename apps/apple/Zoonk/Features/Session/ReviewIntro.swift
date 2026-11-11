@@ -31,51 +31,43 @@ struct ReviewIntro: View {
     } else {
       DisclosureGroup(isExpanded: $isOpen) {
         if block.weakest {
-          ListRow(
+          row(
+            "scope",
             Text(
               "Your hardest topics today", tableName: "Session",
               comment: "How reviews work: a review of the weakest topics when nothing was due"),
-            description: Text(
+            Text(
               "Nothing is close to being forgotten, so you practice what's been hardest for you.",
               tableName: "Session",
-              comment: "How reviews work: a review of the weakest topics when nothing was due")
-          ) {
-            Image(systemName: "scope")
-          }
+              comment: "How reviews work: a review of the weakest topics when nothing was due"))
         } else {
-          ListRow(
+          row(
+            "hourglass",
             Text(
               "Just before you forget", tableName: "Session",
               comment: "How reviews work: when an idea comes back"),
-            description: Text(
+            Text(
               "Each idea you study comes back right before you'd start to forget it.",
-              tableName: "Session", comment: "How reviews work: when an idea comes back")
-          ) {
-            Image(systemName: "hourglass")
-          }
+              tableName: "Session", comment: "How reviews work: when an idea comes back"))
         }
 
-        ListRow(
+        row(
+          "calendar.badge.clock",
           Text(
             "Right answers wait longer", tableName: "Session",
             comment: "How reviews work: how answers move an idea's next review"),
-          description: Text(
+          Text(
             "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner.",
-            tableName: "Session", comment: "How reviews work: how answers move an idea's next review")
-        ) {
-          Image(systemName: "calendar.badge.clock")
-        }
+            tableName: "Session", comment: "How reviews work: how answers move an idea's next review"))
 
-        ListRow(
+        row(
+          "timer",
           Text(
             "First, and always short", tableName: "Session",
             comment: "How reviews work: where reviews go in a session"),
-          description: Text(
+          Text(
             "Reviews open your session and take a small part of it, even after days away.",
-            tableName: "Session", comment: "How reviews work: where reviews go in a session")
-        ) {
-          Image(systemName: "timer")
-        }
+            tableName: "Session", comment: "How reviews work: where reviews go in a session"))
       } label: {
         ListRow(
           Text(
@@ -83,8 +75,17 @@ struct ReviewIntro: View {
             comment: "Opens what a review is, on the session's next step when it's a review")
         ) {
           Image(systemName: "arrow.counterclockwise")
+            .accessibilityHidden(true)
         }
       }
     }
+  }
+
+  private func row(_ symbol: String, _ title: Text, _ description: Text) -> some View {
+    ListRow(title, description: description) {
+      Image(systemName: symbol)
+        .accessibilityHidden(true)
+    }
+    .accessibilityElement(children: .combine)
   }
 }
