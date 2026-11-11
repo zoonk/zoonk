@@ -198,6 +198,7 @@ export async function getPlanTimeAdvice({
       advice: {
         coveredShare: null,
         endDate: null,
+        focusSubjects: [],
         fullCourseEndDate: null,
         measure: "goal",
         numbers: null,
@@ -243,6 +244,7 @@ export async function getPlanTimeAdvice({
     advice: {
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
       endDate: getCourseFinish(computed),
+      focusSubjects: [],
       fullCourseEndDate: fullCourse
         ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,

@@ -14486,11 +14486,103 @@
             }
           }
         }
+      },
+      "patch": {
+        "description": "The learner's own switches on an exam goal's Focus test. `sessionQuestions`: `skippedToday` (\"Not today\", on a session question marked `placement`) and `paused` take today's unanswered test questions out of the day's session, until the learner's next day or until `on`; read the study block again afterwards, and a block left with no questions is gone from the day. `suggestion: dismissed` stops Today's suggestion of the test. 404 for a goal that isn't an exam.",
+        "operationId": "updateGoalFocusTest",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Change a Focus test's session questions or suggestion",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusTestControlsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Focus test as the plan's row shows it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FocusTestSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/goals/{goalId}/placement/answers": {
       "post": {
-        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook.",
+        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; when the returned sitting has an `end`, finish it with POST /goals/{goalId}/placement/completion.",
         "operationId": "createPlacementAnswer",
         "security": [
           {
@@ -14594,7 +14686,7 @@
     },
     "/goals/{goalId}/placement/completion": {
       "post": {
-        "description": "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
+        "description": "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. For an exam goal it closes the open Focus test sitting and returns the test with its result (`focusTest.checkpoint`); with no sitting and no answer it postpones the test (\"Skip for now\"): sessions ask no test questions until it starts; on a plan the learner has seen, a focus the answers suggest arrives as a proposed plan change (`source: focusTest`), never applied by itself; and `fromScratch` is refused with 422. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
         "operationId": "completeGoalPlacement",
         "security": [
           {
@@ -14639,6 +14731,110 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlacementCompletion"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/placement/sittings": {
+      "post": {
+        "description": "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, of a promised number of questions, and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
+        "operationId": "createPlacementSitting",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Start a Focus test sitting",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlacementSittingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The placement with its open sitting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Placement"
                 }
               }
             }
@@ -15886,326 +16082,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlanChangeInvalidError"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/goals/{goalId}/plan/focus-test": {
-      "get": {
-        "description": "For a plan whose time doesn't cover everything in depth: a few questions on each of the plan's areas worth most, in the exam's quick format, so the answers choose where the depth goes. Nothing is stored until the answers are submitted. 404 when the plan has fewer than two areas to choose between.",
-        "operationId": "getFocusTest",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Get a plan's focus test",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The focus test's questions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusTest"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan. The same `requestId` sent again, even while the first send is still running, returns what that send recorded, with its plan change, and counts nothing again.",
-        "operationId": "submitFocusTest",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Submit a plan's focus test",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FocusTestInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "What the test found and the focus it set",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusTestResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/goals/{goalId}/plan/focus-test/generations": {
-      "post": {
-        "description": "Gets the focus test ready when the learner starts it (never on a screen view). `ready` when every area has its questions. Otherwise a run writes the missing ones in the exam's quick format (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
-        "operationId": "createFocusTestGeneration",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Write a plan's focus test questions",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The focus test has its questions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusTestGeneration"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "A run is writing the questions",
-            "headers": {
-              "Location": {
-                "required": true,
-                "description": "The run's status URL: GET /generations/{generationId}",
-                "schema": {
-                  "type": "string",
-                  "description": "The run's status URL: GET /generations/{generationId}"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FocusTestGeneration"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Subscription required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "A guest is asked to create a free account, where their work moves: their own cap is used (`USAGE_LIMIT_REACHED` with `details.limit`), or the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -28587,6 +28463,32 @@
           }
         ]
       },
+      "FocusTestControlsInput": {
+        "type": "object",
+        "properties": {
+          "sessionQuestions": {
+            "description": "`skippedToday` and `paused` take today's unanswered test questions out of the day's session, until the learner's next day or until `on`. Nothing is recorded as unknown",
+            "type": "string",
+            "enum": [
+              "on",
+              "paused",
+              "skippedToday"
+            ]
+          },
+          "suggestion": {
+            "description": "Today stops suggesting the test for this goal",
+            "type": "string",
+            "enum": [
+              "dismissed"
+            ]
+          },
+          "timeZone": {
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "PlacementAnswerInput": {
         "type": "object",
         "properties": {
@@ -28652,6 +28554,16 @@
             "description": "\"I'd rather start from scratch\": start every phase at its beginning",
             "type": "boolean"
           },
+          "timeZone": {
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlacementSittingInput": {
+        "type": "object",
+        "properties": {
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
             "type": "string"
@@ -29468,34 +29380,6 @@
         },
         "required": [
           "status"
-        ],
-        "additionalProperties": false
-      },
-      "FocusTestInput": {
-        "type": "object",
-        "properties": {
-          "answers": {
-            "minItems": 1,
-            "maxItems": 30,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ItemAnswerInput"
-            }
-          },
-          "requestId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "description": "The test's own id, made when it's first sent. Sending it again (a retry) returns what it already recorded instead of grading and counting it twice."
-          },
-          "timeZone": {
-            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
-            "type": "string"
-          }
-        },
-        "required": [
-          "answers",
-          "requestId"
         ],
         "additionalProperties": false
       },
@@ -80647,6 +80531,15 @@
             "type": "boolean",
             "description": "Today's few minutes of placement are used: no next question today; the first week's sessions ask the rest"
           },
+          "focusTest": {
+            "nullable": true,
+            "description": "An exam goal's placement is its Focus test: sittings of a promised number of questions instead of a few minutes a day. Then `next` is set only while a sitting is open with questions left, `dayBudgetSpent` is the sitting's share answered, `dayBudgetUsed` says it has none left, and `started` that it has answers. Null for other goals",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTest"
+              }
+            ]
+          },
           "knownSkillIds": {
             "type": "array",
             "items": {
@@ -80697,6 +80590,7 @@
           "complete",
           "dayBudgetSpent",
           "dayBudgetUsed",
+          "focusTest",
           "knownSkillIds",
           "needsItems",
           "next",
@@ -80731,6 +80625,424 @@
           "area",
           "confident",
           "startSkillId"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTest": {
+        "type": "object",
+        "properties": {
+          "checkpoint": {
+            "nullable": true,
+            "description": "The result so far; null until the learner has a test answer",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestCheckpoint"
+              }
+            ]
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "asked": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Subjects with at least one test answer"
+              },
+              "quick": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Subjects this test can ask about"
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Every subject, written and listening parts included"
+              }
+            },
+            "required": [
+              "asked",
+              "quick",
+              "total"
+            ],
+            "additionalProperties": false
+          },
+          "dated": {
+            "type": "boolean",
+            "description": "The goal has a date, so the test can also suggest where to focus"
+          },
+          "offer": {
+            "nullable": true,
+            "description": "The sitting POST .../placement/sittings would open; null while one is open and when nothing is left to ask",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestOffer"
+              }
+            ]
+          },
+          "sessionQuestions": {
+            "$ref": "#/components/schemas/FocusTestSessionQuestions"
+          },
+          "sitting": {
+            "nullable": true,
+            "description": "The open sitting",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestSitting"
+              }
+            ]
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FocusTestSubject"
+            },
+            "description": "Every subject, in the notice's order"
+          }
+        },
+        "required": [
+          "checkpoint",
+          "counts",
+          "dated",
+          "offer",
+          "sessionQuestions",
+          "sitting",
+          "subjects"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestCheckpoint": {
+        "type": "object",
+        "properties": {
+          "focus": {
+            "nullable": true,
+            "description": "Where the plan should give more time. Null without a date, with one subject, and on a shown plan whose time covers everything",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestFocus"
+              }
+            ]
+          },
+          "lessonsSkipped": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The plan's lessons the answers so far skip; 0 when subjects start from the basics for now"
+          }
+        },
+        "required": [
+          "focus",
+          "lessonsSkipped"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestFocus": {
+        "type": "object",
+        "properties": {
+          "basis": {
+            "type": "string",
+            "enum": [
+              "answers",
+              "importance"
+            ],
+            "description": "`importance`: no row comes from an answer, so say the suggestion follows mainly what the exam weighs"
+          },
+          "proposal": {
+            "nullable": true,
+            "description": "For `proposed`: the change to apply or decline, with its effect",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanChange"
+              }
+            ]
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FocusTestFocusRow"
+            },
+            "description": "Up to three, the most needed first"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "ifTimeShort",
+              "proposed",
+              "current",
+              "handPicked"
+            ],
+            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan already focuses these. `handPicked`: the learner chose their own focus, which the test never changes"
+          }
+        },
+        "required": [
+          "basis",
+          "proposal",
+          "rows",
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestFocusRow": {
+        "type": "object",
+        "properties": {
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The plan areas a focus on it names, as `focusAreas` takes them"
+          },
+          "part": {
+            "nullable": true,
+            "description": "Set only for `notChecked`",
+            "type": "string",
+            "enum": [
+              "written",
+              "listening",
+              "speaking",
+              "practical"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "answers",
+              "minimumScore",
+              "notChecked",
+              "notAsked",
+              "weight"
+            ],
+            "description": "`answers`: one of its answers was a miss or \"I don't know yet\". `minimumScore`: the part has a minimum score. `notChecked`: it counts heavily and this test can't check it (`part`). `notAsked`: it counts heavily and wasn't asked yet. `weight`: answered right, and still among the heaviest"
+          },
+          "subject": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Identifies the subject in lists; never shown"
+              },
+              "name": {
+                "type": "string",
+                "description": "The subject as the exam's notice names it"
+              },
+              "shortName": {
+                "nullable": true,
+                "description": "What learners call it; show it when set, else `name`",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "name",
+              "shortName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "areas",
+          "part",
+          "reason",
+          "subject"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestOffer": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "About how long `questions` take, from the same count"
+          },
+          "questions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The most questions the sitting would ask"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "first",
+              "continuation"
+            ]
+          },
+          "pastCeiling": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Subjects the test can ask about, still without an answer, that this sitting can't reach; above 0, say some subjects may not be checked"
+          }
+        },
+        "required": [
+          "minutes",
+          "questions",
+          "kind",
+          "pastCeiling"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestSessionQuestions": {
+        "type": "string",
+        "enum": [
+          "off",
+          "on",
+          "paused",
+          "skippedToday"
+        ],
+        "description": "Whether sessions ask up to three test questions each. `off`: the test hasn't started, or nothing is left for sessions to ask. `paused` and `skippedToday`: the learner's choice"
+      },
+      "FocusTestSitting": {
+        "type": "object",
+        "properties": {
+          "answered": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "end": {
+            "nullable": true,
+            "description": "Why this sitting asks nothing more; null while it goes on. `ceiling`: its promised count was reached. `settled`: every starting point is set. `noQuestionsReady`: no question is ready for what's left, which the next sessions ask. Finish the sitting with POST .../placement/completion",
+            "type": "string",
+            "enum": [
+              "ceiling",
+              "settled",
+              "noQuestionsReady"
+            ]
+          },
+          "hint": {
+            "nullable": true,
+            "description": "`manyUnknown` after five \"I don't know yet\" in a row: say that stopping here and starting to learn is fine",
+            "type": "string",
+            "enum": [
+              "manyUnknown"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "first",
+              "continuation"
+            ]
+          },
+          "left": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "`questions` minus `answered`"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "About how long `left` takes at the learner's pace"
+          },
+          "questions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The most questions this sitting asks, fixed when it started; number the one asked as `answered` + 1 of it"
+          },
+          "subject": {
+            "nullable": true,
+            "description": "The subject `next` asks about; null when there is no `next`",
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Identifies the subject in lists; never shown"
+              },
+              "name": {
+                "type": "string",
+                "description": "The subject as the exam's notice names it"
+              },
+              "shortName": {
+                "nullable": true,
+                "description": "What learners call it; show it when set, else `name`",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "name",
+              "shortName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "answered",
+          "end",
+          "hint",
+          "kind",
+          "left",
+          "minutes",
+          "questions",
+          "subject"
+        ],
+        "additionalProperties": false
+      },
+      "FocusTestSubject": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Identifies the subject in lists; never shown"
+          },
+          "name": {
+            "type": "string",
+            "description": "The subject as the exam's notice names it"
+          },
+          "shortName": {
+            "nullable": true,
+            "description": "What learners call it; show it when set, else `name`",
+            "type": "string"
+          },
+          "asked": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Test answers on the subject"
+          },
+          "part": {
+            "nullable": true,
+            "description": "Set only for `notChecked`",
+            "type": "string",
+            "enum": [
+              "written",
+              "listening",
+              "speaking",
+              "practical"
+            ]
+          },
+          "right": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "How many of `asked` were right"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "answered",
+              "notAsked",
+              "notChecked"
+            ],
+            "description": "`answered`: say `right` of `asked` right. `notAsked`: no test answer yet, or no question is ready for it. `notChecked`: a part this test can't ask about (`part`)"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "shortName",
+          "asked",
+          "part",
+          "right",
+          "state"
         ],
         "additionalProperties": false
       },
@@ -80980,6 +81292,81 @@
         ],
         "description": "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because every start is confident (`complete`), today's few minutes are used (`dayBudgetUsed`), or no question exists for what's left, which lessons and reviews settle instead. `unavailable`: no placement question could be written and none was answered; finish placement and go on without it (the first week's sessions and lessons place the learner). `failed`: the run building the goal's plan gave up before it had skills; start it again with POST /goals/{goalId}/generations."
       },
+      "FocusTestSummary": {
+        "type": "object",
+        "properties": {
+          "offer": {
+            "nullable": true,
+            "description": "`notStarted`: the first sitting. `sitting`: what's left of the open one. `checked`: a further sitting. Null when nothing is left to ask",
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "About how long `questions` take, from the same count"
+              },
+              "questions": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The most questions the sitting would ask"
+              }
+            },
+            "required": [
+              "minutes",
+              "questions"
+            ],
+            "additionalProperties": false
+          },
+          "sessionQuestions": {
+            "$ref": "#/components/schemas/FocusTestSessionQuestions"
+          },
+          "setsFocus": {
+            "type": "boolean",
+            "description": "The plan's focus came from the test, not from the learner's pick"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "notStarted",
+              "sitting",
+              "checked"
+            ],
+            "description": "`sitting`: a sitting is open with questions left. `checked`: the learner has test answers and no sitting open"
+          },
+          "subjects": {
+            "nullable": true,
+            "description": "Subjects with a test answer, of all of them. Null before the first answer, and for a goal placed before the Focus test until its next test answer",
+            "type": "object",
+            "properties": {
+              "asked": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "asked",
+              "total"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "offer",
+          "sessionQuestions",
+          "setsFocus",
+          "state",
+          "subjects"
+        ],
+        "additionalProperties": false
+      },
       "PlacementAnswerResult": {
         "type": "object",
         "properties": {
@@ -81009,6 +81396,15 @@
             "type": "boolean",
             "description": "Every area of every phase had a confident start when placement finished. False when the plan had no skills yet: nothing was placed"
           },
+          "focusTest": {
+            "nullable": true,
+            "description": "An exam goal's Focus test after this finish, with its result (`checkpoint`); null for other goals",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTest"
+              }
+            ]
+          },
           "knownSkillIds": {
             "type": "array",
             "items": {
@@ -81036,6 +81432,7 @@
         "required": [
           "areas",
           "complete",
+          "focusTest",
           "knownSkillIds",
           "phases",
           "testedOutPlanItemIds"
@@ -82999,6 +83396,15 @@
             ],
             "additionalProperties": false
           },
+          "focusTest": {
+            "nullable": true,
+            "description": "An exam goal's Focus test, for the plan's row and the reveal: open it with GET /v1/goals/{goalId}/placement. Null for other goals",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestSummary"
+              }
+            ]
+          },
           "fundedMocks": {
             "type": "array",
             "items": {
@@ -83455,6 +83861,7 @@
           "examDocument",
           "feasibility",
           "fitOffer",
+          "focusTest",
           "fundedMocks",
           "goalId",
           "languageAim",
@@ -84335,362 +84742,6 @@
         ],
         "additionalProperties": false
       },
-      "FocusTest": {
-        "type": "object",
-        "properties": {
-          "areas": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The plan's areas it asks about, in the plan's order: the ones worth most (at most ten), never a written test's or the plan's own extras. Names as plan changes (`focusAreas`) take them"
-          },
-          "needsItems": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "description": "Skills without a question for their place yet: POST .../focus-test/generations writes them when the learner starts the test, while `questions` are asked"
-          },
-          "questions": {
-            "type": "array",
-            "items": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "context": {
-                      "nullable": true,
-                      "description": "A situation shown before the question",
-                      "type": "string"
-                    },
-                    "image": {
-                      "nullable": true,
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/QuestionImage"
-                        }
-                      ]
-                    },
-                    "itemId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                      "description": "Answer with this item ID"
-                    },
-                    "skillId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                      "description": "Skill ID"
-                    },
-                    "visual": {
-                      "nullable": true,
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/LessonVisual"
-                        }
-                      ]
-                    },
-                    "format": {
-                      "type": "string",
-                      "enum": [
-                        "multipleChoice"
-                      ]
-                    },
-                    "options": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "Answer with the chosen option's index, or indexes"
-                    },
-                    "question": {
-                      "type": "string"
-                    },
-                    "select": {
-                      "$ref": "#/components/schemas/QuestionSelect"
-                    },
-                    "area": {
-                      "type": "string",
-                      "description": "The area it asks about, as learners call it"
-                    }
-                  },
-                  "required": [
-                    "context",
-                    "image",
-                    "itemId",
-                    "skillId",
-                    "visual",
-                    "format",
-                    "options",
-                    "question",
-                    "select",
-                    "area"
-                  ],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "context": {
-                      "nullable": true,
-                      "description": "A situation shown before the question",
-                      "type": "string"
-                    },
-                    "image": {
-                      "nullable": true,
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/QuestionImage"
-                        }
-                      ]
-                    },
-                    "itemId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                      "description": "Answer with this item ID"
-                    },
-                    "skillId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                      "description": "Skill ID"
-                    },
-                    "visual": {
-                      "nullable": true,
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/LessonVisual"
-                        }
-                      ]
-                    },
-                    "format": {
-                      "type": "string",
-                      "enum": [
-                        "trueFalse"
-                      ]
-                    },
-                    "options": {
-                      "type": "string",
-                      "nullable": true,
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "question": {
-                      "type": "string",
-                      "description": "The statement to judge true or false"
-                    },
-                    "area": {
-                      "type": "string",
-                      "description": "The area it asks about, as learners call it"
-                    }
-                  },
-                  "required": [
-                    "context",
-                    "image",
-                    "itemId",
-                    "skillId",
-                    "visual",
-                    "format",
-                    "options",
-                    "question",
-                    "area"
-                  ],
-                  "additionalProperties": false
-                }
-              ],
-              "type": "object"
-            },
-            "description": "The questions that exist, area by area, `questionsPerArea` on each when every place has one, spread over the area's skills, in the exam's quick format and never one the learner already answered. While `needsItems` lists any, ask these first, then GET again once the run writing the others is ready and add the questions not asked yet: a question written later fills a place that had none, never one already asked"
-          },
-          "questionsPerArea": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Four when it asks about up to six areas, three when more"
-          },
-          "trueFalseLabels": {
-            "$ref": "#/components/schemas/TrueFalseLabels"
-          }
-        },
-        "required": [
-          "areas",
-          "needsItems",
-          "questions",
-          "questionsPerArea",
-          "trueFalseLabels"
-        ],
-        "additionalProperties": false
-      },
-      "FocusTestResult": {
-        "type": "object",
-        "properties": {
-          "ceremony": {
-            "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Milestone"
-              }
-            ]
-          },
-          "certificates": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OwnedCertificateFacts"
-            },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
-          },
-          "reached": {
-            "type": "object",
-            "properties": {
-              "energy": {
-                "nullable": true,
-                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "level": {
-                "nullable": true,
-                "description": "The belt level its Brain Power reached, the day's bonus included",
-                "type": "object",
-                "properties": {
-                  "color": {
-                    "type": "string",
-                    "enum": [
-                      "white",
-                      "yellow",
-                      "orange",
-                      "green",
-                      "blue",
-                      "purple",
-                      "brown",
-                      "red",
-                      "gray",
-                      "black"
-                    ]
-                  },
-                  "level": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "color",
-                  "level"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "energy",
-              "level"
-            ],
-            "additionalProperties": false,
-            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
-          },
-          "areas": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "answers": {
-                  "type": "array",
-                  "items": {
-                    "type": "boolean"
-                  },
-                  "description": "Each answer on the area, in the order asked: right or not"
-                },
-                "chosen": {
-                  "type": "boolean",
-                  "description": "The area now has the plan's focus"
-                },
-                "correct": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "label": {
-                  "type": "string",
-                  "description": "What learners call it: an exam subject's short name"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "The area as plan changes name it"
-                },
-                "total": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                }
-              },
-              "required": [
-                "answers",
-                "chosen",
-                "correct",
-                "label",
-                "name",
-                "total"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Each area answered at least three times, in the plan's order; others aren't scored"
-          },
-          "changeId": {
-            "nullable": true,
-            "description": "The plan change that set the focus; undo it through the goal's plan changes. Null when the focus was already this or the plan isn't built yet",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "focusAreas": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The areas that got the focus: the weakest of the ones worth most (up to three, a third of those scored at most), or, when every area is known, the one worth most"
-          }
-        },
-        "required": [
-          "ceremony",
-          "certificates",
-          "reached",
-          "areas",
-          "changeId",
-          "focusAreas"
-        ],
-        "additionalProperties": false
-      },
-      "FocusTestGeneration": {
-        "type": "object",
-        "properties": {
-          "generationId": {
-            "nullable": true,
-            "description": "The run writing the questions: stream GET /generations/{generationId}/events",
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ready",
-              "generating"
-            ],
-            "description": "`ready`: GET the focus test now. `generating`: ask the questions the test has while following the run's stream until `focusTestQuestionsReady`, then GET it again for the rest"
-          }
-        },
-        "required": [
-          "generationId",
-          "status"
-        ],
-        "additionalProperties": false
-      },
       "OwnLevelChange": {
         "type": "object",
         "properties": {
@@ -84916,6 +84967,28 @@
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
+          "focusSubjects": {
+            "default": [],
+            "description": "The subjects saving this time would give more of it, from the learner's Focus test: suggest giving them more attention. Empty unless the time asked about doesn't cover everything by the date and the learner answered a test question",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "shortName": {
+                  "nullable": true,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "shortName"
+              ],
+              "additionalProperties": false
+            }
+          },
           "fullCourseEndDate": {
             "default": null,
             "description": "For an exam asked about with fullCourse: the day the plan studying everything ends at the time asked about, going on after the exam for what doesn't fit before it. Null when not asked, for other goals, while not ready, when the time fits everything before the exam (nothing goes on after it), and when even that plan can't fit everything in the time it plans (a few minutes a day for a big exam)",
@@ -84965,6 +85038,7 @@
         "required": [
           "coveredShare",
           "endDate",
+          "focusSubjects",
           "fullCourseEndDate",
           "measure",
           "numbers",
@@ -95635,6 +95709,15 @@
               }
             ]
           },
+          "focusTest": {
+            "nullable": true,
+            "description": "Suggests the Focus test (GET /v1/goals/{goalId}/placement) for an exam goal in its first week whose time doesn't cover everything by its date and whose test hasn't started: about how long its first sitting takes. Dismiss it with PATCH /v1/goals/{goalId}/placement. Null otherwise",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TodayFocusTest"
+              }
+            ]
+          },
           "goal": {
             "type": "object",
             "properties": {
@@ -95715,13 +95798,14 @@
           },
           "notice": {
             "default": null,
-            "description": "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view) or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+            "description": "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
             "nullable": true,
             "type": "string",
             "enum": [
               "exam",
               "examAccess",
               "examChoice",
+              "focusTest",
               "insight",
               "planChange",
               "practice",
@@ -96049,6 +96133,7 @@
           "earlierWork",
           "exam",
           "examChoice",
+          "focusTest",
           "goal",
           "insight",
           "lessonStatus",
@@ -96158,6 +96243,28 @@
           "stage",
           "timeZone",
           "tools"
+        ],
+        "additionalProperties": false
+      },
+      "TodayFocusTest": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "About how long `questions` take, from the same count"
+          },
+          "questions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The most questions the sitting would ask"
+          }
+        },
+        "required": [
+          "minutes",
+          "questions"
         ],
         "additionalProperties": false
       },

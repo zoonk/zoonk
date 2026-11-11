@@ -1,16 +1,9 @@
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planChangeDecisionInputSchema, planChangeInputSchema } from "@zoonk/core/plans/contract";
-import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
-import { z } from "zod";
 import { contentWritingResponse } from "../schemas/content-writing";
-import {
-  focusTestGenerationSchema,
-  focusTestResponseSchema,
-  focusTestResultSchema,
-} from "../schemas/focus-test";
 import { goalSchema } from "../schemas/goals";
 import {
   goalPathParamsSchema,
@@ -28,7 +21,6 @@ import {
   conflictResponse,
   guestRefusalResponse,
   notFoundResponse,
-  paymentRequiredResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
@@ -105,75 +97,6 @@ export const planPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer or undo a plan change",
-      tags: ["Plans"],
-    },
-  },
-  "/goals/{goalId}/plan/focus-test": {
-    get: {
-      description:
-        "For a plan whose time doesn't cover everything in depth: a few questions on each of the plan's areas worth most, in the exam's quick format, so the answers choose where the depth goes. Nothing is stored until the answers are submitted. 404 when the plan has fewer than two areas to choose between.",
-      operationId: "getFocusTest",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        ...planErrors,
-        "200": {
-          content: { "application/json": { schema: focusTestResponseSchema } },
-          description: "The focus test's questions",
-        },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Get a plan's focus test",
-      tags: ["Plans"],
-    },
-    post: {
-      description:
-        "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan. The same `requestId` sent again, even while the first send is still running, returns what that send recorded, with its plan change, and counts nothing again.",
-      operationId: "submitFocusTest",
-      requestBody: {
-        content: { "application/json": { schema: focusTestInputSchema } },
-        required: true,
-      },
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        ...planErrors,
-        "200": {
-          content: { "application/json": { schema: focusTestResultSchema } },
-          description: "What the test found and the focus it set",
-        },
-        "422": unprocessableEntityResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Submit a plan's focus test",
-      tags: ["Plans"],
-    },
-  },
-  "/goals/{goalId}/plan/focus-test/generations": {
-    post: {
-      description:
-        "Gets the focus test ready when the learner starts it (never on a screen view). `ready` when every area has its questions. Otherwise a run writes the missing ones in the exam's quick format (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
-      operationId: "createFocusTestGeneration",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        ...planErrors,
-        "200": {
-          content: { "application/json": { schema: focusTestGenerationSchema } },
-          description: "The focus test has its questions",
-        },
-        "202": {
-          content: { "application/json": { schema: focusTestGenerationSchema } },
-          description: "A run is writing the questions",
-          headers: z.object({
-            Location: z
-              .string()
-              .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
-          }),
-        },
-        "402": paymentRequiredResponse,
-        "403": guestRefusalResponse,
-        "429": tooManyRequestsResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Write a plan's focus test questions",
       tags: ["Plans"],
     },
   },

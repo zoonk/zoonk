@@ -163,8 +163,6 @@ export async function buildPlanView({
     summary,
   } = await loadPlanReadProjection({ context: savedContext, now });
 
-  const feasibility = readSavedFeasibility(summary);
-
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
 
@@ -277,11 +275,12 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility,
+    feasibility: readSavedFeasibility(summary),
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,
     },
+    focusTest: null,
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)

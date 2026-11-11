@@ -13,14 +13,16 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
-  chapterTestOutRecordSchema,
-  chapterTestOutResponseSchema,
-  chapterTestOutResultSchema,
   placementAnswerResponseSchema,
   placementCompletionResponseSchema,
   placementResponseSchema,
-  testOutGenerationSchema,
 } from "../src/lib/openapi/schemas/learner";
+import {
+  chapterTestOutRecordSchema,
+  chapterTestOutResponseSchema,
+  chapterTestOutResultSchema,
+  testOutGenerationSchema,
+} from "../src/lib/openapi/schemas/test-out";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";

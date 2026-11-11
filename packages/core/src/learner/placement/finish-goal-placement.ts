@@ -7,6 +7,7 @@ import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { applyPlacement } from "./_utils/apply-placement";
+import { type FocusTestView } from "./focus-test-contract";
 import { type PlacementCompletionInput } from "./placement-contract";
 import {
   type AreaStart,
@@ -19,6 +20,8 @@ type PlacementCompletion = {
   areas: AreaStart[];
   /** False when the plan has no skills. */
   complete: boolean;
+  /** An exam goal's test after this finish, with its result; null for other goals. */
+  focusTest: FocusTestView | null;
   knownSkillIds: string[];
   phases: PhaseStart[];
   testedOutPlanItemIds: string[];
@@ -69,6 +72,7 @@ export async function finishGoalPlacement({
       completion: {
         areas: getScratchAreaStarts(plan.skills),
         complete: plan.skills.length > 0,
+        focusTest: null,
         knownSkillIds: [],
         phases: getScratchPhaseStarts(plan.skills),
         testedOutPlanItemIds: [],
@@ -98,6 +102,7 @@ export async function finishGoalPlacement({
     completion: {
       areas: state.areas,
       complete: state.complete,
+      focusTest: state.focusTest,
       knownSkillIds: state.knownSkillIds,
       phases: state.phases,
       testedOutPlanItemIds,

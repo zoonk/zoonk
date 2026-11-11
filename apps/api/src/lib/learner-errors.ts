@@ -14,3 +14,7 @@ export function learnerAccessError(
 
   return accessError(status);
 }
+
+export function noFocusTestError() {
+  return errors.notFound("This goal has no Focus test");
+}

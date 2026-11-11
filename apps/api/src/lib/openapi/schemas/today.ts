@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { todayFocusTestSchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
@@ -34,6 +35,12 @@ export const todayResponseSchema = z
       .meta({
         description:
           "One of the exam's choices the learner hasn't picked yet (ENEM's foreign language), to ask on Today until they do: the plan studies none of its options before. Pick with POST /v1/goals/{goalId}/plan/exam-choices. Null when every choice is picked or the exam has none",
+      }),
+    focusTest: todayFocusTestSchema
+      .nullable()
+      .meta({
+        description:
+          "Suggests the Focus test (GET /v1/goals/{goalId}/placement) for an exam goal in its first week whose time doesn't cover everything by its date and whose test hasn't started: about how long its first sitting takes. Dismiss it with PATCH /v1/goals/{goalId}/placement. Null otherwise",
       }),
     goal: z.object({
       dateEstimated: z
@@ -74,7 +81,7 @@ export const todayResponseSchema = z
       .default(null)
       .meta({
         description:
-          "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view) or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+          "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
       }),
     pattern: noticedPatternSchema
       .nullable()

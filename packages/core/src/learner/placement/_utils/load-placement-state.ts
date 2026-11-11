@@ -16,6 +16,7 @@ import {
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { type FocusTestView } from "../focus-test-contract";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { getPlacementBudgetSpent } from "../placement-budget";
 import {
@@ -59,6 +60,8 @@ export type PlacementState = {
   dayBudgetSpent: number;
   /** Unfinished placement continues in first-week sessions after today's budget is used. */
   dayBudgetUsed: boolean;
+  /** An exam goal's placement is its Focus test; null for other goals. */
+  focusTest: FocusTestView | null;
   knownSkillIds: string[];
   needsItems: string[];
   next: PlacementQuestionView | null;
@@ -310,6 +313,7 @@ export async function loadPlacementState({
     complete,
     dayBudgetSpent,
     dayBudgetUsed,
+    focusTest: null,
     knownSkillIds: [
       ...new Set([
         ...listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }),
