@@ -13,6 +13,7 @@ const QUESTION_MAIN_ID = "question-main-action";
 
 const ICONS = {
   check: { icon: <CheckIcon aria-hidden="true" /> },
+  confirm: { icon: <CheckIcon aria-hidden="true" /> },
   continue: FORWARD_ICON,
 } as const;
 
@@ -27,7 +28,8 @@ export function QuestionMainButton({
   disabled = false,
   onPress,
 }: {
-  action: "check" | "continue";
+  /** `confirm` sends an answer that gets no verdict, such as a placement question's. */
+  action: keyof typeof ICONS;
   busy?: boolean;
   disabled?: boolean;
   onPress: () => void;
@@ -44,7 +46,7 @@ export function QuestionMainButton({
     { enabled: ready },
   );
 
-  const labels = { check: t("Check"), continue: t("Continue") };
+  const labels = { check: t("Check"), confirm: t("Confirm"), continue: t("Continue") };
 
   return (
     <EnterButton
