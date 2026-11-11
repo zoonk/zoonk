@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { getWarmUpKey } from "./warm-up-key";
 
-const shared = { generalGoal: "  Apí culture! ", ownerId: null, targetLanguage: null };
+const shared = {
+  generalGoal: "  Apí culture! ",
+  language: "en",
+  ownerId: null,
+  targetLanguage: null,
+};
 
 describe(getWarmUpKey, () => {
   it("normalizes the general goal with the Library's identity rules", () => {

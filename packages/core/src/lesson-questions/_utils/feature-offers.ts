@@ -1,7 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
-import { isJsonObject } from "@zoonk/utils/json";
 import {
   getTaughtRegion,
   getVarietyFlagCode,
@@ -12,7 +11,7 @@ import { searchCourses } from "../../courses/search-courses";
 import { type Allowance } from "../../entitlements/contract";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getLessonVariety } from "../../goals/_utils/content-country-view";
-import { hasCountryReading } from "../../goals/_utils/goal-content-country";
+import { hasCountryReading, isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -213,11 +212,7 @@ export async function offerCountry({
     return { reason: "countryNotOffered", status: "unavailable" };
   }
 
-  if (
-    kind === "contentCountry" &&
-    (goal.kind !== "learn" ||
-      (isJsonObject(goal.details) && goal.details.countryDependent === false))
-  ) {
+  if (kind === "contentCountry" && !isCountryGoal(goal)) {
     return { reason: "notCountryGoal", status: "unavailable" };
   }
 

@@ -94,20 +94,13 @@ export async function readSavedGoalOpening(
 
   const course = await prisma.course.findFirst({
     select: { country: true },
-    where: { country, id: skill.course.id },
+    where: { id: skill.course.id },
   });
 
-  return course
-    ? {
-        lesson,
-        skill: {
-          ...skill,
-          course: {
-            ...skill.course,
-            countrySpecific: Boolean(course.country) || skill.course.countrySpecific,
-          },
-        },
-      }
+  const countrySpecific = Boolean(course?.country) || skill.course.countrySpecific;
+
+  return course && course.country === (countrySpecific ? country : null)
+    ? { lesson, skill: { ...skill, course: { ...skill.course, countrySpecific } } }
     : null;
 }
 

@@ -19,7 +19,7 @@ import {
   type GoalAnswerInput,
   getCountryAnswerData,
   getDetailChanges,
-  isInvalidCountryAnswer,
+  isInvalidGoalAnswer,
   withoutReplacedAnswer,
 } from "./onboarding-answer-details";
 import { findOnboardingGoalIds } from "./onboarding-goals";
@@ -128,7 +128,7 @@ export async function saveAnswerInputs({
   | { goalIds: string[]; status: "invalid" | "notFound" | "saved" }
   | { goals: number; minutes: number; status: "dayTooShort" }
 > {
-  if (isInvalidCountryAnswer({ current: goal, input })) {
+  if (isInvalidGoalAnswer({ current: goal, input })) {
     return { goalIds: [goal.id], status: "invalid" };
   }
 
@@ -165,7 +165,7 @@ export async function saveAnswerInputs({
       }
 
       for (const current of currentGoals) {
-        if (input.question === "reason" && current.kind !== "language") {
+        if (isInvalidGoalAnswer({ current, input })) {
           return unchanged("invalid");
         }
 

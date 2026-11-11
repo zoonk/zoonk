@@ -244,6 +244,7 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
 
   const goal = await goalFixture({
     details: { answered: [], level: "basic", purpose: "overview" },
+    planRevealedAt: null,
     prompt: "Understand how vaccines train the immune system",
     title: "How vaccines work",
     userId: user.id,

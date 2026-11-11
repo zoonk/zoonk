@@ -193,6 +193,31 @@ describe(readSavedGoalOpening, () => {
     expect(resumed?.skill).toStrictEqual(opening);
   });
 
+  it("keeps a legacy opening without a country reading in its original country", async () => {
+    const user = await userFixture();
+
+    const [{ course, first, skill }, goal] = await Promise.all([
+      taughtCourse(),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const opening = openingFor({ course, skill });
+
+    await prisma.goal.update({
+      data: {
+        openingLessonId: first.id,
+        openingSkill: { ...opening, course: { id: course.id, key: "legacy", title: course.title } },
+      },
+      where: { id: goal.id },
+    });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toBeNull();
+
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toMatchObject({
+      lesson: { id: first.id },
+    });
+  });
+
   it("never reuses an opening from another country when rebuilding", async () => {
     const user = await userFixture();
 
@@ -204,7 +229,10 @@ describe(readSavedGoalOpening, () => {
     await saveGoalOpening({
       goalId: goal.id,
       lessonId: first.id,
-      opening: openingFor({ course, skill }),
+      opening: {
+        ...openingFor({ course, skill }),
+        course: { ...openingFor({ course, skill }).course, countrySpecific: true },
+      },
     });
 
     await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toBeNull();

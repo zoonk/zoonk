@@ -134,3 +134,10 @@ export function getGoalContentCountry({
 export function hasCountryReading(goal: Pick<Goal, "details">): boolean {
   return isJsonObject(goal.details) && typeof goal.details.countryDependent === "boolean";
 }
+
+export function isCountryGoal(goal: Pick<Goal, "kind" | "details">): boolean {
+  return (
+    goal.kind === "learn" &&
+    (!isJsonObject(goal.details) || goal.details.countryDependent !== false)
+  );
+}

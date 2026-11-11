@@ -116,7 +116,7 @@ export async function finishGoalRebuild({
 
       const saved = plan
         ? await tx.plan.findUnique({
-            select: { goal: { select: { generationRunId: true } } },
+            select: { goal: { select: { generationRunId: true, planRevealedAt: true } } },
             where: { id: plan.id },
           })
         : null;
@@ -124,7 +124,7 @@ export async function finishGoalRebuild({
       const failedAt = new Date();
       const ownFailure = failed && saved?.goal.generationRunId === generationId;
 
-      if (ownFailure) {
+      if (ownFailure && saved.goal.planRevealedAt === null) {
         await tx.plan.updateMany({ data: { buildFailedAt: failedAt }, where: { goalId } });
       }
 

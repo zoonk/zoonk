@@ -2,6 +2,8 @@ import { waitForSleep } from "@workflow/vitest";
 import { generateWholeSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
+import { getGoal } from "@zoonk/core/goals/get";
+import { updateGoal } from "@zoonk/core/goals/update";
 import { requestGoalPlacement } from "@zoonk/core/learner/placement/request";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { getGoalPlan } from "@zoonk/core/plans/get";
@@ -79,7 +81,7 @@ async function savedGoal() {
   await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lesson.id } });
 
   const opening = {
-    course: { id: course.id, key: "course", title: course.title },
+    course: { countrySpecific: false, id: course.id, key: "course", title: course.title },
     skill: {
       area: "Foundations",
       description: skill.description,
@@ -306,6 +308,49 @@ describe("a learner's owed rebuild", () => {
       expect(generateWholeSkillGraph).toHaveBeenCalledWith(
         expect.objectContaining({ purpose: "deep" }),
       );
+    },
+  );
+
+  it(
+    "keeps the revealed plan readable through a failed country rebuild and its retry",
+    { timeout: 60_000 },
+    async () => {
+      const { goal, user } = await savedGoal();
+
+      await prisma.goal.update({
+        data: {
+          details: { ...(goal.details as object), countryDependent: true },
+          planRevealedAt: new Date(),
+        },
+        where: { id: goal.id },
+      });
+
+      const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      await updateGoal({ goalId: goal.id, input: { contentCountry: "PT" } });
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+      vi.mocked(classifyGoalSpecificity).mockRejectedValue(new Error("refused"));
+      await dispatch(user.id);
+      const failed = await goalRun(goal.id);
+      await expect(failed.returnValue).rejects.toThrow();
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+
+      await expect(getGoal(goal.id)).resolves.toMatchObject({
+        goal: { contentCountry: { rebuild: "failed" } },
+      });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ buildFailedAt: null, graph: before.graph });
+
+      vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+        taskResult({ generalGoal: "Foundations", personalDetails: [], privateCourse: false }),
+      );
+
+      const retried = await retry(goal.id);
+      await drive(retried);
+      await expect(retried.returnValue).resolves.toMatchObject({ status: "built" });
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
     },
   );
 

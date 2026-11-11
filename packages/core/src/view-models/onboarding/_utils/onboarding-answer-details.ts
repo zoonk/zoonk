@@ -1,5 +1,6 @@
 import { type Goal } from "@zoonk/db";
 import { isCountryCode } from "@zoonk/utils/countries";
+import { isCountryGoal } from "../../../goals/_utils/goal-content-country";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
 import { getReasonDetails } from "./reason-answer";
@@ -96,16 +97,20 @@ export function getDetailChanges({
   }
 }
 
-export function isInvalidCountryAnswer({
+export function isInvalidGoalAnswer({
   current,
   input,
 }: {
   current: Goal;
   input: GoalAnswerInput;
 }): boolean {
+  if (input.question === "reason") {
+    return current.kind !== "language";
+  }
+
   return (
     input.question === "contentCountry" &&
-    (current.kind !== "learn" || (input.country !== null && !isCountryCode(input.country)))
+    (!isCountryGoal(current) || (input.country !== null && !isCountryCode(input.country)))
   );
 }
 
