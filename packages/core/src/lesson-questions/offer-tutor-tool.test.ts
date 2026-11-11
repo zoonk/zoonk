@@ -676,4 +676,31 @@ describe("every feature the buddy can suggest", () => {
       status: "offered",
     });
   });
+
+  it("offers content-country and home-country cards without saving either choice", async () => {
+    const { goal } = await learnSetup();
+    const asked = await askBuddy(goal.id, "I live in Portugal and need Portugal's finance lessons");
+
+    await expect(
+      offerTutorTool({ ...asked, country: "PT", tool: "contentCountry" }),
+    ).resolves.toMatchObject({
+      offer: { country: "PT", goalId: goal.id, kind: "contentCountry" },
+      status: "offered",
+    });
+
+    await expect(
+      offerTutorTool({ ...asked, country: "PT", tool: "homeCountry" }),
+    ).resolves.toMatchObject({ offer: { country: "PT", kind: "homeCountry" }, status: "offered" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      contentCountry: null,
+    });
+
+    const profile = await prisma.userLearningProfile.findUnique({ where: { userId: goal.userId } });
+    expect(profile?.homeCountry ?? null).toBeNull();
+
+    await expect(
+      offerTutorTool({ ...asked, country: "XX", tool: "contentCountry" }),
+    ).resolves.toMatchObject({ reason: "countryNotOffered", status: "unavailable" });
+  });
 });

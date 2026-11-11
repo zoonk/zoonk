@@ -5,6 +5,7 @@ import {
   type GoalRebuildFollowUp,
   recordGoalRebuildSaved,
 } from "@zoonk/core/goals/rebuild-follow-up";
+import { orderGoalCourses } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { createGoalPlan } from "@zoonk/core/plans/create";
@@ -49,10 +50,13 @@ function toGraphPlan({
   platform,
   provenance,
 }: GraphPlanInput) {
+  const [primary] = orderGoalCourses(graph);
+
   return {
     goalId,
     graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
     platform,
+    primaryCourseId: primary ? courseIdsByKey[primary.key] : undefined,
     provenance: {
       generatedAt: new Date(provenance.generatedAt),
       model: provenance.model,
@@ -72,7 +76,11 @@ export async function createGoalPlanStep({
   "use step";
 
   return catchPlanConflict(async () => {
-    const { setupTasks, status } = await createGoalPlan({ ...toGraphPlan(input), waitsForNotice });
+    const { setupTasks, status } = await createGoalPlan({
+      ...toGraphPlan(input),
+      followUp,
+      waitsForNotice,
+    });
 
     if (followUp && status !== "notFound") {
       await recordGoalRebuildSaved({ followUp, goalId: input.goalId });

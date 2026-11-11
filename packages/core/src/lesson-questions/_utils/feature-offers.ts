@@ -1,5 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
+import { isJsonObject } from "@zoonk/utils/json";
 import {
   getTaughtRegion,
   getVarietyFlagCode,
@@ -192,4 +194,60 @@ export async function offerPlus(): Promise<TutorToolResult> {
   const allowance = await getAllowance();
 
   return { offer: { kind: "plus", subscribed: allowance?.tier === "plus" }, status: "offered" };
+}
+
+export async function offerCountry({
+  country,
+  goal,
+  kind,
+}: {
+  country: string | null;
+  goal: Goal;
+  kind: "contentCountry" | "homeCountry";
+}): Promise<TutorToolResult> {
+  const code = country?.trim().toUpperCase() ?? "";
+
+  if (!isCountryCode(code)) {
+    return { reason: "countryNotOffered", status: "unavailable" };
+  }
+
+  if (
+    kind === "contentCountry" &&
+    (goal.kind !== "learn" ||
+      (isJsonObject(goal.details) && goal.details.countryDependent === false))
+  ) {
+    return { reason: "notCountryGoal", status: "unavailable" };
+  }
+
+  const profile =
+    kind === "homeCountry"
+      ? await prisma.userLearningProfile.findUnique({ where: { userId: goal.userId } })
+      : null;
+
+  const ownCountry = getLanguageCountry(goal.language);
+
+  const current =
+    kind === "homeCountry" ? profile?.homeCountry : (goal.contentCountry ?? ownCountry);
+
+  if (code === current) {
+    return { reason: "alreadySet", status: "unavailable" };
+  }
+
+  return {
+    offer: {
+      country: code,
+      countryName: new Intl.DisplayNames([goal.language], { type: "region" }).of(code) ?? code,
+      goalId: goal.id,
+      kind,
+      languageFlag: code.toLowerCase(),
+      lessonVariety:
+        kind === "contentCountry" &&
+        ownCountry &&
+        code !== ownCountry &&
+        isLanguageRegion({ language: goal.language, region: code })
+          ? { language: goal.language, region: ownCountry }
+          : null,
+    },
+    status: "offered",
+  };
 }

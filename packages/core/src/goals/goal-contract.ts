@@ -207,6 +207,7 @@ export type GoalDraft = z.infer<typeof goalDraftSchema>;
 
 export const goalUpdateInputSchema = z
   .object({
+    contentCountry: countryCodeSchema.nullable().optional(),
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
     displayName: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH).optional(),

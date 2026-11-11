@@ -23,7 +23,6 @@ import { startOutlines } from "./goal-outlines";
 import { preparePlanPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
 import { setUpPlan } from "./plan-setup";
-import { setGoalPrimaryCourseStep } from "./steps/goal-course-steps";
 import {
   linkSkillPrerequisitesStep,
   saveExamSkillGraphStep,
@@ -69,23 +68,14 @@ type SavedCurriculum = Pick<BuiltCurriculum, "courseIdsByKey" | "idsByKey">;
 async function saveCurriculum({
   courseIds,
   graph,
-  goalId,
   slices,
 }: {
   courseIds: Promise<Record<string, string>>;
   graph: BuiltGraph["graph"];
-  goalId: string;
   slices: SavedSlice[];
 }): Promise<SavedCurriculum> {
   const [saved, courseIdsByKey] = await Promise.all([Promise.all(slices), courseIds]);
   const idsByKey = Object.fromEntries(saved.flatMap((slice) => Object.entries(slice)));
-  const [first] = orderGoalCourses(graph);
-  const primaryCourseId = first ? courseIdsByKey[first.key] : undefined;
-
-  if (primaryCourseId) {
-    await setGoalPrimaryCourseStep({ courseId: primaryCourseId, goalId });
-  }
-
   await linkSkillPrerequisitesStep({ idsByKey, skills: graph.skills });
 
   return { courseIdsByKey, idsByKey };
@@ -198,7 +188,7 @@ function saveBuiltGraph({
         scope,
       });
 
-  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }) };
+  return { saved: saveCurriculum({ courseIds, graph, slices }) };
 }
 
 type PreparedCurriculum = SavingCurriculum & { built: BuiltGraph; reused: boolean };

@@ -28,6 +28,14 @@ function getUpdateErrorResponse(
     return errors.unauthorized();
   }
 
+  if (result.status === "invalidCountry") {
+    return createErrorResponse({
+      code: "INVALID_COUNTRY",
+      message: "Unknown country",
+      status: httpStatus.unprocessableEntity,
+    });
+  }
+
   if (result.status === "goalNotFound") {
     return createErrorResponse({
       code: accessErrorCodes.goalNotFound,

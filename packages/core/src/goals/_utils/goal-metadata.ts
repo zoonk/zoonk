@@ -1,7 +1,9 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { getLanguageCountry } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { type GoalUpdateInput, onlyCoreDetails, withoutCoreDetails } from "../goal-contract";
 import { ActiveGoalLimitError, findActiveGoalLimit, moveActiveGoalAway } from "./goal-status";
 
@@ -22,8 +24,22 @@ function mergeDetails({
 }
 
 export function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInput }) {
+  const details = mergeDetails({ current, details: input.details });
+
+  const countryDetails =
+    input.contentCountry === undefined
+      ? details
+      : {
+          ...(details ?? (isJsonObject(current.details) ? current.details : {})),
+          contentCountrySource: "picked",
+          ...(!isJsonObject(current.details) || current.details.countryDependent === undefined
+            ? { countryDependent: true }
+            : {}),
+        };
+
   return {
-    details: mergeDetails({ current, details: input.details }),
+    contentCountry: input.contentCountry,
+    details: countryDetails,
     displayName: input.displayName,
     status: input.status,
     studyTime: input.studyTime,
@@ -65,6 +81,21 @@ export async function saveMetadataInTransaction(
   const updated = changed
     ? await tx.goal.update({ data: goalMetadata({ current, input }), where: { id: current.id } })
     : current;
+
+  const details = isJsonObject(updated.details) ? updated.details : {};
+  const ownCountry = getLanguageCountry(current.language);
+
+  const changedCountry =
+    input.contentCountry !== undefined &&
+    (input.contentCountry ?? ownCountry) !== (current.contentCountry ?? ownCountry);
+
+  if (changedCountry && current.kind === "learn" && details.countryDependent !== false) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { goalId: current.id }, kind: "rebuildGoalCurriculum" }],
+      userId,
+    });
+  }
 
   const moved = input.status
     ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })

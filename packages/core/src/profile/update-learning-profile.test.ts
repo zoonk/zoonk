@@ -230,6 +230,7 @@ describe(updateLearningProfile, () => {
       activeGoalId: null,
       availableGlasses: ["round"],
       buddy: { glasses: "round", kind: "zu", name: null, picked: false },
+      homeCountry: null,
       shareUsageData: null,
       soundsEnabled: true,
     });
@@ -304,6 +305,7 @@ describe(updateLearningProfile, () => {
         activeGoalId: goal.id,
         availableGlasses: ["round"],
         buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
+        homeCountry: null,
         shareUsageData: null,
         soundsEnabled: true,
       },
@@ -359,5 +361,35 @@ describe(updateLearningProfile, () => {
     await expect(updateLearningProfile({ activeGoalId: archivedGoal.id })).resolves.toStrictEqual({
       status: "goalNotFound",
     });
+  });
+});
+
+describe("home country", () => {
+  it("saves only the learner's choice without changing existing plans", async () => {
+    const { user } = await plannedLearner();
+    const before = await planInputs(user.id);
+
+    await expect(updateLearningProfile({ homeCountry: "PT" })).resolves.toMatchObject({
+      profile: { homeCountry: "PT" },
+      status: "updated",
+    });
+
+    await expect(planInputs(user.id)).resolves.toStrictEqual(before);
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "rebuildGoalCurriculum", userId: user.id } }),
+    ).resolves.toBe(0);
+  });
+
+  it("rejects an unknown country before creating a profile", async () => {
+    const user = await useLearner();
+
+    await expect(updateLearningProfile({ homeCountry: "XX" })).resolves.toMatchObject({
+      status: "invalidCountry",
+    });
+
+    await expect(
+      prisma.userLearningProfile.findUnique({ where: { userId: user.id } }),
+    ).resolves.toBeNull();
   });
 });

@@ -29,6 +29,7 @@ function toLearningProfileView({
     activeGoalId: profile?.activeGoalId ?? null,
     availableGlasses,
     buddy: resolveProfileBuddy(profile),
+    homeCountry: profile?.homeCountry ?? null,
     shareUsageData: profile?.shareUsageData ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
   };

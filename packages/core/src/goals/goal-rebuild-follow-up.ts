@@ -116,7 +116,7 @@ export async function finishGoalRebuild({
 
       const saved = plan
         ? await tx.plan.findUnique({
-            select: { goal: { select: { generationRunId: true, planRevealedAt: true } } },
+            select: { goal: { select: { generationRunId: true } } },
             where: { id: plan.id },
           })
         : null;
@@ -130,7 +130,7 @@ export async function finishGoalRebuild({
 
       const graphSaved = isJsonObject(current.input) && current.input.graphSaved === true;
 
-      if (ownFailure && !saved.goal.planRevealedAt && !graphSaved) {
+      if (ownFailure && !graphSaved) {
         await tx.followUp.update({ data: { failedAt }, where: { id: row.id } });
       } else {
         await tx.followUp.deleteMany({ where: { id: row.id, revision: followUp.revision } });
