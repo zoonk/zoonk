@@ -141,7 +141,7 @@ async function savedGoal() {
     repaired: [],
   }));
 
-  return { goal, lesson, planGraph, user };
+  return { course, goal, lesson, planGraph, user };
 }
 
 async function editPurpose(goalId: string) {
@@ -258,7 +258,8 @@ describe("a learner's owed rebuild", () => {
     "holds the reveal after an edit and opens it when the actual rebuild finishes",
     { timeout: 60_000 },
     async () => {
-      const { goal, lesson, user } = await savedGoal();
+      const { course, goal, lesson, user } = await savedGoal();
+      expect(goal.primaryCourseId).toBeNull();
       await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
       await editPurpose(goal.id);
       await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: false } });
@@ -270,7 +271,7 @@ describe("a learner's owed rebuild", () => {
 
       await expect(
         prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
-      ).resolves.toMatchObject({ openingLessonId: lesson.id });
+      ).resolves.toMatchObject({ openingLessonId: lesson.id, primaryCourseId: course.id });
 
       expect(generateWholeSkillGraph).toHaveBeenCalledWith(
         expect.objectContaining({ purpose: "deep", serviceTier: "priority" }),

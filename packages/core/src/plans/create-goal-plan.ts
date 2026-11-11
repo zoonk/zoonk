@@ -1,6 +1,6 @@
 import "server-only";
 import { DbNull, type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
@@ -117,6 +117,11 @@ async function findNoticeNextDay({
   );
 }
 
+function getPreviousCourseId(goal: Goal): string | null {
+  const openingCourse = isJsonObject(goal.openingSkill) ? goal.openingSkill.course : null;
+  return goal.primaryCourseId ?? getString(openingCourse, "id");
+}
+
 type GraphPlanning = {
   primaryCourseId?: string;
   followUp?: GoalRebuildFollowUp;
@@ -206,16 +211,17 @@ async function planFromGraph({
         await tx.goal.update({
           data: {
             primaryCourseId,
-            ...(!isFirst && {
-              details: isJsonObject(goal.details)
-                ? Object.fromEntries(
-                    Object.entries(goal.details).filter(([key]) => key !== "courseStart"),
-                  )
-                : undefined,
-              openingLessonId: null,
-              openingSkill: DbNull,
-              warmUpId: null,
-            }),
+            ...(!isFirst &&
+              primaryCourseId !== getPreviousCourseId(goal) && {
+                details: isJsonObject(goal.details)
+                  ? Object.fromEntries(
+                      Object.entries(goal.details).filter(([key]) => key !== "courseStart"),
+                    )
+                  : undefined,
+                openingLessonId: null,
+                openingSkill: DbNull,
+                warmUpId: null,
+              }),
           },
           where: { id: goalId },
         });
