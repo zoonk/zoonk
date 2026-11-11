@@ -166,7 +166,7 @@ private struct FocusTestSuggestedFocus: View {
   }
 
   private var intro: String? {
-    guard answer != .applied else {
+    guard answer == nil else {
       return nil
     }
 
