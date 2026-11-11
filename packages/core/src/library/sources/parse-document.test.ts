@@ -112,6 +112,28 @@ describe(parseDocument, () => {
     expect(isCutText(null)).toBe(false);
   });
 
+  it("leaves out a law page's struck-through wording, which the law no longer says", async () => {
+    const page = [
+      "<p><strike>Art. 4º Configura conflito de interesses o exercício de atividade privada.</strike></p>",
+      "<p>Art. 4º O ocupante de cargo deve agir de modo a prevenir conflito de interesses.</p>",
+      "<p>§ 2º A ocorrência de conflito <s>exige</s> independe da existência de lesão.</p>",
+    ].join("");
+
+    const law = await parseDocument({
+      bytes: Buffer.from(page),
+      contentType: "text/html",
+      topic: "regulation",
+    });
+
+    const notice = await parseDocument({ bytes: Buffer.from(page), contentType: "text/html" });
+
+    expect(law.text).toBe(
+      "Art. 4º O ocupante de cargo deve agir de modo a prevenir conflito de interesses.\n§ 2º A ocorrência de conflito  independe da existência de lesão.",
+    );
+
+    expect(notice.text).toContain("Configura conflito de interesses");
+  });
+
   it("rejects types it can't read", async () => {
     await expect(
       parseDocument({ bytes: new Uint8Array([1, 2]), contentType: "application/zip" }),

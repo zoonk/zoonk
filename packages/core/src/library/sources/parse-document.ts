@@ -2,7 +2,12 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeContentType } from "@zoonk/utils/upload";
-import { type OfficeParserAST, type SupportedFileType, parseOffice } from "officeparser";
+import {
+  type OfficeContentNode,
+  type OfficeParserAST,
+  type SupportedFileType,
+  parseOffice,
+} from "officeparser";
 import {
   DOCX_CONTENT_TYPE,
   IMAGE_CONTENT_TYPES,
@@ -70,8 +75,13 @@ function getPageNumber(node: OfficeParserAST["content"][number], position: numbe
   return typeof number === "number" ? number : position + 1;
 }
 
-async function readText(ast: OfficeParserAST): Promise<string> {
-  const { value } = await ast.to("text");
+/** Official law sites strike through wording a later law revoked and keep it on the page. */
+function dropStruckText(node: OfficeContentNode): false | undefined {
+  return node.formatting?.strikethrough ? false : undefined;
+}
+
+async function readText({ ast, isLaw }: { ast: OfficeParserAST; isLaw: boolean }): Promise<string> {
+  const { value } = await ast.to("text", isLaw ? { onNode: dropStruckText } : undefined);
   return value;
 }
 
@@ -111,11 +121,11 @@ async function readPagedText({
 async function parseOfficeDocument({
   bytes,
   fileType,
-  maxLength,
+  topic,
 }: {
   bytes: Uint8Array;
   fileType: SupportedFileType;
-  maxLength: number;
+  topic?: SourceTopic;
 }): Promise<ParsedDocument> {
   const ast = await parseOffice(Buffer.from(bytes), {
     extractAttachments: fileType === "docx" || fileType === "pptx",
@@ -127,36 +137,41 @@ async function parseOfficeDocument({
 
   const text = PAGED_FILE_TYPES.has(fileType)
     ? await readPagedText({ ast, fileType })
-    : await readText(ast);
+    : await readText({ ast, isLaw: topic === "regulation" });
 
   return {
     images: ast.attachments
       .filter((attachment) => MODEL_IMAGE_TYPES.has(attachment.mimeType))
       .map((attachment) => ({ data: attachment.data, mediaType: attachment.mimeType })),
     pages: countPages(ast),
-    text: limitText({ maxLength, text }),
+    text: limitText({ maxLength: getMaxTextLength(topic), text }),
   };
 }
 
 export async function parseDocument({
   bytes,
   contentType,
-  maxLength = MAX_EXTRACTED_TEXT_LENGTH,
+  topic,
 }: {
   bytes: Uint8Array;
   contentType: string;
-  maxLength?: number;
+  topic?: SourceTopic;
 }): Promise<ParsedDocument> {
   const type = normalizeContentType(contentType);
   const fileType = OFFICE_FILE_TYPES[type];
 
   if (fileType) {
-    return parseOfficeDocument({ bytes, fileType, maxLength });
+    return parseOfficeDocument({ bytes, fileType, topic });
   }
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
     const text = new TextDecoder().decode(bytes);
-    return { images: [], pages: null, text: limitText({ maxLength, text }) };
+
+    return {
+      images: [],
+      pages: null,
+      text: limitText({ maxLength: getMaxTextLength(topic), text }),
+    };
   }
 
   if (MODEL_IMAGE_TYPES.has(type)) {

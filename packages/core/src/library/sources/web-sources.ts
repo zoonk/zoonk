@@ -7,7 +7,7 @@ import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
-import { getMaxTextLength, hashDocument, parseDocument } from "./parse-document";
+import { hashDocument, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
 import { type SourceStructure, type SourceTopic, sourceStructureSchema } from "./source-contract";
 import { oweSourceChangeNotice } from "./unnoticed-changes";
@@ -31,7 +31,7 @@ export async function fetchAndParse(url: string, topic?: SourceTopic) {
   const parsed = await parseDocument({
     bytes: document.bytes,
     contentType: document.contentType,
-    maxLength: getMaxTextLength(topic),
+    topic,
   });
 
   return {
