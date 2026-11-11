@@ -1,39 +1,41 @@
-import { randomUUID } from "node:crypto";
-import {
-  closeSync,
-  mkdirSync,
-  openSync,
-  readFileSync,
-  renameSync,
-  rmSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
+import { closeSync, mkdirSync, openSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
-import { setTimeout as delay } from "node:timers/promises";
+import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
 import { CliError } from "./errors.ts";
-import { OAUTH_TIMEOUT_MS, isRecord } from "./http.ts";
 
 export type StoredLogin = { accessToken: string; expiresAt: number; refreshToken: string };
 
 export type LoginPlace = { file: string; origin: string };
-
-type CredentialsFile = Record<string, unknown>;
 
 type LoginChange<T> = { result: T; save?: StoredLogin | null };
 
 const PLAIN_TOKEN_PATTERN = /^[\w\-.~+/]+=*$/u;
 const OWNER_ONLY_DIRECTORY = 0o700;
 const OWNER_ONLY_FILE = 0o600;
-const LOCK_RETRY_MS = 50;
+const BUSY_TIMEOUT_MS = 30_000;
+const SQLITE_BUSY = 5;
 
-/** A live command holds the lock for at most one OAuth request, so an older lock was abandoned. */
-const LOCK_STALE_MS = OAUTH_TIMEOUT_MS * 2;
+const CREATE_LOGINS = `
+  CREATE TABLE IF NOT EXISTS logins (
+    origin TEXT PRIMARY KEY,
+    access_token TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    expires_at INTEGER NOT NULL
+  ) STRICT`;
+
+const SELECT_LOGIN = "SELECT access_token, refresh_token, expires_at FROM logins WHERE origin = ?";
+
+const UPSERT_LOGIN = `
+  INSERT INTO logins (origin, access_token, refresh_token, expires_at) VALUES (?, ?, ?, ?)
+  ON CONFLICT (origin) DO UPDATE SET
+    access_token = excluded.access_token,
+    refresh_token = excluded.refresh_token,
+    expires_at = excluded.expires_at`;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
-  return join(configHome, "zoonk", "credentials.json");
+  return join(configHome, "zoonk", "credentials.db");
 }
 
 /** RFC 6750's token characters, so a token can't break a header or a line of output. */
@@ -41,121 +43,115 @@ export function isPlainToken(value: unknown): value is string {
   return typeof value === "string" && PLAIN_TOKEN_PATTERN.test(value);
 }
 
-function isStoredLogin(value: unknown): value is StoredLogin {
-  return (
-    isRecord(value) &&
-    isPlainToken(value.accessToken) &&
-    isPlainToken(value.refreshToken) &&
-    typeof value.expiresAt === "number"
-  );
-}
-
-function hasErrorCode(error: unknown, code: string): boolean {
-  return error instanceof Error && "code" in error && error.code === code;
-}
-
-function readText(file: string): string | null {
-  try {
-    return readFileSync(file, "utf8");
-  } catch (error) {
-    if (hasErrorCode(error, "ENOENT")) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
-function readCredentials(file: string): CredentialsFile {
-  const text = readText(file);
-
-  if (text === null) {
-    return {};
+function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredLogin | null {
+  if (
+    !row ||
+    !isPlainToken(row.access_token) ||
+    !isPlainToken(row.refresh_token) ||
+    typeof row.expires_at !== "number"
+  ) {
+    return null;
   }
 
-  try {
-    const parsed: unknown = JSON.parse(text);
-    return isRecord(parsed) ? parsed : {};
-  } catch {
-    throw new CliError(`${file} isn't valid JSON. Delete it and log in again.`);
-  }
+  return {
+    accessToken: row.access_token,
+    expiresAt: row.expires_at,
+    refreshToken: row.refresh_token,
+  };
 }
 
-/** Commands read this file without the lock, so a write never shows half a file. */
-function writeLogin({ file, login, origin }: LoginPlace & { login: StoredLogin | null }) {
-  const others = Object.entries(readCredentials(file)).filter(([key]) => key !== origin);
-  const credentials = Object.fromEntries(login ? [...others, [origin, login]] : others);
-  const temporaryFile = `${file}.${randomUUID()}.tmp`;
+/** SQLite would create the file with the umask's default permissions, so it starts owner-only. */
+function openCredentials(file: string): DatabaseSync {
+  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
+  closeSync(openSync(file, "a", OWNER_ONLY_FILE));
 
-  writeFileSync(temporaryFile, `${JSON.stringify(credentials, null, 2)}\n`, {
-    flag: "wx",
-    mode: OWNER_ONLY_FILE,
-  });
+  const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
+  database.exec(CREATE_LOGINS);
 
-  renameSync(temporaryFile, file);
+  return database;
 }
 
-function tryLock(lockFile: string): boolean {
-  try {
-    closeSync(openSync(lockFile, "wx", OWNER_ONLY_FILE));
-    return true;
-  } catch (error) {
-    if (hasErrorCode(error, "EEXIST")) {
-      return false;
-    }
-
-    throw error;
-  }
+function selectLogin(database: DatabaseSync, origin: string): StoredLogin | null {
+  return toStoredLogin(database.prepare(SELECT_LOGIN).get(origin));
 }
 
-function isAbandoned(lockFile: string): boolean {
-  const lock = statSync(lockFile, { throwIfNoEntry: false });
-  return lock !== undefined && Date.now() - lock.mtimeMs > LOCK_STALE_MS;
-}
-
-async function acquireLock(lockFile: string): Promise<void> {
-  if (tryLock(lockFile)) {
+function writeLogin({
+  database,
+  login,
+  origin,
+}: {
+  database: DatabaseSync;
+  login: StoredLogin | null;
+  origin: string;
+}) {
+  if (!login) {
+    database.prepare("DELETE FROM logins WHERE origin = ?").run(origin);
     return;
   }
 
-  if (isAbandoned(lockFile)) {
-    rmSync(lockFile, { force: true });
-  } else {
-    await delay(LOCK_RETRY_MS);
-  }
+  database
+    .prepare(UPSERT_LOGIN)
+    .run(origin, login.accessToken, login.refreshToken, login.expiresAt);
+}
 
-  return acquireLock(lockFile);
+function isBusy(error: unknown): boolean {
+  return error instanceof Error && "errcode" in error && error.errcode === SQLITE_BUSY;
+}
+
+function beginImmediate(database: DatabaseSync) {
+  try {
+    database.exec("BEGIN IMMEDIATE");
+  } catch (error) {
+    if (isBusy(error)) {
+      throw new CliError("Another zoonk command is renewing the login; try again.");
+    }
+
+    throw error;
+  }
 }
 
 export function readLogin({ file, origin }: LoginPlace): StoredLogin | null {
-  const login = readCredentials(file)[origin];
-  return isStoredLogin(login) ? login : null;
+  const database = openCredentials(file);
+
+  try {
+    return selectLogin(database, origin);
+  } finally {
+    database.close();
+  }
 }
 
 /**
- * Every read-then-write of the file runs here, one command at a time, so two commands never
- * refresh with the same token or drop each other's write. `save: null` removes the login.
+ * Every read-then-write of a login, refresh or revocation included, runs in one `BEGIN IMMEDIATE`
+ * transaction, so two commands never send the same refresh token. SQLite's lock lasts as long as
+ * its holder, even a suspended one, and ends when the holder's process does. `save: null` removes
+ * the login.
  */
 export async function changeLogin<T>({
   change,
   file,
   origin,
 }: LoginPlace & { change: (stored: StoredLogin | null) => Promise<LoginChange<T>> }): Promise<T> {
-  const lockFile = `${file}.lock`;
-
-  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
-  await acquireLock(lockFile);
+  const database = openCredentials(file);
 
   try {
-    const { result, save } = await change(readLogin({ file, origin }));
+    beginImmediate(database);
+
+    const { result, save } = await change(selectLogin(database, origin));
 
     if (save !== undefined) {
-      writeLogin({ file, login: save, origin });
+      writeLogin({ database, login: save, origin });
     }
 
+    database.exec("COMMIT");
     return result;
+  } catch (error) {
+    if (database.isTransaction) {
+      database.exec("ROLLBACK");
+    }
+
+    throw error;
   } finally {
-    rmSync(lockFile, { force: true });
+    database.close();
   }
 }
 
