@@ -134,6 +134,13 @@ class FocusTestScreenshots {
             tap("Use my answers")
         }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanAlreadyFits() =
+        shoot("focus-test-checkpoint-plan-already-fits", closing(focusOf(state = "alreadyFits")), host = FocusTestHost.Plan) {
+            tap("Use my answers")
+        }
+
     /** Over an exam's test question inside a session; the second one after "Not today" didn't save. */
     @Test
     fun sessionNote() {

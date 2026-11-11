@@ -75,6 +75,8 @@
     <string name="focustest_focus_if_short">If your time can\'t cover everything, your plan gives these more time.</string>
     <string name="focustest_focus_proposed">Your time can\'t cover everything. Your plan can give these more time.</string>
     <string name="focustest_focus_current">Your plan gives these more time.</string>
+    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time ("a focus"). -->
+    <string name="focustest_focus_already_fits">Your plan already has time for these, so it doesn\'t need a focus.</string>
     <string name="focustest_focus_hand_picked">You chose your own focus, and your plan keeps it. This is what the test suggests.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">For now, this follows mainly what counts most in your exam.</string>

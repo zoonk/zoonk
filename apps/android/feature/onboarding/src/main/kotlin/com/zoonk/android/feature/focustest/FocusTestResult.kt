@@ -119,6 +119,7 @@ private fun focusIntro(state: FocusTestFocus.State): String =
             FocusTestFocus.State.IF_TIME_SHORT -> R.string.focustest_focus_if_short
             FocusTestFocus.State.PROPOSED -> R.string.focustest_focus_proposed
             FocusTestFocus.State.CURRENT -> R.string.focustest_focus_current
+            FocusTestFocus.State.ALREADY_FITS -> R.string.focustest_focus_already_fits
             FocusTestFocus.State.HAND_PICKED -> R.string.focustest_focus_hand_picked
         },
     )
