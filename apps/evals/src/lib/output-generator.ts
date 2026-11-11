@@ -4,7 +4,7 @@ import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
 import { settleWithConcurrency } from "./concurrency";
-import { type ModelConfig, getModelById } from "./models";
+import { DEFAULT_REASONING, type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
@@ -40,7 +40,7 @@ function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: Te
   return {
     ...testCase.userInput,
     model: model.gatewayModelId,
-    reasoning: model.reasoning,
+    reasoning: model.reasoning ?? DEFAULT_REASONING,
     useFallback: false,
   };
 }
