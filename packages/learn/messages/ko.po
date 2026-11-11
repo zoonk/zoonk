@@ -3986,11 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "모든 내용을 공부하기에는 시간이 부족해요. 이 과목들에 시간을 더 배정하도록 계획을 바꿀 수 있어요."
 
-#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "l_lxS0"
-msgid "Your plan already follows this focus."
-msgstr "이미 이 방향으로 학습 계획이 짜여 있어요."
+msgctxt "ITVIDG"
+msgid "Your plan gives these more time."
+msgstr "이 과목들에 학습 시간을 더 배정해요."
+
+#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "npOrov"
+msgid "Your plan already has time for these, so it doesn't need a focus."
+msgstr "이미 계획에 이 과목들을 공부할 시간이 잡혀 있어서 추가로 배정할 필요가 없어요."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
@@ -4196,9 +4201,9 @@ msgid "{part, select, written {Writing: not checked here} listening {Listening: 
 msgstr "{part, select, written {서술형: 여기서는 확인하지 않음} listening {듣기: 여기서는 확인하지 않음} speaking {말하기: 여기서는 확인하지 않음} other {실기: 여기서는 확인하지 않음}}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "o8HeHO"
-msgid "Your answers suggest reviewing {subject}."
-msgstr "답변을 보니 {subject} 복습이 필요해 보여요."
+msgctxt "NRNo96"
+msgid "Your answers suggest reviewing this subject."
+msgstr "답안을 보니 이 과목을 복습하면 좋겠어요."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"
@@ -4207,9 +4212,9 @@ msgstr "이 파트에는 최소 점수 기준이 있어요."
 
 #. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kPTHuX"
-msgid "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
-msgstr "{part, select, written {서술형은 시험에서 비중이 크지만 여기서는 확인하지 않아요.} listening {듣기는 시험에서 비중이 크지만 여기서는 확인하지 않아요.} speaking {말하기는 시험에서 비중이 크지만 여기서는 확인하지 않아요.} other {이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요.}}"
+msgctxt "0_2y4Q"
+msgid "This part counts heavily; it isn't checked here."
+msgstr "이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TEkiKm"

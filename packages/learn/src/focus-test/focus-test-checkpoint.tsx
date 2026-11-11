@@ -99,7 +99,7 @@ function FocusRows({ rows }: { rows: readonly FocusRow[] }) {
             <ListRow>
               <ListRowContent>
                 <ListRowTitle>{getSubjectName(row.subject)}</ListRowTitle>
-                <ListRowDescription>{reasonText(row)}</ListRowDescription>
+                <ListRowDescription>{reasonText(row.reason)}</ListRowDescription>
               </ListRowContent>
             </ListRow>
           </li>
@@ -119,10 +119,12 @@ function useFocusIntro() {
       case "proposed":
         return t("Your time can't cover everything. Your plan can give these more time.");
       case "current":
+        return t("Your plan gives these more time.");
+      case "alreadyFits":
         return t({
           description:
-            "Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.",
-          message: "Your plan already follows this focus.",
+            "Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).",
+          message: "Your plan already has time for these, so it doesn't need a focus.",
         });
       case "handPicked":
         return t(

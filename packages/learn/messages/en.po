@@ -3986,11 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "Your time can't cover everything. Your plan can give these more time."
 
-#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "l_lxS0"
-msgid "Your plan already follows this focus."
-msgstr "Your plan already follows this focus."
+msgctxt "ITVIDG"
+msgid "Your plan gives these more time."
+msgstr "Your plan gives these more time."
+
+#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "npOrov"
+msgid "Your plan already has time for these, so it doesn't need a focus."
+msgstr "Your plan already has time for these, so it doesn't need a focus."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
@@ -4196,9 +4201,9 @@ msgid "{part, select, written {Writing: not checked here} listening {Listening: 
 msgstr "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "o8HeHO"
-msgid "Your answers suggest reviewing {subject}."
-msgstr "Your answers suggest reviewing {subject}."
+msgctxt "NRNo96"
+msgid "Your answers suggest reviewing this subject."
+msgstr "Your answers suggest reviewing this subject."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"
@@ -4207,9 +4212,9 @@ msgstr "This part has a minimum score."
 
 #. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kPTHuX"
-msgid "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
-msgstr "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
+msgctxt "0_2y4Q"
+msgid "This part counts heavily; it isn't checked here."
+msgstr "This part counts heavily; it isn't checked here."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TEkiKm"

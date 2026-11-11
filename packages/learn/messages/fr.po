@@ -3986,11 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "Tu n’as pas le temps de tout étudier. Ton plan peut accorder plus de temps à ces matières."
 
-#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "l_lxS0"
-msgid "Your plan already follows this focus."
-msgstr "Ton plan correspond déjà à cette recommandation."
+msgctxt "ITVIDG"
+msgid "Your plan gives these more time."
+msgstr "Ton plan accorde plus de temps à ces matières."
+
+#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "npOrov"
+msgid "Your plan already has time for these, so it doesn't need a focus."
+msgstr "Ton plan prévoit déjà assez de temps pour ces matières, donc pas besoin de leur en consacrer plus."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
@@ -4196,9 +4201,9 @@ msgid "{part, select, written {Writing: not checked here} listening {Listening: 
 msgstr "{part, select, written {Expression écrite : non évaluée ici} listening {Écoute : non évaluée ici} speaking {Expression orale : non évaluée ici} other {Partie pratique : non évaluée ici}}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "o8HeHO"
-msgid "Your answers suggest reviewing {subject}."
-msgstr "Tes réponses suggèrent de réviser cette matière : {subject}."
+msgctxt "NRNo96"
+msgid "Your answers suggest reviewing this subject."
+msgstr "Tes réponses suggèrent de réviser cette matière."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"
@@ -4207,9 +4212,9 @@ msgstr "Cette partie exige un Score minimum."
 
 #. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kPTHuX"
-msgid "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
-msgstr "{part, select, written {L’expression écrite compte pour beaucoup ; elle n’est pas évaluée ici.} listening {L’écoute compte pour beaucoup ; elle n’est pas évaluée ici.} speaking {L’expression orale compte pour beaucoup ; elle n’est pas évaluée ici.} other {Cette partie compte pour beaucoup ; elle n’est pas évaluée ici.}}"
+msgctxt "0_2y4Q"
+msgid "This part counts heavily; it isn't checked here."
+msgstr "Cette partie compte pour beaucoup ; elle n’est pas évaluée ici."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TEkiKm"

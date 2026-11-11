@@ -3986,11 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "すべてを学ぶには時間が足りません。これらの科目に多くの時間を割く計画にできます。"
 
-#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "l_lxS0"
-msgid "Your plan already follows this focus."
-msgstr "学習計画はすでにこの提案に沿っています。"
+msgctxt "ITVIDG"
+msgid "Your plan gives these more time."
+msgstr "学習計画では、これらの科目に多くの時間を割きます。"
+
+#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "npOrov"
+msgid "Your plan already has time for these, so it doesn't need a focus."
+msgstr "これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。"
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
@@ -4196,9 +4201,9 @@ msgid "{part, select, written {Writing: not checked here} listening {Listening: 
 msgstr "{part, select, written {ライティング：ここでは診断できません} listening {リスニング：ここでは診断できません} speaking {スピーキング：ここでは診断できません} other {実技：ここでは診断できません}}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "o8HeHO"
-msgid "Your answers suggest reviewing {subject}."
-msgstr "回答をもとに、{subject}の復習をおすすめします。"
+msgctxt "NRNo96"
+msgid "Your answers suggest reviewing this subject."
+msgstr "回答を見ると、この科目は復習したほうがよさそうです。"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"
@@ -4207,9 +4212,9 @@ msgstr "このパートには最低スコアが設定されています。"
 
 #. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kPTHuX"
-msgid "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
-msgstr "{part, select, written {ライティングは配点が高いですが、ここでは診断できません。} listening {リスニングは配点が高いですが、ここでは診断できません。} speaking {スピーキングは配点が高いですが、ここでは診断できません。} other {このパートは配点が高いですが、ここでは診断できません。}}"
+msgctxt "0_2y4Q"
+msgid "This part counts heavily; it isn't checked here."
+msgstr "このパートは配点が高いですが、ここでは診断できません。"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TEkiKm"

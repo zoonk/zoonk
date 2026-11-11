@@ -3986,11 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "Não dá tempo de estudar tudo. Seu plano pode dedicar mais tempo a essas matérias."
 
-#. Shown above a short list of exam subjects the Focus test suggests focusing on. It says the learner's study plan already matches that suggestion. Don't say the plan gives them more time or priority: sometimes it matches with no change made.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "l_lxS0"
-msgid "Your plan already follows this focus."
-msgstr "Seu plano já tem esse foco."
+msgctxt "ITVIDG"
+msgid "Your plan gives these more time."
+msgstr "Seu plano dedica mais tempo a essas matérias."
+
+#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "npOrov"
+msgid "Your plan already has time for these, so it doesn't need a focus."
+msgstr "Seu plano já reserva tempo para essas matérias, então não precisa dar mais foco a elas."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
@@ -4196,9 +4201,9 @@ msgid "{part, select, written {Writing: not checked here} listening {Listening: 
 msgstr "{part, select, written {Escrita: não avaliada aqui} listening {Escuta: não avaliada aqui} speaking {Conversação: não avaliada aqui} other {Parte prática: não avaliada aqui}}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "o8HeHO"
-msgid "Your answers suggest reviewing {subject}."
-msgstr "Suas respostas indicam que vale revisar {subject}."
+msgctxt "NRNo96"
+msgid "Your answers suggest reviewing this subject."
+msgstr "Suas respostas indicam que vale revisar esta matéria."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"
@@ -4207,9 +4212,9 @@ msgstr "Essa parte exige uma pontuação mínima."
 
 #. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kPTHuX"
-msgid "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}"
-msgstr "{part, select, written {A escrita tem bastante peso; não é avaliada aqui.} listening {A escuta tem bastante peso; não é avaliada aqui.} speaking {A conversação tem bastante peso; não é avaliada aqui.} other {Essa parte tem bastante peso; não é avaliada aqui.}}"
+msgctxt "0_2y4Q"
+msgid "This part counts heavily; it isn't checked here."
+msgstr "Essa parte tem bastante peso; não é avaliada aqui."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TEkiKm"

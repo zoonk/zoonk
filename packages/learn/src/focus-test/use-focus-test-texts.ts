@@ -44,31 +44,28 @@ export function useSubjectStateText() {
   };
 }
 
+/** The row's title already names the subject, so no reason says it again. */
 export function useFocusReasonText() {
   const t = useExtracted();
 
-  return (row: Pick<FocusRow, "part" | "reason" | "subject">): string => {
-    switch (row.reason) {
+  return (reason: FocusRow["reason"]): string => {
+    switch (reason) {
       case "answers":
-        return t("Your answers suggest reviewing {subject}.", {
-          subject: getSubjectName(row.subject),
-        });
+        return t("Your answers suggest reviewing this subject.");
       case "minimumScore":
         return t("This part has a minimum score.");
       case "notChecked":
         return t({
           description:
             "Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.",
-          message:
-            "{part, select, written {Writing counts heavily; it isn't checked here.} listening {Listening counts heavily; it isn't checked here.} speaking {Speaking counts heavily; it isn't checked here.} other {This part counts heavily; it isn't checked here.}}",
-          values: { part: row.part ?? "other" },
+          message: "This part counts heavily; it isn't checked here.",
         });
       case "notAsked":
         return t("This subject counts heavily. Its starting point hasn't been checked yet.");
       case "weight":
         return t("This subject counts heavily.");
       default:
-        return row.reason satisfies never;
+        return reason satisfies never;
     }
   };
 }
