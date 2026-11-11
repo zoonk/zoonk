@@ -282,6 +282,34 @@ describe(refreshWebSource, () => {
     });
   });
 
+  it("re-reads a law stored by an older reader without telling learners it changed", async () => {
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+
+    await prisma.source.update({
+      data: {
+        contentHash: "older-reading",
+        extractedText: "Edital 2026\nA prova ter� 50 quest�es.",
+        readVersion: 0,
+      },
+      where: { id: law.id },
+    });
+
+    await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "changed" });
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { contentHash: law.contentHash, unnoticedChanges: null },
+    );
+
+    servePage(noticePage({ questions: 60, token: "b" }));
+    await refreshWebSource(law.id);
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { unnoticedChanges: expect.stringContaining("+ A prova terá 60 questões.") },
+    );
+  });
+
   it("keeps what each of two saves at once changed in a law, whichever saves first", async () => {
     const url = `https://example.gov.br/${randomUUID()}`;
     const law = { ...EDITAL, topic: "regulation" as const, url };

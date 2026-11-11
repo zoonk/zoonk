@@ -1,6 +1,6 @@
 import "server-only";
 import { type Source, type TransactionClient } from "@zoonk/db";
-import { type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
+import { SOURCE_READ_VERSION, type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
 import { appendTextChange, summarizeTextChange } from "./text-change";
 
 const NOTICE_FAILURES = 3;
@@ -58,6 +58,7 @@ export async function oweSourceChangeNotice({
     select: {
       contentHash: true,
       extractedText: true,
+      readVersion: true,
       unnoticedChanges: true,
       unnoticedFromHash: true,
       unnoticedRevision: true,
@@ -67,7 +68,7 @@ export async function oweSourceChangeNotice({
 
   const change = summarizeTextChange({ current: text, previous: stored.extractedText });
 
-  if (!change) {
+  if (!change || stored.readVersion < SOURCE_READ_VERSION) {
     return {};
   }
 

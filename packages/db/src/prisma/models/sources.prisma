@@ -38,6 +38,9 @@ model Source {
   /// Moves on with every save that adds to `unnoticedChanges` and every notice that clears them, so
   /// a notice clears, and a failed notice run counts against, only the change it read.
   unnoticedRevision  Int                  @default(0) @map("unnoticed_revision")
+  /// The `SOURCE_READ_VERSION` that turned the page into `extractedText`. A text read the older way
+  /// differs only in how it was read, so saving it read the new way tells learners nothing changed.
+  readVersion        Int                  @default(0) @map("read_version")
   /// Notice runs that failed after their retries since the page last changed; a change whose notice
   /// keeps failing isn't tried again until the page changes.
   noticeFailures     Int                  @default(0) @map("notice_failures")

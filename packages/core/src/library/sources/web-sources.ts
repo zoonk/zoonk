@@ -9,7 +9,12 @@ import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
 import { hashDocument, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
-import { type SourceStructure, type SourceTopic, sourceStructureSchema } from "./source-contract";
+import {
+  SOURCE_READ_VERSION,
+  type SourceStructure,
+  type SourceTopic,
+  sourceStructureSchema,
+} from "./source-contract";
 import { oweSourceChangeNotice } from "./unnoticed-changes";
 
 type WebSource = Omit<Source, "extractedText">;
@@ -68,6 +73,7 @@ function toSourceContent({
     extractedText: fetched.parsed.text,
     fetchedAt: now,
     mimeType: fetched.contentType,
+    readVersion: SOURCE_READ_VERSION,
     structure: toStructure({ parsed: fetched.parsed, topic }),
     validUntil,
   };
