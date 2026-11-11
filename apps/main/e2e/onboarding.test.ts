@@ -115,7 +115,16 @@ test.describe("Onboarding from a typed goal", () => {
       page.getByRole("heading", { name: "Is there a date you're aiming for?" }),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "No date" }).click();
+    // Stepping a field leaves a half-typed date, which the browser reports as no value.
+    const date = page.getByLabel("Date", { exact: true });
+    await date.click();
+    await page.keyboard.press("ArrowUp");
+
+    await expect
+      .poll(() => date.evaluate((input: HTMLInputElement) => input.validity.badInput))
+      .toBe(true);
+
+    await page.getByRole("button", { name: "Continue without a date" }).click();
 
     await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Skip all" }).click();
@@ -278,7 +287,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await page.getByRole("button", { name: "No date" }).click();
+  await page.getByRole("button", { name: "Continue without a date" }).click();
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
   await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
