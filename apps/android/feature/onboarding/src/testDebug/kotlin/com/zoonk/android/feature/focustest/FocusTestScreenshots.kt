@@ -322,14 +322,15 @@ class FocusTestScreenshots {
                 )
         }
 
-        /** A focus on two subjects: the second gains a lesson but starts later, since the first takes its slot. */
+        /** A focus on two subjects: the second gains a lesson but starts later, since the first takes its slot; Statistics gives some up. */
         const val PROPOSAL =
             """
             {"behind":null,"canApply":true,"canUndo":true,"createdAt":"2026-11-11T12:00:00.000Z","days":null,
              "effect":{"endDateAfter":"2026-12-10","endDateBefore":"2026-12-10","lessonsAdded":0,"lessonsRemoved":2,
               "areaStarts":[{"area":"Mathematics","after":"2026-11-20","before":"2026-11-17"}],
               "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
-               {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}]},
+               {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}],
+              "areaLessons":[{"area":"Statistics","after":3,"before":6}]},
              "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,
              "operations":[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}],"reason":null,"seen":false,
              "source":"focusTest","status":"proposed","todaySession":null}

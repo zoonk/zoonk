@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.plan.PlanEffectDiff
+import com.zoonk.android.feature.plan.focusedAreas
 import com.zoonk.android.feature.plan.planChangeProposalEffect
-import com.zoonk.android.feature.plan.setsFocus
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -206,7 +206,7 @@ private fun Proposal(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (answer == null) {
-            planChangeProposalEffect(proposal.effect, besideDiff = true, setsFocus = proposal.setsFocus)?.let {
+            planChangeProposalEffect(proposal.effect, besideDiff = true, focused = proposal.focusedAreas)?.let {
                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
             PlanEffectDiff(proposal.effect)

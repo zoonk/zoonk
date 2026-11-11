@@ -13,6 +13,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanEffectAreaLessonsInner
 import com.zoonk.api.models.PlanEffectWeeklyEvents
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
@@ -87,8 +88,8 @@ fun planChangeAppliedEffect(
 
 /**
  * Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan
- * without a date. A focus change ([setsFocus]) says what each focused subject gains before when it starts, since a start
- * moved later reads like a loss when it leads.
+ * without a date. A focus change says what its [focused] subjects gain before when they start, since a start moved later
+ * reads like a loss when it leads; what another subject loses keeps its place.
  */
 @Composable
 fun planChangeProposalEffect(
@@ -96,13 +97,14 @@ fun planChangeProposalEffect(
     current: PlanEnd? = null,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
-    setsFocus: Boolean = false,
+    focused: List<String> = emptyList(),
 ): String? {
     val end = if (current != null) planEndEffect(effect, current) else changeEffectText(effect)
-    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate, gainsFirst = setsFocus)
+    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate, focused = focused)
 }
 
-val PlanChange.setsFocus: Boolean get() = operations.any { it.op is PlanOp.FocusAreas }
+/** The subjects a focus change gives more time. */
+val PlanChange.focusedAreas: List<String> get() = operations.mapNotNull { it.op as? PlanOp.FocusAreas }.flatMap { it.areas }
 
 /** The plan's date and estimated end, as shown before a change. */
 data class PlanEnd(
@@ -118,17 +120,17 @@ data class PlanEnd(
 @Composable
 fun planChangeFootnote(change: PlanChange): String? {
     val effect = change.effect ?: return null
-    val gainsFirst = change.setsFocus
-    val starts = areaStartTexts(effect)
-    // An end that moves is in the diff; one that stays says why, and a focus says what each subject gains.
-    val ends =
-        areaEndTexts(
-            effect.areaEnds.orEmpty().filter { it.after == it.before || (gainsFirst && (it.lessonsGained ?: 0) > 0) },
-            effect.lessonsAddedEstimated == true,
-        )
+    val ends = effect.areaEnds.orEmpty()
+    val focused = change.focusedAreas
+    val estimated = effect.lessonsAddedEstimated == true
+    val gains = ends.filter { it.area in focused && (it.lessonsGained ?: 0) > 0 && it.after > it.before }
     val sentences =
         listOfNotNull(
-            *(if (gainsFirst) ends + starts else starts + ends).toTypedArray(),
+            // An end that moves is in the diff, but a focus still says what its subjects gain first.
+            *areaEndTexts(gains, estimated).toTypedArray(),
+            *areaStartTexts(effect).toTypedArray(),
+            // An end that stays says why.
+            *areaEndTexts(ends.filter { it.after == it.before }, estimated).toTypedArray(),
             reviewFirstText(effect),
             lessonsText(effect, named = true),
             addedTopicsStartText(effect),
@@ -812,13 +814,18 @@ private fun effectSentences(
     endText: String?,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
-    gainsFirst: Boolean = false,
+    focused: List<String> = emptyList(),
 ): String? {
-    val starts = areaStartTexts(effect)
-    val gains = areaEndTexts(effect?.areaEnds.orEmpty(), effect?.lessonsAddedEstimated == true) + areaLessonTexts(effect)
+    val (focusedEnds, otherEnds) = effect?.areaEnds.orEmpty().partition { it.area in focused }
+    val (focusedLessons, otherLessons) = effect?.areaLessons.orEmpty().partition { it.area in focused }
+    val estimated = effect?.lessonsAddedEstimated == true
     val sentences =
         listOfNotNull(
-            *(if (gainsFirst) gains + starts else starts + gains).toTypedArray(),
+            *areaEndTexts(focusedEnds, estimated).toTypedArray(),
+            *areaLessonTexts(focusedLessons).toTypedArray(),
+            *areaStartTexts(effect).toTypedArray(),
+            *areaEndTexts(otherEnds, estimated).toTypedArray(),
+            *areaLessonTexts(otherLessons).toTypedArray(),
             reviewFirstText(effect),
             weeklyEventsText(effect),
             nextMockText(effect),
@@ -885,8 +892,8 @@ private fun areaEndTexts(
     }
 
 @Composable
-private fun areaLessonTexts(effect: PlanEffect?): List<String> =
-    effect?.areaLessons.orEmpty().map {
+private fun areaLessonTexts(lessons: List<PlanEffectAreaLessonsInner>): List<String> =
+    lessons.map {
         pluralStringResource(R.plurals.plan_change_area_lessons_to_go, it.after.toInt(), it.area, it.after.toInt(), it.before.toInt())
     }
 
