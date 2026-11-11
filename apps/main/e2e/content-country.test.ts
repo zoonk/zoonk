@@ -68,6 +68,7 @@ test.describe("Content country", () => {
   test("changes a started goal's country from the Plan after asking, and keeps the plan while the new one is prepared", async ({
     browser,
   }) => {
+    // The persona's goal is in Portuguese, which names its countries; the app speaks English.
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
       const details = isJsonObject(goal.details) ? goal.details : {};
@@ -75,7 +76,7 @@ test.describe("Content country", () => {
 
       await prisma.goal.update({
         data: {
-          contentCountry: "GB",
+          contentCountry: "PT",
           details: {
             ...details,
             answered: [...answered, "contentCountry"],
@@ -94,33 +95,33 @@ test.describe("Content country", () => {
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const row = properties.getByRole("button", { name: /^Content country/u });
       await expectHydrated(row);
-      await expect(row).toHaveText(/United Kingdom$/u);
-      await expect(properties.getByText("English (United States)")).toBeVisible();
+      await expect(row).toHaveText(/Portugal$/u);
+      await expect(properties.getByText("Portuguese (Brazil)")).toBeVisible();
 
       await row.click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      await editor.getByRole("button", { name: "United Kingdom" }).click();
+      await editor.getByRole("button", { name: "Portugal" }).click();
 
       const picker = page.getByRole("dialog", { name: "Country" });
       const search = picker.getByRole("combobox", { name: "Search countries" });
-      await search.fill("ger");
-      await picker.getByRole("option", { name: "Germany" }).click();
+      await search.fill("alem");
+      await picker.getByRole("option", { name: "Alemanha" }).click();
 
       const confirm = page.getByRole("alertdialog", { name: "Change the content country?" });
-      await expect(confirm).toContainText("New country: Germany.");
+      await expect(confirm).toContainText("New country: Alemanha.");
       await confirm.getByRole("button", { name: "Cancel" }).click();
       await expect(confirm).toBeHidden();
       await expect(picker).toBeVisible();
-      expect(await readCountry()).toBe("GB");
+      expect(await readCountry()).toBe("PT");
 
-      await picker.getByRole("option", { name: "Germany" }).click();
+      await picker.getByRole("option", { name: "Alemanha" }).click();
       await confirm.getByRole("button", { name: "Rebuild plan" }).click();
       await expect(picker).toBeHidden();
       await expect.poll(readCountry).toBe("DE");
 
       await page.keyboard.press("Escape");
-      await expect(row).toHaveText(/Germany$/u);
-      await expect(properties.getByText("English (United States)")).toHaveCount(0);
+      await expect(row).toHaveText(/Alemanha$/u);
+      await expect(properties.getByText("Portuguese (Brazil)")).toHaveCount(0);
 
       await expect(page.getByText("Preparing your new plan")).toBeVisible();
       await expect(page.locator('[data-slot="journey"]')).toBeVisible();
