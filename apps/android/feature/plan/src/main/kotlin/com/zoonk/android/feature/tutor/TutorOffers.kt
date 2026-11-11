@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -21,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -158,7 +162,10 @@ internal fun TutorOffer(
                 tile = { OfferIcon(R.drawable.ic_auto_awesome) },
                 modifier = modifier,
             ) {
-                OfferButton(stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.tutor_offer_see_plus), onClick = routes.seePlus)
+                OfferButton(
+                    stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.tutor_offer_see_plus),
+                    onClick = routes.seePlus,
+                )
             }
         }
     }
@@ -379,6 +386,8 @@ private fun VarietyOffer(
     modifier: Modifier,
 ) {
     val locale = currentLocale()
+    val card = remember { BringIntoViewRequester() }
+    LaunchedEffect(save) { if (save == VarietySave.Failed) card.bringIntoView() }
 
     OfferCard(
         title = varietyName(offer.targetLanguage, offer.targetRegion, locale),
@@ -394,7 +403,7 @@ private fun VarietyOffer(
                     ::flagEmoji,
                 )?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) }
         },
-        modifier = modifier,
+        modifier = modifier.bringIntoViewRequester(card),
     ) {
         if (save == VarietySave.Saved) {
             Text(
