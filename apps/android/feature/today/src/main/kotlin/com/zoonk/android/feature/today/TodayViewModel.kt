@@ -184,8 +184,9 @@ class TodayViewModel(
     fun holdNotice(
         read: TodayRead.Day,
         picked: Today.Notice?,
+        settled: Boolean,
     ) {
-        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight)
+        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight, settled)
     }
 
     /**

@@ -13,8 +13,9 @@ struct TodayDayView: View {
   @State private var tapTask: Task<Void, Never>?
   @State private var disclosures = TodayDisclosures()
   @State private var writingStalled = false
-  /// Main's `useShownNotice`: the notice Today opened with stays while the learner is here, so
-  /// answering it shows what the answer did; the next waits for the next visit.
+  /// The notice Today opened with stays while the learner is here, so answering it shows what the
+  /// answer did; the next waits for the next visit. Today opens on its first settled read, not on
+  /// the stored one shown while a newer read loads.
   @State private var shownNotice: TodayView.Notice?
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
@@ -88,9 +89,9 @@ struct TodayDayView: View {
         startVisit()
       }
     }
-    .onChange(of: view.notice) {
+    .onChange(of: settledNotice) {
       if shownNotice == nil {
-        shownNotice = view.notice
+        shownNotice = settledNotice
         countNotice()
       }
     }
@@ -446,10 +447,14 @@ struct TodayDayView: View {
     writingStalled = true
   }
 
+  private var settledNotice: TodayView.Notice? {
+    store.today.isRefreshing || store.today.isInvalidated ? nil : view.notice
+  }
+
   /// Main reads Today afresh on each visit (back from a lesson or another tab): what the learner
   /// answered stays only while they're here.
   private func startVisit() {
-    shownNotice = view.notice
+    shownNotice = settledNotice
     disclosures.showsDone = false
     disclosures.showsMore = false
     examChoice = nil
