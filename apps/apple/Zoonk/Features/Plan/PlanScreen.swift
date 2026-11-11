@@ -15,6 +15,24 @@ struct PlanScreen: View {
   }
 }
 
+struct PlanOverTask: View {
+  @Environment(\.dismiss) private var dismiss
+
+  var body: some View {
+    NavigationStack {
+      AppTab.plan.root
+        .navigationDestination(for: AppRoute.self) { route in
+          route.destination
+        }
+        .taskClose {
+          Button(role: .close) {
+            dismiss()
+          }
+        }
+    }
+  }
+}
+
 private struct GoalPlanView: View {
   @Environment(PlanStore.self) private var store
 

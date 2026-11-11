@@ -210,6 +210,8 @@ struct AppSheetView: View {
         AccountSheet(page: page)
       case .feedback(let screen):
         FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: screen))
+      case .plan:
+        PlanOverTask()
       case .signIn:
         AccountSheet(signsIn: true)
       case .subscription:
