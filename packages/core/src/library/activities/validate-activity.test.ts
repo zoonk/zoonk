@@ -243,6 +243,24 @@ describe(validateActivity, () => {
     ]);
   });
 
+  it("refuses sources with more passages than a learner's marks can send back", () => {
+    const manyPassages = structuredClone(fixtures.sourceComparison);
+    const [first] = manyPassages.fields.sources;
+    const words = Array.from({ length: 201 }, (_, index) => `z${index}q`);
+
+    manyPassages.fields.sources[0] = {
+      ...first!,
+      excerpt: words.join(" "),
+      passages: words.map((text, index) => ({ id: `p-${index}`, isTarget: index === 0, text })),
+    };
+
+    const result = validateActivity(manyPassages);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.sources" }),
+    ]);
+  });
+
   it("keeps a list the learner never sends back, however long", () => {
     const manyPlaces = structuredClone(fixtures.mapExplorer);
     const [first] = manyPlaces.fields.places;

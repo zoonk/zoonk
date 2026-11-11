@@ -9,6 +9,7 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
+import { MAX_ANSWER_ITEMS } from "../activity-answer-schema";
 import { aimForItems, slugSchema } from "../activity-schemas";
 import { describeBaseMaps, getActivityBaseMap, isOnBaseMap } from "../base-maps";
 import { type ActivityIssue, defineActivityTemplate } from "../define-activity-template";
@@ -219,6 +220,15 @@ function passageIssues(fields: SourceComparisonFields) {
   const passages = fields.sources.flatMap((source) => source.passages);
 
   return [
+    ...(passages.length > MAX_ANSWER_ITEMS
+      ? [
+          issue(
+            "inconsistentFields",
+            "fields.sources",
+            `A learner may mark every passage, and an answer lists at most ${MAX_ANSWER_ITEMS}`,
+          ),
+        ]
+      : []),
     ...duplicateIssues(
       passages.map((passage) => passage.id),
       "fields.sources",
