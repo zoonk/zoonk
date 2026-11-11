@@ -113,7 +113,7 @@ struct TodayDayView: View {
   }
 
   private func header(actionInHeader: Bool) -> some View {
-    let lead = TodayDayLead(view: view)
+    let lead = TodayDayLead(view: view, writingStalled: writingStalled)
 
     return Section {
       VStack(alignment: .leading, spacing: 6) {

@@ -41,6 +41,7 @@ msgstr "Corretta"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "A seguire"
@@ -55,6 +56,7 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, one {{done, number} di # lezione completata} other {{done, number} di # lezioni completate}}"
 
 #: src/_components/chapter-mark.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "Saltato"
@@ -69,6 +71,7 @@ msgstr "Saltato"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -820,6 +823,7 @@ msgstr "Tempo di studio diverso nel fine settimana"
 
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
+#: src/today/today-week-day.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
 msgstr "{time} di studio"
@@ -4808,25 +4812,25 @@ msgid "Next on your path"
 msgstr "Le tue prossime tappe"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
 msgstr "non hai studiato"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "1sq74z"
 msgid "rest day"
 msgstr "giorno di riposo"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "kkpP2k"
 msgid "today"
 msgstr "oggi"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
 msgstr "in programma"
@@ -4843,7 +4847,7 @@ msgid "This week"
 msgstr "Questa settimana"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
@@ -14395,6 +14399,7 @@ msgstr ", attività saltata"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "Stiamo preparando i contenuti per te…"
@@ -14425,16 +14430,19 @@ msgid "What changed"
 msgstr "Cos’è cambiato"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Ay_6I8"
 msgid "Not written yet."
 msgstr "Non ancora preparate."
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Le tue prossime lezioni"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Ci stiamo mettendo più tempo del solito"
@@ -14712,6 +14720,41 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "La tua settimana"
 
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "Verifica quello che hai imparato finora."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "Esprimi con parole tue quello che hai imparato."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "Un nuovo tentativo con le domande che hai sbagliato."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "Una simulazione, proprio come l’esame vero."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "Nuove domande che uniscono gli argomenti studiati."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "Riprende quello che hai studiato prima che lo dimentichi."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} su {count, plural, one {# domanda} other {# domande}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
@@ -14762,45 +14805,55 @@ msgctxt "MuwOz5"
 msgid "every topic, your weakest first"
 msgstr "tutti gli argomenti, prima quelli su cui fai più fatica"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
 msgstr "tempo giornaliero raggiunto"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "F8phHs"
 msgid "studied"
 msgstr "hai studiato"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "uMBOLl"
 msgid "exam day"
 msgstr "giorno dell’esame"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
 msgstr "data del tuo obiettivo"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
 msgid "before your plan"
 msgstr "prima dell’inizio del tuo piano"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "fy2sc9"
 msgid "after your date"
 msgstr "dopo la data del tuo obiettivo"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
 msgid "{day}: {name}"
 msgstr "{day}: {name}"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "JsGsZi"
 msgid "{day}: {name}, {status}"
 msgstr "{day}: {name}, {status}"
+
+#: src/today/today-week-day.tsx
+msgctxt "KPis2L"
+msgid "{studied} of {planned} studied"
+msgstr "{studied} di studio su {planned}"
+
+#: src/today/today-week-day.tsx
+msgctxt "9PPMqu"
+msgid "{time} planned"
+msgstr "{time} in programma"
 
 #: src/today/today-week.tsx
 msgctxt "sq7Fxi"

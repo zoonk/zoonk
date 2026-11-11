@@ -9,7 +9,6 @@ extension Locale {
 
   /// A language named on its own, capitalized as main lists it ("Chinês (Taiwan)").
   func languageTitle(_ tag: String) -> String {
-    let name = languageName(tag)
-    return name.prefix(1).uppercased(with: self) + name.dropFirst()
+    languageName(tag).labelCased(self)
   }
 }

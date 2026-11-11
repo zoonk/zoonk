@@ -296,4 +296,20 @@
     <string name="today_coming_stalled">Taking longer than usual</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Not written yet.</string>
+    <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
+    <string name="today_segment_label">%1$s: %2$s</string>
+    <string name="today_segment_up_next">Up next</string>
+    <!-- %1$s is a formatted number of questions answered, %2$d the step's questions: "3 of 12 questions". -->
+    <plurals name="today_segment_questions">
+        <item quantity="one">%1$s of %2$d question</item>
+        <item quantity="other">%1$s of %2$d questions</item>
+    </plurals>
+    <string name="today_segment_review_note">Brings back what you studied before you forget it.</string>
+    <string name="today_segment_practice_note">New questions that mix what you\'ve learned.</string>
+    <string name="today_segment_mistakes_note">Another try at questions you missed.</string>
+    <string name="today_segment_challenge_note">Checks what you\'ve learned so far.</string>
+    <string name="today_segment_mock_note">A practice exam, like the real one.</string>
+    <string name="today_segment_essay_note">You put what you learned into your own words.</string>
+    <string name="today_week_day_studied_of">%1$s of %2$s studied</string>
+    <string name="today_week_day_planned">%1$s planned</string>
 </resources>
