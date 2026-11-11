@@ -48,7 +48,7 @@ export type UnderstoodRow = {
   badge?: string;
   choiceDates?: string[];
   /** For a `contentCountry` row, the country and the ones its picker suggests first. */
-  contentCountry?: { code: string; suggested: readonly SuggestedCountry[] };
+  contentCountry?: { code: string; language: string; suggested: readonly SuggestedCountry[] };
   /** For a `country` row, the language and the countries it can change to. */
   country?: { choices: readonly RegionChoice[]; language: string };
   editable?: EditableField;
@@ -281,7 +281,7 @@ export function useUnderstoodRows() {
       },
       dateRow({ draft, examDates }),
       ...languageRows({ countryAsked, draft, regionChoices }),
-      contentCountryRow({ contentCountry, suggested }),
+      contentCountryRow({ contentCountry, language: draft.language, suggested }),
       ...detailRows(draft, cutoff, languageAim),
       Boolean(levelNote) && {
         badge: t("you said"),

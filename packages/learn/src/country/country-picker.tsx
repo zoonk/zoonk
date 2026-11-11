@@ -18,7 +18,6 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { StatusRegion } from "../_components/status-region";
-import { useAppLocale } from "../_utils/locale";
 import { type CountryChoice, type SuggestedCountry } from "./country-choice";
 import { matchesCountry } from "./country-search";
 import { useCountryCatalog } from "./use-country-catalog";
@@ -136,6 +135,7 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
  */
 export function CountryPicker({
   children,
+  language,
   noneLabel,
   onOpenChange,
   onPick,
@@ -145,6 +145,8 @@ export function CountryPicker({
   value,
 }: {
   children?: React.ReactNode;
+  /** The list's names and lesson varieties: a goal's language for its content, else the app's. */
+  language: string;
   noneLabel?: string;
   onOpenChange: (open: boolean) => void;
   onPick: (country: CountryChoice | null) => void;
@@ -154,9 +156,8 @@ export function CountryPicker({
   value: string | null;
 }) {
   const t = useExtracted();
-  const locale = useAppLocale();
   const [query, setQuery] = useState("");
-  const catalog = useCountryCatalog({ enabled: open, language: locale });
+  const catalog = useCountryCatalog({ enabled: open, language });
   const searching = query.trim() !== "";
 
   const noneRow: PickerRow[] = noneLabel

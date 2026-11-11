@@ -93,6 +93,7 @@ function getGoalContentCountry(goal: ReturnType<typeof findActiveGoal>) {
   return goal?.contentCountry
     ? {
         ...goal.contentCountry,
+        language: goal.language,
         onChange: setGoalContentCountryAction.bind(null, goal.id),
         onRetry: retryGoalRebuildAction.bind(null, goal.id),
         suggested: goal.suggested,

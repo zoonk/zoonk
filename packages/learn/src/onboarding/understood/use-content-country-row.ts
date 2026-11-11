@@ -15,8 +15,11 @@ export function useContentCountryRow() {
 
   return function toContentCountryRow({
     contentCountry,
+    language,
     suggested = [],
-  }: Pick<UnderstoodGoalView, "contentCountry" | "suggested">): UnderstoodRow | null {
+  }: Pick<UnderstoodGoalView, "contentCountry" | "suggested"> & {
+    language: string;
+  }): UnderstoodRow | null {
     if (!contentCountry) {
       return null;
     }
@@ -29,7 +32,7 @@ export function useContentCountryRow() {
     return {
       badge: badges[contentCountry.source],
       ...(contentCountry.editable && {
-        contentCountry: { code: contentCountry.code, suggested },
+        contentCountry: { code: contentCountry.code, language, suggested },
         editable: { key: "contentCountry", kind: "contentCountry" },
       }),
       id: "contentCountry",

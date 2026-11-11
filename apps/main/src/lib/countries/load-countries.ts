@@ -1,18 +1,11 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
+import { countryPickerChoiceSchema } from "@zoonk/core/goals/country-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 
-const catalogSchema = z.object({
-  countries: z.array(
-    z.object({
-      code: z.string(),
-      lessonVariety: z.object({ language: z.string(), region: z.string() }).nullish(),
-      name: z.string(),
-    }),
-  ),
-});
+const catalogSchema = z.object({ countries: z.array(countryPickerChoiceSchema) });
 
 /** The API's public, cached list: the browser and the CDN keep it for a day, so pickers share it. */
 export async function loadCountries(language: string) {

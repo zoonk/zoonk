@@ -43,6 +43,7 @@ export function CountryRowPicker({
       </Button>
 
       <CountryPicker
+        language={row.contentCountry.language}
         onOpenChange={setOpen}
         onPick={(country) => {
           if (!country || country.code === row.contentCountry?.code) {

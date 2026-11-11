@@ -11,7 +11,7 @@ import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
-import { type CountryChoice, type SuggestedCountry } from "../country/country-choice";
+import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type AppearanceBuddy, BuddySettings } from "./buddy-settings";
 import { HomeCountrySetting } from "./home-country-setting";
 import { LanguageSetting } from "./language-setting";
@@ -24,7 +24,7 @@ export type AppearanceView = {
   look: BuddyLook;
   buddy: ResolvedBuddy;
   /** Where the learner says they live; null until they say. */
-  homeCountry: CountryChoice | null;
+  homeCountry: CountryName | null;
   homeCountrySuggested: readonly SuggestedCountry[];
   shareUsageData: boolean;
   soundsEnabled: boolean;
@@ -64,7 +64,7 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
       ),
-    setHomeCountry: (next: CountryChoice | null) =>
+    setHomeCountry: (next: CountryName | null) =>
       run(
         () => setOptimisticHome(next),
         () => actions.setHomeCountry(next?.code ?? null),

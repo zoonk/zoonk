@@ -5,7 +5,8 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { SettingRow } from "../_components/setting-rows";
-import { type CountryChoice, type SuggestedCountry } from "../country/country-choice";
+import { useAppLocale } from "../_utils/locale";
+import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 
 /** Nothing rebuilds, so a pick saves at once and closes; "Not set" clears it. */
@@ -14,11 +15,12 @@ export function HomeCountrySetting({
   suggested,
   value,
 }: {
-  onChange: (country: CountryChoice | null) => void;
+  onChange: (country: CountryName | null) => void;
   suggested: readonly SuggestedCountry[];
-  value: CountryChoice | null;
+  value: CountryName | null;
 }) {
   const t = useExtracted();
+  const locale = useAppLocale();
   const labelId = useId();
   const descriptionId = useId();
   const valueId = useId();
@@ -50,6 +52,7 @@ export function HomeCountrySetting({
       </Button>
 
       <CountryPicker
+        language={locale}
         noneLabel={t("Not set")}
         onOpenChange={setOpen}
         onPick={(country) => {

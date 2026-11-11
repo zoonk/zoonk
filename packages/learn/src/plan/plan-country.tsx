@@ -132,6 +132,7 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
       {lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
 
       <CountryPicker
+        language={country.language}
         onOpenChange={setOpen}
         onPick={pick}
         open={open}

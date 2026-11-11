@@ -10,7 +10,11 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { StatusRegion } from "../../_components/status-region";
-import { type CountryChoice, type SuggestedCountry } from "../../country/country-choice";
+import {
+  type CountryChoice,
+  type CountryName,
+  type SuggestedCountry,
+} from "../../country/country-choice";
 import { CountryPicker } from "../../country/country-picker";
 import { useLessonLanguageLine } from "../../country/use-country-lines";
 import { type Choice, ChoiceList } from "../choice-list";
@@ -22,14 +26,15 @@ function getRows({
   other,
   suggested,
 }: {
-  defaultCountry: CountryChoice | null;
+  defaultCountry: CountryName | null;
   other: CountryChoice | null;
   suggested: readonly SuggestedCountry[];
 }): CountryChoice[] {
   const listed: CountryChoice[] = [...suggested];
 
   if (listed.length === 0 && defaultCountry) {
-    listed.push(defaultCountry);
+    // The language's own country, where lessons read as they always do.
+    listed.push({ ...defaultCountry, lessonVariety: null });
   }
 
   return other && !listed.some((country) => country.code === other.code)
@@ -41,7 +46,7 @@ function CountryNotice({
   defaultCountry,
   picked,
 }: {
-  defaultCountry: CountryChoice | null;
+  defaultCountry: CountryName | null;
   picked: CountryChoice | null;
 }) {
   const t = useExtracted();
@@ -66,12 +71,14 @@ function CountryNotice({
  */
 export function CountryStep({
   defaultCountry,
+  language,
   onAnswer,
   pending,
   subject,
   suggested,
 }: {
-  defaultCountry: CountryChoice | null;
+  defaultCountry: CountryName | null;
+  language: string;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   subject: string;
@@ -124,6 +131,7 @@ export function CountryStep({
       </ListGroup>
 
       <CountryPicker
+        language={language}
         onOpenChange={setPickerOpen}
         onPick={(country) => {
           if (country) {
