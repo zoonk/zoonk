@@ -142,7 +142,6 @@
     "./tasks/memory/insight-rules": "./src/tasks/memory/memory-insight-rules.ts",
     "./tasks/memory/reconcile": "./src/tasks/memory/memory-reconcile.ts",
     "./tasks/memory/relevance": "./src/tasks/memory/memory-relevance.ts",
-    "./tasks/memory/search-terms": "./src/tasks/memory/memory-search-terms.ts",
     "./tasks/memory/session-patterns": "./src/tasks/memory/memory-session-patterns.ts",
     "./tasks/mistakes/cause": "./src/tasks/mistakes/mistake-cause.ts",
     "./tasks/plans/edit-intent": "./src/tasks/plans/plan-edit-intent.ts",
