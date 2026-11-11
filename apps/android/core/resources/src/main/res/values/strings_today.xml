@@ -54,6 +54,11 @@
         <item quantity="one">%d done</item>
         <item quantity="other">%d done</item>
     </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d skipped</item>
+        <item quantity="other">%d skipped</item>
+    </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d more</item>
         <item quantity="other">+%d more</item>

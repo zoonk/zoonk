@@ -135,6 +135,7 @@
   "today_setting_up_detail": "60e2e415fbc917943ea011ae3709e276edba2cdb8e62f0c73a5a254789bd19b2",
   "today_setting_up_goal": "99ada9ba8632250be7ea916efa14bc93f621317aa145bc720c6eb2f867568d0c",
   "today_show_less": "9cec010259de41f5be4c351629f905915938ebed7ef24b1dc4978fd76f72c592",
+  "today_skipped_count": "1872289658b6406a2181c1e7842e3bca80b4e31f462dfaabf3142c469dab03c9",
   "today_start_new_goal": "4f155c0d0914e184553145ad11c081417326ce784e6dd7bebd2cd117da0ae531",
   "today_start_session": "2edf05c2ac6beed83b471f990730d7b1dbdff93b058edead4f9722eea3d61270",
   "today_step_after_lessons": "a9605b904efdb032fa630fcadd6fad426fd762a621402724493bc206016332a4",
@@ -258,6 +259,13 @@
         <item quantity="few">Ukończono %d</item>
         <item quantity="many">Ukończono %d</item>
         <item quantity="other">Ukończono %d</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">Pominięto %d</item>
+        <item quantity="few">Pominięto %d</item>
+        <item quantity="many">Pominięto %d</item>
+        <item quantity="other">Pominięto %d</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d więcej</item>

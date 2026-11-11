@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -199,7 +200,7 @@ private fun LazyListScope.sessionQueue(
     if (foldsDone) {
         item(key = "fold-done", contentType = "fold") {
             FoldRow(
-                label = pluralStringResource(R.plurals.today_done_count, queue.done.size, queue.done.size),
+                label = doneFoldLabel(queue.done),
                 done = true,
                 open = viewModel.doneOpen,
                 minutes = null,
@@ -547,6 +548,21 @@ private fun TodayDayProgress(
 
 private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
+
+/** Skipped steps fold in with the done ones, so the row says which is which. */
+@Composable
+private fun doneFoldLabel(done: List<DayStep>): String {
+    val skipped = done.count { it.status == StudyBlock.Status.SKIPPED }
+    val completed = done.size - skipped
+    val completedText = pluralStringResource(R.plurals.today_done_count, completed, completed)
+    val skippedText = pluralStringResource(R.plurals.today_skipped_count, skipped, skipped)
+
+    return when {
+        skipped == 0 -> completedText
+        completed == 0 -> skippedText
+        else -> completedText + FACT_SEPARATOR + skippedText
+    }
+}
 
 @Composable
 internal fun stepsDone(bar: SessionBar): String {

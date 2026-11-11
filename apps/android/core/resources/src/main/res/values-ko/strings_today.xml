@@ -135,6 +135,7 @@
   "today_setting_up_detail": "d7149b1707015b8da63ebe21b4d56672980114c2cca81b7a4c9bdabbad428d81",
   "today_setting_up_goal": "11855c6c7f2d584b100ffe30d9e75d0e78ed1082f052075d6493851fb0b56e45",
   "today_show_less": "693c87326519897256f195075bde81a1f483e1915b6b3f28be0be139e4172239",
+  "today_skipped_count": "c9374539bb4760c66c372285bf514a757df86154f571c7fe2007603151a3daef",
   "today_start_new_goal": "7683ec312f44392f14e25b75baf9c39382a10f2e6f9e11ea12f651e13f71617f",
   "today_start_session": "5f0f29e764849e3b612ea04bb45dcb92263a8e77feae929af8f13c3743fcd048",
   "today_step_after_lessons": "27f151889616502a4da891768c910a656a865a46f350d0d21ee5bd9d08a125d8",
@@ -237,6 +238,10 @@
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="other">%d개 완료</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="other">%d개 건너뜀</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="other">+%d개 더</item>
