@@ -224,7 +224,8 @@ struct TutorAnswerText: View {
 
   let text: String
   let linksEnabled: Bool
-  let buddyName: String
+  /// Said before the answer, except where every answer is the buddy's.
+  let buddyName: String?
 
   var body: some View {
     let blocks = TutorAnswerBlock.blocks(of: text, linksEnabled: linksEnabled)
@@ -256,8 +257,9 @@ struct TutorAnswerText: View {
     .onDisappear { blockOpen?.cancel() }
   }
 
-  static func said(_ blocks: [TutorAnswerBlock], buddyName: String) -> String {
-    "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"
+  static func said(_ blocks: [TutorAnswerBlock], buddyName: String?) -> String {
+    let answer = blocks.map(\.text.said).joined(separator: "\n")
+    return buddyName.map { "\($0): \(answer)" } ?? answer
   }
 
   @ViewBuilder
@@ -265,6 +267,12 @@ struct TutorAnswerText: View {
     switch block.kind {
     case .paragraph:
       Text(block.text, legibility: legibilityWeight)
+        .padding(.leading, continuationIndent(block))
+    case .formula:
+      Text(block.text, legibility: legibilityWeight)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .padding(.leading, continuationIndent(block))
     case .heading:
       Text(block.text, legibility: legibilityWeight)
         .typeStyle(.body.weight(.semibold))
@@ -280,6 +288,11 @@ struct TutorAnswerText: View {
       }
       .padding(.leading, CGFloat(block.depth) * listIndent)
     }
+  }
+
+  /// A list item's text after its formula lines up past the item's marker.
+  private func continuationIndent(_ block: TutorAnswerBlock) -> CGFloat {
+    block.listID == nil ? 0 : CGFloat(block.depth + 1) * listIndent
   }
 
   /// The buddy links the app's pages by their path on main (`/session?block=…`, `/mistakes`).
@@ -357,6 +370,8 @@ struct TutorAnswerBlock: Identifiable {
     case heading
     case code
     case listItem(marker: String)
+    /// A formula on its own lines.
+    case formula
   }
 
   let id: Int
@@ -365,13 +380,15 @@ struct TutorAnswerBlock: Identifiable {
   let depth: Int
   let listID: Int?
   let followsListItem: Bool
-  let text: AttributedString
+  let text: RichInline
 
   /// Links are underlined, as main draws them, since the ink tint alone doesn't mark them.
   static func blocks(of markdown: String, linksEnabled: Bool) -> [TutorAnswerBlock] {
+    let (withoutFormulas, formulas) = TutorFormula.takeOut(markdown)
+
     guard
       var parsed = try? AttributedString(
-        markdown: markdown,
+        markdown: withoutFormulas,
         options: .init(
           allowsExtendedAttributes: false, interpretedSyntax: .full,
           failurePolicy: .returnPartiallyParsedIfPossible))
@@ -379,7 +396,7 @@ struct TutorAnswerBlock: Identifiable {
       return [
         TutorAnswerBlock(
           id: 0, kind: .paragraph, depth: 0, listID: nil, followsListItem: false,
-          text: AttributedString(markdown))
+          text: RichInline(text: AttributedString(markdown)))
       ]
     }
 
@@ -416,13 +433,74 @@ struct TutorAnswerBlock: Identifiable {
       }
 
       let listID = lists.last?.identity
+      let pieces = kind == .code ? [Piece(text: RichInline(text: text))] : pieces(text, formulas)
 
-      blocks.append(
-        TutorAnswerBlock(
-          id: blocks.count, kind: kind, depth: max(lists.count - 1, 0), listID: listID,
-          followsListItem: listID != nil && blocks.last?.listID == listID, text: text))
+      for (index, piece) in pieces.enumerated() {
+        blocks.append(
+          TutorAnswerBlock(
+            id: blocks.count,
+            kind: index == 0 && kind != .paragraph ? kind : piece.isFormula ? .formula : .paragraph,
+            depth: max(lists.count - 1, 0), listID: listID,
+            followsListItem: listID != nil && blocks.last?.listID == listID, text: piece.text))
+      }
     }
 
     return blocks
+  }
+
+  private struct Piece {
+    var isFormula = false
+    let text: RichInline
+  }
+
+  /// A formula on its own lines leaves the text around it as blocks of their own.
+  private static func pieces(_ text: AttributedString, _ formulas: [TutorFormula]) -> [Piece] {
+    var pieces: [Piece] = []
+    var line = RichInline(text: AttributedString())
+    var rest = text[text.startIndex...]
+
+    func endLine() {
+      var text = line.text
+
+      while text.characters.first?.isWhitespace == true {
+        text.characters.removeFirst()
+      }
+
+      while text.characters.last?.isWhitespace == true {
+        text.characters.removeLast()
+      }
+
+      if !text.characters.isEmpty {
+        pieces.append(
+          Piece(
+            text: RichInline(
+              text: text, spoken: line.spoken?.trimmingCharacters(in: .whitespacesAndNewlines))))
+      }
+
+      line = RichInline(text: AttributedString())
+    }
+
+    while let open = rest.characters.firstIndex(of: TutorFormula.open),
+      let close = rest.characters[open...].firstIndex(of: TutorFormula.close),
+      let index = Int(String(rest.characters[rest.characters.index(after: open)..<close])),
+      formulas.indices.contains(index)
+    {
+      line += RichInline(text: AttributedString(rest[..<open]))
+      let formula = formulas[index]
+      let math = LessonMath.typeset(formula.latex)
+
+      if formula.display {
+        endLine()
+        pieces.append(Piece(isFormula: true, text: math))
+      } else {
+        line += math
+      }
+
+      rest = rest[rest.characters.index(after: close)...]
+    }
+
+    line += RichInline(text: AttributedString(rest))
+    endLine()
+    return pieces
   }
 }
