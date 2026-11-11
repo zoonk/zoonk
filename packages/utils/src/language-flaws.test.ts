@@ -124,6 +124,15 @@ describe(findLanguageFlaws, () => {
         value: { spelling: "Suspicion. I have a suspicion." },
       }),
     ).toStrictEqual([]);
+
+    expect(
+      findLanguageFlaws({
+        input: "",
+        language: "pt",
+        otherLanguages: ["es"],
+        value: { openingLine: "Hola, ¿quiere probar nuestro cacao? Llegó ayer de Macao." },
+      }),
+    ).toStrictEqual([]);
   });
 
   it("passes keys, slugs and one-word ids, which are no prose", () => {

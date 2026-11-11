@@ -116,11 +116,11 @@ const ACCENTLESS_WORDS: Readonly<Record<string, ReadonlySet<string>>> = {
 
 /**
  * Endings no word has without the accent: Portuguese "-ção", "-ções", "-ssão", Spanish "-ción",
- * apart from English words that end the same way.
+ * apart from the few words of other languages that end the same way ("cacao", "suspicion").
  */
 const ACCENTLESS_ENDINGS: Readonly<Record<string, RegExp>> = {
   es: /^(?!(?:coer|s|suspi)cion$)[a-z]{3,}cion$/u,
-  pt: /^[a-z]{2,}(?:cao|coes|ssao|ssoes)$/u,
+  pt: /^(?!(?:ca|ma)cao$)[a-z]{2,}(?:cao|coes|ssao|ssoes)$/u,
 };
 
 /**
