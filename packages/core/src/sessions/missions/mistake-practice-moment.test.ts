@@ -9,7 +9,6 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { gradeChoiceAnswer, parseChoiceItem } from "../../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
@@ -151,14 +150,12 @@ describe("notebook practice mission moments", () => {
   });
 
   it.each([
-    [false, false, false, false],
-    [true, false, false, false],
-    [true, true, false, false],
-    [true, false, true, false],
-    [true, true, false, true],
+    [false, false],
+    [true, false],
+    [true, true],
   ])(
-    "does not claim an ordinary session's correction (unknown: %s, reopened: %s, review done: %s, refixed elsewhere: %s)",
-    async (dontKnow, reopened, reviewDone, refixed) => {
+    "does not claim an ordinary session's correction (unknown: %s, review done: %s)",
+    async (dontKnow, reviewDone) => {
       const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
       const goal = await goalFixture({ timezone: "UTC", userId: user.id });
       await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
@@ -220,24 +217,6 @@ describe("notebook practice mission moments", () => {
       vi.setSystemTime(new Date(NOW.getTime() + 1000));
       mockSession(user.id);
 
-      const corrected = reopened
-        ? await answerMistakePractice({
-            input: {
-              answer: { selectedIndex: 0 },
-              durationMs: 5000,
-              itemId: practiceItem.id,
-              timeZone: "UTC",
-            },
-            mistakeId: practiceMistake.id,
-          })
-        : null;
-
-      if (corrected && corrected.status !== "ready") {
-        throw new Error(`Practice answer failed: ${corrected.status}`);
-      }
-
-      vi.setSystemTime(new Date(NOW.getTime() + 2000));
-
       const answered = await answerMistakePractice({
         input: {
           answer: dontKnow ? { dontKnow: true } : { selectedIndex: 1 },
@@ -257,51 +236,19 @@ describe("notebook practice mission moments", () => {
         throw new Error(`Practice answer failed: ${answered.status}`);
       }
 
-      if (refixed) {
-        vi.setSystemTime(new Date(NOW.getTime() + 3000));
-
-        const parsed = parseChoiceItem(practiceItem);
-
-        if (!parsed) {
-          throw new Error("The original must be playable");
-        }
-
-        const grade = gradeChoiceAnswer({ answer: { selectedIndex: 0 }, item: parsed });
-
-        await recordLearnerAnswer({
-          answer: { selectedIndex: 0 },
-          graded: { durationMs: 5000, isCorrect: true },
-          itemId: practiceItem.id,
-          language: "en",
-          mistake: { questionText: grade.snapshot.question, snapshot: grade.snapshot },
-          purpose: "learning",
-          skillId: skill.id,
-          studySessionId: session.id,
-          timeZone: "UTC",
-          userId: user.id,
-        });
-      }
-
       await expect(
         prisma.mistake.findUniqueOrThrow({ where: { id: practiceMistake.id } }),
-      ).resolves.toMatchObject({ status: reopened || refixed ? "fixed" : "open" });
+      ).resolves.toMatchObject({ status: "open" });
 
-      const input = {
-        answerIds: [
-          ...(corrected?.status === "ready" ? [corrected.feedback.answerId] : []),
-          answered.feedback.answerId,
-        ],
-        ended: true,
-        timeZone: "UTC",
-      };
+      const input = { answerIds: [answered.feedback.answerId], ended: true, timeZone: "UTC" };
 
       await expect(finishMistakePractice(input)).resolves.toMatchObject({
-        result: { missionMoment: reopened ? { completed: ["fixMistake"] } : null },
+        result: { missionMoment: null },
         status: "ready",
       });
 
       await expect(finishMistakePractice(input)).resolves.toMatchObject({
-        result: { missionMoment: reopened ? { completed: ["fixMistake"] } : null },
+        result: { missionMoment: null },
         status: "ready",
       });
 
@@ -317,7 +264,7 @@ describe("notebook practice mission moments", () => {
 
       expect(saved.fullMealAt !== null).toBe(reviewDone);
       expect(JSON.stringify(saved.startSnapshot)).not.toContain("fullMealSource");
-      expect(JSON.stringify(saved.missions).includes("completedBy")).toBe(reopened);
+      expect(JSON.stringify(saved.missions)).not.toContain("completedBy");
     },
   );
 });

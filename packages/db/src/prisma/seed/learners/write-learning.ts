@@ -85,6 +85,7 @@ async function writeAttempt(
         ? studyMoment(scope, attempt.mistake.fixedDay ?? -1)
         : null,
     itemId,
+    missedAt: answeredAt,
     skillId,
     snapshot: attempt.mistake.snapshot,
     status: attempt.mistake.status,

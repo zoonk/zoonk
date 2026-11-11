@@ -2,7 +2,6 @@ import "server-only";
 import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
-import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../../learner/_utils/model-grading";
 import { toCheckResult } from "../../lesson-player/_utils/check-results";
 import {
@@ -22,6 +21,7 @@ import { type MistakeReplay } from "../mistake-replay";
 import { readMistakeSnapshot } from "../mistake-snapshot";
 import { cachedGradeDuration } from "./cached-grade-duration";
 import { runMistakeGrade } from "./mistake-grade";
+import { refuseAnsweredMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 import { readSavedPracticeAnswer } from "./saved-practice-answer";
 
@@ -77,6 +77,7 @@ export async function answerLessonMistake({
   saved,
   kind,
   timeLimitSeconds,
+  timeZone,
 }: {
   input: Extract<MistakePracticeAnswerInput, { stepId: string }>;
   mistake: Mistake;
@@ -86,6 +87,7 @@ export async function answerLessonMistake({
   saved: Attempt | null;
   kind: MistakeDrillKind;
   timeLimitSeconds: number | null;
+  timeZone: string;
 }): Promise<MistakePracticeAnswerResult> {
   const { lesson } = replay;
 
@@ -190,10 +192,15 @@ export async function answerLessonMistake({
           skillId: mistake.skillId,
           stepId: mistake.stepId,
           targetLanguage: lesson.targetLanguage,
-          timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+          timeZone,
           userId,
         },
+        refuse: refuseAnsweredMistake({ mistakeId: mistake.id, timeZone, userId }),
       });
+
+  if (outcome.status === "refused") {
+    return { status: "retryable" };
+  }
 
   const isCorrect =
     outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
