@@ -112,16 +112,23 @@ data class PlanEnd(
 
 /**
  * Main's tutor footnote: what a change moves beyond its diff (an area's end that stays, starts,
- * reviews, the lessons it names, topics in and out).
+ * reviews, the lessons it names, topics in and out). A focus says what each subject gains before
+ * when it starts.
  */
 @Composable
-fun planChangeFootnote(effect: PlanEffect?): String? {
-    effect ?: return null
-    val ends = effect.areaEnds.orEmpty()
+fun planChangeFootnote(change: PlanChange): String? {
+    val effect = change.effect ?: return null
+    val gainsFirst = change.setsFocus
+    val starts = areaStartTexts(effect)
+    // An end that moves is in the diff; one that stays says why, and a focus says what each subject gains.
+    val ends =
+        areaEndTexts(
+            effect.areaEnds.orEmpty().filter { it.after == it.before || (gainsFirst && (it.lessonsGained ?: 0) > 0) },
+            effect.lessonsAddedEstimated == true,
+        )
     val sentences =
         listOfNotNull(
-            *areaStartTexts(effect).toTypedArray(),
-            *areaEndTexts(ends.filter { it.after == it.before }, effect.lessonsAddedEstimated == true).toTypedArray(),
+            *(if (gainsFirst) ends + starts else starts + ends).toTypedArray(),
             reviewFirstText(effect),
             lessonsText(effect, named = true),
             addedTopicsStartText(effect),
