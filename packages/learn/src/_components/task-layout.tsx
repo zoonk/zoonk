@@ -83,15 +83,21 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
  * `--task-aside-bottom` the action bar's row (73px), or the buddy's dock when it's taller.
+ * `collapsible` lets the learner collapse the aside from the header (`TaskHeaderSide`), which the
+ * `with-aside` and `without-aside` variants follow; its screens then lay out as below `lg`.
  */
-export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAsideWidth } = {}) {
+export function getTaskAsideRootProps({
+  collapsible = false,
+  width = "default",
+}: { collapsible?: boolean; width?: TaskAsideWidth } = {}) {
   return {
     className: cn(
-      "group/task lg:pr-(--task-aside)",
+      "group/task with-aside:pr-(--task-aside)",
       "lg:[--task-aside-bottom:max(4.5625rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
+    "data-aside-collapsible": collapsible ? "" : undefined,
   };
 }
 
@@ -100,7 +106,7 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
-export const HIDDEN_WITH_TASK_ASIDE_CLASS = "lg:hidden";
+export const HIDDEN_WITH_TASK_ASIDE_CLASS = "with-aside:hidden";
 
 export function TaskAsideHeader({
   className,
@@ -156,7 +162,7 @@ export function TaskAside({
     <aside
       aria-label={label}
       className={cn(
-        "bg-background hidden lg:flex lg:flex-col lg:pb-(--task-aside-bottom)",
+        "bg-background with-aside:flex with-aside:flex-col with-aside:pb-(--task-aside-bottom) hidden",
         TASK_ASIDE_RAIL_CLASS,
       )}
       data-slot="task-aside"
@@ -199,7 +205,7 @@ export function TaskAsideContent({ className, ...props }: React.ComponentProps<"
   return (
     <div
       className={cn(
-        "lg:group-data-aside/task:scroll-fade-b lg:top-(--task-bar) lg:right-0 lg:bottom-(--task-aside-bottom) lg:w-[calc(var(--task-aside)-1px)] lg:group-has-data-[slot$=docked-conversation]/task:invisible lg:group-data-aside/task:fixed lg:group-data-aside/task:z-30 lg:group-data-aside/task:overflow-y-auto lg:group-data-aside/task:px-5 lg:group-data-aside/task:pb-6",
+        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-5 with-aside:group-data-aside/task:pb-6",
         className,
       )}
       data-slot="task-aside-content"
@@ -229,6 +235,7 @@ export function TaskSkeleton({
   actions,
   aside,
   children,
+  collapsible = false,
   menu = false,
   progress = false,
   title,
@@ -237,16 +244,18 @@ export function TaskSkeleton({
   /** `true` keeps an empty aside until the screen arrives. */
   aside?: React.ReactNode;
   children: React.ReactNode;
+  collapsible?: boolean;
   menu?: boolean;
   progress?: boolean;
   title?: React.ReactNode;
 }) {
-  const root = aside ? getTaskAsideRootProps() : null;
+  const root = aside ? getTaskAsideRootProps({ collapsible }) : null;
 
   return (
     <main
       className={cn("flex min-h-dvh flex-col", root?.className)}
       data-aside={root?.["data-aside"]}
+      data-aside-collapsible={root?.["data-aside-collapsible"]}
     >
       <div className="border-b border-transparent">
         <div className={TASK_HEADER_BAR_CLASS}>
@@ -255,6 +264,7 @@ export function TaskSkeleton({
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
+            {aside && collapsible && <Skeleton className="hidden size-9 rounded-lg lg:block" />}
             {menu && <Skeleton className="-mr-2.5 size-9 rounded-lg" />}
           </div>
         </div>
@@ -278,7 +288,7 @@ export function TaskSkeleton({
       </div>
 
       {aside && (
-        <div className={cn("hidden flex-col gap-4 px-5 lg:flex", TASK_ASIDE_RAIL_CLASS)}>
+        <div className={cn("with-aside:flex hidden flex-col gap-4 px-5", TASK_ASIDE_RAIL_CLASS)}>
           {aside !== true && (
             <>
               <div className="flex h-13 shrink-0 items-center xl:h-15">

@@ -54,7 +54,7 @@ export function LessonRouteFrame({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const asideRoot = getTaskAsideRootProps();
+  const asideRoot = getTaskAsideRootProps({ collapsible: true });
 
   const minutes =
     lesson.estimatedMinutes === undefined ? undefined : formatDuration(lesson.estimatedMinutes);
@@ -63,6 +63,7 @@ export function LessonRouteFrame({
     <div
       className={cn("bg-background flex min-h-dvh flex-col", asideRoot.className)}
       data-aside={asideRoot["data-aside"]}
+      data-aside-collapsible={asideRoot["data-aside-collapsible"]}
     >
       <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>

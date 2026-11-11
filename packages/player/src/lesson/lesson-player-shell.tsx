@@ -137,7 +137,7 @@ function LessonPlayerFrame() {
   const { actions, state } = useLessonPlayer();
   const dotPaper = useDotPaper();
   const mainRef = useRef<HTMLElement>(null);
-  const asideRoot = getTaskAsideRootProps();
+  const asideRoot = getTaskAsideRootProps({ collapsible: true });
 
   const turns = useScreenTurns();
 
@@ -152,6 +152,7 @@ function LessonPlayerFrame() {
         asideRoot.className,
       )}
       data-aside={asideRoot["data-aside"]}
+      data-aside-collapsible={asideRoot["data-aside-collapsible"]}
       data-phase={state.phase}
       data-slot="lesson-player"
       onClickCapture={actions.engage}

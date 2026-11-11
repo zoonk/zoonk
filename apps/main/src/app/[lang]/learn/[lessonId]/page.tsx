@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function LessonPlayerSkeleton() {
   return (
-    <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-40" />}>
+    <TaskSkeleton aside collapsible menu progress title={<Skeleton className="h-4 w-40" />}>
       <Skeleton className="h-7 w-3/4" />
       <div className="flex flex-col gap-2">
         <Skeleton className="h-5 w-full" />

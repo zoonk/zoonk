@@ -1,10 +1,16 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
+import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
+import { PanelRightIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { useSyncExternalStore } from "react";
+import { deviceStorage } from "../_utils/device-storage";
 import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
 
@@ -28,6 +34,7 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
+/** The end side offers the aside's toggle on a task that lets the learner collapse it. */
 export function TaskHeaderSide({
   align,
   children,
@@ -35,7 +42,12 @@ export function TaskHeaderSide({
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
-  return <div className={TASK_HEADER_SIDE_CLASS[align]}>{children}</div>;
+  return (
+    <div className={TASK_HEADER_SIDE_CLASS[align]}>
+      {align === "end" && <TaskAsideToggle />}
+      {children}
+    </div>
+  );
 }
 
 export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
@@ -137,20 +149,70 @@ export function TaskHeaderSegments({
   );
 }
 
-/** Where a task's aside shows (`TaskAside`): Tailwind's `lg`. */
+/** Where a task's aside can show (`TaskAside`): Tailwind's `lg`. */
 const ASIDE_QUERY = "(min-width: 64rem)";
 
-function subscribeToAsideQuery(onChange: () => void) {
+const asideListeners = new Set<() => void>();
+
+function subscribeToAside(onChange: () => void) {
   const query = globalThis.matchMedia(ASIDE_QUERY);
   query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
+  asideListeners.add(onChange);
+
+  return () => {
+    query.removeEventListener("change", onChange);
+    asideListeners.delete(onChange);
+  };
+}
+
+function isAsideCollapsed(): boolean {
+  return document.documentElement.hasAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
+}
+
+/** Keep in step with the `with-aside` variant in `@zoonk/ui`'s `globals.css`. */
+function isAsideShown(): boolean {
+  return (
+    globalThis.matchMedia(ASIDE_QUERY).matches &&
+    !(isAsideCollapsed() && document.querySelector("[data-aside-collapsible]"))
+  );
 }
 
 /** False on the server and while hydrating, so layout stays in CSS; use it only for behavior. */
 export function useTaskAsideShown(): boolean {
-  return useSyncExternalStore(
-    subscribeToAsideQuery,
-    () => globalThis.matchMedia(ASIDE_QUERY).matches,
-    () => false,
+  return useSyncExternalStore(subscribeToAside, isAsideShown, () => false);
+}
+
+function toggleAside() {
+  const collapsed = document.documentElement.toggleAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
+  deviceStorage.set(ASIDE_COLLAPSED_KEY, String(collapsed));
+
+  for (const listener of asideListeners) {
+    listener();
+  }
+}
+
+function TaskAsideToggle() {
+  const t = useExtracted();
+  const collapsed = useSyncExternalStore(subscribeToAside, isAsideCollapsed, () => false);
+  const label = collapsed ? t("Expand sidebar") : t("Collapse sidebar");
+
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        aria-label={label}
+        onClick={toggleAside}
+        render={
+          <Button
+            className="hidden shrink-0 lg:group-data-aside-collapsible/task:inline-flex"
+            data-slot="task-aside-toggle"
+            size="icon"
+            variant="ghost"
+          />
+        }
+      >
+        <PanelRightIcon aria-hidden="true" />
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   );
 }

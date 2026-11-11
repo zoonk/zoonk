@@ -253,7 +253,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
   if (buddy.missed && !quiet) {
     return (
       <Button
-        className={cn(TASK_WRAPPING_ACTION_CLASS, "ml-auto lg:hidden")}
+        className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
         onClick={() => buddy.open()}
         size="lg"
         type="button"
@@ -272,7 +272,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="ml-auto size-11 shrink-0 lg:hidden"
+            className="with-aside:hidden ml-auto size-11 shrink-0 lg:ml-0"
             size="icon"
             type="button"
             variant="outline"
