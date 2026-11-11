@@ -366,4 +366,17 @@ describe(sendAuthorized, () => {
 
     expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
+
+  it.each([502, 504])("forgets the login when a refresh ends in HTTP %i", async (status) => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: { body: {}, status } });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
 });

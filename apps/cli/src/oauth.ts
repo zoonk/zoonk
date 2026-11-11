@@ -39,6 +39,12 @@ export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok
 /** The server may have rotated the refresh token, but no usable new pair arrived. */
 type RefreshResult = TokenResult | "unconfirmed";
 
+const BAD_GATEWAY = 502;
+const GATEWAY_TIMEOUT = 504;
+
+/** A gateway's error after the server may have finished, such as a Vercel function timeout. */
+const GATEWAY_FAILURES = new Set([BAD_GATEWAY, GATEWAY_TIMEOUT]);
+
 function oauthError(result: HttpResult): string | null {
   const error = isRecord(result.body) ? result.body.error : null;
   return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
@@ -155,7 +161,7 @@ export async function refreshLogin({
     return null;
   });
 
-  if (!result) {
+  if (!result || GATEWAY_FAILURES.has(result.status)) {
     return "unconfirmed";
   }
 
