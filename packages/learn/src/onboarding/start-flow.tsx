@@ -311,11 +311,7 @@ function GoalStartFlow({
               run: (run) =>
                 creation.create({
                   onCreated: navigation.toSteps,
-                  onLimit: (reason) => {
-                    if (reason === "activeGoals") {
-                      void draftActions.loadRead();
-                    }
-                  },
+                  onLimit: () => void draftActions.loadRead(),
                   run,
                 }),
               startExplanation,

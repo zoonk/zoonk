@@ -5,7 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, needsAccountFor, useGoalLimitMessage } from "../goal-errors";
-import { type CreateGoalsOutcome, type GoalLimitReason } from "../onboarding-actions";
+import { type CreateGoalsOutcome } from "../onboarding-actions";
 
 function useCreateError() {
   const t = useExtracted();
@@ -42,7 +42,7 @@ export function useGoalCreation() {
     run,
   }: {
     onCreated: (goalId: string) => void;
-    onLimit?: (reason: GoalLimitReason) => void;
+    onLimit?: () => void;
     run: () => Promise<CreateGoalsOutcome>;
   }) =>
     startCreating(async () => {
@@ -69,7 +69,7 @@ export function useGoalCreation() {
       });
 
       if (outcome.status === "limitReached") {
-        onLimit?.(outcome.reason);
+        onLimit?.();
       }
     });
 
