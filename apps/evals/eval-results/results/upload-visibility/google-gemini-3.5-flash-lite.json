@@ -2,15 +2,33 @@
   "modelId": "google/gemini-3.5-flash-lite",
   "results": [
     {
-      "classification": { "expected": "public", "predicted": "public" },
+      "classification": {
+        "expected": "public",
+        "predicted": "public"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "public" },
+        "expected": {
+          "visibility": "public"
+        },
         "id": "exam-notice-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -24,15 +42,33 @@
       }
     },
     {
-      "classification": { "expected": "public", "predicted": "public" },
+      "classification": {
+        "expected": "public",
+        "predicted": "public"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "public" },
+        "expected": {
+          "visibility": "public"
+        },
         "id": "law-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -46,15 +82,33 @@
       }
     },
     {
-      "classification": { "expected": "public", "predicted": "public" },
+      "classification": {
+        "expected": "public",
+        "predicted": "public"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "public" },
+        "expected": {
+          "visibility": "public"
+        },
         "id": "past-exam-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -68,15 +122,33 @@
       }
     },
     {
-      "classification": { "expected": "private", "predicted": "private" },
+      "classification": {
+        "expected": "private",
+        "predicted": "private"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "private" },
+        "expected": {
+          "visibility": "private"
+        },
         "id": "class-slides-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -90,15 +162,33 @@
       }
     },
     {
-      "classification": { "expected": "private", "predicted": "private" },
+      "classification": {
+        "expected": "private",
+        "predicted": "private"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "private" },
+        "expected": {
+          "visibility": "private"
+        },
         "id": "school-exam-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -112,15 +202,33 @@
       }
     },
     {
-      "classification": { "expected": "private", "predicted": "private" },
+      "classification": {
+        "expected": "private",
+        "predicted": "private"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "private" },
+        "expected": {
+          "visibility": "private"
+        },
         "id": "personal-notes-1",
+        "language": "pt",
         "userInput": {
           "document": {
             "file": null,
@@ -134,15 +242,33 @@
       }
     },
     {
-      "classification": { "expected": "private", "predicted": "private" },
+      "classification": {
+        "expected": "private",
+        "predicted": "private"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "private" },
+        "expected": {
+          "visibility": "private"
+        },
         "id": "work-document-1",
+        "language": "en",
         "userInput": {
           "document": {
             "file": null,
@@ -156,15 +282,33 @@
       }
     },
     {
-      "classification": { "expected": "private", "predicted": "private" },
+      "classification": {
+        "expected": "private",
+        "predicted": "private"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "visibility": "private" },
+        "expected": {
+          "visibility": "private"
+        },
         "id": "prep-company-book-1",
+        "language": "en",
         "userInput": {
           "document": {
             "file": null,

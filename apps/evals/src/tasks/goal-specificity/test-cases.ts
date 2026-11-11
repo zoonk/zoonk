@@ -9,16 +9,19 @@ function goalCase({
   goal,
   id,
   language,
+  noPersonalDetails,
   personalKeywords = [],
   privateCourse,
-}: Partial<Pick<GoalSpecificityExpected, "generalKeywords" | "personalKeywords">> &
+}: Partial<
+  Pick<GoalSpecificityExpected, "generalKeywords" | "personalKeywords" | "noPersonalDetails">
+> &
   Pick<GoalSpecificityExpected, "privateCourse"> & {
     goal: string;
     id: string;
     language: string;
   }): GoalSpecificityTestCase {
   return {
-    expected: { generalKeywords, personalKeywords, privateCourse },
+    expected: { generalKeywords, noPersonalDetails, personalKeywords, privateCourse },
     id,
     userInput: { goal, language },
   };
@@ -38,6 +41,7 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     goal: "Excel pivot tables for nurses",
     id: "en-field-is-context",
     language: "en",
+    noPersonalDetails: true,
     privateCourse: false,
   }),
   goalCase({
@@ -112,6 +116,7 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     goal: "Estatística para enfermeiros",
     id: "pt-field-is-context",
     language: "pt",
+    noPersonalDetails: true,
     privateCourse: false,
   }),
   goalCase({

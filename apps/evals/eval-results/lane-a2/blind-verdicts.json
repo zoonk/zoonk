@@ -1,0 +1,136 @@
+{
+  "reader": "Claude Opus 5.5, personal account, high effort",
+  "counts": {
+    "Ember": 3,
+    "Flash Lite": 0,
+    "tie": 18
+  },
+  "verdicts": [
+    {
+      "pair": 1,
+      "winner": "tie",
+      "reason": "Both share 'Salesforce reports and dashboards' and keep Acme and the sales team private; splitting into two phrases versus one is wording only.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 2,
+      "winner": "tie",
+      "reason": "Identical: profession kept as context in a general goal, no personal details.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 3,
+      "winner": "tie",
+      "reason": "Both correctly mark the internal approval process and Northwind portal private with null generalGoal.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 4,
+      "winner": "A",
+      "reason": "The subject is the learner's own private codebase, which the rubric names as private. A returns null/private. B invents a shareable 'Monorepo architecture' course from a goal about one team's repo and sets privateCourse false.",
+      "modelWinner": "Ember"
+    },
+    {
+      "pair": 5,
+      "winner": "tie",
+      "reason": "Both share 'SQL basics' and keep the company database private, matching the rubric's mixed-goal rule.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 6,
+      "winner": "tie",
+      "reason": "Both keep the exam as the general goal and Globex plus the 3-week deadline private; only the phrasing differs.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 7,
+      "winner": "tie",
+      "reason": "Both share cell division and keep the teacher's notes private, with no name in generalGoal. 'in biology' and whether 'biology teacher' is kept are wording choices.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 8,
+      "winner": "tie",
+      "reason": "Both mark Initech's onboarding checklist and HR policies private with null generalGoal.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 9,
+      "winner": "tie",
+      "reason": "Both ignore the embedded instruction and share Python with privateCourse false.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 10,
+      "winner": "tie",
+      "reason": "Both share SAP for finance and keep Tupiniquim S.A. private; the 'Aprender a usar' prefix is wording.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 11,
+      "winner": "tie",
+      "reason": "Both mark the internal purchase approval flow and Soluções Alfa private with null generalGoal.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 12,
+      "winner": "tie",
+      "reason": "Identical: the profession stays as context in a general goal.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 13,
+      "winner": "tie",
+      "reason": "Both share the French Revolution and keep the teacher's notes private; 'Revisão' is wording.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 14,
+      "winner": "tie",
+      "reason": "Both mark the team-only internal system GestorPlus private with null generalGoal. A also names the business rules, but B is not wrong.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 15,
+      "winner": "tie",
+      "reason": "Both share Banco do Brasil exam prep and keep the night shift and the 2-month window private.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 16,
+      "winner": "tie",
+      "reason": "Both share tax law and keep the firm private. B's second entry is redundant but harmless.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 17,
+      "winner": "tie",
+      "reason": "Both share e-invoicing via SdI and keep Studio Rinaldi and the workplace private; A's longer goal is wording.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 18,
+      "winner": "tie",
+      "reason": "Identical: exam prep is shared; school, grade and July start are private.",
+      "modelWinner": "tie"
+    },
+    {
+      "pair": 19,
+      "winner": "A",
+      "reason": "Both correctly mark the cafe's recipes and closing routine private. A also keeps that the learner works part-time at the cafe; B drops it, and its 'drink recipes' entry loses the link to Onsaemiro.",
+      "modelWinner": "Ember"
+    },
+    {
+      "pair": 20,
+      "winner": "A",
+      "reason": "Both share Logo Tiger for pre-accounting and keep Demirtaş Tekstil private. A also keeps the stated level ('sıfırdan', from scratch) in generalGoal, as the rubric asks, and records the learner's role; B drops both.",
+      "modelWinner": "Ember"
+    },
+    {
+      "pair": 21,
+      "winner": "tie",
+      "reason": "Both mark MagPro, the internal warehouse system built for Trans-Pol, private with null generalGoal.",
+      "modelWinner": "tie"
+    }
+  ]
+}
