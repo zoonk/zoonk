@@ -396,6 +396,7 @@ msgstr "{done, number}/{total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -6702,16 +6703,6 @@ msgstr "正しく発音できました"
 msgctxt "kA_8QW"
 msgid "We heard “{heard}”"
 msgstr "「{heard}」と聞こえました"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "{date}にもう一度出てきます。"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "この単語はもう大丈夫です。今後は復習に出てきません。"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "JDo5F5"
@@ -13317,12 +13308,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "レッスンはまだ保存されていません"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "{date}に復習"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13523,31 +13508,6 @@ msgstr "差し引き {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "1問間違えると、正解1問分が差し引かれます。自信がないときは、空欄のままにしてください。"
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "この問題は{date}に出てきました。"
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "{date}に続いて、今回も正解です。"
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "{date}には正解しています。今復習すると、記憶に残りやすくなります。"
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "{date}には「{answer}」と答えました。"
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "{date}には、この問題でつまずきました。"
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx

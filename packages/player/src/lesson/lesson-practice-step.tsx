@@ -207,7 +207,7 @@ export function LessonPracticeStep(props: Props) {
               {graded && (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
                 <LessonStepResultView
                   hyperdriveStreak={null}
-                  next={{ nextReviewAt: null, savedMistake: false, willReturn: false }}
+                  next={{ savedMistake: false, willReturn: false }}
                   result={graded}
                   step={getAnsweredStep({ answer: selected, step })}
                 />

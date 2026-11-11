@@ -223,7 +223,7 @@ describe(startLibraryLesson, () => {
 
     const resumed = await start(lesson.id);
     const answers = resumed.status === "started" ? resumed.run.answers : [];
-    const restored = { nextReviewAt: null, savedMistake: false };
+    const restored = { savedMistake: false };
 
     const fromSaved = {
       ...restored,

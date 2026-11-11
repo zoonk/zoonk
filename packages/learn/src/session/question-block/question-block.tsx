@@ -32,7 +32,6 @@ import { QuestionBlockStatus } from "./question-block-status";
 import { QuestionFeedback } from "./question-feedback";
 import { isNetScoredQuestion } from "./question-view";
 import { SwipeScore } from "./swipe-score";
-import { TimeMachine, TimeMachineNote } from "./time-machine";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
 function getQuestionSegments({
@@ -103,14 +102,6 @@ function isQuestionPhase(phase: QuestionBlockPhase): boolean {
     phase.kind === "feedback" ||
     phase.kind === "alreadyAnswered"
   );
-}
-
-function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
-  if (phase.kind !== "feedback") {
-    return null;
-  }
-
-  return phase.feedback.isCorrect ? "correct" : "wrong";
 }
 
 /** A timed drill's clock never waits on a menu, so its question is reported once answered. */
@@ -187,7 +178,6 @@ export function QuestionBlock({
     );
   }
 
-  const answerResult = getAnswerResult(phase);
   const askButton = tutor?.button;
 
   const block = (
@@ -209,14 +199,6 @@ export function QuestionBlock({
         <FinishReadyBody phase={phase} />
         {isNetScoredQuestion({ detail, question }) && (
           <SwipeScore detail={detail} answers={run.state.answers} />
-        )}
-
-        {question?.timeMachine && !answerResult && (
-          <TimeMachine
-            format={question.format}
-            machine={question.timeMachine}
-            trueFalseLabels={detail.trueFalseLabels}
-          />
         )}
 
         {question && (
@@ -241,14 +223,6 @@ export function QuestionBlock({
               trueFalseLabels={detail.trueFalseLabels}
             >
               <BlockDrillNotes blockDrill={blockDrill} feedback={phase.feedback} phase={phase} />
-              {question.timeMachine && answerResult && (
-                <TimeMachineNote
-                  format={question.format}
-                  machine={question.timeMachine}
-                  result={answerResult}
-                  trueFalseLabels={detail.trueFalseLabels}
-                />
-              )}
             </QuestionFeedback>
             {phase.feedback.pauseSuggested && <PauseSuggestion onStop={actions.stop} />}
           </>

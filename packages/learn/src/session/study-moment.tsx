@@ -4,7 +4,7 @@ import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/butto
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, CircleStopIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { MomentReadouts } from "../_components/moment-readouts";
@@ -32,10 +32,6 @@ import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
- * next.
- */
 function MomentEarned({
   lessonSeconds = 0,
   moment,
@@ -44,21 +40,12 @@ function MomentEarned({
   moment: StudyMomentView;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const formatDuration = useFormatDuration();
   const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
     studied,
-    moment.comesBackOn &&
-      t("Review on {date}", {
-        date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
-          day: "numeric",
-          month: "short",
-          timeZone: "UTC",
-        }),
-      }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
     moment.deferredLessonsCount > 0 &&
       t(

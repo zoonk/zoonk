@@ -396,6 +396,7 @@ msgstr "{done, number} de {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -6702,16 +6703,6 @@ msgstr "Soou certo"
 msgctxt "kA_8QW"
 msgid "We heard “{heard}”"
 msgstr "A gente ouviu “{heard}”"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "Ela volta em {date}."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Você já sabe essa palavra. Ela não vai voltar."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "JDo5F5"
@@ -13317,12 +13308,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Sua aula ainda não foi salva"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Revisão em {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13523,31 +13508,6 @@ msgstr "saldo {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Uma resposta errada anula uma certa. Não tem certeza? Deixe em branco."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Você viu isso em {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Você acertou de novo, como em {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "Você acertou em {date}. Revisar agora ajuda a lembrar."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "Em {date}, você respondeu “{answer}”."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "Em {date}, você errou essa."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx

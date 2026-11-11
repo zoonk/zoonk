@@ -36,7 +36,6 @@ describe("bounded waits", () => {
           feedback: null,
           isCorrect: true,
           keyPoints: null,
-          nextReviewAt: null,
           savedMistake: false,
           score: 1,
           spelling: "It shows where the electron is likely to be",

@@ -83,11 +83,12 @@ function confirmCheck(
     return state;
   }
 
-  const { nextReviewAt, savedMistake } = action.result;
-
   return {
     ...state,
-    results: { ...state.results, [action.stepId]: { ...current, nextReviewAt, savedMistake } },
+    results: {
+      ...state.results,
+      [action.stepId]: { ...current, savedMistake: action.result.savedMistake },
+    },
   };
 }
 
