@@ -15,7 +15,6 @@ import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
-import { type FocusTestRecord } from "../focus-test-state";
 import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
@@ -208,31 +207,4 @@ export async function saveTestSummary({
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
   return saved;
-}
-
-/** Notes the suggestion the test settled with the plan, so it isn't settled again. */
-export async function keepHandledSuggestion({
-  areas,
-  goalId,
-  dailyMinutes,
-  targetDate,
-  outcome,
-  userId,
-}: {
-  areas: string[];
-  goalId: string;
-  dailyMinutes: number;
-  targetDate: string | null;
-  outcome: NonNullable<FocusTestRecord["handled"]>["outcome"];
-  userId: string;
-}): Promise<void> {
-  await writeLearnerChange({ userId }, async (tx) => {
-    await changeFocusTestRecord({
-      change: (record) => ({ ...record, handled: { areas, dailyMinutes, outcome, targetDate } }),
-      goalId,
-      tx,
-    });
-  });
-
-  revalidateCacheTags([getGoalsCacheTag(userId)]);
 }

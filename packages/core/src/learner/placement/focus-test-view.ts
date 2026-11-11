@@ -93,8 +93,7 @@ export function listFocusRows({
 }
 
 export type FocusPlan = {
-  /** The plan already gives the suggested subjects their time, so a focus on them changes nothing. */
-  covered: boolean;
+  /** The learner dismissed a proposal of the suggested subjects. */
   declined: boolean;
   focusAreas: readonly string[];
   handPicked: boolean;
@@ -133,11 +132,7 @@ function getFocusState({
     return "handPicked";
   }
 
-  if (plan.declined) {
-    return "declined";
-  }
-
-  return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : null;
+  return plan.declined ? "declined" : "suggested";
 }
 
 export function toFocus({

@@ -265,61 +265,50 @@ describe("the Focus test on a plan whose time is short", () => {
     });
   });
 
-  it("does not call an immovable focus already covered", async () => {
-    const { goal, plan } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: PLAN_SHOWN });
-    const completion = await sit(goal.id, [DONT_KNOW]);
+  it.each([
+    { lessons: 1, reason: "alreadyIn" },
+    { lessons: 8, reason: "cantMove" },
+  ] as const)(
+    "makes no claim about a plan its suggestion can't move ($reason)",
+    async ({ lessons, reason }) => {
+      const { goal, plan } = await shortPlanExamGoalFixture({
+        daysLeft: 10,
+        goal: PLAN_SHOWN,
+        lessons,
+      });
 
-    expect(completion.focusTest?.checkpoint?.focus).toBeNull();
+      const completion = await sit(goal.id, [DONT_KNOW]);
 
-    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
-      placement: { focusTest: { checkpoint: { focus: null } } },
-    });
+      const suggested = {
+        proposal: null,
+        rows: [{ areas: ["Direito"] }, { areas: ["Português"] }],
+        state: "suggested",
+      };
 
-    await expect(
-      prisma.planChange.count({ where: { planId: plan.id, status: "proposed" } }),
-    ).resolves.toBe(0);
+      expect(completion.focusTest?.checkpoint?.focus).toMatchObject(suggested);
 
-    await expect(readFocus(goal.id)).resolves.toMatchObject({ planFocus: [], testFocus: null });
-  });
+      await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+        placement: { focusTest: { checkpoint: { focus: suggested } } },
+      });
 
-  it("keeps alreadyFits after an unrelated answer bumps plan inputs", async () => {
-    const { goal, user } = await shortPlanExamGoalFixture({
-      daysLeft: 10,
-      goal: PLAN_SHOWN,
-      lessons: 1,
-    });
+      await expect(
+        prisma.planChange.count({ where: { planId: plan.id, status: "proposed" } }),
+      ).resolves.toBe(0);
 
-    const completion = await sit(goal.id, [DONT_KNOW]);
-    expect(completion.focusTest?.checkpoint?.focus?.state).toBe("alreadyFits");
+      await expect(readFocus(goal.id)).resolves.toMatchObject({ planFocus: [], testFocus: null });
 
-    await writeLearnerChange({ planInputs: true, userId: user.id }, async () => null);
-
-    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
-      placement: { focusTest: { checkpoint: { focus: { state: "alreadyFits" } } } },
-    });
-  });
-
-  it("calls an unchanged focus already covered only when every suggested lesson is in the plan", async () => {
-    const { goal } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: PLAN_SHOWN, lessons: 1 });
-
-    const completion = await sit(goal.id, [DONT_KNOW]);
-
-    expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
-      proposal: null,
-      state: "alreadyFits",
-    });
-
-    await expect(
-      changeGoalPlan({
-        goalId: goal.id,
-        input: { operations: [{ areas: ["Direito", "Português"], kind: "focusAreas" }] },
-        trackAnalytics: false,
-      }),
-    ).resolves.toMatchObject({ reason: "alreadyIn", status: "unchanged" });
-  });
+      await expect(
+        changeGoalPlan({
+          goalId: goal.id,
+          input: { operations: [{ areas: ["Direito", "Português"], kind: "focusAreas" }] },
+          trackAnalytics: false,
+        }),
+      ).resolves.toMatchObject({ reason, status: "unchanged" });
+    },
+  );
 
   it.each(["date", "daily time"])(
-    "reconsiders an unchanged focus after changing the %s",
+    "asks the planner again at the next completion after changing the %s",
     async (changed) => {
       const { goal } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: PLAN_SHOWN });
       await sit(goal.id, [DONT_KNOW]);
@@ -350,18 +339,11 @@ describe("the Focus test on a plan whose time is short", () => {
               focus:
                 changed === "date"
                   ? { proposal: { source: "focusTest" }, state: "proposed" }
-                  : null,
+                  : { proposal: null, state: "suggested" },
             },
           },
         },
         status: "ready",
-      });
-
-      const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-      expect(readFocusTestRecord(stored)?.handled).toMatchObject({
-        dailyMinutes: stored.dailyMinutes,
-        targetDate: stored.targetDate?.toISOString().slice(0, 10) ?? null,
       });
     },
   );

@@ -10,7 +10,7 @@ import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
 import { toFocus } from "../focus-test-view";
 import { type PlacementState } from "./load-placement-state";
-import { keepHandledSuggestion, saveTestSummary } from "./test-sitting";
+import { saveTestSummary } from "./test-sitting";
 
 /**
  * A new plan's first summary, so the plan's row, its reveal and Today can offer the test before
@@ -66,39 +66,22 @@ export async function settleFocusTest({
     timeZone,
   });
 
-  if (proposed.status === "proposed" || proposed.status === "unchanged") {
-    await keepHandledSuggestion({
-      areas,
-      dailyMinutes: focusTest.dailyMinutes,
-      goalId,
-      outcome: proposed.status === "unchanged" ? proposed.reason : "proposed",
-      targetDate: focusTest.targetDate,
-      userId,
-    });
-
-    return {
-      ...state,
-      focusTest: {
-        ...state.focusTest,
-        checkpoint: {
-          ...checkpoint,
-          focus: toFocus({
-            plan: {
-              ...focusTest.plan,
-              covered: proposed.status === "unchanged" && proposed.reason === "alreadyIn",
-              proposal:
-                proposed.status === "proposed"
-                  ? await loadPlanChangeView(proposed.changeId, { timeZone })
-                  : null,
-            },
-            rows: focusTest.rows,
-          }),
-        },
-      },
-    };
+  if (proposed.status !== "proposed") {
+    return state;
   }
 
-  return state;
+  const proposal = await loadPlanChangeView(proposed.changeId, { timeZone });
+
+  return {
+    ...state,
+    focusTest: {
+      ...state.focusTest,
+      checkpoint: {
+        ...checkpoint,
+        focus: toFocus({ plan: { ...focusTest.plan, proposal }, rows: focusTest.rows }),
+      },
+    },
+  };
 }
 
 async function settleAfterSession({

@@ -143,10 +143,10 @@ const focusTestFocusSchema = z
       .meta({ description: "For `proposed`: the change to apply or decline, with its effect" }),
     rows: z.array(focusRowSchema).meta({ description: "Up to three, the most needed first" }),
     state: z
-      .enum(["ifTimeShort", "proposed", "current", "alreadyFits", "handPicked", "declined"])
+      .enum(["ifTimeShort", "proposed", "current", "handPicked", "declined", "suggested"])
       .meta({
         description:
-          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; valid while the exam date and daily time are unchanged, including across daily replans. `handPicked`: the learner chose their own focus. `declined`: the learner dismissed this suggestion with Not now or Undo; it stays dismissed for the same suggested subjects across replans and date or daily-time edits",
+          "Read from the plan's focus and the test's own plan changes. `ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `handPicked`: the plan has a focus the learner chose. `declined`: the learner dismissed a proposal of these subjects with Not now or Undo, and the plan has no focus of their own; the test never proposes them again. `suggested`: the rows alone, with no claim about the plan",
       }),
   })
   .meta({ id: "FocusTestFocus" });
@@ -159,7 +159,7 @@ const focusTestCheckpointSchema = z
       .nullable()
       .meta({
         description:
-          "Where the plan should give more time. Null without a date, with one subject, on a shown plan whose time covers everything, when the learner has no focus and the suggestion cannot move the plan, or while a changed exam date or daily time awaits the next test settlement",
+          "Where the plan should give more time. Null without a date, with one subject, or on a shown plan whose time covers everything",
       }),
     lessonsSkipped: countSchema.meta({
       description:

@@ -41,19 +41,6 @@ const recordSchema = z.object({
    * applied. A plan whose focus is anything else has the learner's own choice.
    */
   focus: z.array(z.string()).nullable().default(null),
-  /**
-   * Plan verdicts depend on the exam date and daily time; a proposal's status holds the learner's
-   * decision for those suggested subjects across replans.
-   */
-  handled: z
-    .object({
-      areas: z.array(z.string()),
-      dailyMinutes: z.int(),
-      outcome: z.enum(["proposed", "alreadyIn", "cantMove"]),
-      targetDate: z.iso.date().nullable(),
-    })
-    .nullable()
-    .default(null),
   pausedAt: z.iso.datetime().nullable().default(null),
   sitting: sittingSchema.nullable().default(null),
   skippedOn: z.iso.date().nullable().default(null),
