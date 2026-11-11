@@ -1531,6 +1531,9 @@ importers:
       polyclip-ts:
         specifier: 0.16.8
         version: 0.16.8
+      remark-parse:
+        specifier: 11.0.0
+        version: 11.0.0(supports-color@10.2.2)
       sane-topojson:
         specifier: 4.0.0
         version: 4.0.0
@@ -1546,6 +1549,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 7.1.0-beta
+      unified:
+        specifier: 11.0.5
+        version: 11.0.5
       us-atlas:
         specifier: 3.0.1
         version: 3.0.1
