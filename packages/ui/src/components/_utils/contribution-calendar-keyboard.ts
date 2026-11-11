@@ -1,5 +1,5 @@
 import { CONTRIBUTION_CALENDAR_DAYS_PER_WEEK } from "@zoonk/utils/contribution-calendar";
-import { type ChartPointNavigation } from "./chart-inspector-keyboard";
+import { type ChartPointNavigation, getChartPointTargetIndex } from "./chart-inspector-keyboard";
 
 /** The calendar's DOM is column-major: one index moves a weekday, seven move a week. */
 export function getContributionCalendarTargetIndex({
@@ -33,5 +33,5 @@ export function getContributionCalendarTargetIndex({
     return targetIndex >= totalPoints ? currentIndex : targetIndex;
   }
 
-  return null;
+  return getChartPointTargetIndex({ currentIndex, key, totalPoints });
 }

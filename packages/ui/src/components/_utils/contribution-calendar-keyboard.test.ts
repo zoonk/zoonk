@@ -24,6 +24,15 @@ describe(getContributionCalendarTargetIndex, () => {
     );
   });
 
+  it.each([
+    { key: "Home", targetIndex: 0 },
+    { key: "End", targetIndex: 20 },
+  ] as const)("moves $key to the calendar's first or last day", ({ key, targetIndex }) => {
+    expect(getContributionCalendarTargetIndex({ currentIndex: 9, key, totalPoints: 21 })).toBe(
+      targetIndex,
+    );
+  });
+
   it("ignores keys that do not navigate the calendar", () => {
     expect(
       getContributionCalendarTargetIndex({ currentIndex: 9, key: "Enter", totalPoints: 21 }),
