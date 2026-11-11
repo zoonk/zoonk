@@ -151,9 +151,7 @@ function toPick({
   row: SkillRow;
   writesTyped: boolean;
 }): PlacementItemPick | null {
-  const fitting = row.items.filter(
-    (item) => covers(item) && !(exceptAnswered && isAnswered(item)),
-  );
+  const fitting = row.items.filter((item) => covers(item) && !(exceptAnswered && isAnswered(item)));
 
   const formats = new Set(fitting.map((item) => item.format));
   const quick = fitting.filter((item) => item.format === quickFormat).length;
