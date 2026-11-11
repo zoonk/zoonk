@@ -10,7 +10,6 @@ import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { type DayEntry, type TapStep } from "@/lib/session/day-entry";
 import {
-  askDayEntryStart,
   endDayEntry,
   failDayEntry,
   markDayEntryApplied,
@@ -92,15 +91,12 @@ export function SessionBlockClient({
   );
 }
 
-/**
- * Once the learner asked to start, the tap's entry keeps the step busy until what it opened shows,
- * so the step never goes idle first.
- */
+/** The tap's entry keeps the step busy until what it opened shows, so the step never goes idle first. */
 function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap | null }): boolean {
   const router = useRouter();
   const go = useGoToStudyDestination();
   const [applying, startApplying] = useTransition();
-  const result = tap && entry?.startAsked ? entry.result : null;
+  const result = tap ? entry?.result : null;
 
   const apply = useEffectEvent(() => {
     if (!entry || entry.applied || !result || result.kind === "failed") {
@@ -192,16 +188,10 @@ export function SessionNextStopClient({
     screen: "session",
   });
 
-  const start = (target: DayStep) => {
-    if (entry && tapped?.tap.state === "held" && target.position === drawn.position) {
-      askDayEntryStart(entry.id);
-      return Promise.resolve(true);
-    }
-
-    return target.position === step.position && sessionId === null
+  const start = (target: DayStep) =>
+    target.position === step.position && sessionId === null
       ? taps.next(toTapStep(target))
       : taps.open(toTapStep(target));
-  };
 
   return (
     <NextStop

@@ -32,14 +32,32 @@ function isFocusOnControl(): boolean {
   return active instanceof HTMLElement && active !== document.body;
 }
 
-function isUnderWay({
-  blocks,
+function isSessionScreen(location: string): boolean {
+  return location === SESSION_PATH || location.startsWith(`${SESSION_PATH}?`);
+}
+
+/**
+ * A step that hasn't begun opens on its screen and waits for Start there, so the learner reads what
+ * it is before it starts. An unopened day's address shows only its next step.
+ */
+function waitsForStart({
+  day,
+  origin,
   step,
 }: {
-  blocks: TapDay["shown"]["day"]["blocks"];
+  day: TapDay["shown"]["day"];
+  origin: string;
   step: TapStep;
 }): boolean {
-  return blocks.some((block) => block.position === step.position && block.status === "active");
+  const underWay = day.blocks.some(
+    (block) => block.position === step.position && block.status === "active",
+  );
+
+  return (
+    !isSessionScreen(origin) &&
+    !underWay &&
+    (step.blockId !== null || step.position === day.nextPosition)
+  );
 }
 
 type TapRequest = {
@@ -170,6 +188,11 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
             )
           : null;
 
+      if (href && waitsForStart({ day: shown.day, origin, step })) {
+        router.push(href);
+        return true;
+      }
+
       const stillHere = async () =>
         (await learnerHere()) && [origin, href].includes(getCurrentLocation());
 
@@ -177,10 +200,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const answer = request({ next, step, stillHere });
 
       if (href) {
-        const onSessionScreen = origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`);
-
         // Within the session screen the step replaces the one shown; Back still leads to Today.
-        if (href !== origin && onSessionScreen) {
+        if (href !== origin && isSessionScreen(origin)) {
           router.replace(href);
         } else if (href !== origin) {
           router.push(href);
@@ -192,9 +213,6 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           here: stayingHere(shown.userId),
           href,
           next,
-          // A step tapped elsewhere opens to its screen and waits there for Start, so the learner
-          // reads what it is first; one already under way goes on.
-          startAsked: onSessionScreen || isUnderWay({ blocks: shown.day.blocks, step }),
           step,
           tappedAt: Date.now(),
         });

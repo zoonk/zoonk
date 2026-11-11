@@ -23,25 +23,28 @@ import { deviceStorage, subscribeToDeviceStorage } from "../_utils/device-storag
 import { type DayStep } from "./session-types";
 import { hasCapsules } from "./use-block-copy";
 
-const STARTS_KEY = "zoonk:review-intro-starts";
+function getStartsKey(goalId: string): string {
+  return `zoonk:review-intro-starts:${goalId}`;
+}
 
 /** A daily learner reads it open a few times, then it folds to one row they can reopen. */
 const OPEN_FOR_STARTS = 3;
 
-function readStarts(): number {
-  return Number(deviceStorage.get(STARTS_KEY)) || 0;
+/** Counted per goal, so a learner sharing the device starts with it open. */
+function readStarts(goalId: string): number {
+  return Number(deviceStorage.get(getStartsKey(goalId))) || 0;
 }
 
-export function noteReviewStart(block: DayStep): void {
+export function noteReviewStart({ block, goalId }: { block: DayStep; goalId: string }): void {
   if (hasCapsules(block)) {
-    deviceStorage.set(STARTS_KEY, String(readStarts() + 1));
+    deviceStorage.set(getStartsKey(goalId), String(readStarts(goalId) + 1));
   }
 }
 
-function useOpenAtFirst(): boolean {
+function useOpenAtFirst(goalId: string): boolean {
   return useSyncExternalStore(
     subscribeToDeviceStorage,
-    () => readStarts() < OPEN_FOR_STARTS,
+    () => readStarts(goalId) < OPEN_FOR_STARTS,
     () => true,
   );
 }
@@ -93,9 +96,9 @@ function WhyRow({ weakest }: { weakest: boolean }) {
 }
 
 /** What a review is and how it picks its questions, for a learner who never asked. */
-export function ReviewIntro({ block }: { block: DayStep }) {
+export function ReviewIntro({ block, goalId }: { block: DayStep; goalId: string }) {
   const t = useExtracted();
-  const open = useOpenAtFirst();
+  const open = useOpenAtFirst(goalId);
 
   if (block.kind !== "review") {
     return null;

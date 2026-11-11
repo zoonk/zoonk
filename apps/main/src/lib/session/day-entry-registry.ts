@@ -79,10 +79,6 @@ export function updateDayEntry(id: number, fields: Partial<Pick<DayEntry, "href"
   }
 }
 
-export function askDayEntryStart(id: number): void {
-  patch(id, { startAsked: true });
-}
-
 export function markDayEntryApplied(id: number): void {
   patch(id, { applied: true });
 }

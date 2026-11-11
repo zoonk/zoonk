@@ -43,8 +43,7 @@ export type NextStopActions = {
 
 export type NextStopTap = {
   focus: boolean;
-  /** Held, a tap from another screen opened the step and waits for the learner's Start. */
-  state: "failed" | "held" | "opening";
+  state: "failed" | "opening";
   /** `Date.now()` of the tap. */
   tappedAt: number;
 };
@@ -117,10 +116,7 @@ function useStartState({
   const opening = tap?.state === "opening";
 
   const start = useSessionAction({
-    action: () => {
-      noteReviewStart(block);
-      return actions.start(block);
-    },
+    action: () => actions.start(block),
     enterKey: isReady && !opening,
   });
 
@@ -316,7 +312,7 @@ export function NextStop({
             <TaskMeta facts={facts} />
           </div>
 
-          <ReviewIntro block={block} />
+          <ReviewIntro block={block} goalId={goalId} />
 
           <StatusRegion className="text-sm text-pretty">
             {written && t("Your lesson is ready.")}
@@ -332,7 +328,13 @@ export function NextStop({
         </TaskBody>
 
         <NextStopActionBar
-          actions={actions}
+          actions={{
+            ...actions,
+            start: (step) => {
+              noteReviewStart({ block: step, goalId });
+              return actions.start(step);
+            },
+          }}
           alternative={alternative}
           block={block}
           isReady={isReady}
