@@ -39,10 +39,6 @@ export async function addExtraStudyBlock({
     return owned;
   }
 
-  if (await isFreeWeekOver(owned.session)) {
-    return { reason: "plusRequired", status: "unavailable" };
-  }
-
   const { userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
   const skillIds = owned.session.goalId ? await loadGoalSkillIds(owned.session.goalId) : [];
@@ -56,6 +52,10 @@ export async function addExtraStudyBlock({
 
       if (!extraTime.available) {
         return { reason: extraTime.reason, status: "unavailable" };
+      }
+
+      if (await isFreeWeekOver(session)) {
+        return { reason: "plusRequired", status: "unavailable" };
       }
 
       const planned = await planExtraBlocks({
