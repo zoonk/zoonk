@@ -288,6 +288,24 @@ const LAWS: Exam[] = [
   {
     expected: {
       minOfficialSites: 2,
+      noticeHints: ["9784", "9.784"],
+      officialDomains: BRAZILIAN_LAW_SITES,
+    },
+    id: "lei-9784-1999",
+    language: "pt",
+    plan: {
+      country: "BR",
+      name: "Lei nº 9.784/1999",
+      officialDomains: ["planalto.gov.br", "camara.leg.br"],
+      queries: [
+        "Lei nº 9.784/1999 texto compilado",
+        "Lei 9.784 de 1999 processo administrativo federal texto atualizado",
+      ],
+    },
+  },
+  {
+    expected: {
+      minOfficialSites: 2,
       noticeHints: ["constituicao", "constituição"],
       officialDomains: BRAZILIAN_LAW_SITES,
     },

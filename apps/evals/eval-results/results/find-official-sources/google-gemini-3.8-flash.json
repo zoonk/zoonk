@@ -984,61 +984,6 @@
       "testCase": {
         "expected": {
           "noticeHints": [
-            "academic"
-          ],
-          "officialDomains": [
-            "ielts.org"
-          ],
-          "sectionHints": [
-            "listening",
-            "reading",
-            "writing",
-            "speaking"
-          ]
-        },
-        "id": "ielts-academic-sections:parallel-1",
-        "language": "en",
-        "userInput": {
-          "plan": {
-            "board": "IELTS (British Council, IDP, Cambridge University Press & Assessment)",
-            "country": "GB",
-            "edition": null,
-            "name": "IELTS Academic",
-            "officialDomains": [
-              "ielts.org"
-            ],
-            "queries": [
-              "IELTS Academic test format",
-              "IELTS Academic test sections timing questions"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
             "content",
             "structure",
             "2026"
@@ -1175,121 +1120,6 @@
     {
       "steps": [
         {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "syllabus",
-            "quantum",
-            "8.04",
-            "course"
-          ],
-          "officialDomains": [
-            "edu",
-            "ac.uk"
-          ]
-        },
-        "id": "syllabus-quantum-mechanics:parallel-1",
-        "language": "en",
-        "userInput": {
-          "plan": {
-            "board": null,
-            "country": "US",
-            "edition": null,
-            "name": "Quantum Mechanics",
-            "officialDomains": [
-              "ocw.mit.edu",
-              "physics.harvard.edu",
-              "stanford.edu"
-            ],
-            "queries": [
-              "undergraduate quantum mechanics course syllabus topics",
-              "mit ocw quantum physics syllabus"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "syllabus"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "ementa",
-            "calculo",
-            "cálculo",
-            "programa",
-            "mat"
-          ],
-          "officialDomains": [
-            "usp.br",
-            "unicamp.br",
-            "ufrj.br",
-            "ufmg.br",
-            "unesp.br",
-            "edu.br"
-          ]
-        },
-        "id": "syllabus-calculo:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": null,
-            "country": "BR",
-            "edition": null,
-            "name": "Cálculo Diferencial e Integral",
-            "officialDomains": [
-              "usp.br",
-              "unicamp.br",
-              "ufrj.br"
-            ],
-            "queries": [
-              "ementa calculo diferencial e integral engenharia",
-              "programa disciplina calculo 1 engenharia universidade"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "syllabus"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "A downloadable copy states the notice's content",
           "kind": "majorErrors",
           "score": 10
@@ -1348,113 +1178,6 @@
             "https://www.vunesp.com.br/TJSP2503",
             "https://www.vunesp.com.br/TJSP2401"
           ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "tc_df_26",
-            "2026",
-            "anace"
-          ],
-          "officialDomains": [
-            "cebraspe.org.br",
-            "tc.df.gov.br"
-          ]
-        },
-        "id": "tcdf-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "edition": "2026",
-            "name": "Concurso TCDF",
-            "officialDomains": [
-              "cebraspe.org.br",
-              "tc.df.gov.br"
-            ],
-            "queries": [
-              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
-              "TCDF 2026 edital retificação"
-            ],
-            "role": "Analista Administrativo de Controle Externo"
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
         }
       }
     },
@@ -1598,6 +1321,555 @@
             "lexml.gov.br"
           ]
         },
+        "id": "lei-12813-2013:parallel-3",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 12.813/2013",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 12.813/2013 texto compilado",
+              "Lei 12.813 de 2013 conflito de interesses texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "9784",
+            "9.784"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-9784-1999:parallel-3",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 9.784/1999",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 9.784/1999 texto compilado",
+              "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "constituicao",
+            "constituição"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "constituicao-1988:parallel-3",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Constituição da República Federativa do Brasil de 1988",
+            "officialDomains": [
+              "planalto.gov.br",
+              "senado.leg.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Constituição Federal de 1988 texto compilado",
+              "Constituição da República Federativa do Brasil texto atualizado emendas"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ]
+        },
+        "id": "enem-2026:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "tc_df_26",
+            "2026",
+            "anace"
+          ],
+          "officialDomains": [
+            "cebraspe.org.br",
+            "tc.df.gov.br"
+          ]
+        },
+        "id": "tcdf-2026:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": [
+              "cebraspe.org.br",
+              "tc.df.gov.br"
+            ],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "academic"
+          ],
+          "officialDomains": [
+            "ielts.org"
+          ],
+          "sectionHints": [
+            "listening",
+            "reading",
+            "writing",
+            "speaking"
+          ]
+        },
+        "id": "ielts-academic-sections:parallel-2",
+        "language": "en",
+        "userInput": {
+          "plan": {
+            "board": "IELTS (British Council, IDP, Cambridge University Press & Assessment)",
+            "country": "GB",
+            "edition": null,
+            "name": "IELTS Academic",
+            "officialDomains": [
+              "ielts.org"
+            ],
+            "queries": [
+              "IELTS Academic test format",
+              "IELTS Academic test sections timing questions"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "syllabus",
+            "quantum",
+            "8.04",
+            "course"
+          ],
+          "officialDomains": [
+            "edu",
+            "ac.uk"
+          ]
+        },
+        "id": "syllabus-quantum-mechanics:parallel-1",
+        "language": "en",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "US",
+            "edition": null,
+            "name": "Quantum Mechanics",
+            "officialDomains": [
+              "ocw.mit.edu",
+              "physics.harvard.edu",
+              "stanford.edu"
+            ],
+            "queries": [
+              "undergraduate quantum mechanics course syllabus topics",
+              "mit ocw quantum physics syllabus"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "syllabus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "syllabus",
+            "quantum",
+            "8.04",
+            "course"
+          ],
+          "officialDomains": [
+            "edu",
+            "ac.uk"
+          ]
+        },
+        "id": "syllabus-quantum-mechanics:parallel-2",
+        "language": "en",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "US",
+            "edition": null,
+            "name": "Quantum Mechanics",
+            "officialDomains": [
+              "ocw.mit.edu",
+              "physics.harvard.edu",
+              "stanford.edu"
+            ],
+            "queries": [
+              "undergraduate quantum mechanics course syllabus topics",
+              "mit ocw quantum physics syllabus"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "syllabus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "ementa",
+            "calculo",
+            "cálculo",
+            "programa",
+            "mat"
+          ],
+          "officialDomains": [
+            "usp.br",
+            "unicamp.br",
+            "ufrj.br",
+            "ufmg.br",
+            "unesp.br",
+            "edu.br"
+          ]
+        },
+        "id": "syllabus-calculo:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "BR",
+            "edition": null,
+            "name": "Cálculo Diferencial e Integral",
+            "officialDomains": [
+              "usp.br",
+              "unicamp.br",
+              "ufrj.br"
+            ],
+            "queries": [
+              "ementa calculo diferencial e integral engenharia",
+              "programa disciplina calculo 1 engenharia universidade"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "syllabus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "ementa",
+            "calculo",
+            "cálculo",
+            "programa",
+            "mat"
+          ],
+          "officialDomains": [
+            "usp.br",
+            "unicamp.br",
+            "ufrj.br",
+            "ufmg.br",
+            "unesp.br",
+            "edu.br"
+          ]
+        },
+        "id": "syllabus-calculo:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "BR",
+            "edition": null,
+            "name": "Cálculo Diferencial e Integral",
+            "officialDomains": [
+              "usp.br",
+              "unicamp.br",
+              "ufrj.br"
+            ],
+            "queries": [
+              "ementa calculo diferencial e integral engenharia",
+              "programa disciplina calculo 1 engenharia universidade"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "syllabus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "12813",
+            "12.813"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
         "id": "lei-12813-2013:parallel-1",
         "language": "pt",
         "userInput": {
@@ -1611,6 +1883,162 @@
             "queries": [
               "Lei nº 12.813/2013 texto compilado",
               "Lei 12.813 de 2013 conflito de interesses texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "12813",
+            "12.813"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-12813-2013:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 12.813/2013",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 12.813/2013 texto compilado",
+              "Lei 12.813 de 2013 conflito de interesses texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "9784",
+            "9.784"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-9784-1999:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 9.784/1999",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 9.784/1999 texto compilado",
+              "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "9784",
+            "9.784"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-9784-1999:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 9.784/1999",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 9.784/1999 texto compilado",
+              "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
             ]
           },
           "searchTool": "parallel",
@@ -1668,6 +2096,221 @@
           },
           "searchTool": "parallel",
           "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "constituicao",
+            "constituição"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "constituicao-1988:parallel-2",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Constituição da República Federativa do Brasil de 1988",
+            "officialDomains": [
+              "planalto.gov.br",
+              "senado.leg.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Constituição Federal de 1988 texto compilado",
+              "Constituição da República Federativa do Brasil texto atualizado emendas"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ]
+        },
+        "id": "enem-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "tc_df_26",
+            "2026",
+            "anace"
+          ],
+          "officialDomains": [
+            "cebraspe.org.br",
+            "tc.df.gov.br"
+          ]
+        },
+        "id": "tcdf-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": [
+              "cebraspe.org.br",
+              "tc.df.gov.br"
+            ],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "academic"
+          ],
+          "officialDomains": [
+            "ielts.org"
+          ],
+          "sectionHints": [
+            "listening",
+            "reading",
+            "writing",
+            "speaking"
+          ]
+        },
+        "id": "ielts-academic-sections:parallel-1",
+        "language": "en",
+        "userInput": {
+          "plan": {
+            "board": "IELTS (British Council, IDP, Cambridge University Press & Assessment)",
+            "country": "GB",
+            "edition": null,
+            "name": "IELTS Academic",
+            "officialDomains": [
+              "ielts.org"
+            ],
+            "queries": [
+              "IELTS Academic test format",
+              "IELTS Academic test sections timing questions"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
         }
       }
     }
