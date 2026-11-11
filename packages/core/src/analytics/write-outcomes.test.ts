@@ -1,5 +1,5 @@
 import { sendEmail } from "@zoonk/mailer";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -142,8 +142,11 @@ describe("write outcome analytics", () => {
   it("sends legacy names for newly completed missions once", async () => {
     const user = await learner();
     const flush = runDeferredWork();
+    const [skill, goal] = await Promise.all([skillFixture(), goalFixture({ userId: user.id })]);
+    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
 
     const session = await studySessionFixture({
+      goalId: goal.id,
       missions: {
         picks: [
           { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
@@ -161,7 +164,12 @@ describe("write outcome analytics", () => {
       status: "completed",
     });
 
-    await mistakeFixture({ fixedAt: new Date(), status: "fixed", userId: user.id });
+    await mistakeFixture({
+      fixedAt: new Date(),
+      skillId: skill.id,
+      status: "fixed",
+      userId: user.id,
+    });
     const input = { blockId: block.id, sessionId: session.id, timeZone: "UTC", userId: user.id };
     await settleMissions(input);
     await settleMissions(input);
