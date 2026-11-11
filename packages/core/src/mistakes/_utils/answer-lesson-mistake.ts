@@ -26,7 +26,7 @@ import { finishPracticeAnswer } from "./practice-feedback";
 import { readSavedPracticeAnswer } from "./saved-practice-answer";
 
 const lessonAnswerVerdictSchema = lessonStepCheckResultSchema
-  .omit({ nextReviewAt: true, savedMistake: true })
+  .omit({ savedMistake: true })
   .extend({ answerText: z.string().nullable() });
 
 function skippedAnswer(step: PlayableLibraryStep, snapshot: unknown): LessonAnswerVerdict {
@@ -145,7 +145,7 @@ export async function answerLessonMistake({
         fixed: false,
         fixedMistakeIds: [],
         isCorrect: false,
-        lessonResult: toCheckResult({ nextReviewAt: null, savedMistake: false, verdict }),
+        lessonResult: toCheckResult({ savedMistake: false, verdict }),
         mistakeStatus: mistake.status,
         reached: NOTHING_REACHED,
         trap: null,
@@ -206,7 +206,6 @@ export async function answerLessonMistake({
     outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
 
   const lessonResult = toCheckResult({
-    nextReviewAt: null,
     savedMistake: !isCorrect,
     verdict: {
       ...verdict,

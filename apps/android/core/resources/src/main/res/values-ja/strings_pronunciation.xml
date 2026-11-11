@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "23c6118815380559749c6d980d37c64dd8344df020f40bbac28cddd392218db7",
-  "pronunciation_comes_back": "dc2aaf03e92e714fb3d60d75e47c46a47d2b6e2ab5a97c84d3099f5cbcc67339",
+  "pronunciation_accent": "ed529297011ba173cf66aa6dabf62a07e9c5bd139c8d4a34507e9641c43c0aa9",
   "pronunciation_continue": "26294479b46ac128c41d6ceb80f362476a076879d2d6af15296c88f033500143",
   "pronunciation_done": "de123c80613e26bcf53ac1243cb17a250bb4d0c74a65fadd5ad5705179fd850a",
   "pronunciation_failed": "bcb31be01a5265d9b50199cc3f5120c18c4ab4c2e98822926f1bb49c8acc13b9",
   "pronunciation_grading": "3232af08b2560af43ab252396f20b8f0bcb8b1b24aa3260201f03c4de0cb140c",
   "pronunciation_heard": "2c2dc986abb6707039f1af4fbca3b192a677329926b71e49e13758424cf3395a",
-  "pronunciation_learned": "8a0b6086a0f995c10791b7f5c217d8c0683e2696d85cca39280ccd9c6333103a",
   "pronunciation_listen": "66df8a35f691aa67d5d0daa6047d182f0c64c2b41d267b9f0e1e5f130dcd111b",
   "pronunciation_listen_slowly": "af0fa30f0709e23ffbccbe4673b5a183a1f8086c87a3fcef2a7b40cf4e1a1b14",
   "pronunciation_microphone_off": "8de595b04b3d7970d2e1a159932acfde9c1581b815249988d1c39981f1a30495",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">正しく発音できました</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">「%1$s」と聞こえました</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">%1$sにまた出てきます。</string>
-    <string name="pronunciation_learned">この単語はもう大丈夫です。今後は復習に出てきません。</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">もう一度言う</string>
     <!-- Goes on to the next word. -->
@@ -64,7 +59,7 @@
     <string name="pronunciation_no_words">今日はもう一度声に出して言う単語はありません。</string>
     <string name="pronunciation_practice_done">練習完了</string>
     <string name="pronunciation_nothing_said">今回は発音しませんでした</string>
-    <string name="pronunciation_accent">なまりがあっても先に進めます。まだ発音が違う単語は、明日また出てきます。</string>
+    <string name="pronunciation_accent">なまりがあっても、先に進めます。</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">完了</string>
 </resources>

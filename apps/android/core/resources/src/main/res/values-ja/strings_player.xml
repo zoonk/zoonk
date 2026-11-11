@@ -52,10 +52,6 @@
   "player_citation_from_material": "38fd0eaa320f1fd1915f890d3b01a7cc89428f6e771966a9e366359dd6e70944",
   "player_citation_not_in_material": "9dead427f8a8aee46f317c94b4118a33ab6d8a7f0b2fbeadb70d225519fe609b",
   "player_comes_back_at_end": "9d993efbf3e7b9cc3c40b76d979ec124e9604ae15762d5a55bf0c98ede4b0903",
-  "player_comes_back_date": "e22e8a05bc4760909e683f2870d30c0d639535975877f60260c37e1b6930c8a2",
-  "player_comes_back_today": "43a3a9dfa07f9ae2fab0d748af3d7f4aaa61eeab1faf4f62f906e8690d93766a",
-  "player_comes_back_tomorrow": "8e8aaeb67616a3eb17bad3f559e2c406fde04a78d32996e4079f6097c69da7d5",
-  "player_comes_back_weekday": "9ce575db0601a66a6635803f51e990ed67f1d3808023aa31cc4359e3626fc688",
   "player_correct_answer_label": "0bc7496bdf52285fa0549878426f5999e85f68728c50c2c3523108f733d187f3",
   "player_correction_right": "25de97fc9c6f8ed0fddb1cf612c87e9a84e58d6d5066576f16f9eae856f4965b",
   "player_correction_yours": "ceabd298f3a781655578005e1b38cb89497247fc14a693f20395b300c0bc2ff1",
@@ -142,14 +138,9 @@
   "player_ready_instead": "8e823aa7539b87c50acdb08608f8e6097ff8d1e9fa75f6b010b6e3c70f154068",
   "player_ready_while_waiting": "0ea0689decf9fd479aa4ca868d2846b5e3eee857987b872bb7bb1fda22159e07",
   "player_review_ideas": "0bc279247074a777c60e36e01699a99949c9a9e70c9d474681a3904b426cb429",
-  "player_review_on": "22f893220053fae199c23a77ab855ce9e3b974040ad2553104e3ba2243ddb4a6",
   "player_save_failed": "ecb3f699e33fce633df023bf50ca2882de9579568a3e29243657204085776c62",
   "player_saved_to_mistakes": "4802ce138af5b670ef1ee4ecee353be3c33b908c3f5627a227995249680f62b2",
   "player_saved_to_mistakes_back_at_end": "f09263f6928d2bd4876e9a286ea1038c8646ee4d468fb4859329aeed21cc981c",
-  "player_saved_to_mistakes_back_date": "c6b70db6d11f9afd2f29c3762fba76c8a148651f912a605c0fa76e70670db5ad",
-  "player_saved_to_mistakes_back_today": "bb89d2beca0ec8c41aca62dc12151d52476f9e707e1e874117d10489c058ed44",
-  "player_saved_to_mistakes_back_tomorrow": "f43ed07e701bfb18fc59ea7ac863e7605ce86a4493ee63d56d56a626a12952e7",
-  "player_saved_to_mistakes_back_weekday": "3bf9dd03b8bce04749b9842117f53e485bbe2eef898103d6b1ad6203db5aba40",
   "player_saving_progress": "1b97c936b457ec649c07c3914d357ef065ef365d1876f3a26d014053761a7678",
   "player_say_it_instead": "986eab8f39e59227d5876b872874551afd293f06946a4e9f3ec77e55a3df6e71",
   "player_screen_options": "95751c6cf9db4249ccaaf7fa72763b2ce39d1d554b7e2b6c687b49c2353fcd6b",
@@ -271,14 +262,6 @@
     <string name="player_comes_back_at_end">この問題はレッスンの最後にもう一度出題されます</string>
     <string name="player_saved_to_mistakes">間違いノートに保存しました</string>
     <string name="player_saved_to_mistakes_back_at_end">間違いノートに保存しました · このレッスンの最後にもう一度出てきます</string>
-    <string name="player_saved_to_mistakes_back_today">間違いノートに保存しました · 今日このあとの復習に出てきます</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">間違いノートに保存しました · 明日の復習に出てきます</string>
-    <string name="player_saved_to_mistakes_back_weekday">間違いノートに保存しました · %1$sの復習に出てきます</string>
-    <string name="player_saved_to_mistakes_back_date">間違いノートに保存しました · %1$sの復習に出てきます</string>
-    <string name="player_comes_back_today">この内容は今日このあとの復習にもう一度出てきます</string>
-    <string name="player_comes_back_tomorrow">この内容は明日の復習にもう一度出てきます</string>
-    <string name="player_comes_back_weekday">この内容は%1$sの復習にもう一度出てきます</string>
-    <string name="player_comes_back_date">この内容は%1$sの復習にもう一度出てきます</string>
     <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">予想なので、採点されません</string>
     <string name="player_answer_options">選択肢</string>
@@ -411,8 +394,6 @@
     <string name="player_lesson_not_saved">レッスンはまだ保存されていません</string>
     <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
     <string name="player_time_studied">%1$s学習済み</string>
-    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
-    <string name="player_review_on">%1$sに復習</string>
     <string name="player_next_lesson">次のレッスン</string>
     <string name="player_stop_for_today">今日はここまでにする</string>
     <string name="player_see_todays_summary">今日のまとめを見る</string>

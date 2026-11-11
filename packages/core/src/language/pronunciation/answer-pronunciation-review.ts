@@ -121,12 +121,7 @@ export async function answerPronunciationReview({
   );
 
   return {
-    grade: {
-      attemptId: recorded.attempt.id,
-      isCorrect: match.isCorrect,
-      nextReviewAt: next.dueAt?.toISOString() ?? null,
-      transcript,
-    },
+    grade: { attemptId: recorded.attempt.id, isCorrect: match.isCorrect, transcript },
     status: "graded",
   };
 }

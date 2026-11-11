@@ -67,7 +67,7 @@ fun checkResult(
                 it,
             )
         }},"feedback":${feedback?.let { "\"$it\"" } ?: "null"},
-         "isCorrect":$isCorrect,"keyPoints":$keyPoints,"nextReviewAt":"2026-10-30T09:00:00Z","savedMistake":false,"score":null,"spelling":null}
+         "isCorrect":$isCorrect,"keyPoints":$keyPoints,"savedMistake":false,"score":null,"spelling":null}
         """.trimIndent(),
     )
 
@@ -85,14 +85,14 @@ fun runAnswerJson(
     """
     {"answer":$answer,"answeredAt":"$answeredAt","isCorrect":$isCorrect,"stepId":"$stepId",
      "result":{"answerText":${answerText?.let { "\"$it\"" } ?: "null"},"checked":true,"correctAnswer":null,"corrections":[],
-     "expected":null,"feedback":null,"isCorrect":$isCorrect,"keyPoints":null,"nextReviewAt":null,"savedMistake":false,
+     "expected":null,"feedback":null,"isCorrect":$isCorrect,"keyPoints":null,"savedMistake":false,
      "score":null,"spelling":null}}
     """.trimIndent()
 
 val COMPLETION =
     """
     {"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
-     "incorrectCount":0,"isFirstCompletion":true,"nextReviewAt":"2026-10-31T09:00:00Z","seconds":120,"studyBlock":null,
+     "incorrectCount":0,"isFirstCompletion":true,"seconds":120,"studyBlock":null,
      "totalBrainPower":130}
     """.trimIndent()
 

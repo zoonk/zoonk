@@ -38,7 +38,7 @@ internal fun grade(
 ): PronunciationAnswerGrade =
     ApiJson.decodeFromString(
         PronunciationAnswerGrade.serializer(),
-        """{"attemptId":"00000000-0000-4000-8000-000000000099","isCorrect":$isCorrect,"nextReviewAt":null,"transcript":"$transcript"}""",
+        """{"attemptId":"00000000-0000-4000-8000-000000000099","isCorrect":$isCorrect,"transcript":"$transcript"}""",
     )
 
 internal val RESULT: PronunciationRoundResult =

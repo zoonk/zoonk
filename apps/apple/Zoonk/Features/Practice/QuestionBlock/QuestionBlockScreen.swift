@@ -186,16 +186,6 @@ struct QuestionBlockView: View {
       if let drill = run.drill, run.drillStage == .idea, let lesson = drill.lesson {
         DrillIdeaView(drill: drill, lesson: lesson)
       } else {
-        let graded = graded(phase)
-
-        if let machine = question.timeMachine, graded == nil {
-          PracticeCallout(systemImage: "clock.arrow.circlepath") {
-            Text(
-              TimeMachineText.line(
-                machine, result: nil, format: question.format, labels: run.detail.trueFalseLabels))
-          }
-        }
-
         if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill {
           DrillNoteView(drill: drill)
         }
@@ -287,9 +277,7 @@ struct QuestionBlockView: View {
   private func feedback(
     _ feedback: PracticeFeedback, answer: PracticeAnswer, question: PracticeQuestion
   ) -> some View {
-    let mark: AnswerOptionResult = feedback.isCorrect ? .right : .wrong
-
-    return VStack(alignment: .leading, spacing: 12) {
+    VStack(alignment: .leading, spacing: 12) {
       PracticeFeedbackPanel(
         verdict: verdict(feedback, answer: answer),
         streak: feedback.isCorrect ? feedback.hyperdrive.streak : 0,
@@ -300,14 +288,6 @@ struct QuestionBlockView: View {
       ) {
         DrillAnswerNotes(
           drill: run.drill, notSure: answer.isDontKnow, timedOut: run.timedOut, trap: feedback.trap)
-
-        if let machine = question.timeMachine {
-          QuestionNote(systemImage: "clock.arrow.circlepath") {
-            Text(
-              TimeMachineText.line(
-                machine, result: mark, format: question.format, labels: run.detail.trueFalseLabels))
-          }
-        }
 
         MistakeMovedNote(feedback: feedback)
       }
@@ -535,7 +515,7 @@ private struct MistakeMovedNote: View {
     } else if feedback.savedToNotebook {
       QuestionNote(systemImage: "square.and.pencil") {
         Text(
-          "Saved to your mistakes\u{00A0}· it comes back tomorrow", tableName: "Practice",
+          "Saved to your mistakes", tableName: "Practice",
           comment: "After a wrong answer saved to the mistakes notebook.")
       }
     }

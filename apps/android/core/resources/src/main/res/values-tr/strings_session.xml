@@ -63,7 +63,6 @@
   "session_review_intro_title": "2d860fd9e12b60f300d7c99855001470ec94526e4da2216e142afb305943cd99",
   "session_review_intro_weakest": "981ffa8d99ddbdb3787d2220e5713dced40a07ada1f2ecf59f37c100d5636b78",
   "session_review_intro_weakest_title": "cc72dc05c79a58472724d2f24f347ba967f88c22f303e409c56a68c9ae1b19ad",
-  "session_summary_back_on": "c2de87d323ba450b33284ff166e6a050fd7fd712f676a60fe1508a9f90630974",
   "session_summary_brain_power": "2beab43192169abbf19c318bc112b0773471261a551b4aa9a1195ebe6be6abe5",
   "session_summary_buddy_happy": "f2e4a19a6742402f8f1a3c7688c7de674aeb68875601ba60b8ebc8d00d678819",
   "session_summary_create_account": "0a0ee76d7742ad1742155a655f0f0bea082b37b572d94285b0581480e75adb8f",
@@ -183,7 +182,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Tekrar edilecek</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Tekrar tarihleri: %1$s</string>
     <string name="session_summary_brain_power">Beyin Gücü</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

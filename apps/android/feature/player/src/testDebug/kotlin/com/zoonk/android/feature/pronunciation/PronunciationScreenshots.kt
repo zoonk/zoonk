@@ -108,12 +108,6 @@ class PronunciationScreenshots {
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun galaxyFold() = capture("galaxy-fold", fold = true)
 
-    private val comesBack: PronunciationAnswerGrade =
-        ApiJson.decodeFromString(
-            PronunciationAnswerGrade.serializer(),
-            """{"attemptId":"00000000-0000-4000-8000-000000000099","isCorrect":false,"nextReviewAt":"2026-11-02T12:00:00Z","transcript":"ola"}""",
-        )
-
     private val words =
         arrayOf(
             word(1, "hola", respelling = "OH-lah", tip = "The **h** is silent: start the word on the vowel."),
@@ -123,7 +117,7 @@ class PronunciationScreenshots {
     private val states: List<State> =
         listOf(
             State("word"),
-            State("wrong", listOf(comesBack)),
+            State("wrong", listOf(grade(isCorrect = false, transcript = "ola"))),
             State("right", listOf(grade(isCorrect = true))),
             State("no-speech", listOf(null)),
             State("practice-done", listOf(grade(isCorrect = true)), skips = 2),

@@ -22,7 +22,6 @@ function result(checked = true): LessonStepCheckResult {
     feedback: "The original answer was checked.",
     isCorrect: checked,
     keyPoints: null,
-    nextReviewAt: null,
     savedMistake: false,
     score: null,
     spelling: null,

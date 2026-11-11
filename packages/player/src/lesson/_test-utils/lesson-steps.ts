@@ -128,7 +128,6 @@ export function stepResult(isCorrect: boolean): LessonStepResult {
     heard: null,
     isCorrect,
     keyPoints: null,
-    nextReviewAt: null,
     savedMistake: false,
     score: null,
     spelling: null,
