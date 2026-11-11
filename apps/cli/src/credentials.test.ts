@@ -1,4 +1,4 @@
-import { mkdtempSync, readdirSync, rmSync, statSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -42,6 +42,18 @@ describe("credentials file", () => {
     expect(permissions(file)).toBe("600");
     expect(permissions(dirname(file))).toBe("700");
     expect(readdirSync(dirname(file))).toStrictEqual(["credentials.db"]);
+  });
+
+  it("makes an existing folder and database owner-only before saving to them", async () => {
+    const file = createCredentialsFile();
+
+    mkdirSync(dirname(file), { mode: 0o755, recursive: true });
+    writeFileSync(file, "", { mode: 0o644 });
+
+    await saveLogin({ file, login: login("production"), origin: PRODUCTION });
+
+    expect(permissions(dirname(file))).toBe("700");
+    expect(permissions(file)).toBe("600");
   });
 
   it("rolls back a change that fails, and removes only the API's login it's asked to", async () => {

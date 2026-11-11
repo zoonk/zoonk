@@ -94,6 +94,16 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("keeps what to print beside the request", () => {
+    expect(parseInvocation(["staff", "models", "Goal", "Plan"]).command).toMatchObject({
+      shape: { kind: "models", names: ["Goal", "Plan"] },
+    });
+
+    expect(
+      parseInvocation(["staff", "list", "Goal", "--fields", "id, status,createdAt"]).command,
+    ).toMatchObject({ shape: { fields: ["id", "status", "createdAt"], kind: "fields" } });
+  });
+
   it("reads --api on any command", () => {
     expect(parseInvocation(["logout", "--api", "http://localhost:3001"])).toStrictEqual({
       apiUrl: "http://localhost:3001",
@@ -113,6 +123,8 @@ describe(parseInvocation, () => {
     [["staff", "users", "search"]],
     [["staff", "drop", "Goal"]],
     [["staff", "list", "Goal", "--unknown"]],
+    [["staff", "count", "Goal", "--fields", "id"]],
+    [["staff", "list", "Goal", "--fields", ","]],
   ])("rejects %j as wrong usage", (argv) => {
     expect(() => parseInvocation(argv)).toThrow(
       expect.objectContaining({ exitCode: EXIT_CODES.usage }),
