@@ -3,7 +3,7 @@ import { withItemRules } from "./item-rules";
 
 vi.mock("./item-rules.prompt.md", () => ({
   default:
-    "# Good\n\n- Concrete.{{FIELD_RULE}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
+    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
 }));
 
 vi.mock("./item-rules/field.prompt.md", () => ({ default: "Set in `FIELD`.\n" }));
@@ -67,6 +67,16 @@ describe(withItemRules, () => {
     );
 
     expect(prompt).not.toContain("{{");
+  });
+
+  it("tells a writer to avoid the skill's used situations only when it has some", () => {
+    const scope = { field: false, formats: ["trueFalse"], languageGoal: false } as const;
+
+    expect(withItemRules("# Role", { ...scope, usedSituations: true })).toContain(
+      "- Concrete.\n- Not a used situation.\n- In `LANGUAGE`.",
+    );
+
+    expect(withItemRules("# Role", scope)).not.toContain("used situation");
   });
 
   it("tells a numeric writer its questions never point at a picture, without the picture rules", () => {

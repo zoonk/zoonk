@@ -42,6 +42,7 @@ async function writeItemSetStep({
       description: skill.description,
       level: skill.level ?? "intermediate",
       name: skill.name,
+      usedSituations: skill.usedSituations,
     })),
     targetLanguage: first.targetLanguage,
     usedTitles,
