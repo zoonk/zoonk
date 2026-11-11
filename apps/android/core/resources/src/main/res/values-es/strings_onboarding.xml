@@ -452,10 +452,9 @@
   "onboarding_understood_title": "0733997fa284a5930af7277926b4a8493b00745508611e499d3899d1a22b0705",
   "onboarding_upload_file": "2f78e32c7d3b491cd5046b37d22b9f1c7fc3baee73f924812994d7a455c2bde1",
   "onboarding_use_this_date": "ea34a1348e0ffc4e1aa140aa2d73b0c82aaabb06b22a900ca6c98843161e8728",
-  "onboarding_variety_description": "7c69a1caec4e92c7717c467423e533b620e137ce05c6ebd4f0106b7c38029258",
+  "onboarding_variety_description": "d6cf879f0e397a626177a7c891ac540695718f7b296e5b5ab114b0bdac379537",
   "onboarding_variety_none": "a9ee9a8bd1e4dc7e185539be615fe955ca53bb663affacbaa88db673bd0b41e0",
   "onboarding_variety_note": "b80c721331e82e48cb22304cbc72dad536b0503cf83f1d639d6bb8521164b7cf",
-  "onboarding_variety_taught": "ce9d690ee7491f614187d41a32cddcb95c28c3896c0900e8a3469121b1cd7d5c",
   "onboarding_waitlist_joined": "fe147b16a5ed805821d33d01a6697e46b9cb90d1ac8f33cd0a7fba6af6a14e84",
   "onboarding_waitlist_sign_in": "d94706508e24947285f3ea31093d2cb6f723c7ab4cb97daeef4917d3c2ecca17",
   "onboarding_weekend_time": "52184c273b77c2e4dde76bc1f8699af2f8a4a781f21bdec542df94f896db23f4",
@@ -1143,12 +1142,10 @@
     </plurals>
     <string name="onboarding_reason_choices">Por qué aprendes este idioma</string>
     <string name="onboarding_aim_description">Hasta dónde llega tu curso, lo que define cuánto dura tu plan.</string>
-    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows. -->
-    <string name="onboarding_variety_description">Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones no cambian.</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
+    <string name="onboarding_variety_description">Tu compañero y las llamadas de práctica usan la forma de hablar del país que elijas. Las lecciones y su audio usan %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">Sin preferencia</string>
-    <!-- Beside the country whose way of speaking the lessons and their audio teach, such as "Mexico · Lessons use this variety". -->
-    <string name="onboarding_variety_taught">Las lecciones usan esta variante</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">Tu compañero y las llamadas de práctica usan %1$s. Las lecciones y su audio usan %2$s.</string>
 </resources>

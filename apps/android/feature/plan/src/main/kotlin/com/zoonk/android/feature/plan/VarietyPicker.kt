@@ -29,7 +29,6 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.varietyName
 import com.zoonk.android.ui.format.varietyNameInSentence
 import com.zoonk.api.models.RegionChoice
@@ -95,12 +94,12 @@ fun VarietySheet(
     failed: Boolean = false,
 ) {
     val title = stringResource(R.string.onboarding_row_language)
-    val note = varietyNote(LocalResources.current, currentLocale(), variety.language, variety.region, variety.taughtRegion)
+    val locale = currentLocale()
+    val note = varietyNote(LocalResources.current, locale, variety.language, variety.region, variety.taughtRegion)
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
-    val taught = stringResource(R.string.onboarding_variety_taught)
     val choices =
         listOf(Choice(NO_REGION, stringResource(R.string.onboarding_variety_none))) +
-            variety.choices.map { Choice(it.code, if (it.taught) listOf(it.name, taught).factsLine() else it.name) }
+            variety.choices.map { Choice(it.code, it.name) }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -110,7 +109,10 @@ fun VarietySheet(
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
             // A language's countries run past the screen, so the error shows up here, where the learner is reading.
             Text(
-                note ?: stringResource(R.string.onboarding_variety_description),
+                note ?: stringResource(
+                    R.string.onboarding_variety_description,
+                    varietyNameInSentence(variety.language, variety.taughtRegion, locale),
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )

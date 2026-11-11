@@ -191,7 +191,7 @@ private fun MenuItems(
                         )
                     }
                 },
-                leadingIcon = { GoalMark(name) },
+                leadingIcon = { GoalMark(name, goal.languageFlag) },
                 onClick = {
                     onDismiss()
                     if (goal.locked) {

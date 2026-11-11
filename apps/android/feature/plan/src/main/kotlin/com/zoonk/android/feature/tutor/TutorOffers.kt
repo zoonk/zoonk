@@ -390,9 +390,10 @@ private fun VarietyOffer(
                     varietyNameInSentence(offer.targetLanguage, offer.targetRegion, locale),
                 ),
         tile = {
-            flagEmoji(
-                offer.targetRegion,
-            )?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) }
+            offer.languageFlag
+                ?.let(
+                    ::flagEmoji,
+                )?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) }
         },
         modifier = modifier,
     ) {
