@@ -117,6 +117,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Up next</string>
     <string name="session_next_start">Start</string>
+    <string name="session_next_continue">Continue</string>
+    <string name="session_review_intro_title">How reviews work</string>
+    <string name="session_review_intro_forget_title">Just before you forget</string>
+    <string name="session_review_intro_forget">Each idea you study comes back right before you\'d start to forget it.</string>
+    <string name="session_review_intro_spacing_title">Right answers wait longer</string>
+    <string name="session_review_intro_spacing">Get it right and it returns in days, then weeks, then months. Miss it and it\'s back sooner.</string>
+    <string name="session_review_intro_short_title">First, and always short</string>
+    <string name="session_review_intro_short">Reviews open your session and take a small part of it, even after days away.</string>
+    <string name="session_review_intro_weakest_title">Your hardest topics today</string>
+    <string name="session_review_intro_weakest">Nothing is close to being forgotten, so you practice what\'s been hardest for you.</string>
+    <string name="session_review_intro_first_week">A few quick questions to check what you already know.</string>
     <string name="session_next_writing_note">This lesson is being written for you. It\'s usually ready in a few minutes.</string>
     <string name="session_next_lesson_ready">Your lesson is ready.</string>
     <string name="session_next_stop">Stop for today</string>

@@ -10,10 +10,14 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.SESSION
 import com.zoonk.android.feature.session.StudyOpener
+import com.zoonk.android.feature.session.blockId
 import com.zoonk.android.feature.session.day
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.opening
 import com.zoonk.android.feature.session.step
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -134,6 +138,47 @@ class TodayTapTest {
             advanceUntilIdle()
 
             assertEquals(1, shownRoutes(viewModel).size)
+        }
+
+    /** Opening a block starts it, so the intro's reading time would count as study and coming back would skip the intro. */
+    @Test
+    fun aReviewThatHasntStartedWaitsOnItsIntroWithoutOpeningAndOneUnderWayGoesOn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val review = { status: StudyBlock.Status ->
+                step(0, status, StudyBlock.Kind.REVIEW, StudyBlock.Screen.SESSION, lessonId = null)
+            }
+            val pending = TodayRead.Day(read.today, day(listOf(review(StudyBlock.Status.PENDING), step(1))))
+            val active = TodayRead.Day(read.today, day(listOf(review(StudyBlock.Status.ACTIVE), step(1))))
+            val routes = shownRoutes(viewModel)
+
+            viewModel.open(pending, pending.day.steps[0], next = true)
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
+            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), routes.single().route)
+
+            viewModel.open(active, active.day.steps[0], next = true)
+            advanceUntilIdle()
+
+            assertEquals(1, api.targets.size)
+        }
+
+    @Test
+    fun pendingSavedMissionWaitsForStartWithoutOpening() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val review = step(0, StudyBlock.Status.PENDING, StudyBlock.Kind.REVIEW, StudyBlock.Screen.SESSION, lessonId = null)
+            val pending = TodayRead.Day(read.today, day(listOf(review, step(1))))
+            val routes = shownRoutes(viewModel)
+
+            viewModel.openMission(pending, pending.day.steps[0])
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
+            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), routes.single().route)
         }
 
     @Test

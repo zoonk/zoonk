@@ -51,6 +51,8 @@ export type DayEntry = {
   shown: boolean;
   step: TapStep;
   tappedAt: number;
+  /** Nothing was sent: the step's intro shows at once from the tapping screen's day and waits for Start. */
+  waiting: boolean;
 };
 
 /**
@@ -96,6 +98,14 @@ function isCurrent({ entry, href, learner }: EntryScope & { entry: DayEntry }) {
 
 type DrawnDay<Step> = { blocks: readonly Step[]; goalId: string; localDate: Date };
 
+function getTapState(entry: DayEntry): NextStopTap["state"] {
+  if (entry.waiting) {
+    return "waiting";
+  }
+
+  return entry.result?.kind === "failed" ? "failed" : "opening";
+}
+
 export function findDayTap<Step extends { position: number; status: string }>({
   day,
   ...scope
@@ -122,10 +132,6 @@ export function findDayTap<Step extends { position: number; status: string }>({
 
   return {
     step,
-    tap: {
-      focus: entry.focusMain,
-      state: entry.result?.kind === "failed" ? "failed" : "opening",
-      tappedAt: entry.tappedAt,
-    },
+    tap: { focus: entry.focusMain, state: getTapState(entry), tappedAt: entry.tappedAt },
   };
 }

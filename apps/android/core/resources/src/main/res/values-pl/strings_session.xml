@@ -33,6 +33,7 @@
   "session_energy_glowing_brightest": "bc253dbfb109fc451efcd8d34b13bd9dbef8da0be1a4bd22e904e86a9604eeb8",
   "session_energy_max": "8039dbaa9155faad2634f524ccf4f22e6de8b24b28498d64548cfb70bd35ddaa",
   "session_level_up": "c49e9a73aef147f56813d6647b8503999c58a24cc3f64950aa97450ff1ccb247",
+  "session_next_continue": "385c215cdc80d2ba9ee24cdcb0ed792307e02af80c3c5228e77fd7538497b4ab",
   "session_next_eyebrow": "b54554310c6bdd3115b4598593a4ae3684446beb8ef0db191c760a116d3af137",
   "session_next_instead": "cce2e5f92a79d316b554ff8fff9d7d05accb2efdd8b200d08b84d74f2909d906",
   "session_next_lesson_ready": "7017293e93ab36301a39823cfa24a0de21e4437d65d28cbb476fe0c82a20d24c",
@@ -43,6 +44,16 @@
   "session_next_writing_note": "1dbdadc18c38c750f31ca23da6bc6e75dd8d3b73c39b7ea575b44c136581e64d",
   "session_opening_slow": "4b6f50356710d35c756a2a9ce21d829ff9330da21f1cc01b9d011c83b67c0a40",
   "session_opening_very_slow": "e5426a44182d4879e9e8a8fc1e1d3166698eb68cf2c79947aceb2213d4fd576c",
+  "session_review_intro_first_week": "43d6fd7cb98ae06b7a74e0bd3b2be72d41a930178ca4c3cc9ae4b04b9a26935f",
+  "session_review_intro_forget": "428953dd9577c1a968dfb1980157e30709502263eca92c9f912d7e632a084bc4",
+  "session_review_intro_forget_title": "21d97b2bfe23ff82b90f5406578e767d96450bec6d3912111999e8f7856e5812",
+  "session_review_intro_short": "4d27740e604bc975964dee62e1996dc90c8d12b750f508c212e4f9392e76e8a9",
+  "session_review_intro_short_title": "2f4ba26f72dcf6be4fa3fbacdd685d754e915e01e47cf1519b50a580ee209144",
+  "session_review_intro_spacing": "4f2e518282fe7aa4896ce0f6e32c7e1ae45d6bc3b68fddb454cdf295470efab3",
+  "session_review_intro_spacing_title": "bd03141ac0ec08fc9e8571ab7b296b9bc8b04c891516bf59ee611d22b30b9b92",
+  "session_review_intro_title": "6b4eac816aa50b7cfe47ecb006f17a8610f7593bc357ae892e477ce57933587c",
+  "session_review_intro_weakest": "865a358f29d3e00df244ca0d03c3afc921d151711e9f543bdd4a50387d793a0a",
+  "session_review_intro_weakest_title": "41f091b4bf49b4d4ecc2ebb0b6e1e89f9ad5e5a03f30ec9f12e089bd49ba943c",
   "session_summary_brain_power": "46ea1462e8e8e2363c23061978f70c3299fa0b67b79566d37e36500c94f1d151",
   "session_summary_buddy_happy": "5872f893b2f2c5e555c7bc18cb3c79136a736563587b649c3f4ce0d466e75a7e",
   "session_summary_create_account": "03800ee0ab9eda10bb738dd4afc61f3f445498bbb27e4221f5523c584b6544d3",
@@ -211,6 +222,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Następny krok</string>
     <string name="session_next_start">Zacznij</string>
+    <string name="session_next_continue">Kontynuuj</string>
+    <string name="session_review_intro_title">Jak działają powtórki</string>
+    <string name="session_review_intro_forget_title">Tuż przed zapomnieniem</string>
+    <string name="session_review_intro_forget">Każde zagadnienie, którego się uczysz, wraca tuż przed tym, jak zaczniesz je zapominać.</string>
+    <string name="session_review_intro_spacing_title">Dłuższa przerwa po poprawnej odpowiedzi</string>
+    <string name="session_review_intro_spacing">Po poprawnej odpowiedzi zagadnienie wraca po kilku dniach, potem po kilku tygodniach, a w końcu po kilku miesiącach. Po pomyłce wraca szybciej.</string>
+    <string name="session_review_intro_short_title">Na początek, zawsze krótko</string>
+    <string name="session_review_intro_short">Powtórki rozpoczynają naukę i zajmują tylko jej niewielką część, nawet po kilku dniach przerwy.</string>
+    <string name="session_review_intro_weakest_title">Najtrudniejsze dla ciebie tematy na dziś</string>
+    <string name="session_review_intro_weakest">Na razie wszystko dobrze pamiętasz, więc ćwiczysz to, co dotąd sprawiało ci najwięcej trudności.</string>
+    <string name="session_review_intro_first_week">Kilka krótkich pytań, żeby sprawdzić, co już wiesz.</string>
     <string name="session_next_writing_note">Przygotowujemy dla ciebie tę lekcję. Zwykle jest gotowa w ciągu kilku minut.</string>
     <string name="session_next_lesson_ready">Twoja lekcja jest gotowa.</string>
     <string name="session_next_stop">Zakończ na dziś</string>

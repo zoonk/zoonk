@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { formatClock } from "../../_utils/clock";
-import { deviceStorage } from "../../_utils/device-storage";
+import { deviceStorage, subscribeToDeviceStorage } from "../../_utils/device-storage";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useTimeLeft } from "../../_utils/use-time-left";
 
@@ -21,11 +21,6 @@ function getStorageKey(cardId: string): string {
 function readStartedAt(cardId: string): number | null {
   const value = Number(deviceStorage.get(getStorageKey(cardId)));
   return value > 0 && Date.now() - value < STALE_MINUTES * MS_PER_MINUTE ? value : null;
-}
-
-function subscribeToStorage(onChange: () => void) {
-  globalThis.addEventListener("storage", onChange);
-  return () => globalThis.removeEventListener("storage", onChange);
 }
 
 function PrepTimeLeft({ deadline }: { deadline: number }) {
@@ -72,7 +67,7 @@ export function PrepTimer({
   const clock = useRef<HTMLDivElement>(null);
   // The device's copy, read after hydration so the server's render and the first one match.
   const saved = useSyncExternalStore(
-    subscribeToStorage,
+    subscribeToDeviceStorage,
     () => readStartedAt(cardId),
     () => null,
   );

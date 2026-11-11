@@ -227,8 +227,7 @@ extension ProgressWeekday {
   private func capitalized(_ symbols: KeyPath<Calendar, [String]>, locale: Locale) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
-    let name = calendar[keyPath: symbols][sundayIndex]
-    return name.prefix(1).uppercased(with: locale) + name.dropFirst()
+    return calendar[keyPath: symbols][sundayIndex].labelCased(locale)
   }
 
   private var sundayIndex: Int {

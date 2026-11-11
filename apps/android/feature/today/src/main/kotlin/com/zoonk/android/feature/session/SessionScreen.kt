@@ -92,6 +92,7 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.delay
@@ -135,7 +136,7 @@ fun SessionScreen(
 
     when {
         sessionId != null -> {
-            SavedDay(app, navigator, viewModel, route, sessionId, goal = todayDay?.today?.goal)
+            SavedDay(app, navigator, viewModel, route, sessionId, todayDay)
         }
 
         shown != null -> {
@@ -175,14 +176,22 @@ private fun SavedDay(
     viewModel: SessionViewModel,
     route: AppRoute.Session,
     sessionId: UUID,
-    goal: TodayGoal?,
+    todayDay: TodayRead.Day?,
 ) {
     val read by app.studySessions.day[sessionId].collectShown()
+    val loading = read == LoadState.Idle || read == LoadState.Loading
+    // A tap on Today names a step of the saved day Today holds: it shows at once, and the session's read replaces it.
+    val held =
+        todayDay
+            ?.today
+            ?.session
+            ?.saved()
+            ?.takeIf { loading && it.id == sessionId && it.opened(route.blockId) != null }
+    val session = read.value ?: held
 
-    when (val state = read) {
-        is LoadState.Loaded -> {
-            val session = state.value
-            val opened = session.blocks.firstOrNull { it.id.toString() == route.blockId && it.status in OPEN }
+    when {
+        session != null -> {
+            val opened = session.opened(route.blockId)
             val step = opened ?: session.blocks.firstOrNull { it.id == session.nextBlockId }
             if (route.stopped || step == null) {
                 SessionSummaryContent(
@@ -191,7 +200,12 @@ private fun SavedDay(
                     viewModel,
                     session,
                     stopped = route.stopped,
-                    goalKind = goal?.takeIf { it.id == session.goalId }?.kind,
+                    goalKind =
+                        todayDay
+                            ?.today
+                            ?.goal
+                            ?.takeIf { it.id == session.goalId }
+                            ?.kind,
                 )
             } else {
                 NextStop(
@@ -210,13 +224,13 @@ private fun SavedDay(
             }
         }
 
-        is LoadState.Failed -> {
+        read is LoadState.Failed -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
                 LoadFailedMessage(onRetry = { app.studySessions.day[sessionId].invalidate() }, modifier = Modifier.padding(padding))
             }
         }
 
-        LoadState.Empty -> {
+        read == LoadState.Empty -> {
             TaskNotFound(navigator)
         }
 
@@ -225,6 +239,16 @@ private fun SavedDay(
         }
     }
 }
+
+private fun StudyDay.saved(): StudySession? =
+    when (this) {
+        is StudyDay.ActiveWrapper -> value
+        is StudyDay.CompletedWrapper -> value
+        is StudyDay.PlannedWrapper -> value
+        is StudyDay.UnstartedWrapper -> null
+    }
+
+private fun StudySession.opened(blockId: String?): StudyBlock? = blocks.firstOrNull { it.id.toString() == blockId && it.status in OPEN }
 
 @Composable
 private fun SessionSummaryContent(
@@ -361,6 +385,8 @@ internal fun NextStop(
         val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
         val startFocus = remember { FocusRequester() }
         var screenFocused by remember { mutableStateOf(false) }
+        val reviewStarts = rememberReviewStarts()
+        val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
         val instead = alternative?.takeIf { !ready && goalId != null }
 
         LaunchedEffect(step.position, waiting, step.screen) {
@@ -409,6 +435,7 @@ internal fun NextStop(
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
                                 else -> Unit
                             }
+                            OpeningWaitLine(opening)
                             TaskActions { main ->
                                 onStop?.let {
                                     // Main stacks the actions on a narrow layout once an alternative joins them.
@@ -424,12 +451,23 @@ internal fun NextStop(
                                     LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
                                     Button(
                                         busy = viewModel.busy == SessionAction.Start,
-                                        onClick = { viewModel.start(day, step, goal) },
+                                        onClick = {
+                                            reviewStarts.note(step, goal)
+                                            viewModel.start(day, step, goal)
+                                        },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
                                         leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
-                                        Text(stringResource(R.string.session_next_start))
+                                        Text(
+                                            stringResource(
+                                                if (step.status == StudyBlock.Status.ACTIVE) {
+                                                    R.string.session_next_continue
+                                                } else {
+                                                    R.string.session_next_start
+                                                },
+                                            ),
+                                        )
                                     }
                                 }
                                 instead?.let { other ->
@@ -493,6 +531,7 @@ internal fun NextStop(
                                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                             }
                             StepFacts(step)
+                            ReviewIntro(step, reviewStarts.openAtFirst(goalId), Modifier.padding(top = 16.dp))
                             if (written && !hold.holding) {
                                 Text(
                                     stringResource(R.string.session_next_lesson_ready),

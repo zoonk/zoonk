@@ -33,6 +33,7 @@
   "session_energy_glowing_brightest": "3d7f63dd542af838220c8ac7d0307178ecdd1e7670a6b4d8c22cffc724df49d4",
   "session_energy_max": "07721fa57250c8d5b0fc9f15119aa47b22da7bc748ed8f6bdae323055eb4e50c",
   "session_level_up": "69bff6ac7520bcd59a6a4f3438173ba28d274b11051b3472778367ce2f7b00b4",
+  "session_next_continue": "a1acc9a6160e497ac262238e9acc08d0d544a0dedb634aec0ee1b92989cbd215",
   "session_next_eyebrow": "517dd79150fef8c3955d2902b0232b4701abefea045141c1c87c64f581cb5f52",
   "session_next_instead": "c3caac22eeeb7d774dfb2afff9037d5e2ec703980e14ab75b8cc820ff43619e4",
   "session_next_lesson_ready": "ce9735361a0434fb41aaacffa5e1b0de7c50ff0ef3c13a8461ea42f86b1da322",
@@ -43,6 +44,16 @@
   "session_next_writing_note": "57d0dfdc8fb066a5d00b1123b61622649fa8d00cae5e07ac5650059a9571a8f5",
   "session_opening_slow": "aa37c18d87444b6d187057ed23d13daddf917d98b2b45364680e2aeaa09f1cb2",
   "session_opening_very_slow": "844133ffa61653d54a2358e31352e77921d6e5325cc126f2c35f4a236ad58264",
+  "session_review_intro_first_week": "3be89569ef0459312154a175e4560fdafe4d27fc5667789b7b6af962e3753da8",
+  "session_review_intro_forget": "cf08805b69b50a6d424a7528ec6a56b71e93f03aaf7e715b03fd91d080cf9b29",
+  "session_review_intro_forget_title": "3a8efdbec903124e15cc08bfa779a98e4cb8f5b7a50e16e6f70cf49c5c39253e",
+  "session_review_intro_short": "a7218a48c39aeb70aeacbeb1c95b2dc0a467002a69f7f7456105d67d4d0b1a69",
+  "session_review_intro_short_title": "18c039b4c59c25c0523a848e349e54e2e5cbec6b178e7acb480487ac7946337b",
+  "session_review_intro_spacing": "ae81673982ed060c067c30520e0de3b97766cd507ae54ae0603e864897c5e672",
+  "session_review_intro_spacing_title": "cfc1e84352c3b201e46bae77e88e10cafd3c75103bab919963bdfdb700b16129",
+  "session_review_intro_title": "2d860fd9e12b60f300d7c99855001470ec94526e4da2216e142afb305943cd99",
+  "session_review_intro_weakest": "981ffa8d99ddbdb3787d2220e5713dced40a07ada1f2ecf59f37c100d5636b78",
+  "session_review_intro_weakest_title": "cc72dc05c79a58472724d2f24f347ba967f88c22f303e409c56a68c9ae1b19ad",
   "session_summary_brain_power": "2beab43192169abbf19c318bc112b0773471261a551b4aa9a1195ebe6be6abe5",
   "session_summary_buddy_happy": "f2e4a19a6742402f8f1a3c7688c7de674aeb68875601ba60b8ebc8d00d678819",
   "session_summary_create_account": "0a0ee76d7742ad1742155a655f0f0bea082b37b572d94285b0581480e75adb8f",
@@ -191,6 +202,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Sıradaki</string>
     <string name="session_next_start">Başla</string>
+    <string name="session_next_continue">Devam et</string>
+    <string name="session_review_intro_title">Tekrarlar nasıl işler</string>
+    <string name="session_review_intro_forget_title">Unutmadan hemen önce</string>
+    <string name="session_review_intro_forget">Çalıştığın her kavram, tam unutmaya başlayacakken tekrar karşına çıkar.</string>
+    <string name="session_review_intro_spacing_title">Doğru cevapladıkların daha geç tekrarlanır</string>
+    <string name="session_review_intro_spacing">Doğru cevapladıkça tekrarlar arasındaki süre günlerden haftalara, sonra aylara uzar. Yanlış cevaplarsan daha erken karşına çıkar.</string>
+    <string name="session_review_intro_short_title">En başta ve her zaman kısa</string>
+    <string name="session_review_intro_short">Günlerce ara versen bile tekrarlar çalışmanın başında yer alır ve yalnızca küçük bir kısmını kaplar.</string>
+    <string name="session_review_intro_weakest_title">Bugün en çok zorlandığın konular</string>
+    <string name="session_review_intro_weakest">Şu an unutmak üzere olduğun bir konu yok, bu yüzden en çok zorlandığın konuları çalışıyorsun.</string>
+    <string name="session_review_intro_first_week">Zaten bildiklerini kontrol etmek için birkaç kısa soru.</string>
     <string name="session_next_writing_note">Bu dersi senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur.</string>
     <string name="session_next_lesson_ready">Dersin hazır.</string>
     <string name="session_next_stop">Bugünlük bitir</string>

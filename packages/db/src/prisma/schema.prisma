@@ -3,6 +3,11 @@ generator client {
   output   = "../generated/prisma"
 }
 
+generator metadata {
+  provider = "node ./src/prisma/generate-metadata.mts"
+  output   = "../generated/metadata"
+}
+
 datasource db {
   provider = "postgresql"
 }

@@ -22,18 +22,27 @@ struct MeterParts: View {
   private let minimumWidth = 4.0
   private let ringWidth = 1.5
 
+  /// Where each part sits across a bar this wide, so a caller can lay a control over each one.
+  func spans(width: Double) -> [(x: Double, width: Double)] {
+    let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
+    let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
+    let sharedWidth = max(width - fixedWidth, 0)
+    var x = 0.0
+
+    return parts.map { part in
+      let share = totalWeight > 0 ? max(part.weight, 0) / totalWeight : 0
+      let span = (x: x, width: minimumWidth + sharedWidth * share)
+      x += span.width + gap
+      return span
+    }
+  }
+
   var body: some View {
     Canvas { context, size in
-      let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
-      let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
-      let sharedWidth = max(size.width - fixedWidth, 0)
       let radius = min(3, height / 2)
-      var x = 0.0
 
-      for part in parts {
-        let share = totalWeight > 0 ? max(part.weight, 0) / totalWeight : 0
-        let rect = CGRect(
-          x: x, y: 0, width: minimumWidth + sharedWidth * share, height: size.height)
+      for (part, span) in zip(parts, spans(width: size.width)) {
+        let rect = CGRect(x: span.x, y: 0, width: span.width, height: size.height)
 
         switch part.fill {
         case .track:
@@ -58,8 +67,6 @@ struct MeterParts: View {
                 size: CGSize(width: rect.width * min(max(filled, 0), 1), height: rect.height))),
             with: .color(.success))
         }
-
-        x = rect.maxX + gap
       }
     }
     .frame(height: height)

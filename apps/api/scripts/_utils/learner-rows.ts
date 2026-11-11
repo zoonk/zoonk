@@ -12,7 +12,8 @@ const NOT_LEARNING = new Set([
   "subscriptions",
 ]);
 
-const ANONYMOUS_PREFIX = "anonymous_";
+/** Anonymous stats name no learner, and a copy never carries the CLI logins of its source. */
+const NOT_LEARNING_PREFIXES = ["anonymous_", "oauth_"];
 
 type ForeignKey = { cascades: boolean; child: string; column: string; parent: string };
 
@@ -32,7 +33,9 @@ export function quoteName(name: string): string {
 }
 
 function isLearning(table: string): boolean {
-  return !NOT_LEARNING.has(table) && !table.startsWith(ANONYMOUS_PREFIX);
+  return (
+    !NOT_LEARNING.has(table) && !NOT_LEARNING_PREFIXES.some((prefix) => table.startsWith(prefix))
+  );
 }
 
 async function readForeignKeys(): Promise<ForeignKey[]> {
@@ -52,8 +55,10 @@ async function readForeignKeys(): Promise<ForeignKey[]> {
     WHERE key.contype = 'f' AND key.connamespace = current_schema()::regnamespace
   `);
 
-  // Copies remap ids, so every reference has to be one column pointing at an `id`.
-  const unsupported = keys.find((key) => key.columns !== 1 || key.referenced !== "id");
+  // Copies remap ids, so every reference a copied table holds has to be one column pointing at an `id`.
+  const unsupported = keys.find(
+    (key) => isLearning(key.child) && (key.columns !== 1 || key.referenced !== "id"),
+  );
 
   if (unsupported) {
     throw new Error(
