@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDecision, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { canLookUpLaw, getLawLookupToken, isOfficialSite } from "./law-identity";
 import { findStoredLawSource, isLawSource, readLawLookup, recordLawLookup } from "./law-sources";
+import { SOURCE_READ_VERSION } from "./source-contract";
 
 const DAY_MS = 86_400_000;
 
@@ -33,6 +34,7 @@ function storedLaw({
     extractedText: `${LAW_OPENING}\n${FIRST_ARTICLE}`,
     language: "pt",
     mimeType: "text/html",
+    readVersion: SOURCE_READ_VERSION,
     structure: { images: 0, pages: null, topic: "regulation" },
     title: `Lei nº 12.813 ${word}`,
     url: `https://${host}/ccivil_03/lei/${word}.htm`,
@@ -105,6 +107,15 @@ describe(findStoredLawSource, () => {
     await expect(findStoredLawSource(lawRequest(word))).resolves.toBeNull();
     expect(decideLibraryIdentity).not.toHaveBeenCalled();
     expect(cut.id).not.toBe(mirror.id);
+  });
+
+  it("never offers a copy an older reader stored, which cut laws short and kept revoked wording", async () => {
+    const word = uniqueWord();
+    const law = await storedLaw({ readVersion: 0, word });
+    mockDecision(law.id);
+
+    await expect(findStoredLawSource(lawRequest(word))).resolves.toBeNull();
+    expect(decideLibraryIdentity).not.toHaveBeenCalled();
   });
 });
 

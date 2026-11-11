@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getSourceValidUntil } from "./freshness-schedule";
 import { type LawRequest, isOfficialSite, toLawKey } from "./law-identity";
 import { getMaxTextLength } from "./parse-document";
+import { SOURCE_READ_VERSION } from "./source-contract";
 import {
   type ResearchSourceCandidate,
   type StoredSourcesRequest,
@@ -42,7 +43,10 @@ export async function recordLawLookup({
   });
 }
 
-/** A law is read from its official site's whole text: a cut text loses its last articles. */
+/**
+ * A law is read from its official site's whole text, read by the current reader: a cut text loses
+ * its last articles, and an older reader cut laws sooner and kept their revoked wording.
+ */
 function isWholeOfficialText({
   candidate,
   law,
@@ -54,6 +58,7 @@ function isWholeOfficialText({
     candidate.length !== null &&
     candidate.length > 0 &&
     candidate.length < getMaxTextLength("regulation") &&
+    candidate.readVersion === SOURCE_READ_VERSION &&
     isOfficialSite({ domains: law.officialDomains, url: candidate.url })
   );
 }

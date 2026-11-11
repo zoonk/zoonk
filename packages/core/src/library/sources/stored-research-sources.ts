@@ -52,12 +52,14 @@ const LEAD_CHARACTERS = 20_000;
 /** `length` is null for a document that stored no text, such as a PDF models read as a file. */
 export type ResearchSourceCandidate = LibraryIdentityCandidate & {
   length: number | null;
+  readVersion: number;
   url: string | null;
 };
 
 type CandidateRow = {
   id: string;
   length: number | null;
+  readVersion: number;
   lead: string | null;
   publisher: string | null;
   title: string;
@@ -92,6 +94,7 @@ export async function loadResearchSourceCandidates(
   const rows = await prisma.$queryRaw<CandidateRow[]>`
     SELECT s.id, s.title, s.publisher, s.url,
       char_length(s.extracted_text)::int AS length,
+      s.read_version AS "readVersion",
       left(s.extracted_text, ${LEAD_CHARACTERS}) AS lead
     FROM sources s
     WHERE s.id = ANY(${[...ids]}::uuid[])`;
@@ -105,6 +108,7 @@ export async function loadResearchSourceCandidates(
       url: row.url,
     },
     length: row.length,
+    readVersion: row.readVersion,
     url: row.url,
   }));
 }
