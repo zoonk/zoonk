@@ -412,7 +412,8 @@ struct TodayUploadRequestSection: View {
 }
 
 /// Main's `TodayFocusTest`: in a short exam plan's first week, the Focus test for a learner who
-/// hasn't started it. Answered, it stays while the learner is here to say what the answer did.
+/// hasn't started it. Answered with "Not now", it stays while the learner is here to say what the
+/// answer did; gone for any other reason, such as a test taken since, it's gone here too.
 struct TodayFocusTestSection: View {
   let goalID: String
   let offer: FocusTestSummary.Size?
@@ -426,7 +427,7 @@ struct TodayFocusTestSection: View {
   @State private var failed = false
 
   var body: some View {
-    if let shown = offer ?? kept {
+    if let shown = offer ?? (isDismissing || dismissed ? kept : nil) {
       Section {
         if dismissed {
           SuggestionLine {
