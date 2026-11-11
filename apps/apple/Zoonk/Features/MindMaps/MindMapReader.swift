@@ -1,9 +1,9 @@
 import SwiftUI
 
 /// Main's study reader: a goal's tab of maps one per screen, in syllabus order, from the tapped map
-/// or where this device last was. The deck is the one the page showed when it opened; a map saved or
-/// made meanwhile, or a goal switched in another window, doesn't move it. The last map's Next is
-/// Done.
+/// or where this device last was, in the lesson player's chrome. The deck is the one the page showed
+/// when it opened; a map saved or made meanwhile, or a goal switched in another window, doesn't move
+/// it. The last map's Next is Done.
 struct MindMapReader: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -39,23 +39,21 @@ struct MindMapReader: View {
       }
       .mindMapSaveFailureAlert(goalId: goalId)
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          } label: {
-            Label {
-              Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
-            } icon: {
-              Image(systemName: "xmark")
-            }
+      .taskClose {
+        Button(role: .close) {
+          dismiss()
+        } label: {
+          Label {
+            Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
+          } icon: {
+            Image(systemName: "xmark")
           }
-          .keyboardShortcut(.cancelAction)
         }
+        .keyboardShortcut(.cancelAction)
       }
     }
     .fullScreenCover(item: $zoomed) { map in
-      MindMapZoom(map: map)
+      MindMapZoom(map: map, goalId: goalId)
         .zoonkStyles()
     }
   }
@@ -70,7 +68,7 @@ struct MindMapReader: View {
   @ViewBuilder
   private func deck(_ maps: GoalMindMaps) -> some View {
     let cards = MindMapDeck.cards(tab: tab, maps: maps)
-    let index = current.flatMap { cards.firstIndex(of: $0) }
+    let index = current.flatMap { cards.firstIndex(of: $0) } ?? 0
 
     if cards.isEmpty {
       ContentUnavailableView {
@@ -84,18 +82,29 @@ struct MindMapReader: View {
       }
       .lonePage()
     } else {
-      ScrollView(.horizontal) {
-        LazyHStack(spacing: 0) {
-          ForEach(cards, id: \.self) { card in
-            page(card, maps: maps)
-              .containerRelativeFrame(.horizontal)
+      let title = title(current, maps: maps)
+      let save = current.flatMap { saveTarget($0, maps: maps) }
+
+      ScrollViewReader { proxy in
+        ScrollView(.horizontal) {
+          LazyHStack(spacing: 0) {
+            ForEach(cards, id: \.self) { card in
+              page(card, maps: maps)
+                .containerRelativeFrame(.horizontal)
+            }
           }
+          .scrollTargetLayout()
         }
-        .scrollTargetLayout()
+        .scrollTargetBehavior(.paging)
+        .scrollPosition(id: $current)
+        .scrollIndicators(.hidden)
+        // The position alone opens the deck on its first page under a resumed map's title, and a
+        // new width (rotating, resizing) leaves it between pages: both scroll to the map shown.
+        .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.width) { _, _ in
+          show(current, with: proxy)
+        }
+        .task { show(current, with: proxy) }
       }
-      .scrollTargetBehavior(.paging)
-      .scrollPosition(id: $current)
-      .scrollIndicators(.hidden)
       // The chapter of the map shown and the next one, read ahead.
       .loads(lessonResources(cards, around: index), refreshable: false)
       .onChange(of: current, initial: true) { _, card in
@@ -103,20 +112,38 @@ struct MindMapReader: View {
           store.remember(MindMapPosition(card), goalId: goalId, tab: tab)
         }
       }
-      .navigationTitle(title(current, maps: maps))
-      .navigationSubtitle(context(current, maps: maps))
-      .toolbar {
-        ToolbarItem(placement: .primaryAction) {
-          menu(cards, maps: maps)
+      .onKeyPress(.rightArrow) {
+        guard index < cards.count - 1 else {
+          return .ignored
         }
 
-        bottomBar(cards, index: index ?? 0, maps: maps)
+        move(to: cards[index + 1])
+        return .handled
+      }
+      .safeAreaBar(edge: .bottom) {
+        actionBar(cards, index: index)
+          .keepsOffFold()
+      }
+      // Previous is see-through, so a map scrolling under the bar stops at its edge.
+      .scrollEdgeEffectStyle(.hard, for: .bottom)
+      .navigationTitle(title)
+      .announcesStatus(title)
+      .taskAction(isShown: save != nil) {
+        if let save {
+          MindMapSaveButton(target: save.target, goalId: goalId, server: save.server)
+            .keyboardShortcut("s", modifiers: [])
+        }
+      }
+      .taskOptions(
+        label: Text("More options", tableName: "MindMaps", comment: "The reader's menu")
+      ) {
+        menuItems(cards)
       }
     }
   }
 
-  private func lessonResources(_ cards: [MindMapCard], around index: Int?) -> [any CachedResource] {
-    guard tab != .chapters, let index else {
+  private func lessonResources(_ cards: [MindMapCard], around index: Int) -> [any CachedResource] {
+    guard tab != .chapters else {
       return []
     }
 
@@ -143,7 +170,11 @@ struct MindMapReader: View {
     case .chapter(let chapterId):
       if let map = maps.chapter(chapterId) {
         ChapterMapPage(map: map) { image in
-          zoomed = ZoomedMap(url: image, title: map.title)
+          zoomed = ZoomedMap(
+            url: image,
+            target: SaveTarget(
+              key: MindMapKey(kind: .chapter, targetId: chapterId), title: map.title,
+              chapterId: chapterId))
         }
       }
     case .lesson(let chapterId, let lessonId):
@@ -152,12 +183,12 @@ struct MindMapReader: View {
       if let lesson = lessons.value?.lessons.first(where: { $0.lessonId == lessonId }),
         let summary = lesson.map
       {
-        ZoonkList {
-          Section {
-            LessonMapView(title: lesson.title, summary: summary)
-              .listRowSeparator(.hidden)
-          }
+        // The lesson player's map, as its last screen shows it, in the player's column.
+        ScrollView {
+          LessonMapView(title: lesson.title, summary: summary)
+            .taskColumn(alignment: .leading)
         }
+        .lonePage()
       } else if lessons.value != nil {
         ContentUnavailableView {
           Label {
@@ -203,106 +234,83 @@ struct MindMapReader: View {
     .lonePage()
   }
 
-  private func menu(_ cards: [MindMapCard], maps: GoalMindMaps) -> some View {
-    Menu {
-      Button {
-        move(to: cards.first)
-      } label: {
-        Label {
-          Text(
-            "Start from the first map", tableName: "MindMaps",
-            comment: "Goes back to the deck's first map")
-        } icon: {
-          Image(systemName: "arrow.uturn.backward")
-        }
-      }
-      .disabled(current == cards.first)
-
-      if let current {
-        Button {
-          router.open(.chapter(chapterId: current.chapterId))
-        } label: {
-          Label {
-            Text("Open chapter", tableName: "MindMaps", comment: "Opens the map's chapter page")
-          } icon: {
-            Image(systemName: "book.pages")
-          }
-        }
-
-        if case .lesson(_, let lessonId) = current {
-          Button {
-            router.open(.lesson(lessonId: lessonId))
-          } label: {
-            Label {
-              Text("Open lesson", tableName: "MindMaps", comment: "Opens the map's lesson")
-            } icon: {
-              Image(systemName: "play")
-            }
-          }
-        }
-      }
+  @ViewBuilder
+  private func menuItems(_ cards: [MindMapCard]) -> some View {
+    Button {
+      move(to: cards.first)
     } label: {
       Label {
-        Text("More options", tableName: "MindMaps", comment: "The reader's menu")
+        Text(
+          "Start from the first map", tableName: "MindMaps",
+          comment: "Goes back to the deck's first map")
       } icon: {
-        Image(systemName: "ellipsis")
+        Image(systemName: "arrow.uturn.backward")
+      }
+    }
+    .disabled(current == cards.first)
+
+    if let current {
+      Button {
+        router.open(.chapter(chapterId: current.chapterId))
+      } label: {
+        Label {
+          Text("Open chapter", tableName: "MindMaps", comment: "Opens the map's chapter page")
+        } icon: {
+          Image(systemName: "book.pages")
+        }
+      }
+
+      if case .lesson(_, let lessonId) = current {
+        Button {
+          router.open(.lesson(lessonId: lessonId))
+        } label: {
+          Label {
+            Text("Open lesson", tableName: "MindMaps", comment: "Opens the map's lesson")
+          } icon: {
+            Image(systemName: "play")
+          }
+        }
       }
     }
   }
 
-  /// Previous, "5 of 12", Save and Next under the thumb; the last map's Next is Done.
-  @ToolbarContentBuilder
-  private func bottomBar(
-    _ cards: [MindMapCard], index: Int, maps: GoalMindMaps
-  ) -> some ToolbarContent {
-    ToolbarItemGroup(placement: .bottomBar) {
-      Button {
-        move(to: cards[max(0, index - 1)])
-      } label: {
-        Label {
-          Text("Previous", tableName: "MindMaps", comment: "Goes to the deck's previous map")
-        } icon: {
-          Image(systemName: "chevron.backward")
+  /// The lesson player's bar: Previous from the second map, then Next, which is Done on the last.
+  private func actionBar(_ cards: [MindMapCard], index: Int) -> some View {
+    let isLast = index == cards.count - 1
+
+    return TaskActionBar {
+      if index > 0 {
+        StepBackButton(
+          label: Text(
+            "Previous", tableName: "MindMaps", comment: "Goes to the deck's previous map")
+        ) {
+          move(to: cards[index - 1])
         }
       }
-      .disabled(index == 0)
-      .keyboardShortcut(.leftArrow, modifiers: [])
 
-      Spacer()
-
-      Text(
-        "\(index + 1) of \(cards.count)", tableName: "MindMaps", comment: "Which map of the deck"
-      )
-      .typeStyle(.data)
-      .monospacedDigit()
-      .foregroundStyle(.mutedForeground)
-      .fixedSize()
-
-      Spacer()
-
-      if let current, let target = saveTarget(current, maps: maps) {
-        MindMapSaveButton(target: target.target, goalId: goalId, server: target.server)
-          .keyboardShortcut("s", modifiers: [])
-      }
-
-      if index == cards.count - 1 {
-        Button {
+      BusyButton(isBusy: false, icon: isLast ? .check : .forward) {
+        if isLast {
           dismiss()
-        } label: {
-          Text("Done", tableName: "MindMaps", comment: "Closes the reader after the last map")
-        }
-      } else {
-        Button {
+        } else {
           move(to: cards[index + 1])
-        } label: {
-          Label {
-            Text("Next", tableName: "MindMaps", comment: "Goes to the deck's next map")
-          } icon: {
-            Image(systemName: "chevron.forward")
-          }
         }
-        .keyboardShortcut(.rightArrow, modifiers: [])
+      } label: {
+        if isLast {
+          Text("Done", tableName: "MindMaps", comment: "Closes the reader after the last map")
+        } else {
+          Text("Next", tableName: "MindMaps", comment: "Goes to the deck's next map")
+        }
       }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+      .buttonSizing(.flexible)
+      .keyboardShortcut(.defaultAction)
+    }
+  }
+
+  private func show(_ card: MindMapCard?, with proxy: ScrollViewProxy) {
+    if let card {
+      proxy.scrollTo(card)
     }
   }
 
@@ -345,6 +353,7 @@ struct MindMapReader: View {
     }
   }
 
+  /// The map's title alone: the lesson's on a lesson map, else its chapter's.
   private func title(_ card: MindMapCard?, maps: GoalMindMaps) -> String {
     guard let card else {
       return ""
@@ -359,29 +368,6 @@ struct MindMapReader: View {
 
     return maps.chapter(card.chapterId)?.title ?? ""
   }
-
-  private func context(_ card: MindMapCard?, maps: GoalMindMaps) -> String {
-    guard let card, let chapter = maps.chapter(card.chapterId) else {
-      return ""
-    }
-
-    let chapterLine = String(
-      localized: "Chapter \(chapter.position)", table: "MindMaps", comment: "A chapter's number")
-
-    guard case .lesson(let chapterId, let lessonId) = card,
-      let lesson = store.lessonMaps(goalId: goalId, chapterId: chapterId).value?.lessons.first(
-        where: { $0.lessonId == lessonId })
-    else {
-      return chapterLine
-    }
-
-    return [
-      chapterLine,
-      String(
-        localized: "Lesson \(lesson.position)", table: "MindMaps",
-        comment: "A lesson's number in its chapter"),
-    ].joinedFacts()
-  }
 }
 
 /// A chapter's map: its picture, then its outline, in one scroll; side by side where the screen
@@ -393,26 +379,35 @@ private struct ChapterMapPage: View {
   var body: some View {
     let url = map.image.flatMap { URL(string: $0.url) }
 
-    if let outline = map.outline {
+    if let outline = map.outline, let url {
       PaneSplit {
-        if let url {
-          ScrollView {
-            picture(url)
-              .scenePadding()
-          }
+        ScrollView {
+          picture(url)
+            .scenePadding()
         }
       } secondary: {
         MindMapOutlineView(outline: outline) { EmptyView() }
       } single: {
         MindMapOutlineView(outline: outline) {
-          if let url {
-            Section {
-              picture(url)
-                .listRowSeparator(.hidden)
-            }
+          Section {
+            picture(url)
+              .listRowSeparator(.hidden)
           }
         }
       }
+    } else if let outline = map.outline {
+      MindMapOutlineView(outline: outline) {
+        Section {
+          Text(
+            "Its picture had mistakes, so here's the mind map as text.", tableName: "MindMaps",
+            comment: "A map whose picture failed its check, shown as its outline"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+        }
+      }
+      .lonePage()
     } else if let url {
       ScrollView {
         picture(url)
@@ -452,38 +447,47 @@ private struct ChapterMapPage: View {
 
 private struct ZoomedMap: Identifiable {
   let url: URL
-  let title: String
+  let target: SaveTarget
 
   var id: URL { url }
 }
 
 /// The existing zoom viewer over the reader, which keeps the deck's swipes and keys until it
-/// closes.
+/// closes. Its bookmark sits where the reader's does.
 private struct MindMapZoom: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(MindMapsStore.self) private var store
 
   let map: ZoomedMap
+  let goalId: String
 
   var body: some View {
+    let saved =
+      map.target.chapterId.flatMap { store.list(goalId: goalId).value?.chapter($0)?.saved }
+      ?? false
+
     NavigationStack {
-      ZoomableRemoteImage(url: map.url, title: map.title)
+      ZoomableRemoteImage(url: map.url, title: map.target.title)
         .ignoresSafeArea(edges: .bottom)
-        .navigationTitle(map.title)
+        .navigationTitle(map.target.title)
         .toolbarTitleDisplayMode(.inline)
-        .toolbar {
-          ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) {
-              dismiss()
-            } label: {
-              Label {
-                Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
-              } icon: {
-                Image(systemName: "xmark")
-              }
+        .taskClose {
+          Button(role: .close) {
+            dismiss()
+          } label: {
+            Label {
+              Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
+            } icon: {
+              Image(systemName: "xmark")
             }
-            .keyboardShortcut(.cancelAction)
           }
+          .keyboardShortcut(.cancelAction)
         }
+        .taskAction {
+          MindMapSaveButton(target: map.target, goalId: goalId, server: saved)
+            .keyboardShortcut("s", modifiers: [])
+        }
+        .mindMapSaveFailureAlert(goalId: goalId)
     }
   }
 }
