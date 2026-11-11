@@ -32,6 +32,16 @@ const SPOKEN_MOSTLY = 0.6;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
+/** The test asks each skill this many questions, so a bank with fewer for a skill can't run it. */
+export function hasEnoughQuestions(
+  questions: readonly Pick<LevelTestQuestion, "skill">[],
+): boolean {
+  return QUESTION_SKILLS.every(
+    (skill) =>
+      questions.filter((question) => question.skill === skill).length >= QUESTIONS_PER_SKILL,
+  );
+}
+
 export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
 
 function getBand(level: CefrLevel): number {

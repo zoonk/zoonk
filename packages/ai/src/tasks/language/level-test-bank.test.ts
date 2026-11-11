@@ -35,13 +35,6 @@ function writeQuestion(label: string) {
   };
 }
 
-function withTwoWrongOptions(questions: ReturnType<typeof writeQuestion>[]) {
-  return questions.map((question) => ({
-    ...question,
-    wrongOptions: question.wrongOptions.slice(0, 2),
-  }));
-}
-
 function writeLevel(level: string) {
   const step = {
     model: { modelId: MODEL, provider: "gateway" },
@@ -152,26 +145,6 @@ describe(generateLevelTestBank, () => {
     expect(
       reading.some((question) => question.options.some((option) => option.startsWith("wrong 4"))),
     ).toBe(false);
-  });
-
-  it("fails the bank for a retry when no question kept its wrong options", async () => {
-    vi.mocked(generateText).mockImplementation(({ prompt }) => {
-      const text = typeof prompt === "string" ? prompt : "";
-      const level = /LEVEL: (?<level>\w\d)/u.exec(text)?.groups?.level ?? "none";
-      const written = writeLevel(level);
-
-      const output = {
-        ...written.output,
-        listening: withTwoWrongOptions(written.output.listening),
-        reading: withTwoWrongOptions(written.output.reading),
-      };
-
-      return Promise.resolve({ ...written, output }) as never;
-    });
-
-    await expect(
-      generateLevelTestBank({ learnerLanguage: "pt", targetLanguage: "en" }),
-    ).rejects.toThrow("three wrong options");
   });
 
   it("sets every level's texts where the tested language is spoken", async () => {

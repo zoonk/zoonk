@@ -6,6 +6,7 @@ import {
 import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";
+import { hasEnoughQuestions } from "../level-test-rules";
 
 const STALE_CLAIM_MS = 660_000;
 
@@ -22,7 +23,7 @@ export type LevelTestBankState =
 
 export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelTestBank | null {
   const bank = levelTestBankSchema.safeParse(row?.content);
-  return bank.success && bank.data.questions.length > 0 ? bank.data : null;
+  return bank.success && hasEnoughQuestions(bank.data.questions) ? bank.data : null;
 }
 
 export function findBankRow(pair: LanguagePair) {
@@ -43,6 +44,10 @@ async function writeBank({
     learnerLanguage: pair.language,
     targetLanguage: pair.targetLanguage,
   });
+
+  if (!hasEnoughQuestions(data.questions)) {
+    throw new Error("The level test bank is short of questions for a skill.");
+  }
 
   const counts = new Map<string, number>();
 

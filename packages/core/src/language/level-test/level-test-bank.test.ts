@@ -246,6 +246,23 @@ describe("writing a pair's question bank ahead", () => {
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "written" });
   });
 
+  it("writes the bank again when a skill is short of the questions the test asks", async () => {
+    const pair = freshPair();
+    const listeningOnly = bankFrom("Short");
+
+    listeningOnly.data.questions = listeningOnly.data.questions.filter(
+      (question) => question.skill === "listening",
+    );
+
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(listeningOnly);
+
+    await expect(writeLevelTestBank({ pair })).rejects.toThrow("short of questions");
+
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom("Retry"));
+
+    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "written" });
+  });
+
   it("drops a late write when a newer run took its claim over", async () => {
     const pair = freshPair();
     const late = pendingWriter();
