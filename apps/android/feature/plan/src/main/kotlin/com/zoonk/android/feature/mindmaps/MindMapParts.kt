@@ -26,8 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -143,7 +141,10 @@ internal fun mindMapDescription(
     }.joinToString("\n")
 }
 
-/** The map in words: its title and central idea, its numbered branches, a comparison and the gist. */
+/**
+ * The map in words under the header that names it: its central idea, its numbered branches, a
+ * comparison and the gist.
+ */
 @Composable
 internal fun MindMapOutlineText(
     outline: MindMapOutline,
@@ -152,10 +153,7 @@ internal fun MindMapOutlineText(
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(outline.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
-        }
+        Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
 
         outline.branches.forEachIndexed { index, branch ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
