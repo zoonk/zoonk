@@ -243,6 +243,24 @@ describe(checkItem, () => {
     expect(checkItem({ item: unfinished, language: "en" })).toStrictEqual([
       expect.stringContaining("placeholder"),
     ]);
+
+    const [mistake, ...others] = discountMath.commonMistakes;
+
+    const unexplained: GeneratedItem = {
+      context: null,
+      difficulty: "easy",
+      format: "numeric",
+      math: {
+        ...discountMath,
+        commonMistakes: [{ ...mistake!, reason: "[Insert the reason here]" }, ...others],
+      },
+      otherSolutions: [],
+      question: "A shirt costs {price} and is {discount}% off. How much do you pay?",
+    };
+
+    expect(checkItem({ item: unexplained, language: "en" })).toStrictEqual([
+      expect.stringContaining("placeholder"),
+    ]);
   });
 
   it("rejects options that print the worked-out values deciding the answer", () => {

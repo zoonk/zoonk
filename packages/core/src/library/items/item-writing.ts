@@ -58,7 +58,13 @@ export function mapItemWriting(item: GeneratedItem, map: ItemTextMap): Generated
     case "numeric": {
       const [context, question] = [support(item.context), block(item.question)];
       const steps = item.math.steps.map((step) => ({ ...step, text: block(step.text) }));
-      return { ...item, context, math: { ...item.math, steps }, question };
+
+      const commonMistakes = item.math.commonMistakes.map((mistake) => ({
+        ...mistake,
+        reason: block(mistake.reason),
+      }));
+
+      return { ...item, context, math: { ...item.math, commonMistakes, steps }, question };
     }
     default:
       throw new Error("Unknown item format.");

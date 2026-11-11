@@ -295,6 +295,48 @@ describe(repairWrittenLesson, () => {
     });
   });
 
+  it("repairs an activity's prose and a math check's wrong-answer reasons like every other text, but never a label", () => {
+    const lesson = writtenTemperatureLesson();
+    const [mathCheck, activity] = [lesson.screens[3], lesson.screens[5]];
+
+    if (mathCheck?.kind !== "mathCheck" || activity?.kind !== "activity") {
+      throw new Error("Screen 4 is a math check and screen 6 an activity.");
+    }
+
+    const [mistake, ...others] = mathCheck.math.commonMistakes;
+    const content: object = JSON.parse(activity.content);
+    const label = "The 10^{-5} scale";
+
+    const flawed = {
+      ...lesson,
+      screens: lesson.screens.map((screen, index) => {
+        if (index === 3) {
+          const reason = "A rise adds **degrees; the sensor resolves 10^{-5} °C.";
+          const commonMistakes = [{ ...mistake!, reason }, ...others];
+          return { ...mathCheck, math: { ...mathCheck.math, commonMistakes } };
+        }
+
+        return index === 5
+          ? { ...activity, content: JSON.stringify({ ...content, prompt: "Follow the **dot." }) }
+          : screen;
+      }),
+      summary: { ideas: [{ label, text: "A rise moves up the thermometer." }], shape: "hub" },
+    } satisfies typeof lesson;
+
+    const repaired = repairWrittenLesson({ language: "en", lesson: flawed, spec });
+    const [reasoned, played] = [repaired.screens[3], repaired.screens[5]];
+
+    expect(reasoned?.kind === "mathCheck" && reasoned.math.commonMistakes[0]?.reason).toBe(
+      "A rise adds degrees; the sensor resolves $10^{-5}$ °C.",
+    );
+
+    expect(played?.kind === "activity" && JSON.parse(played.content)).toMatchObject({
+      prompt: "Follow the dot.",
+    });
+
+    expect(repaired.summary.ideas[0]?.label).toBe(label);
+  });
+
   it("repairs a question's basis quote like the line it copies, so it still matches", () => {
     const explanation = {
       exampleLineIdea: null,
