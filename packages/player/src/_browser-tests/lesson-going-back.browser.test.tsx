@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
+  expectCount,
   expectSideBySide,
   expectVerdict,
   pressOnSlider,
@@ -73,6 +74,23 @@ function letter({ audioUrl, symbol }: { audioUrl: string | null; symbol: string 
   });
 }
 
+const DOUBLED_LINE = "const doubled = numbers.map((n) => n + n);";
+
+const javascriptRunner = {
+  ...activityContentFixtures.codeRunner,
+  fields: {
+    editableLines: [2],
+    expectedOutput: "[ 2, 4, 6 ]",
+    language: "javascript",
+    mistakes: [],
+    solution:
+      "const numbers = [1, 2, 3];\nconst doubled = numbers.map((n) => n * 2);\nconsole.log(doubled);",
+    starterCode:
+      "const numbers = [1, 2, 3];\nconst doubled = numbers.map((n) => n);\nconsole.log(doubled);",
+  },
+  prompt: "Double every number.",
+};
+
 function playLesson(steps: Parameters<typeof buildLesson>[0]) {
   renderLessonPlayer({ lesson: buildLesson(steps) });
 }
@@ -129,6 +147,41 @@ describe("going back to reread", () => {
     await expect.element(valueInput()).toHaveValue(typed);
     await checkActivity();
     await expectVerdict("Not quite");
+  });
+
+  it("brings a checked code runner back with the code that printed its output", async () => {
+    playLesson([activity(javascriptRunner), reading]);
+    const line = page.getByRole("textbox", { name: "Line 2, yours to edit" });
+    await line.fill(DOUBLED_LINE);
+    await page.getByRole("button", { name: "Run" }).click();
+    await expectCount(page.getByText("[ 2, 4, 6 ]", { exact: true }), 2);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expectVerdict("Correct!");
+    await expect.element(line).toHaveValue(DOUBLED_LINE);
+  });
+
+  it("shows a missed activity's first attempt where the learner left it, after its retry starts over", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+    playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await pressOnSlider("Extra per month", "ArrowRight", 2);
+    await checkActivity();
+    await expectVerdict("Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).not.toHaveAttribute("aria-valuenow", "100");
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expectVerdict("Not quite");
+    await expect.element(slider).toHaveAttribute("aria-valuenow", "100");
   });
 
   it("shows a finished match board with each word beside its match", async () => {

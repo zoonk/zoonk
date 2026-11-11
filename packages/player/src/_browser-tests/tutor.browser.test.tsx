@@ -1766,7 +1766,7 @@ describe("docked beside the lesson", () => {
     const lesson = buildLesson([reading, teachingStep("explanation")], { targetLanguage: "es" });
     stubTutorApi({ lesson });
     const pauseMs = getStrugglePauseMs(reading) ?? 0;
-    const offer = page.getByText("Taking your time? Pip can explain it another way.");
+    const offer = page.getByRole("button", { name: "No thanks" });
 
     const pause = async () => {
       await vi.advanceTimersByTimeAsync(pauseMs);

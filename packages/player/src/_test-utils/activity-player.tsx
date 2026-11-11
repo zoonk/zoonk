@@ -3,9 +3,10 @@ import { type VoiceText } from "@zoonk/learn/speech/provider";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { expect } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
+import { type LessonRunAnswers } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { type ActivityContent, activityStep } from "../preview/preview-steps";
-import { renderLessonPlayer } from "./render-lesson-player";
+import { type ActivityContent, activityStep, explanationStep } from "../preview/preview-steps";
+import { buildAdapters, renderLessonPlayer, runAnswer, startedRun } from "./render-lesson-player";
 
 type ActivityTemplate = keyof typeof activityContentFixtures;
 
@@ -32,6 +33,57 @@ export function openActivities({ contents }: { contents: ActivityContent[] }) {
   return renderLessonPlayer({
     lesson: buildLesson(contents.map((content) => activityStep({ content }))),
   });
+}
+
+/**
+ * An activity before a reading and another activity. `reopenSaved`, once the first is checked,
+ * opens the lesson again the way a learner who comes back later finds it, and goes back to the
+ * first activity, which rebuilds from its saved answer alone.
+ */
+export function openActivityToResume(content: ActivityContent) {
+  const lesson = buildLesson([
+    activityStep({ content }),
+    explanationStep({ text: "Next.", title: "Next" }),
+    activityStep({ content: activityContentFixtures.categorize }),
+  ]);
+
+  const local = buildAdapters(lesson);
+  const saved: LessonRunAnswers = [];
+
+  const view = renderLessonPlayer({
+    adapters: {
+      ...local,
+      checkStep: async (input) => {
+        const outcome = await local.checkStep(input);
+
+        if (outcome.status === "checked") {
+          const { isCorrect } = outcome.result;
+          saved.push(runAnswer({ answer: input.answer, isCorrect, stepId: input.stepId }));
+        }
+
+        return outcome;
+      },
+    },
+    lesson,
+  });
+
+  async function reopenSaved() {
+    await expect.poll(() => saved.length).toBe(1);
+    view.unmount();
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, {
+        startLesson: () => Promise.resolve(startedRun({ answers: saved })),
+      }),
+      lesson,
+      resume: saved,
+    });
+
+    await expect.element(page.getByRole("heading", { name: "Next" })).toBeVisible();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+  }
+
+  return { reopenSaved };
 }
 
 export function valueInput() {
