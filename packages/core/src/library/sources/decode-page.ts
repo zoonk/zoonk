@@ -27,20 +27,22 @@ function toDecoder(label: string | undefined): TextDecoder | null {
 
 /**
  * As a browser decodes a page: its byte-order mark, else the charset its response declares, else
- * the one its `<meta>` declares in the first kilobyte, skipping a charset no decoder knows, else
- * as `decodeUndeclared` reads it. A `<meta>` declaring UTF-16 can't be right, since the prescan
- * read it as ASCII.
+ * the one an HTML page's `<meta>` declares in its first kilobyte, skipping a charset no decoder
+ * knows, else as `decodeUndeclared` reads it. A `<meta>` declaring UTF-16 can't be right, since
+ * the prescan read it as ASCII. Plain text only quotes a `<meta>`, so its own is never read.
  */
 export function decodePage({
   bytes,
   charset,
+  isHtml,
 }: {
   bytes: Uint8Array;
   charset?: string | null;
+  isHtml: boolean;
 }): string {
   const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, PRESCAN_BYTES));
   const bom = BYTE_ORDER_MARKS.find(({ marks }) => head.startsWith(marks));
-  const meta = META_CHARSET.exec(head)?.groups?.charset?.toLowerCase();
+  const meta = isHtml ? META_CHARSET.exec(head)?.groups?.charset?.toLowerCase() : undefined;
   const labels = [bom?.label, charset ?? undefined, meta?.startsWith("utf-16") ? "utf8" : meta];
   const decoder = labels.map((label) => toDecoder(label)).find(Boolean);
 

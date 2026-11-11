@@ -194,7 +194,10 @@ async function readDocument({
   const fileType = OFFICE_FILE_TYPES[type];
 
   if (fileType === "html") {
-    const page = reading.decodesCharset ? Buffer.from(decodePage({ bytes, charset })) : bytes;
+    const page = reading.decodesCharset
+      ? Buffer.from(decodePage({ bytes, charset, isHtml: true }))
+      : bytes;
+
     return parseOfficeDocument({ bytes: page, fileType, reading });
   }
 
@@ -204,7 +207,7 @@ async function readDocument({
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
     const text = reading.decodesCharset
-      ? decodePage({ bytes, charset })
+      ? decodePage({ bytes, charset, isHtml: false })
       : new TextDecoder().decode(bytes);
 
     return { images: [], pages: null, text: limitText({ maxLength: reading.maxLength, text }) };

@@ -146,6 +146,17 @@ describe(parseDocument, () => {
     expect([html.text, plain.text]).toStrictEqual([text, text]);
   });
 
+  it("reads a note that quotes a <meta> charset in its own encoding", async () => {
+    const note = `Write <meta charset="windows-1252"> in the head.\nCafé 日本語`;
+
+    const parsed = await parseDocument({
+      bytes: new TextEncoder().encode(note),
+      contentType: "text/markdown",
+    });
+
+    expect(parsed.text).toBe(note);
+  });
+
   it("rejects types it can't read", async () => {
     await expect(
       parseDocument({ bytes: new Uint8Array([1, 2]), contentType: "application/zip" }),

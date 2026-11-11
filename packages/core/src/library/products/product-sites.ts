@@ -163,7 +163,7 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
   return {
     domain,
     tags: readPageTags({
-      html: decodePage({ bytes: fetched.bytes, charset: fetched.charset }),
+      html: decodePage({ bytes: fetched.bytes, charset: fetched.charset, isHtml: true }),
       url: fetched.url,
     }),
     url: fetched.url,
