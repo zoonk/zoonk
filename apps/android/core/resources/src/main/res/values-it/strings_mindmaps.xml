@@ -7,8 +7,8 @@
   "mindmaps_as_picture": "d603220732ef98d76a248ff3d5d9ec36efb93912996c85353d92a1ba14ff61d6",
   "mindmaps_as_text": "2489ca2e6710497acbfb80d9e358d5856ba0190d25ce45ff2ed41cde4a9d27a6",
   "mindmaps_as_text_note": "9608cdb9faa6bb5a166a483548fd262cc99104cfb0c8214307de776582de90b7",
-  "mindmaps_being_made": "f96187b5337c21fb43c691e84a143bc26a97456cb863d1af95bd07091ba2adac",
-  "mindmaps_can_make_more": "1764c063aefa33aba864fa60e3c9bc4cdcb91fcbcdd63254288c4617a6f23140",
+  "mindmaps_being_made": "d856b461d54da7036f395958aee0683f87f702c9e709287aa3e0c9960510b916",
+  "mindmaps_can_make_more": "e3d9087a0b7f772799b8c5a392c7d28f74018cc20b438f610dd5e2ec2ccbfc78",
   "mindmaps_chapter_count": "03a0e78adcd0c0b03312cf5bb80f11a86f0c74cec18ca2c18ffb42c6d55c5195",
   "mindmaps_chapter_finished": "3ea7bf142337c9cb6d54133bf90865c145ad4c1d7e6cade0a1d2a6f4bc8a76c6",
   "mindmaps_chapter_number": "1a21ebb79a88ab07336bc0ee0d38abe261dfd4d26264be30f6bc68f9c7459af5",
@@ -35,7 +35,7 @@
   "mindmaps_lessons_to_write": "23c4a3ae2e9cd78d502425ad65fe01b7649db927a7da51a0c9034303835d7e3d",
   "mindmaps_locked_count": "c5fab5a7b82c5c2435f019b4afc8c103d7d0df54789d48e7cab8e5ba732a39ef",
   "mindmaps_map_gone": "2186eb2a8754fe7ac3c3bb18a4e6add9a1eb48a89ad2cfa23e3dd3ce87745199",
-  "mindmaps_need_lessons": "3ac50d8eded8682b0f0088b644fad6c812ccd7e29fa2b8d63f1ab239728b5196",
+  "mindmaps_need_lessons": "8c44cda75da039dc3291d00591c2d1692407c0a442cddd3ee60e50352eb70bfc",
   "mindmaps_next": "e55ed37e8d5df70359e6dfebdfac50ceb41cb1b3b04b178b990f6c54ec326818",
   "mindmaps_no_longer_available": "184bd1839584148077ded5a4de0f4a92c1911428ca48ef946ba4ea267574429a",
   "mindmaps_not_made_yet": "a4e97fe37a0b5cd68d4988b83aab6d4b5e8d87c80c58eab75cafde21ff0ffba0",
@@ -200,21 +200,21 @@
     </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
-        <item quantity="one">Stiamo preparando %1$s mappa. Puoi uscire nel frattempo.</item>
-        <item quantity="many">Stiamo preparando %1$s mappe. Puoi uscire nel frattempo.</item>
-        <item quantity="other">Stiamo preparando %1$s mappe. Puoi uscire nel frattempo.</item>
+        <item quantity="one">%1$s in arrivo. Puoi uscire mentre la prepariamo.</item>
+        <item quantity="many">%1$s in arrivo. Puoi uscire mentre le prepariamo.</item>
+        <item quantity="other">%1$s in arrivo. Puoi uscire mentre le prepariamo.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">Al momento puoi creare ancora %1$s mappa.</item>
-        <item quantity="many">Al momento puoi creare ancora %1$s mappe.</item>
-        <item quantity="other">Al momento puoi creare ancora %1$s mappe.</item>
+        <item quantity="one">Puoi crearne ancora %1$s adesso.</item>
+        <item quantity="many">Puoi crearne ancora %1$s adesso.</item>
+        <item quantity="other">Puoi crearne ancora %1$s adesso.</item>
     </plurals>
     <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
     <plurals name="mindmaps_need_lessons">
-        <item quantity="one">Dobbiamo prima preparare le lezioni di %1$s capitolo.</item>
-        <item quantity="many">Dobbiamo prima preparare le lezioni di %1$s capitoli.</item>
-        <item quantity="other">Dobbiamo prima preparare le lezioni di %1$s capitoli.</item>
+        <item quantity="one">Per %1$s capitolo dobbiamo prima preparare le lezioni.</item>
+        <item quantity="many">Per %1$s capitoli dobbiamo prima preparare le lezioni.</item>
+        <item quantity="other">Per %1$s capitoli dobbiamo prima preparare le lezioni.</item>
     </plurals>
     <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
     <string name="mindmaps_show_chapters">Mostra i capitoli</string>

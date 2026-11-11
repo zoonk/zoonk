@@ -7,13 +7,13 @@
   "mindmaps_as_picture": "bb6574dcbc4e99a45f95ac2776272a42cd223746f9e261129624b570f4e5e056",
   "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
   "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
-  "mindmaps_being_made": "202b6130614ccf7d45172a90593d51f1c429ff9dabf2ee769c7e79ca056c9c7f",
+  "mindmaps_being_made": "a35ebfceeaa88b4c2b0d3f3fa4a3d0c8a40205cedfeafc35b9312a272ac2b55c",
   "mindmaps_can_make_more": "1ecaefa1071f068d65e3c2afce99c19db4f2c7436a11714f2b7a9cd9d0e32e9f",
   "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
   "mindmaps_chapter_finished": "616586994a6641aa6234a1919f26b68184b85cb1191796f5555ade1f5e88fed2",
   "mindmaps_chapter_number": "2c1f1d51fb44844abd6c1929f9d3de3d0c4adc686b4e8d6c1bbd3a8b4ae1cf8d",
   "mindmaps_create": "6baf318ab485765ffcc73d97ae957b469f353903a0b83e3b544631c789cf82d8",
-  "mindmaps_create_count": "42c5e7796f0d9913241b4abdbf664f51102a64d1b262a91fb57a98fe18978735",
+  "mindmaps_create_count": "235ef76e21d17482e6a214f876adb2cd99e40a7078e59267a37e2aaf0a9af19c",
   "mindmaps_create_spoken": "c642b459c7b94fcc16a1c8ff69bb388cc5a6cb9874db97e0d0a342aaafd5695d",
   "mindmaps_done": "a4eeb47e648a48de419cbe370ac0d6d147aded8c1b2cee394dad9c263039cbbb",
   "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
@@ -35,7 +35,7 @@
   "mindmaps_lessons_to_write": "b9f4568ff3ee15eeba4876e70870d3d7fc2630a2a7440650642e551e2df1466c",
   "mindmaps_locked_count": "4c0131b92fd74303c4e375bcbaf48acb6777dca272e919fda0d15f87b7ac035d",
   "mindmaps_map_gone": "df3f61ef1d34ea410f369c8c856e816d16b51aed6468b6c1e9c2c89e245d1c35",
-  "mindmaps_need_lessons": "3a34fea7da7decec3cc12dc3687b526f9924cb9ee4185021883a5a94c9939062",
+  "mindmaps_need_lessons": "33889f286ce044e7cb053a093efac5f007781aedf1d43a691f1c35cbd5e704a8",
   "mindmaps_next": "444685710f8eb154a784f0d2eed20f1601ec5c04a2eeb2b41e543a747615ce84",
   "mindmaps_no_longer_available": "4eee6b62d142fc8e59344bfddfbe422b02903288f194006c82994f9efb0ac609",
   "mindmaps_not_made_yet": "0de4826d8f99ee6e2bbeb009922c9d08f6f0a46515ee77ad246eaf5683ab7528",
@@ -180,11 +180,11 @@
     <string name="mindmaps_not_made_yet">아직 만들지 않음</string>
     <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
     <plurals name="mindmaps_create_count">
-        <item quantity="other">챕터 맵 %1$s개 만들기</item>
+        <item quantity="other">챕터 마인드맵 %1$s개 만들기</item>
     </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
-        <item quantity="other">%1$s개를 만들고 있어요. 기다리지 않고 나가도 돼요.</item>
+        <item quantity="other">%1$s개를 만들고 있어요. 만드는 동안 나가도 괜찮아요.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
@@ -192,7 +192,7 @@
     </plurals>
     <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
     <plurals name="mindmaps_need_lessons">
-        <item quantity="other">레슨을 먼저 만들어야 하는 챕터가 %1$s개 있어요.</item>
+        <item quantity="other">챕터 %1$s개는 레슨을 먼저 만들어야 해요.</item>
     </plurals>
     <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
     <string name="mindmaps_show_chapters">챕터 보기</string>

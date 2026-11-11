@@ -7,7 +7,7 @@
   "mindmaps_as_picture": "d580af9cb833eb729543319b57f0fc1cbc266f5de1c99c9284581a7029ae8701",
   "mindmaps_as_text": "63ec156151cc2d86d81d84d0f35b799cf0e3adc611ab4c0005a1ce13e6d0984f",
   "mindmaps_as_text_note": "c6025a56bb9fe1d43d8144a27dce6bc5bd3532fd9f2e09b888ea1db6adc020eb",
-  "mindmaps_being_made": "82eba7a4fbd47b6c96e759f8ff8de463488d7436a8f84b9eb0ee4b0691b6033c",
+  "mindmaps_being_made": "1007f76304fa886580128f3abbdabb86a07de67f4b5d7874d2f1c87a569b91d3",
   "mindmaps_can_make_more": "7cb76aea961a80ff7382ebbba451e7f94d965c60c0a13b3ca6c43afe90302825",
   "mindmaps_chapter_count": "659d692a8bef30000c5c6a174c862e95c05cf908aec4b595bcfb4b6fc5ef7c91",
   "mindmaps_chapter_finished": "d202febd66892a9c5161226ce876eba5ef12b9ada8c4ab027bd5ce26598f7ffd",
@@ -200,9 +200,9 @@
     </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
-        <item quantity="one">%1$s en préparation. Tu peux quitter cet écran en attendant.</item>
-        <item quantity="many">%1$s en préparation. Tu peux quitter cet écran en attendant.</item>
-        <item quantity="other">%1$s en préparation. Tu peux quitter cet écran en attendant.</item>
+        <item quantity="one">%1$s en préparation. Tu peux quitter la page en attendant.</item>
+        <item quantity="many">%1$s en préparation. Tu peux quitter la page en attendant.</item>
+        <item quantity="other">%1$s en préparation. Tu peux quitter la page en attendant.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

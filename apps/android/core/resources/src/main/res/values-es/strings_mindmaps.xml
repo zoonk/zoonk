@@ -7,13 +7,13 @@
   "mindmaps_as_picture": "154be579898ce4af7049032ad6d85ab70ba256fff4bb1ce2d6b61d2e4a45a473",
   "mindmaps_as_text": "8e03e2b9a4842b313266c1d5e9bbd048ce96fed0ceb07606ff21b8eb6af5dab3",
   "mindmaps_as_text_note": "14645a25c2f4545f2d7bd026513b9de16f5687ff3b2121e36f2f7e022dbad49e",
-  "mindmaps_being_made": "13cc1fe0202803c7b13c76e10f1b6e59c416e4ac10e89459f7072328aed0b915",
+  "mindmaps_being_made": "7b14eb9b34f6678beef01e95226f851ce525f75c3d170d0b606222d715b1a8d2",
   "mindmaps_can_make_more": "27c4e387b675826d1924f759c970fc342ef0ddf22feb4f3313fbc789ac56f3d9",
   "mindmaps_chapter_count": "b7e5c090f0daf77e73238c8e613586ddb8c116dec996e1597a01fb10b4f1ecc4",
   "mindmaps_chapter_finished": "ff2aaace930121d28a3058616cc6a3375e74d73800641e21fcf60e651f8a0d9a",
   "mindmaps_chapter_number": "b30a89682edb2724b90cafe25bae92743cfce652762def7623bcd4c16e0a5fae",
   "mindmaps_create": "20ba98b33ef74264933bded81d27dec5d06ef8baff7ac018f3357ec1bc3df028",
-  "mindmaps_create_count": "956a67e066320608c3af84b644846be4f967dadddd3bcd71b7f0e61863aa4e5b",
+  "mindmaps_create_count": "3f257971e272799096d0535554bbc933d6b27baa3ef8fb1ae504798cd6fd40e8",
   "mindmaps_create_spoken": "985c93abb4f59c854375f603719967489fc5157a08a2f0c3731b3472591eb6c5",
   "mindmaps_done": "623d69f06e46aff4ca2bf57e41ffcb586b0fc6b105e93095e120c3204ffa30a0",
   "mindmaps_download": "2defac6dc3fa752150a32d5dc750c0e270468a20edf0c6b1e61793b1655c14fc",
@@ -194,15 +194,15 @@
     <string name="mindmaps_not_made_yet">Aún sin crear</string>
     <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
     <plurals name="mindmaps_create_count">
-        <item quantity="one">Crear %1$s mapa del capítulo</item>
+        <item quantity="one">Crear %1$s mapa de capítulo</item>
         <item quantity="many">Crear %1$s mapas de capítulos</item>
         <item quantity="other">Crear %1$s mapas de capítulos</item>
     </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
-        <item quantity="one">%1$s en preparación. Puedes salir mientras se prepara.</item>
-        <item quantity="many">%1$s en preparación. Puedes salir mientras se preparan.</item>
-        <item quantity="other">%1$s en preparación. Puedes salir mientras se preparan.</item>
+        <item quantity="one">Se está creando %1$s mapa. Puedes salir mientras se termina.</item>
+        <item quantity="many">Se están creando %1$s mapas. Puedes salir mientras se terminan.</item>
+        <item quantity="other">Se están creando %1$s mapas. Puedes salir mientras se terminan.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
