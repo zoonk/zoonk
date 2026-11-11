@@ -1,7 +1,7 @@
 import "server-only";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation-feedback";
 import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
-import { type LanguageConversation } from "@zoonk/db";
+import { type LanguageConversation, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
@@ -97,7 +97,13 @@ async function writeExamTaskFeedback({
 async function writeCallFeedback(
   input: ReviewInput & { objectivesMet: string[] },
 ): Promise<WrittenFeedback> {
+  const profile = await prisma.userLearningProfile.findUnique({
+    select: { addressForm: true },
+    where: { userId: input.userId },
+  });
+
   const { data, provenance } = await writeConversationFeedback({
+    addressForm: profile?.addressForm ?? undefined,
     analytics: { contentScope: "personal", distinctId: input.userId },
     learnerLanguage: input.row.language,
     level: input.level,

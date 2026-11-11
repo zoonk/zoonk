@@ -12,6 +12,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { LearnLink } from "../../learn-link";
+import { useExclusiveLabels } from "../../profile-questions/profile-body-parts";
 import {
   type ProfileDraft,
   canSendProfileDraft,
@@ -124,6 +125,7 @@ function ProfileStep({
   question: ProfileQuestionView;
 }) {
   const t = useExtracted();
+  const exclusiveLabels = useExclusiveLabels();
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription({ nextIsSupport, question: question.id });
 
@@ -151,9 +153,15 @@ function ProfileStep({
       onContinue={() => void send()}
       onSkip={() => {
         onConditions([]);
-        void onAnswer({ answer: null, question: question.id });
+
+        void onAnswer(
+          question.id === "addressForm"
+            ? { answer: { declined: true, form: null }, question: "addressForm" }
+            : { answer: null, question: question.id },
+        );
       }}
       pending={pending}
+      skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
       subject={t({
         description: "Which of the questions about the learner this is, such as 4 of 10.",
         message: "About you · {current, number} of {total, number}",
@@ -162,6 +170,7 @@ function ProfileStep({
       title={title}
     >
       <ProfileQuestionBody
+        declineAsSkip
         draft={draft}
         jobPrefill={jobPrefill}
         label={title}

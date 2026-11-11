@@ -26,9 +26,8 @@ export async function mergeProfileAnswers({ guestUserId, transaction, userId }: 
     await transaction.learnerCondition.deleteMany({ where: { userId: guestUserId } });
   }
 
-  const takeGuestSupport =
-    !accountQuestions.has("learningSupport") &&
-    guestAnswers.some((answer) => answer.question === "learningSupport");
+  const takeGuest = (question: "learningSupport" | "addressForm") =>
+    !accountQuestions.has(question) && guestAnswers.some((answer) => answer.question === question);
 
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -48,5 +47,8 @@ export async function mergeProfileAnswers({ guestUserId, transaction, userId }: 
     ORDER BY condition ON CONFLICT (user_id, condition) DO NOTHING
   `;
 
-  return takeGuestSupport;
+  return {
+    takeGuestAddressForm: takeGuest("addressForm"),
+    takeGuestSupport: takeGuest("learningSupport"),
+  };
 }

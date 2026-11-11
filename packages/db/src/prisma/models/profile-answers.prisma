@@ -9,11 +9,18 @@ enum ProfileQuestion {
   activities
   conditions
   learningSupport @map("learning_support")
+  addressForm     @map("address_form")
 }
 
 enum ProfileAnswerOutcome {
   answered
   declined
+}
+
+enum AddressForm {
+  feminine
+  masculine
+  neutral
 }
 
 enum LearningNeed {
@@ -38,7 +45,8 @@ enum LearnerConditionKind {
   other
 }
 
-/// Records the version answered or declined; the answer lives in memory, conditions or needs.
+/// Records the version answered or declined; the answer lives in memory, conditions, needs or the
+/// address form.
 model ProfileAnswer {
   id         String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId     String               @map("user_id") @db.Uuid

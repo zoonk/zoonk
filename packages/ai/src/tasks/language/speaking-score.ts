@@ -8,6 +8,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
@@ -45,7 +46,7 @@ const fallbackModels = ["meta/muse-ember", "google/gemini-3.8-flash"] as const;
 
 function withRubric({ english, rubric }: { english: boolean; rubric: string }): string {
   const prompt = selectPromptVariants({ template: basePrompt, variants: { english } });
-  return `${prompt}\n${rubric}\n${regionalFormsPrompt}`;
+  return `${prompt}\n${rubric}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 }
 
 const SYSTEM_PROMPTS: Record<SpeakingExam | SpeakingMockExam, string> = {

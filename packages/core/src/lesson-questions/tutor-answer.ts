@@ -144,6 +144,7 @@ function startGoalTutorAnswer(
 
   return {
     answer: streamGoalTutorAnswer({
+      addressForm: claim.addressForm,
       analytics: { ...claim.analytics, contentScope: "personal" },
       contextSnapshot,
       learnerMemory: claim.learnerMemory,
@@ -198,6 +199,7 @@ export function startTutorAnswer(claim: ClaimedAnswer): TutorAnswerRun {
 
   return {
     answer: streamLessonQuestionAnswer({
+      addressForm: claim.addressForm,
       analytics: { ...claim.analytics, contentScope: claim.shareAnswer ? "shared" : "personal" },
       contextSnapshot: getLessonScreen(claim.contextSnapshot),
       learnerMemory: claim.learnerMemory,

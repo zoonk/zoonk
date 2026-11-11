@@ -25597,6 +25597,44 @@
               "question"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "form": {
+                    "default": null,
+                    "description": "How words about the learner agree in languages that mark gender; required unless declined",
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "feminine",
+                      "masculine",
+                      "neutral"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "addressForm"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
           }
         ],
         "description": "A complete replacement for one optional profile answer",
@@ -31095,6 +31133,45 @@
           {
             "type": "object",
             "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "form": {
+                    "default": null,
+                    "description": "How words about the learner agree in languages that mark gender; required unless declined",
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "feminine",
+                      "masculine",
+                      "neutral"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "addressForm"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
               "forever": {
                 "default": false,
                 "description": "Declines every unanswered profile question permanently instead of skipping this onboarding",
@@ -31888,6 +31965,16 @@
             "additionalProperties": false,
             "description": "The account's name, username, email and creation date"
           },
+          "addressForm": {
+            "nullable": true,
+            "description": "How the learner asked to be addressed; null when not chosen",
+            "type": "string",
+            "enum": [
+              "feminine",
+              "masculine",
+              "neutral"
+            ]
+          },
           "answers": {
             "type": "object",
             "properties": {
@@ -32268,6 +32355,7 @@
         },
         "required": [
           "account",
+          "addressForm",
           "answers",
           "buddy",
           "conditions",
@@ -32586,6 +32674,7 @@
       "ProfileQuestion": {
         "type": "string",
         "enum": [
+          "addressForm",
           "work",
           "tools",
           "studies",
@@ -32676,7 +32765,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Saved option, status, condition or need ids; noSoundEffects represents disabled sounds"
+                "description": "Saved option, status, condition, need or address form ids; noSoundEffects represents disabled sounds"
               },
               "studies": {
                 "type": "array",
@@ -90637,6 +90726,7 @@
           "examChoice",
           "level",
           "schedule",
+          "addressForm",
           "work",
           "tools",
           "studies",

@@ -12720,6 +12720,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "Lo que te ayuda a aprender"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "Cómo nos dirigimos a ti"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12740,6 +12746,12 @@ msgstr "Sin responder"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, one {# guardada} other {# guardadas}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Respuesta guardada"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -12918,6 +12930,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "¿Qué te ayuda a aprender?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "¿Cómo prefieres que nos dirijamos a ti?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -12947,6 +12965,11 @@ msgstr "Opcional. No guardaremos nada de esto a menos que tú lo decidas."
 msgctxt "310Na4"
 msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "Elige todo lo que te ayude. No necesitas una etiqueta ni un diagnóstico."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Tu compañero y los comentarios que recibas usarán estas formas al hablarte. Las lecciones no cambian."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"

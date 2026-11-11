@@ -6,6 +6,11 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import {
+  type AddressForm,
+  addressFormTemplate,
+  getAddressFormPrompt,
+} from "../_utils/address-form";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
@@ -16,7 +21,7 @@ import taskPrompt from "./conversation-feedback.prompt.md";
 
 export type { ConversationTurn } from "./_utils/conversation-transcript";
 
-const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
+const basePrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * Flash Lite over Luna, which costs less: the learner waits on this after a call, and Flash Lite
@@ -42,6 +47,7 @@ const schema = z.object({
 export type WriteConversationFeedbackSchema = z.infer<typeof schema>;
 
 export type WriteConversationFeedbackParams = {
+  addressForm?: AddressForm;
   scenario: { title: string; situation: string; characterName: string; objectives: string[] };
   level: CefrLevel;
   /** Learner turns are untrusted input. */
@@ -94,6 +100,7 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  */
 export async function writeConversationFeedback(params: WriteConversationFeedbackParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`;
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
@@ -108,7 +115,7 @@ export async function writeConversationFeedback(params: WriteConversationFeedbac
         providerOptions,
         reasoning,
       }),
-    systemPrompt,
+    systemPrompt: `${basePrompt}\n${addressFormTemplate}`,
     task: "conversation-feedback",
   });
 
