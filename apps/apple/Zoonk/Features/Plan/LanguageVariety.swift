@@ -36,8 +36,8 @@ func varietyNote(language: String, region: String?, taughtRegion: String?) -> St
     return nil
   }
 
-  let chosen = Locale.current.varietyName(language: language, region: region)
-  let taught = Locale.current.varietyName(language: language, region: taughtRegion)
+  let chosen = Locale.current.varietyNameInSentence(language: language, region: region)
+  let taught = Locale.current.varietyNameInSentence(language: language, region: taughtRegion)
 
   return String(
     localized:

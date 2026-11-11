@@ -82,7 +82,11 @@ final class LearnerSummaryStore {
     case .done(true):
       await summary.refresh()
       return true
-    case .done(false), .failed:
+    case .done(false):
+      return false
+    case .failed:
+      // One that timed out may have landed.
+      cache.invalidate([.goals])
       return false
     case .obsolete:
       // Another learner's data may be on screen, so nothing is left to say.

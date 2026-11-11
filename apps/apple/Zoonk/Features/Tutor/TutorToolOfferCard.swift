@@ -238,11 +238,13 @@ struct TutorToolOfferCard: View {
           Text("Practice", tableName: "Tutor", comment: "Opens pronunciation practice"),
           .pronunciation(goalId: pronunciation.goalId)))
     case .case9(let variety):
-      let name = Locale.current.varietyName(
+      let name = Locale.current.varietyNameInSentence(
         language: variety.targetLanguage, region: variety.targetRegion)
 
       return Content(
-        title: Text(name),
+        title: Text(
+          Locale.current.varietyName(
+            language: variety.targetLanguage, region: variety.targetRegion)),
         description: varietyNote(
           language: variety.targetLanguage, region: variety.targetRegion,
           taughtRegion: variety.taughtRegion
