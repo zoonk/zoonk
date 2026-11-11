@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { type ScreenTurn } from "../components/screen-turn";
 import { turnKeepingFocus } from "./_utils/lesson-focus";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { type LessonPlayerState } from "./lesson-player-state";
-
-export type ScreenTurn = "back" | "forward";
 
 type SeenScreen = { position: number; queue: readonly string[]; turn: ScreenTurn | null };
 

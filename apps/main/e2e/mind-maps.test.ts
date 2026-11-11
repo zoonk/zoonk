@@ -28,29 +28,48 @@ const STRUCTURE = {
   title: "Inside the atom",
 };
 
-async function createLearner() {
-  const user = await createE2EUser(getBaseURL());
-  const suffix = randomUUID().slice(0, 6);
+async function createChapter(goalSuffix: string, position: number) {
+  const suffix = `${goalSuffix}-${position}`;
 
-  const [goal, chapter, skill, { lesson }] = await Promise.all([
-    goalFixture({ timezone: "UTC", title: `Understand atoms ${suffix}`, userId: user.id }),
+  const [chapter, skill, { lesson }] = await Promise.all([
     libraryChapterFixture({ title: `Inside the atom ${suffix}` }),
     skillFixture({ name: `Atoms ${suffix}` }),
     playableLessonFixture({ lesson: { title: "An almost empty atom" }, steps: ["explanation"] }),
   ]);
 
   await Promise.all([
-    planFixture({
-      goalId: goal.id,
-      items: [{ chapterId: chapter.id, lessonId: lesson.id, skillId: skill.id }],
-    }),
-    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
     prisma.lesson.update({ data: { homeChapterId: chapter.id }, where: { id: lesson.id } }),
   ]);
 
-  return { chapter, lessonId: lesson.id, user };
+  return { chapter, lessonId: lesson.id, skillId: skill.id };
+}
+
+/** A learner whose plan has two chapters, each with one written lesson and no map. */
+async function createLearner() {
+  const user = await createE2EUser(getBaseURL());
+  const suffix = randomUUID().slice(0, 6);
+
+  const [goal, first, second] = await Promise.all([
+    goalFixture({ timezone: "UTC", title: `Understand atoms ${suffix}`, userId: user.id }),
+    createChapter(suffix, 1),
+    createChapter(suffix, 2),
+  ]);
+
+  await Promise.all([
+    planFixture({
+      goalId: goal.id,
+      items: [first, second].map(({ chapter, lessonId, skillId }) => ({
+        chapterId: chapter.id,
+        lessonId,
+        skillId,
+      })),
+    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  return { first, second, user };
 }
 
 /** The model's part: the API's E2E build holds a workflow's model calls, so its run never ends. */
@@ -75,7 +94,8 @@ test.describe("Mind maps", () => {
   test("finishing a chapter shows its map row, which turns ready and opens the map", async ({
     browser,
   }) => {
-    const { chapter, lessonId, user } = await createLearner();
+    const { first, user } = await createLearner();
+    const { chapter, lessonId } = first;
     const page = await openAs(browser, user);
 
     try {
@@ -102,6 +122,77 @@ test.describe("Mind maps", () => {
 
       // The outline is also in a hidden description for screen readers.
       await expect(viewer.getByText(STRUCTURE.summary).filter({ visible: true })).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a map saved while studying stays in Saved until the learner removes it", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+
+    await Promise.all([drawMap(first.chapter.id), drawMap(second.chapter.id)]);
+
+    const page = await openAs(browser, user);
+    const savedCount = () => prisma.savedMindMap.count({ where: { userId: user.id } });
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }).click();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: second.chapter.title }),
+      ).toBeVisible();
+
+      await page.getByRole("button", { exact: true, name: "Save" }).click();
+      await expect(page.getByRole("button", { exact: true, name: "Saved" })).toBeVisible();
+      await expect.poll(savedCount).toBe(1);
+
+      await page.getByRole("button", { name: "Previous map" }).click();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: first.chapter.title }),
+      ).toBeVisible();
+
+      await page.getByRole("link", { name: "Leave" }).click();
+
+      await page
+        .getByRole("navigation", { name: "Mind maps" })
+        .getByRole("link", { name: /^Saved/u })
+        .click();
+
+      const saved = page.getByRole("list", { name: "Saved maps" });
+      const savedMap = saved.getByRole("link", { name: new RegExp(second.chapter.title, "u") });
+
+      await expect(savedMap).toBeVisible();
+      await saved.getByRole("button", { name: "Saved" }).click();
+
+      await expect(savedMap).toBeHidden();
+      await expect.poll(savedCount).toBe(0);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("creating every chapter map starts them and the page shows each as it turns ready", async ({
+    browser,
+  }) => {
+    const { first, user } = await createLearner();
+    const page = await openAs(browser, user);
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("button", { name: "Create all chapter maps" }).click();
+      await expect(page.getByText(/2 on the way/u)).toBeVisible();
+
+      await drawMap(first.chapter.id);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(first.chapter.title, "u") }),
+      ).toBeVisible({ timeout: 15_000 });
+
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
     } finally {
       await page.context().close();
     }

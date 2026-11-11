@@ -17,6 +17,7 @@ import { toMindMapDownloadHref, toMindMapFileName, toMindMapSrc } from "./_utils
 import { MAX_SCALE, fitSide } from "./_utils/pan-zoom";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
 import { MindMapOutline } from "./mind-map-outline";
+import { type MindMapSave, MindMapSaveButton } from "./mind-map-save-button";
 import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
@@ -180,12 +181,14 @@ export function MindMapViewer({
   onOpenChange,
   open,
   outline,
+  save,
   title,
 }: {
   image: MindMapImage | null;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   outline: Outline | null;
+  save: MindMapSave;
   title: string;
 }) {
   const t = useExtracted();
@@ -223,6 +226,7 @@ export function MindMapViewer({
             </DialogTitle>
 
             {image && outline && <AsTextToggle onChange={setAsText} pressed={asText} />}
+            <MindMapSaveButton {...save} labelled={false} size="icon-bar" variant="ghost" />
             {image && <MindMapDownloadLink className={barButton} image={image} title={title} />}
           </header>
 

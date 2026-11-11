@@ -3,7 +3,10 @@ import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
+import { toMindMapsPage } from "@zoonk/learn/mind-maps/page";
+import { readMindMapTab } from "@zoonk/learn/mind-maps/urls";
 import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
+import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
@@ -13,13 +16,19 @@ import { LearnNoGoal } from "../_components/learn-no-goal";
 import { LearnNotFound } from "../_components/learn-not-found";
 import { MindMapsClient } from "./mind-maps-client";
 
+type Props = PageProps<"/[lang]/mind-maps">;
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { title: t("Mind maps") };
 }
 
-async function MindMapsBody() {
-  const goal = await getCurrentGoal();
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+async function MindMapsBody({ searchParams }: Pick<Props, "searchParams">) {
+  const [goal, query] = await Promise.all([getCurrentGoal(), searchParams]);
 
   if (!goal) {
     const t = await getExtracted();
@@ -48,7 +57,11 @@ async function MindMapsBody() {
   }
 
   return (
-    <MindMapsClient goalId={goal.id} mindMaps={result.mindMaps} plus={allowance?.tier === "plus"} />
+    <MindMapsClient
+      mindMaps={toMindMapsPage(result.mindMaps)}
+      tab={readMindMapTab(first(query.tab))}
+      tier={allowance?.tier ?? "free"}
+    />
   );
 }
 
@@ -72,22 +85,20 @@ async function MindMapsSkeleton() {
       <JourneyPageBar root />
       <div className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8")}>
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-1">
-            <span className="flex h-4 items-center">
-              <Skeleton className="h-3 w-32 rounded-sm" />
-            </span>
-            <PageTitle>{t("Mind maps")}</PageTitle>
-            <span className="flex h-5 items-end">
-              <Skeleton className="h-3 w-16 rounded-sm" />
-            </span>
-          </div>
-          <div className="flex max-w-prose flex-col gap-2 py-0.5">
-            <Skeleton className="h-3.5 w-full rounded-sm" />
-            <Skeleton className="h-3.5 w-1/2 rounded-sm" />
+          <DetailHero>
+            <DetailHeroText>
+              <Skeleton className="my-0.5 h-3 w-32 rounded-sm" />
+              <PageTitle>{t("Mind maps")}</PageTitle>
+            </DetailHeroText>
+            <Skeleton className="h-11 w-full rounded-lg md:w-28" />
+          </DetailHero>
+          <div className="flex gap-1">
+            <Skeleton className="h-8 w-24 rounded-md" />
+            <Skeleton className="h-8 w-24 rounded-md" />
+            <Skeleton className="h-8 w-20 rounded-md" />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-3.5 w-28 rounded-sm" />
+        <div className="flex flex-col">
           <MapRowSkeleton />
           <MapRowSkeleton />
           <MapRowSkeleton />
@@ -97,10 +108,10 @@ async function MindMapsSkeleton() {
   );
 }
 
-export default function MindMapsPage() {
+export default function MindMapsPage({ searchParams }: Props) {
   return (
     <Suspense fallback={<MindMapsSkeleton />}>
-      <MindMapsBody />
+      <MindMapsBody searchParams={searchParams} />
     </Suspense>
   );
 }
