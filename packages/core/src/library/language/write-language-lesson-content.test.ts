@@ -369,8 +369,54 @@ describe(writeLanguageLessonContent, () => {
       pronunciations.map((row) => [row.userLanguage, row.pronunciation, Boolean(row.tip)]),
     ).toStrictEqual([
       ["es", "es RÉNT", true],
-      ["pt", "REHNT", true],
+      ["pt", "RÉNT", true],
     ]);
+  });
+
+  it("replaces a word's saved guide and tip with the ones the new lesson wrote together", async () => {
+    const organization = await aiOrganizationFixture();
+    const draft = uniqueDraft(crypto.randomUUID());
+    const [rent, deposit] = draft.words;
+
+    const [savedRent, savedDeposit] = await Promise.all(
+      [rent!, deposit!].map((word) =>
+        wordFixture({ organizationId: organization.id, targetLanguage: "en", word: word.word }),
+      ),
+    );
+
+    await Promise.all([
+      wordPronunciationFixture({
+        pronunciation: "REHNT",
+        userLanguage: "pt",
+        wordId: savedRent!.id,
+      }),
+      wordPronunciationFixture({
+        pronunciation: "di-PÓ-zi-ti",
+        tip: "Não acrescente um 'i' depois do t.",
+        userLanguage: "pt",
+        wordId: savedDeposit!.id,
+      }),
+    ]);
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    const writerRunId = crypto.randomUUID();
+    mockDraft(draft, writerRunId);
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    const pronunciations = await prisma.wordPronunciation.findMany({
+      where: { wordId: { in: [savedRent!.id, savedDeposit!.id] } },
+    });
+
+    expect(
+      Object.fromEntries(
+        pronunciations.map((row) => [row.wordId, [row.pronunciation, row.tip, row.runId]]),
+      ),
+    ).toStrictEqual({
+      [savedDeposit!.id]: [deposit!.pronunciation, null, writerRunId],
+      [savedRent!.id]: [rent!.pronunciation, rent!.tip, writerRunId],
+    });
   });
 
   it("voices each word its word banks show once, so every target-language tile plays it", async () => {
