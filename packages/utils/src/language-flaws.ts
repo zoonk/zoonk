@@ -120,6 +120,15 @@ const ACCENTLESS_ENDINGS: Readonly<Record<string, RegExp>> = {
   pt: /^[a-z]{2,}(?:cao|coes|ssao|ssoes)$/u,
 };
 
+/**
+ * Real words of a practiced language that look like another's accentless ones: Italian "voce" is
+ * Portuguese "você" stripped. English shows up in every language's text, so its words always pass.
+ */
+const WORDS_ELSEWHERE: Readonly<Record<string, ReadonlySet<string>>> = {
+  en: new Set(["coercion", "scion", "suspicion"]),
+  it: new Set(["voce"]),
+};
+
 /** Composite codes `Intl` gives for scripts written with more than one Unicode script. */
 const WRITING_SYSTEMS: Readonly<Record<string, readonly string[]>> = {
   Hans: ["Hani"],
@@ -129,10 +138,10 @@ const WRITING_SYSTEMS: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * Latin carries names, codes and units in every language, and Greek letters are math and science
- * symbols ("π", "Δ"). Common and Inherited cover digits, punctuation and combining marks.
+ * Latin carries names, codes and units in every language. Common and Inherited cover digits,
+ * punctuation and combining marks.
  */
-const SHARED_SCRIPTS = ["Latn", "Grek", "Zyyy", "Zinh"];
+const SHARED_SCRIPTS = ["Latn", "Zyyy", "Zinh"];
 
 const NON_LATIN_SCRIPTS = [
   "Arab",
@@ -142,6 +151,7 @@ const NON_LATIN_SCRIPTS = [
   "Deva",
   "Ethi",
   "Geor",
+  "Grek",
   "Gujr",
   "Guru",
   "Hang",
@@ -169,15 +179,21 @@ function findInputScripts(input: string): string[] {
 
 const WORD = /[\p{L}\p{M}]+/gu;
 
-/** One Latin word, key, slug or URL ("redacao", "regra-de-tres"): ids and codes, not prose. */
-const UNSPACED_LATIN = /^[\p{scx=Latn}\p{N}\p{P}\p{S}]+$/u;
+/** A Greek letter on its own is a math or science symbol ("π", "Δx"); a Greek word is Greek. */
+const GREEK_SYMBOL = /(?<!\p{scx=Grek})\p{scx=Grek}(?!\p{scx=Grek})/gu;
+
+/** A key, slug, enum or URL ("comunicacao", "regra-de-tres"): ids and codes, not prose. */
+const IDENTIFIER = /^(?:https?:\/\/\S+|[a-z\d]+(?:[-_./][a-z\d]+)*)$/u;
 
 /**
- * Quoted, bracketed or code text may be spelled as someone else wrote it: a learner's line, a
- * term's original, a variable, a `{placeholder}` code fills in.
+ * Quoted or code text may be spelled as someone else wrote it: a learner's line, a variable, a
+ * `{placeholder}` code fills in.
  */
 const QUOTED =
-  /`[^`\n]*`|\{[^{}\n]*\}|"[^"\n]*"|“[^”\n]*”|„[^“”\n]*[“”]|«[^»\n]*»|「[^」\n]*」|『[^』\n]*』|\([^()\n]*\)/gu;
+  /`[^`\n]*`|\{[^{}\n]*\}|"[^"\n]*"|“[^”\n]*”|„[^“”\n]*[“”]|«[^»\n]*»|「[^」\n]*」|『[^』\n]*』/gu;
+
+/** Brackets hold a term in its original alphabet: "kaizen (改善)". */
+const BRACKETED = /\([^()\n]*\)/gu;
 
 function getScripts(language: string): readonly string[] {
   try {
@@ -211,20 +227,31 @@ function buildScriptPattern({
   ]);
 
   const classes = [...scripts].filter((script) => isScriptProperty(script));
-  return new RegExp(`^[${classes.map((script) => `\\p{scx=${script}}`).join("")}]+$`, "u");
+  return new RegExp(`^[${classes.map((script) => `\\p{scx=${script}}`).join("")}]*$`, "u");
 }
 
-function isAccentless({ language, word }: { language: string; word: string }): boolean {
+function isAccentless({
+  language,
+  otherLanguages,
+  word,
+}: {
+  language: string;
+  otherLanguages: readonly string[];
+  word: string;
+}): boolean {
   const lower = word.toLowerCase();
   const words = ACCENTLESS_WORDS[language];
   const ending = ACCENTLESS_ENDINGS[language];
 
-  return Boolean(words?.has(lower) || ending?.test(lower));
+  const elsewhere = ["en", ...otherLanguages].some((other) => WORDS_ELSEWHERE[other]?.has(lower));
+
+  return !elsewhere && Boolean(words?.has(lower) || ending?.test(lower));
 }
 
 /**
- * `otherLanguages` are the ones the text may also be in, such as the practiced one. Words the
- * model's `input` has are spelled as given, and alphabets it has belong to the task.
+ * `otherLanguages` are the ones the text may also be in, such as the practiced one. A word the
+ * model's `input` has, in the same form, is spelled as given, such as a learner's typed "nao"; an
+ * alphabet it has belongs to the task.
  */
 export function findLanguageFlaws({
   input,
@@ -237,27 +264,25 @@ export function findLanguageFlaws({
   otherLanguages?: readonly string[];
   value: unknown;
 }): string[] {
-  const base = getBaseLanguage(language);
+  const [base = "", ...others] = [language, ...otherLanguages].map((code) => getBaseLanguage(code));
   const scriptPattern = buildScriptPattern({ input, languages: [language, ...otherLanguages] });
-  const given = new Set(input.toLowerCase().match(WORD));
+  const given = new Set(input.match(WORD));
 
-  const words = collectJsonStrings(value)
-    .filter((text) => !UNSPACED_LATIN.test(text.trim()))
-    .flatMap((text) => text.replaceAll(QUOTED, " ").match(WORD) ?? []);
+  const unquoted = collectJsonStrings(value)
+    .filter((text) => !IDENTIFIER.test(text.trim()))
+    .map((text) => text.replaceAll(QUOTED, " "));
 
-  const problems = words.flatMap((word) => {
-    if (given.has(word.toLowerCase())) {
-      return [];
-    }
+  const foreign = unquoted
+    .flatMap((text) => text.replaceAll(BRACKETED, " ").match(WORD) ?? [])
+    .filter((word) => !given.has(word) && !scriptPattern.test(word.replaceAll(GREEK_SYMBOL, "")))
+    .map((word) => `Has "${word}", a word in a script this language doesn't use.`);
 
-    if (!scriptPattern.test(word)) {
-      return [`Has "${word}", a word in a script this language doesn't use.`];
-    }
+  const accentless = unquoted
+    .flatMap((text) => text.match(WORD) ?? [])
+    .filter(
+      (word) => !given.has(word) && isAccentless({ language: base, otherLanguages: others, word }),
+    )
+    .map((word) => `Writes "${word}" without the accents it needs.`);
 
-    return isAccentless({ language: base, word })
-      ? [`Writes "${word}" without the accents it needs.`]
-      : [];
-  });
-
-  return [...new Set(problems)];
+  return [...new Set([...foreign, ...accentless])];
 }

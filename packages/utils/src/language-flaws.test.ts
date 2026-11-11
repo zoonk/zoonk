@@ -58,7 +58,8 @@ describe(findLanguageFlaws, () => {
 
   it("passes words spelled as the input wrote them, quoted, in code or in a placeholder", () => {
     const value = {
-      feedback: "Você escreveu “nao entendi”; tente `nao_entendi` com {producao} e (Сергей).",
+      feedback:
+        "Você escreveu “nao entendi”; tente `nao_entendi` com {producao} e Sergei (Сергей).",
       said: "desculpa, nao entendi o deposito, voce pode repetir?",
     };
 
@@ -79,8 +80,57 @@ describe(findLanguageFlaws, () => {
     ).toStrictEqual([]);
   });
 
+  it("finds a Greek word, though a Greek letter alone is a symbol", () => {
+    const value = "Você respondeu com φυσικά naturalidade, e Δx ficou pequeno.";
+
+    expect(findLanguageFlaws({ input: "", language: "pt", value })).toStrictEqual([
+      expect.stringContaining('"φυσικά"'),
+    ]);
+  });
+
+  it("finds a one-word title and bracketed prose without accents", () => {
+    const value = { feedback: "Continue praticando (voce esta evoluindo).", title: "Comunicacao" };
+
+    expect(findLanguageFlaws({ input: "", language: "pt", value })).toStrictEqual([
+      expect.stringContaining('"voce"'),
+      expect.stringContaining('"Comunicacao"'),
+    ]);
+  });
+
+  it("passes only the form the learner typed, not the model's own", () => {
+    const value = { feedback: "Voce nao identificou a causa." };
+
+    expect(
+      findLanguageFlaws({ input: "nao entendi, voce pode explicar?", language: "pt", value }),
+    ).toStrictEqual([expect.stringContaining('"Voce"')]);
+  });
+
+  it("passes practiced-language words that look like accentless ones", () => {
+    expect(
+      findLanguageFlaws({
+        input: "LEARNER_ANSWER: Alza la vose.",
+        language: "pt",
+        otherLanguages: ["it"],
+        value: { spelling: "Alza la voce." },
+      }),
+    ).toStrictEqual([]);
+
+    expect(
+      findLanguageFlaws({
+        input: "LEARNER_ANSWER: I have a suspision.",
+        language: "es",
+        otherLanguages: ["en"],
+        value: { spelling: "I have a suspicion." },
+      }),
+    ).toStrictEqual([]);
+  });
+
   it("passes keys, slugs and one-word ids, which are no prose", () => {
-    const value = { id: "comunicacao", key: "regra-de-tres", url: "https://example.com/nao" };
+    const value = {
+      id: "comunicacao",
+      key: "regra-de-tres",
+      url: "https://example.com/Comunicacao",
+    };
 
     expect(findLanguageFlaws({ input: "", language: "pt", value })).toStrictEqual([]);
   });
