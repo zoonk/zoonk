@@ -534,7 +534,7 @@ private fun NextAndMore(
 private val SIDE_BY_SIDE_WIDTH = 600.dp
 
 @Composable
-private fun PlanEvents(
+internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
 ) {
