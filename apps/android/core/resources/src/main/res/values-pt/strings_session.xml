@@ -27,8 +27,8 @@
   "session_block_weekly_challenge": "b3e959bb0c8e69691a6c821bc3b8ca792a3612c3d9f478b3ea6f146097439814",
   "session_block_what_you_know": "9b5359a0466c6ad81b838068ba12c7cb8eccecf2617c2939bf4cd846dcc3a2bf",
   "session_block_writing_practice": "fdc84147d9d9aa269b73311b7615a0ebf51014df028d60f7559bb2b1c28651d7",
-  "session_catch_up_to_go": "5f8937e1e014233c63bb626504f5048166499263cd3e9794d72520efb797be07",
-  "session_caught_up_today": "a9eba94821796a71bfea9ea410145167fc8596ba859fd2fc17c0d71562a40ebf",
+  "session_catch_up_to_go": "f297b466e703eb603dbcddc4081982f184c946ec6bba21eb4e2037237c6f0d91",
+  "session_caught_up_today": "32430ad1ca6dce8193708bfccb9e54229e8695dfb3acfc6493b9dab6aef8ec4c",
   "session_day_done": "1b5de0e8634ec6cba7aaf480193ae488da9042d2cf120e2b8fb51f76b0ca3e04",
   "session_day_done_caption": "b72da27623ae8d4a254dca87419b212f46a57e98df300160eeade7d1e4c6354d",
   "session_day_left": "1dd33e581b8503decc1056de6501b64948ddd2f0cfc4abec32c6999af09280e7",
@@ -248,15 +248,15 @@
     <string name="session_day_more_coming">Mais aulas conforme você avança</string>
     <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
     <plurals name="session_caught_up_today">
-        <item quantity="one">%1$s aula colocada em dia hoje</item>
-        <item quantity="many">%1$s aulas colocadas em dia hoje</item>
-        <item quantity="other">%1$s aulas colocadas em dia hoje</item>
+        <item quantity="one">%1$s colocada em dia hoje</item>
+        <item quantity="many">%1$s colocadas em dia hoje</item>
+        <item quantity="other">%1$s colocadas em dia hoje</item>
     </plurals>
     <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
     <plurals name="session_catch_up_to_go">
-        <item quantity="one">%1$s para fazer</item>
-        <item quantity="many">%1$s para fazer</item>
-        <item quantity="other">%1$s para fazer</item>
+        <item quantity="one">falta %1$s</item>
+        <item quantity="many">faltam %1$s</item>
+        <item quantity="other">faltam %1$s</item>
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Nenhuma aula para colocar em dia.</string>
