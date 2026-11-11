@@ -1,12 +1,13 @@
+import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
-import { readCurrentTestSummary } from "../facts/focus-test-summary";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 import { settleFocusTestAfterSession } from "./_utils/settle-focus-test";
+import { readFocusTestRecord } from "./focus-test-state";
 
 const SUBJECTS = [
   { name: "Português", questions: 8 },
@@ -84,7 +85,7 @@ describe("the Focus test's questions inside sessions", () => {
     await expect(pick(true)).resolves.toContain("Português");
   });
 
-  it("reads session coverage from answers before and after settlement", async () => {
+  it("settles the test when a session that asked its questions ends, and only then", async () => {
     const { goal, items, user } = await setup();
 
     const [asking, plain] = await Promise.all([
@@ -92,10 +93,12 @@ describe("the Focus test's questions inside sessions", () => {
       studySessionFixture({ goalId: goal.id, localDate: new Date("2030-01-06"), userId: user.id }),
     ]);
 
-    const readSummary = () => readCurrentTestSummary(user.id, goal.id);
+    const readSummary = async () =>
+      readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }))
+        ?.summary ?? null;
 
     await settleFocusTestAfterSession({ goalId: goal.id, sessionId: plain.id, userId: user.id });
-    await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
+    await expect(readSummary()).resolves.toBeNull();
 
     await attemptFixture({
       isPlacement: true,

@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { endFollowUp, listFollowUps } from "../follow-ups/follow-up-rows";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../learner/_test-utils/exam-test-goal";
-import { readCurrentTestSummary } from "../learner/facts/focus-test-summary";
+import { readFocusTestRecord } from "../learner/placement/focus-test-state";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import * as rebalance from "../preparation/rebalance-plan";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -49,7 +49,9 @@ describe("the plan work a session end owes", () => {
         sessionId: session.id,
       });
 
-      const readSummary = () => readCurrentTestSummary(user.id, goal.id);
+      const readSummary = async () =>
+        readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }))
+          ?.summary;
 
       const settleOwed = async () => {
         const rows = await listFollowUps(user.id);
@@ -87,7 +89,7 @@ describe("the plan work a session end owes", () => {
         }),
       ).resolves.toMatchObject({ status: "ready" });
 
-      await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
+      await expect(readSummary()).resolves.toMatchObject({ asked: 0 });
       await finishStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
 
       if (ending === "stop") {

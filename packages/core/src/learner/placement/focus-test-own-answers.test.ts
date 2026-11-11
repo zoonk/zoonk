@@ -2,10 +2,10 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
-import { readCurrentTestSummary } from "../facts/focus-test-summary";
 import { loadEvidence } from "./_utils/placement-evidence";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
+import { readFocusTestRecord } from "./focus-test-state";
 import { getGoalPlacement } from "./get-goal-placement";
 
 describe("test progress while a sitting stays open", () => {
@@ -184,7 +184,9 @@ describe("test progress while a sitting stays open", () => {
         }),
       ).resolves.toStrictEqual([{ correctAnswers: 1, seconds: 20 }]);
 
-      await expect(readCurrentTestSummary(user.id, goal.id)).resolves.toMatchObject({
+      const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+      expect(readFocusTestRecord(saved)?.summary).toMatchObject({
         paceMs: source === "mock" ? 60_000 : (20_000 + 14 * 180_000) / 15,
       });
     },

@@ -156,9 +156,10 @@ export async function closeTestSitting({
   return closed;
 }
 
-/** Synchronizes sitting progress under the learner lock and reads the current test. */
-export async function syncTestSitting({
+/** Reads and keeps the summary under the learner's lock, so an earlier answer can't overwrite a later one. */
+export async function saveTestSummary({
   goalId,
+  onlyFirst = false,
   ownLevel,
   plan,
   today,
@@ -166,6 +167,7 @@ export async function syncTestSitting({
   userId,
 }: {
   goalId: string;
+  onlyFirst?: boolean;
   ownLevel?: OwnLevel | null;
   plan: GoalPlan;
   today?: Date;
@@ -193,6 +195,7 @@ export async function syncTestSitting({
             record.sitting && state.focusTest?.sitting
               ? { ...record.sitting, answered: state.focusTest.sitting.answered }
               : record.sitting,
+          summary: onlyFirst && record.summary ? record.summary : focusTest.summary,
         }),
         goalId,
         tx,

@@ -14,6 +14,26 @@ const sittingSchema = z.object({
   startedAt: z.iso.datetime(),
 });
 
+const suggestedSubjectSchema = z.object({
+  areas: z.array(z.string()),
+  name: z.string(),
+  shortName: z.string().nullable(),
+});
+
+const summarySchema = z.object({
+  asked: z.int().min(0),
+  complete: z.boolean(),
+  /** The questions a start would open with no sitting open; null when nothing can be asked. */
+  offerQuestions: z.int().min(1).nullable(),
+  paceMs: z.number().positive(),
+  quick: z.int().min(0),
+  /** The subjects a short plan should focus, the most needed first; empty without a date. */
+  suggested: z.array(suggestedSubjectSchema),
+  total: z.int().min(0),
+  /** Subjects quick questions can check that have no test answer yet. */
+  unasked: z.int().min(0),
+});
+
 const recordSchema = z.object({
   dismissedAt: z.iso.datetime().nullable().default(null),
   /**
@@ -25,20 +45,13 @@ const recordSchema = z.object({
   sitting: sittingSchema.nullable().default(null),
   skippedOn: z.iso.date().nullable().default(null),
   startedAt: z.iso.datetime().nullable().default(null),
+  /** What the plan's row, Today and the time question show, kept so they never load the answers. */
+  summary: summarySchema.nullable().default(null),
 });
 
 export type FocusTestRecord = z.infer<typeof recordSchema>;
 
-export type FocusTestSummaryRecord = {
-  asked: number;
-  complete: boolean;
-  offerQuestions: number | null;
-  paceMs: number;
-  quick: number;
-  suggested: { areas: string[]; name: string; shortName: string | null }[];
-  total: number;
-  unasked: number;
-};
+export type FocusTestSummaryRecord = z.infer<typeof summarySchema>;
 
 export const NEW_FOCUS_TEST_RECORD: FocusTestRecord = recordSchema.parse({});
 

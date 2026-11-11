@@ -3,9 +3,9 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
-import { readCurrentTestSummary } from "../facts/focus-test-summary";
 import { loadAnsweredTestItems, loadEvidence } from "./_utils/placement-evidence";
 import { finishGoalPlacement } from "./finish-goal-placement";
+import { readFocusTestRecord } from "./focus-test-state";
 
 describe("diagnostic progress outside the recent model evidence window", () => {
   it("keeps old test coverage, pace and answered items after 1,000 ordinary answers", async () => {
@@ -33,9 +33,11 @@ describe("diagnostic progress outside the recent model evidence window", () => {
 
     await finishGoalPlacement({ goalId: goal.id, input: {} });
 
-    const saved = await readCurrentTestSummary(user.id, goal.id);
+    const saved = readFocusTestRecord(
+      await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+    );
 
-    expect(saved).toMatchObject({ asked: 1, paceMs: 132_000 });
+    expect(saved?.summary).toMatchObject({ asked: 1, paceMs: 132_000 });
 
     await prisma.attempt.createMany({
       data: Array.from({ length: 1000 }, (_, index) => ({
@@ -72,8 +74,10 @@ describe("diagnostic progress outside the recent model evidence window", () => {
     const continued = await startSitting(goal.id);
     expect(continued.next?.itemId).toBe(items[5]!.id);
 
-    const after = await readCurrentTestSummary(user.id, goal.id);
+    const after = readFocusTestRecord(
+      await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+    );
 
-    expect(after).toMatchObject({ asked: 1, paceMs: 132_000, unasked: 0 });
+    expect(after?.summary).toMatchObject({ asked: 1, paceMs: 132_000, unasked: 0 });
   });
 });

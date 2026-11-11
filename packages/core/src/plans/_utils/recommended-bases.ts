@@ -2,7 +2,6 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { loadCurrentTestSummary } from "../../learner/facts/focus-test-summary";
 import { keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { getDailyTimeFocus } from "../../learner/placement/focus-test-summary";
 import { type PlanSettings, parsePlanSettings } from "../planner/plan-state";
@@ -95,10 +94,6 @@ export async function settleNewPlan({ goalId }: { goalId: string }): Promise<voi
       const focus = getDailyTimeFocus({
         focusAreas: current.focusAreas,
         goal: plan.goal,
-        summary:
-          plan.goal.kind === "exam"
-            ? await loadCurrentTestSummary({ goalId, tx, userId: plan.goal.userId })
-            : null,
         timeShort,
       });
 

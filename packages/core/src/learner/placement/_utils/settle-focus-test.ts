@@ -8,11 +8,29 @@ import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
 import { toFocus } from "../focus-test-view";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
-import { syncTestSitting } from "./test-sitting";
+import { saveTestSummary } from "./test-sitting";
+
+/**
+ * A new plan's first summary, so the plan's row, its reveal and Today can offer the test before
+ * the learner touches it. Workflow bridge: the goal comes from the run that built its plan.
+ */
+export async function startFocusTestSummary(goalId: string): Promise<void> {
+  const goal = await prisma.goal.findUnique({
+    select: { kind: true, userId: true },
+    where: { id: goalId },
+  });
+
+  if (goal?.kind !== "exam") {
+    return;
+  }
+
+  const plan = await loadPlacementPlan(goalId);
+  await saveTestSummary({ goalId, onlyFirst: true, plan, userId: goal.userId });
+}
 
 /**
  * Where an exam goal's test stands once its answers were applied or a session with its questions
- * ended: synchronizes its sitting and proposes a focus when one is due, never while a
+ * ended: saves what the cheap reads show and proposes a focus when one is due, never while a
  * sitting or a session is still asking. Returns the state after both; other goals only read it.
  */
 export async function settleFocusTest({
@@ -27,7 +45,7 @@ export async function settleFocusTest({
   userId: string;
 }): Promise<PlacementState> {
   const plan = await loadPlacementPlan(goalId);
-  const { focusTest, state } = await syncTestSitting({ goalId, plan, timeZone, today, userId });
+  const { focusTest, state } = await saveTestSummary({ goalId, plan, timeZone, today, userId });
 
   const checkpoint = state.focusTest?.checkpoint;
 

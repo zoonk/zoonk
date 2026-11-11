@@ -6,33 +6,21 @@ import {
   type TodayFocusTest,
 } from "./focus-test-contract";
 import { getPaceMs, getSessionQuestions, getSittingMinutes } from "./focus-test-rules";
-import {
-  type FocusTestSummaryRecord,
-  isFocusTestStarted,
-  readFocusTestRecord,
-} from "./focus-test-state";
+import { isFocusTestStarted, readFocusTestRecord } from "./focus-test-state";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 import { getGoalDay } from "./placement-day";
 
 type TestGoal = Pick<Goal, "createdAt" | "details" | "kind">;
 
-type TestDay = {
-  goal: TestGoal;
-  localDate: Date;
-  timeZone: string;
-  summary: FocusTestSummaryRecord | null;
-};
+type TestDay = { goal: TestGoal; localDate: Date; timeZone: string };
 
 /**
- * Whether an exam goal's sessions ask the test's questions on a day, from the current subjects and answers.
+ * Whether an exam goal's sessions ask the test's questions on a day, from what the goal row keeps.
+ * A goal placed before the test kept a summary may still have a subject to ask about.
  */
-export function readSessionQuestions({
-  goal,
-  localDate,
-  timeZone,
-  summary,
-}: TestDay): SessionQuestions {
+export function readSessionQuestions({ goal, localDate, timeZone }: TestDay): SessionQuestions {
   const record = readFocusTestRecord(goal);
+  const summary = record?.summary;
 
   return getSessionQuestions({
     complete: summary?.complete ?? false,
@@ -53,7 +41,8 @@ export function isSameFocus(a: readonly string[], b: readonly string[]): boolean
 }
 
 /**
- * The test as the plan's row shows it, derived from current subjects and answers. Null for a goal that isn't an exam.
+ * The test as the plan's row shows it, read off the goal row. Null for a goal that isn't an exam.
+ * A goal placed before the test kept a summary has no numbers until its next test answer.
  */
 export function readFocusTestSummary({
   focusAreas,
@@ -69,7 +58,7 @@ export function readFocusTestSummary({
   }
 
   const record = readFocusTestRecord(goal);
-  const summary = day.summary;
+  const summary = record?.summary ?? null;
   const sitting = record?.sitting ?? null;
   const left = sitting ? sitting.questions - sitting.answered : 0;
   const paceMs = summary?.paceMs ?? getPaceMs({ answers: 0, durationMs: 0 });
@@ -94,19 +83,19 @@ export function readTodayFocusTest({
   localDate,
   timeShort,
   timeZone,
-  summary,
 }: TestDay & {
   /** The plan has a date and its time doesn't cover everything by it. */
   timeShort: boolean;
 }): TodayFocusTest | null {
   const record = readFocusTestRecord(goal);
+  const summary = record?.summary;
 
   const suggests =
     goal.kind === "exam" &&
     timeShort &&
     summary &&
     summary.total > 1 &&
-    !record?.dismissedAt &&
+    !record.dismissedAt &&
     !isFocusTestStarted(goal) &&
     getGoalDay({ createdAt: goal.createdAt, localDate, timeZone }) < PLACEMENT_WEEK_DAYS;
 
@@ -115,8 +104,10 @@ export function readTodayFocusTest({
 
 /** The subjects a short plan would focus, once the learner has a test answer to go by. */
 export function readFocusSubjects(
-  summary: FocusTestSummaryRecord | null,
+  goal: Pick<Goal, "details">,
 ): { name: string; shortName: string | null }[] {
+  const summary = readFocusTestRecord(goal)?.summary;
+
   return summary && summary.asked > 0
     ? summary.suggested.map(({ name, shortName }) => ({ name, shortName }))
     : [];
@@ -131,16 +122,15 @@ export function getDailyTimeFocus({
   focusAreas,
   goal,
   timeShort,
-  summary,
 }: {
   focusAreas: readonly string[];
   goal: Pick<Goal, "details" | "kind">;
   timeShort: boolean;
-  summary: FocusTestSummaryRecord | null;
 }): string[] | null {
   const record = readFocusTestRecord(goal);
+  const summary = record?.summary;
 
-  if (goal.kind !== "exam" || !summary || !isSameFocus(focusAreas, record?.focus ?? [])) {
+  if (goal.kind !== "exam" || !summary || !isSameFocus(focusAreas, record.focus ?? [])) {
     return null;
   }
 

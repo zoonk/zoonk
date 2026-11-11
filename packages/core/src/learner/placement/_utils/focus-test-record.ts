@@ -1,11 +1,10 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { lockLearner } from "@zoonk/db/learner-writes";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
-import { writeLearnerChange } from "../../_utils/write-learner-change";
 import {
   FOCUS_TEST_DETAIL,
   type FocusTestRecord,
@@ -169,16 +168,4 @@ export async function changeFocusTestRecord({
   }
 
   return { after, before };
-}
-
-export async function initializeFocusTestRecord(goalId: string): Promise<void> {
-  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-
-  if (goal?.kind !== "exam") {
-    return;
-  }
-
-  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
-    await changeFocusTestRecord({ change: (record) => record, goalId, tx });
-  });
 }

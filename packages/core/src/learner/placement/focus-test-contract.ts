@@ -235,7 +235,7 @@ export const focusTestSummarySchema = z
       .nullable()
       .meta({
         description:
-          "Current plan subjects with a diagnostic test answer, of all current plan subjects. Null before the first answer",
+          "Subjects with a test answer, of all of them. Null before the first answer, and for a goal placed before the Focus test until its next test answer",
       }),
   })
   .meta({ id: "FocusTestSummary" });

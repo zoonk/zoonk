@@ -20,7 +20,7 @@ import {
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
-import { syncTestSitting } from "./_utils/test-sitting";
+import { saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
 
 export type PlacementAnswerResult =
@@ -183,7 +183,7 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   });
 
-  const readPlacement = owned.goal.kind === "exam" ? syncTestSitting : loadPlacementWithSummary;
+  const readPlacement = owned.goal.kind === "exam" ? saveTestSummary : loadPlacementWithSummary;
 
   const { state: placement } = await readPlacement({
     goalId,

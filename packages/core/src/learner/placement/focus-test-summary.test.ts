@@ -26,12 +26,7 @@ function examGoal(focusTest: object | null, details: object = {}) {
   };
 }
 
-const DAY_THREE = {
-  localDate: new Date("2030-03-04T00:00:00Z"),
-  summary: SUMMARY,
-  timeShort: true,
-  timeZone: "UTC",
-};
+const DAY_THREE = { localDate: new Date("2030-03-04T00:00:00Z"), timeShort: true, timeZone: "UTC" };
 
 describe(readTodayFocusTest, () => {
   const untouched = { ...NEW_FOCUS_TEST_RECORD, summary: SUMMARY };
@@ -62,13 +57,7 @@ describe(readTodayFocusTest, () => {
     ],
     ["nothing was kept on the goal yet", DAY_THREE, null, {}],
   ])("says nothing when %s", (_, day, focusTest, details) => {
-    expect(
-      readTodayFocusTest({
-        ...day,
-        goal: examGoal(focusTest, details),
-        summary: focusTest?.summary ?? null,
-      }),
-    ).toBeNull();
+    expect(readTodayFocusTest({ ...day, goal: examGoal(focusTest, details) })).toBeNull();
   });
 
   it("says nothing for a goal that isn't an exam", () => {
@@ -88,11 +77,9 @@ describe(getDailyTimeFocus, () => {
   it("focuses what the test suggests when the time is short", () => {
     const goal = examGoal(answered);
 
-    expect(
-      getDailyTimeFocus({ focusAreas: [], goal, summary: answered.summary, timeShort: true }),
-    ).toStrictEqual(areas);
+    expect(getDailyTimeFocus({ focusAreas: [], goal, timeShort: true })).toStrictEqual(areas);
 
-    expect(readFocusSubjects(answered.summary)).toStrictEqual([
+    expect(readFocusSubjects(goal)).toStrictEqual([
       { name: "Direito Administrativo", shortName: "Adm" },
       { name: "Redação", shortName: null },
     ]);
@@ -102,49 +89,21 @@ describe(getDailyTimeFocus, () => {
     const skipped = examGoal({ ...answered, summary: { ...SUMMARY, suggested: SUGGESTED } });
 
     expect(
-      getDailyTimeFocus({
-        focusAreas: [],
-        goal: examGoal(answered),
-        summary: answered.summary,
-        timeShort: false,
-      }),
+      getDailyTimeFocus({ focusAreas: [], goal: examGoal(answered), timeShort: false }),
     ).toBeNull();
 
-    expect(
-      getDailyTimeFocus({ focusAreas: [], goal: skipped, summary: SUMMARY, timeShort: true }),
-    ).toBeNull();
-
-    expect(readFocusSubjects(SUMMARY)).toStrictEqual([]);
+    expect(getDailyTimeFocus({ focusAreas: [], goal: skipped, timeShort: true })).toBeNull();
+    expect(readFocusSubjects(skipped)).toStrictEqual([]);
   });
 
   it("removes its own focus once more time covers everything, and leaves one the learner picked", () => {
     const set = examGoal({ ...answered, focus: areas });
 
-    expect(
-      getDailyTimeFocus({
-        focusAreas: areas,
-        goal: set,
-        summary: answered.summary,
-        timeShort: false,
-      }),
-    ).toStrictEqual([]);
+    expect(getDailyTimeFocus({ focusAreas: areas, goal: set, timeShort: false })).toStrictEqual([]);
+    expect(getDailyTimeFocus({ focusAreas: areas, goal: set, timeShort: true })).toBeNull();
 
     expect(
-      getDailyTimeFocus({
-        focusAreas: areas,
-        goal: set,
-        summary: answered.summary,
-        timeShort: true,
-      }),
-    ).toBeNull();
-
-    expect(
-      getDailyTimeFocus({
-        focusAreas: ["Informática"],
-        goal: set,
-        summary: answered.summary,
-        timeShort: true,
-      }),
+      getDailyTimeFocus({ focusAreas: ["Informática"], goal: set, timeShort: true }),
     ).toBeNull();
   });
 });

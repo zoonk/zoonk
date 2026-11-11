@@ -118,7 +118,6 @@ type PlacementRead = {
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
-  now?: Date;
   plan: GoalPlan;
   today?: Date | null;
   timeZone?: string;
@@ -129,14 +128,12 @@ type PlacementRead = {
 async function loadPlacementFacts({
   goalId,
   requestedLevel,
-  now,
   skillIds,
   tx,
   userId,
 }: {
   goalId: string;
   requestedLevel: OwnLevel | null | undefined;
-  now?: Date;
   skillIds: string[];
   tx: TransactionClient;
   userId: string;
@@ -162,7 +159,6 @@ async function loadPlacementFacts({
         focusAreas: exam.focusAreas,
         goalId,
         knownAreas: exam.knownAreas,
-        now,
         ownLevel,
         tx,
       }).then(async (planBuild) => ({
@@ -195,7 +191,6 @@ async function loadPlacementFacts({
 export async function loadPlacementWithSummary({
   goalId,
   ownLevel: requestedLevel,
-  now,
   plan,
   today = null,
   timeZone,
@@ -215,7 +210,7 @@ export async function loadPlacementWithSummary({
     placementAnswers,
     sittingOutcomes,
     testSkills,
-  } = await loadPlacementFacts({ goalId, now, requestedLevel, skillIds, tx, userId });
+  } = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
 
   const { answeredOnly, focusAreas, focusedSkillIds, knownAreas, quickFormat } = exam;
 

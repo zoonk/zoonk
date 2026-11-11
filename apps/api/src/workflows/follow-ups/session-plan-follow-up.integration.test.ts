@@ -13,7 +13,7 @@ import {
   PLAN_SHOWN,
   shortPlanExamGoalFixture,
 } from "../../../../../packages/core/src/learner/_test-utils/exam-test-goal";
-import { loadCurrentTestSummary } from "../../../../../packages/core/src/learner/facts/focus-test-summary";
+import { readFocusTestRecord } from "../../../../../packages/core/src/learner/placement/focus-test-state";
 import * as proposals from "../../../../../packages/core/src/plans/propose-plan-change";
 import * as rebalance from "../../../../../packages/core/src/preparation/rebalance-plan";
 import { settleSessionDay } from "../../../../../packages/core/src/sessions/_utils/settle-session-day";
@@ -81,7 +81,8 @@ describe("a session's owed plan settlement", () => {
       sessionId: session.id,
     });
 
-    const readSummary = () => loadCurrentTestSummary({ goalId: goal.id, userId: user.id });
+    const readSummary = async () =>
+      readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }))?.summary;
 
     const dispatchPlanWork = async () => {
       await prisma.followUp.deleteMany({
@@ -111,7 +112,7 @@ describe("a session's owed plan settlement", () => {
 
     await finishStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
     await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
-    await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
+    await expect(readSummary()).resolves.toMatchObject({ asked: 0 });
     await dispatchPlanWork();
 
     await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
@@ -132,9 +133,10 @@ describe("a session's owed plan settlement", () => {
   it("retries a failed proposal write in its step, settles the summary and proposes before rebalancing", async () => {
     const { goal, owed, plan, user } = await endedSession();
 
-    const readSummary = () => loadCurrentTestSummary({ goalId: goal.id, userId: user.id });
+    const readSummary = async () =>
+      readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }))?.summary;
 
-    await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
+    await expect(readSummary()).resolves.toMatchObject({ asked: 0 });
     const rebalancePlan = vi.spyOn(rebalance, "rebalancePlanAfterSession");
     // A transient proposal-write failure cannot be produced safely with ordinary database fixtures.
     const propose = vi.spyOn(proposals, "proposePlanChange").mockImplementationOnce(async () => {

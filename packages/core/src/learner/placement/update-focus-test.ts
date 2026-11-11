@@ -1,5 +1,5 @@
-import { prisma } from "@zoonk/db";
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
@@ -12,7 +12,6 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { dropSessionTestQuestions } from "../../sessions/_utils/drop-test-questions";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { writeLearnerChange } from "../_utils/write-learner-change";
-import { loadCurrentTestSummary } from "../facts/focus-test-summary";
 import { changeFocusTestRecord } from "./_utils/focus-test-record";
 import { type FocusTestControlsInput, type FocusTestSummary } from "./focus-test-contract";
 import { type FocusTestRecord } from "./focus-test-state";
@@ -102,7 +101,6 @@ export async function updateFocusTest({
     focusAreas: parsePlanSettings(saved.plan?.settings).focusAreas,
     goal: saved,
     localDate: today,
-    summary: await loadCurrentTestSummary({ goalId, now, userId }),
     timeZone,
   });
 

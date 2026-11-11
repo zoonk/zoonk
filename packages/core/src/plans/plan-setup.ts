@@ -1,7 +1,7 @@
 import "server-only";
 import { type PlanSetupTask, prisma } from "@zoonk/db";
 import { applyPlacementToNewPlan } from "../learner/placement/_utils/apply-placement";
-import { initializeFocusTestRecord } from "../learner/placement/_utils/focus-test-record";
+import { startFocusTestSummary } from "../learner/placement/_utils/settle-focus-test";
 import { fitPlanToRoutineMemory } from "./_utils/fit-plan-to-routine";
 import { PlanSetupTaskEndedError, isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { askAboutNoticeDay } from "./notice-plan-change";
@@ -15,8 +15,9 @@ export { selectRoutineMemory } from "./_utils/fit-plan-to-routine";
  */
 const SETUP_ORDER: readonly PlanSetupTask[] = ["placement", "routine", "notice"];
 
+/** The summary first: the placement task ends itself, and a retry writes the summary again. */
 async function placeNewPlan(goalId: string): Promise<void> {
-  await initializeFocusTestRecord(goalId);
+  await startFocusTestSummary(goalId);
   await applyPlacementToNewPlan(goalId);
 }
 
