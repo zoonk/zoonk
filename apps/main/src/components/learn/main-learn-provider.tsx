@@ -1,5 +1,6 @@
 "use client";
 
+import { loadCountries } from "@/lib/countries/load-countries";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -11,6 +12,7 @@ import { useSignUpHref } from "./use-sign-up-href";
 const MAIN_LEARN_ADAPTERS: LearnAdapters = {
   analytics: { track: trackEvent },
   linkComponent: LearningLink,
+  loadCountries,
   routes: {
     buddy: "/buddy",
     journey: "/plan",

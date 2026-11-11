@@ -112,7 +112,13 @@ function CommandInput({
   );
 }
 
-function CommandList({ children, className, ...props }: Omit<AutocompleteListProps, "render">) {
+/** `after` scrolls with the list, outside it, for what isn't an option: a loading or failed state. */
+function CommandList({
+  after,
+  children,
+  className,
+  ...props
+}: Omit<AutocompleteListProps, "render"> & { after?: React.ReactNode }) {
   return (
     <ScrollAreaRoot
       className="flex min-h-0 flex-1 flex-col sm:flex-none"
@@ -130,6 +136,7 @@ function CommandList({ children, className, ...props }: Omit<AutocompleteListPro
           >
             {children}
           </Autocomplete.List>
+          {after}
         </ScrollAreaContent>
       </ScrollAreaViewport>
       <ScrollAreaScrollbar>
@@ -149,13 +156,13 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
+const COMMAND_GROUP_LABEL_CLASS =
+  "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
+
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
     <Autocomplete.GroupLabel
-      className={cn(
-        "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case",
-        className,
-      )}
+      className={cn(COMMAND_GROUP_LABEL_CLASS, className)}
       data-slot="command-group-label"
       {...props}
     />
@@ -197,6 +204,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export {
+  COMMAND_GROUP_LABEL_CLASS,
   Command,
   CommandCollection,
   CommandDialog,
