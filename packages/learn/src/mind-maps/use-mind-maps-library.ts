@@ -16,10 +16,15 @@ import { type SavedMapTarget, useMindMapSaves } from "./use-mind-map-saves";
 const DRAWING_POLL_MS = 5000;
 const WRITING_POLL_MS = 15_000;
 
-/** What only this device knows: the server keeps no refusal, and can't say it wasn't reached. */
-type RowNote = { limit?: MindMapLimit; shown: "refused" | "unreachable" };
+/**
+ * What only this device knows: the server keeps no refusal, and can't say it wasn't reached. A read
+ * of the list that starts after `failedAt` and comes through clears it, as on iOS and Android.
+ */
+type RowNote = { failedAt: number; limit?: MindMapLimit; shown: "refused" | "unreachable" };
 
-type Bulk = { status: "idle" | "sending" | "unreachable"; stop: MindMapAllowanceStop | null };
+type Bulk =
+  | { status: "idle" | "sending"; stop: MindMapAllowanceStop | null }
+  | { failedAt: number; status: "unreachable"; stop: null };
 
 function withStatus({
   chapterIds,
@@ -64,12 +69,37 @@ export function useMindMapsLibrary({
   const [sending, setSending] = useState<ReadonlySet<string>>(new Set());
   const [bulk, setBulk] = useState<Bulk>({ status: "idle", stop: null });
   const saveWrites = useRef(0);
+  const reads = useRef(0);
 
-  const note = (chapterId: string, next: RowNote | null) =>
+  const note = (chapterId: string, next: Omit<RowNote, "failedAt"> | null) => {
+    const failedAt = reads.current;
+
     setNotes((current) => {
       const others = [...current].filter(([id]) => id !== chapterId);
-      return new Map(next ? [...others, [chapterId, next]] : others);
+      return new Map(next ? [...others, [chapterId, { ...next, failedAt }]] : others);
     });
+  };
+
+  const readList = async () => {
+    reads.current += 1;
+    const started = reads.current;
+    const listed = await actions.list();
+
+    if (listed) {
+      setNotes((current) => {
+        const kept = [...current].filter(([, entry]) => entry.failedAt >= started);
+        return kept.length === current.size ? current : new Map(kept);
+      });
+
+      setBulk((current) =>
+        current.status === "unreachable" && current.failedAt < started
+          ? { status: "idle", stop: null }
+          : current,
+      );
+    }
+
+    return listed;
+  };
 
   const saves = useMindMapSaves({
     onSaved: (target, saved) => {
@@ -88,7 +118,7 @@ export function useMindMapsLibrary({
   // A list read while a save was on its way may not have it yet, so it's dropped for the next one.
   const refresh = async () => {
     const writes = saveWrites.current;
-    const listed = await actions.list();
+    const listed = await readList();
 
     if (!listed) {
       throw new Error("The mind maps couldn't be read.");
@@ -150,11 +180,11 @@ export function useMindMapsLibrary({
     const started = await actions.requestAll().catch(() => null);
 
     if (!started) {
-      setBulk({ status: "unreachable", stop: null });
+      setBulk({ failedAt: reads.current, status: "unreachable", stop: null });
       return;
     }
 
-    const listed = await actions.list().catch(() => null);
+    const listed = await readList().catch(() => null);
 
     setPage((current) =>
       listed

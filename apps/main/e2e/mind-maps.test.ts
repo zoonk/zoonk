@@ -197,4 +197,35 @@ test.describe("Mind maps", () => {
       await page.context().close();
     }
   });
+
+  test("a request that didn't reach the server says so until the page's next read comes through", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+    const page = await openAs(browser, user);
+    const row = (title: string) => page.getByRole("listitem").filter({ hasText: title });
+    const secondRow = row(second.chapter.title);
+    const message = "We couldn't reach the server. Check your connection.";
+    const unreachable = page.getByText(message, { exact: true });
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+      await row(first.chapter.title).getByRole("button", { name: "Create" }).click();
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      await page.route("**/generations", (route) => route.abort());
+      await secondRow.getByRole("button", { name: "Create" }).click();
+      await page.getByRole("button", { name: "Create all chapter maps" }).click();
+
+      await expect(secondRow.getByRole("button", { name: "Try again" })).toBeVisible();
+      await expect(unreachable).toBeVisible();
+
+      // The first map is still drawing, so the page reads the list again within a few seconds.
+      await expect(unreachable).toBeHidden({ timeout: 15_000 });
+      await expect(secondRow.getByRole("button", { name: "Create" })).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
 });
