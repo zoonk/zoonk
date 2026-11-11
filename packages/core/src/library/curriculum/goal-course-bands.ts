@@ -4,6 +4,7 @@ import {
   type CourseOutlineNeed,
   type CurriculumScope,
   type GoalSkillRef,
+  getGraphCourseCountry,
   toExamSkillAreas,
 } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
@@ -94,16 +95,22 @@ function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
   return { ...need, bands: [{ ...first, skills: need.bands.flatMap((band) => band.skills) }] };
 }
 
-export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: string }[] {
+export function orderGoalCourses(
+  graph: GoalSkillGraph,
+): { key: string; title: string; countrySpecific?: boolean }[] {
   const courses = graph.courses.flatMap((course) => {
     const position = graph.skills.findIndex((skill) => skill.course === course.key);
 
-    return position === -1 ? [] : [{ key: course.key, position, title: course.title }];
+    return position === -1 ? [] : [{ course, position }];
   });
 
   return courses
     .toSorted((a, b) => a.position - b.position)
-    .map(({ key, title }) => ({ key, title }));
+    .map(({ course }) => ({
+      key: course.key,
+      title: course.title,
+      ...("countrySpecific" in course && { countrySpecific: Boolean(course.countrySpecific) }),
+    }));
 }
 
 export function toGoalCourses({
@@ -137,8 +144,20 @@ export function toGoalCourses({
       return [];
     }
 
+    const course = graph.courses.find((candidate) => candidate.key === need.key);
+
+    const courseScope = {
+      ...scope,
+      country: course ? getGraphCourseCountry({ course, scope }) : null,
+    };
+
     return [
-      { bands: bands.map((band) => ({ ...band, withToolChapters })), courseId, scope, ...areas },
+      {
+        bands: bands.map((band) => ({ ...band, withToolChapters })),
+        courseId,
+        scope: courseScope,
+        ...areas,
+      },
     ];
   });
 }

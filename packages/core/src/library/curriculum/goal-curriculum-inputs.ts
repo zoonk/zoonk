@@ -53,6 +53,7 @@ const OMITTED_CONTEXT_FIELDS = new Set([
 export type GoalCurriculumInputs = {
   goal: Pick<
     Goal,
+    | "contentCountry"
     | "examBlueprintId"
     | "id"
     | "kind"
@@ -277,6 +278,8 @@ export async function loadGoalCurriculumInputs(
     examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,
     goal: {
+      contentCountry:
+        goal.kind === "exam" ? (goal.examBlueprint?.country ?? null) : goal.contentCountry,
       examBlueprintId: goal.examBlueprintId,
       id: goal.id,
       kind: goal.kind,

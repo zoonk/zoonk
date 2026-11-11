@@ -75,6 +75,7 @@ async function toSkillRow({
   }
 
   const created = await createSkill({
+    country: scope.country,
     description: skill.description,
     example: null,
     identityKey: resolution.identityKey,
@@ -105,6 +106,7 @@ async function resolveScopeSkillRows({
   const resolutions = await resolveLibraryIdentities({
     analytics,
     requests: unique.map((skill) => ({
+      country: scope.country,
       course: skill.course ?? null,
       description: skill.description,
       goal: scope.generalGoal,
@@ -187,6 +189,7 @@ function toLessonBase({ context, lesson }: { context: LessonContext; lesson: Sco
   const { course, level, scope } = context;
 
   return {
+    country: scope.country,
     course,
     description: lesson.description,
     goal: scope.generalGoal,

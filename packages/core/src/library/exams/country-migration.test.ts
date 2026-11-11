@@ -16,7 +16,7 @@ describe("country migration", () => {
       const setup = [
         "CREATE TEMP TABLE courses (id text, language text) ON COMMIT DROP",
         "CREATE TEMP TABLE goals (id text) ON COMMIT DROP",
-        "CREATE TEMP TABLE skills (id text) ON COMMIT DROP",
+        "CREATE TEMP TABLE skills (id text, identity_key text) ON COMMIT DROP",
         "CREATE TEMP TABLE user_learning_profiles (id text) ON COMMIT DROP",
         "CREATE TEMP TABLE exam_blueprints (id text, country text, identity_key text) ON COMMIT DROP",
         "CREATE TEMP TABLE exam_skill_graphs (exam_blueprint_id text, primary_course_id text, graph jsonb) ON COMMIT DROP",
@@ -24,10 +24,10 @@ describe("country migration", () => {
         "CREATE TEMP TABLE library_chapters (id text, home_course_id text) ON COMMIT DROP",
         "CREATE TEMP TABLE course_chapters (chapter_id text, course_id text) ON COMMIT DROP",
         `INSERT INTO courses VALUES ('pt', 'pt'), ('br', 'pt'), ('conflict', 'pt'), ('international', 'pt'), ('general', 'pt')`,
-        `INSERT INTO skills VALUES ('exclusive'), ('shared')`,
+        `INSERT INTO skills VALUES ('exclusive', ':exclusive'), ('shared', ':shared'), ('graph-only', ':graph-only')`,
         `INSERT INTO exam_blueprints VALUES ('pt', 'PT', 'private:owner:exam'), ('br', 'BR', 'exam'), ('zz', 'ZZ', 'exam')`,
         `INSERT INTO exam_skill_graphs VALUES
-        ('pt', 'pt', '{"skills":[{"courseIds":["conflict"]}]}'),
+        ('pt', 'pt', '{"skills":[{"courseIds":["conflict"]},{"skillId":"graph-only","courseIds":["pt"]}]}'),
         ('br', 'br', '{"skills":[{"courseIds":["conflict"]}]}'),
         ('zz', 'international', '{}')`,
         `INSERT INTO library_chapters VALUES ('pt', 'pt'), ('general', 'general')`,
@@ -43,6 +43,17 @@ describe("country migration", () => {
         await tx.$executeRawUnsafe(statement);
       }
 
+      const scopeMigration = readFileSync(
+        new URL(
+          "../../../../db/src/prisma/migrations/20261111184530_scope_country_skill_identity/migration.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      );
+
+      for (const statement of scopeMigration.split(";").filter((part) => part.trim())) {
+        await tx.$executeRawUnsafe(statement);
+      }
       /* oxlint-enable no-await-in-loop */
 
       await expect(
@@ -58,6 +69,7 @@ describe("country migration", () => {
       await expect(tx.$queryRaw`SELECT id, country FROM skills ORDER BY id`).resolves.toStrictEqual(
         [
           { country: "PT", id: "exclusive" },
+          { country: "PT", id: "graph-only" },
           { country: null, id: "shared" },
         ],
       );

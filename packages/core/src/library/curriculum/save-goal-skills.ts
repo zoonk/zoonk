@@ -3,8 +3,13 @@ import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../_utils/library-rows";
+import { getContentCountryScope } from "../content-country";
 import { setSkillsPrerequisites } from "../skills/create-skill";
-import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
+import {
+  type CurriculumAnalytics,
+  type CurriculumScope,
+  getGraphCourseCountry,
+} from "./curriculum-scope";
 import { resolveScopeSkills } from "./resolve-lesson-skills";
 
 export type GoalSkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
@@ -27,6 +32,7 @@ async function findReusedIds({
   const rows = await prisma.skill.findMany({
     select: { id: true },
     where: {
+      country: getContentCountryScope(scope),
       id: { in: libraryIds },
       language: scope.language,
       mergedIntoId: null,
@@ -39,7 +45,7 @@ async function findReusedIds({
 }
 
 /** Internal workflow bridge: the owner must come from the goal the public boundary authorized. */
-export async function saveGoalSkills({
+async function saveGoalSkillsInScope({
   analytics,
   provenance,
   scope,
@@ -72,6 +78,30 @@ export async function saveGoalSkills({
       isReused(skill) ? (skill.libraryId ?? "") : (freshIds.get(skill.key) ?? ""),
     ]),
   );
+}
+
+export async function saveGoalSkills({
+  courses,
+  ...input
+}: Parameters<typeof saveGoalSkillsInScope>[0] & {
+  courses?: readonly { key: string; countrySpecific?: boolean }[];
+}): Promise<Record<string, string>> {
+  if (!courses) {
+    return saveGoalSkillsInScope(input);
+  }
+
+  const groups = Map.groupBy(input.skills, (skill) => {
+    const course = courses.find((candidate) => candidate.key === skill.course);
+    return course ? getGraphCourseCountry({ course, scope: input.scope }) : null;
+  });
+
+  const saved = await Promise.all(
+    [...groups].map(([country, skills]) =>
+      saveGoalSkillsInScope({ ...input, scope: { ...input.scope, country }, skills }),
+    ),
+  );
+
+  return Object.fromEntries(saved.flatMap((ids) => Object.entries(ids)));
 }
 
 export async function linkGoalSkillPrerequisites({

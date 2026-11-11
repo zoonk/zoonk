@@ -315,7 +315,7 @@ describe("deciding which stored exam the learner means", () => {
     }
 
     expect(search.candidates).toContainEqual(expect.objectContaining({ id: blueprint.id }));
-    expect(search.request).toMatchObject({ country: "BR", role: "registro/redação" });
+    expect(search.request).toMatchObject({ country: null, role: "registro/redação" });
 
     vi.mocked(decideExamIdentity).mockImplementation(async ({ candidates }) => {
       const [candidate] = candidates;

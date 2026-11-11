@@ -883,7 +883,7 @@ describe(findSameExam, () => {
     expect(found?.id).toBe(blueprint.id);
 
     expect(decideExamIdentity).toHaveBeenLastCalledWith(
-      expect.objectContaining({ request: expect.objectContaining({ country: "BR" }) }),
+      expect.objectContaining({ request: expect.objectContaining({ country: null }) }),
     );
   });
 

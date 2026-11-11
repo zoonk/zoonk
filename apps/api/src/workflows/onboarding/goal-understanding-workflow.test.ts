@@ -64,7 +64,7 @@ async function storedExam(examName: string) {
       timeZone: null,
       year: 2099,
     },
-    identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
+    identityKey: buildExamIdentityKey({ country: "BR", name: examName, ownerId: null, role: null }),
     name: examName,
   });
 
@@ -159,7 +159,7 @@ describe(goalUnderstandingWorkflow, () => {
     expect(findExamDate).not.toHaveBeenCalled();
   });
 
-  it("reuses words read today without a model call, keeps that reading's age and gives the exam its stored days", async () => {
+  it("reuses words read today, checks the unknown-country exam and keeps the reading's age", async () => {
     const user = await userFixture();
     const examName = `Test Exam ${randomUUID()}`;
     const prompt = `pass the exam in 2099 ${randomUUID()}`;
@@ -177,6 +177,8 @@ describe(goalUnderstandingWorkflow, () => {
       }),
     ]);
 
+    vi.mocked(decideExamIdentity).mockResolvedValue({ id: blueprint.id, probability: 1 });
+
     const draft = await createDraft({ prompt, userId: user.id });
 
     await expect(goalUnderstandingWorkflow({ draftId: draft.id })).resolves.toMatchObject({
@@ -185,7 +187,11 @@ describe(goalUnderstandingWorkflow, () => {
 
     expect(understandGoal).not.toHaveBeenCalled();
     expect(classifyCourseIntent).not.toHaveBeenCalled();
-    expect(decideExamIdentity).not.toHaveBeenCalled();
+
+    expect(decideExamIdentity).toHaveBeenCalledWith(
+      expect.objectContaining({ request: expect.objectContaining({ country: null }) }),
+    );
+
     expect(findExamDate).not.toHaveBeenCalled();
 
     await expect(readCard(draft.id)).resolves.toMatchObject({

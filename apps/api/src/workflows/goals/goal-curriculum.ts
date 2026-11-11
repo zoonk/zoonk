@@ -181,7 +181,7 @@ function saveBuiltGraph({
 
   const slices = [
     ...toSlices(toSave).map((skills) =>
-      saveGoalSkillsStep({ ...context, provenance, scope, skills }),
+      saveGoalSkillsStep({ courses: graph.courses, ...context, provenance, scope, skills }),
     ),
     Promise.resolve(savedSkillIds),
   ];

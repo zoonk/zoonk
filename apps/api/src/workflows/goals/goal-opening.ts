@@ -79,6 +79,7 @@ async function writeOpening({
 
   const [skillIds, courseIds] = await Promise.all([
     saveGoalSkillsStep({
+      courses: graph.courses,
       ...context,
       provenance,
       scope,

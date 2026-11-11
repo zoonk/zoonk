@@ -284,7 +284,12 @@ describe(researchWorkflow, () => {
       include: { source: true },
       where: {
         languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
           language: "pt",
         },
       },
@@ -374,7 +379,12 @@ describe(researchWorkflow, () => {
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
       where: {
         languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
           language: "pt",
         },
       },
@@ -582,7 +592,12 @@ describe(researchWorkflow, () => {
       include: { source: true },
       where: {
         languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
           language: "pt",
         },
       },
@@ -742,7 +757,12 @@ describe(researchWorkflow, () => {
       include: { source: true },
       where: {
         languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
           language: "pt",
         },
       },
@@ -857,7 +877,12 @@ describe(researchWorkflow, () => {
 
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       promptVersion: "older-instructions",
@@ -903,7 +928,12 @@ describe(researchWorkflow, () => {
       expect.objectContaining({ corrections: [] }),
     );
 
-    const identityKey = buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role });
+    const identityKey = buildExamIdentityKey({
+      country: plan.country,
+      name: plan.name,
+      ownerId: null,
+      role: plan.role,
+    });
 
     const stored = await prisma.examBlueprint.findUniqueOrThrow({
       where: { languageIdentity: { identityKey, language: "pt" } },
@@ -932,7 +962,12 @@ describe(researchWorkflow, () => {
 
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -994,7 +1029,12 @@ describe(researchWorkflow, () => {
 
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1053,7 +1093,12 @@ describe(researchWorkflow, () => {
 
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1204,7 +1249,12 @@ describe(researchWorkflow, () => {
 
     const lastEdition = await examBlueprintFixture({
       examDate: new Date(Date.now() - 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1232,7 +1282,12 @@ describe(researchWorkflow, () => {
 
     const lastEdition = await examBlueprintFixture({
       examDate: new Date(Date.now() - 300 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1269,7 +1324,12 @@ describe(researchWorkflow, () => {
     const lastEdition = await examBlueprintFixture({
       board: "FGV",
       examDate: new Date(Date.now() - 300 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1335,7 +1395,12 @@ describe(researchWorkflow, () => {
         year: 2024,
       },
       examDate: new Date(Date.now() - 300 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      identityKey: buildExamIdentityKey({
+        country: plan.country,
+        name: plan.name,
+        ownerId: null,
+        role: plan.role,
+      }),
       language: "pt",
       name: plan.name,
       role: plan.role,
@@ -1380,7 +1445,12 @@ describe(researchWorkflow, () => {
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
       where: {
         languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          identityKey: buildExamIdentityKey({
+            country: plan.country,
+            name: plan.name,
+            ownerId: null,
+            role: plan.role,
+          }),
           language: "pt",
         },
       },
@@ -1501,6 +1571,7 @@ describe(researchWorkflow, () => {
           where: {
             languageIdentity: {
               identityKey: buildExamIdentityKey({
+                country: plan.country,
                 name: plan.name,
                 ownerId: null,
                 role: plan.role,
@@ -1606,6 +1677,7 @@ describe(researchWorkflow, () => {
         where: {
           languageIdentity: {
             identityKey: buildExamIdentityKey({
+              country: plan.country,
               name: plan.name,
               ownerId: user.id,
               role: plan.role,
