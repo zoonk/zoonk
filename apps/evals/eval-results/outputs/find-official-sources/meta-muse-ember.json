@@ -1,0 +1,88 @@
+{
+  "failedRuns": [
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.023967836
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 27484,
+            "inputTokens": 46053,
+            "outputTokens": 4002,
+            "reasoningTokens": 2461
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "tcdf-2026:parallel-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.024250664
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 13416,
+            "inputTokens": 33676,
+            "outputTokens": 4342,
+            "reasoningTokens": 2655
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "piracema-2026:parallel-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.01981936
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 8040,
+            "inputTokens": 30537,
+            "outputTokens": 5075,
+            "reasoningTokens": 3506
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "oab-47:parallel-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": true,
+            "usd": 0.018973712
+          },
+          "modelId": "meta/muse-ember",
+          "usage": {
+            "cacheReadTokens": 10728,
+            "inputTokens": 27776,
+            "outputTokens": 4452,
+            "reasoningTokens": 2749
+          }
+        }
+      ],
+      "message": "No object generated: could not parse the response.",
+      "reason": "schema",
+      "testCaseId": "enem-2026:parallel-1"
+    }
+  ],
+  "generatedAt": "2026-11-11T02:28:44.677Z",
+  "modelId": "meta/muse-ember",
+  "outputs": [],
+  "taskId": "find-official-sources"
+}

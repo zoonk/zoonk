@@ -5,6 +5,25 @@ import { type FormatsExpected } from "./task";
 type FormatsCase = TestCase<FormatsExpected, FormatsEvalInput>;
 
 export const TEST_CASES: FormatsCase[] = [
+  ...[
+    {
+      exam: "Multiple-correct practice exam",
+      id: "en-fixed-credit-per-correct-option",
+      text: "Each question has four options; one or more options can be correct. Select all correct options. Each correct selected option earns 1 point, selecting all correct options earns 4 points, and selecting any incorrect option scores -1 point for the entire question.",
+    },
+    {
+      exam: "Prova de múltiplas respostas",
+      id: "pt-fixed-credit-per-correct-option",
+      text: "Cada questão tem quatro alternativas; uma ou mais podem estar corretas. Selecione todas as alternativas corretas. Cada alternativa correta selecionada vale 1 ponto, selecionar todas as corretas vale 4 pontos e selecionar qualquer alternativa incorreta resulta em -1 ponto para a questão inteira.",
+    },
+  ].map(({ exam, id, text }): FormatsCase => ({
+    expected: {
+      absent: [{ kind: "multipleChoice", partialCredit: "perRightPick", select: "all" }],
+      present: [{ kind: "multipleChoice", options: 4, partialCredit: "perOption", select: "all" }],
+    },
+    id,
+    userInput: { documents: [{ text, title: exam }], exam },
+  })),
   {
     expected: {
       absent: [],
@@ -108,7 +127,13 @@ export const TEST_CASES: FormatsCase[] = [
       absent: [{ kind: "essay" }],
       present: [
         { kind: "multipleChoice", options: 4, section: null, select: null },
-        { kind: "multipleChoice", options: 4, section: null, select: "all" },
+        {
+          kind: "multipleChoice",
+          options: 4,
+          partialCredit: "perOption",
+          section: null,
+          select: "all",
+        },
         { kind: "numeric", section: null },
       ],
     },

@@ -7,9 +7,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1447,
-          "outputTokens": 364,
-          "reasoningTokens": 268
+          "inputTokens": 1439,
+          "outputTokens": 210,
+          "reasoningTokens": 153
         }
       },
       "steps": [
@@ -24,9 +24,9 @@
           "score": 10
         },
         {
-          "conclusion": "In Korean, repeat the minimum qualifier for Group 2: use '그룹 2에서 최소 30점' to make unmistakable that 30 is a minimum rather than an exact required score.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
@@ -57,9 +57,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1477,
-          "outputTokens": 429,
-          "reasoningTokens": 283
+          "inputTokens": 1457,
+          "outputTokens": 480,
+          "reasoningTokens": 386
         }
       },
       "steps": [
@@ -69,9 +69,9 @@
           "score": 10
         },
         {
-          "conclusion": "The Korean translation uses '이거나, 즉' ('or, that is'), awkwardly suggesting alternative conditions where the source states an equivalence. The required English, Spanish, French and German translations correctly preserve the passing threshold and numerical precision.",
+          "conclusion": "The Spanish translation uses “40,00,” whereas the requested Mexican Spanish locale conventionally uses “40.00.” The numerical value is preserved, but the decimal formatting should match the requested locale.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
           "conclusion": "None",
@@ -107,9 +107,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1663,
-          "outputTokens": 130,
-          "reasoningTokens": 73
+          "inputTokens": 1664,
+          "outputTokens": 113,
+          "reasoningTokens": 56
         }
       },
       "steps": [
