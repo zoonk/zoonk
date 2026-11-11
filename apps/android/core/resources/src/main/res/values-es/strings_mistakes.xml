@@ -19,12 +19,14 @@
   "mistakes_open_lesson": "53cf9444aa62cf5c7810f116c7e7eb91453a73aba9f9a9019a40cdca34e8be3d",
   "mistakes_other_questions": "d13642f084ee9afedda41da3929d0883c379aca7378d6f582a098b056e00ced6",
   "mistakes_practice": "aa7112255bc4b6d6d8c90210fdf67c67ce2feb8cfd742a42246c3e326018e4ab",
-  "mistakes_practice_comes_back": "ecbbf1ecd5fa996e47dba9b2f39ec6fb3346f7dedaa5256e0daed057dc9f8cea",
+  "mistakes_practice_comes_back": "b30805254e80337a7e1ac57a6a79340af994fa85f3557f6b97443c23d9191ec9",
   "mistakes_practice_end": "794a05f59a7bd24e1d7713b16bbf1a4a093bbaecad9dcfd881390a90f9ee8a6e",
   "mistakes_practice_fixed": "359d4c4bfa5dff995bf2474902ee064caec8307572f048ce1f49b05cc10820d8",
+  "mistakes_practice_missed_and_unreached": "4a7eebf61f5ebc9cda1d40a74307578a2dfbcf5b69a7e66a3fa989099ba9294c",
   "mistakes_practice_skill": "a9b54de63f859e017264a48adba2430d5fd39517f1d7cb8b7a3df4c5b5df3b92",
   "mistakes_practice_title": "d211e9c2bbac804c2b707c5d21ec6aec9d942b66a6c396763caf6b2c24f46246",
   "mistakes_practice_tomorrow": "4068a28a42b99f33f88c17d7f5c10f2ed99c074389d97aa7b4feee5b3a3ef15e",
+  "mistakes_practice_unreached": "3d892b7c97d6e2c0b389d9d88470c6af8c73be91b02e651b89c91834b18b5f73",
   "mistakes_ready": "f60ccbd7e65c3b136b3a560235b6df07a353fe4c5766affcb28d75da40065ab6",
   "mistakes_show_more": "45b16433397b1e8928f987a566228052a9c5cdd47c916ecf81b9cf75c38dd4ff",
   "mistakes_tab_fixed": "66f569aba50ec576228b92b14888c5058c35029d32d3784b52ef9d24677aca4f",
@@ -36,7 +38,9 @@
     <string name="mistakes_practice_title">Practicar con tus errores</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Terminar la práctica. Tus respuestas cuentan.</string>
-    <string name="mistakes_practice_comes_back">Los demás vuelven otro día para que el repaso te ayude a recordar mejor.</string>
+    <string name="mistakes_practice_comes_back">Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor.</string>
+    <string name="mistakes_practice_missed_and_unreached">Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar.</string>
+    <string name="mistakes_practice_unreached">El resto aún está disponible para practicar.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d error corregido</item>
         <item quantity="many">%d errores corregidos</item>

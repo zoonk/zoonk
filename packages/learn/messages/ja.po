@@ -7964,9 +7964,19 @@ msgid "Nothing to practice yet"
 msgstr "まだ練習する問題はありません"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "残りの問題は、記憶に定着しやすいよう日をあけて出題されます。"
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。"
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。"
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "残りの問題は引き続き練習できます。"
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx

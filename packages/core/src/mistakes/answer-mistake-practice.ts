@@ -1,10 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { findSavedAttempt, getAnswerAttemptId } from "../learner/_utils/answer-once";
+import { getAnswerAttemptId } from "../learner/_utils/answer-once";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
 import { answerItemMistake } from "./_utils/answer-item-mistake";
 import { answerLessonMistake } from "./_utils/answer-lesson-mistake";
+import { readPracticeClaim } from "./_utils/practice-claim";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { loadMistakeReplay } from "./mistake-replay";
@@ -14,7 +15,7 @@ export type MistakePracticeAnswerResult =
   | { feedback: MistakePracticeFeedback; status: "ready" }
   | { status: "invalidItem" | "notFound" | "unauthorized" | "retryable" };
 
-/** The answer must target the exact saved source; skill membership never substitutes for identity. */
+/** The answer must target the exact saved source; skill membership never substitutes for identity. A mistake that isn't ready returns the answer that counted for it today. */
 export function answerMistakePractice(input: {
   input: Extract<MistakePracticeAnswerInput, { itemId: string }>;
   mistakeId: string;
@@ -63,7 +64,20 @@ export async function answerMistakePractice({
     userId,
   });
 
-  const saved = await findSavedAttempt({ attemptId, userId });
+  const claim = await readPracticeClaim({
+    attemptId,
+    goalId: input.run?.goalId,
+    mistakeId: mistake.id,
+    timeZone: input.timeZone,
+    userId,
+  });
+
+  if (!claim) {
+    return { status: "invalidItem" };
+  }
+
+  const { saved, timeZone } = claim;
+
   const kind = getDrillKind(mistake.cause);
   const timeLimitSeconds = getDrillTimeLimitSeconds(kind);
   await saveDayBeforeActivity({ goalId: input.run?.goalId, timeZone: input.timeZone, userId });
@@ -77,6 +91,7 @@ export async function answerMistakePractice({
       replay,
       saved,
       timeLimitSeconds,
+      timeZone,
       userId,
     });
   }
@@ -93,6 +108,7 @@ export async function answerMistakePractice({
     replay,
     saved,
     timeLimitSeconds,
+    timeZone,
     userId,
   });
 }

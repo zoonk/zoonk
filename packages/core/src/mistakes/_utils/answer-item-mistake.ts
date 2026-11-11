@@ -2,7 +2,6 @@ import "server-only";
 import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
-import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { gradeTypedItemAnswer } from "../../learner/_utils/typed-grading";
 import { readRecordedAnswer } from "../../sessions/_utils/session-items";
 import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
@@ -13,6 +12,7 @@ import { gradeMistakeItem } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { cachedGradeDuration } from "./cached-grade-duration";
 import { runMistakeGrade } from "./mistake-grade";
+import { refuseAnsweredMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 
 const typedVerdictSchema = z.object({ feedback: z.string().nullable(), isCorrect: z.boolean() });
@@ -26,6 +26,7 @@ export async function answerItemMistake({
   saved,
   kind,
   timeLimitSeconds,
+  timeZone,
 }: {
   input: Extract<MistakePracticeAnswerInput, { itemId: string }>;
   mistake: Mistake;
@@ -35,6 +36,7 @@ export async function answerItemMistake({
   saved: Attempt | null;
   kind: MistakeDrillKind;
   timeLimitSeconds: number | null;
+  timeZone: string;
 }): Promise<MistakePracticeAnswerResult> {
   const { item } = replay;
   const answer = saved ? (readRecordedAnswer(saved.answer) ?? input.answer) : input.answer;
@@ -114,10 +116,15 @@ export async function answerItemMistake({
           practicedMistakeId: mistake.id,
           purpose: "learning",
           skillId: mistake.skillId,
-          timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+          timeZone,
           userId,
         },
+        refuse: refuseAnsweredMistake({ mistakeId: mistake.id, timeZone, userId }),
       });
+
+  if (outcome.status === "refused") {
+    return { status: "retryable" };
+  }
 
   return {
     feedback: await finishPracticeAnswer({

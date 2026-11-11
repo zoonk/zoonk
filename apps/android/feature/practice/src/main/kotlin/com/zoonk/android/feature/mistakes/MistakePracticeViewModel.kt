@@ -92,7 +92,22 @@ data class PracticeState(
     val end: PracticeEnd? = null,
     val lesson: LessonPlayerState? = null,
     val lessonGrade: MistakePracticeFeedback? = null,
-)
+) {
+    val endNote: PracticeEndNote?
+        get() {
+            val missed = run.answers.values.any { !it.isCorrect }
+            val unreached = run.answers.size < read.tasks.size
+
+            return when {
+                missed && unreached -> PracticeEndNote.MissedAndUnreached
+                missed -> PracticeEndNote.Missed
+                unreached -> PracticeEndNote.Unreached
+                else -> null
+            }
+        }
+}
+
+enum class PracticeEndNote { Missed, MissedAndUnreached, Unreached }
 
 /** Each answer carries the run's earlier ones, so a run left halfway still counts; the end counts it once more. */
 class MistakePracticeViewModel(

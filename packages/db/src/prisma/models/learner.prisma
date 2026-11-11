@@ -98,6 +98,8 @@ model Mistake {
   cause     MistakeCause?
   status    MistakeStatus @default(open)
   fixedAt   DateTime?     @map("fixed_at")
+  /// The last time the learner got it wrong; practice brings it back from the next local day.
+  missedAt  DateTime      @default(now()) @map("missed_at")
   snapshot  Json
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @default(now()) @updatedAt @map("updated_at")
