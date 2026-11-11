@@ -80746,7 +80746,7 @@
               "alreadyFits",
               "handPicked"
             ],
-            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the plan has no focus and its time already covers these subjects, so no focus is needed. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it"
+            "description": "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; retained across replans until the test settles again. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it"
           }
         },
         "required": [

@@ -49,12 +49,16 @@ function getHandledSuggestion({
   const handled = setup.record?.handled;
 
   if (!handled || !isSameFocus(handled.areas, suggested)) {
-    return null;
+    return { current: null, last: null };
   }
 
-  return status === "proposed" || status === "applied" || handled.planVersion === setup.plan.version
-    ? handled
-    : null;
+  return {
+    current:
+      status === "proposed" || status === "applied" || handled.planVersion === setup.plan.version
+        ? handled
+        : null,
+    last: handled,
+  };
 }
 
 function isDismissed(status: PlanChangeStatus | undefined): boolean {
@@ -98,15 +102,18 @@ async function loadFocusFacts({
   const handled = getHandledSuggestion({ setup, status: suggestion?.status, suggested });
 
   const due =
-    proposes && !handled && !isSameFocus(focusAreas, suggested) && isSameFocus(focusAreas, focus);
+    proposes &&
+    !handled.current &&
+    !isSameFocus(focusAreas, suggested) &&
+    isSameFocus(focusAreas, focus);
 
   return {
-    covered: handled?.outcome === "alreadyIn",
+    covered: handled.last?.outcome === "alreadyIn",
     due: due ? suggested : null,
     focusAreas,
     handPicked:
       (focusAreas.length > 0 && !isSameFocus(focusAreas, focus)) ||
-      (handled?.outcome === "proposed" && isDismissed(suggestion?.status)),
+      (handled.last?.outcome === "proposed" && isDismissed(suggestion?.status)),
     proposal:
       suggestion?.status === "proposed"
         ? await loadPlanChangeView(suggestion.id, { timeZone })

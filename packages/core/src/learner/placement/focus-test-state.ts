@@ -42,8 +42,8 @@ const recordSchema = z.object({
    */
   focus: z.array(z.string()).nullable().default(null),
   /**
-   * A proposed suggestion stays handled after the learner answers it. A planner verdict applies
-   * to the saved plan version, so unrelated answers don't change it and a replan reconsiders it.
+   * The last verdict stays visible until the test settles again. Its saved plan version decides
+   * whether that settlement reconsiders the suggestion; unrelated answers don't expire it.
    */
   handled: z
     .object({
