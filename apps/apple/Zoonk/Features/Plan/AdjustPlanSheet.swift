@@ -376,7 +376,6 @@ func planEffectText(_ effect: PlanEffect?, today: String, isEstimated: Bool) -> 
 }
 
 /// Main's `useAreaEndTexts`: when each subject whose end moves finishes, and what it gains or loses.
-/// A focus leads its effect with these, so what its subjects gain comes first.
 func planAreaEndTexts(_ effect: PlanEffect?, today: String) -> [String] {
   let estimated = effect?.lessonsAddedEstimated ?? false
 
@@ -421,6 +420,15 @@ func planAreaEndTexts(_ effect: PlanEffect?, today: String) -> [String] {
       localized: "You finish \(area) around \(after) instead of \(before).", table: "Plan",
       comment: "When a change moves a subject's end; the dates are days like 'May 5'")
   }
+}
+
+/// A proposal's effect beside its buttons; a focus leads with what each subject gains.
+func planProposalEffectText(_ effect: PlanEffect?, setsFocus: Bool, today: String) -> String? {
+  let sentences =
+    (setsFocus ? planAreaEndTexts(effect, today: today) : [])
+    + [planLessonsEffectText(effect)].compactMap(\.self)
+
+  return sentences.isEmpty ? nil : sentences.joinedSentences()
 }
 
 /// Mirrors main's `useLessonsEffectText` for a plan with a date: what a change adds and leaves out,

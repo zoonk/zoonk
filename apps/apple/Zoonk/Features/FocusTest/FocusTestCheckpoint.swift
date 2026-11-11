@@ -230,12 +230,11 @@ private struct FocusTestProposal: View {
     VStack(alignment: .leading, spacing: 12) {
       if decision == nil {
         let today = PlanDate.isoDate(.now)
-        let effect =
-          (proposal.setsFocus ? planAreaEndTexts(proposal.effect, today: today) : [])
-          + [planLessonsEffectText(proposal.effect)].compactMap(\.self)
 
-        if !effect.isEmpty {
-          Text(effect.joinedSentences())
+        if let effect = planProposalEffectText(
+          proposal.effect, setsFocus: proposal.setsFocus, today: today)
+        {
+          Text(effect)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
