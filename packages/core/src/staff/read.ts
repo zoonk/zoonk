@@ -62,8 +62,12 @@ function failedRead(error: unknown): ReadFailure {
     };
   }
 
-  if (code?.startsWith("22") || code === "P2029") {
-    return { message: "A filter value doesn't fit its column.", status: "invalid" };
+  if (code === "P2029") {
+    return { message: "Too many filter values in one request.", status: "invalid" };
+  }
+
+  if (code?.startsWith("22")) {
+    return { message: "A value in this request doesn't fit its column.", status: "invalid" };
   }
 
   return { status: "error" };
