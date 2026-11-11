@@ -35,7 +35,7 @@ export async function checkLessonQuality(params: CheckLessonQualityParams) {
   const { analytics, lesson, reasoning, serviceTier, useFallback = true } = params;
 
   const models = getLessonCheckModels({
-    alphabet: params.alphabet,
+    kind: params.alphabet ? "alphabet" : "written",
     writerModel: params.writerModel,
   });
 
