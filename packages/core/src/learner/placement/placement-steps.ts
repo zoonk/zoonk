@@ -286,7 +286,7 @@ function getDirectionalPool({
   return onSide.length > 0 ? onSide : candidates;
 }
 
-/** Only selects askableSkillIds; null means nothing can be asked now. answeredOnly walks every topic in plan order before confirming. */
+/** Only selects askableSkillIds; null means nothing can be asked now. answeredOnly walks every topic, in areaOrder then plan order, before confirming. */
 export function chooseNextPlacementSkill({
   answeredOnly = false,
   areaOrder,
@@ -317,20 +317,27 @@ export function chooseNextPlacementSkill({
     return null;
   }
 
+  const orderedArea = areaOrder?.find((name) =>
+    candidates.some((skill) => skill.sectionTitle === name),
+  );
+
   if (answeredOnly) {
-    const unanswered = candidates.filter(
+    const pool = orderedArea
+      ? candidates.filter((skill) => skill.sectionTitle === orderedArea)
+      : candidates;
+
+    const unanswered = pool.filter(
       (skill) => !evidence.some((answer) => answer.skillId === skill.id),
     );
 
     return (
-      (unanswered.length > 0 ? unanswered : candidates).toSorted((a, b) => a.order - b.order)[0]
-        ?.id ?? null
+      (unanswered.length > 0 ? unanswered : pool).toSorted((a, b) => a.order - b.order)[0]?.id ??
+      null
     );
   }
 
   const area =
-    areaOrder?.find((name) => candidates.some((skill) => skill.sectionTitle === name)) ??
-    pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
+    orderedArea ?? pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
 
   const inArea = candidates.filter((skill) => skill.sectionTitle === area);
   const last = evidence.findLast((answer) => graph.byId.get(answer.skillId)?.sectionTitle === area);

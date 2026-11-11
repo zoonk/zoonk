@@ -466,6 +466,22 @@ describe("placement across an exam's areas", () => {
     expect(nextFor([...evidence, answer("h1", "dontKnow")])).toBe("m1");
   });
 
+  it("asks a Focus test from the learner's own material in its subject order", () => {
+    const next = (evidence: PlacementEvidence[]) =>
+      chooseNextPlacementSkill({
+        answeredOnly: true,
+        areaOrder: ["History", "Math"],
+        askableSkillIds: EXAM_ASKABLE,
+        evidence,
+        skills: EXAM,
+        statuses: place(evidence, EXAM).statuses,
+      });
+
+    expect(next([])).toBe("h1");
+    expect(next([answer("m1", "correct")])).toBe("h1");
+    expect(next([answer("h1", "correct")])).toBe("h2");
+  });
+
   it("starts each area where the learner's own level points", () => {
     expect(nextFor([], "none")).toBe("m1");
     expect(nextFor([answer("m1", "correct")], "none")).toBe("h1");
