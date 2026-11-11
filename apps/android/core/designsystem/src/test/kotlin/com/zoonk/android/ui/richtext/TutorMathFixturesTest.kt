@@ -5,6 +5,8 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.commonmark.node.AbstractVisitor
+import org.commonmark.node.Text
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,11 +16,22 @@ import java.io.File
 @RunWith(Parameterized::class)
 internal class TutorMathFixturesTest(
     private val text: String,
-    private val expected: List<MarkdownFormula>,
+    private val expected: List<Pair<Boolean, String>>,
 ) {
     @Test
-    fun matchesWebFormulas() {
-        assertEquals(expected, takeOutFormulas(text).second)
+    fun showsTheWebFormulas() {
+        val document = parseMarkdown(text)
+        val shown = mutableListOf<MarkdownFormula>()
+
+        document.root.accept(
+            object : AbstractVisitor() {
+                override fun visit(text: Text) {
+                    FORMULA.findAll(text.literal).forEach { shown += document.formulas[it.groupValues[1].toInt()] }
+                }
+            },
+        )
+
+        assertEquals(expected, shown.map { it.display to it.latex })
     }
 
     companion object {
@@ -35,7 +48,7 @@ internal class TutorMathFixturesTest(
                     val formulas =
                         case.getValue("formulas").jsonArray.map { formula ->
                             val value = formula.jsonObject
-                            MarkdownFormula(value.getValue("display").jsonPrimitive.boolean, value.getValue("latex").jsonPrimitive.content)
+                            value.getValue("display").jsonPrimitive.boolean to value.getValue("latex").jsonPrimitive.content
                         }
                     arrayOf(case.getValue("text").jsonPrimitive.content, formulas)
                 }

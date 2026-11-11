@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.richtext
 
+import org.commonmark.node.IndentedCodeBlock
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -9,7 +10,10 @@ class MarkdownFormulasTest {
     fun takesOutDisplayFormulasSoMarkdownNeverReadsTheirMarks() {
         val (text, formulas) = takeOutFormulas("Pay $$\\frac{a_1 * b_1}{2}$$ now, not \$5 or \$10.")
 
-        assertEquals(listOf(MarkdownFormula(display = false, latex = "\\frac{a_1 * b_1}{2}")), formulas)
+        assertEquals(
+            listOf(MarkdownFormula(display = false, latex = "\\frac{a_1 * b_1}{2}", source = "\$\$\\frac{a_1 * b_1}{2}\$\$")),
+            formulas,
+        )
         assertEquals("Pay \uE0000\uE001 now, not \$5 or \$10.", text)
     }
 
@@ -17,7 +21,7 @@ class MarkdownFormulasTest {
     fun readsAFormulaAcrossLines() {
         val (_, formulas) = takeOutFormulas("$$\nv = \\sqrt{\\frac{GM}{r}}\n$$")
 
-        assertEquals(listOf(MarkdownFormula(display = true, latex = "v = \\sqrt{\\frac{GM}{r}}")), formulas)
+        assertEquals(listOf(true to "v = \\sqrt{\\frac{GM}{r}}"), formulas.map { it.display to it.latex })
     }
 
     @Test
@@ -27,5 +31,12 @@ class MarkdownFormulasTest {
 
         assertEquals(emptyList<MarkdownFormula>(), formulas)
         assertEquals(markdown, text)
+    }
+
+    @Test
+    fun showsAFormulaMarkdownReadsAsCodeAsWritten() {
+        val code = parseMarkdown("Some code:\n\n    \$\$x^2\$\$").root.lastChild as IndentedCodeBlock
+
+        assertEquals("\$\$x^2\$\$\n", code.literal)
     }
 }

@@ -51,6 +51,7 @@ import org.commonmark.ext.gfm.tables.TableBlock
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.ext.gfm.tables.TableRow
 import org.commonmark.ext.gfm.tables.TablesExtension
+import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.BlockQuote
 import org.commonmark.node.BulletList
 import org.commonmark.node.Code
@@ -107,11 +108,13 @@ private const val CODE_SIZE = 0.85f
 /** Where a formula was taken out of an answer's Markdown, so its LaTeX never reads as Markdown. */
 private const val FORMULA_OPEN = '\uE000'
 private const val FORMULA_CLOSE = '\uE001'
-private val FORMULA = Regex("$FORMULA_OPEN(\\d+)$FORMULA_CLOSE")
+internal val FORMULA = Regex("$FORMULA_OPEN(\\d+)$FORMULA_CLOSE")
 
+/** `source` is what the writer wrote, which shows wherever Markdown reads the formula as code. */
 internal data class MarkdownFormula(
     val display: Boolean,
     val latex: String,
+    val source: String,
 )
 
 internal class MarkdownDocument(
@@ -121,52 +124,121 @@ internal class MarkdownDocument(
 
 internal fun parseMarkdown(markdown: String): MarkdownDocument {
     val (text, formulas) = takeOutFormulas(markdown)
-    return MarkdownDocument(MARKDOWN.parse(text), formulas)
+    val root = MARKDOWN.parse(text)
+    root.accept(FormulasInCodeAsWritten(formulas))
+    return MarkdownDocument(root, formulas)
+}
+
+private class FormulasInCodeAsWritten(
+    private val formulas: List<MarkdownFormula>,
+) : AbstractVisitor() {
+    private fun asWritten(code: String) = FORMULA.replace(code) { formulas[it.groupValues[1].toInt()].source }
+
+    override fun visit(code: Code) {
+        code.literal = asWritten(code.literal)
+    }
+
+    override fun visit(fencedCodeBlock: FencedCodeBlock) {
+        fencedCodeBlock.literal = asWritten(fencedCodeBlock.literal)
+    }
+
+    override fun visit(indentedCodeBlock: IndentedCodeBlock) {
+        indentedCodeBlock.literal = asWritten(indentedCodeBlock.literal)
+    }
 }
 
 private val FENCE = Regex("^ {0,3}(`{3,}|~{3,})")
+private val QUOTE = Regex("^(?: {0,3}> ?)*")
+private val MATH_FENCE = Regex("([ \\t]*)([$]{2,})[^$]*")
+
+/** Blank lines and lines that open a heading, a thematic break or a list item end a paragraph. */
+private val PARAGRAPH_END =
+    Regex(
+        "^(?:[ \\t]*$| {0,3}(?:#{1,6}(?:[ \\t]|$)|(?:-[ \\t]*){3,}$|(?:\\*[ \\t]*){3,}$|(?:_[ \\t]*){3,}$)|[ \\t]*(?:[-+*]|\\d{1,9}[.)])(?:[ \\t]|$))",
+    )
+
+private fun quoteOf(line: String): String = QUOTE.find(line)?.value.orEmpty()
+
+private fun depthOf(line: String): Int = quoteOf(line).count { it == '>' }
+
+private fun bodyOf(line: String): String = line.substring(quoteOf(line).length)
+
+private fun placeholder(index: Int): String = "$FORMULA_OPEN$index$FORMULA_CLOSE"
 
 internal fun takeOutFormulas(markdown: String): Pair<String, List<MarkdownFormula>> {
+    val lines = markdown.split('\n')
     val formulas = mutableListOf<MarkdownFormula>()
-    val output = StringBuilder()
-    val prose = StringBuilder()
+    val output = mutableListOf<String>()
+    val prose = mutableListOf<String>()
     var fence: String? = null
+    var index = 0
 
     fun flushProse() {
-        output.append(takeOutProseFormulas(prose.toString(), formulas))
+        if (prose.isNotEmpty()) output += takeOutInline(prose.joinToString("\n"), formulas)
         prose.clear()
     }
 
-    for ((index, line) in markdown.split('\n').withIndex()) {
-        val separator = if (index == 0) "" else "\n"
-        val marker = FENCE.find(line)?.groupValues?.get(1)
+    while (index < lines.size) {
+        val line = lines[index++]
+        val quote = quoteOf(line)
+        val body = line.substring(quote.length)
+        val marker = FENCE.find(body)?.groupValues?.get(1)
         val open = fence
+        val math = MATH_FENCE.matchEntire(body)
 
         when {
             open != null -> {
-                output.append(separator).append(line)
+                output += line
                 if (marker != null && marker[0] == open[0] && marker.length >= open.length) fence = null
             }
 
             marker != null -> {
                 flushProse()
-                output.append(separator).append(line)
+                output += line
                 fence = marker
             }
 
+            math != null -> {
+                flushProse()
+                val (indent, dollars) = math.destructured
+                val depth = depthOf(line)
+                val end =
+                    (index until lines.size).firstOrNull {
+                        depthOf(lines[it]) < depth || closesMath(bodyOf(lines[it]), dollars.length)
+                    } ?: lines.size
+                val next = if (end < lines.size && depthOf(lines[end]) >= depth) end + 1 else end
+                val content = lines.subList(index, end).map { bodyOf(it).withoutIndent(indent.length) }
+                val source = (listOf(body.substring(indent.length)) + lines.subList(index, next)).joinToString("\n")
+                // Blank lines around it make it a paragraph of its own, drawn as a block.
+                output += listOf(quote.trimEnd(), quote + indent + placeholder(formulas.size), quote.trimEnd())
+                formulas += MarkdownFormula(display = true, latex = content.joinToString("\n"), source = source)
+                index = next
+            }
+
             else -> {
-                prose.append(separator).append(line)
+                prose += line
             }
         }
     }
 
     flushProse()
-    return output.toString() to formulas
+    return output.joinToString("\n") to formulas
 }
 
-private val MATH_BLOCK_OPEN = Regex(" {0,3}([$]{2,})[^$\\n]*(?:\\n|$)")
+/** remark-math's math flow: its block runs to a fence at least as long, the end of its quote, or the end. */
+private fun closesMath(
+    line: String,
+    length: Int,
+): Boolean {
+    val fence = line.trim(' ', '\t')
+    return fence.length >= length && fence.all { it == '$' }
+}
 
-private fun takeOutProseFormulas(
+/** Inside a list item, the fence lines up with the item's text. */
+private fun String.withoutIndent(length: Int): String = drop(take(length).takeWhile { it == ' ' || it == '\t' }.length)
+
+/** remark-math closes `$$` like a code span: on a run of exactly as many dollars, in the same paragraph. */
+private fun takeOutInline(
     text: String,
     formulas: MutableList<MarkdownFormula>,
 ): String {
@@ -182,59 +254,82 @@ private fun takeOutProseFormulas(
             continue
         }
 
-        if (character == '`') {
-            val run = text.drop(index).takeWhile { it == '`' }.length
-            val fence = "`".repeat(run)
-            val close = Regex("(?<!`)$fence(?!`)").find(text, index + run)
-            val end = close?.range?.last?.plus(1) ?: (index + run)
+        if (character != '`' && character != '$') {
+            output.append(character)
+            index++
+            continue
+        }
+
+        val run = runLength(text, index)
+        val close = if (character == '`' || run >= 2) closingRun(text, index, run) else null
+        val end = if (close == null) index + run else close + run
+
+        if (close != null && character == '$') {
+            val latex =
+                text
+                    .substring(index + run, close)
+                    .split('\n')
+                    .mapIndexed { line, part -> if (line == 0) part else bodyOf(part) }
+                    .joinToString("\n")
+            output.append(placeholder(formulas.size))
+            formulas += MarkdownFormula(display = false, latex = unpadded(latex), source = text.substring(index, end))
+        } else {
             output.append(text, index, end)
-            index = end
-            continue
         }
 
-        if ((index == 0 || text[index - 1] == '\n')) {
-            val opening = MATH_BLOCK_OPEN.matchAt(text, index)
-            if (opening != null) {
-                val run = opening.groupValues[1].length
-                val contentStart = opening.range.last + 1
-                val closing = Regex("(?m)^ {0,3}[$]{$run,}[ \\t]*(?=\\n|$)").find(text, contentStart)
-                val end = closing?.range?.first ?: text.length
-                val content = text.substring(contentStart, end).removeSuffix("\n")
-                output
-                    .append("\n\n")
-                    .append(FORMULA_OPEN)
-                    .append(formulas.size)
-                    .append(FORMULA_CLOSE)
-                    .append("\n\n")
-                formulas += MarkdownFormula(display = true, latex = content)
-                index = closing?.range?.last?.plus(1) ?: text.length
-                continue
-            }
-        }
-
-        if (text.startsWith("$$", index)) {
-            val run = text.drop(index).takeWhile { it == '$' }.length
-            val closing = Regex("(?<![$])[$]{$run}(?![$])").find(text, index + run)
-            if (closing != null) {
-                var content = text.substring(index + run, closing.range.first).replace('\n', ' ')
-                if (content.startsWith(' ') && content.endsWith(' ') && content.any { it != ' ' }) {
-                    content = content.substring(1, content.length - 1)
-                }
-                output.append(FORMULA_OPEN).append(formulas.size).append(FORMULA_CLOSE)
-                formulas += MarkdownFormula(display = false, latex = content)
-                index = closing.range.last + 1
-                continue
-            }
-            output.append(text, index, index + run)
-            index += run
-            continue
-        }
-
-        output.append(character)
-        index++
+        index = end
     }
 
     return output.toString()
+}
+
+private fun runLength(
+    text: String,
+    index: Int,
+): Int = text.drop(index).takeWhile { it == text[index] }.length
+
+private fun closingRun(
+    text: String,
+    open: Int,
+    length: Int,
+): Int? {
+    val depth = depthOf(text.substring(text.lastIndexOf('\n', open) + 1))
+    var index = open + length
+
+    while (index < text.length) {
+        when {
+            text[index] == '\n' && endsParagraph(text.substring(index + 1).substringBefore('\n'), depth) -> {
+                return null
+            }
+
+            text[index] != text[open] -> {
+                index++
+            }
+
+            runLength(text, index) == length -> {
+                return index
+            }
+
+            else -> {
+                index += runLength(text, index)
+            }
+        }
+    }
+
+    return null
+}
+
+/** A deeper quote opens a new block; a shallower line is a lazy continuation. */
+private fun endsParagraph(
+    line: String,
+    depth: Int,
+): Boolean = depthOf(line) > depth || PARAGRAPH_END.containsMatchIn(bodyOf(line))
+
+/** remark-math drops one space or line break from each side when both sides have one. */
+private fun unpadded(latex: String): String {
+    val padding = setOf(' ', '\n')
+    val padded = latex.length > 2 && latex.first() in padding && latex.last() in padding && latex.any { it !in padding }
+    return if (padded) latex.substring(1, latex.length - 1) else latex
 }
 
 private fun Node.children(): List<Node> = generateSequence(firstChild) { it.next }.toList()
