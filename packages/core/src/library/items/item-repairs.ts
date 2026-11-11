@@ -1,7 +1,6 @@
 import { fitOptions } from "@zoonk/ai/tasks/fit-options";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { type GeneratedItem, MAX_OPTIONS } from "@zoonk/ai/tasks/items/schemas";
-import { fitVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { normalizeString } from "@zoonk/utils/string";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { stripOptionLabels } from "../_utils/answer-options";
@@ -151,10 +150,5 @@ export function repairItem<TItem extends GeneratedItem>({
 }): TItem {
   const written = mapItemWriting(item, ({ layout, text }) => repairMarkdown({ layout, text }));
 
-  const repaired = repairAnswers({ item: written, language, optionCount });
-
-  const visual =
-    "visual" in repaired && repaired.visual ? { visual: fitVisual(repaired.visual) } : {};
-
-  return { ...item, ...repaired, ...visual };
+  return { ...item, ...repairAnswers({ item: written, language, optionCount }) };
 }

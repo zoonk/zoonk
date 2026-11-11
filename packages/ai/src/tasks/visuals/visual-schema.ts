@@ -14,7 +14,7 @@ const label = aimForCharacters(z.string(), LABEL_TARGET);
 const title = aimForCharacters(z.string(), TITLE_TARGET);
 const MIN_CATEGORIES = 2;
 const MIN_EVENTS = 2;
-/** The app colors three series, so code keeps a chart's first three. */
+/** The app has three series colors, and dropping a series could drop what a question asks about. */
 const MAX_SERIES = 3;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind first, then what the visual is about, then its data. */
@@ -32,7 +32,8 @@ const chartVisualSchema = z.object({
   categories: z.array(label).min(MIN_CATEGORIES),
   series: z
     .array(z.object({ name: label, values: z.array(z.number()).min(MIN_CATEGORIES) }))
-    .min(1),
+    .min(1)
+    .max(MAX_SERIES),
   /** Null for a made-up example. */
   source: title.nullable(),
 });
@@ -62,9 +63,3 @@ export const lessonVisualSchema = z.union([chartVisualSchema, timelineVisualSche
 export type LessonVisual = z.infer<typeof lessonVisualSchema>;
 export type ChartVisual = z.infer<typeof chartVisualSchema>;
 export type TimelineVisual = z.infer<typeof timelineVisualSchema>;
-
-export function fitVisual(visual: LessonVisual): LessonVisual {
-  return visual.kind === "chart" && visual.series.length > MAX_SERIES
-    ? { ...visual, series: visual.series.slice(0, MAX_SERIES) }
-    : visual;
-}

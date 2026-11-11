@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type ChartVisual, fitVisual, lessonVisualSchema } from "./visual-schema";
+import { type ChartVisual, lessonVisualSchema } from "./visual-schema";
 
 const months = Array.from({ length: 14 }, (_, index) => `M${index + 1}`);
 
@@ -21,8 +21,8 @@ function chart(seriesCount: number): ChartVisual {
   };
 }
 
-describe(fitVisual, () => {
-  it("takes a chart or timeline past the prompt's counts", () => {
+describe("lesson visual schema", () => {
+  it("takes a chart's categories and a timeline's events past the prompt's counts", () => {
     const timeline = {
       events: Array.from({ length: 11 }, (_, index) => ({
         date: String(1900 + index),
@@ -33,14 +33,11 @@ describe(fitVisual, () => {
       title: "A century",
     };
 
-    expect(lessonVisualSchema.safeParse(chart(5)).success).toBe(true);
+    expect(lessonVisualSchema.safeParse(chart(3)).success).toBe(true);
     expect(lessonVisualSchema.safeParse(timeline).success).toBe(true);
   });
 
-  it("keeps a chart's first three series, the ones the app has colors for", () => {
-    const fitted = fitVisual(chart(5));
-
-    expect(fitted).toStrictEqual({ ...chart(5), series: chart(5).series.slice(0, 3) });
-    expect(fitVisual(chart(3))).toStrictEqual(chart(3));
+  it("keeps a chart to the three series the app has colors for", () => {
+    expect(lessonVisualSchema.safeParse(chart(4)).success).toBe(false);
   });
 });

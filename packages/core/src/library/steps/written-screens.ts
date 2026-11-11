@@ -1,5 +1,5 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { type LessonVisual, fitVisual } from "@zoonk/ai/tasks/visuals/schema";
+import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { type StepKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";
@@ -49,7 +49,7 @@ function pictureField(
 }
 
 function visualField(screen: { visual: LessonVisual | null }) {
-  return screen.visual ? { visual: fitVisual(screen.visual) } : {};
+  return screen.visual ? { visual: screen.visual } : {};
 }
 
 export function checkWrittenExplore(explore: { content: string; template: string }) {
