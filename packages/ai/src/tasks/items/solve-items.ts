@@ -11,13 +11,14 @@ import promptTemplate from "./solve-items.prompt.md";
 
 /**
  * A missed wrong key reaches every learner who gets the item, so catching them comes first. On the
- * solve-items eval (8 Nov 2026), Luna at high reasoning caught all 6 wrong keys in each of three runs
- * and dropped none of the 50 right items, at $0.38 per 1,000 checks and 4 to 8 s for a placement
- * batch. Terra matched it 1 to 2 s faster at six times the cost but dropped a right item twice, and
- * Luna at lower reasoning missed up to 3. Sonnet missed only a key whose reading splits model families.
+ * solve-items eval (11 Nov 2026, each of 13 cases run 10 times), Terra caught all 60 planted wrong
+ * keys and dropped 2 of 500 right items, at $2.73 per 1,000 checks and 4.6 s p50. In 5 runs each,
+ * Luna missed 3 of 30 at high and at xhigh reasoning, and Gemini 4 Argon missed the assembly key
+ * in every run. Terra at low reasoning matched it faster, but a chain shares one setting and Sonnet
+ * and Opus at low missed 6 of 30, so both run at their defaults, where Sonnet caught all 30. Terra
+ * writes most of these items, and its blind solve still caught its own air fryer key.
  */
-const defaultModel = "openai/gpt-6-luna";
-const defaultReasoning: Reasoning = "high";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-sonnet-5.5"] as const;
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
@@ -121,7 +122,7 @@ export async function solveItems(params: SolveItemsParams) {
     analytics,
     items,
     model = defaultModel,
-    reasoning = defaultReasoning,
+    reasoning,
     select = 1,
     serviceTier,
     stimulus,
