@@ -10364,6 +10364,65 @@
         }
       }
     },
+    "More time for %@, from your Focus test." : {
+      "comment" : "A focus the learner's Focus test answers propose; then subjects",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Fokustest empfiehlt mehr Zeit für %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más tiempo para %@, según tu Prueba de enfoque."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de temps pour %@, d’après ton Test de priorités."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più tempo per %@, in base al tuo Test delle priorità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重点診断の結果をもとに、%@の学習時間を増やす提案です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중 진단 결과에 따라 %@에 시간을 더 쓰는 걸 제안해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój Test priorytetów sugeruje więcej czasu na: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais tempo para %@, com base no seu Teste de foco."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak testine göre %@ için daha fazla süre."
+          }
+        }
+      }
+    },
     "More time or a later date" : {
       "comment" : "Opens the plan's daily time and date",
       "localizations" : {

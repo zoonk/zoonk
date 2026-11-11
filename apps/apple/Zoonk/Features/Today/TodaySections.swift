@@ -387,7 +387,13 @@ struct TodayPlanChangeSection: View {
   }
 
   private var summary: String {
-    change.reason
+    if change.source == "focusTest", let areas = change.operations.first?.areas, !areas.isEmpty {
+      return String(
+        localized: "More time for \(areas.formatted(.list(type: .and))), from your Focus test.",
+        table: "Today", comment: "A focus the learner's Focus test answers propose; then subjects")
+    }
+
+    return change.reason
       ?? String(
         localized: "Your plan has a change for you to look at.", table: "Today",
         comment: "A proposed plan change")

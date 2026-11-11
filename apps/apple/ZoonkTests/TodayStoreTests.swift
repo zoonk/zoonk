@@ -849,8 +849,8 @@ private func planChange(
   try decode(
     """
     {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
-    "id":"\(id)","kind":"edited","officialDate":null,"reason":"Rest on Saturdays?",
-    "source":"memory","status":"\(status)","todaySession":null}
+    "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
+    "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
 }
 
