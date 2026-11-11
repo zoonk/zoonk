@@ -105,6 +105,7 @@ private struct GoalStartFlow: View {
   @State private var needsAccount: Bool
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(SessionStore.self) private var session
   @State private var path: [StartPage] = []
   @State private var words: String
   @State private var error: GoalError?
@@ -208,6 +209,12 @@ private struct GoalStartFlow: View {
         if path.isEmpty {
           sending?.cancel()
           draft = nil
+        }
+      }
+      .onChange(of: session.authenticatedSession) { _, signedIn in
+        // A guest's draft moves to the account they sign in to, which has its own room for goals.
+        if signedIn != nil, case .draft(let value, _) = draft {
+          draft = .opening(id: value.id)
         }
       }
       .onDisappear {
