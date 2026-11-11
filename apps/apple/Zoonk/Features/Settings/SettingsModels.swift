@@ -135,8 +135,6 @@ struct PlanAllowance: Equatable, Sendable {
     var used = 0
 
     var isReached: Bool { limit.map { used >= $0 } ?? false }
-    /// Nil when there's no cap, as an onboarding draft's `activeGoalsLeft`.
-    var left: Int? { limit.map { max(0, $0 - used) } }
   }
 
   let tier: Tier

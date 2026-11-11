@@ -4,7 +4,6 @@ struct ReadDraftView: View {
   let draft: OnboardingDraft
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
-  let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
@@ -20,7 +19,7 @@ struct ReadDraftView: View {
     case .case1(let understood):
       UnderstoodCard(
         draft: draft, understood: understood, isCreating: isCreating, error: error,
-        onDraft: onDraft, onRewrite: onRewrite
+        onRewrite: onRewrite
       ) {
         create {
           try await onboarding.createGoals(
@@ -31,7 +30,8 @@ struct ReadDraftView: View {
         }
       }
       .onChange(of: draft) {
-        // A draft read after the refusal has room again, such as after pausing a goal; nil is no cap.
+        // The draft is read again when the learner's goals or plan change, and it may have room by
+        // then, such as after getting Plus; nil is no cap.
         if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
           error = nil
         }
@@ -96,13 +96,6 @@ struct ReadDraftView: View {
       } catch is CancellationError {
       } catch {
         self.error = GoalError.creating(error)
-
-        // The card's room comes from the draft, so any refusal reads the draft again.
-        if self.error?.limit != nil,
-          let fresh = try? await onboarding.understanding(id: draft.id)
-        {
-          onDraft(fresh)
-        }
       }
     }
   }
@@ -113,7 +106,6 @@ private struct UnderstoodCard: View {
   let understood: Components.Schemas.GoalUnderstanding.Case1Payload
   let isCreating: Bool
   let error: GoalError?
-  let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onConfirm: () -> Void
 
@@ -289,19 +281,12 @@ private struct UnderstoodCard: View {
     }
 
     do {
-      let updated = try await onboarding.revise(
-        draftID: draft.id, field: field, goal: goal, value: value)
+      try await onboarding.revise(draftID: draft.id, field: field, goal: goal, value: value)
       editing = nil
-      onDraft(updated)
       return true
     } catch is CancellationError {
       return true
     } catch {
-      // One that timed out may have landed, and the screen must show what the draft now says.
-      if let fresh = try? await onboarding.understanding(id: draft.id) {
-        onDraft(fresh)
-      }
-
       return false
     }
   }
