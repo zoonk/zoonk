@@ -4,14 +4,12 @@ import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { type GoalDraft } from "@zoonk/core/goals/contract";
 import {
   type LearnerSummaryGoal,
   type LearnerSummaryWaitingGoal,
 } from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getVarietyFlagCode } from "@zoonk/utils/language-regions";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
 import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding-actions";
@@ -51,15 +49,8 @@ function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   );
 }
 
-/** A waiting goal is still a draft, so the summary has no flag for it yet. */
-function getDraftFlag({ kind, targetLanguage, targetRegion }: GoalDraft): string | null {
-  return kind === "language" && targetLanguage
-    ? getVarietyFlagCode({ language: targetLanguage, region: targetRegion })
-    : null;
-}
-
 function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, locked, displayName }) => {
+  return goals.flatMap(({ id, input, languageFlag, locked, displayName }) => {
     const [goal] = input.goals;
 
     return goal
@@ -67,7 +58,7 @@ function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
           {
             displayName,
             id,
-            languageFlag: getDraftFlag(goal),
+            languageFlag,
             locked,
             targetLanguage: goal.targetLanguage ?? null,
             targetRegion: goal.targetRegion ?? null,

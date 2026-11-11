@@ -3,7 +3,7 @@
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { Flag, isFlagCode } from "@zoonk/ui/components/language-flag";
 import { safeAsync } from "@zoonk/utils/error";
-import { getVarietyFlagCode, getVarietyNameInSentence } from "@zoonk/utils/language-regions";
+import { getVarietyNameInSentence } from "@zoonk/utils/language-regions";
 import { LanguagesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState, useTransition } from "react";
@@ -14,9 +14,7 @@ import { OfferButton, OfferCard, OfferTile } from "./tutor-offer-card";
 
 type VarietyOfferView = Extract<TutorToolOffer, { kind: "variety" }>;
 
-function VarietyTile({ offer }: { offer: VarietyOfferView }) {
-  const flag = getVarietyFlagCode({ language: offer.targetLanguage, region: offer.targetRegion });
-
+function VarietyTile({ flag }: { flag: string | null }) {
   return isFlagCode(flag) ? (
     <Flag className="w-4.5" code={flag} />
   ) : (
@@ -74,7 +72,7 @@ export function VarietyOffer({
         })
       }
       ref={cardRef}
-      tile={<VarietyTile offer={offer} />}
+      tile={<VarietyTile flag={offer.languageFlag} />}
       title={varietyName({ language, region })}
     >
       {saved || outcome === "saved" ? (
