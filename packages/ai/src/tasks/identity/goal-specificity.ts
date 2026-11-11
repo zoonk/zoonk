@@ -12,7 +12,8 @@ import systemPrompt from "./goal-specificity.prompt.md";
  * Onboarding waits on this call. On 21 cases (11 Nov 2026), Muse Ember without reasoning passed
  * every case at 0.91 s p50 for $0.13/1k; Haiku 5.5 scored 9.90 (it invented an occupation) at
  * 1.63 s for $0.08/1k, and a blind GPT-6.1 Sol read found 2 Ember wins and 19 ties. Ember's
- * provider refuses some hostile course requests, so Haiku and Luna (9.71) fall back. Jev decided
+ * provider refuses some hostile course requests, but Ember answered all 8 legitimate goals a filter
+ * might misread, such as pentesting or lethal doses; Haiku and Luna (9.71) fall back. Jev decided
  * all 21 at half Haiku's cost but can't write the shareable goal and the personal details apart.
  */
 const defaultModel = "meta/muse-ember";

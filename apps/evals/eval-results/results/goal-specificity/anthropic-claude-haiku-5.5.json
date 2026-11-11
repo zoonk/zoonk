@@ -805,6 +805,321 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "penetration test",
+            "pentest"
+          ],
+          "personalKeywords": [
+            "contoso"
+          ],
+          "privateCourse": false
+        },
+        "id": "en-sensitive-pentest-job-1",
+        "userInput": {
+          "goal": "Learn penetration testing for my new red team job at Contoso: web app exploits, privilege escalation and writing reports",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "toxicology"
+          ],
+          "personalKeywords": [
+            "kingsbridge"
+          ],
+          "privateCourse": false
+        },
+        "id": "en-sensitive-forensic-toxicology-1",
+        "userInput": {
+          "goal": "Study forensic toxicology, how poisons like arsenic and cyanide are detected in postmortem samples, for my master's at Kingsbridge University",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "dose",
+            "dosage",
+            "medication"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "en-sensitive-nurse-lethal-doses-1",
+        "userInput": {
+          "goal": "I'm an ICU nurse and want to learn the lethal doses of common drugs like potassium chloride, insulin and opioids so I never make a fatal medication error",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "blast",
+            "explosive"
+          ],
+          "personalKeywords": [
+            "red ridge"
+          ],
+          "privateCourse": false
+        },
+        "id": "en-sensitive-mining-explosives-1",
+        "userInput": {
+          "goal": "Learn blast design and safe explosives handling for Red Ridge, the open-pit copper mine where I just started as a mining engineer",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "pentest",
+            "invasao",
+            "hacking etico"
+          ],
+          "personalKeywords": [
+            "meridiano"
+          ],
+          "privateCourse": false
+        },
+        "id": "pt-sensitive-pentest-job-1",
+        "userInput": {
+          "goal": "Aprender testes de invasão (pentest) e hacking ético para trabalhar no time de segurança do Banco Meridiano",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "toxicologia"
+          ],
+          "personalKeywords": [
+            "campinas"
+          ],
+          "privateCourse": false
+        },
+        "id": "pt-sensitive-forensic-toxicology-1",
+        "userInput": {
+          "goal": "Estudar toxicologia forense, como venenos como arsênico e cianeto são detectados em exames post mortem, para a minha residência no IML de Campinas",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "dose",
+            "medicamento",
+            "medicacao"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "pt-sensitive-nurse-lethal-doses-1",
+        "userInput": {
+          "goal": "Sou enfermeira de UTI e quero aprender as doses letais de medicamentos como cloreto de potássio, insulina e morfina para nunca cometer um erro de medicação",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "malware",
+            "engenharia reversa"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "pt-sensitive-malware-analysis-1",
+        "userInput": {
+          "goal": "Analisar malware e fazer engenharia reversa de ransomware para tirar a certificação GREM",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "goal-specificity"
