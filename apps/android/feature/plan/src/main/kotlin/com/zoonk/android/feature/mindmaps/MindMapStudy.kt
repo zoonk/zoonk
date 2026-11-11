@@ -78,7 +78,6 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.ApiJson
@@ -545,22 +544,14 @@ private fun ZoomablePicture(
     )
 }
 
-/** The player's map of a lesson's ideas, phone-wide, before the fold on a book. */
+/** The player's map of a lesson's ideas, phone-wide, on the page before the split where the screen spreads, as the player's screen. */
 @Composable
 private fun LessonSlide(content: StepContent.Map) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
     BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)
+        val fold = spreadFold(maxWidth, span)
         Column(
-            (
-                if (fold !=
-                    null
-                ) {
-                    Modifier.width(fold.start)
-                } else {
-                    Modifier.fillMaxWidth()
-                }
-            ).fillMaxHeight().verticalScroll(rememberScrollState()),
+            (fold?.let { Modifier.width(it.start) } ?: Modifier.fillMaxWidth()).fillMaxHeight().verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(Modifier.taskColumn().padding(vertical = 16.dp)) { LessonMapView(content) }
