@@ -15,7 +15,7 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
 
   if (result.status === FORBIDDEN) {
     return new CliError(
-      `This login to ${origin} has no staff access. Log in with a Zoonk platform admin account: ` +
+      `This login to ${origin} has no staff access. Log in with a Zoonk staff account: ` +
         `\`${loginCommand(origin)}\`.`,
     );
   }

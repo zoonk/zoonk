@@ -72,7 +72,10 @@ async function waitForApproval({
     case "expired_token":
       throw new CliError(`The code expired. Run \`${loginCommand(origin)}\` again.`);
     case "access_denied":
-      throw new CliError("The login was denied.");
+      throw new CliError(
+        "The login was denied in the browser. Only a Zoonk staff account can approve it. " +
+          `To try again, run \`${loginCommand(origin)}\`.`,
+      );
     default:
       throw new CliError(`The login failed (${result.error}).`);
   }
