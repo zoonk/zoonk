@@ -5,6 +5,7 @@ import { getLanguageCountry } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { type GoalUpdateInput, onlyCoreDetails, withoutCoreDetails } from "../goal-contract";
+import { hasCountryReading } from "./goal-content-country";
 import { ActiveGoalLimitError, findActiveGoalLimit, moveActiveGoalAway } from "./goal-status";
 
 /** A learner's details replace theirs whole but keep what only core writes. */
@@ -32,9 +33,7 @@ export function goalMetadata({ current, input }: { current: Goal; input: GoalUpd
       : {
           ...(details ?? (isJsonObject(current.details) ? current.details : {})),
           contentCountrySource: "picked",
-          ...(!isJsonObject(current.details) || current.details.countryDependent === undefined
-            ? { countryDependent: true }
-            : {}),
+          ...(hasCountryReading(current) ? {} : { countryDependent: true }),
         };
 
   return {
@@ -89,7 +88,13 @@ export async function saveMetadataInTransaction(
     input.contentCountry !== undefined &&
     (input.contentCountry ?? ownCountry) !== (current.contentCountry ?? ownCountry);
 
-  if (changedCountry && current.kind === "learn" && details.countryDependent !== false) {
+  const firstCountryChoice = input.contentCountry !== undefined && !hasCountryReading(current);
+
+  if (
+    (changedCountry || firstCountryChoice) &&
+    current.kind === "learn" &&
+    details.countryDependent !== false
+  ) {
     await oweFollowUps({
       db: tx,
       followUps: [{ input: { goalId: current.id }, kind: "rebuildGoalCurriculum" }],

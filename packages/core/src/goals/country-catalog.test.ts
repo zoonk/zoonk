@@ -30,11 +30,16 @@ describe("country choices", () => {
     });
 
     expect(suggested.slice(0, 5)).toStrictEqual([
-      { code: "FR", name: "França", tag: null },
-      { code: "DE", name: "Alemanha", tag: null },
-      { code: "US", name: "Estados Unidos", tag: null },
-      { code: "PT", name: "Portugal", tag: "home" },
-      { code: "BR", name: "Brasil", tag: null },
+      { code: "FR", lessonVariety: null, name: "França", tag: null },
+      { code: "DE", lessonVariety: null, name: "Alemanha", tag: null },
+      { code: "US", lessonVariety: null, name: "Estados Unidos", tag: null },
+      {
+        code: "PT",
+        lessonVariety: { language: "pt", region: "BR" },
+        name: "Portugal",
+        tag: "home",
+      },
+      { code: "BR", lessonVariety: null, name: "Brasil", tag: null },
     ]);
 
     expect(suggested.length).toBeLessThanOrEqual(8);
@@ -42,15 +47,40 @@ describe("country choices", () => {
 
   it("orders the language's own country first without selecting it", () => {
     const suggested = getCountrySuggestions({ homeCountry: null, language: "en", recent: [] });
-    expect(suggested[0]).toStrictEqual({ code: "US", name: "United States", tag: null });
+
+    expect(suggested[0]).toStrictEqual({
+      code: "US",
+      lessonVariety: null,
+      name: "United States",
+      tag: null,
+    });
+
     expect(suggested.every((choice) => choice.tag === null)).toBe(true);
     expect(suggested.length).toBeLessThanOrEqual(8);
+  });
+
+  it("lets the country question preview a different lesson variety before Continue", () => {
+    const { countries } = getCountryCatalog("pt");
+
+    expect(countries.find((country) => country.code === "PT")).toMatchObject({
+      lessonVariety: { language: "pt", region: "BR" },
+    });
+
+    expect(countries.find((country) => country.code === "DE")).toMatchObject({
+      lessonVariety: null,
+    });
   });
 
   it("serves every country in localized name order, with no unknown-region entry", () => {
     const { countries } = getCountryCatalog("pt");
     expect(countries.length).toBeGreaterThan(240);
-    expect(countries).toContainEqual({ code: "PT", name: "Portugal" });
+
+    expect(countries).toContainEqual({
+      code: "PT",
+      lessonVariety: { language: "pt", region: "BR" },
+      name: "Portugal",
+    });
+
     expect(countries.some((country) => country.code === "ZZ")).toBe(false);
 
     expect(countries).toStrictEqual(

@@ -33022,6 +33022,23 @@
                 "name": {
                   "type": "string"
                 },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
                 "tag": {
                   "nullable": true,
                   "type": "string",
@@ -33033,6 +33050,7 @@
               "required": [
                 "code",
                 "name",
+                "lessonVariety",
                 "tag"
               ],
               "additionalProperties": false
@@ -38575,6 +38593,23 @@
                 "name": {
                   "type": "string"
                 },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
                 "tag": {
                   "nullable": true,
                   "type": "string",
@@ -38586,6 +38621,7 @@
               "required": [
                 "code",
                 "name",
+                "lessonVariety",
                 "tag"
               ],
               "additionalProperties": false
@@ -38887,25 +38923,46 @@
           "countries": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "code",
-                "name"
-              ],
-              "additionalProperties": false
+              "$ref": "#/components/schemas/CountryPickerChoice"
             }
           }
         },
         "required": [
           "countries"
+        ],
+        "additionalProperties": false
+      },
+      "CountryPickerChoice": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "lessonVariety": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "language": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "language",
+              "region"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "lessonVariety"
         ],
         "additionalProperties": false
       },
@@ -46261,6 +46318,23 @@
                 "name": {
                   "type": "string"
                 },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
                 "tag": {
                   "nullable": true,
                   "type": "string",
@@ -46272,6 +46346,7 @@
               "required": [
                 "code",
                 "name",
+                "lessonVariety",
                 "tag"
               ],
               "additionalProperties": false
@@ -90780,6 +90855,23 @@
                 "name": {
                   "type": "string"
                 },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
                 "tag": {
                   "nullable": true,
                   "type": "string",
@@ -90791,6 +90883,7 @@
               "required": [
                 "code",
                 "name",
+                "lessonVariety",
                 "tag"
               ],
               "additionalProperties": false
@@ -91120,6 +91213,23 @@
                     "name": {
                       "type": "string"
                     },
+                    "lessonVariety": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "language",
+                        "region"
+                      ],
+                      "additionalProperties": false
+                    },
                     "tag": {
                       "nullable": true,
                       "type": "string",
@@ -91131,6 +91241,7 @@
                   "required": [
                     "code",
                     "name",
+                    "lessonVariety",
                     "tag"
                   ],
                   "additionalProperties": false

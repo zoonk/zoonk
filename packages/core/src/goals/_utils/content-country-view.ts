@@ -10,6 +10,20 @@ export function toCountryChoice({ code, language }: { code: string | null; langu
   return { code, name: new Intl.DisplayNames([language], { type: "region" }).of(code) ?? code };
 }
 
+export function getLessonVariety({
+  code,
+  language,
+}: {
+  code: string;
+  language: string;
+}): GoalContentCountry["lessonVariety"] {
+  const ownCountry = getLanguageCountry(language);
+
+  return ownCountry && code !== ownCountry && isLanguageRegion({ language, region: code })
+    ? { language, region: ownCountry }
+    : null;
+}
+
 export function toContentCountryView({
   code,
   editable,
@@ -31,16 +45,11 @@ export function toContentCountryView({
     return null;
   }
 
-  const ownCountry = getLanguageCountry(language);
-
   return {
     ...country,
     editable,
     kind,
-    lessonVariety:
-      ownCountry && code !== ownCountry && isLanguageRegion({ language, region: country.code })
-        ? { language, region: ownCountry }
-        : null,
+    lessonVariety: getLessonVariety({ code: country.code, language }),
     rebuild,
     source,
   };

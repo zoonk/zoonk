@@ -4,7 +4,7 @@ import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getRegionChoices } from "@zoonk/utils/language-regions";
 import { MAX_SUGGESTED_COUNTRIES, type SuggestedCountry } from "../country-contract";
-import { toCountryChoice } from "./content-country-view";
+import { getLessonVariety, toCountryChoice } from "./content-country-view";
 
 const MAX_RECENT_COUNTRIES = 3;
 
@@ -76,7 +76,13 @@ export function getCountrySuggestions({
     const choice = toCountryChoice({ code, language });
 
     return choice
-      ? [{ ...choice, tag: choice.code === homeCountry ? ("home" as const) : null }]
+      ? [
+          {
+            ...choice,
+            lessonVariety: getLessonVariety({ code, language }),
+            tag: choice.code === homeCountry ? ("home" as const) : null,
+          },
+        ]
       : [];
   });
 }

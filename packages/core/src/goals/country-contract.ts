@@ -4,11 +4,18 @@ import { z } from "zod";
 export const countryCodeSchema = z.string().refine(isCountryCode, { message: "Unknown country" });
 export const countryChoiceSchema = z.object({ code: countryCodeSchema, name: z.string() });
 
+const lessonVarietySchema = z
+  .object({ language: z.string(), region: countryCodeSchema })
+  .nullable();
+export const countryPickerChoiceSchema = countryChoiceSchema
+  .extend({ lessonVariety: lessonVarietySchema })
+  .meta({ id: "CountryPickerChoice" });
+
 export const goalContentCountrySchema = countryChoiceSchema
   .extend({
     editable: z.boolean(),
     kind: z.enum(["content", "exam"]),
-    lessonVariety: z.object({ language: z.string(), region: countryCodeSchema }).nullable(),
+    lessonVariety: lessonVarietySchema,
     rebuild: z.enum(["none", "preparing", "failed"]),
     source: z.enum(["said", "home", "picked", "default"]),
   })
@@ -18,7 +25,7 @@ export type GoalContentCountry = z.infer<typeof goalContentCountrySchema>;
 
 export const MAX_SUGGESTED_COUNTRIES = 8;
 
-export const suggestedCountrySchema = countryChoiceSchema.extend({
+export const suggestedCountrySchema = countryPickerChoiceSchema.extend({
   tag: z.literal("home").nullable(),
 });
 export const suggestedCountriesSchema = z

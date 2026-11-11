@@ -84,6 +84,28 @@ describe("content-country changes", () => {
     ).resolves.toBe(0);
   });
 
+  it.each(["BR", null])(
+    "rebuilds an older goal once when its first explicit country is its own: %s",
+    async (contentCountry) => {
+      const { goal, user } = await countryGoal();
+
+      await Promise.all(
+        [1, 2].map(() => updateGoal({ goalId: goal.id, input: { contentCountry } })),
+      );
+
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ).resolves.toMatchObject({ details: { countryDependent: true } });
+
+      const owed = await prisma.followUp.findMany({
+        where: { key: goal.id, kind: "rebuildGoalCurriculum", userId: user.id },
+      });
+
+      expect(owed).toHaveLength(1);
+      expect(owed[0]).toMatchObject({ revision: 0 });
+    },
+  );
+
   it("refuses another learner's goal, exams, language goals and unknown codes before writing", async () => {
     const { user, goal } = await countryGoal(true);
     const stranger = await userFixture();
