@@ -136,6 +136,16 @@ describe(formatLocalContext, () => {
     expect(lineOf(context, "Numbers, dates and units")).toMatch(/^- [^:]+: 1\.234,56 /u);
   });
 
+  it("writes dates and times the way the text's language does in a country it names", () => {
+    const context = formatLocalContext({ country: "SE", language: "en" });
+
+    expect(lineOf(context, "Place")).toBe("- Place: Sweden");
+
+    expect(lineOf(context, "Numbers, dates and units")).toContain(
+      "dates as 2026-09-27; 24-hour clock (14:30)",
+    );
+  });
+
   it("has no setting for languages outside the app's languages", () => {
     expect(formatLocalContext({ country: null, language: "ar" })).toBe("LOCAL_CONTEXT: none");
     expect(formatMoneyContext({ country: null, language: "ar" })).toBe("MONEY: none");

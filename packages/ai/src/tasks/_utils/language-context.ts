@@ -1,5 +1,4 @@
 import { getContentCurrency, getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
-import { isLanguageRegion } from "@zoonk/utils/language-regions";
 import { type SupportedLocale, getContentLocale, getFormattingLocale } from "@zoonk/utils/locale";
 import { COUNTRY_PACKS, type CountryPack, REGISTERS } from "./country-packs";
 
@@ -17,19 +16,11 @@ export function resolveContentCountry({ country, language }: ContentPlace): stri
   return country && isCountryCode(country) ? country : getLanguageCountry(language);
 }
 
-/**
- * The language's own country formats as the language always has; a country where the language is
- * spoken (Portugal for Portuguese) as it does there; any other as the language does at home.
- */
+/** The language's own country formats as the language always has; any other as the language does there. */
 function getFormattingLocaleFor({ country, locale }: { country: string; locale: SupportedLocale }) {
-  if (
-    country !== getLanguageCountry(locale) &&
-    isLanguageRegion({ language: locale, region: country })
-  ) {
-    return `${locale}-${country}`;
-  }
-
-  return getFormattingLocale(locale);
+  return country === getLanguageCountry(locale)
+    ? getFormattingLocale(locale)
+    : `${locale}-${country}`;
 }
 
 const SAMPLE_NUMBER = 1234.56;
