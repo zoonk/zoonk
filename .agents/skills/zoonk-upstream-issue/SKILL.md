@@ -4,12 +4,20 @@ description: Report a bug in a dependency (library, framework or SDK) to its mai
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Upstream issue with a minimal reproduction
 
 Maintainers act on a bug they can run in a minute. Prove the bug is theirs, reproduce it in the smallest public repository, then file it in their template. The issue and the repository are public: follow [zoonk-post-on-behalf](../zoonk-post-on-behalf/SKILL.md). Both need the user's go-ahead; a standing approval in their own instructions counts.
+
+## A security bug
+
+When the bug lets someone see, change or keep what they shouldn't (another user's data, access that outlives a logout), nothing about it goes public until the maintainers publish a fix.
+
+- Make the reproduction repository private.
+- Report it through the channel the project's `SECURITY.md` names, never a public issue. For GitHub's private vulnerability reporting, use the web form (`https://github.com/<owner>/<repo>/security/advisories/new`) with the disclosure and its AI-use box ticked, per zoonk-post-on-behalf.
+- Leave it out of step 4's PR description and tracking issue, and out of every comment in this repository, until the fix is published. Give the user the advisory link instead.
 
 ## 1. Confirm it's theirs
 

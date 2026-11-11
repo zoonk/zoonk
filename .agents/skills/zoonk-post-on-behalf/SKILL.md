@@ -4,7 +4,7 @@ description: Publish as the user's agent, such as GitHub issues, comments, discu
 license: MIT
 metadata:
   author: zoonk
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Posting on behalf of the user
@@ -32,6 +32,7 @@ Start the post with a GitHub note:
 - `<first name>`: the first name on the posting account's GitHub profile (`gh api user --jq .name`). If the profile has no name, use the account's username.
 - Name what the post is: "opening this issue", "responding", "opening this pull request".
 - Where the note doesn't render, make the same sentence the first line.
+- When the form has its own AI-use box, tick it too, such as "I used AI assistance to find or write up this report" on GitHub's private vulnerability reports. Post through the form when the API can't set the box (GitHub's REST endpoint for those reports can't); without a browser, give the user the filled-in fields to submit.
 
 ## The voice
 
