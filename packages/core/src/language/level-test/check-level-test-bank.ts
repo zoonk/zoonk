@@ -79,17 +79,25 @@ export async function listOwedLevelTestBankChecks(): Promise<LanguagePair[]> {
 export async function claimLevelTestBankCheck(
   pair: LanguagePair,
 ): Promise<LevelTestQuestion[] | null> {
+  const row = await prisma.languageLevelTest.findFirst({ where: { ...owesCheck, ...pair } });
+  const bank = readBank(row);
+
+  if (!row || !bank) {
+    return null;
+  }
+
   const { count } = await prisma.languageLevelTest.updateMany({
     data: { checkedAt: new Date() },
-    where: { ...owesCheck, ...pair },
+    where: { checkedAt: null, id: row.id, runId: row.runId },
   });
 
-  return count > 0 ? (readBank(await findBankRow(pair))?.questions ?? null) : null;
+  return count > 0 ? bank.questions : null;
 }
 
 /**
  * System workflow capability: leaves the bank only the questions that passed. A learner's answer
- * to a removed question stops counting, and the test asks another in its place.
+ * to a removed question stops counting, and the test asks another in its place. A bank with none
+ * left is given up, so the pair's next level test writes a new one.
  */
 export async function keepCheckedLevelTestQuestions({
   keptIds,
@@ -102,12 +110,15 @@ export async function keepCheckedLevelTestQuestions({
   const kept = new Set(keptIds);
   const questions = bank?.questions.filter((question) => kept.has(question.id)) ?? [];
 
-  if (!bank || questions.length === bank.questions.length || questions.length === 0) {
+  if (!bank || questions.length === bank.questions.length) {
     return { removed: 0 };
   }
 
   await prisma.languageLevelTest.update({
-    data: { content: { ...bank, questions } },
+    data:
+      questions.length > 0
+        ? { content: { ...bank, questions } }
+        : { checkedAt: null, content: {}, generatedAt: new Date(0), model: "" },
     where: { languagePair: pair },
   });
 

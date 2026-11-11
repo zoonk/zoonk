@@ -79,15 +79,18 @@ async function recordTestActivity({
   transaction: TransactionClient;
   userId: string;
 }) {
-  const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
+  const rightAnswers = new Map(
+    bank.questions.map((question) => [question.id, question.answerIndex]),
+  );
+
+  // A question its check removed from the bank counts like a skipped one.
+  const fresh = progress.answers
+    .slice(progress.counted)
+    .filter((answer) => !answer.skipped && rightAnswers.has(answer.id));
 
   if (fresh.length === 0) {
     return;
   }
-
-  const rightAnswers = new Map(
-    bank.questions.map((question) => [question.id, question.answerIndex]),
-  );
 
   await settleAnsweredActivity(transaction, {
     answers: fresh.map((answer) => ({

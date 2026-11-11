@@ -19,6 +19,7 @@ import {
   keepCheckedLevelTestQuestions,
   listOwedLevelTestBankChecks,
 } from "./check-level-test-bank";
+import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { levelTestBankSchema } from "./level-test-contract";
 import { prepareLanguageLevelTest } from "./prepare-language-level-test";
@@ -603,5 +604,34 @@ describe("checking a bank's questions", () => {
     const row = await findRow(pair);
     const stored = levelTestBankSchema.parse(row.content).questions.map((question) => question.id);
     expect(stored).toStrictEqual(keptIds);
+
+    await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.learningEvent.findFirst({ where: { goalId, lessonKind: "levelTest" } }),
+    ).resolves.toBeNull();
+  });
+
+  it("gives up a stored bank whose every question fails its check, so the pair's next test writes a new one", async () => {
+    const pair = freshPair();
+
+    await prisma.languageLevelTest.create({
+      data: {
+        ...pair,
+        content: uncheckedBank(crypto.randomUUID()),
+        model: "test",
+        promptVersion: "test",
+        runId: "old-bank",
+      },
+    });
+
+    await expect(claimLevelTestBankCheck(pair)).resolves.toHaveLength(4 * TEST_LEVELS.length);
+
+    await expect(keepCheckedLevelTestQuestions({ keptIds: [], pair })).resolves.toStrictEqual({
+      removed: 4 * TEST_LEVELS.length,
+    });
+
+    await expect(listOwedLevelTestBankChecks()).resolves.not.toContainEqual(pair);
+    await expect(claimLevelTestBank(pair)).resolves.toMatchObject({ status: "claimed" });
   });
 });
