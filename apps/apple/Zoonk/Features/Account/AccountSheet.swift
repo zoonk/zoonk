@@ -404,7 +404,9 @@ private struct SettingsHubView: View {
                   Text(appLanguageName)
                     .layoutPriority(1)
                 }
-                .accessibilityElement(children: .combine)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                  Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)"))
               } else {
                 Text(appLanguageName)
               }
