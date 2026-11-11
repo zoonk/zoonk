@@ -141,7 +141,7 @@ private struct FocusTestSuggestedFocus: View {
         FocusTestProposal(proposal: proposal, goalID: goalID, decision: $answer)
       }
 
-      if let changeFocus, [.current, .handPicked, .declined].contains(focus.state) {
+      if let changeFocus, ![.ifTimeShort, .proposed].contains(focus.state) {
         Button(action: changeFocus) {
           Text(
             "Change focus", tableName: "FocusTest",
@@ -170,7 +170,7 @@ private struct FocusTestSuggestedFocus: View {
       return nil
     }
 
-    let state =
+    let state: String? =
       switch focus.state {
       case .ifTimeShort:
         String(
@@ -184,11 +184,6 @@ private struct FocusTestSuggestedFocus: View {
         String(
           localized: "Your plan gives these more time.", table: "FocusTest",
           comment: "Suggested focus the plan already follows")
-      case .alreadyFits:
-        String(
-          localized: "Your plan already has time for these, so it doesn't need a focus.",
-          table: "FocusTest",
-          comment: "Suggested focus the plan's time already covers without a focus")
       case .handPicked:
         String(
           localized:
@@ -198,19 +193,19 @@ private struct FocusTestSuggestedFocus: View {
         String(
           localized: "You kept your plan as it is.", table: "FocusTest",
           comment: "Suggested focus the learner said Not now to, or undid")
+      case .suggested:
+        nil
       }
-
-    guard focus.basis == .importance else {
-      return state
-    }
-
-    return [
-      state,
-      String(
+    let basis =
+      focus.basis == .importance
+      ? String(
         localized: "For now, this follows mainly what counts most in your exam.",
         table: "FocusTest",
-        comment: "Suggested focus with no answer behind it yet: it follows the exam's weights"),
-    ].joined(separator: " ")
+        comment: "Suggested focus with no answer behind it yet: it follows the exam's weights")
+      : nil
+    let note = [state, basis].compactMap(\.self)
+
+    return note.isEmpty ? nil : note.joined(separator: " ")
   }
 }
 

@@ -115,11 +115,11 @@ struct FocusTest: Decodable, Equatable, Sendable {
       case ifTimeShort
       case proposed
       case current
-      /// The plan has no focus, and its time already covers these.
-      case alreadyFits
       case handPicked
       /// The learner dismissed this suggestion with "Not now" or Undo.
       case declined
+      /// The rows alone, with no claim about the plan.
+      case suggested
     }
 
     let basis: Basis

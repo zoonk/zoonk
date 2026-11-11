@@ -4841,65 +4841,6 @@
         }
       }
     },
-    "Your plan already has time for these, so it doesn't need a focus." : {
-      "comment" : "Suggested focus the plan's time already covers without a focus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan sieht für diese Fächer schon genug Zeit vor, daher ist kein Schwerpunkt nötig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan ya dedica suficiente tiempo a estas materias, así que no hace falta darles más."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan prévoit déjà assez de temps pour ces matières, donc pas besoin de leur en consacrer plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano prevede già abbastanza tempo per queste materie, quindi non serve aggiungerne altro."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이미 계획에 이 과목들을 공부할 시간이 잡혀 있어서 추가로 배정할 필요가 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan już przewiduje czas na te przedmioty, więc nie trzeba go zwiększać."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano já reserva tempo para essas matérias, então não precisa dar mais foco a elas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planında bunlar için zaten zaman var, bu yüzden ek süreye gerek yok."
-          }
-        }
-      }
-    },
     "Your plan considers all %lld subjects." : {
       "comment" : "The Focus test's invitation, when its sitting can't reach every subject",
       "localizations" : {
