@@ -29,7 +29,7 @@ struct PlusMark: View {
 ///   `SeePlusButton`.
 /// - `isInset` drops the panel inside a card that already has one (a tutor's offer).
 /// - `seePlus` replaces opening Plus where the screen must close first (a full-screen moment).
-/// - `action` is the free way, after "See Plus" (the free plan's one goal: their Plan).
+/// - `action` is the free way, after "See Plus" (a goal past the free plan's active goals: their Plan).
 struct PlusNotice<Action: View>: View {
   var title: Text?
   var description: Text?

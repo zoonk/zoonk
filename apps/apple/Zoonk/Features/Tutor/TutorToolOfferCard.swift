@@ -153,8 +153,11 @@ struct TutorToolOfferCard: View {
           .startGoal(goal: start.goal)),
         locked: start.access == .plusRequired,
         lockNote: Text(
-          "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus.",
-          tableName: "Tutor", comment: "Why a free learner can't start another goal"))
+          "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
+          tableName: "Tutor",
+          comment:
+            "Why a free learner can't start another goal now: either they follow as many goals at once as the free plan allows or they started as many new goals as it allows recently, so it names neither. Plus is the subscription's name, not \"more\""
+        ))
     case .case2(let test):
       return Content(
         title: Text(

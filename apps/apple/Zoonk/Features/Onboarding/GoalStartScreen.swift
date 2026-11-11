@@ -9,11 +9,14 @@ struct GoalStartScreen: View {
 
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(SettingsStore.self) private var settings
 
   var body: some View {
     GoalStartFlow(
       sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
-      limit: upFrontLimit)
+      limit: settings.allowance.value?.goalStartLimit
+    )
+    .loads(settings.allowance, refreshable: false)
   }
 
   private var needsAccount: Bool {
@@ -23,16 +26,28 @@ struct GoalStartScreen: View {
 
     return summary.identity.isAnonymous && !summary.followedGoals.isEmpty
   }
+}
 
-  /// Said before the learner types; creating a goal checks it again.
-  private var upFrontLimit: GoalLimitReason? {
-    guard let summary = learner.summary.value, summary.tier == .free,
-      summary.followedGoals.contains(where: { $0.status == .active })
-    else {
-      return nil
+extension PlanAllowance {
+  /// Said before the learner types, checked in core's order; creating a goal checks it again.
+  var goalStartLimit: GoalLimitReason? {
+    let reached: (period: String, resource: String)? =
+      if activeGoals.isReached {
+        ("total", "activeGoals")
+      } else if newGoalsTotal.isReached {
+        ("total", "goal")
+      } else if newGoalsToday.isReached {
+        ("day", "goal")
+      } else if newGoalsThisMonth.isReached {
+        ("month", "goal")
+      } else {
+        nil
+      }
+
+    return reached.map {
+      GoalLimitReason(
+        OnboardingLimit(period: $0.period, resource: $0.resource, tier: tier.rawValue))
     }
-
-    return .oneActiveGoal
   }
 }
 
