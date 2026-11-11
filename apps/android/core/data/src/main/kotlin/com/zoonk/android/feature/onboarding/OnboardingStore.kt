@@ -122,9 +122,12 @@ class OnboardingStore(
     private val sessions: SessionSource,
     private val startGuest: suspend () -> SignInResult,
 ) {
-    /** Each fix answers with the whole new draft; confirming it gives it a goal, so goal changes read it again. */
+    /**
+     * Each fix answers with the whole new draft. Confirming it gives it a goal, and its room counts the goals followed
+     * against the plan's cap, so goal and subscription changes read it again.
+     */
     val drafts =
-        cache.keyed<String, OnboardingDraft>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, id ->
+        cache.keyed<String, OnboardingDraft>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.UserSubscription)) { session, id ->
             session?.let { api.draft(it, id) }
         }
 

@@ -171,6 +171,24 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText("Looks right").assertIsDisplayed()
     }
+
+    @Test
+    fun aFullCardOpensEveryGoalOnceTheLearnerGetsPlus() {
+        api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = 0)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        rule.onNodeWithText("Looks right").assertDoesNotExist()
+
+        api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = null)
+        cache.invalidate(setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession, DataDomain.Certificates))
+
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(
+            listOf(listOf("Pass the bar exam", "Learn statistics")),
+            api.created.map { input -> input.goals.map { it.title } },
+        )
+    }
 }
 
 private fun twoGoals() =
