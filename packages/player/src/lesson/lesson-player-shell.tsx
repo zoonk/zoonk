@@ -69,10 +69,10 @@ function LessonHeader() {
 }
 
 function LessonContent() {
-  const { screen, state } = useLessonPlayer();
+  const { played, screen, state } = useLessonPlayer();
   const turn = useScreenTurn(state);
   const shown = screen.step && getScreenRef(state, screen.step.id);
-  const kept = useKeptScreens(state, shown);
+  const kept = useKeptScreens(played, shown);
 
   if (state.run.status === "refused") {
     return <LessonAccessScreen refusal={state.run.refusal} />;

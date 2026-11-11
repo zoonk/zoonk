@@ -229,7 +229,10 @@ export function LessonPlayerProvider({
     ],
   );
 
-  const runtime = useMemo(() => ({ actions, screen, state: shown }), [actions, screen, shown]);
+  const runtime = useMemo(
+    () => ({ actions, played: state, screen, state: shown }),
+    [actions, screen, shown, state],
+  );
 
   return (
     <LessonPlayerConfigContext value={config}>

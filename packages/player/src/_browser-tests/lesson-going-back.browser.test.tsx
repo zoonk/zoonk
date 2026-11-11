@@ -182,6 +182,28 @@ describe("going back to reread", () => {
     await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
   });
 
+  it("keeps a retry's work while the learner looks back at its first attempt", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+    playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await pressOnSlider("Extra per month", "ArrowRight", 2);
+    await checkActivity();
+    await expectVerdict("Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).not.toHaveAttribute("aria-valuenow", "100");
+    await pressOnSlider("Extra per month", "ArrowRight", 2);
+    await expect.element(slider).toHaveAttribute("aria-valuenow", "100");
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expectVerdict("Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect.element(slider).toHaveAttribute("aria-valuenow", "100");
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toBeVisible();
+  });
+
   it("starts a rhythm run or a sound check over when the learner leaves it halfway", async () => {
     localStorage.removeItem(DEVICE_DELAY_KEY);
     const stop = vi.spyOn(AudioScheduledSourceNode.prototype, "stop");
