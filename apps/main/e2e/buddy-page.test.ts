@@ -150,11 +150,14 @@ test.describe("Buddy tab", () => {
 
       const card = conversation.getByRole("region", { name: "English (Canada)" });
       const apply = card.getByRole("button", { name: "Apply" });
+      const status = card.getByRole("status");
       await expect(apply).toBeVisible();
+      await expect(status).toBeEmpty();
       expect(await readCountry()).toBeNull();
 
       await apply.click();
-      await expect(card.getByRole("status")).toBeVisible();
+      await expect(status).toHaveText("Saved. You can change it in your plan.");
+      await expect(card).toBeFocused();
       await expect(apply).toBeHidden();
       await expect.poll(readCountry).toBe("CA");
     });
