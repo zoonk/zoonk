@@ -26,6 +26,8 @@ final class StudyRemindersStore {
   @ObservationIgnored private let push: any PushAccess
   @ObservationIgnored private let defaults: UserDefaults
   @ObservationIgnored private let saves: QueuedSaves<StudyReminder>
+  /// Push turned on or off again while a setup waits wins, as on Android.
+  @ObservationIgnored private var pushChoices = 0
   private static let tokenKey = "studyReminderPushToken"
 
   init(
@@ -76,7 +78,8 @@ final class StudyRemindersStore {
 
   /// Permission, then this phone, then push on (at `time` when given). Done only once both saved.
   func turnOnPush(at time: String? = nil) async -> PushSetup {
-    await selectThisPhone(then: StudyReminderChange(time: time, pushOn: true))
+    pushChoices += 1
+    return await selectThisPhone(then: StudyReminderChange(time: time, pushOn: true))
   }
 
   /// Push goes to this phone from now on, on or off as it was.
@@ -96,6 +99,10 @@ final class StudyRemindersStore {
   /// Settings' changes, saved in the order made.
   func change(_ change: StudyReminderChange) async {
     failedSave = nil
+
+    if change.pushOn != nil {
+      pushChoices += 1
+    }
 
     let result = await saves.save(change.applied, invalidating: [.studyReminder]) { [api] in
       try await api.updateReminder(token: $0.bearerToken, change)
@@ -151,6 +158,7 @@ final class StudyRemindersStore {
   /// phone is theirs.
   private func selectThisPhone(then enable: StudyReminderChange?) async -> PushSetup {
     let owner = cache.session.authenticatedSession
+    let choice = pushChoices
 
     guard await push.requestAuthorization() else {
       return .denied
@@ -170,7 +178,7 @@ final class StudyRemindersStore {
 
     savedToken = token
 
-    guard let enable else {
+    guard let enable, choice == pushChoices else {
       return show(selected) ? .on : .failed
     }
 

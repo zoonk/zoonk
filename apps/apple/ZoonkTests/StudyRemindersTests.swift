@@ -112,6 +112,27 @@ final class StudyRemindersTests: XCTestCase {
       calls, ["select a phone"], "A's setup must stop before enabling push after B signs in")
   }
 
+  func testPushTurnedOffDuringASlowSetupStaysOff() async throws {
+    let context = try await context(token: "a")
+    let selection = RegistrationGate()
+    let api = RemindersAPIStub(selectionGate: selection)
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: PushStub(token: "phone"),
+      defaults: context.defaults)
+    await store.reminder.load()
+    let setup = Task { await store.turnOnPush(at: "20:30") }
+    await selection.waitUntilStarted()
+
+    await store.change(StudyReminderChange(pushOn: false))
+    selection.finish()
+    _ = await setup.value
+
+    let calls = await api.calls
+    XCTAssertEqual(
+      calls, ["get a", "select a phone", "update a - push false"],
+      "The later Off must win over the earlier setup's On")
+  }
+
   func testFailedSelectionForBDoesNotLoseTheTokenRefreshOwedToA() async throws {
     let context = try await context(token: "b")
     context.defaults.set("old-token", forKey: "studyReminderPushToken")
