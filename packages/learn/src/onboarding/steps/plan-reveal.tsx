@@ -109,14 +109,19 @@ export function PlanReveal({
   }
 
   // Today waits for this: until it's saved, Today sends the learner back here.
-  const start = async (): Promise<boolean> => {
+  const markRevealed = async (): Promise<boolean> => {
     const { data: saved } = await safeAsync(() => actions.markPlanRevealed(goalId));
+    return saved === true;
+  };
+
+  const start = async (): Promise<boolean> => {
+    const saved = await markRevealed();
 
     if (saved) {
       toToday();
     }
 
-    return saved === true;
+    return saved;
   };
 
   async function refreshAfter<T>(change: Promise<T>): Promise<T> {
@@ -167,7 +172,9 @@ export function PlanReveal({
           <PlanSheetHosts>
             <RevealBody
               buddy={buddy}
+              goalId={goalId}
               isGuest={isGuest}
+              markRevealed={markRevealed}
               moment={!planRevealed}
               onStart={start}
               signUpHref={signUpHref}

@@ -139,7 +139,9 @@ function RevealRailBlock({ children, title }: { children: React.ReactNode; title
 
 export function RevealBody({
   buddy,
+  goalId,
   isGuest,
+  markRevealed,
   moment,
   onStart,
   reveal,
@@ -147,7 +149,9 @@ export function RevealBody({
   syllabus,
 }: {
   buddy: LearnBuddy | null;
+  goalId: string;
   isGuest: boolean;
+  markRevealed: () => Promise<boolean>;
   /** False once the learner pressed Start: a reveal they open again shows its end, still. */
   moment: boolean;
   onStart: () => Promise<boolean>;
@@ -199,7 +203,7 @@ export function RevealBody({
           <RevealNoticeDay />
         </header>
 
-        <RevealToday reveal={reveal} />
+        <RevealToday goalId={goalId} markRevealed={markRevealed} reveal={reveal} />
         <RevealWeek reveal={reveal} />
 
         <div className="flex flex-col gap-2">

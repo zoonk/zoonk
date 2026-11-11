@@ -3,9 +3,11 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
   return new Date(Date.now() + minutes * 60_000);
@@ -52,6 +54,30 @@ test.describe("Placement and the plan", () => {
 
     expect(attempts).toBeGreaterThanOrEqual(2);
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
+    expect(saved.planRevealedAt).not.toBeNull();
+  });
+
+  test("a lesson tapped in the reveal's Today opens, and Today counts the plan as seen", async ({
+    browser,
+  }) => {
+    const { goal, lesson, user } = await createStudyDay();
+    const details = isJsonObject(goal.details) ? goal.details : {};
+    const setup = Array.isArray(details.answered) ? details.answered : [];
+
+    await prisma.goal.update({
+      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto(`/start/${goal.id}`);
+
+    const today = page.getByRole("region", { name: "Today" });
+    await today.getByRole("button", { name: new RegExp(lesson.title, "u") }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.planRevealedAt).not.toBeNull();
   });
 });

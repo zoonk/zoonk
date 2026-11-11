@@ -6,10 +6,12 @@ import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import { KindMark, type LearnKind } from "../../_components/kind-tile";
 import {
   ListGroup,
   ListRow,
+  ListRowButton,
   ListRowContent,
   ListRowDescription,
   ListRowIcon,
@@ -23,9 +25,11 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
+import { StepOpenFailed } from "../../_components/step-open-failed";
 import { isoDateToUtc } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { BlockMark } from "../../session/block-mark";
+import { DayStepOpener } from "../../session/day-step-opener";
 import { type DayStep } from "../../session/session-types";
 import { useBlockTitle } from "../../session/use-block-copy";
 import { isFinished, splitTodayQueue } from "../../today/today-queue";
@@ -84,19 +88,23 @@ function NextTag({ children }: { children: string }) {
 function TodayRow({
   block,
   line,
+  onOpen,
   tag,
 }: {
   block: DayStep;
   line: string | null;
+  onOpen: (() => Promise<boolean>) | null;
   tag: string | null;
 }) {
   const t = useExtracted();
   const title = useBlockTitle();
   const formatDuration = useFormatDuration();
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
   const details = [line, formatDuration(block.estimatedMinutes)].filter(Boolean);
 
-  return (
-    <ListRow data-highlighted={tag ? "" : undefined}>
+  const content = (
+    <>
       <ListRowLeading>
         <ListRowIcon>
           <BlockMark block={block} />
@@ -114,7 +122,36 @@ function TodayRow({
           {details.join(" · ")}
         </ListRowDescription>
       </ListRowContent>
-    </ListRow>
+    </>
+  );
+
+  if (!onOpen) {
+    return <ListRow data-highlighted={tag ? "" : undefined}>{content}</ListRow>;
+  }
+
+  const open = async () => {
+    setPending(true);
+    setFailed(false);
+
+    if (!(await onOpen())) {
+      setPending(false);
+      setFailed(true);
+    }
+  };
+
+  return (
+    <>
+      <ListRowButton
+        aria-busy={pending || undefined}
+        data-highlighted={tag ? "" : undefined}
+        disabled={pending}
+        onClick={open}
+      >
+        {content}
+      </ListRowButton>
+
+      {failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-7" />}
+    </>
   );
 }
 
@@ -125,8 +162,19 @@ function useFormatDay() {
     format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC", weekday: "short" });
 }
 
-/** Today's own day, in Today's order: what the learner finished, then where they go on. */
-export function RevealToday({ reveal }: { reveal: PlanRevealDays | null }) {
+/**
+ * Today's own day, in Today's order: what the learner finished, then where they go on. A tapped row
+ * ends the reveal (`markRevealed`) before its step opens, so Today never sends the learner back here.
+ */
+export function RevealToday({
+  goalId,
+  markRevealed,
+  reveal,
+}: {
+  goalId: string;
+  markRevealed: () => Promise<boolean>;
+  reveal: PlanRevealDays | null;
+}) {
   const t = useExtracted();
   const session = reveal?.today;
   const formatDay = useFormatDay();
@@ -154,16 +202,25 @@ export function RevealToday({ reveal }: { reveal: PlanRevealDays | null }) {
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ListGroup>
-        {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
-          <TodayRow
-            block={block}
-            key={block.position}
-            line={label(block)}
-            tag={block === next ? nextTag : null}
-          />
-        ))}
-      </ListGroup>
+      <DayStepOpener day={session} goalId={goalId}>
+        {(open) => (
+          <ListGroup>
+            {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
+              <TodayRow
+                block={block}
+                key={block.position}
+                line={label(block)}
+                onOpen={
+                  isFinished(block) || block.waitReason
+                    ? null
+                    : async () => (await markRevealed()) && open(block)
+                }
+                tag={block === next ? nextTag : null}
+              />
+            ))}
+          </ListGroup>
+        )}
+      </DayStepOpener>
     </PageSection>
   );
 }
