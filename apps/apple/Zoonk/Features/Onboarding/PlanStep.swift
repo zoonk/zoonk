@@ -693,13 +693,15 @@ private struct PlanReveal: View {
         .buttonStyle(.outline)
         .fixedSize()
 
-        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play, action: openToday) {
+        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play) {
+          start(on: day)
+        } label: {
           if day?.blocks.contains(where: \.isFinished) == true {
             Text(
               "Continue", tableName: "Onboarding",
-              comment: "Opens Today once a lesson of the plan's first day is done")
+              comment: "Opens the plan's next step once a lesson of its first day is done")
           } else {
-            Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+            Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
           }
         }
         .buttonStyle(.mainAction)
@@ -806,17 +808,34 @@ private struct PlanReveal: View {
     }
   }
 
+  /// Start opens the step tagged where to start, as its row does; with none to open, Today.
+  private func start(on day: StudyDay?) {
+    if let day, let next = day.nextBlock, next.opensFromReveal {
+      open(next, on: day, fromStart: true)
+    } else {
+      openToday()
+    }
+  }
+
   /// A row ends the reveal as Start does, then opens its step the way Today's row does, so the
   /// learner comes back from it to Today.
-  private func open(_ block: StudyBlock, on day: StudyDay) {
+  private func open(_ block: StudyBlock, on day: StudyDay, fromStart: Bool = false) {
     guard opening == nil else {
       return
     }
 
     startFailed = false
     failedRow = nil
-    openingRow = block.position
+    openingRow = fromStart ? nil : block.position
     let shown = router.shown
+
+    func fail() {
+      if fromStart {
+        startFailed = true
+      } else {
+        failedRow = block.position
+      }
+    }
 
     opening = Task {
       defer {
@@ -829,11 +848,11 @@ private struct PlanReveal: View {
       } catch is CancellationError {
         return
       } catch {
-        failedRow = block.position
+        fail()
         return
       }
 
-      // As Start does: the step opens over Today, and the session screen reads the day from it.
+      // The step opens over Today, and the session screen reads the day from it.
       await today.today.refresh()
 
       // A learner who left the reveal while it saved isn't taken anywhere.
@@ -855,7 +874,7 @@ private struct PlanReveal: View {
         router.showRoot(of: .today)
         router.openStudy(destination)
       case .failed:
-        failedRow = block.position
+        fail()
       case .done, .obsolete:
         break
       }

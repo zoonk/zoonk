@@ -218,7 +218,7 @@ struct RevealToday: View {
   /// The position of the row opening, or of the one that failed to.
   let busy: Int?
   let failed: Int?
-  /// Nil while Start opens Today.
+  /// Nil while Start opens.
   let open: ((StudyBlock) -> Void)?
 
   var body: some View {
@@ -240,9 +240,7 @@ struct RevealToday: View {
             tag: isNext ? tag : nil)
 
           Group {
-            if block.isFinished || block.waitReason != nil {
-              row
-            } else {
+            if block.opensFromReveal {
               Button {
                 open?(block)
               } label: {
@@ -251,6 +249,8 @@ struct RevealToday: View {
               .tint(.primary)
               .disabled(open == nil || (busy != nil && busy != block.position))
               .accessibilityBusy(busy == block.position)
+            } else {
+              row
             }
           }
           .currentRow(isNext)
@@ -265,6 +265,12 @@ struct RevealToday: View {
         }
       }
     }
+  }
+}
+
+extension StudyBlock {
+  var opensFromReveal: Bool {
+    !isFinished && waitReason == nil
   }
 }
 
