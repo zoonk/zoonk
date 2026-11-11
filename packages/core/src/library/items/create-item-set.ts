@@ -1,11 +1,30 @@
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
 import { type Item, type ItemSet, type ItemSetKind, prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { type KeyCheckedItem, type KeyedFormat } from "./check-item-keys";
 import { type RejectedItem, toCheckedItem } from "./create-items";
-import { type ItemAnswerFormat, toStoredItem } from "./item-content";
+import { toStoredItem } from "./item-content";
 import { parseItemSetContent } from "./item-set-content";
 
-type SetItem = ItemAnswerFormat & { format: ItemFormat; item: GeneratedItem; skillId: string };
+export type WrittenSetItem = { format: ItemFormat; item: GeneratedItem; skillId: string };
+
+/** A format whose key a blind solve can check takes only the items `checkItemSetKeys` kept. */
+type SetItem =
+  | { format: Exclude<ItemFormat, KeyedFormat>; item: GeneratedItem; skillId: string }
+  | { format: ItemFormat; item: KeyCheckedItem; skillId: string };
+
+export type ItemSetToStore<Question = SetItem> = {
+  content: object;
+  examBlueprintId?: string | null;
+  items: readonly Question[];
+  kind: ItemSetKind;
+  language: string;
+  minItems?: number;
+  optionCount?: number | null;
+  provenance: LibraryProvenance;
+  /** A language exam's options are in the practiced language, so their numbers are read its way. */
+  optionLanguage?: string | null;
+};
 
 /** Throws if the stimulus does not match its kind's schema; retries of the same run reuse its stored set. */
 export async function createItemSet({
@@ -18,23 +37,15 @@ export async function createItemSet({
   optionCount = null,
   provenance,
   optionLanguage = null,
-}: {
-  content: object;
-  examBlueprintId?: string | null;
-  items: readonly SetItem[];
-  kind: ItemSetKind;
-  language: string;
-  minItems?: number;
-  optionCount?: number | null;
-  provenance: LibraryProvenance;
-  /** A language exam's options are in the practiced language, so their numbers are read its way. */
-  optionLanguage?: string | null;
-}): Promise<{ rejected: RejectedItem[]; set: (ItemSet & { items: Item[] }) | null }> {
+}: ItemSetToStore): Promise<{
+  rejected: RejectedItem[];
+  set: (ItemSet & { items: Item[] }) | null;
+}> {
   parseItemSetContent({ content, kind });
 
-  const checked = items.map(({ entry, format, item, select, skillId }, index) => ({
+  const checked = items.map(({ format, item, skillId }, index) => ({
     ...toCheckedItem({
-      answerFormat: { entry, select },
+      answerFormat: {},
       format,
       index,
       item,
@@ -42,7 +53,6 @@ export async function createItemSet({
       optionCount,
       optionLanguage,
     }),
-    answerFormat: { entry, select },
     skillId,
   }));
 
@@ -73,8 +83,8 @@ export async function createItemSet({
         ...shared,
         content,
         items: {
-          create: passing.map(({ answerFormat, item, skillId }, position) => ({
-            ...toStoredItem(item, answerFormat),
+          create: passing.map(({ item, skillId }, position) => ({
+            ...toStoredItem(item, {}),
             ...shared,
             setPosition: position,
             skillId,

@@ -9200,6 +9200,1661 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Business case: question 1 is keyed $2.50, but a supermarket loaf needs no packaging, so it adds $4.50 − $1.20 − $0.50 = $2.80; the others are right.",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-business-case-bakery-order-1",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is left out.",
+                  "text": "$2.80"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "$4.50 − $2.00 = $2.50.",
+                  "text": "$2.50"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "That compares with the average cost.",
+                  "text": "−$0.30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Electricity is a cost too.",
+                  "text": "$3.30"
+                }
+              ],
+              "question": "How much does each supermarket loaf add toward rent and wages?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "600 × $2.80 = $1,680.",
+                  "text": "It rises by $1,680."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rent and wages don't change.",
+                  "text": "It falls by $180."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is saved.",
+                  "text": "It rises by $1,500."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Each loaf adds $2.80.",
+                  "text": "It doesn't change."
+                }
+              ],
+              "question": "How would taking the order change the bakery's monthly profit?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Rent and wages are paid either way.",
+                  "text": "The $4.80 includes rent and wages the bakery pays whether or not it takes the order."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It pays $4.50.",
+                  "text": "The supermarket would pay more than $4.80 a loaf."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "No new staff are needed.",
+                  "text": "The order would need new staff."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It includes rent and wages.",
+                  "text": "The $4.80 counts only flour, salt and starter."
+                }
+              ],
+              "question": "Why is the accountant's warning misleading for this decision?",
+              "visual": null
+            }
+          ],
+          "stimulus": "A supermarket order for Marlow Bakery\n\nMarlow Bakery sells its sourdough loaf for $6.00. Flour, salt and starter cost $1.20 per loaf, packaging $0.30 and the electricity for baking $0.50. Rent and wages come to $4,200 a month whatever the bakery sells. Last month it sold 1,500 loaves.\n\nThe owner, Priya, has been offered a supermarket order of 600 extra loaves a month at $4.50 each. The supermarket would collect the loaves on its own crates, so they would need no packaging, and the bakery has enough spare oven time to bake them without new staff. Priya's accountant warns that $4.50 is below last month's average cost per loaf, $4.80."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Business case: question 1 is keyed $2.50, but a supermarket loaf needs no packaging, so it adds $4.50 − $1.20 − $0.50 = $2.80; the others are right.",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-business-case-bakery-order-2",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is left out.",
+                  "text": "$2.80"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "$4.50 − $2.00 = $2.50.",
+                  "text": "$2.50"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "That compares with the average cost.",
+                  "text": "−$0.30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Electricity is a cost too.",
+                  "text": "$3.30"
+                }
+              ],
+              "question": "How much does each supermarket loaf add toward rent and wages?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "600 × $2.80 = $1,680.",
+                  "text": "It rises by $1,680."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rent and wages don't change.",
+                  "text": "It falls by $180."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is saved.",
+                  "text": "It rises by $1,500."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Each loaf adds $2.80.",
+                  "text": "It doesn't change."
+                }
+              ],
+              "question": "How would taking the order change the bakery's monthly profit?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Rent and wages are paid either way.",
+                  "text": "The $4.80 includes rent and wages the bakery pays whether or not it takes the order."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It pays $4.50.",
+                  "text": "The supermarket would pay more than $4.80 a loaf."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "No new staff are needed.",
+                  "text": "The order would need new staff."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It includes rent and wages.",
+                  "text": "The $4.80 counts only flour, salt and starter."
+                }
+              ],
+              "question": "Why is the accountant's warning misleading for this decision?",
+              "visual": null
+            }
+          ],
+          "stimulus": "A supermarket order for Marlow Bakery\n\nMarlow Bakery sells its sourdough loaf for $6.00. Flour, salt and starter cost $1.20 per loaf, packaging $0.30 and the electricity for baking $0.50. Rent and wages come to $4,200 a month whatever the bakery sells. Last month it sold 1,500 loaves.\n\nThe owner, Priya, has been offered a supermarket order of 600 extra loaves a month at $4.50 each. The supermarket would collect the loaves on its own crates, so they would need no packaging, and the bakery has enough spare oven time to bake them without new staff. Priya's accountant warns that $4.50 is below last month's average cost per loaf, $4.80."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Business case: question 1 is keyed $2.50, but a supermarket loaf needs no packaging, so it adds $4.50 − $1.20 − $0.50 = $2.80; the others are right.",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-business-case-bakery-order-3",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is left out.",
+                  "text": "$2.80"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "$4.50 − $2.00 = $2.50.",
+                  "text": "$2.50"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "That compares with the average cost.",
+                  "text": "−$0.30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Electricity is a cost too.",
+                  "text": "$3.30"
+                }
+              ],
+              "question": "How much does each supermarket loaf add toward rent and wages?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "600 × $2.80 = $1,680.",
+                  "text": "It rises by $1,680."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rent and wages don't change.",
+                  "text": "It falls by $180."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is saved.",
+                  "text": "It rises by $1,500."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Each loaf adds $2.80.",
+                  "text": "It doesn't change."
+                }
+              ],
+              "question": "How would taking the order change the bakery's monthly profit?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Rent and wages are paid either way.",
+                  "text": "The $4.80 includes rent and wages the bakery pays whether or not it takes the order."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It pays $4.50.",
+                  "text": "The supermarket would pay more than $4.80 a loaf."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "No new staff are needed.",
+                  "text": "The order would need new staff."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It includes rent and wages.",
+                  "text": "The $4.80 counts only flour, salt and starter."
+                }
+              ],
+              "question": "Why is the accountant's warning misleading for this decision?",
+              "visual": null
+            }
+          ],
+          "stimulus": "A supermarket order for Marlow Bakery\n\nMarlow Bakery sells its sourdough loaf for $6.00. Flour, salt and starter cost $1.20 per loaf, packaging $0.30 and the electricity for baking $0.50. Rent and wages come to $4,200 a month whatever the bakery sells. Last month it sold 1,500 loaves.\n\nThe owner, Priya, has been offered a supermarket order of 600 extra loaves a month at $4.50 each. The supermarket would collect the loaves on its own crates, so they would need no packaging, and the bakery has enough spare oven time to bake them without new staff. Priya's accountant warns that $4.50 is below last month's average cost per loaf, $4.80."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Business case: question 1 is keyed $2.50, but a supermarket loaf needs no packaging, so it adds $4.50 − $1.20 − $0.50 = $2.80; the others are right.",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-business-case-bakery-order-4",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is left out.",
+                  "text": "$2.80"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "$4.50 − $2.00 = $2.50.",
+                  "text": "$2.50"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "That compares with the average cost.",
+                  "text": "−$0.30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Electricity is a cost too.",
+                  "text": "$3.30"
+                }
+              ],
+              "question": "How much does each supermarket loaf add toward rent and wages?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "600 × $2.80 = $1,680.",
+                  "text": "It rises by $1,680."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rent and wages don't change.",
+                  "text": "It falls by $180."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is saved.",
+                  "text": "It rises by $1,500."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Each loaf adds $2.80.",
+                  "text": "It doesn't change."
+                }
+              ],
+              "question": "How would taking the order change the bakery's monthly profit?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Rent and wages are paid either way.",
+                  "text": "The $4.80 includes rent and wages the bakery pays whether or not it takes the order."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It pays $4.50.",
+                  "text": "The supermarket would pay more than $4.80 a loaf."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "No new staff are needed.",
+                  "text": "The order would need new staff."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It includes rent and wages.",
+                  "text": "The $4.80 counts only flour, salt and starter."
+                }
+              ],
+              "question": "Why is the accountant's warning misleading for this decision?",
+              "visual": null
+            }
+          ],
+          "stimulus": "A supermarket order for Marlow Bakery\n\nMarlow Bakery sells its sourdough loaf for $6.00. Flour, salt and starter cost $1.20 per loaf, packaging $0.30 and the electricity for baking $0.50. Rent and wages come to $4,200 a month whatever the bakery sells. Last month it sold 1,500 loaves.\n\nThe owner, Priya, has been offered a supermarket order of 600 extra loaves a month at $4.50 each. The supermarket would collect the loaves on its own crates, so they would need no packaging, and the bakery has enough spare oven time to bake them without new staff. Priya's accountant warns that $4.50 is below last month's average cost per loaf, $4.80."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 2 of 2 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Business case: question 1 is keyed $2.50, but a supermarket loaf needs no packaging, so it adds $4.50 − $1.20 − $0.50 = $2.80; the others are right.",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-business-case-bakery-order-5",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is left out.",
+                  "text": "$2.80"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "$4.50 − $2.00 = $2.50.",
+                  "text": "$2.50"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "That compares with the average cost.",
+                  "text": "−$0.30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Electricity is a cost too.",
+                  "text": "$3.30"
+                }
+              ],
+              "question": "How much does each supermarket loaf add toward rent and wages?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "600 × $2.80 = $1,680.",
+                  "text": "It rises by $1,680."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rent and wages don't change.",
+                  "text": "It falls by $180."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Packaging is saved.",
+                  "text": "It rises by $1,500."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Each loaf adds $2.80.",
+                  "text": "It doesn't change."
+                }
+              ],
+              "question": "How would taking the order change the bakery's monthly profit?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Rent and wages are paid either way.",
+                  "text": "The $4.80 includes rent and wages the bakery pays whether or not it takes the order."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It pays $4.50.",
+                  "text": "The supermarket would pay more than $4.80 a loaf."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "No new staff are needed.",
+                  "text": "The order would need new staff."
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "It includes rent and wages.",
+                  "text": "The $4.80 counts only flour, salt and starter."
+                }
+              ],
+              "question": "Why is the accountant's warning misleading for this decision?",
+              "visual": null
+            }
+          ],
+          "stimulus": "A supermarket order for Marlow Bakery\n\nMarlow Bakery sells its sourdough loaf for $6.00. Flour, salt and starter cost $1.20 per loaf, packaging $0.30 and the electricity for baking $0.50. Rent and wages come to $4,200 a month whatever the bakery sells. Last month it sold 1,500 loaves.\n\nThe owner, Priya, has been offered a supermarket order of 600 extra loaves a month at $4.50 each. The supermarket would collect the loaves on its own crates, so they would need no packaging, and the bakery has enough spare oven time to bake them without new staff. Priya's accountant warns that $4.50 is below last month's average cost per loaf, $4.80."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Chart: statement 1 is keyed true, but April's 160 m³ is a third more than March's 120 m³, not 50% more; the others are right (the semester totals 695 m³).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "pt-chart-school-water-1",
+        "language": "pt",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³ e março, 120 m³.",
+              "statement": "O consumo de abril foi 50% maior que o de março.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³, o maior valor do semestre.",
+              "statement": "O maior consumo do semestre ocorreu em abril.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "80 + 95 + 120 + 160 + 150 + 90 = 695 m³.",
+              "statement": "O consumo total do semestre passou de 700 m³.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "De 150 m³ para 90 m³ são 60 m³ a menos, 40% de 150.",
+              "statement": "De maio para junho, o consumo caiu 40%.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Consumo de água da escola\n\nO gráfico mostra o consumo mensal de água de uma escola no primeiro semestre.\n\n{\"axisStart\":null,\"categories\":[\"jan\",\"fev\",\"mar\",\"abr\",\"mai\",\"jun\"],\"categoryLabel\":\"Mês\",\"chart\":\"bar\",\"kind\":\"chart\",\"series\":[{\"name\":\"Consumo\",\"values\":[80,95,120,160,150,90]}],\"source\":null,\"title\":\"Consumo de água por mês\",\"unit\":\"m³\",\"valueLabel\":\"Consumo (m³)\"}"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Chart: statement 1 is keyed true, but April's 160 m³ is a third more than March's 120 m³, not 50% more; the others are right (the semester totals 695 m³).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "pt-chart-school-water-2",
+        "language": "pt",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³ e março, 120 m³.",
+              "statement": "O consumo de abril foi 50% maior que o de março.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³, o maior valor do semestre.",
+              "statement": "O maior consumo do semestre ocorreu em abril.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "80 + 95 + 120 + 160 + 150 + 90 = 695 m³.",
+              "statement": "O consumo total do semestre passou de 700 m³.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "De 150 m³ para 90 m³ são 60 m³ a menos, 40% de 150.",
+              "statement": "De maio para junho, o consumo caiu 40%.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Consumo de água da escola\n\nO gráfico mostra o consumo mensal de água de uma escola no primeiro semestre.\n\n{\"axisStart\":null,\"categories\":[\"jan\",\"fev\",\"mar\",\"abr\",\"mai\",\"jun\"],\"categoryLabel\":\"Mês\",\"chart\":\"bar\",\"kind\":\"chart\",\"series\":[{\"name\":\"Consumo\",\"values\":[80,95,120,160,150,90]}],\"source\":null,\"title\":\"Consumo de água por mês\",\"unit\":\"m³\",\"valueLabel\":\"Consumo (m³)\"}"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Chart: statement 1 is keyed true, but April's 160 m³ is a third more than March's 120 m³, not 50% more; the others are right (the semester totals 695 m³).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "pt-chart-school-water-3",
+        "language": "pt",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³ e março, 120 m³.",
+              "statement": "O consumo de abril foi 50% maior que o de março.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³, o maior valor do semestre.",
+              "statement": "O maior consumo do semestre ocorreu em abril.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "80 + 95 + 120 + 160 + 150 + 90 = 695 m³.",
+              "statement": "O consumo total do semestre passou de 700 m³.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "De 150 m³ para 90 m³ são 60 m³ a menos, 40% de 150.",
+              "statement": "De maio para junho, o consumo caiu 40%.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Consumo de água da escola\n\nO gráfico mostra o consumo mensal de água de uma escola no primeiro semestre.\n\n{\"axisStart\":null,\"categories\":[\"jan\",\"fev\",\"mar\",\"abr\",\"mai\",\"jun\"],\"categoryLabel\":\"Mês\",\"chart\":\"bar\",\"kind\":\"chart\",\"series\":[{\"name\":\"Consumo\",\"values\":[80,95,120,160,150,90]}],\"source\":null,\"title\":\"Consumo de água por mês\",\"unit\":\"m³\",\"valueLabel\":\"Consumo (m³)\"}"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Chart: statement 1 is keyed true, but April's 160 m³ is a third more than March's 120 m³, not 50% more; the others are right (the semester totals 695 m³).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "pt-chart-school-water-4",
+        "language": "pt",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³ e março, 120 m³.",
+              "statement": "O consumo de abril foi 50% maior que o de março.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³, o maior valor do semestre.",
+              "statement": "O maior consumo do semestre ocorreu em abril.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "80 + 95 + 120 + 160 + 150 + 90 = 695 m³.",
+              "statement": "O consumo total do semestre passou de 700 m³.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "De 150 m³ para 90 m³ são 60 m³ a menos, 40% de 150.",
+              "statement": "De maio para junho, o consumo caiu 40%.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Consumo de água da escola\n\nO gráfico mostra o consumo mensal de água de uma escola no primeiro semestre.\n\n{\"axisStart\":null,\"categories\":[\"jan\",\"fev\",\"mar\",\"abr\",\"mai\",\"jun\"],\"categoryLabel\":\"Mês\",\"chart\":\"bar\",\"kind\":\"chart\",\"series\":[{\"name\":\"Consumo\",\"values\":[80,95,120,160,150,90]}],\"source\":null,\"title\":\"Consumo de água por mês\",\"unit\":\"m³\",\"valueLabel\":\"Consumo (m³)\"}"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Chart: statement 1 is keyed true, but April's 160 m³ is a third more than March's 120 m³, not 50% more; the others are right (the semester totals 695 m³).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "pt-chart-school-water-5",
+        "language": "pt",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³ e março, 120 m³.",
+              "statement": "O consumo de abril foi 50% maior que o de março.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "Abril teve 160 m³, o maior valor do semestre.",
+              "statement": "O maior consumo do semestre ocorreu em abril.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "80 + 95 + 120 + 160 + 150 + 90 = 695 m³.",
+              "statement": "O consumo total do semestre passou de 700 m³.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "De 150 m³ para 90 m³ são 60 m³ a menos, 40% de 150.",
+              "statement": "De maio para junho, o consumo caiu 40%.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Consumo de água da escola\n\nO gráfico mostra o consumo mensal de água de uma escola no primeiro semestre.\n\n{\"axisStart\":null,\"categories\":[\"jan\",\"fev\",\"mar\",\"abr\",\"mai\",\"jun\"],\"categoryLabel\":\"Mês\",\"chart\":\"bar\",\"kind\":\"chart\",\"series\":[{\"name\":\"Consumo\",\"values\":[80,95,120,160,150,90]}],\"source\":null,\"title\":\"Consumo de água por mês\",\"unit\":\"m³\",\"valueLabel\":\"Consumo (m³)\"}"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Listening script: question 1 is keyed nine, the time Daniel asked for, but nine was taken and he booked half past ten; the others are right (£12 + 2 × £2 = £16).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-listening-tennis-booking-1",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Daniel asks for nine.",
+                  "text": "9:00"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nine was taken.",
+                  "text": "10:30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nobody says ten.",
+                  "text": "10:00"
+                }
+              ],
+              "question": "What time is the court booked for?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rackets cost extra.",
+                  "text": "£12"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "£12 for the court and two rackets at £2.",
+                  "text": "£16"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Two of them have rackets.",
+                  "text": "£20"
+                }
+              ],
+              "question": "How much will Daniel's group pay in total?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "Two of the four have their own rackets.",
+              "statement": "Daniel will hire a racket for every player.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "There are four of them, so doubles.",
+              "statement": "The court is booked for a doubles game.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Booking a tennis court\nReceptionist: Good morning, Hillside Leisure Centre.\nDaniel: Hi, I'd like to book a tennis court for Saturday, please.\nReceptionist: Morning or afternoon?\nDaniel: The morning. Around nine, if possible.\nReceptionist: Nine's taken, I'm afraid. I can do half past ten.\nDaniel: Half ten is fine. Oh, and there are four of us, so doubles.\nReceptionist: Then it's twelve pounds for the court, plus two pounds a racket if you need to hire any.\nDaniel: Two of us have our own, so just two to hire.\nReceptionist: Lovely. Can I take a surname?\nDaniel: Okafor. O-K-A-F-O-R."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Listening script: question 1 is keyed nine, the time Daniel asked for, but nine was taken and he booked half past ten; the others are right (£12 + 2 × £2 = £16).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-listening-tennis-booking-2",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Daniel asks for nine.",
+                  "text": "9:00"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nine was taken.",
+                  "text": "10:30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nobody says ten.",
+                  "text": "10:00"
+                }
+              ],
+              "question": "What time is the court booked for?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rackets cost extra.",
+                  "text": "£12"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "£12 for the court and two rackets at £2.",
+                  "text": "£16"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Two of them have rackets.",
+                  "text": "£20"
+                }
+              ],
+              "question": "How much will Daniel's group pay in total?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "Two of the four have their own rackets.",
+              "statement": "Daniel will hire a racket for every player.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "There are four of them, so doubles.",
+              "statement": "The court is booked for a doubles game.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Booking a tennis court\nReceptionist: Good morning, Hillside Leisure Centre.\nDaniel: Hi, I'd like to book a tennis court for Saturday, please.\nReceptionist: Morning or afternoon?\nDaniel: The morning. Around nine, if possible.\nReceptionist: Nine's taken, I'm afraid. I can do half past ten.\nDaniel: Half ten is fine. Oh, and there are four of us, so doubles.\nReceptionist: Then it's twelve pounds for the court, plus two pounds a racket if you need to hire any.\nDaniel: Two of us have our own, so just two to hire.\nReceptionist: Lovely. Can I take a surname?\nDaniel: Okafor. O-K-A-F-O-R."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Listening script: question 1 is keyed nine, the time Daniel asked for, but nine was taken and he booked half past ten; the others are right (£12 + 2 × £2 = £16).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-listening-tennis-booking-3",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Daniel asks for nine.",
+                  "text": "9:00"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nine was taken.",
+                  "text": "10:30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nobody says ten.",
+                  "text": "10:00"
+                }
+              ],
+              "question": "What time is the court booked for?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rackets cost extra.",
+                  "text": "£12"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "£12 for the court and two rackets at £2.",
+                  "text": "£16"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Two of them have rackets.",
+                  "text": "£20"
+                }
+              ],
+              "question": "How much will Daniel's group pay in total?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "Two of the four have their own rackets.",
+              "statement": "Daniel will hire a racket for every player.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "There are four of them, so doubles.",
+              "statement": "The court is booked for a doubles game.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Booking a tennis court\nReceptionist: Good morning, Hillside Leisure Centre.\nDaniel: Hi, I'd like to book a tennis court for Saturday, please.\nReceptionist: Morning or afternoon?\nDaniel: The morning. Around nine, if possible.\nReceptionist: Nine's taken, I'm afraid. I can do half past ten.\nDaniel: Half ten is fine. Oh, and there are four of us, so doubles.\nReceptionist: Then it's twelve pounds for the court, plus two pounds a racket if you need to hire any.\nDaniel: Two of us have our own, so just two to hire.\nReceptionist: Lovely. Can I take a surname?\nDaniel: Okafor. O-K-A-F-O-R."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Listening script: question 1 is keyed nine, the time Daniel asked for, but nine was taken and he booked half past ten; the others are right (£12 + 2 × £2 = £16).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-listening-tennis-booking-4",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Daniel asks for nine.",
+                  "text": "9:00"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nine was taken.",
+                  "text": "10:30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nobody says ten.",
+                  "text": "10:00"
+                }
+              ],
+              "question": "What time is the court booked for?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rackets cost extra.",
+                  "text": "£12"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "£12 for the court and two rackets at £2.",
+                  "text": "£16"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Two of them have rackets.",
+                  "text": "£20"
+                }
+              ],
+              "question": "How much will Daniel's group pay in total?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "Two of the four have their own rackets.",
+              "statement": "Daniel will hire a racket for every player.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "There are four of them, so doubles.",
+              "statement": "The court is booked for a doubles game.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Booking a tennis court\nReceptionist: Good morning, Hillside Leisure Centre.\nDaniel: Hi, I'd like to book a tennis court for Saturday, please.\nReceptionist: Morning or afternoon?\nDaniel: The morning. Around nine, if possible.\nReceptionist: Nine's taken, I'm afraid. I can do half past ten.\nDaniel: Half ten is fine. Oh, and there are four of us, so doubles.\nReceptionist: Then it's twelve pounds for the court, plus two pounds a racket if you need to hire any.\nDaniel: Two of us have our own, so just two to hire.\nReceptionist: Lovely. Can I take a surname?\nDaniel: Okafor. O-K-A-F-O-R."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Caught 1 of 1 wrong keys; kept 3 of 3 right items.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Listening script: question 1 is keyed nine, the time Daniel asked for, but nine was taken and he booked half past ten; the others are right (£12 + 2 × £2 = £16).",
+        "expected": {
+          "drop": [
+            1
+          ]
+        },
+        "id": "en-listening-tennis-booking-5",
+        "language": "en",
+        "userInput": {
+          "items": [
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "Daniel asks for nine.",
+                  "text": "9:00"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nine was taken.",
+                  "text": "10:30"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Nobody says ten.",
+                  "text": "10:00"
+                }
+              ],
+              "question": "What time is the court booked for?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "fixedOrder": false,
+              "format": "multipleChoice",
+              "image": null,
+              "options": [
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Rackets cost extra.",
+                  "text": "£12"
+                },
+                {
+                  "isCorrect": true,
+                  "misconception": null,
+                  "reason": "£12 for the court and two rackets at £2.",
+                  "text": "£16"
+                },
+                {
+                  "isCorrect": false,
+                  "misconception": "Misreads the stimulus",
+                  "reason": "Two of them have rackets.",
+                  "text": "£20"
+                }
+              ],
+              "question": "How much will Daniel's group pay in total?",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": false,
+              "misconception": null,
+              "reason": "Two of the four have their own rackets.",
+              "statement": "Daniel will hire a racket for every player.",
+              "visual": null
+            },
+            {
+              "context": null,
+              "difficulty": "medium",
+              "format": "trueFalse",
+              "image": null,
+              "isTrue": true,
+              "misconception": null,
+              "reason": "There are four of them, so doubles.",
+              "statement": "The court is booked for a doubles game.",
+              "visual": null
+            }
+          ],
+          "stimulus": "Booking a tennis court\nReceptionist: Good morning, Hillside Leisure Centre.\nDaniel: Hi, I'd like to book a tennis court for Saturday, please.\nReceptionist: Morning or afternoon?\nDaniel: The morning. Around nine, if possible.\nReceptionist: Nine's taken, I'm afraid. I can do half past ten.\nDaniel: Half ten is fine. Oh, and there are four of us, so doubles.\nReceptionist: Then it's twelve pounds for the court, plus two pounds a racket if you need to hire any.\nDaniel: Two of us have our own, so just two to hire.\nReceptionist: Lovely. Can I take a surname?\nDaniel: Okafor. O-K-A-F-O-R."
+        }
+      }
     }
   ],
   "taskId": "solve-items"

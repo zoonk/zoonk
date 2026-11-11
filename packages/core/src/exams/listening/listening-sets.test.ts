@@ -287,7 +287,7 @@ describe(writePartSet, () => {
     const part = firstPart(exam);
     const { provenance } = mockWrittenListeningSet();
 
-    const setId = await writePartSet({ exam, part });
+    const written = await writePartSet({ exam, part });
 
     expect(writeListeningSet).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -305,8 +305,9 @@ describe(writePartSet, () => {
       }),
     );
 
-    await expect(
-      prisma.itemSet.findUniqueOrThrow({ where: { id: setId ?? "" } }),
-    ).resolves.toMatchObject({ examBlueprintId: exam.blueprintId, runId: provenance.runId });
+    expect(written).toMatchObject({
+      examBlueprintId: exam.blueprintId,
+      provenance: { runId: provenance.runId },
+    });
   });
 });

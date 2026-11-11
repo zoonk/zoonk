@@ -1,11 +1,16 @@
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { writeItemSet } from "@zoonk/ai/tasks/items/write-set";
-import { storeWrittenItemSet } from "@zoonk/core/library/items/store-set";
+import { type ItemSetToStore, type WrittenSetItem } from "@zoonk/core/library/items/create-set";
+import { prepareWrittenItemSet } from "@zoonk/core/library/items/prepare-set";
 import { type ItemSetTarget, pickItemSetTargets } from "@zoonk/core/lookahead/item-set-targets";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { storeKeyCheckedItemSet } from "../../_shared/item-set-steps";
 
 /** Questions on one stimulus: enough to need reading it well, few enough for one sitting. */
 const QUESTIONS_PER_SET = { multipleChoice: 3, trueFalse: 4 } as const;
+
+type ItemSetWrite = { analytics?: ContentAnalytics; target: ItemSetTarget; workflowRunId: string };
 
 export async function pickItemSetTargetsStep(goalId: string): Promise<ItemSetTarget[]> {
   "use step";
@@ -13,28 +18,21 @@ export async function pickItemSetTargetsStep(goalId: string): Promise<ItemSetTar
   return pickItemSetTargets({ goalId });
 }
 
-export async function prepareItemSetStep({
+async function writeItemSetStep({
   analytics,
+  first,
   target,
-  workflowRunId,
 }: {
-  analytics?: ContentAnalytics;
+  analytics: AiGenerationContext;
+  first: ItemSetTarget["skills"][number];
   target: ItemSetTarget;
-  workflowRunId: string;
-}): Promise<boolean> {
+}): Promise<ItemSetToStore<WrittenSetItem> | null> {
   "use step";
 
-  const [first] = target.skills;
-
-  if (!first) {
-    return false;
-  }
-
   const { format, skills, usedTitles } = target;
-  const context = toContentAnalytics({ analytics, scope: first, workflowRunId });
 
   const { data, provenance } = await writeItemSet({
-    analytics: context,
+    analytics,
     examFormat: first.exam,
     format,
     language: first.language,
@@ -49,7 +47,7 @@ export async function prepareItemSetStep({
     usedTitles,
   });
 
-  const stored = await storeWrittenItemSet({
+  return prepareWrittenItemSet({
     examBlueprintId: first.exam?.blueprintId ?? null,
     format,
     language: first.language,
@@ -59,6 +57,22 @@ export async function prepareItemSetStep({
     skillIds: skills.map((skill) => skill.id),
     written: data,
   });
+}
 
-  return stored.setId !== null;
+export async function prepareItemSet({
+  analytics,
+  target,
+  workflowRunId,
+}: ItemSetWrite): Promise<boolean> {
+  const [first] = target.skills;
+
+  if (!first) {
+    return false;
+  }
+
+  const context = toContentAnalytics({ analytics, scope: first, workflowRunId });
+  const set = await writeItemSetStep({ analytics: context, first, target });
+  const setId = await storeKeyCheckedItemSet({ analytics: context, set, wait: "later" });
+
+  return setId !== null;
 }
