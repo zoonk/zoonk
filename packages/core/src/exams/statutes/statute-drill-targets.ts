@@ -49,6 +49,9 @@ function getStyle({
   return board && FGV_PATTERN.test(board) ? "fgv" : "generic";
 }
 
+/** Plans name a law "Lei 8.112/1990", leaving out the "nº" or "n." its title has. */
+const NUMBER_SIGN = /\s+n(?:[º°o]|úmero)?\.?(?=\s*\d)/giu;
+
 function findLawSkill({
   skills,
   title,
@@ -56,7 +59,7 @@ function findLawSkill({
   skills: ReturnType<typeof parsePlanGraph>["skills"];
   title: string;
 }): string | null {
-  const shortName = toStatuteShortName(title);
+  const shortName = toStatuteShortName(title).replaceAll(NUMBER_SIGN, "");
 
   const skill = skills.find(
     (candidate) =>
