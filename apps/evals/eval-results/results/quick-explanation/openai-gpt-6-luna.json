@@ -2,82 +2,21 @@
   "modelId": "openai/gpt-6-luna",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation and arithmetic are correct. It appropriately qualifies debt compounding and notes that rates, payments and contract rules matter. It makes no investment recommendation or unsupported product-specific claim.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The five short screens build logically from an analogy to the mechanism and its consequences. However, the final screen introduces both growth determinants and a separate practical checklist about frequency, costs and taxes, triggering the maximum score of 7 for multiple new ideas on one screen. Increasing interest amounts are implied rather than demonstrated.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The language is generally accessible, capitalização follows an explanation of the process, and there are no formulas or equations. However, phrases such as 'os juros incidem' and 'juros são incorporados ao saldo' could be replaced with more direct everyday wording for a 12-year-old.",
-          "score": 8,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The R$ 1.000 example is concrete and uses correct Brazilian currency formatting, while cards and loans provide everyday relevance. There are no foreign financial products or US-style amounts. Nevertheless, most screens describe the mechanism abstractly, and the numerical example is not situated in a recognizable Brazilian account or transaction.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct answer, options have similar lengths, and every option has feedback. However, the question repeats the debt mechanism already explained rather than requiring application in a new situation. The third distractor is implausible, and its feedback does not directly explain why the claim about decreasing interest is wrong.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral and recognizable. The recap contains three short bullets matching the teaching sequence. Educação financeira is a suitable broad beginner course, and the three follow-up questions are natural extensions.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2310,
-          "outputTokens": 1117,
-          "reasoningTokens": 413
-        }
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "The final screen combines two lessons: how rate and time affect growth, and checking compounding frequency, costs and taxes. The check largely repeats the debt explanation rather than applying it to a new situation; its third option is also conspicuously implausible. Most screens remain abstract rather than providing concrete everyday examples.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Anchor the numerical example in a familiar Brazilian savings or credit situation, clearly labeling the rate as hypothetical. Show that the second month's interest is R$ 10,10, compared with R$ 10 in the first month, to make accelerating growth explicit. Replace the check with a fresh scenario that requires predicting or comparing outcomes.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -90,82 +29,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly stays in the United States, names all three major credit bureaus, identifies FICO and VantageScore, and gives the common 300–850 range with appropriate qualification. It accurately emphasizes timely payments and low card-limit usage, acknowledges model and report differences, and avoids guarantees or personal financial advice.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, and the opening starts with the familiar act of applying for a card or loan. However, screen 4 largely repeats screen 3 without adding concrete detail that meaningfully advances the explanation. This triggers the repetition cap of 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The language is generally accessible Brazilian Portuguese, with no formulas or unnecessary mathematical notation. However, both 'credit score' and 'relatório de crédito' are introduced before their plain-language explanations or examples, rather than after the underlying ideas. This triggers the two-term ordering cap of 7.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Applying for a card and paying a bill are recognizable situations, but Ana merely pays on time and uses 'uma parte do limite.' Without actual amounts or a concrete comparison, the dedicated example remains generic, triggering the cap of 7. Dollar-denominated balances and limits would make the central idea usable.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one check, one clearly correct option, reasonably similar option lengths, and explanatory feedback for every option. However, changing Ana to Lucas does not create a meaningful transfer task: the correct answer essentially repeats the habits already stated twice.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap has exactly three short bullets that accurately follow the story's progression. 'Finanças pessoais' is a sensible broad beginner course, and the three follow-up questions naturally extend the US-credit explanation. The title is neutral and immediately recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2322,
-          "outputTokens": 972,
-          "reasoningTokens": 255
-        }
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Screens 3 and 4 substantially repeat the same payment and card-limit habits. Ana's example remains generic: it provides no balance or limit to make low usage concrete. The check mainly asks readers to recognize the same habits rather than apply them to a genuinely new situation. 'Credit score' and 'relatório de crédito' also appear before their plain-language explanations.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Make Ana's example concrete with dollar amounts, such as a $100 balance on a $1,000 limit, without suggesting a guaranteed score change. Use the check to compare two otherwise similar borrowers with different balances and payment behavior. Introduce the plain meaning before naming each technical term.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -178,82 +56,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The paycheck arithmetic is correct, the salary-versus-installment distinction is sound, and the result avoids personal tax advice. However, the task-required W-4 connection, state income taxes in most states, and refund-or-bill reconciliation are missing. Social Security and Medicare are named, but their grouping as FICA is not explained.",
-          "score": 7,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short, logically ordered screens, starting with the familiar annual salary figure. However, the first screen introduces both pay before deductions and payment frequency, while the second combines paycheck withholding with the distinction between advance payments and final tax liability. The multiple-new-ideas cap limits this category to 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most wording is accessible, and the dollar example uses prose rather than an unrequested formula. However, “401(k)” appears before the retirement-saving explanation, and “gross pay” appears without a plain-language definition in the screens. Two terms introduced before explanation trigger the cap of 7.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The $2,000 paycheck example concretely and correctly shows how taxes and benefits leave a $1,500 deposit. Payment schedules, insurance deductions, and reviewing a pay stub provide concrete everyday connections across most screens.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the deduction idea to a new situation, has one clearly correct explanation, and provides feedback for every option. Options are reasonably similar in length. However, annual salary being paid all at once and withholding being the final bill are weak distractors for a newly smaller deposit, so the check tests little discrimination between plausible explanations.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The three recap bullets accurately summarize the taught material in order. Personal Finance is an appropriate broad beginner course, the three follow-up questions are natural, and the title is neutral and recognizable. The gross-pay follow-up largely revisits a concept the lesson already uses rather than extending it.",
-          "score": 8,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2285,
-          "outputTokens": 1129,
-          "reasoningTokens": 362
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits three required parts of the tax story: federal withholding depends on the W-4, most states also withhold state income tax, and a refund or amount due at tax time settles the difference between income tax paid and owed. Saying the final tax bill may differ does not explain that settlement.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Some screens introduce multiple ideas, and technical terms such as “401(k)” and “gross pay” appear before their plain-language explanations. The check's incorrect options are mostly unrelated to Ava's changed deposit, making the answer easy to identify without much reasoning.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Reorganize the five or six screens around the complete paycheck-tax story, defining terms after explaining their everyday meaning. Keep the useful dollar example, and make the check's distractors plausible competing explanations for the same paycheck change.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -266,82 +83,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The main explanation correctly connects microwave energy with water-molecule motion and uneven heating, without claiming inside-out cooking or radioactivity. However, the recap's statement that particles “become heat” turns the simplification into a false claim, triggering the maximum score of 6.",
-          "score": 6,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens progress from a familiar unevenly heated burrito to waves, molecular motion, uneven absorption, and heat redistribution. Each has a distinct central idea, and the final screen completes the explanation.",
-          "score": 9,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most language is accessible, but the mechanism screen introduces multiple unexplained technical terms, particularly “electric field” and “charged particles.” This triggers the maximum score of 7 for two or more terms appearing before explanation.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The burrito and stirred soup are useful everyday examples, and the oven itself provides another concrete anchor. The blanket comparison adds little and may distract because readers commonly associate blankets with slowing heat transfer.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct option, options are reasonably similar in length, and feedback explains each answer. However, the question repeats the exact soup-stirring situation taught on the last screen instead of requiring transfer to a new situation.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short and recognizable, the recap has three ordered bullets, and Physics plus the three follow-up questions are appropriate. The second recap bullet does not faithfully summarize the mechanism because it says particles become heat.",
-          "score": 7,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2151,
-          "outputTokens": 1000,
-          "reasoningTokens": 338
-        }
-      },
       "steps": [
         {
-          "conclusion": "The recap says energy makes particles “shift and become heat,” incorrectly implying that particles turn into heat. Energy is transferred into molecular motion and interactions; the particles remain particles. The check also repeats the soup-stirring example already explained rather than testing the main idea in a new situation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "“Electric field,” “water molecules,” and “charged particles” appear without plain-language introductions. The blanket comparison is also unhelpful: blankets are familiar as insulation, not as examples of heat spreading.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Explain the mechanism first as tiny water particles being made to jiggle, then introduce any necessary terminology. Replace the check with a new application, such as predicting why a thick portion of leftovers benefits from standing after heating.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -354,82 +110,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly connects general price increases over time with reduced purchasing power. Its description of the IPCA is accurate at this level, and possible causes are appropriately qualified rather than presented as inevitable. It gives no investment recommendation or materially false simplification.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens with a familiar opening, and the question is answered. However, screens 1 and 3 both explain that the same money buys fewer supermarket goods, substantially repeating the same lesson and example. The explicit repetition cap applies.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most language is accessible Brazilian Portuguese, and there are no formulas. However, 'IPCA' and 'índices' appear before the plain explanation of following changes in a basket of prices. This triggers the cap for two terms introduced before their explanation.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The supermarket opening, the R$ 100 shopping example, and references to transport and production costs provide concrete everyday grounding across most screens. The comparisons accurately illustrate the concepts without misleading the reader.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the general-versus-isolated-price distinction to a new cafeteria situation. It has one clearly correct answer, similarly sized options, and explanatory feedback for every option. However, the claims that a price increase proves money buys more or that the IPCA measures only that item are weak distractors, reducing the check's diagnostic value.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap has exactly three short bullets following the teaching order. 'Economia' is a sensible broad beginner course, and the three follow-up questions naturally extend the explanation.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2255,
-          "outputTokens": 1089,
-          "reasoningTokens": 411
-        }
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Screens 1 and 3 repeat the same supermarket purchasing-power example rather than clearly advancing the story. Screen 4 introduces both 'IPCA' and 'índices' before explaining the everyday idea of tracking a basket of prices. Several check distractors are implausible, making the question easier to answer without understanding inflation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Make the continuous nature of inflation explicit, describe comparing a basket's prices before naming the IPCA, and use a different concrete example—such as bus fares—to develop purchasing power. Replace the weakest check distractors with plausible misunderstandings about individual versus general price increases.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -442,82 +137,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The central explanation correctly describes preferential scattering of blue light and the longer atmospheric path at sunset. However, the rainbow-separation image prompt gives a false representation of ordinary atmospheric scattering, triggering the maximum score of 6 for a false simplification. The violet explanation mentions eye sensitivity but omits the required contribution of the Sun's spectrum.",
-          "score": 6,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar opening, and a progression that completes the main answer. However, screen 2 teaches both sunlight's composition and scattering, while screen 4 adds the violet explanation to the explanation of light reaching the observer. These multiple-idea screens trigger the maximum score of 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most wording is accessible, scattering is introduced after its plain-language meaning, and there are no formulas. However, molecules and wavelength terminology are used without first explaining their plain meanings. This triggers the maximum score of 7 for two or more unexplained technical terms.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The sunset screen provides a concrete everyday example, and the rainbow and sky-viewing references help ground the explanation. However, the accompanying rainbow image misleadingly suggests that air separates sunlight as a prism does, triggering the maximum score of 7 for misleading comparisons.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check has one clearly correct answer, comparably sized options, and useful explanations for every option. However, it asks exactly why sunsets look orange or red immediately after teaching that explanation. It tests recall rather than application in a new situation, failing the category's central transfer requirement.",
-          "score": 6,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap contains three concise points in teaching order, and Earth and Space Science is a sensible beginner course. Two follow-up questions extend the lesson naturally, but the sunset question repeats material already answered.",
-          "score": 8,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2175,
-          "outputTokens": 1066,
-          "reasoningTokens": 331
-        }
-      },
       "steps": [
         {
-          "conclusion": "The second image prompt misleadingly depicts air separating white sunlight into rainbow colors, confusing scattering with prism-like dispersion. The explanation of why the sky is not violet omits the Sun's spectrum, which the expectations explicitly require. The check repeats the sunset explanation already taught rather than applying the main idea to a new situation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Screen 2 introduces both sunlight's color mixture and scattering; screen 4 combines where scattered light reaches us with why violet does not dominate. 'Air molecules' and 'short-wavelength'/'long-wavelength' appear without plain-language explanations.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Replace the sunset follow-up question, which the lesson already answers, with a genuine extension such as why the sky looks paler near the horizon.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -530,82 +164,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation accurately connects vaccination, immune responses, memory, and faster responses to later exposure. It appropriately qualifies protection against infection and severe disease, acknowledges variation between vaccines, and gives no personal medical advice. The wording about instructions is broad but acceptable at this introductory level. No accuracy cap is triggered.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar doorman hook, and a coherent progression that answers the question. However, the final screen introduces both the number of doses and the time required for protection, triggering the maximum score of 7 for multiple new ideas on one screen.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most wording is accessible Brazilian Portuguese, but “inativada” and “anticorpos” are introduced without first explaining their meanings in everyday language. This triggers the maximum score of 7 for two or more unexplained terms. The unexplained abbreviation “UBS” adds another accessibility obstacle.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The vaccination visit and vaccination card provide a recognizable real-life use. The doorman and training-team comparisons make the mechanism concrete, so most screens offer a concrete example or comparison. These comparisons do not materially distort how vaccination works.",
-          "score": 10,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one check with one clearly correct answer, reasonably comparable options, and feedback explaining every option. Its weakness is transfer: Rafael's later encounter with a germ closely restates the exact scenario and conclusion from screen four, rather than requiring meaningful use of the idea in a new situation.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap has three concise points in teaching order, and the suggested human-body course is appropriate for beginners. The follow-up questions are relevant, but the questions about multiple doses and boosters overlap, reducing the breadth of the suggested next steps.",
-          "score": 8,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2318,
-          "outputTokens": 1071,
-          "reasoningTokens": 350
-        }
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "The final screen combines dose schedules and the time needed to develop protection rather than teaching one idea. Terms such as “inativada” and “anticorpos” appear without a preceding plain-language explanation; “UBS” is also unexplained. The check mostly repeats the later-exposure scenario already taught, with Rafael's name adding little genuine application.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Focus the final screen on why protection may require multiple doses, explain unfamiliar words before naming them, and make the check require interpreting a new situation—for example, whether an infection after vaccination necessarily means the vaccine did nothing. Replace one of the overlapping follow-up questions about additional doses with a different beginner question.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -618,82 +191,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly identifies interest earning further interest, and the example correctly increases annual earnings from $10 to $11. Debt compounding is appropriately conditional, relevant dependencies are acknowledged, and no specific investment is recommended.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens move from a familiar snowball comparison to the mechanism and a numerical example. However, the final screen introduces debt compounding alongside multiple factors affecting outcomes and professional advice. This triggers the maximum score of 7 for a screen containing multiple new ideas.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The language is accessible, and the numerical example contains no formula or equation. 'Compound interest' is named after its plain explanation. However, 'interest' itself is used on the opening screen before being explained on the next screen.",
-          "score": 8,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The $100 savings example is concrete and clearly demonstrates why later interest earnings increase. The snowball, savings jar, and balance-growth illustrations provide concrete support across most screens without materially misleading the reader.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct option, options have comparable length and tone, and feedback explains each answer. However, changing the starting balance to $200 leaves essentially the same situation and asks readers to repeat the explanation rather than apply it in a meaningfully new situation. The 'different kind of money' distractor is also too implausible to test understanding well.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap has three short bullets following the teaching order, and Personal Finance is a suitable broad beginner course with three natural follow-up questions.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2171,
-          "outputTokens": 1025,
-          "reasoningTokens": 365
-        }
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "The final screen combines debt compounding with separate ideas about rates, timing, fees, taxes, and professional advice, weakening the one-idea-per-screen structure. The check largely repeats the savings explanation with a different starting amount rather than testing transfer. Also, 'interest' appears on the first screen before its plain-language explanation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Keep the final screen focused on how compounding affects borrowing. Make the check ask readers to compare leaving earned interest in an account versus withdrawing it, and replace the implausible 'different kind of money' distractor with a realistic misunderstanding.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -706,82 +218,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The equations, coefficient values, discriminant calculation, roots and check answers are correct. The explanation correctly limits the discriminant's solution-count statements to real roots and specifies that a must be nonzero.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The five short screens follow a coherent progression from solutions to coefficients, discriminant, formula and worked example. Each has a focused purpose, and the final screen completes the calculation. However, the opening is an abstract equation rather than the required familiar hook.",
-          "score": 8,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Formulas are expressly requested, so their inclusion is appropriate. However, the formula is not fully explained in words: several operations and the general roles of the coefficients remain implicit. 'Discriminante' and 'raízes reais' appear before a plain-language explanation, triggering the maximum score of 7 for multiple unexplained technical terms. These gaps materially limit accessibility for a beginner.",
-          "score": 6,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The small-number worked example is correct, and several screens contain concrete numerical material. Nevertheless, no screen shows a practical use the reader might encounter in real life. The balance illustration represents an equation but does not supply a real-world application.",
-          "score": 6,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the method to a new equation, has exactly one correct option, and provides relevant explanations for every option. The final option is noticeably longer and structurally different from the three pairs of numbers, so the options are not fully parallel.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral and recognizable. The recap has three concise bullets that follow the teaching sequence. 'Matemática' is a sensible broad beginner course, and all three follow-up questions are relevant, although they mostly revisit material already introduced rather than extending the learner's understanding.",
-          "score": 8,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2426,
-          "outputTokens": 1049,
-          "reasoningTokens": 306
-        }
-      },
       "steps": [
         {
-          "conclusion": "The requested verbal explanation of every formula part is incomplete. Only ± is explained explicitly; the roles of a, b and c, the meaning of −b and √Δ, and division of the entire numerator by 2a are left implicit. There is also no real-life practical example: all examples involve manipulating equations.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The opening starts with abstract algebra rather than something familiar. Technical language such as 'discriminante' and 'raízes reais' appears before its meaning is established in everyday words. The check's final option differs noticeably in length and form from the other options.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "Use a familiar situation, such as finding a rectangle's dimensions from its area, to motivate the equation. Walk through the formula in spoken language and show the two numerical branches separately. Explicit substitution of one answer would also make the verification easier to follow.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -794,82 +245,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The core comparison between tax withheld and tax owed is correct. Refund timing and payroll payment are appropriately qualified, and the result avoids personal tax advice. However, the explanation is incomplete about pensioners, expense-related tax reductions and the official prefilled return. The opening also loosely describes the 730 as the adjustment rather than clearly identifying it as the tax return used to calculate that adjustment.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are six short screens, a familiar payslip hook and a logical progression that answers why a summer refund can appear. However, the last screen introduces both an amount owed and professional assistance, triggering the maximum of 7 for multiple new ideas on one screen.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most sentences are accessible, and credito is introduced after explaining overpayment. There are no unrequested formulas. However, conguaglio and CAF are used without first explaining their plain-language meanings, triggering the maximum of 7 for two or more unexplained terms.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Giulia's example gives concrete, correctly formatted euro amounts and correctly identifies a 200,00 € credit. Payslips provide a familiar anchor across most screens. The example would be more useful if it connected the lower amount owed to an actual eligible expense, as required by the task.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct answer, reasonably comparable option lengths and explanatory feedback for every option. However, the question reproduces the explanation's premise and conclusion rather than making the reader apply the main idea to a genuinely new situation.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral and recognizable. The recap contains three short bullets following the teaching sequence, and the suggested beginner course and three follow-up questions are sensible and relevant.",
-          "score": 9,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2630,
-          "outputTokens": 1366,
-          "reasoningTokens": 595
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits several explicitly required elements: pensioners and pension refunds; detrazioni illustrated through medical expenses, the scontrino parlante with codice fiscale, mortgage interest or school costs; and the Agenzia delle Entrate's 730 precompilato. Mentioning the precompilato only as a follow-up question does not explain it. These omissions leave out the practical link between eligible expenses and the refund.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Technical terms including conguaglio and CAF appear without a plain-language explanation. The check merely repeats the rule about paying more than owed, with Marco's name added, rather than requiring application in a new situation. The final screen combines the possibility of owing money with a separate idea about seeking professional help.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Make the numerical example show why the final tax is lower, using an eligible expense and explaining any relevant limits without giving personal advice. Replace the check with a fresh numerical scenario that asks the reader to identify whether money should be refunded or withheld.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -882,82 +272,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly describes estimated withholding, annual recalculation, refunds or additional collection, and the distinction from resident-tax settlement. It gives no personal tax advice or foreign-system misinformation. However, statements that insurance payments may affect tax and side income may require a return do not explain what those outcomes depend on, leaving the conditional guidance underspecified.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, and the opening uses the familiar experience of a paycheck deduction. However, the last screen introduces both resident-tax separation and separate-return requirements, triggering the maximum score of 7 for multiple new ideas on one screen. The missing December/January timing also leaves the practical explanation incomplete.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The Japanese is natural, uses polite everyday phrasing, and avoids romaji, あなた, formulas, and stiff honorifics. 源泉徴収 is introduced after its plain meaning. However, multiple other terms—particularly 扶養家族, 住民税, and 確定申告—are used without plain explanations, triggering the maximum score of 7.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Paychecks, insurance payments, and handing documents to a company employee provide relevant Japanese context. Nevertheless, the insurance example remains generic, and there is no worked yen example or concrete use of the named forms or 源泉徴収票. The generic-example cap of 7 applies.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check has one clearly correct answer, reasonably similar options, and feedback explaining each choice. Its weakness is transfer: adding a person's name to the exact excess-withholding situation already taught mostly tests repetition rather than use of the idea in a new situation.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap contains three short bullets that follow the main teaching sequence. The beginner course is appropriately broad, all three follow-up questions are natural, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2826,
-          "outputTokens": 1167,
-          "reasoningTokens": 335
-        }
-      },
       "steps": [
         {
-          "conclusion": "The basic mechanism is correct, but the explanation omits important expected practical details: settlement usually appears in the December or January paycheck, and the submitted forms include 扶養控除等申告書 and 保険料控除申告書. It also lacks the requested concrete Japanese anchors such as yen amounts, 源泉徴収票, and the company's 総務 or 経理. These omissions weaken the connection to the paperwork the user actually submits.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "The final screen combines two new ideas: distinguishing income tax from resident tax and explaining when a separate tax return may be necessary. Several terms, including 扶養家族, 住民税, and 確定申告, appear without plain-language introductions. The check largely repeats the excess-withholding rule rather than applying it to a genuinely new situation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Add a worked yen example showing an excess payment returned through payroll, and connect an actual form to a named deduction. Medical-expense deductions and the first year of the housing-loan tax credit would make the separate-return exception more useful than the vague reference to side income.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -970,82 +299,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The stated tax mechanics and won calculations are correct, and the explanation appropriately notes that deduction conditions and limits vary without giving personal tax advice. However, it leaves out much of the explicitly required process, including company withholding under the 간이세액표, next-year timing, 홈택스 documentation, and the usual payroll settlement months. There is no false simplification triggering the maximum-6 rule.",
-          "score": 7,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, the opening uses a familiar payslip, and the sequence ultimately answers why outcomes differ. However, screen 2 introduces annual recalculation and the separate mechanisms of income deductions and tax credits together. This triggers the maximum-7 cap for multiple new ideas on one screen.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The Korean is natural, uses 해요체, avoids 당신 and romanization, and contains no formulas. However, 소득공제 and 세액공제 are each named before their plain-language explanations, rather than introducing the everyday idea first. This triggers the maximum-7 cap for two terms introduced before explanation.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The payslip opening, prepaid-money comparison, and correct 100만 원 versus 110만 원 example provide useful concrete grounding. Amounts use appropriate Korean formatting. Nevertheless, there are no concrete deduction examples or examples involving the company's 인사팀 or 회계팀 and 국세청, despite the task-specific expectations. The reader is not shown how an everyday expense can produce different outcomes.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one check with a correct calculation, reasonably comparable options, and feedback for every option. However, ‘낸 돈과 최종 세금이 같아져요’ can be understood as the net result after settlement, making it insufficiently distinct from the correct refund answer. The scenario also closely repeats the teaching example rather than testing a different application.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap has exactly three short bullets that follow the teaching order. ‘한국의 세금과 월급’ is a sensible broad beginner course, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2684,
-          "outputTokens": 1163,
-          "reasoningTokens": 263
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits several explicitly required parts of the Korean process: the company's withholding using the 간이세액표 (원천징수), recalculation early the following year, deduction examples, 홈택스 연말정산 간소화 서비스, and refunds or additional deductions usually appearing in February or March pay. It also omits 국세청, the company's 인사팀 or 회계팀, and the expression ‘13월의 월급’. The central refund-versus-payment explanation is correct, but the required practical context is substantially incomplete.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Screen 2 combines annual recalculation with two distinct deduction concepts. Both 소득공제 and 세액공제 are introduced before their plain-language explanations. The check's option ‘낸 돈과 최종 세금이 같아져요’ is ambiguous: it could describe the net amount paid after the refund, so rejecting it without clarifying the timing weakens the otherwise straightforward check.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Use a concrete deduction example, such as eligible medical expenses or pension savings, to connect personal differences to the final tax amount. Make the check test an underpayment rather than repeat the story's refund calculation with different numbers, and replace the ambiguous option with an unmistakably incorrect outcome.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -1058,82 +326,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The deduction mechanism, final-consumer burden, and example of 10 TL KDV within a %10-taxed 110 TL price are correct. There are no claims that the market funds the tax itself or that consumers pay the state separately. However, important requested facts are missing: the general %20 rate, lower-rate categories, the general shelf-price convention, and an explicit explanation of taxation on added value.",
-          "score": 7,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, and the opening uses a familiar market receipt. However, screen 4 combines tax incidence with rate variation and repeats the seller’s role from earlier screens. The explicit cap for multiple new ideas or repetition therefore applies.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The answer uses Turkish characters, addresses the reader informally, and avoids equations. However, “tahsil eder” and “beyan eder” are introduced without first explaining their everyday meanings. Additional wording such as “alış KDV’siyle hesaplaşır” is unnecessarily formal for a curious 12-year-old. The cap for multiple unexplained terms applies.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The market receipt and the 110 TL example provide concrete, locally appropriate material, with Turkish percentage notation and no foreign currency or misleading checkout framing. The supply-chain explanation would be more useful with a named product and actual purchase-and-sale amounts showing the deduction.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct option, and every option has explanatory feedback. However, the question returns to the same receipt situation and the correct answer closely repeats the lesson, rather than requiring transfer to a new situation. The final option is also noticeably shorter than the others.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The short, recognizable title directly matches the question. The recap has three concise points following the teaching order. “Ekonomi” is a sensible broad beginner course, and the three follow-up questions naturally extend the explanation.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2668,
-          "outputTokens": 1136,
-          "reasoningTokens": 337
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits the general %20 rate and the existence of lower rates. Although the example uses a KDV-inclusive price, it never clearly establishes that shelf prices in Türkiye already include KDV, rather than having it added at checkout. It explains businesses deducting purchase KDV but leaves the central consequence—that each stage is taxed only on its added value—implicit.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Screen 4 combines who bears the tax with a new point about varying rates, while repeating earlier collection-and-remittance material. Terms such as “tahsil” and “beyan” appear without everyday explanations. The check repeats the original receipt situation and mostly tests recognition of a sentence already taught rather than application in a new situation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Use a named everyday purchase and a small producer-to-market example to make the deduction mechanism tangible. Replace formal tax vocabulary with plain Turkish, and make the check ask the reader to apply the explanation to a different purchase or a shopkeeper’s claim.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -1146,82 +353,21 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The basic sequence—enter a code, confirm in the banking app, and receive a payment result—is broadly correct. However, the required explanation lacks issuer identification by the BLIK system, code lifetime and non-reusability, and card/account-number privacy. The account-access verification wording is imprecise. There is no financial advice or claim that the code is a card number or permanent password.",
-          "score": 7,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens with a familiar online-shopping opening and a generally clear progression. However, the story ends without explaining how those six digits let the system identify the correct bank, leaving the central question incompletely answered. This triggers the maximum score of 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The text uses natural Polish, Polish diacritics, and direct second-person address. Most wording is accessible, with no formulas or code. 'Autoryzować' is unnecessarily technical, and the vague account-access explanation could be replaced with a straightforward description of confirming in the app.",
-          "score": 8,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Online shopping is a relevant Polish use case, and there are no foreign payment services, currencies, or number formats. However, 'buying something online' remains generic: no screen follows a specific purchase or gives an amount in złoty. The generic-example cap of 7 applies.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the approval requirement to a declined-payment situation. It has one clearly correct answer, reasonably comparable options, and feedback explaining each choice. It tests the core distinction between entering the code and authorizing payment.",
-          "score": 9,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap contains three short bullets matching the story in order. 'Finanse na co dzień' is a sensible broad beginner course, and the three follow-up questions are relevant and natural.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2613,
-          "outputTokens": 1060,
-          "reasoningTokens": 267
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits the mechanism central to the user's question: the shop sends the code and amount to the BLIK system, which identifies the issuing bank and routes the confirmation request. It also omits the approximately two-minute validity, single-use restriction, and the fact that the shop does not receive the card or account number. Saying that the shop cannot infer your name is not a substitute for explaining these protections.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The phrase 'bank checks whether you have access to the account' makes the confirmation process less precise than necessary, and 'autoryzować' adds avoidable jargon. Calling the shop payment a 'przelew' is also less clear than consistently calling it a payment. The explanation does not mention that confirmation often requires a PIN.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "Make the online-shopping scenario concrete with an amount such as 49,99 zł, and carry that same amount through the code submission, bank confirmation, and successful payment. This would demonstrate what information connects the order to the approval without adding more screens.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {

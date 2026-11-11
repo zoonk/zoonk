@@ -22,6 +22,7 @@ export function marketExplanation(): QuickExplanation {
       ],
       question: "The market is up 2% today. What happened?",
     },
+    description: "What a market index measures and what a 2% rise compares with.",
     goFurther: {
       overviewCourse: "How the stock market works",
       relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
@@ -33,25 +34,20 @@ export function marketExplanation(): QuickExplanation {
     ],
     screens: [
       {
-        imagePrompt: "A basket of company logos on a scale",
+        image: {
+          alt: "A scale holding a basket of company logos, the biggest logos taking most of the room",
+          prompt: "A basket of company logos on a scale",
+        },
         text: "“The market” is an **index**.",
         title: "The market isn't one price",
       },
       {
-        imagePrompt: null,
+        image: null,
         text: "Each company counts by its size.",
         title: "Bigger companies weigh more",
       },
-      {
-        imagePrompt: null,
-        text: "It compares now with yesterday's close.",
-        title: "Up 2% since when?",
-      },
-      {
-        imagePrompt: null,
-        text: "An index fund follows the basket.",
-        title: "Why it matters to you",
-      },
+      { image: null, text: "It compares now with yesterday's close.", title: "Up 2% since when?" },
+      { image: null, text: "An index fund follows the basket.", title: "Why it matters to you" },
     ],
     title: "What “the market is up 2%” means",
   };

@@ -41,6 +41,7 @@ function explanation(courseTitle: string): QuickExplanation {
       ],
       question: "The market is up 2% today. What happened?",
     },
+    description: "What a market index measures and what a 2% rise compares with.",
     goFurther: {
       overviewCourse: courseTitle,
       relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
@@ -51,26 +52,14 @@ function explanation(courseTitle: string): QuickExplanation {
       "Up 2% compares with yesterday.",
     ],
     screens: [
+      { image: null, text: "“The market” is an **index**.", title: "The market isn't one price" },
       {
-        imagePrompt: null,
-        text: "“The market” is an **index**.",
-        title: "The market isn't one price",
-      },
-      {
-        imagePrompt: null,
+        image: null,
         text: "Each company counts by its size.",
         title: "Bigger companies weigh more",
       },
-      {
-        imagePrompt: null,
-        text: "It compares now with yesterday's close.",
-        title: "Up 2% since when?",
-      },
-      {
-        imagePrompt: null,
-        text: "An index fund follows the basket.",
-        title: "Why it matters to you",
-      },
+      { image: null, text: "It compares now with yesterday's close.", title: "Up 2% since when?" },
+      { image: null, text: "An index fund follows the basket.", title: "Why it matters to you" },
     ],
     title: "What “the market is up 2%” means",
   };
@@ -427,7 +416,10 @@ describe(explainQuestionWorkflow, () => {
       taskResult(
         {
           ...written,
-          screens: written.screens.map((screen) => ({ ...screen, imagePrompt: "A prism" })),
+          screens: written.screens.map((screen) => ({
+            ...screen,
+            image: { alt: "Light splitting into colors through a glass prism", prompt: "A prism" },
+          })),
         },
         "openai/gpt-6-luna",
       ),
@@ -463,7 +455,10 @@ describe(explainQuestionWorkflow, () => {
       taskResult(
         {
           ...written,
-          screens: written.screens.map((screen) => ({ ...screen, imagePrompt: "A maple leaf" })),
+          screens: written.screens.map((screen) => ({
+            ...screen,
+            image: { alt: "A red maple leaf with five pointed lobes", prompt: "A maple leaf" },
+          })),
         },
         "openai/gpt-6-luna",
       ),
