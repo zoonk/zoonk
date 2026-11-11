@@ -260,8 +260,8 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
       first?.kind === "focusAreas" &&
       first.areas.length > 0
     ) {
-      return t("More time for {areas}, from your Focus test.", {
-        areas: format.list(first.areas, { type: "conjunction" }),
+      return t("Your Focus test suggests more time for {subjects}.", {
+        subjects: format.list(first.areas, { type: "conjunction" }),
       });
     }
 

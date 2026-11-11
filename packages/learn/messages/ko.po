@@ -12156,9 +12156,9 @@ msgid "More time for {areas}, where it's needed most."
 msgstr "가장 연습이 필요한 {areas} 영역에 시간을 더 써요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "_Ps9uY"
-msgid "More time for {areas}, from your Focus test."
-msgstr "집중 진단 결과에 따라 {areas}에 시간을 더 배분해요."
+msgctxt "a_18ck"
+msgid "Your Focus test suggests more time for {subjects}."
+msgstr "집중 진단 결과, {subjects}에 시간을 더 쓰는 걸 추천해요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"

@@ -12156,9 +12156,9 @@ msgid "More time for {areas}, where it's needed most."
 msgstr "特に学習が必要な{areas}に、より多くの時間をかけます。"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "_Ps9uY"
-msgid "More time for {areas}, from your Focus test."
-msgstr "重点診断の結果をもとに、{areas}の学習時間を増やします。"
+msgctxt "a_18ck"
+msgid "Your Focus test suggests more time for {subjects}."
+msgstr "重点診断の結果から、{subjects}に多めに時間を充てるのがおすすめです。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"

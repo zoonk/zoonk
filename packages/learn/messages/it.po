@@ -12156,9 +12156,9 @@ msgid "More time for {areas}, where it's needed most."
 msgstr "Più tempo per {areas}, dove serve di più."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "_Ps9uY"
-msgid "More time for {areas}, from your Focus test."
-msgstr "Più tempo per {areas}, in base al tuo Test delle priorità."
+msgctxt "a_18ck"
+msgid "Your Focus test suggests more time for {subjects}."
+msgstr "Il tuo Test delle priorità suggerisce di dedicare più tempo a {subjects}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"
