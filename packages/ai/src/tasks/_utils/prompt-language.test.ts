@@ -53,14 +53,4 @@ describe(fillPromptLanguages, () => {
       fillPromptLanguages({ learnerLanguage: "pt", template: "Answer in {{LEARNER_LANGUAGE}}." }),
     ).toBe("Answer in Português Brasileiro.");
   });
-
-  it("says how text in the learner's language addresses them", () => {
-    const prompt = fillPromptLanguages({
-      learnerLanguage: "pt",
-      template: "In {{LEARNER_LANGUAGE}}, {{LEARNER_REGISTER}}.",
-    });
-
-    expect(prompt).toMatch(/^In Português Brasileiro, address the reader as "você"/u);
-    expect(prompt).not.toContain("{{");
-  });
 });

@@ -79,7 +79,7 @@ One `sentence` in `TARGET_LANGUAGE`, with `SPEAKING_WORDS` words, that someone a
 - B2: a view or a hypothetical with a complex structure (a conditional, a relative clause, a passive).
 - C1: a nuanced statement with a structure beyond B2 (an inversion, a cleft sentence, a mixed conditional) and an idiomatic phrase.
 
-Write it with normal punctuation. `translation` is its meaning in natural `LEARNER_LANGUAGE`. Every learner says the same sentence and their gender is unknown, so neither has a word that agrees with the speaker's gender ("Sono stanco", "Estoy listo").
+Write it with normal punctuation. `translation` is its meaning in natural `LEARNER_LANGUAGE`.
 
 # Language rules
 

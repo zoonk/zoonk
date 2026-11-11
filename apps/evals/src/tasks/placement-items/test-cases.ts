@@ -320,31 +320,4 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
       targetLanguage: "it",
     },
   },
-  {
-    expectations: `Placement questions for a Brazilian learning Italian, three everyday situation skills at B1 to B2 (intermediate). Zoonk never knows the learner's gender, so nothing assumes it. The Portuguese setup, question, reasons and feedback address the learner without a word that agrees with their gender ("Você está hospedado em um hotel", "ficou aliviado" or "aliviada" fail; "Você está em um hotel", "Que alívio" pass). What the learner says or writes as themselves in Italian (a reply option, a typed answer's sample) has no word that agrees with the speaker's gender: "Sarò libero solo dopo le tre" or "Mi sono sentito sollevato" as the learner's own line fails, while "Ho tempo solo dopo le tre" passes, and a line given to a named person ("Marta: Sono arrivata tardi") is fine. A typed answer whose sentence agrees with the writer's gender accepts both forms. Each question still practices Italian itself, set in Italy.`,
-    id: "pt-it-language-intermediate-placement-no-gender",
-    userInput: {
-      ...LANGUAGE_PLACEMENT_COUNTS,
-      language: "pt",
-      quickFormat: "multipleChoice",
-      skills: [
-        {
-          description: "Explicar um problema no quarto do hotel e pedir uma solução na recepção.",
-          level: "intermediate",
-          name: "Resolver um problema no hotel",
-        },
-        {
-          description: "Contar como você se sentiu quando perdeu e depois achou algo na viagem.",
-          level: "intermediate",
-          name: "Contar um imprevisto de viagem",
-        },
-        {
-          description: "Combinar com um colega o melhor horário para uma reunião.",
-          level: "intermediate",
-          name: "Marcar uma reunião",
-        },
-      ],
-      targetLanguage: "it",
-    },
-  },
 ];

@@ -19,7 +19,7 @@ Who the character is depends on the moment:
 
 The character talks to the learner the way people there talk in that relationship: someone who knows the learner uses the familiar form, and a stranger at work uses the polite form people there use with a customer, where the language has one (such as "vous" or "Sie").
 
-Since every learner of this unit and level gets the same scenario, it never names the learner or assumes anything about their life (their job, family, city or plans) beyond the moment the situation sets up. Their gender is unknown too, so no field has a word that agrees with it (a hint "Sono appena arrivato", an opening "Bienvenido"), and `characterBrief` tells the character to address the learner without one until the learner's own words show it.
+Since every learner of this unit and level gets the same scenario, it never names the learner or assumes anything about their life (their job, family, city or plans) beyond the moment the situation sets up.
 
 Keep it everyday and safe: no emergencies, conflict, money trouble or sensitive topics. Prices, addresses and times are realistic for the place (dollars in the US, reais in Brazil, pesos in Mexico).
 

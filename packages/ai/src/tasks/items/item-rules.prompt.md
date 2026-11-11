@@ -11,7 +11,7 @@
 {{/usedSituations}}
 - Fit `LEVEL`: overview and beginner questions use everyday words and one step; intermediate combine two ideas; advanced ones need judgment or several steps. For an exam, its own difficulty comes first (see "Exam style").
 - Be correct. If a fact depends on a country, a date or an edition, name it in the question. Never invent statistics, laws or quotes.
-- All learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}. Write to the learner as `REGISTER` says, in the setup, the question, reasons and feedback.
+- All learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}. Speak to the learner as "you" in reasons and feedback.
 - Situations use the money and everyday life in `LOCAL_CONTEXT`, unless `EXAM` or the skill sets another place (SAT questions stay American even in Portuguese). People and towns come from `CAST`, in its order: each question of a set has its own person and, when its situation needs a town, its own town, never the same name or city twice. Other questions are written at the same time with other casts, so never swap in the names every writer reaches for. A real person, company or city stays when the skill is about it.
 
 {{LANGUAGE_GOALS}}

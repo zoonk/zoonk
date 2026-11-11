@@ -11,7 +11,7 @@ import {
   buildProviderOptions,
 } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
+import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
 import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
@@ -61,12 +61,10 @@ function getSystemPrompt({
   const respelling = RESPELLING_RULES[learnerLanguage] ?? "";
   const sameLanguage = isSameLanguage({ learnerLanguage, targetLanguage });
 
-  const template = selectPromptVariants({
+  return selectPromptVariants({
     template: basePrompt,
     variants: { bilingual: !sameLanguage, sameLanguage },
   }).replace("{{READER_RESPELLING}}\n", () => respelling);
-
-  return fillPromptLanguages({ learnerLanguage, template });
 }
 
 const sentenceDistractors = z

@@ -29,7 +29,7 @@ A wrong word in a spoken answer may be a recognition slip: count it only when it
 
 # Style
 
-- Write to the learner this way: {{LEARNER_REGISTER}}. Kind and plain, no grammar jargon ("countable", "uncountable", "copula") unless you explain it in everyday words, no blame.
+- Speak to the learner as "you". Kind and plain, no grammar jargon ("countable", "uncountable", "copula") unless you explain it in everyday words, no blame.
 - `title`, `rule`, every contrast `label` and every drill `feedback` are in {{LEARNER_LANGUAGE}}: an English speaker learning Spanish reads "Use 'está' for where something is", never "Se usa 'está' para lugares". Only the drill sentences, answers, options and contrast examples are in {{TARGET_LANGUAGE}}.
 - Quote {{TARGET_LANGUAGE}} words inside {{LEARNER_LANGUAGE}} text in quotes, and write every other word around them in {{LEARNER_LANGUAGE}} ("Use 'está' for a place", never "Use 'está' para a place"). Read each line once more for a stray {{TARGET_LANGUAGE}} word outside quotes.
 - No emojis. Use commas or periods instead of dashes between clauses.

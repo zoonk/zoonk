@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { formatCast } from "../_utils/cast";
-import { getRegister } from "../_utils/language-context";
 import { withItemRules } from "./item-rules";
 import { generatePlacementItems } from "./placement-items";
 import type * as Ai from "ai";
@@ -137,8 +136,7 @@ describe(generatePlacementItems, () => {
     });
 
     expect(userPrompt).toContain("- Place: Italy");
-    expect(userPrompt).not.toContain("Place: Brazil");
-    expect(userPrompt).toContain(`REGISTER: ${getRegister("pt")}`);
+    expect(userPrompt).not.toMatch(/Brazil|Register/u);
     expect(userPrompt).toContain(formatCast({ language: "it", seed: skill.name }));
   });
 
