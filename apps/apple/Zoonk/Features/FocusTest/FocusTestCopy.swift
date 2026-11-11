@@ -58,10 +58,17 @@ enum FocusTestCopy {
   /// list says only what the test can't check.
   static func state(of subject: FocusTest.Subject) -> String {
     switch subject.state {
+    case .answered where subject.asked == subject.dontKnow:
+      String(
+        localized: "Not known yet", table: "FocusTest",
+        comment: "A subject whose Focus test answers were all \"I don't know yet\"")
     case .answered:
       String(
-        localized: "\(subject.right) of \(subject.asked) right", table: "FocusTest",
-        comment: "How many of a subject's Focus test answers were right")
+        localized: "\(subject.right) of \(subject.asked - subject.dontKnow) right",
+        table: "FocusTest",
+        comment:
+          "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted"
+      )
     case .notAsked:
       String(
         localized: "Not asked yet", table: "FocusTest",

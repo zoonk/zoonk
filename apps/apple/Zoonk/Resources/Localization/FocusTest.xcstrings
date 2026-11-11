@@ -169,7 +169,7 @@
       }
     },
     "%lld of %lld right" : {
-      "comment" : "How many of a subject's Focus test answers were right",
+      "comment" : "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1649,6 +1649,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Henüz sorulmadı"
+          }
+        }
+      }
+    },
+    "Not known yet" : {
+      "comment" : "A subject whose Focus test answers were all \"I don't know yet\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht bekannt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no lo sabes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore à découvrir"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora da imparare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだわからない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 모름"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze nieznane"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não sabe"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz bilinmiyor"
           }
         }
       }

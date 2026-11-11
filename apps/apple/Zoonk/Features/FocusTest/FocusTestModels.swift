@@ -50,6 +50,8 @@ struct FocusTest: Decodable, Equatable, Sendable {
     /// Only for `notChecked`.
     let part: Part?
     let asked: Int
+    /// "I don't know yet" answers, counted in `asked` and never graded.
+    let dontKnow: Int
     let right: Int
 
     var id: String { key }
