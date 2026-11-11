@@ -8,10 +8,16 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { scheduleFreshnessChecks } from "../exams/freshness-checks";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
 import { loadLessonDocuments } from "./_utils/lesson-sources";
 import { linkLessonLaws, loadLessonLawsInput, replanUnsourcedLesson } from "./lesson-laws";
+
+vi.mock(import("../exams/freshness-checks"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, scheduleFreshnessChecks: vi.fn(actual.scheduleFreshnessChecks) };
+});
 
 const CONFLICT_OF_INTEREST_ARTICLES = [
   "Art. 3º Para os fins desta Lei, considera-se:",
@@ -141,6 +147,32 @@ describe(linkLessonLaws, () => {
 
     const source = await prisma.source.findUniqueOrThrow({ where: { id: law.id } });
     expect(source.nextCheckAt).not.toBeNull();
+  });
+
+  it("links no law whose change checks couldn't be scheduled, so the next attempt links it again", async () => {
+    const [lesson, law] = await Promise.all([
+      libraryLessonFixture({ language: "pt" }),
+      sourceFixture({
+        extractedText: conflictOfInterestLaw(),
+        language: "pt",
+        mimeType: "text/html",
+        nextCheckAt: null,
+        structure: { images: 0, pages: null, topic: "regulation" },
+        title: "Lei nº 12.813, de 16 de maio de 2013",
+      }),
+    ]);
+
+    vi.mocked(scheduleFreshnessChecks).mockRejectedValueOnce(new Error("database unavailable"));
+
+    await expect(
+      linkLessonLaws({
+        laws: [{ articles: ["4"], searchTerms: [], sourceId: law.id }],
+        lessonId: lesson.id,
+        prompt: PROMPT,
+      }),
+    ).rejects.toThrow("database unavailable");
+
+    await expect(prisma.lessonSource.count({ where: { lessonId: lesson.id } })).resolves.toBe(0);
   });
 
   it("links nothing for a law whose text is gone", async () => {

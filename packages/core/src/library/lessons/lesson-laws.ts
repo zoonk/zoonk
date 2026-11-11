@@ -123,17 +123,20 @@ export async function linkLessonLaws({
     query: toLessonQuery(prompt),
   });
 
-  await prisma.lessonSource.createMany({
-    data: texts.map(({ source }, index) => ({
-      articles: articles[index] ?? [],
-      lessonId,
-      sourceId: source.id,
-    })),
-    skipDuplicates: true,
-  });
+  await prisma.$transaction(async (tx) => {
+    await tx.lessonSource.createMany({
+      data: texts.map(({ source }, index) => ({
+        articles: articles[index] ?? [],
+        lessonId,
+        sourceId: source.id,
+      })),
+      skipDuplicates: true,
+    });
 
-  await scheduleFreshnessChecks({
-    targets: texts.map(({ source }) => ({ kind: "source", sourceId: source.id })),
+    await scheduleFreshnessChecks({
+      db: tx,
+      targets: texts.map(({ source }) => ({ kind: "source", sourceId: source.id })),
+    });
   });
 }
 
