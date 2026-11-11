@@ -102,6 +102,8 @@ model LanguageConversation {
   /// The learner's language.
   language            String                     @db.VarChar(10)
   targetLanguage      String                     @map("target_language") @db.VarChar(10)
+  /// The goal's country when the call was created: its variety, kept on reconnect.
+  targetRegion        String?                    @map("target_region") @db.VarChar(2)
   /// The CEFR band the character speaks at.
   level               String                     @db.VarChar(3)
   minutes             Int                        @db.SmallInt
