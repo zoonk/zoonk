@@ -31,4 +31,7 @@ export const profileOnboardingAnswerSchemas = [
   profileAnswerInputSchema.options[9].extend({
     answer: profileAnswerInputSchema.options[9].shape.answer.nullable().default(null),
   }),
+  profileAnswerInputSchema.options[10].extend({
+    answer: profileAnswerInputSchema.options[10].shape.answer.nullable().default(null),
+  }),
 ] as const;

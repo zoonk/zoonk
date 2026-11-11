@@ -10,14 +10,6 @@ import { type NextRequest, NextResponse } from "next/server";
 function getGuestErrorResponse(error: unknown) {
   const code = getAuthError(error)?.code;
 
-  if (code === accessErrorCodes.botDetected) {
-    return createErrorResponse({
-      code,
-      message: "This request looks automated",
-      status: httpStatus.forbidden,
-    });
-  }
-
   if (code === "ANONYMOUS_USERS_CANNOT_SIGN_IN_AGAIN_ANONYMOUSLY") {
     return createErrorResponse({
       code: accessErrorCodes.alreadyGuest,

@@ -4,6 +4,11 @@ import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type MemoryInsightParams, generateMemoryInsight } from "./memory-insight";
 import type * as Ai from "ai";
 
+vi.mock("../_utils/address-form.prompt.md", () => ({
+  default:
+    "{{#neutral}}Neutral address.{{/neutral}}{{#feminine}}Feminine address.{{/feminine}}{{#masculine}}Masculine address.{{/masculine}}",
+}));
+
 vi.mock("server-only", () => ({}));
 vi.mock("./memory-insight.prompt.md", () => ({ default: "Coach the learner." }));
 vi.mock("./memory-insight-plan-change.prompt.md", () => ({ default: "Size plan changes." }));
@@ -48,14 +53,17 @@ describe(generateMemoryInsight, () => {
       insightParams({ kinds: ["tip", "planChange", "scheduleIdea"], skills: [FRACTIONS] }),
     );
 
-    expect(withGap.systemPrompt).toBe("Coach the learner.\nSize plan changes.");
+    expect(withGap.systemPrompt).toBe("Coach the learner.\nNeutral address.\nSize plan changes.");
     expect(withGap.userPrompt).toContain('name="SKILLS"');
     expect(withGap.userPrompt).toContain("Fractions: 1 short lesson");
 
     const withoutGap = await generateMemoryInsight(insightParams({}));
 
-    expect(withoutGap.systemPrompt).toBe("Coach the learner.");
+    expect(withoutGap.systemPrompt).toBe("Coach the learner.\nNeutral address.");
     expect(withoutGap.userPrompt).not.toContain("SKILLS");
-    expect(vi.mocked(generateText).mock.lastCall?.[0].instructions).toBe("Coach the learner.");
+
+    expect(vi.mocked(generateText).mock.lastCall?.[0].instructions).toBe(
+      "Coach the learner.\nNeutral address.",
+    );
   });
 });

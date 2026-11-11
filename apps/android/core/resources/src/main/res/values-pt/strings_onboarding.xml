@@ -153,7 +153,6 @@
   "onboarding_limit_daily_explanations": "aafe2d182e26be6389b588817d0231d38caa6ff424e7909ed905df3a7ec23572",
   "onboarding_limit_daily_goals": "ad3cbfad7b8cc4198bdcd771e519cb0b00f887012ca8d37614db6ca6c1b16170",
   "onboarding_limit_guest": "bb0dd743d50803e6ed89f4bb82abc0dc0e7b9cb96da33205001aa08a9ae3630d",
-  "onboarding_limit_guest_blocked": "b718617326937a591b67a191266713acafd3a658bfb991fe089719a8019d61e4",
   "onboarding_limit_monthly_explanations": "c54a924e425da07bf3d63c3b0796a4345e84adc6d291192f6e2de96cb8d9cc8f",
   "onboarding_limit_monthly_goals": "413808d893abb7058ef62a6c3cb3a38ae8f87fae537d5b41a33c9e940ffa939c",
   "onboarding_limit_sign_up_required": "f8ed7c5b80569bf74a53ae98499d174d7904eb313ad4e04e856d4ff33c5e48cb",
@@ -501,7 +500,6 @@
     <string name="onboarding_limit_daily_goals">Você já começou todos os objetivos novos que seu plano permite hoje. Tente de novo amanhã.</string>
     <string name="onboarding_limit_guest">Sem uma conta, você pode seguir um objetivo. Crie uma conta grátis para continuar.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">O sistema de segurança não deixou você começar sem uma conta. Crie uma conta grátis para continuar.</string>
     <string name="onboarding_limit_monthly_explanations">Você já fez todas as perguntas novas que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_monthly_goals">Você já começou todos os objetivos novos que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->

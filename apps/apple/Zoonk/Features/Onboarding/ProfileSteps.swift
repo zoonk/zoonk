@@ -8,6 +8,9 @@ struct ProfileScreenContext {
   var prechecked = false
   /// Work: the job came from the goal's current-role answer.
   var jobFromEarlierAnswer = false
+  /// Onboarding's skip button reads "I'd rather not say" and declines, so the screen has no row
+  /// for it.
+  var skipDeclines = false
   var memoryEnabled = true
 }
 
@@ -32,6 +35,8 @@ struct ProfileQuestionSections: View {
 
     Group {
       switch view.id {
+      case .addressForm:
+        addressForm
       case .work:
         work
       case .studies:
@@ -80,6 +85,23 @@ struct ProfileQuestionSections: View {
       }
 
       declineRow(.ratherNotSay)
+    }
+  }
+
+  private var addressForm: some View {
+    Section {
+      ForEach(view.options, id: \.id) { option in
+        ProfileRow(
+          label: Text(option.label), detail: option.description.map { Text($0) },
+          isOn: draft.picks == [option.id]
+        ) {
+          draft.toggle(option.id)
+        }
+      }
+
+      if !context.skipDeclines {
+        declineRow(.ratherNotSay)
+      }
     }
   }
 
@@ -356,6 +378,12 @@ private struct ProfileRow: View {
 enum ProfileCopy {
   static func title(_ question: ProfileQuestion) -> Text {
     switch question {
+    case .addressForm:
+      Text(
+        "How should we address you?", tableName: "AboutYou",
+        comment:
+          "About you question: which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question."
+      )
     case .work:
       Text("What do you do now?", tableName: "AboutYou", comment: "About you question")
     case .tools:
@@ -387,6 +415,10 @@ enum ProfileCopy {
 
   static func description(_ question: ProfileQuestion) -> Text {
     switch question {
+    case .addressForm:
+      Text(
+        "Your buddy and your feedback will talk to you this way. Lessons stay the same.",
+        tableName: "AboutYou", comment: "Under How should we address you?")
     case .work:
       Text(
         "We'll use situations from your day in your examples.", tableName: "AboutYou",
@@ -549,7 +581,10 @@ struct ProfileStep: View {
         .frame(maxWidth: .infinity, alignment: .leading)
       }
 
-      StepButtons(canContinue: hasAnswer) {
+      StepButtons(
+        canContinue: hasAnswer,
+        skipLabel: context.skipDeclines ? ProfileCopy.decline(question.id, .ratherNotSay) : nil
+      ) {
         keepConditions()
         onAnswer(draft.input)
       } onSkip: {

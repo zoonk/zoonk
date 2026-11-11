@@ -8,14 +8,14 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { expressionSchema, unitSchema } from "../activity-schemas";
+import { aimForItems, expressionSchema, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { evaluateOrNull, isClose, issue } from "./_utils/template-helpers";
 
-const MAX_MOVES = 5;
+const MOVES_TARGET = 5;
 const MAX_TICKS = 40;
-const MAX_PARTS = 4;
-const MAX_SOLVER_STEPS = 5;
+const PARTS_TARGET = 4;
+const SOLVER_STEPS_TARGET = 5;
 
 const numberLineFields = z
   .object({
@@ -25,7 +25,7 @@ const numberLineFields = z
     moves: z
       .array(z.object({ by: z.number(), label: labelSchema.optional() }).strict())
       .min(1)
-      .max(MAX_MOVES),
+      .describe(aimForItems(MOVES_TARGET)),
     start: z.number(),
     step: z.number().positive(),
     unit: unitSchema.optional(),
@@ -66,7 +66,7 @@ export const numberLineTemplate = defineActivityTemplate({
 const sideSchema = z
   .object({
     label: labelSchema.optional(),
-    parts: z.array(z.number().positive()).min(1).max(MAX_PARTS),
+    parts: z.array(z.number().positive()).min(1).describe(aimForItems(PARTS_TARGET)),
     total: z.number().positive(),
   })
   .strict();
@@ -147,7 +147,9 @@ export const stepSolverTemplate = defineActivityTemplate({
   fields: z
     .object({
       problem: promptSchema,
-      steps: uniqueIdsSchema(solverStepSchema, { max: MAX_SOLVER_STEPS, min: 2 }),
+      steps: uniqueIdsSchema(solverStepSchema, { min: 2 }).describe(
+        aimForItems(SOLVER_STEPS_TARGET),
+      ),
     })
     .strict(),
   formulas: (fields) =>

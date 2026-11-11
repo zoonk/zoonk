@@ -52,6 +52,7 @@ import { languageLessonTask } from "./language-lesson/task";
 import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
+import { lessonLawsTask } from "./lesson-laws/task";
 import { lessonMarksTask } from "./lesson-marks/task";
 import { lessonQualityCheckTask } from "./lesson-quality-check/task";
 import { lessonQuestionTask } from "./lesson-question/task";
@@ -131,6 +132,7 @@ export const TASKS: readonly RegisteredTask[] = [
   imageInputSafetyRewriteTask,
   imageSceneTask,
   lessonImageTask,
+  lessonLawsTask,
   lessonMarksTask,
   iconMatchTask,
   imageCheckTask,

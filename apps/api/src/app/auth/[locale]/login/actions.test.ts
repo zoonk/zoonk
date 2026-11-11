@@ -23,9 +23,6 @@ vi.mock("@zoonk/auth", async () => {
   const { baseAuthConfig, baseAuthPlugins } =
     await import("../../../../../../../packages/auth/src/server");
 
-  const { botCheckPlugin } =
-    await import("../../../../../../../packages/auth/src/plugins/bot-check");
-
   const { createEmailOTPPlugin } =
     await import("../../../../../../../packages/auth/src/email-otp-plugin");
 
@@ -33,7 +30,7 @@ vi.mock("@zoonk/auth", async () => {
     auth: betterAuth({
       ...baseAuthConfig,
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
-      plugins: [...baseAuthPlugins, botCheckPlugin(), createEmailOTPPlugin({ storeOTP: "hashed" })],
+      plugins: [...baseAuthPlugins, createEmailOTPPlugin({ storeOTP: "hashed" })],
       rateLimit: { enabled: true, storage: "database" },
       secret: "web-email-code-action-test-secret",
     }),

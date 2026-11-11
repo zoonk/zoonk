@@ -1,11 +1,13 @@
 import "server-only";
-import { type Source, prisma } from "@zoonk/db";
+import { DbNull, type Source, prisma } from "@zoonk/db";
 import { listProductPageIds } from "../../products/product-pages";
 import { lessonGoalsFilter, loadLessonMaterialPages } from "../../sources/goal-material";
+import { pickLawPages, toLawPages } from "../../sources/law-pages";
 import {
   type MaterialPage,
+  type MaterialSource,
   selectSourcePages,
-  toMaterialPages,
+  toSourcePages,
 } from "../../sources/material-pages";
 import { type SourceTopic, sourceStructureSchema } from "../../sources/source-contract";
 
@@ -14,20 +16,83 @@ const LESSON_SOURCE_CHARACTERS = 6000;
 const MIN_SHARED_TERMS = 3;
 
 /** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
-const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regulation", "software"]);
+const FACT_TOPICS = ["product", "regulation", "software"] satisfies SourceTopic[];
 
-type LessonSourceRow = Pick<
-  Source,
-  "contentHash" | "extractedText" | "id" | "mimeType" | "structure" | "title"
->;
+const SOURCE_SELECT = {
+  contentHash: true,
+  extractedText: true,
+  id: true,
+  mimeType: true,
+  structure: true,
+  title: true,
+} as const;
 
-function statesFacts(source: LessonSourceRow): boolean {
-  if (source.structure === null) {
-    return true;
-  }
+type LessonSourceRow = Pick<Source, keyof typeof SOURCE_SELECT>;
 
-  const parsed = sourceStructureSchema.safeParse(source.structure);
-  return parsed.success && FACT_TOPICS.has(parsed.data.topic);
+type FactSource = MaterialSource & { topic: SourceTopic | null };
+
+function toFactSource(source: LessonSourceRow): FactSource[] {
+  const topic = sourceStructureSchema.safeParse(source.structure).data?.topic ?? null;
+  return source.extractedText ? [{ ...source, text: source.extractedText, topic }] : [];
+}
+
+/** Linked laws, read only in the articles picked for the lesson, whatever the other sources hold. */
+async function findLinkedLaws(lessonId: string) {
+  const links = await prisma.lessonSource.findMany({
+    orderBy: { createdAt: "asc" },
+    select: { articles: true, source: { select: SOURCE_SELECT } },
+    where: { lessonId, source: { extractedText: { not: null } } },
+  });
+
+  return links.flatMap((link) =>
+    toFactSource(link.source).map((source) => ({ articles: link.articles, source })),
+  );
+}
+
+async function findFactSources({
+  goals,
+  lessonId,
+  productPageIds,
+}: {
+  goals: ReturnType<typeof lessonGoalsFilter>;
+  lessonId: string;
+  productPageIds: string[];
+}): Promise<FactSource[]> {
+  const sources = await prisma.source.findMany({
+    orderBy: { fetchedAt: "desc" },
+    select: SOURCE_SELECT,
+    take: MAX_LESSON_SOURCES,
+    where: {
+      AND: [
+        {
+          OR: [
+            { learnerSources: { some: { goal: goals } } },
+            { steps: { some: { lessonId } } },
+            { stepSources: { some: { step: { lessonId } } } },
+            { id: { in: productPageIds } },
+          ],
+        },
+        {
+          OR: [
+            { structure: { equals: DbNull } },
+            ...FACT_TOPICS.map((topic) => ({ structure: { equals: topic, path: ["topic"] } })),
+          ],
+        },
+      ],
+      extractedText: { not: null },
+      kind: { not: "upload" },
+      lessons: { none: { lessonId } },
+      visibility: "public",
+    },
+  });
+
+  return sources.flatMap((source) => toFactSource(source));
+}
+
+function toFactPages({ index, source }: { index: number; source: FactSource }): MaterialPage[] {
+  return source.topic === "regulation"
+    ? toLawPages({ index, source }).map((page) => page.page)
+    : toSourcePages({ index, source });
 }
 
 async function loadLessonSourcePages({
@@ -41,43 +106,28 @@ async function loadLessonSourcePages({
   lessonId: string;
   query: string;
 }): Promise<MaterialPage[]> {
-  const goals = lessonGoalsFilter({ chapterId, courseId, lessonId });
-
   const productPageIds = courseId
     ? await listProductPageIds({ courses: { some: { id: courseId } } })
     : [];
 
-  const sources = await prisma.source.findMany({
-    orderBy: { fetchedAt: "desc" },
-    select: {
-      contentHash: true,
-      extractedText: true,
-      id: true,
-      mimeType: true,
-      structure: true,
-      title: true,
-    },
-    take: MAX_LESSON_SOURCES,
-    where: {
-      OR: [
-        { learnerSources: { some: { goal: goals } } },
-        { steps: { some: { lessonId } } },
-        { stepSources: { some: { step: { lessonId } } } },
-        { id: { in: productPageIds } },
-      ],
-      extractedText: { not: null },
-      kind: { not: "upload" },
-      visibility: "public",
-    },
-  });
+  const [laws, sources] = await Promise.all([
+    findLinkedLaws(lessonId),
+    findFactSources({
+      goals: lessonGoalsFilter({ chapterId, courseId, lessonId }),
+      lessonId,
+      productPageIds,
+    }),
+  ]);
 
-  const documents = sources
-    .filter((source) => statesFacts(source))
-    .flatMap((source) => (source.extractedText ? [{ ...source, text: source.extractedText }] : []));
+  const lawPages = laws.flatMap(({ articles, source }, index) =>
+    pickLawPages({ labels: articles, pages: toLawPages({ index, source }) }),
+  );
+
+  const pages = sources.flatMap((source, index) =>
+    toFactPages({ index: laws.length + index, source }),
+  );
 
   const productSourceIds = new Set(productPageIds);
-
-  const pages = toMaterialPages(documents);
 
   // A product's own pages are about its lessons whatever words they share, often in another language.
   const productPages = selectSourcePages({
@@ -96,7 +146,7 @@ async function loadLessonSourcePages({
     query,
   });
 
-  return [...productPages, ...otherPages];
+  return [...lawPages, ...productPages, ...otherPages];
 }
 
 /** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */

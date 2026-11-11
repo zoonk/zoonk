@@ -53,6 +53,7 @@ function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive | null
     case "conditions":
       return null;
     case "work":
+    case "addressForm":
       return "ratherNot";
     case "studies":
       return "nothing";
@@ -118,7 +119,7 @@ export function toggleProfilePick({
   id: string;
   question: ProfileQuestion;
 }): { capped: boolean; draft: ProfileDraft } {
-  if (question === "work") {
+  if (question === "work" || question === "addressForm") {
     return { capped: false, draft: { ...draft, exclusive: null, picks: [id] } };
   }
 
@@ -179,6 +180,7 @@ function hasContent({
       return draft.studies.length > 0;
     case "work":
     case "conditions":
+    case "addressForm":
       return draft.picks.length > 0;
     case "learningSupport":
     case "tools":
@@ -251,6 +253,8 @@ function toAnswer({
         })),
         consented: true,
       };
+    case "addressForm":
+      return { form: draft.picks[0] ?? null };
     case "learningSupport":
       return {
         needs: draft.picks.filter((pick) => pick !== NO_SOUND_EFFECTS),

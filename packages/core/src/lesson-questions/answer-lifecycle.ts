@@ -163,8 +163,16 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
     return claimed;
   }
 
-  const { contextSnapshot, goalId, learnerNeeds, priorTurns, question, questionId, revision } =
-    claimed.claim;
+  const {
+    addressForm,
+    contextSnapshot,
+    goalId,
+    learnerNeeds,
+    priorTurns,
+    question,
+    questionId,
+    revision,
+  } = claimed.claim;
 
   const [tutor, learnerNames] = await Promise.all([
     claimTutorAnswer({ question: claimed.claim, userId }),
@@ -179,6 +187,7 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
 
   return {
     claim: {
+      addressForm,
       analytics: getAnswerAnalytics({ goalId, userId }),
       contextSnapshot,
       learnerMemory,

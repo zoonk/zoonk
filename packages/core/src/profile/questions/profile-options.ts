@@ -30,6 +30,11 @@ const en: ProfileContent = {
       travel: { description: null, fragment: "travels", label: "Travel" },
       workOut: { description: null, fragment: "works out", label: "Work out" },
     },
+    addressForm: {
+      feminine: { description: null, fragment: "", label: "Feminine forms" },
+      masculine: { description: null, fragment: "", label: "Masculine forms" },
+      neutral: { description: null, fragment: "", label: "Neutral wording" },
+    },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "Anxiety" },
@@ -257,6 +262,11 @@ const es: ProfileContent = {
       playMusic: { description: null, fragment: "toca música", label: "Tocar música" },
       travel: { description: null, fragment: "viaja", label: "Viajar" },
       workOut: { description: null, fragment: "hace ejercicio", label: "Hacer ejercicio" },
+    },
+    addressForm: {
+      feminine: { description: "“Ya estás lista”", fragment: "", label: "En femenino" },
+      masculine: { description: "“Ya estás listo”", fragment: "", label: "En masculino" },
+      neutral: { description: "“Ya puedes seguir”", fragment: "", label: "Sin marcar género" },
     },
     conditions: {
       adhd: { description: null, fragment: "", label: "TDAH" },
@@ -520,6 +530,11 @@ const pt: ProfileContent = {
       travel: { description: null, fragment: "viaja", label: "Viajar" },
       workOut: { description: null, fragment: "faz exercícios", label: "Fazer exercícios" },
     },
+    addressForm: {
+      feminine: { description: "“Você está certa”", fragment: "", label: "No feminino" },
+      masculine: { description: "“Você está certo”", fragment: "", label: "No masculino" },
+      neutral: { description: "“Você acertou”", fragment: "", label: "Sem marcar gênero" },
+    },
     conditions: {
       adhd: { description: null, fragment: "", label: "TDAH" },
       anxiety: { description: null, fragment: "", label: "Ansiedade" },
@@ -777,6 +792,19 @@ const fr: ProfileContent = {
       },
       travel: { description: null, fragment: "voyage", label: "Voyager" },
       workOut: { description: null, fragment: "fait du sport", label: "Faire du sport" },
+    },
+    addressForm: {
+      feminine: { description: "« Tu es prête pour la suite »", fragment: "", label: "Au féminin" },
+      masculine: {
+        description: "« Tu es prêt pour la suite »",
+        fragment: "",
+        label: "Au masculin",
+      },
+      neutral: {
+        description: "« Tu peux passer à la suite »",
+        fragment: "",
+        label: "Sans marquer le genre",
+      },
     },
     conditions: {
       adhd: { description: null, fragment: "", label: "TDAH" },
@@ -1040,6 +1068,23 @@ const de: ProfileContent = {
       playMusic: { description: null, fragment: "macht Musik", label: "Musik machen" },
       travel: { description: null, fragment: "reist", label: "Reisen" },
       workOut: { description: null, fragment: "trainiert", label: "Trainieren" },
+    },
+    addressForm: {
+      feminine: {
+        description: "„Du bist eine echte Expertin“",
+        fragment: "",
+        label: "Weibliche Formen",
+      },
+      masculine: {
+        description: "„Du bist ein echter Experte“",
+        fragment: "",
+        label: "Männliche Formen",
+      },
+      neutral: {
+        description: "„Du kennst dich richtig gut aus“",
+        fragment: "",
+        label: "Neutrale Formulierungen",
+      },
     },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHS" },
@@ -1319,6 +1364,23 @@ const it: ProfileContent = {
       travel: { description: null, fragment: "viaggia", label: "Viaggiare" },
       workOut: { description: null, fragment: "si allena", label: "Allenarsi" },
     },
+    addressForm: {
+      feminine: {
+        description: "“Sei pronta per la prossima”",
+        fragment: "",
+        label: "Al femminile",
+      },
+      masculine: {
+        description: "“Sei pronto per la prossima”",
+        fragment: "",
+        label: "Al maschile",
+      },
+      neutral: {
+        description: "“Puoi passare alla prossima”",
+        fragment: "",
+        label: "Senza marcare il genere",
+      },
+    },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "Ansia" },
@@ -1561,6 +1623,11 @@ const ja: ProfileContent = {
       travel: { description: null, fragment: "旅行", label: "旅行" },
       workOut: { description: null, fragment: "運動", label: "運動" },
     },
+    addressForm: {
+      feminine: { description: null, fragment: "", label: "女性形" },
+      masculine: { description: null, fragment: "", label: "男性形" },
+      neutral: { description: null, fragment: "", label: "性別を区別しない表現" },
+    },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "不安" },
@@ -1792,6 +1859,11 @@ const ko: ProfileContent = {
       travel: { description: null, fragment: "여행", label: "여행" },
       workOut: { description: null, fragment: "운동", label: "운동" },
     },
+    addressForm: {
+      feminine: { description: null, fragment: "", label: "여성형" },
+      masculine: { description: null, fragment: "", label: "남성형" },
+      neutral: { description: null, fragment: "", label: "성별을 구분하지 않는 표현" },
+    },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "불안" },
@@ -2015,6 +2087,11 @@ const tr: ProfileContent = {
       playMusic: { description: null, fragment: "müzik çalıyor", label: "Müzik çalmak" },
       travel: { description: null, fragment: "seyahat ediyor", label: "Seyahat etmek" },
       workOut: { description: null, fragment: "spor yapıyor", label: "Spor yapmak" },
+    },
+    addressForm: {
+      feminine: { description: null, fragment: "", label: "Dişil biçimler" },
+      masculine: { description: null, fragment: "", label: "Eril biçimler" },
+      neutral: { description: null, fragment: "", label: "Cinsiyet belirtmeyen ifadeler" },
     },
     conditions: {
       adhd: { description: null, fragment: "", label: "DEHB" },
@@ -2256,6 +2333,11 @@ const pl: ProfileContent = {
       playMusic: { description: null, fragment: "muzykuje", label: "Muzykowanie" },
       travel: { description: null, fragment: "podróżuje", label: "Podróże" },
       workOut: { description: null, fragment: "ćwiczy", label: "Ćwiczenia" },
+    },
+    addressForm: {
+      feminine: { description: "„Zrobiłaś to dobrze”", fragment: "", label: "Formy żeńskie" },
+      masculine: { description: "„Zrobiłeś to dobrze”", fragment: "", label: "Formy męskie" },
+      neutral: { description: "„Udało ci się”", fragment: "", label: "Bez form rodzajowych" },
     },
     conditions: {
       adhd: { description: null, fragment: "", label: "ADHD" },

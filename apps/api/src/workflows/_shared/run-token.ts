@@ -132,17 +132,22 @@ export async function waitForRunToken(token: string): Promise<boolean> {
   return claim.conflict === null;
 }
 
+/** False when the run failed, was cancelled, stalled or outlasted any run's work. */
+export async function waitForRun(runId: string): Promise<boolean> {
+  const state = await repeatUntil<JoinedState>({
+    done: (current) => current !== "working",
+    run: () => checkJoinedRunStep(runId),
+    times: MAX_JOIN_POLLS,
+    wait: () => sleep(JOIN_POLL),
+  });
+
+  return state === "completed";
+}
+
 /**
  * Null when the run failed, was cancelled, stalled or outlasted any run's work, so the caller does
  * the work itself instead of waiting forever.
  */
 export async function joinRun(run: Run<unknown>): Promise<unknown> {
-  const state = await repeatUntil<JoinedState>({
-    done: (current) => current !== "working",
-    run: () => checkJoinedRunStep(run.runId),
-    times: MAX_JOIN_POLLS,
-    wait: () => sleep(JOIN_POLL),
-  });
-
-  return state === "completed" ? run.returnValue : null;
+  return (await waitForRun(run.runId)) ? run.returnValue : null;
 }

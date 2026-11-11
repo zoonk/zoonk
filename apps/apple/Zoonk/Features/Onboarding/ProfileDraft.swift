@@ -7,14 +7,17 @@ typealias ProfileQuestions = Components.Schemas.ProfileQuestions
 extension ProfileQuestion {
   /// The questions about the learner's life, which become memory and need it on.
   var isBiography: Bool {
-    self != .conditions && self != .learningSupport
+    switch self {
+    case .addressForm, .conditions, .learningSupport: false
+    case .work, .tools, .studies, .watch, .listen, .play, .read, .activities: true
+    }
   }
 
   /// Chips, of which a learner picks up to three.
   var pickLimit: Int? {
     switch self {
     case .tools, .studies, .watch, .listen, .play, .read, .activities: 3
-    case .work, .conditions, .learningSupport: nil
+    case .addressForm, .work, .conditions, .learningSupport: nil
     }
   }
 }
@@ -39,7 +42,8 @@ struct ProfileDraft: Equatable {
   static let otherOption = "other"
 
   let question: ProfileQuestion
-  /// In pick order, which studies' subject fields follow. For `work`, the one status.
+  /// In pick order, which studies' subject fields follow. For `work`, the one status; for
+  /// `addressForm`, the one form.
   private(set) var picks: [String]
   private(set) var decline: Decline?
   /// Favorites, the job, the `other` condition's note or the support note. Typing answers the
@@ -71,7 +75,7 @@ struct ProfileDraft: Equatable {
     decline =
       if view.status == .declined && picks.isEmpty && text.isEmpty {
         switch view.id {
-        case .work: .ratherNotSay
+        case .addressForm, .work: .ratherNotSay
         case .conditions: nil
         default: .noneOfThese
         }
@@ -90,7 +94,7 @@ struct ProfileDraft: Equatable {
       return true
     }
 
-    if question == .work {
+    if question == .work || question == .addressForm {
       picks = [id]
       return true
     }
@@ -105,15 +109,21 @@ struct ProfileDraft: Equatable {
 
   /// Picking a declining row clears everything else, as any other pick clears it.
   mutating func toggle(_ decline: Decline) {
-    guard self.decline != decline else {
+    if self.decline == decline {
       self.decline = nil
-      return
+    } else {
+      self = declining(decline)
     }
+  }
 
-    self.decline = decline
-    picks = []
-    text = ""
-    subjects = [:]
+  /// This question declined, whatever was picked or typed.
+  func declining(_ decline: Decline) -> ProfileDraft {
+    var draft = self
+    draft.decline = decline
+    draft.picks = []
+    draft.text = ""
+    draft.subjects = [:]
+    return draft
   }
 
   /// Rows checked for what often helps with the conditions picked on the screen before. True when
@@ -143,7 +153,7 @@ struct ProfileDraft: Equatable {
     }
 
     switch question {
-    case .work, .studies, .conditions: return picks.isEmpty
+    case .addressForm, .work, .studies, .conditions: return picks.isEmpty
     default: return picks.isEmpty && trimmed(text).isEmpty
     }
   }
@@ -207,6 +217,8 @@ struct ProfileDraft: Equatable {
         "consented": !declined,
         "declined": declined,
       ]
+    case .addressForm:
+      return ["declined": declined, "form": declined || picks.isEmpty ? NSNull() : picks[0]]
     case .learningSupport:
       return [
         "declined": declined,
@@ -227,13 +239,10 @@ struct ProfileDraft: Equatable {
   /// Onboarding's Skip leaves a question for the next goal, but declines conditions, so a learner
   /// who skips them isn't asked about their health at every new goal.
   var skipInput: [String: Any] {
-    guard question == .conditions else {
-      return ["answer": NSNull(), "question": question.rawValue]
+    switch question {
+    case .conditions, .addressForm: declining(.ratherNotSay).input
+    default: ["answer": NSNull(), "question": question.rawValue]
     }
-
-    var declined = self
-    declined.decline = .ratherNotSay
-    return declined.input
   }
 }
 

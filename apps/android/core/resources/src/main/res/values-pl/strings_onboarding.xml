@@ -153,7 +153,6 @@
   "onboarding_limit_daily_explanations": "4697fe035a84a6742f3b48501030f78d8444967bd975e4ea9bdc8f4ddbb801c1",
   "onboarding_limit_daily_goals": "e5480a6135d498b2045843bc4d434885c94d349587a26474cc25e16bc997218e",
   "onboarding_limit_guest": "d4b339ea7cbab77d180295a0fac8ef470c1154ecb723e123db2903965b27595e",
-  "onboarding_limit_guest_blocked": "9d3e58241d0fcebb3b4755b06b31d67acf3344da51ac14a375adcca10a9e3478",
   "onboarding_limit_monthly_explanations": "ae11cbf95603939e043bc7ea151a589d84111d3c5d114b44ee9ec7a870350bf0",
   "onboarding_limit_monthly_goals": "736b236f572a9159ab32609260b7eb1a17060d82262a6350d09575307b827fc9",
   "onboarding_limit_sign_up_required": "e7f6916eaf4fcd643603e1afd5b82cb05d456f669833daa4569bed8670d64fac",
@@ -501,7 +500,6 @@
     <string name="onboarding_limit_daily_goals">Twój pakiet nie pozwala dziś rozpocząć więcej nowych celów. Spróbuj ponownie jutro.</string>
     <string name="onboarding_limit_guest">Bez konta możesz realizować jeden cel. Załóż bezpłatne konto, żeby kontynuować.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Kontrola bezpieczeństwa nie pozwala rozpocząć nauki bez konta. Załóż bezpłatne konto, aby kontynuować.</string>
     <string name="onboarding_limit_monthly_explanations">W pakiecie Free nie możesz w tym miesiącu zadać więcej nowych pytań. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
     <string name="onboarding_limit_monthly_goals">W pakiecie Free nie możesz w tym miesiącu rozpocząć więcej nowych celów. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->

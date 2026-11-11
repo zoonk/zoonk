@@ -1,9 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { type QuickExplanation } from "./quick-explanation";
 
-export const QUICK_EXPLANATION_MIN_SCREENS = 4;
-export const QUICK_EXPLANATION_MAX_SCREENS = 6;
-
 function hasDuplicates(values: readonly string[]): boolean {
   return new Set(values.map((value) => normalizeString(value))).size !== values.length;
 }
@@ -15,9 +12,6 @@ export function checkQuickExplanation(explanation: QuickExplanation): string[] {
 
   return [
     !description.trim() && "The description is empty.",
-    (screens.length < QUICK_EXPLANATION_MIN_SCREENS ||
-      screens.length > QUICK_EXPLANATION_MAX_SCREENS) &&
-      `Has ${screens.length} screens instead of ${QUICK_EXPLANATION_MIN_SCREENS} to ${QUICK_EXPLANATION_MAX_SCREENS}.`,
     screens.some((screen) => !screen.title.trim() || !screen.text.trim()) &&
       "A screen has an empty title or text.",
     screens.some(

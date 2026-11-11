@@ -12,6 +12,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { LearnLink } from "../../learn-link";
+import { useExclusiveLabels } from "../../profile-questions/profile-body-parts";
 import {
   type ProfileDraft,
   canSendProfileDraft,
@@ -30,11 +31,21 @@ import { type FlowState } from "../_utils/answered-step";
 import { getProfileProgress } from "../_utils/setup-progress";
 import { StepForm } from "./step-form";
 
-/** Skipping conditions declines them, so a learner isn't asked about their health at every new goal. */
-const CONDITIONS_DECLINE = {
-  answer: { conditions: [], consented: false, declined: true },
-  question: "conditions",
-} satisfies OnboardingAnswerInput;
+/**
+ * Skipping conditions declines them, so a learner isn't asked about their health at every new goal;
+ * the address form's skip is its "I'd rather not say".
+ */
+function skipAnswer(question: ProfileQuestionView["id"]): OnboardingAnswerInput {
+  if (question === "conditions") {
+    return { answer: { conditions: [], consented: false, declined: true }, question };
+  }
+
+  if (question === "addressForm") {
+    return { answer: { declined: true, form: null }, question };
+  }
+
+  return { answer: null, question };
+}
 
 function initialDraft({
   jobPrefill,
@@ -128,6 +139,7 @@ function ProfileStep({
   question: ProfileQuestionView;
 }) {
   const t = useExtracted();
+  const exclusiveLabels = useExclusiveLabels();
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription(question.id);
 
@@ -156,13 +168,10 @@ function ProfileStep({
       onSkip={() => {
         onConditions([]);
 
-        void onAnswer(
-          question.id === "conditions"
-            ? CONDITIONS_DECLINE
-            : { answer: null, question: question.id },
-        );
+        void onAnswer(skipAnswer(question.id));
       }}
       pending={pending}
+      skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
       subject={t({
         description: "Which of the questions about the learner this is, such as 4 of 10.",
         message: "About you · {current, number} of {total, number}",
@@ -171,6 +180,7 @@ function ProfileStep({
       title={title}
     >
       <ProfileQuestionBody
+        declineAsSkip
         draft={draft}
         jobPrefill={jobPrefill}
         label={title}

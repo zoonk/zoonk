@@ -47,6 +47,12 @@ export function useProfileQuestionTitle(question: ProfileQuestion): string {
       });
     case "learningSupport":
       return t("What helps you learn?");
+    case "addressForm":
+      return t({
+        description:
+          "Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.",
+        message: "How should we address you?",
+      });
     default:
       return question satisfies never;
   }
@@ -68,6 +74,8 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
       );
     case "learningSupport":
       return t("Pick anything that helps. No label or diagnosis needed.");
+    case "addressForm":
+      return t("Your buddy and your feedback will talk to you this way. Lessons stay the same.");
     case "watch":
     case "listen":
     case "play":

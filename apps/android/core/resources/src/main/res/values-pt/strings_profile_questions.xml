@@ -5,6 +5,8 @@
   "profile_questions_activities_placeholder": "3801687916e095e656c19d64633a4cfec93ac64ac3638c98302c31e2075b7186",
   "profile_questions_activities_title": "476e9670979bb098f4706c3837fe42947f57703706c66fe5f1811bcc9980120c",
   "profile_questions_add": "ae2c0b9b21af3e9609b5f63ae611574edf0b81603c06fb0fa19f715f6704c66e",
+  "profile_questions_address_description": "92031d56b9658ad7cb1b9f025deb0e91005f9d9007a532d86710ab364919d049",
+  "profile_questions_address_title": "3d2bcb096439c110d24c108e436ec0f7c84e2beb9041236105d9fdd1cfcc75b9",
   "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
   "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
   "profile_questions_conditions_description": "ce70c881221017e7a9d2b507b4a4efe35785cbadd5ae107e14085fb959c2ed96",
@@ -38,6 +40,7 @@
   "profile_questions_read_placeholder": "be347631712ab28402540922b4cb2c29b2ec4341549a2c272a36828661703a5a",
   "profile_questions_read_title": "77932b0b3d35f6a3bd41e7cfe61a8b0c1837311341ad43f49f0fac30bae14850",
   "profile_questions_row_activities": "8794ee4c4fb92c2318704af82127fff0b9efef07d1106e69f47fb070311a0a5e",
+  "profile_questions_row_address": "f3de4ef0e4c938314dfca257d10a9cfb87a12cec94d91c3308b03b5997964582",
   "profile_questions_row_conditions": "a1e17b7483a4aac5f2f5aa58db0dbd34794f1ea1f417c74a836dc67059ba73c4",
   "profile_questions_row_listen": "8b610f7ba0e66521a009570b2324b3b75e4d798a03e161a875592a451d5f974f",
   "profile_questions_row_play": "1f895cf90556248d4f79acbac68af178abecfc763fb159052c0d7e23bcfcd4b7",
@@ -48,6 +51,7 @@
   "profile_questions_row_watch": "a2cb4568ff21b783ff6bfc3e08a3c62b368733554d0434a097693cd1699b0ded",
   "profile_questions_row_work": "e28c63c9d1cced48d134dff469166e72f2adae028557d3ffd0935efef21d019a",
   "profile_questions_save_start_lesson": "4f4520b6119b0b866c2b7a9f6f546347df009afc0464105a0523b02d2a5dcce2",
+  "profile_questions_saved": "a49e94dcc5cf50e054b200760dfb81d510846957147f981cb33a0df5854a7960",
   "profile_questions_skip_all": "7790b6ca37f44c055a801d03550de33fefd55122bc1ccf1b0ce14042afe70428",
   "profile_questions_skip_all_label": "c89b18f798a838766ca99ddd2fe1491f545c6bd1f5f8033f50b3eb185d64e6cd",
   "profile_questions_something_else": "c44c7f602d8cae2b1d86e899dad3bb0c53241b2bbb4929418ab93670662d0668",
@@ -124,6 +128,8 @@
     <string name="profile_questions_condition_note">O que a gente deve saber?</string>
     <string name="profile_questions_support_title">O que te ajuda a aprender?</string>
     <string name="profile_questions_support_description">Escolha tudo o que te ajuda. Não precisa de rótulo nem diagnóstico.</string>
+    <string name="profile_questions_address_title">Como a gente fala com você?</string>
+    <string name="profile_questions_address_description">Seu parceiro e o feedback vão falar com você assim. As aulas continuam iguais.</string>
     <string name="profile_questions_suggested">A gente pesquisou o que costuma ajudar com as opções que você escolheu. Mude o que quiser.</string>
     <string name="profile_questions_nothing_particular">Nada em especial</string>
     <string name="profile_questions_something_else">+ Algo mais que ajuda</string>
@@ -151,8 +157,10 @@
     <string name="profile_questions_row_activities">Fazer</string>
     <string name="profile_questions_row_conditions">Condições</string>
     <string name="profile_questions_row_support">O que te ajuda a aprender</string>
+    <string name="profile_questions_row_address">Como a gente fala com você</string>
     <string name="profile_questions_not_answered">Sem resposta</string>
     <string name="profile_questions_not_shared">Não informado</string>
+    <string name="profile_questions_saved">Salva</string>
     <string name="profile_questions_add">Adicionar</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d salva</item>

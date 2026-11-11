@@ -5,11 +5,11 @@ import {
   labelSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { unitSchema } from "../activity-schemas";
+import { aimForItems, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { issue } from "./_utils/template-helpers";
 
-const MAX_FACTS = 4;
+const FACTS_TARGET = 4;
 
 const factSchema = z
   .object({ id: idSchema, label: labelSchema, unit: unitSchema.optional(), value: z.number() })
@@ -18,7 +18,7 @@ const factSchema = z
 const stateSchema = z
   .object({
     description: explanationSchema,
-    facts: uniqueIdsSchema(factSchema, { max: MAX_FACTS, min: 1 }),
+    facts: uniqueIdsSchema(factSchema, { min: 1 }).describe(aimForItems(FACTS_TARGET)),
     label: labelSchema,
   })
   .strict();

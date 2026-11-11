@@ -30,7 +30,7 @@ const italianGreetings: LanguageLessonCheckInput = {
         romanization: null,
         sentence: "Buonasera, come sta?",
         speakingPrompt: null,
-        translation: "Boa noite, como vai?",
+        translation: "Boa noite, como a senhora está?",
         translationDistractors: ["dia", "onde"],
       },
       {
@@ -80,7 +80,7 @@ const italianGreetings: LanguageLessonCheckInput = {
         pronunciation: "CÔ-me STA",
         romanization: null,
         tip: null,
-        translation: "Como vai? (a quem você não conhece bem)",
+        translation: "Como a senhora está?",
         word: "Come sta?",
       },
     ],

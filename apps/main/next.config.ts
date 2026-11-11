@@ -3,7 +3,6 @@ import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { tailwindRules } from "@zoonk/ui/turbopack";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
-import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -107,7 +106,7 @@ const withNextIntl = createNextIntlPlugin({
   requestConfig: "./src/i18n/request.ts",
 });
 
-export default withSentryConfig(withBotId(withNextIntl(withMDX(nextConfig))), {
+export default withSentryConfig(withNextIntl(withMDX(nextConfig)), {
   bundleSizeOptimizations: { excludeDebugStatements: true },
   org: "zoonk",
   project: "zoonk",

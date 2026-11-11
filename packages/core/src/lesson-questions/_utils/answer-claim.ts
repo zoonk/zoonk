@@ -219,7 +219,11 @@ export async function claimAnswerInTransaction({
 
   const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
 
-  const { needs: learnerNeeds, personal } = await getTutorNeeds({
+  const {
+    addressForm,
+    needs: learnerNeeds,
+    personal,
+  } = await getTutorNeeds({
     client: transaction,
     task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
     userId,
@@ -263,6 +267,7 @@ export async function claimAnswerInTransaction({
 
   return {
     claim: {
+      addressForm: shareAnswer ? undefined : (addressForm ?? undefined),
       contextSnapshot,
       goalId: question.goalId,
       learnerNeeds,

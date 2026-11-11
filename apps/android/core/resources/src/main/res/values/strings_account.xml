@@ -29,7 +29,6 @@
     <string name="account_new_code_failed">We couldn\'t send a new code. Try again.</string>
     <string name="account_failure_invalid_email">Enter a valid email address</string>
     <string name="account_failure_disposable_email">Temporary email addresses aren\'t supported. Use another email or a privacy alias.</string>
-    <string name="account_failure_bot_detected">A security check blocked this request. Try Continue with Google, or contact hello@zoonk.com.</string>
     <string name="account_failure_network">Zoonk couldn\'t connect. Check your connection and try again.</string>
     <string name="account_failure_rate_limited">Too many tries. Wait a minute, then try again.</string>
     <string name="account_failure_wrong_code">That code isn\'t right. Check the email and try again.</string>

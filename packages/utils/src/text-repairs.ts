@@ -1,5 +1,6 @@
 import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup";
-import { findMarkdownTableLines } from "./markdown-table";
+import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
+import { splitAtMath } from "./math-spans";
 import { replaceEmDashes } from "./string";
 import {
   AUTOLINK,
@@ -37,12 +38,33 @@ function removeLineMarks(line: string): string {
   return line.replace(HEADING_MARK, "$<indent>").replace(QUOTE_MARK, "$<indent>");
 }
 
+const PLACEHOLDER = /\u{E000}(?<index>\d+)\u{E001}/gu;
+
+/** Each formula stands in as a placeholder, so an edit sees a link around it whole. */
+function editOutsideMath(line: string, edit: (text: string) => string): string {
+  const segments = splitAtMath(line);
+  const formulas = segments.filter(({ kind }) => kind !== "text");
+
+  const masked = segments
+    .map((segment) =>
+      segment.kind === "text" ? segment.text : `\u{E000}${formulas.indexOf(segment)}\u{E001}`,
+    )
+    .join("");
+
+  return edit(masked).replaceAll(PLACEHOLDER, (placeholder, index: string) => {
+    const formula = formulas[Number(index)];
+    return formula ? line.slice(formula.start, formula.end) : placeholder;
+  });
+}
+
 function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {
-  return line
-    .replaceAll(LINK, "$<text>")
-    .replaceAll(ANGLE_LINK, "$<address>")
-    .replaceAll(LINE_BREAK_TAG, breakAs)
-    .replaceAll(STYLE_TAG, "")
+  return editOutsideMath(line, (text) =>
+    text
+      .replaceAll(LINK, "$<text>")
+      .replaceAll(ANGLE_LINK, "$<address>")
+      .replaceAll(LINE_BREAK_TAG, breakAs)
+      .replaceAll(STYLE_TAG, ""),
+  )
     .split("\n")
     .map((part) => removeStrayEmphasis(part))
     .join("\n");
@@ -55,8 +77,7 @@ function repairBlocks(text: string): string {
   return lines
     .map((line, index) =>
       tableLines.has(index)
-        ? line
-            .split("|")
+        ? splitTableCells(line)
             .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
             .join("|")
         : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) }),

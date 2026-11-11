@@ -1,25 +1,25 @@
 import { z } from "zod";
 import { idSchema, labelSchema, uniqueIdsSchema } from "../../steps/contract/content-schemas";
-import { identifierSchema, outputSchema, variableSchema } from "../activity-schemas";
+import { aimForItems, identifierSchema, outputSchema, variableSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { parseExpression } from "../expression/parse-expression";
 import { computeOutput, formulaModelIssues, outputFormulas } from "./_utils/formula-model";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_VARIABLES = 4;
-const MAX_OUTPUTS = 4;
-const MAX_EVENTS = 4;
+const VARIABLES_TARGET = 4;
+const OUTPUTS_TARGET = 4;
+const EVENTS_TARGET = 4;
 
 const eventSchema = z.object({ label: labelSchema, name: identifierSchema }).strict();
 
 const formulaModelFields = z
   .object({
     compareAt: z.number().optional(),
-    events: z.array(eventSchema).max(MAX_EVENTS).optional(),
-    outputs: uniqueIdsSchema(outputSchema, { max: MAX_OUTPUTS, min: 1 }),
+    events: z.array(eventSchema).describe(aimForItems(EVENTS_TARGET)).optional(),
+    outputs: uniqueIdsSchema(outputSchema, { min: 1 }).describe(aimForItems(OUTPUTS_TARGET)),
     plot: z.object({ x: identifierSchema, y: idSchema }).strict().optional(),
     title: labelSchema.optional(),
-    variables: z.array(variableSchema).min(1).max(MAX_VARIABLES),
+    variables: z.array(variableSchema).min(1).describe(aimForItems(VARIABLES_TARGET)),
   })
   .strict();
 

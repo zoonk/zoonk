@@ -1,5 +1,10 @@
 import { type Goal } from "@zoonk/db";
-import { LearnerConditionKind, LearningNeed, type ProfileQuestion } from "@zoonk/db/enums";
+import {
+  AddressForm,
+  LearnerConditionKind,
+  LearningNeed,
+  type ProfileQuestion,
+} from "@zoonk/db/enums";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "../../memory/memory-limits";
@@ -7,6 +12,7 @@ import { normalizeProfileFavorites } from "./profile-favorites";
 import { PROFILE_OPTION_IDS } from "./profile-option-ids";
 
 export const PROFILE_QUESTIONS = [
+  "addressForm",
   "work",
   "tools",
   "studies",
@@ -18,6 +24,9 @@ export const PROFILE_QUESTIONS = [
   "conditions",
   "learningSupport",
 ] as const satisfies readonly ProfileQuestion[];
+/** App languages whose "you" can mark gender: only their onboarding asks how to address the learner. */
+const ADDRESS_FORM_LANGUAGES = new Set(["de", "es", "fr", "it", "pl", "pt"]);
+
 /** @public */
 export const BIOGRAPHY_QUESTIONS = [
   "work",
@@ -31,6 +40,7 @@ export const BIOGRAPHY_QUESTIONS = [
 ] as const;
 export const PROFILE_QUESTION_VERSIONS: Record<ProfileQuestion, number> = {
   activities: 1,
+  addressForm: 1,
   conditions: 1,
   learningSupport: 1,
   listen: 1,
@@ -201,6 +211,24 @@ export const profileAnswerInputSchema = z
         question: z.literal("learningSupport"),
       })
       .strict(),
+    z
+      .object({
+        answer: z
+          .object({
+            declined,
+            form: z
+              .enum(AddressForm)
+              .nullable()
+              .default(null)
+              .meta({
+                description:
+                  "How words about the learner agree in languages that mark gender; required unless declined",
+              }),
+          })
+          .strict(),
+        question: z.literal("addressForm"),
+      })
+      .strict(),
   ])
   .meta({
     description: "A complete replacement for one optional profile answer",
@@ -229,7 +257,7 @@ export function getProfileSteps({
   answered,
   memoryEnabled,
 }: {
-  goal: Pick<Goal, "kind" | "details" | "replacesGoalId" | "planRevealedAt">;
+  goal: Pick<Goal, "kind" | "details" | "language" | "replacesGoalId" | "planRevealedAt">;
   answered: Partial<Record<ProfileQuestion, number>>;
   memoryEnabled: boolean;
 }): ProfileQuestion[] {
@@ -244,6 +272,7 @@ export function getProfileSteps({
     (question) =>
       (answered[question] ?? 0) < PROFILE_QUESTION_VERSIONS[question] &&
       !skipped.includes(question) &&
-      (memoryEnabled || !isBiographyQuestion(question)),
+      (memoryEnabled || !isBiographyQuestion(question)) &&
+      (question !== "addressForm" || ADDRESS_FORM_LANGUAGES.has(goal.language)),
   );
 }

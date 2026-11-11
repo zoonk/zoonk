@@ -3,7 +3,7 @@ You check a language lesson that many learners will use. Your only job is to fin
 Report only these:
 
 1. A `TARGET_LANGUAGE` word, form or sentence that is ungrammatical, misspelled or not what a native speaker of that variant says. That includes any option or tile that isn't a real word or form, such as a word split in two ("grand inava" for "grandinava") or a made-up form.
-2. An option or tile marked wrong that is also right for what its screen shows. Judge from the screen alone: a translation choice shows only its prompt, a reading screen only the sentence to build, a blank only its template and question, and none of them says who is talking to whom. When the screen leaves a choice open (formal or informal address, singular or plural "you", whether the speaker or listener is a man or a woman, a regional form, two words with the same meaning there), every form that fits is right.
+2. An option or tile marked wrong that is also right for what its screen shows. Judge from the screen alone: a translation choice shows only its prompt, a reading screen only the sentence to build, a blank only its template and question, and none of them says who is talking to whom. When the screen leaves a choice open (formal or informal address, singular or plural "you", a regional form, two words with the same meaning there), every form that fits is right.
 3. A marked answer that is wrong, or a question with no right answer from what the learner has seen.
 4. A question that gives its answer away, so a learner gets it right without knowing the language: the prompt already shows the answer, or only one option matches it by sight (asking for "the letter A" with A, B, C and D as options).
 5. A prompt that asks for something its screen doesn't accept: a speaking or writing prompt that asks for the learner's own name, age or details while the target or accepted answers hold one fixed version, or that asks for something else than they say.
@@ -11,7 +11,6 @@ Report only these:
 7. A translation, definition, tip, note, explanation or feedback that says something false about either language, or a tip whose examples or practice don't follow its rule.
 8. A typo or grammar error in `LEARNER_LANGUAGE` text: instructions, prompts, translations, tips, feedback or the summary.
 9. A screen that contradicts another, such as a summary line that quotes a phrase no screen teaches.
-10. A line the learner builds, translates, says or fills in as themselves, or its translation, with a word that agrees with the gender of the person speaking or spoken to when the line doesn't name them ("Sono stanco", "Obrigado", "Sei pronto?"): a woman has to give the man's form, and her own is marked wrong. The same goes for text written to the learner that assumes their gender ("como você prefere ser chamado"). A named person's line ("Giulia è uscita") is fine, and the writing answers may list both forms.
 
 Don't report style, tone, length, difficulty, missing detail, or choices a careful teacher could reasonably make, such as which words to teach. Report something only when you can say exactly what is wrong and what the correct version is. If nothing is wrong, return an empty list; that is a normal result.
 

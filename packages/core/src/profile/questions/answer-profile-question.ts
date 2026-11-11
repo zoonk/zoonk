@@ -82,6 +82,16 @@ async function saveSettings({
       where: { userId },
     });
   }
+
+  if (input.question === "addressForm") {
+    const data = { addressForm: input.answer.declined ? null : input.answer.form };
+
+    await tx.userLearningProfile.upsert({
+      create: { userId, ...data },
+      update: data,
+      where: { userId },
+    });
+  }
 }
 
 export async function answerProfileQuestion({

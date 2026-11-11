@@ -14,7 +14,6 @@
   "account_did_not_get_it": "fc17ea910ce7da7a2c518be4951743759fe6d679501fa66708f68b13abb16cfb",
   "account_email": "f10017bcbf88aa812fa1f7b1896d33fe6215ad6173e331071731739f7a9c79cf",
   "account_email_placeholder": "63071e1900a78b7de3cb465b20c2cb37adf0fe2af434f330436e510214a1f336",
-  "account_failure_bot_detected": "2bec7bafd1b631af0926ab9941ac0495f6cc665fee38ca4295254ce1c6ed8557",
   "account_failure_code_expired": "876f4fef442b4e8b45ca5996e6a7e4e5d712295105dbc24310e4725a8bdd61e2",
   "account_failure_code_locked": "62ef957d7020eebf06035a0d624b9e3a28749d790be1d1ea0f4434bdf6b0d3cd",
   "account_failure_disposable_email": "18913ee7e7b40a8b6b8e8b16a6d4f4333c1e8795984c067881617320f5202c77",
@@ -89,7 +88,6 @@
     <string name="account_new_code_failed">Não conseguimos enviar um novo código. Tente de novo.</string>
     <string name="account_failure_invalid_email">Digite um email válido</string>
     <string name="account_failure_disposable_email">Emails temporários não são aceitos. Use outro email ou um endereço alternativo de privacidade.</string>
-    <string name="account_failure_bot_detected">Um sistema de segurança bloqueou esta solicitação. Tente a opção Continuar com Google ou entre em contato pelo e-mail contato@zoonk.com.</string>
     <string name="account_failure_network">O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo.</string>
     <string name="account_failure_rate_limited">Muitas tentativas. Espere um minuto e tente de novo.</string>
     <string name="account_failure_wrong_code">Esse código não está certo. Confira o e-mail e tente de novo.</string>

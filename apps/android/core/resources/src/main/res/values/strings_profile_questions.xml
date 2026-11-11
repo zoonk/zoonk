@@ -46,6 +46,9 @@
     <string name="profile_questions_condition_note">What should we know?</string>
     <string name="profile_questions_support_title">What helps you learn?</string>
     <string name="profile_questions_support_description">Pick anything that helps. No label or diagnosis needed.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
+    <string name="profile_questions_address_title">How should we address you?</string>
+    <string name="profile_questions_address_description">Your buddy and your feedback will talk to you this way. Lessons stay the same.</string>
     <string name="profile_questions_suggested">We checked what often helps with what you picked. Change anything you like.</string>
     <string name="profile_questions_nothing_particular">Nothing in particular</string>
     <string name="profile_questions_something_else">+ Something else that helps</string>
@@ -73,8 +76,12 @@
     <string name="profile_questions_row_activities">Do</string>
     <string name="profile_questions_row_conditions">Conditions</string>
     <string name="profile_questions_row_support">What helps you learn</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
+    <string name="profile_questions_row_address">How we address you</string>
     <string name="profile_questions_not_answered">Not answered</string>
     <string name="profile_questions_not_shared">Not shared</string>
+    <!-- An answer the learner saved, without showing it. -->
+    <string name="profile_questions_saved">Saved</string>
     <string name="profile_questions_add">Add</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d saved</item>
