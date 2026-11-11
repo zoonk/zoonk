@@ -82,11 +82,8 @@ function applyLessonFixes({
 }
 
 /**
- * The owner keeps the writer's own model as fixer: Luna broke the correct § 2º into § 1º.
- * On the citation/term cases (8 Nov 2026), Luna scored 6 and 10 ($0.00189, 15.06s / $0.00238,
- * 30.85s); Terra scored 10 on both ($0.01161, 3.55s / $0.01554, 19.06s); Opus scored 6 and 10
- * ($0.08849, 9.65s / $0.12343, 16.75s): it kept § 2º but harmlessly filled another screen's
- * empty basis. All three corrected the repeated term claim; Terra left the citation lesson intact.
+ * The owner keeps the writer as fixer: on six cases (11 Nov 2026), Fable, Carbon, Opus and Terra
+ * all scored 10 at $179, $42, $76 and $12 per 1k runs, so neither new model justified a switch.
  * Returns changed screen indexes for provenance.
  */
 export async function fixLessonDraft(params: FixLessonDraftParams) {

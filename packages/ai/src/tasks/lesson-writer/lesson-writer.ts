@@ -32,8 +32,9 @@ const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
 const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
- * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
- * families, so an outage at one provider doesn't stop lessons. Argon hasn't run the current prompt.
+ * Each writer falls back across families. On four current-prompt lessons (11 Nov 2026), shared
+ * Opus scored 8.63 at $155/1k versus Fable's 8.53 at $704/1k; Carbon scored 7.67 at $156/1k
+ * versus Argon's 7.97 at $38/1k, so neither new model justified changing the chain.
  */
 export const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
