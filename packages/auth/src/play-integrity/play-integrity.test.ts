@@ -9,11 +9,14 @@ import { PLAY_INTEGRITY_HEADERS } from "./play-integrity-contract";
 /** Google decrypts the token; everything Zoonk checks about its answer stays real. */
 vi.mock("./decode-play-integrity-token", () => ({ decodePlayIntegrityToken: vi.fn() }));
 
-const GUEST: AppAttestBinding = { fields: [], operation: APP_ATTEST_OPERATIONS.guest };
+const RESTORE_KEY: AppAttestBinding = {
+  fields: ["credential-1"],
+  operation: APP_ATTEST_OPERATIONS.restoreKey,
+};
 
-const EMAIL_CODE: AppAttestBinding = {
-  fields: ["learner@example.test"],
-  operation: APP_ATTEST_OPERATIONS.emailCode,
+const OTHER_KEY: AppAttestBinding = {
+  fields: ["credential-2"],
+  operation: APP_ATTEST_OPERATIONS.restoreKey,
 };
 
 function requestHash({ binding, challenge }: { binding: AppAttestBinding; challenge: string }) {
@@ -23,7 +26,7 @@ function requestHash({ binding, challenge }: { binding: AppAttestBinding; challe
 
 function decodedToken({
   appRecognitionVerdict = "PLAY_RECOGNIZED",
-  binding = GUEST,
+  binding = RESTORE_KEY,
   challenge,
   deviceRecognitionVerdict = ["MEETS_DEVICE_INTEGRITY"],
   requestPackageName = "com.zoonk",
@@ -53,7 +56,7 @@ function proofHeaders(challenge: string) {
   });
 }
 
-async function proveWith(token: (challenge: string) => unknown, binding = GUEST) {
+async function proveWith(token: (challenge: string) => unknown, binding = RESTORE_KEY) {
   const challenge = await issueAppChallenge();
   vi.mocked(decodePlayIntegrityToken).mockResolvedValueOnce(token(challenge));
   return hasPlayIntegrityProof({ binding, headers: proofHeaders(challenge) });
@@ -76,32 +79,29 @@ describe(hasPlayIntegrityProof, () => {
     vi.mocked(decodePlayIntegrityToken).mockResolvedValue(decodedToken({ challenge }));
 
     await expect(
-      hasPlayIntegrityProof({ binding: GUEST, headers: proofHeaders(challenge) }),
+      hasPlayIntegrityProof({ binding: RESTORE_KEY, headers: proofHeaders(challenge) }),
     ).resolves.toBe(true);
 
     expect(decodePlayIntegrityToken).toHaveBeenCalledExactlyOnceWith("play-integrity-token");
 
     // The challenge is spent: the same proof never counts twice, and Google isn't asked again.
     await expect(
-      hasPlayIntegrityProof({ binding: GUEST, headers: proofHeaders(challenge) }),
+      hasPlayIntegrityProof({ binding: RESTORE_KEY, headers: proofHeaders(challenge) }),
     ).resolves.toBe(false);
 
     expect(decodePlayIntegrityToken).toHaveBeenCalledOnce();
   });
 
-  it("refuses a token made for another request, email or app", async () => {
-    await expect(proveWith((challenge) => decodedToken({ challenge }), EMAIL_CODE)).resolves.toBe(
+  it("refuses a token made for another restore key or app", async () => {
+    await expect(proveWith((challenge) => decodedToken({ challenge }), OTHER_KEY)).resolves.toBe(
       false,
     );
 
     await expect(
       proveWith(
         (challenge) =>
-          decodedToken({
-            binding: { ...EMAIL_CODE, fields: ["someone-else@example.test"] },
-            challenge,
-          }),
-        EMAIL_CODE,
+          decodedToken({ binding: { ...OTHER_KEY, fields: ["credential-3"] }, challenge }),
+        OTHER_KEY,
       ),
     ).resolves.toBe(false);
 
@@ -112,7 +112,7 @@ describe(hasPlayIntegrityProof, () => {
 
   it("refuses a challenge this server never issued without asking Google", async () => {
     await expect(
-      hasPlayIntegrityProof({ binding: GUEST, headers: proofHeaders("never-issued") }),
+      hasPlayIntegrityProof({ binding: RESTORE_KEY, headers: proofHeaders("never-issued") }),
     ).resolves.toBe(false);
 
     expect(decodePlayIntegrityToken).not.toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe(hasPlayIntegrityProof, () => {
 
     await expect(
       hasPlayIntegrityProof({
-        binding: { fields: ["learner@example.test\nguest"], operation: "email-code" },
+        binding: { fields: ["credential\nother"], operation: "restore-key" },
         headers: proofHeaders(challenge),
       }),
     ).resolves.toBe(false);
@@ -138,7 +138,7 @@ describe(hasPlayIntegrityProof, () => {
     vi.mocked(decodePlayIntegrityToken).mockRejectedValueOnce(new Error("Google unavailable"));
 
     await expect(
-      hasPlayIntegrityProof({ binding: GUEST, headers: proofHeaders(challenge) }),
+      hasPlayIntegrityProof({ binding: RESTORE_KEY, headers: proofHeaders(challenge) }),
     ).resolves.toBe(false);
   });
 

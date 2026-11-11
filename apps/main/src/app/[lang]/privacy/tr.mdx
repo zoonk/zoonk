@@ -17,7 +17,7 @@ Verilerinin nasıl kullanılacağına Zoonk Tecnologia e Educação Ltda karar v
 - **Bellek:** Zoonk’un sana yardımcı olmak için hatırladığı, nasıl öğrendiğine dair kısa bilgiler (bkz. bölüm 4).
 - **Bize gönderdiklerin:** anlattığın hedefler, ders arkadaşınla (yapay zekâ eğitmeni) yaptığın yazılı ve sesli sohbetler, yüklediğin dosyalar, yapıştırdığın metinler ve destek mesajları.
 - **Ödemeler:** paketin ve abonelik durumun. Kart bilgileri ödeme sağlayıcısında kalır.
-- **Teknik ve kullanım verileri:** IP adresi, bağlantının geldiği ülke, cihaz, tarayıcı, çerezler, giriş kayıtları, güvenlik olayları ve kullanım verileri açıkken (bölüm 7) Zoonk’u nasıl kullandığın (ekranlar, tıklamalar veya dokunmalar ve oturum kayıtları). Botları ve sahte uygulamaları engellemek için tarayıcında güvenlik kontrolleri yaparız; uygulamalarımızda da uygulamanın orijinal olduğunu Apple’a veya Google’a doğrulatırız.
+- **Teknik ve kullanım verileri:** IP adresi, bağlantının geldiği ülke, cihaz, tarayıcı, çerezler, giriş kayıtları, güvenlik olayları ve kullanım verileri açıkken (bölüm 7) Zoonk’u nasıl kullandığın (ekranlar, tıklamalar veya dokunmalar ve oturum kayıtları). Uygulamalarımızda uygulamanın orijinal olduğunu Apple’a veya Google’a doğrulatırız.
 
 Bu verileri elektronik ortamda, girdiğin bilgilerden ve Zoonk’u web’de ve uygulamalarımızda nasıl kullandığından toplarız. Hesap oluşturmak için bir e-posta adresine ihtiyacın vardır. Geri kalan her şeyi bize verip vermemek sana kalmıştır, ancak bazı özellikler bunlar olmadan çalışamaz.
 
@@ -96,7 +96,6 @@ Tarayıcın veya uygulaman şu hizmetlere doğrudan bilgi gönderir:
 
 - **PostHog:** kullanım verileri açıkken gördüğün ekranlar, tıklamalar ve dokunmalar, bir ziyaretçi kimliği, varsa hesap kimliğin ve kullanıcı adın, cihaz, tarayıcı, IP adresi ve oturum kayıtları; kullanımı anlamak ve sorunları gidermek için.
 - **Vercel Web Analytics:** kullanım verileri açıkken sayfanın adresi, geldiğin sayfa, cihaz ve tarayıcı; ziyaretleri saymak için.
-- **Vercel BotID:** giriş yaptığında veya misafir olarak başladığında güvenlik kontrolleri; botları engellemek için.
 - **Vercel Blob:** dosya yüklediğinde yüklediğin dosyalar ve IP adresin; bunları saklamak için (bölüm 6).
 - **OpenAI:** canlı sesli sohbetlerde sesin, IP adresin ve tarayıcın veya cihazın; sohbeti yürütmek için (bölüm 5).
 - **Sentry:** hata ayrıntıları, cihaz ve tarayıcı; hataları düzeltmek için.
@@ -109,7 +108,7 @@ Tarayıcın veya uygulaman şu hizmetlere doğrudan bilgi gönderir:
 
 Verileri yalnızca Zoonk’u çalıştırmak için gerektiği ölçüde paylaşırız. Bu sağlayıcıların çoğu ABD’dedir:
 
-- **Barındırma, dosyalar ve güvenlik:** Vercel, ABD (Vercel Blob, BotID ve AI Gateway dâhil).
+- **Barındırma, dosyalar ve güvenlik:** Vercel, ABD (Vercel Blob ve AI Gateway dâhil).
 - **Veritabanı:** Neon, ABD.
 - **Yapay zekâ:** Görevlerin çoğu için OpenAI, Anthropic ve Google, ABD; metinleri hızlıca sınıflandırmak için TypeSafe; yalnızca Ortak Kütüphane görselleri için Black Forest Labs, Almanya, ve Recraft. Microsoft gibi başka sağlayıcılar, Vercel AI Gateway üzerinden yedek olarak devreye girebilir. Sınav bilgileri ve ders arkadaşın için yapılan web aramaları Parallel’e (ABD) gider. Bu aramalar yalnızca Zoonk’un yazdığı arama sözcüklerini içerir, hesap verilerini asla içermez.
 - **Analiz ve hatalar:** PostHog, Vercel Web Analytics ve Sentry, ABD.

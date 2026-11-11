@@ -1,21 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { checkBotId } from "botid/server";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  makeAssertion,
-  makeDeviceKey,
-} from "../../../../../../packages/auth/src/app-attest/_test-utils/assertion";
 import {
   RECORDED_APP,
   RECORDED_PRODUCTION_ATTESTATION,
 } from "../../../../../../packages/auth/src/app-attest/_test-utils/recorded-attestations";
 import { POST as createGuest } from "../guests/route";
-import { POST as createChallenge } from "./challenges/route";
 import { POST as createKey } from "./keys/route";
-
-vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
 
 vi.mock("@zoonk/auth", async () => {
   const { createRequire } = await import("node:module");
@@ -33,14 +25,13 @@ vi.mock("@zoonk/auth", async () => {
   const { appAttestPlugin } =
     await import("../../../../../../packages/auth/src/plugins/app-attest");
 
-  const { botCheckPlugin } = await import("../../../../../../packages/auth/src/plugins/bot-check");
   const { guestPlugin } = await import("../../../../../../packages/auth/src/plugins/guest");
 
   return {
     auth: betterAuth({
       ...baseAuthConfig,
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
-      plugins: [...baseAuthPlugins, botCheckPlugin(), appAttestPlugin(), bearer(), guestPlugin()],
+      plugins: [...baseAuthPlugins, appAttestPlugin(), bearer(), guestPlugin()],
       rateLimit: { enabled: true, storage: "database" },
       secret: "app-attest-api-test-secret-with-enough-entropy",
     }),
@@ -76,16 +67,6 @@ function post({
   });
 }
 
-async function issueChallenge(headers: Headers) {
-  const response = await createChallenge(post({ headers, path: "/app-attest/challenges" }));
-  const body: unknown = await response.json();
-
-  expect(response.status).toBe(201);
-  expect(body).toMatchObject({ challenge: expect.any(String) });
-
-  return (body as { challenge: string }).challenge;
-}
-
 describe("App Attest through the API", () => {
   beforeEach(async () => {
     vi.stubEnv("NODE_ENV", "production");
@@ -93,13 +74,6 @@ describe("App Attest through the API", () => {
     vi.stubEnv("E2E_TESTING", "false");
     vi.stubEnv("APPLE_TEAM_ID", RECORDED_APP.teamIdentifier);
     vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", RECORDED_APP.bundleIdentifier);
-
-    vi.mocked(checkBotId).mockResolvedValue({
-      bypassed: false,
-      isBot: true,
-      isHuman: false,
-      isVerifiedBot: false,
-    });
 
     await prisma.appAttestKey.deleteMany({
       where: { keyId: RECORDED_PRODUCTION_ATTESTATION.keyId },
@@ -144,35 +118,21 @@ describe("App Attest through the API", () => {
     expect(response.status).toBe(400);
   });
 
-  it("makes a guest for the iOS app's assertion and refuses one without proof", async () => {
-    const key = makeDeviceKey();
-    await prisma.appAttestKey.create({ data: { keyId: key.keyId, publicKey: key.publicKey } });
-
-    const headers = phoneHeaders();
-    const challenge = await issueChallenge(headers);
-
-    const attested = await createGuest(
-      post({
-        body: {},
-        headers: phoneHeaders({
-          "x-app-attest-assertion": makeAssertion({
-            challenge,
-            counter: 1,
-            privateKey: key.privateKey,
-          }),
-          "x-app-attest-challenge": challenge,
-          "x-app-attest-key-id": key.keyId,
-        }),
-        path: "/guests",
-      }),
+  it.each<Record<string, string>>([
+    {},
+    {
+      "x-app-attest-assertion": "obsolete",
+      "x-app-attest-challenge": "obsolete",
+      "x-app-attest-key-id": "obsolete",
+      "x-play-integrity-challenge": "obsolete",
+      "x-play-integrity-token": "obsolete",
+    },
+  ])("makes a guest without proof or with obsolete proof headers: %j", async (extra) => {
+    const response = await createGuest(
+      post({ body: {}, headers: phoneHeaders(extra), path: "/guests" }),
     );
 
-    expect(attested.status).toBe(201);
-    await expect(attested.json()).resolves.toMatchObject({ token: expect.any(String) });
-
-    const unproven = await createGuest(post({ body: {}, path: "/guests" }));
-
-    expect(unproven.status).toBe(403);
-    await expect(unproven.json()).resolves.toMatchObject({ error: { code: "BOT_DETECTED" } });
+    expect(response.status).toBe(201);
+    await expect(response.json()).resolves.toMatchObject({ token: expect.any(String) });
   });
 });

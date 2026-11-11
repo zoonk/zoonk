@@ -54,7 +54,6 @@
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.7.20",
-    "botid": "catalog:",
     "jose": "catalog:",
     "mailchecker": "6.0.21",
     "node-app-attest": "1.0.1",

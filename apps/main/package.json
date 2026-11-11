@@ -31,7 +31,6 @@
     "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "botid": "catalog:",
     "eventsource-parser": "4.1.3",
     "lucide-react": "catalog:",
     "next": "catalog:",

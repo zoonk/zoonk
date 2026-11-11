@@ -34,7 +34,6 @@ import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
 import { appAttestPlugin } from "./plugins/app-attest";
-import { botCheckPlugin } from "./plugins/bot-check";
 import { cliLoginPlugins } from "./plugins/cli-login";
 import { guestPlugin } from "./plugins/guest";
 import { restoreKeyPlugin } from "./plugins/restore-key";
@@ -162,7 +161,6 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
-  botCheckPlugin(),
   appAttestPlugin(),
   restoreKeyPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
