@@ -187,6 +187,7 @@
     "./language/aims": "./src/language/aims/language-aims.ts",
     "./language/aims/schemas": "./src/language/aims/language-aim-schemas.ts",
     "./language/level-test/answer": "./src/language/level-test/answer-language-level-test.ts",
+    "./language/level-test/check-bank": "./src/language/level-test/check-level-test-bank.ts",
     "./language/level-test/contract": "./src/language/level-test/level-test-contract.ts",
     "./language/level-test/finish": "./src/language/level-test/finish-language-level-test.ts",
     "./language/level-test/get": "./src/language/level-test/get-language-level-test.ts",
