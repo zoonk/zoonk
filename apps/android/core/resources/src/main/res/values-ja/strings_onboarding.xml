@@ -455,6 +455,7 @@
   "onboarding_variety_description": "b1cb59f1840886f3fc1f31b3bc8c6870d5607d3e61c618e271fb19c83dbe7853",
   "onboarding_variety_none": "460bcd8ac80c27821d4e72f3890e144f226dfe8eb2b030a545f37bc4a5e93af5",
   "onboarding_variety_note": "2d763e862f887b575d70cc669a98cd59a997c01f25d281b1c57218767f5ff8fd",
+  "onboarding_variety_title": "79742f4c2daa7761299a32044058dccab6e6e69d287374003e10998530820b0c",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
   "onboarding_weekend_time": "8653109d4f3428d5b744163f218dc65df2f267d2f8419ea4f5d3c74208320644",
@@ -1092,6 +1093,8 @@
     </plurals>
     <string name="onboarding_reason_choices">学ぶ理由</string>
     <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">国</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
     <string name="onboarding_variety_description">相棒や会話練習での話し方は、選んだ国に合わせます。レッスンとその音声では%1$sを使います。</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->

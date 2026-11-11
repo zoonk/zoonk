@@ -93,7 +93,7 @@ fun VarietySheet(
     pending: Boolean = false,
     failed: Boolean = false,
 ) {
-    val title = stringResource(R.string.onboarding_row_language)
+    val title = stringResource(R.string.onboarding_variety_title)
     val locale = currentLocale()
     val note = varietyNote(LocalResources.current, locale, variety.language, variety.region, variety.taughtRegion)
     var picked by rememberSaveable { mutableStateOf<String?>(null) }

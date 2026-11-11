@@ -455,6 +455,7 @@
   "onboarding_variety_description": "d6cf879f0e397a626177a7c891ac540695718f7b296e5b5ab114b0bdac379537",
   "onboarding_variety_none": "a9ee9a8bd1e4dc7e185539be615fe955ca53bb663affacbaa88db673bd0b41e0",
   "onboarding_variety_note": "b80c721331e82e48cb22304cbc72dad536b0503cf83f1d639d6bb8521164b7cf",
+  "onboarding_variety_title": "9f59e72ff7df66bdf6504c017abc1b832e3b364fe4a24c28534806883f1e4eb0",
   "onboarding_waitlist_joined": "fe147b16a5ed805821d33d01a6697e46b9cb90d1ac8f33cd0a7fba6af6a14e84",
   "onboarding_waitlist_sign_in": "d94706508e24947285f3ea31093d2cb6f723c7ab4cb97daeef4917d3c2ecca17",
   "onboarding_weekend_time": "52184c273b77c2e4dde76bc1f8699af2f8a4a781f21bdec542df94f896db23f4",
@@ -1142,6 +1143,8 @@
     </plurals>
     <string name="onboarding_reason_choices">Por qué aprendes este idioma</string>
     <string name="onboarding_aim_description">Hasta dónde llega tu curso, lo que define cuánto dura tu plan.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">País</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
     <string name="onboarding_variety_description">Tu compañero y las llamadas de práctica usan la forma de hablar del país que elijas. Las lecciones y su audio usan %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->

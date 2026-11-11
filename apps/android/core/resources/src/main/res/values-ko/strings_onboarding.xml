@@ -455,6 +455,7 @@
   "onboarding_variety_description": "af3216b44afd29fe3fc5c2226f423b3c77191b9a82a82412bd8e8e0eda12315a",
   "onboarding_variety_none": "13bb075e8d1198f46af349ab4ddfe01bd07e9eaa33e80fe8e7ef9e8d1074c05d",
   "onboarding_variety_note": "03dbac82722c49c328d871110b0515349f4c6709b78263d1e660e272729d2448",
+  "onboarding_variety_title": "7adbda650c598dc76e1b91d8ef6feea1e5bdc033198a43a3a9652e58500e9c23",
   "onboarding_waitlist_joined": "3493f63bc039557a44f598290eda4ef97172426122ec762d20bc4ed9208b86f9",
   "onboarding_waitlist_sign_in": "669ea77ceed9a281f29dff02168e5cedaff364ece7d1984434cbce9231550277",
   "onboarding_weekend_time": "31a0ac3b63068c329d8e8e140c23a8c50123bdfc05d2943c210691038a1f996d",
@@ -1092,6 +1093,8 @@
     </plurals>
     <string name="onboarding_reason_choices">배우는 이유</string>
     <string name="onboarding_aim_description">코스에서 어디까지 배울지에 따라 계획 기간이 정해져요.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">국가</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
     <string name="onboarding_variety_description">짝꿍과 대화 연습에서는 선택한 나라의 말투를 사용해요. 레슨과 레슨 음성은 %1$s 기준이에요.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->

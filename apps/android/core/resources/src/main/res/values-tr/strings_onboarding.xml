@@ -455,6 +455,7 @@
   "onboarding_variety_description": "10311c9ad903b1192797b8c37ae69bdae3bace029cfb07ece63190db405faf56",
   "onboarding_variety_none": "88ed730ef103a87938a1ed784a8c3bd682e1402607cb7fdcc80465c0a8704ef2",
   "onboarding_variety_note": "d421863457ed17f424ca6a9bbae8ff0485a311295c1ad665d87c0403d058ac3a",
+  "onboarding_variety_title": "debce6a2316c2d7aa8576b68e03e628cfc76967323ecc19ac5de7ac982f4e133",
   "onboarding_waitlist_joined": "7f68bb76cd1174441202195da9e660ea7ea59a29cb188893f5c92844417fe17a",
   "onboarding_waitlist_sign_in": "570b849c06776cbe95e073d7d15504d1f29658101a5b79f45d5325dfae31242c",
   "onboarding_weekend_time": "7b0fb39481ca064106c2f7d609a3174408d7c9b1ce3f36a3f957c66e600ae800",
@@ -1117,6 +1118,8 @@
     </plurals>
     <string name="onboarding_reason_choices">Bu dili öğrenme nedenin</string>
     <string name="onboarding_aim_description">Kursunun hedef seviyesi, planının süresini belirler.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">Ülke</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
     <string name="onboarding_variety_description">Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre ayarlanır. Derslerde ve seslendirmelerinde %1$s kullanılır.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
