@@ -2,23 +2,15 @@ import { type PlanSetupTask } from "@zoonk/core/plans/setup";
 import {
   fitPlanToRoutineStep,
   runPlanSetupTaskStep,
-  searchRoutineMemoryStep,
   selectRoutineMemoryStep,
 } from "./steps/goal-plan-steps";
 
 async function fitPlanToRoutineInSteps(goalId: string): Promise<void> {
-  const search = await searchRoutineMemoryStep(goalId);
+  const memory = await selectRoutineMemoryStep(goalId);
 
-  if (!search) {
-    return;
+  if (memory) {
+    await fitPlanToRoutineStep({ goalId, memory });
   }
-
-  const memory =
-    "terms" in search
-      ? await selectRoutineMemoryStep({ goalId, terms: search.terms })
-      : search.memory;
-
-  await fitPlanToRoutineStep({ goalId, memory });
 }
 
 function runSetupTask({ goalId, task }: { goalId: string; task: PlanSetupTask }): Promise<void> {

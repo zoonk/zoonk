@@ -537,37 +537,37 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "The delivered lesson has one coherent idea: selecting a pivot table's summary function. Its single skill begins with an action verb and includes an explanatory sentence, concrete examples and a practical use. Sum, count and average naturally belong together. This coherence does not compensate for the missing requested construction procedure, which is assessed separately.",
+          "reasoning": "The lesson has one coherent purpose: constructing a pivot table and selecting its aggregation. Both skills are verb-first actions with canonical topics, one-sentence descriptions, examples, and workplace uses. Rows, Columns, Values, and Filters are closely linked components rather than unrelated ideas, and no split is needed.",
           "score": 9,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The opening brief supplies neither an everyday scene nor an ending question. No ungraded prediction follows the first explanation. Although explanations precede checks and several distractors are concrete, the plan lacks a worked pivot-table construction example and its less-supported follow-up. Learners do not choose rows and columns, and the final application misses the required workplace sales-by-region-and-month question. These combined structural omissions leave the requested procedure unclear, triggering the at-most-6 cap.",
-          "score": 6,
+          "reasoning": "The opening establishes a workplace problem, the first explanation precedes the guess and checks, and the guess tests a new case with plausible alternatives. However, the worked example lacks actual sales rows, an explicit summary function, and a computed output. Its reduced-help follow-up does not exercise the full configuration, and later checks never require choosing Rows, Columns, and aggregation together. The final application is realistic but misses the specifically required region-by-month sales question. These are substantial procedural and application weaknesses.",
+          "score": 7,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "The matching template fits selecting summary settings, and the application appropriately specifies an exact table rather than a decorative image. However, the explanations ask beginners to understand placing fields in the Values area and changing its settings without showing the pivot layout or the relevant arrangement. This is a missing instructional visual, triggering the at-most-8 cap. The activities are otherwise functional rather than decorative.",
-          "score": 8,
+          "reasoning": "The matching activity appropriately connects business questions to aggregation choices, and the supplied summary table is arithmetically correct. However, several screens require learners to picture the arrangement being taught: the Rows/Columns explanation names a configuration panel and resulting grid but shows neither, and the worked example provides no source table or visible configuration. The Rubén summary appears without its underlying records. The opening also includes a table despite the explicit text-only opening-scene requirement. Multiple missing or misplaced displays trigger the cap of 7.",
+          "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The wording is generally accessible Mexican Spanish, with appropriate terms such as folio, Súper and SPEI, and no unnecessary formulas. However, the result narrows the requested beginner lesson to an assumed later segment, relying on unexplained pivot-table areas and field placement. It also introduces filtering configurations without establishing them and substitutes personal spending for the required workplace sales application. These multiple level and scope slips trigger the at-most-7 cap.",
-          "score": 7,
+          "reasoning": "The language is appropriate Mexican Spanish, including natural workplace vocabulary and SPEI, with no Spain-specific terms. Explanations use accessible amounts and everyday situations rather than unnecessary notation. The content stays within pivot-table construction and aggregation, without reteaching the neighboring lessons on sorting, conditional functions, or charts. No level, scope, or language cap is triggered.",
+          "score": 9,
           "label": "Level, scope & language",
           "weight": 25
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "1 of 2 parts passed. Lesson 1 (\"Creación de tablas dinámicas\"): A lesson has exactly one guess, right after its first explanation or worked example and followed by another.",
-          "score": 5.5,
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -576,26 +576,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 8473,
-          "outputTokens": 990,
-          "reasoningTokens": 262
+          "inputTokens": 9766,
+          "outputTokens": 1289,
+          "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "The result omits the core procedure: creating a pivot table from a small sales dataset, assigning rows, columns and values, and choosing the summary function. There is no complete worked example followed by a similar, less-supported task. Calling this a later part does not supply the missing lesson. Checks never require choosing rows and columns, and the final application concerns personal bank expenses rather than workplace sales by region and month. The opening is an instructional objective rather than an everyday scene ending in a question, and the required ungraded prediction after the first explanation is absent.",
+          "conclusion": "The required procedural practice is incomplete. The worked example supplies column names but no small sales dataset, calculated result, or explicit summary-function selection. Its follow-up tests only Columns and Filters, with Rows and Values already supplied. No check asks learners to choose Rows, Columns, and the summary function for a sales question. The final application counts orders by category and shipping type instead of answering the required sales-by-region-and-month question. Several configuration explanations also leave beginners to imagine the pivot layout.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The matching activity describes averaging sales as finding the typical purchase 'per customer,' although the dataset has no customer field and the calculation is per sale. This wording could confuse transaction-level and customer-level averages.",
+          "conclusion": "The statement that Contar counts existing rows is too broad: it counts nonempty entries in the selected field, as a later screen correctly clarifies. The skill use case also describes average spending per customer, although Promedio de Venta calculates an average per sales record unless the data has one record per customer. The first explanation introduces the technical name before the concrete example, reversing the requested teaching order.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use a conventional title such as 'Tablas dinámicas: ventas por región y mes.' Preserve the useful examples of numeric identifiers and blank cells, but place them after a concrete construction example and use precise wording such as 'monto promedio por venta.'",
+          "conclusion": "Keep one sales dataset and reporting scenario through the initial explanations, worked example, and configuration practice. The frequent switches among named employees, expenses, shipments, and orders add unnecessary context changes. Label the unit of each record explicitly so learners can distinguish sales, orders, items, and customers.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -806,37 +806,37 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "Both skills use action-first Portuguese wording and include canonical topics, one-sentence ideas, examples, and practical uses. Catalysis and its influencing factors are related, so the lesson is not an unrelated bundle. However, its boundary is weak relative to the requested sequence–shape–function idea: a substantial kinetics strand replaces protein structure rather than supporting it. The weak-boundary cap of 8 applies.",
-          "score": 8,
+          "reasoning": "The split follows a defensible teaching sequence: protein structure and loss of function, followed by enzyme action and its regulation. Each lesson has two closely linked, verb-first skills with canonical topics, one-sentence ideas, examples, and uses. Titles, descriptions, and can-do lines are appropriately scoped to their respective lessons.",
+          "score": 9,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The scene precedes an explanation, which is immediately followed by an ungraded prediction; no check appears before teaching. Most briefs provide concrete cases, numerical conditions, correct responses, and tempting distractors. Later checks require interpreting experimental or industrial situations, and the final application suits the audience. However, the first graded milk-production question primarily asks learners to reproduce the mechanism just explained rather than use new evidence. The one-weak-check cap of 8 applies.",
+          "reasoning": "Both lessons follow scene–explanation–guess ordering, with no premature check. Checks and final applications are concrete, contextualized five-option questions with named tempting misconceptions. However, several briefs explicitly lead with the technical term rather than developing it from the concrete case, weakening the required concrete-to-name progression. The guesses are also not explicitly designated as unscored.",
           "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "The processOrder activity appropriately makes ordering the catalytic cycle the interaction itself. The active-site picture covers something the template cannot draw, while charts and tables are correctly specified in briefs rather than requested as pictures. The opening scene appropriately remains text-only. However, the explanation contrasting cooling with denaturation leaves the learner to imagine the intact versus altered protein structure; the earlier intact-site picture does not show that change. This missing visual triggers the cap of 8.",
-          "score": 8,
+          "reasoning": "The processOrder activity correctly makes ordering the catalytic cycle the interaction, and the active-site picture shows information that the template cannot. Charts and tables are appropriately specified in briefs rather than requested as pictures. However, the same complete folding image is repeated three times without a new visual treatment, and matchPairs rehearses terminology rather than the stated structure–function skill. These multiple visual/activity weaknesses trigger the cap of 7.",
+          "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The text is in Brazilian Portuguese, the terminology is broadly appropriate for intermediate secondary-school biology, and graded questions consistently use contextualized five-option formats. There is no AI-answer framing or inappropriate legal content. Scope is the principal weakness: the requested amino-acid-sequence-to-protein-shape explanation is absent, while substrate saturation becomes a substantial additional teaching strand. This scope slip triggers the cap of 8. Universal claims about specificity and irreversible denaturation also need qualification.",
-          "score": 8,
+          "reasoning": "The language is Brazilian Portuguese, and the contextualized checks generally suit secondary-school ENEM candidates. Technical vocabulary and simple numerical graphs are appropriate for intermediate study. Nevertheless, the second lesson repeats an explanation of cooling versus heat denaturation already taught in the first, triggering the scope-slip cap of 8. Categorical claims about freezing and temperature-dependent recovery also undermine the precision expected at this level.",
+          "score": 7,
           "label": "Level, scope & language",
           "weight": 25
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "2 of 3 parts passed. Lesson 1 (\"Proteínas: estrutura e desnaturação\"): Has 5 teaching screens in a row; a check comes after at most 4.",
-          "score": 7,
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -845,24 +845,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 10320,
-          "outputTokens": 1264,
-          "reasoningTokens": 516
+          "inputTokens": 13061,
+          "outputTokens": 1726,
+          "reasoningTokens": 1034
         }
       },
       "steps": [
         {
-          "conclusion": "The lesson substantially shifts the requested focus. It never teaches how an amino-acid sequence produces a protein's folded shape or develops the requested structure–function skill beyond substrate fit. Instead, it replaces that strand with extensive enzyme kinetics, especially substrate concentration and saturation. This leaves a central part of the supplied lesson description untaught.",
+          "conclusion": "The protein lesson incorrectly states that cooling or freezing cannot disrupt protein conformation; freezing can denature proteins, depending on the protein and conditions. The enzyme lesson likewise presents recovery after cooling and irreversible loss after heating as universal rather than properties of the example enzyme. The matchPairs activity also violates the task-specific requirement that the interaction practice the target skill: it matches structural-level names instead of practicing structure–function reasoning.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Several explanations overgeneralize: enzymes do not universally recognize only one substrate, and heat-induced loss of activity is not universally irreversible. The first graded check largely restates the preceding explanation under a milk-production context. Denaturation is explained without showing the structural change, although the existing active-site picture shows only an intact enzyme.",
+          "conclusion": "The identical three-level folding illustration is requested on three consecutive screens without any specified visual change. Several explanation briefs introduce terminology before the concrete observation. The second lesson also re-explains the cold-versus-heat denaturation contrast already taught in the first.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the process-order brief explain why each stage requires the preceding one. Identify the numerical enzyme curves as illustrative examples rather than implying that their exact temperature thresholds apply generally. Preserve the contextualized five-option checks, but give the first one evidence or a changed condition that requires inference.",
+          "conclusion": "Label the numerical enzyme curves as illustrative data for a specified enzyme. For processOrder, specify why each stage depends on the preceding stage, not just the correct sequence. Replace some obviously impossible multiple-choice distractors with plausible misconceptions about folding, catalytic reuse, and saturation.",
           "kind": "potentialImprovements",
           "score": 8
         }

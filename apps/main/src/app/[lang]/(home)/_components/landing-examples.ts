@@ -4,7 +4,7 @@ import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { lang } from "next/root-params";
-import { type ExamExample, type ExampleSet } from "./example-set";
+import { type DatedExamExample, type ExampleSet } from "./example-set";
 import { getLocaleExampleSet } from "./locale-example-sets";
 import { getNextSitting } from "./next-sitting";
 
@@ -23,7 +23,7 @@ type ExampleDays = { examDay: string | null; today: string };
 async function getCachedExampleDays({
   course,
   timeZone,
-}: Pick<ExamExample, "course" | "timeZone">): Promise<ExampleDays> {
+}: Pick<DatedExamExample, "course" | "timeZone">): Promise<ExampleDays> {
   "use cache";
 
   const found = course ? await getCourseExamDaysByRoute(course) : null;
@@ -32,7 +32,7 @@ async function getCachedExampleDays({
   return { examDay: found?.days.find((day) => day > today) ?? null, today };
 }
 
-async function getExampleDays({ course, timeZone }: ExamExample): Promise<ExampleDays> {
+async function getExampleDays({ course, timeZone }: DatedExamExample): Promise<ExampleDays> {
   try {
     return await getCachedExampleDays({ course, timeZone });
   } catch (error) {
@@ -45,8 +45,7 @@ async function getExampleDays({ course, timeZone }: ExamExample): Promise<Exampl
 }
 
 /** The exam example's next sitting, so the goal box never suggests a date that's gone. */
-export async function getExampleExamDay(): Promise<Date> {
-  const { exam } = await getExampleSet();
+export async function getExampleExamDay(exam: DatedExamExample): Promise<Date> {
   const { examDay, today } = await getExampleDays(exam);
 
   return exampleDay(examDay ?? getNextSitting({ sittings: exam.sittings, today }));

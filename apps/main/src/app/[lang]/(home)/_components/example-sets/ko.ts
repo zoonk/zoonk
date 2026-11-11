@@ -30,11 +30,10 @@ export const ko: ExampleSet = {
       review: ["미분", "수열"],
       scores: [{ label: "수학", range: "2–3등급" }],
     },
-    name: "수능",
     sittings: ["2026-11-19", "2027-11-18"],
     timeZone: "Asia/Seoul",
   },
-  exams: "수능, 공무원 시험, 자격증, 토익",
+  exams: "수능, 공무원 시험, 자격증, 토익, 학교 시험",
   move: "london",
   topic: {
     chapters: [

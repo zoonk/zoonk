@@ -1,5 +1,6 @@
 import { type Goal, type PlanItemStatus } from "@zoonk/db";
 import { type ChallengeTiming } from "../../checkpoints/_utils/challenge-timing";
+import { isPastPlusOnlyMock } from "../../checkpoints/plus-only-mock";
 import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { isWritingItem } from "../planner/plan-item-rules";
@@ -180,12 +181,25 @@ function getEarliestDate(items: readonly PlanReadItem[]): string | null {
   return dates.toSorted()[0] ?? null;
 }
 
-function buildMocks(items: readonly PlanReadItem[]): PlanPhaseView["mocks"] {
+function buildMocks({
+  items,
+  mocksRequirePlus,
+  today,
+}: {
+  items: readonly PlanReadItem[];
+  mocksRequirePlus: boolean;
+  today: Date | null;
+}): PlanPhaseView["mocks"] {
   const mocks = items.filter((item) => item.kind === "mock");
+
+  const isAhead = (item: PlanReadItem) =>
+    !today || !isPastPlusOnlyMock({ includesMockExams: !mocksRequirePlus, item, today });
 
   const next = mocks
     .flatMap((item) =>
-      item.status === "todo" && item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [],
+      item.status === "todo" && item.scheduledFor && isAhead(item)
+        ? [toIsoDate(item.scheduledFor)]
+        : [],
     )
     .toSorted()[0];
 
@@ -221,6 +235,7 @@ export function buildPhaseViews({
   estimateMinutes = null,
   goalKind,
   items: planItems,
+  mocksRequirePlus = false,
   outlinedUntil = null,
   phases,
   shortPlan = null,
@@ -241,6 +256,7 @@ export function buildPhaseViews({
   estimateMinutes?: number | null;
   goalKind: Goal["kind"];
   items: readonly PlanReadItem[];
+  mocksRequirePlus?: boolean;
   outlinedUntil?: string | null;
   phases: readonly PlanPhase[];
   shortPlan?: ShortPlanShape | null;
@@ -296,7 +312,7 @@ export function buildPhaseViews({
       kind: phase.kind,
       ...countLessonProgress(lessons),
       milestone: phase.milestone,
-      mocks: buildMocks(inPhase),
+      mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,

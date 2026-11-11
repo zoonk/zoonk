@@ -38,8 +38,18 @@ function getCharacterDistance(from: readonly string[], to: readonly string[]): n
   return rows[from.length]?.[to.length] ?? Math.max(from.length, to.length);
 }
 
-function getSubstitutionCost(expected: string, heard: string): number {
-  if (expected === heard) {
+type IsSameWord = (expected: string, heard: string) => boolean;
+
+function getSubstitutionCost({
+  expected,
+  heard,
+  isSameWord,
+}: {
+  expected: string;
+  heard: string;
+  isSameWord: IsSameWord;
+}): number {
+  if (isSameWord(expected, heard)) {
     return 0;
   }
 
@@ -50,7 +60,15 @@ function getSubstitutionCost(expected: string, heard: string): number {
   return MIN_SUBSTITUTION_COST + (1 - MIN_SUBSTITUTION_COST) * distance;
 }
 
-function buildCostTable(expected: readonly string[], heard: readonly string[]): number[][] {
+function buildCostTable({
+  expected,
+  heard,
+  isSameWord,
+}: {
+  expected: readonly string[];
+  heard: readonly string[];
+  isSameWord: IsSameWord;
+}): number[][] {
   const table = Array.from({ length: expected.length + 1 }, (_, row) =>
     Array.from({ length: heard.length + 1 }, (__, column) => (row === 0 ? column : row)),
   );
@@ -58,7 +76,12 @@ function buildCostTable(expected: readonly string[], heard: readonly string[]): 
   for (let row = 1; row <= expected.length; row += 1) {
     for (let column = 1; column <= heard.length; column += 1) {
       const cells = table[row];
-      const cost = getSubstitutionCost(expected[row - 1] ?? "", heard[column - 1] ?? "");
+
+      const cost = getSubstitutionCost({
+        expected: expected[row - 1] ?? "",
+        heard: heard[column - 1] ?? "",
+        isSameWord,
+      });
 
       if (cells) {
         cells[column] = Math.min(
@@ -73,8 +96,16 @@ function buildCostTable(expected: readonly string[], heard: readonly string[]): 
   return table;
 }
 
-export function alignWords(expected: readonly string[], heard: readonly string[]): AlignmentStep[] {
-  const table = buildCostTable(expected, heard);
+export function alignWords({
+  expected,
+  heard,
+  isSameWord = (expectedWord, heardWord) => expectedWord === heardWord,
+}: {
+  expected: readonly string[];
+  heard: readonly string[];
+  isSameWord?: IsSameWord;
+}): AlignmentStep[] {
+  const table = buildCostTable({ expected, heard, isSameWord });
   const cell = (row: number, column: number) => table[row]?.[column] ?? Number.POSITIVE_INFINITY;
 
   function walk(row: number, column: number, steps: AlignmentStep[]): AlignmentStep[] {
@@ -85,7 +116,11 @@ export function alignWords(expected: readonly string[], heard: readonly string[]
     const current = cell(row, column);
 
     if (row > 0 && column > 0) {
-      const cost = getSubstitutionCost(expected[row - 1] ?? "", heard[column - 1] ?? "");
+      const cost = getSubstitutionCost({
+        expected: expected[row - 1] ?? "",
+        heard: heard[column - 1] ?? "",
+        isSameWord,
+      });
 
       if (isStep(current, cost, cell(row - 1, column - 1))) {
         const step: AlignmentStep =

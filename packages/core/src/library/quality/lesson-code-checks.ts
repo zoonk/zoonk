@@ -213,9 +213,16 @@ export function toReviewedLesson({
     screens: lesson.screens.map((written, index) => {
       const converted = screens[index];
 
-      return converted?.ok
-        ? { content: converted.content, kind: converted.kind }
-        : { content: written, kind: written.kind };
+      if (!converted?.ok) {
+        return { content: written, kind: written.kind };
+      }
+
+      const newNumbers = converted.mathItem?.math.variables;
+
+      return {
+        content: newNumbers ? { ...converted.content, newNumbers } : converted.content,
+        kind: converted.kind,
+      };
     }),
     summary: lesson.summary,
   };

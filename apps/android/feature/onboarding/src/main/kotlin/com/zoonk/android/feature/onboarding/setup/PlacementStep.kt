@@ -404,6 +404,7 @@ internal fun ColumnScope.PlacementQuestion(
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
 
     QuestionPages(
+        questionId = item.itemId,
         read = {
             eyebrow?.let { Eyebrow(it) }
             media()
@@ -427,6 +428,18 @@ internal fun ColumnScope.PlacementQuestion(
                 )
             } else {
                 AnswerList(choices, picked, onPick = { picked = it })
+            }
+            TextButton(
+                onClick = {
+                    sender = PlacementSender.Stop
+                    onStop()
+                },
+                busy = pending && sender == PlacementSender.Stop,
+                enabled = !pending,
+                focusableWhenDisabled = pending,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.onboarding_placement_stop))
             }
         },
     ) {
@@ -460,18 +473,6 @@ internal fun ColumnScope.PlacementQuestion(
                 }
             },
         )
-        TextButton(
-            onClick = {
-                sender = PlacementSender.Stop
-                onStop()
-            },
-            busy = pending && sender == PlacementSender.Stop,
-            enabled = !pending,
-            focusableWhenDisabled = pending,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(stringResource(R.string.onboarding_placement_stop))
-        }
     }
 }
 

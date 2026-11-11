@@ -18,6 +18,7 @@ import {
   getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
+import { isPastPlusOnlyMock } from "../plus-only-mock";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
 
 const WEEK_DAYS = 7;
@@ -30,10 +31,23 @@ export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
   return WEEKLY_KINDS.has(item.kind);
 }
 
-export function findNextWeeklyItem<Item extends Pick<PlanItem, "kind" | "status">>(
-  items: readonly Item[],
-): Item | undefined {
-  return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
+type WeeklyItem = Pick<PlanItem, "kind" | "scheduledFor" | "status">;
+
+export function findNextWeeklyItem<Item extends WeeklyItem>({
+  includesMockExams,
+  items,
+  today,
+}: {
+  includesMockExams: boolean;
+  items: readonly Item[];
+  today: Date;
+}): Item | undefined {
+  return items.find(
+    (item) =>
+      isWeeklyChallengeItem(item) &&
+      item.status === "todo" &&
+      !isPastPlusOnlyMock({ includesMockExams, item, today }),
+  );
 }
 
 export function isPlusOnlyMockDay({
@@ -42,10 +56,10 @@ export function isPlusOnlyMockDay({
   today,
 }: {
   includesMockExams: boolean;
-  items: readonly Pick<PlanItem, "kind" | "scheduledFor" | "status">[];
+  items: readonly WeeklyItem[];
   today: Date;
 }): boolean {
-  const item = findNextWeeklyItem(items);
+  const item = findNextWeeklyItem({ includesMockExams, items, today });
 
   return (
     !includesMockExams &&
@@ -168,7 +182,7 @@ export async function loadSessionWeeklyChallenge({
   today: Date;
   userId: string;
 }): Promise<SessionWeeklyChallenge> {
-  const item = findNextWeeklyItem(items);
+  const item = findNextWeeklyItem({ includesMockExams, items, today });
 
   if (!item || !item.scheduledFor || item.scheduledFor > today) {
     return { checkpoint: null, plusRequired: false };

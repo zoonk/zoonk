@@ -1,7 +1,10 @@
 import { countWords, replaceEmDashes } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { countListeningVoices } from "../audio/listening-voices";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
+import { fitsTypedQuestion } from "./listening-answer-fit";
 import {
+  LISTENING_GENDERS,
   type ListeningQuestion,
   type ListeningQuestionFormat,
   type ListeningSet,
@@ -14,9 +17,6 @@ import {
  */
 const MIN_SCRIPT_WORDS = 40;
 const MAX_SCRIPT_WORDS = 1000;
-
-/** Exam recordings rarely have more voices than this (IELTS Part 3 has up to four). */
-const MAX_SPEAKERS = 4;
 
 /** Stage directions and sound cues a voice would read aloud: "[laughs]", "(pause)". */
 const STAGE_DIRECTIONS = /\[[^\]]*\]|\([^)]*\)/gu;
@@ -169,6 +169,13 @@ function isAnswerHeard(script: string, question: ListeningQuestion): boolean {
   });
 }
 
+function hasFittingAnswer(question: ListeningQuestion): boolean {
+  return (
+    question.format !== "typed" ||
+    question.acceptedAnswers.some((answer) => fitsTypedQuestion(answer, question))
+  );
+}
+
 function findQuestionProblems(script: string, question: ListeningQuestion): string[] {
   const label = `"${getQuestionText(question).slice(0, 60)}"`;
 
@@ -177,7 +184,21 @@ function findQuestionProblems(script: string, question: ListeningQuestion): stri
       `${label}: its evidence isn't in the script word for word.`,
     !isAnswerHeard(script, question) &&
       `${label}: none of its accepted answers is said in the script.`,
+    !hasFittingAnswer(question) &&
+      `${label}: none of its accepted answers fits its word limit and gap.`,
   ].filter((problem) => typeof problem === "string");
+}
+
+/** Each speaker gets a voice of their gender; past that many, two would sound the same. */
+function findSharedVoices(speakers: ListeningSet["speakers"]): string[] {
+  return LISTENING_GENDERS.flatMap((gender) => {
+    const count = speakers.filter((speaker) => speaker.gender === gender).length;
+    const voices = countListeningVoices(gender);
+
+    return count > voices
+      ? [`Has ${count} ${gender} speakers; only ${voices} voices tell them apart.`]
+      : [];
+  });
 }
 
 function findScriptProblems(set: ListeningSet): string[] {
@@ -190,7 +211,7 @@ function findScriptProblems(set: ListeningSet): string[] {
 
   return [
     names.size !== set.speakers.length && "Two speakers have the same name.",
-    set.speakers.length > MAX_SPEAKERS && `Has ${set.speakers.length} speakers; at most 4.`,
+    ...findSharedVoices(set.speakers),
     strangers.size > 0 &&
       `Lines are said by people not in the speakers: ${[...strangers].join(", ")}.`,
     words < MIN_SCRIPT_WORDS && `The script has ${words} words; a recording needs at least 40.`,

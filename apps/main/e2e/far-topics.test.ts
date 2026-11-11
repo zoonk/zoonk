@@ -1,13 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
 const GENERATIONS_URL = "**/v1/goals/*/skills/*/outline/generations";
@@ -66,23 +67,29 @@ async function createLearner() {
   return { far, user };
 }
 
+async function stubOutline(page: Page) {
+  const outline = { requested: 0 };
+
+  await page.route(GENERATIONS_URL, async (route) => {
+    outline.requested += 1;
+    await route.fulfill({ json: { generationId: "run-1", status: "writing" }, status: 202 });
+  });
+
+  await page.route(OUTLINE_URL, (route) =>
+    route.fulfill({
+      json: { chapters: [], status: outline.requested > 0 ? "writing" : "available" },
+      status: 200,
+    }),
+  );
+
+  return outline;
+}
+
 test.describe("Far topics", () => {
   test("write their lessons only once the learner taps", async ({ browser }) => {
     const { far, user } = await createLearner();
     const page = await openAs(browser, user);
-    let requested = 0;
-
-    await page.route(GENERATIONS_URL, async (route) => {
-      requested += 1;
-      await route.fulfill({ json: { generationId: "run-1", status: "writing" }, status: 202 });
-    });
-
-    await page.route(OUTLINE_URL, (route) =>
-      route.fulfill({
-        json: { chapters: [], status: requested > 0 ? "writing" : "available" },
-        status: 200,
-      }),
-    );
+    const outline = await stubOutline(page);
 
     await page.goto("/plan/inference");
 
@@ -90,12 +97,28 @@ test.describe("Far topics", () => {
     const sheet = page.getByRole("dialog", { name: far.name });
     const see = sheet.getByRole("button", { name: "See the lessons" });
     await expect(see).toBeVisible();
-    expect(requested).toBe(0);
+    expect(outline.requested).toBe(0);
 
     await see.click();
     const preparing = sheet.getByRole("status").filter({ hasText: /Preparing the lessons/u });
     await expect(preparing).toBeVisible();
-    expect(requested).toBe(1);
+    expect(outline.requested).toBe(1);
+
+    await page.context().close();
+  });
+
+  test("a far topic pressed before the page hydrates opens once it does", async ({ browser }) => {
+    const { far, user } = await createLearner();
+    const page = await openAs(browser, user);
+    await stubOutline(page);
+
+    const release = await holdScripts(page);
+    await page.goto("/plan/inference", { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: new RegExp(far.name, "u") }).click();
+    await release();
+
+    const sheet = page.getByRole("dialog", { name: far.name });
+    await expect(sheet.getByRole("button", { name: "See the lessons" })).toBeVisible();
 
     await page.context().close();
   });
