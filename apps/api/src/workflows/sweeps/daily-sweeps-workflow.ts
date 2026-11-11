@@ -18,6 +18,7 @@ import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-leve
 import { updateCoursesBehind } from "../products/product-releases";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
+  checkLevelTestAnswersStep,
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
@@ -46,6 +47,7 @@ type SweepCounts = {
   guestsDeleted: number;
   itemsRecalibrated: number;
   levelTestBankChecks: number;
+  levelTestQuestionsRemoved: number;
   memoryFactsPurged: number;
   oauthRecordsPurged: number;
   pictureChecks: number;
@@ -170,6 +172,7 @@ async function sweep(): Promise<SweepCounts> {
     courseReleases,
     pictures,
     levelTestBanks,
+    levelTestAnswers,
     sentenceOrders,
     skillLevels,
   ] = await Promise.allSettled([
@@ -187,6 +190,7 @@ async function sweep(): Promise<SweepCounts> {
     updateCoursesBehind(),
     checkOwedPictures(),
     checkOwedLevelTestBanks(),
+    checkLevelTestAnswersStep(),
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
   ]);
@@ -201,6 +205,7 @@ async function sweep(): Promise<SweepCounts> {
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
     levelTestBankChecks: countOf(levelTestBanks),
+    levelTestQuestionsRemoved: countOf(levelTestAnswers),
     memoryFactsPurged: countOf(facts),
     oauthRecordsPurged: access.status === "fulfilled" ? access.value.oauthRecordsPurged : 0,
     pictureChecks: countOf(pictures),
