@@ -13,6 +13,7 @@ import {
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
+import { authDatabase } from "./auth-database";
 import {
   AUTH_ADVANCED_OPTIONS,
   AUTH_MEMBERSHIP_LIMIT,
@@ -34,6 +35,7 @@ import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
 import { appAttestPlugin } from "./plugins/app-attest";
 import { botCheckPlugin } from "./plugins/bot-check";
+import { cliLoginPlugins } from "./plugins/cli-login";
 import { guestPlugin } from "./plugins/guest";
 import { restoreKeyPlugin } from "./plugins/restore-key";
 import { sessionHintPlugin } from "./plugins/session-hint";
@@ -42,7 +44,6 @@ import { nameProviderAccount } from "./provider-username";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
-import { stripeRowsOnly } from "./stripe/stripe-rows-only";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
@@ -61,7 +62,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     fallback: getBaseUrl(),
     protocol: isLocalhostSupported() ? "http" : "https",
   },
-  database: prismaAdapter(stripeRowsOnly, { provider: "postgresql" }),
+  database: prismaAdapter(authDatabase, { provider: "postgresql" }),
   databaseHooks: {
     session: {
       create: {
@@ -105,6 +106,8 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       },
     },
   },
+  // Device authorization's own token endpoint would turn a CLI login into a full session.
+  disabledPaths: ["/device/token"],
   hooks: { before: validateEmailBeforeOTP },
   secret:
     process.env.BETTER_AUTH_SECRET || (isLocalhostSupported() ? LOCAL_AUTH_SECRET : undefined),
@@ -165,6 +168,7 @@ export const fullPlugins = [
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
+  ...cliLoginPlugins,
   stripePlugin(),
   trustedOriginPlugin(),
   guestPlugin(),

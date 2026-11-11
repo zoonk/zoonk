@@ -13,6 +13,7 @@
     "./available-username": "./src/available-username.ts",
     "./certificate-issuance": "./src/certificate-issuance.ts",
     "./client": "./src/client.ts",
+    "./cli-login-contract": "./src/cli-login-contract.ts",
     "./cookies": "./src/cookies.ts",
     "./email-deletion-contract": "./src/email-deletion-contract.ts",
     "./email-signup-contract": "./src/email-signup-contract.ts",
