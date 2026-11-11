@@ -91,6 +91,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 
   const service = { currentDirectory, environment, projectName };
   const mainUrl = getServiceUrl({ ...service, serviceName: "main" });
+  const adminUrl = getServiceUrl({ ...service, serviceName: "admin" });
   const apiUrl = getServiceUrl({ ...service, serviceName: "api" });
   const mailboxUrl = getServiceUrl({ ...service, serviceName: "mailbox" });
 
@@ -100,6 +101,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 
   const stackEnvironment = {
     ...environment,
+    ADMIN_APP_URL: adminUrl,
     MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
     MAIN_APP_URL: mainUrl,
     NEXT_PUBLIC_API_URL: apiUrl,

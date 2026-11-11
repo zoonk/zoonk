@@ -19,6 +19,8 @@
     "./errors": "./src/errors.ts",
     "./google-service-account": "./src/google/service-account.ts",
     "./next": "./src/next.ts",
+    "./passkey-approval": "./src/passkeys/passkey-approval.ts",
+    "./passkey-approval-contract": "./src/passkeys/passkey-approval-contract.ts",
     "./name-rules": "./src/name-rules.ts",
     "./native-apple": "./src/native-apple.ts",
     "./native-apple-contract": "./src/native-apple-contract.ts",
@@ -45,6 +47,7 @@
   },
   "dependencies": {
     "@better-auth/oauth-provider": "1.7.20",
+    "@better-auth/passkey": "1.7.20",
     "@better-auth/prisma-adapter": "1.7.20",
     "@better-auth/stripe": "1.7.20",
     "@simplewebauthn/server": "14.1.0",

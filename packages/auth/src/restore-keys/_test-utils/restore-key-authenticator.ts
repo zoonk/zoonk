@@ -65,7 +65,7 @@ function bytes(base64url = "") {
   return new Uint8Array(Buffer.from(base64url, "base64url"));
 }
 
-function encodeCoseKey({ algorithm, publicKey }: RestoreKeyAuthenticator) {
+export function encodeCoseKey({ algorithm, publicKey }: RestoreKeyAuthenticator) {
   const jwk = publicKey.export({ format: "jwk" });
 
   const fields: [number, number | Uint8Array][] =
@@ -153,14 +153,15 @@ export function makeRegistrationJson({
 /** What Credential Manager's `RestoreCredential.authenticationResponseJson` holds. */
 export function makeAssertionJson({
   challenge,
+  flags = BACKED_UP_FLAGS,
   key,
   origin,
   rpId = RESTORE_KEY_RP_ID,
   signer = key,
-}: Ceremony & { key: RestoreKeyAuthenticator; signer?: RestoreKeyAuthenticator }) {
+}: Ceremony & { flags?: number; key: RestoreKeyAuthenticator; signer?: RestoreKeyAuthenticator }) {
   const authenticatorData = Buffer.concat([
     sha256(rpId),
-    Buffer.from([BACKED_UP_FLAGS]),
+    Buffer.from([flags]),
     Buffer.alloc(COUNTER_BYTES),
   ]);
 
