@@ -76,9 +76,11 @@ internal fun mapLesson(number: Int) = "1e550000-0000-4000-8000-%012d".format(Loc
 
 internal fun lessonGroupJson(
     chapter: Int,
-    count: Int,
+    lessons: List<Int>,
     locked: Int = 0,
-) = """{"chapterId":"${mapChapter(chapter)}","count":$count,"locked":$locked}"""
+) = """{"chapterId":"${mapChapter(chapter)}","count":${lessons.size + locked},"lessonIds":[${lessons.joinToString(
+    ",",
+) { "\"${mapLesson(it)}\"" }}],"locked":$locked}"""
 
 internal fun savedJson(
     kind: String,

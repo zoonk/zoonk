@@ -9,9 +9,9 @@ class MindMapDeckTest {
         goalMindMaps(
             lessonGroups =
                 listOf(
-                    lessonGroupJson(3, count = 3),
-                    lessonGroupJson(5, count = 4, locked = 4),
-                    lessonGroupJson(6, count = 2, locked = 1),
+                    lessonGroupJson(3, lessons = listOf(2, 3, 4)),
+                    lessonGroupJson(5, lessons = emptyList(), locked = 4),
+                    lessonGroupJson(6, lessons = listOf(7), locked = 1),
                 ),
             saved =
                 listOf(
@@ -25,7 +25,7 @@ class MindMapDeckTest {
     fun aDeckHoldsOnlyTheMapsThatOpen() {
         assertEquals(listOf(DeckSlot.Chapter(mapChapter(1)), DeckSlot.Chapter(mapChapter(2))), maps.deck(StudyTab.Chapters))
         assertEquals(
-            listOf(0, 1, 2).map { DeckSlot.LessonOf(mapChapter(3), it) } + DeckSlot.LessonOf(mapChapter(6), 0),
+            listOf(2, 3, 4).map { DeckSlot.Lesson(mapChapter(3), mapLesson(it)) } + DeckSlot.Lesson(mapChapter(6), mapLesson(7)),
             maps.deck(StudyTab.Lessons),
         )
         assertEquals(
@@ -35,15 +35,14 @@ class MindMapDeckTest {
     }
 
     @Test
-    fun aLessonResumesAtItsPlaceInItsChaptersRunOnceTheChapterIsRead() {
+    fun aLessonsDeckHoldsTheLessonsItOpenedWithAndKnowsEachPlaceBeforeItsChapterIsRead() {
         val deck = maps.deck(StudyTab.Lessons)
-        val read = mapOf(mapChapter(3) to listOf(mapLesson(1), mapLesson(2), mapLesson(3)))
 
-        assertEquals(1, deck.indexOf(MapPlace(mapChapter(3), mapLesson(2)), read::get))
-        assertEquals(0, deck.indexOf(MapPlace(mapChapter(3), mapLesson(2))) { null })
-        assertEquals(3, deck.indexOf(MapPlace(mapChapter(6)), read::get))
-        assertNull(deck.indexOf(MapPlace(mapChapter(5)), read::get))
-        assertEquals(MapPlace(mapChapter(3), mapLesson(3)), deck[2].place(read::get))
+        assertEquals(1, deck.indexOfPlace(MapPlace(mapChapter(3), mapLesson(3))))
+        assertEquals(0, deck.indexOfPlace(MapPlace(mapChapter(3), mapLesson(9))))
+        assertEquals(3, deck.indexOfPlace(MapPlace(mapChapter(6))))
+        assertNull(deck.indexOfPlace(MapPlace(mapChapter(5))))
+        assertEquals(MapPlace(mapChapter(3), mapLesson(4)), deck[2].place)
     }
 
     @Test

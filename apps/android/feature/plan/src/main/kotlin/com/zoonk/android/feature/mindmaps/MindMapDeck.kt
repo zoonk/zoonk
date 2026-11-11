@@ -35,14 +35,6 @@ sealed interface DeckSlot {
         override val chapterId: String,
     ) : DeckSlot
 
-    /** The chapter's [index]th lesson map that opens, read when the deck reaches the chapter. */
-    @Serializable
-    @SerialName("lessonOf")
-    data class LessonOf(
-        override val chapterId: String,
-        val index: Int,
-    ) : DeckSlot
-
     @Serializable
     @SerialName("lesson")
     data class Lesson(
@@ -70,8 +62,8 @@ data class MapPlace(
 
 /**
  * The tab's maps in syllabus order, Plus-locked ones left out: chapters' ready maps; every chapter's
- * open lesson maps, counted from the list so the deck knows its length before any is read; or the
- * saved maps that open.
+ * open lesson maps, as the list names them, read when the deck reaches their chapter; or the saved
+ * maps that open.
  */
 fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
     when (tab) {
@@ -81,7 +73,7 @@ fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
 
         StudyTab.Lessons -> {
             lessonGroups.flatMap { group ->
-                List((group.count - group.locked).toInt()) { DeckSlot.LessonOf(group.chapterId.toString(), it) }
+                group.lessonIds.map { DeckSlot.Lesson(group.chapterId.toString(), it.toString()) }
             }
         }
 
@@ -99,39 +91,20 @@ fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
 /** A chapter map ready to read. */
 val GoalMindMap.opens: Boolean get() = status == GoalMindMap.Status.READY && outline != null
 
-/**
- * Where [place] sits in the deck, or null when it isn't in it. A lesson in a chapter's run of lesson
- * maps is found among [openLessons] (the chapter's open lesson ids, once read), and otherwise opens
- * at the chapter's first.
- */
-fun List<DeckSlot>.indexOf(
-    place: MapPlace,
-    openLessons: (chapterId: String) -> List<String>?,
-): Int? {
-    val exact =
-        indexOfFirst { slot ->
-            when (slot) {
-                is DeckSlot.Chapter -> place.lessonId == null && slot.chapterId == place.chapterId
-                is DeckSlot.Lesson -> slot.lessonId == place.lessonId
-                is DeckSlot.LessonOf -> false
-            }
-        }
-    if (exact >= 0) return exact
-
-    val first = indexOfFirst { it is DeckSlot.LessonOf && it.chapterId == place.chapterId }
-    if (first < 0) return null
-    val count = count { it is DeckSlot.LessonOf && it.chapterId == place.chapterId }
-    val within = place.lessonId?.let { openLessons(place.chapterId)?.indexOf(it) } ?: 0
-    return first + within.coerceIn(0, count - 1)
+/** Where [place] sits in the deck, else its chapter's first map, or null when its chapter isn't in it. */
+fun List<DeckSlot>.indexOfPlace(place: MapPlace): Int? {
+    val exact = indexOfFirst { it.place == place }
+    val chapter = indexOfFirst { it.chapterId == place.chapterId }
+    return exact.takeIf { it >= 0 } ?: chapter.takeIf { it >= 0 }
 }
 
-/** What [slot] shows, to resume at; a lesson the deck hasn't read yet is its chapter's run. */
-fun DeckSlot.place(openLessons: (chapterId: String) -> List<String>?): MapPlace =
-    when (this) {
-        is DeckSlot.Chapter -> MapPlace(chapterId)
-        is DeckSlot.Lesson -> MapPlace(chapterId, lessonId)
-        is DeckSlot.LessonOf -> MapPlace(chapterId, openLessons(chapterId)?.getOrNull(index))
-    }
+/** The map [this] shows, to resume at. */
+val DeckSlot.place: MapPlace
+    get() =
+        when (this) {
+            is DeckSlot.Chapter -> MapPlace(chapterId)
+            is DeckSlot.Lesson -> MapPlace(chapterId, lessonId)
+        }
 
 /** Where this device stopped in a goal's tab, kept with the learner's other work on the device. */
 fun studyPlaceKey(

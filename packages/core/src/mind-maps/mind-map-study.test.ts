@@ -120,7 +120,7 @@ describe("mind maps study page", () => {
   });
 
   it("counts and lists every written lesson's published map, never a staged or unwritten one", async () => {
-    const { beginner, first, goal, lessons, second } = await writtenCourseGoal();
+    const { beginner, extra, first, goal, lessons, second } = await writtenCourseGoal();
     const [labelless, staged, unwritten, broken] = lessons;
 
     await Promise.all([
@@ -135,8 +135,8 @@ describe("mind maps study page", () => {
     const list = await readyList(goal.id);
 
     expect(list.lessonGroups).toStrictEqual([
-      { chapterId: first, count: 1, locked: 0 },
-      { chapterId: beginner.id, count: 1, locked: 0 },
+      { chapterId: first, count: 1, lessonIds: [labelless?.id], locked: 0 },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
     ]);
 
     expect(list.firstTab).toBe("lessons");

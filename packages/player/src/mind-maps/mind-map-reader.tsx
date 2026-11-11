@@ -130,7 +130,7 @@ function Reader({
       ? findLessonMap({ lessons: chapterLessons, slide: shown })
       : null;
 
-  const lessonId = shown.kind === "lesson" ? (lesson?.lessonId ?? shown.lessonId) : null;
+  const lessonId = shown.kind === "lesson" ? shown.lessonId : null;
   const isFirst = at.index === 0;
   const isLast = at.index === deck.length - 1;
   const heading = useSlideTitle({ lesson, slide: shown });

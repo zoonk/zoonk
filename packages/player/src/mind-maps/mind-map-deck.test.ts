@@ -70,19 +70,19 @@ describe(buildMindMapDeck, () => {
       mindMaps: mindMaps({
         chapters: [chapter("a"), chapter("b")],
         lessonGroups: [
-          { chapterId: "a", count: 3, locked: 1 },
-          { chapterId: "b", count: 1, locked: 0 },
+          { chapterId: "a", count: 3, lessonIds: ["l1", "l3"], locked: 1 },
+          { chapterId: "b", count: 1, lessonIds: ["l4"], locked: 0 },
         ],
       }),
       view: "lessons",
     });
 
     expect(
-      deck.map((slide) => [slide.chapterId, slide.kind === "lesson" && slide.slot]),
+      deck.map((slide) => [slide.chapterId, slide.kind === "lesson" && slide.lessonId]),
     ).toStrictEqual([
-      ["a", 0],
-      ["a", 1],
-      ["b", 0],
+      ["a", "l1"],
+      ["a", "l3"],
+      ["b", "l4"],
     ]);
   });
 
@@ -106,24 +106,23 @@ describe(buildMindMapDeck, () => {
 });
 
 describe(findLessonMap, () => {
-  const slide = buildMindMapDeck({
+  const deck = buildMindMapDeck({
     mindMaps: mindMaps({
       chapters: [chapter("a")],
-      lessonGroups: [{ chapterId: "a", count: 3, locked: 1 }],
+      lessonGroups: [{ chapterId: "a", count: 2, lessonIds: ["l2", "l3"], locked: 0 }],
     }),
     view: "lessons",
-  })[1];
-
-  it("a slot counts only the maps that open", () => {
-    const lessons = [lesson("l1"), lesson("l2", { locked: true, map: null }), lesson("l3")];
-
-    expect(slide?.kind === "lesson" && findLessonMap({ lessons, slide })?.lessonId).toBe("l3");
   });
 
-  it("a slot the chapter no longer fills finds nothing", () => {
-    expect(
-      slide?.kind === "lesson" && findLessonMap({ lessons: [lesson("l1")], slide }),
-    ).toBeNull();
+  const read = (lessons: LessonMindMap[]) =>
+    deck.map((slide) => slide.kind === "lesson" && findLessonMap({ lessons, slide })?.lessonId);
+
+  it("keeps the maps the deck opened with when an earlier lesson's map is written meanwhile", () => {
+    expect(read([lesson("l1"), lesson("l2"), lesson("l3")])).toStrictEqual(["l2", "l3"]);
+  });
+
+  it("finds nothing for a map that no longer opens", () => {
+    expect(read([lesson("l2", { locked: true, map: null })])).toStrictEqual([undefined, undefined]);
   });
 });
 
@@ -132,18 +131,15 @@ describe(findDeckStart, () => {
     mindMaps: mindMaps({
       chapters: [chapter("a"), chapter("b")],
       lessonGroups: [
-        { chapterId: "a", count: 2, locked: 0 },
-        { chapterId: "b", count: 2, locked: 0 },
+        { chapterId: "a", count: 2, lessonIds: ["l1", "l2"], locked: 0 },
+        { chapterId: "b", count: 2, lessonIds: ["l3", "l4"], locked: 0 },
       ],
     }),
     view: "lessons",
   });
 
   it("opens on the lesson the place names", () => {
-    const lessons = [lesson("l1"), lesson("l2")];
-    const place = { chapterId: "b", lessonId: "l2" };
-
-    expect(findDeckStart({ deck, lessons, place })).toBe(3);
+    expect(findDeckStart({ deck, place: { chapterId: "b", lessonId: "l4" } })).toBe(3);
   });
 
   it("opens on the chapter's first map when the lesson isn't among its maps", () => {

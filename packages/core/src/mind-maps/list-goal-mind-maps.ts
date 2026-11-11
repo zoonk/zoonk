@@ -37,8 +37,10 @@ function toLessonGroups({
   return chapters.flatMap(({ chapterId }) => {
     const maps = lessonMaps.get(chapterId) ?? [];
 
+    const open = maps.filter((map) => !map.locked).map((map) => map.lessonId);
+
     return maps.length > 0
-      ? [{ chapterId, count: maps.length, locked: maps.filter((map) => map.locked).length }]
+      ? [{ chapterId, count: maps.length, lessonIds: open, locked: maps.length - open.length }]
       : [];
   });
 }

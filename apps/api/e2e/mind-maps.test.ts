@@ -305,7 +305,9 @@ test.describe("Mind maps API", () => {
         schema: goalMindMapsSchema,
       }),
     ).resolves.toMatchObject({
-      lessonGroups: [{ chapterId: finished.id, count: 1, locked: 0 }],
+      lessonGroups: [
+        { chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id], locked: 0 },
+      ],
       saved: [
         {
           available: true,

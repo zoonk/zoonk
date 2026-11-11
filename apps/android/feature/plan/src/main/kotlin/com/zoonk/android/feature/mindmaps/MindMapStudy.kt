@@ -130,11 +130,6 @@ fun MindMapStudyScreen(
             remember(host.session, goal.id, tab) { app.drafts.open(host.session, studyPlaceKey(goal.id, tab), MapPlace.serializer()) }
         var saved by rememberSaveable { mutableStateOf<String?>(null) }
         val opening = remember(saved) { saved?.let { ApiJson.decodeFromString(StudyOpening.serializer(), it) } }
-        val openLessons = { chapterId: String ->
-            store.lessonMaps[ChapterKey(goal.id, UUID.fromString(chapterId))]
-                .state.value.value
-                ?.openIds
-        }
         val maps = list.value
         val scope = rememberCoroutineScope()
 
@@ -142,11 +137,8 @@ fun MindMapStudyScreen(
             if (opening == null && maps != null) {
                 LaunchedEffect(Unit) {
                     val place = MapPlace.of(route.start) ?: handle.value.first()
-                    val lessonChapter = place?.takeIf { it.lessonId != null && tab == StudyTab.Lessons }?.chapterId
-                    // A lesson's place in its chapter's run is known once the chapter's lesson maps are read.
-                    lessonChapter?.let { store.lessonMaps[ChapterKey(goal.id, UUID.fromString(it))].prepare() }
                     val deck = maps.deck(tab)
-                    val start = place?.let { deck.indexOf(it, openLessons) } ?: 0
+                    val start = place?.let { deck.indexOfPlace(it) } ?: 0
                     saved = ApiJson.encodeToString(StudyOpening.serializer(), StudyOpening(deck, start))
                 }
             }
@@ -194,15 +186,12 @@ fun MindMapStudyScreen(
                         close = close,
                         save = viewModel::save,
                         navigate = navigator::open,
-                        settled = { slot -> scope.launch { handle.save(slot.place(openLessons)) } },
+                        settled = { slot -> scope.launch { handle.save(slot.place) } },
                     ),
             )
         }
     }
 }
-
-private val com.zoonk.api.models.ChapterLessonMaps.openIds: List<String>
-    get() = lessons.filter { it.opens }.map { it.lessonId.toString() }
 
 private val LessonMindMap.opens: Boolean get() = !locked && map != null
 
@@ -240,21 +229,23 @@ private fun slideOf(
 ): Slide {
     val chapterId = UUID.fromString(slot.chapterId)
     val chapter = maps.chapters.firstOrNull { it.chapterId == chapterId }
-    if (slot is DeckSlot.Chapter) {
-        val outline = chapter?.outline?.takeIf { chapter.opens } ?: return Slide.Gone
-        return Slide.Chapter(chapterId, chapter.position, ViewedMap(chapter.title, chapter.image, outline), chapter.saved)
-    }
+    val lessonId =
+        when (slot) {
+            is DeckSlot.Chapter -> {
+                val outline = chapter?.outline?.takeIf { chapter.opens } ?: return Slide.Gone
+                return Slide.Chapter(chapterId, chapter.position, ViewedMap(chapter.title, chapter.image, outline), chapter.saved)
+            }
+
+            is DeckSlot.Lesson -> {
+                slot.lessonId
+            }
+        }
 
     val resource = app.mindMaps.lessonMaps[ChapterKey(goalId, chapterId)]
     val read by resource.collectShown()
     val scope = rememberCoroutineScope()
     val lessons = read.value?.lessons?.filter { it.opens }
-    val lesson =
-        when (slot) {
-            is DeckSlot.LessonOf -> lessons?.getOrNull(slot.index)
-            is DeckSlot.Lesson -> lessons?.firstOrNull { it.lessonId.toString() == slot.lessonId }
-            is DeckSlot.Chapter -> null
-        }
+    val lesson = lessons?.firstOrNull { it.lessonId.toString() == lessonId }
     return when {
         lesson != null -> Slide.Lesson(chapterId, chapter?.position ?: read.value?.chapter?.position ?: 0, lesson)
         lessons != null -> Slide.Gone
@@ -365,7 +356,6 @@ private val DeckSlot.key: String
     get() =
         when (this) {
             is DeckSlot.Chapter -> "chapter-$chapterId"
-            is DeckSlot.LessonOf -> "lessons-$chapterId-$index"
             is DeckSlot.Lesson -> "lesson-$lessonId"
         }
 

@@ -76,7 +76,8 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
   }
 
   const deck = buildMindMapDeck({ mindMaps: result.mindMaps, view });
-  const opening = deck[findDeckStart({ deck, place })];
+  const start = findDeckStart({ deck, place });
+  const opening = deck[start];
 
   // The lesson maps of the chapter the deck opens on, so its first map is drawn with the page.
   const lessons =
@@ -89,7 +90,7 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
       deck={deck}
       goalId={goal.id}
       lessons={opening && lessons ? { [opening.chapterId]: lessons } : {}}
-      start={findDeckStart({ deck, lessons: lessons ?? [], place })}
+      start={start}
       view={view}
     />
   );

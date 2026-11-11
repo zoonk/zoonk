@@ -198,7 +198,12 @@ class MindMapScreenshots {
                 mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
             )
         val GROUPS =
-            listOf(lessonGroupJson(1, 4), lessonGroupJson(2, 3), lessonGroupJson(7, 5, locked = 5), lessonGroupJson(11, 6, locked = 2))
+            listOf(
+                lessonGroupJson(1, (1..4).toList()),
+                lessonGroupJson(2, (5..7).toList()),
+                lessonGroupJson(7, emptyList(), locked = 5),
+                lessonGroupJson(11, (8..11).toList(), locked = 2),
+            )
         val SAVED =
             listOf(
                 savedJson("chapter", mapChapter(1), "Motion and forces", chapter = 1),
