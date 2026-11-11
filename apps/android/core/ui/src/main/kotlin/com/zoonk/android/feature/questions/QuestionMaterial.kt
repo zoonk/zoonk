@@ -1,8 +1,5 @@
 package com.zoonk.android.feature.questions
 
-import androidx.compose.ui.text.buildAnnotatedString
-import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.android.ui.components.statusLink
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +38,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.IconNote
@@ -49,6 +47,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SourcesChip
+import com.zoonk.android.ui.components.statusLink
+import com.zoonk.android.ui.format.spaceAfterSentence
 import java.time.Instant
 
 /** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
