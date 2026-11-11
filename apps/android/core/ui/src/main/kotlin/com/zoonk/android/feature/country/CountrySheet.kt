@@ -47,6 +47,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -121,14 +122,15 @@ fun CountrySheet(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     singleLine = true,
                 )
-                matches?.let { ResultCount(it.size) }
+                matches?.takeIf { all.hasContent }?.let { ResultCount(it.size) }
             }
             LazyColumn(Modifier.weight(1f).selectableGroup(), contentPadding = PaddingValues(bottom = 32.dp)) {
                 if (matches != null) {
-                    if (matches.isEmpty()) {
+                    if (matches.isEmpty() && all.hasContent) {
                         item(key = "no-match") { Quiet(stringResource(R.string.country_no_match)) }
                     }
                     items(matches, key = { "match-${it.code}" }, contentType = { "country" }) { row(it) }
+                    unloaded(all) { scope.launch { catalog?.refresh() } }
                     return@LazyColumn
                 }
                 if (allowNone) {
@@ -142,31 +144,31 @@ fun CountrySheet(
                     items(suggested, key = { "suggested-${it.code}" }, contentType = { "country" }) { row(it) }
                 }
                 label("all", R.string.country_all)
-                when (val state = all) {
-                    is LoadState.Loaded -> {
-                        items(state.value, key = { "all-${it.code}" }, contentType = { "country" }) { row(it) }
-                    }
-
-                    is LoadState.Failed -> {
-                        item(key = "failed") {
-                            Column(Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp)) {
-                                Text(stringResource(R.string.country_load_failed), style = MaterialTheme.typography.bodyMedium)
-                                TextButton(onClick = { scope.launch { catalog?.refresh() } }) {
-                                    Text(stringResource(R.string.load_failed_try_again))
-                                }
-                            }
-                        }
-                    }
-
-                    else -> {
-                        items(count = SKELETON_ROWS, key = { "skeleton-$it" }, contentType = { "skeleton" }) {
-                            MediaPending(
-                                Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET, vertical = 6.dp).heightIn(min = 40.dp),
-                            ) {}
-                        }
-                    }
+                if (all is LoadState.Loaded) {
+                    items(all.value, key = { "all-${it.code}" }, contentType = { "country" }) { row(it) }
                 }
+                unloaded(all) { scope.launch { catalog?.refresh() } }
             }
+        }
+    }
+}
+
+/** Until every country loads: skeleton rows, or the failure with its retry, which a search keeps showing. */
+private fun LazyListScope.unloaded(
+    all: LoadState<List<CountryChoice>>,
+    onRetry: () -> Unit,
+) {
+    if (all.hasContent) return
+    if (all is LoadState.Failed) {
+        item(key = "failed") {
+            Column(Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp)) {
+                Text(stringResource(R.string.country_load_failed), style = MaterialTheme.typography.bodyMedium)
+                TextButton(onClick = onRetry) { Text(stringResource(R.string.load_failed_try_again)) }
+            }
+        }
+    } else {
+        items(count = SKELETON_ROWS, key = { "skeleton-$it" }, contentType = { "skeleton" }) {
+            MediaPending(Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET, vertical = 6.dp).heightIn(min = 40.dp)) {}
         }
     }
 }
