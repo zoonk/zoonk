@@ -111,25 +111,27 @@ export function getRegionChoices({
     .toSorted((a, b) => collator.compare(a.name, b.name));
 }
 
+type Variety = { language: string; region?: string | null; userLanguage: string };
+
 /**
- * "Spanish (Argentina)" with a country, "Spanish" without, in the learner's language: named from
- * the language and the country, never from the flag, so no country is shown that wasn't chosen.
+ * As it reads inside a sentence, which many languages write in lowercase: "espanhol (Argentina)" in
+ * Portuguese, "Spanish (Argentina)" in English.
  */
-export function getVarietyName({
-  language,
-  region,
-  userLanguage,
-}: {
-  language: string;
-  region?: string | null;
-  userLanguage: string;
-}): string {
+export function getVarietyNameInSentence({ language, region, userLanguage }: Variety): string {
   const names = new Intl.DisplayNames([userLanguage], {
     languageDisplay: "standard",
     type: "language",
   });
 
-  return capitalize(names.of(region ? `${language}-${region}` : language) ?? language);
+  return names.of(region ? `${language}-${region}` : language) ?? language;
+}
+
+/**
+ * "Spanish (Argentina)" with a country, "Spanish" without, in the learner's language: named from
+ * the language and the country, never from the flag, so no country is shown that wasn't chosen.
+ */
+export function getVarietyName(variety: Variety): string {
+  return capitalize(getVarietyNameInSentence(variety));
 }
 
 /** A `flag-icons` code: the country's flag when the learner chose one, else the language's. */

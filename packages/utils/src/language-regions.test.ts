@@ -4,6 +4,7 @@ import {
   getTaughtRegion,
   getVarietyFlagCode,
   getVarietyName,
+  getVarietyNameInSentence,
   isLanguageRegion,
   splitTargetLanguage,
 } from "./language-regions";
@@ -109,6 +110,24 @@ describe(getVarietyName, () => {
     expect(getVarietyName({ language: "es", region: null, userLanguage: "en" })).toBe("Spanish");
     expect(getVarietyName({ language: "pt", userLanguage: "es" })).toBe("Portugués");
     expect(getVarietyName({ language: "zh-TW", userLanguage: "en" })).toBe("Chinese (Taiwan)");
+  });
+});
+
+describe(getVarietyNameInSentence, () => {
+  it("keeps the case the viewer's language writes languages in", () => {
+    const variety = { language: "es", region: "AR" };
+
+    expect(getVarietyNameInSentence({ ...variety, userLanguage: "pt" })).toBe(
+      "espanhol (Argentina)",
+    );
+
+    expect(getVarietyNameInSentence({ ...variety, userLanguage: "en" })).toBe(
+      "Spanish (Argentina)",
+    );
+
+    expect(getVarietyNameInSentence({ ...variety, userLanguage: "de" })).toBe(
+      "Spanisch (Argentinien)",
+    );
   });
 });
 
