@@ -303,6 +303,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
   await expect(effect).toBeHidden();
+  await expect(intro).toBeHidden();
   expect(await readChangeStatus(change.id)).toBe("undone");
 });
 
