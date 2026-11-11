@@ -17,13 +17,16 @@ import {
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * On 11 essays (8 Nov 2026), Haiku 5.5 at high reasoning put every total in its band (EN 3/3, PT
- * 8/8) at $2.29/1k, and Gemini 3.8 Flash at high did too at $16.59/1k; at default reasoning both
- * missed one. Haiku still gave one essay a C5 score its own element count contradicts.
+ * The learner waits on the grade. At high reasoning on 18 essays, twice (11 Nov 2026), Muse Ember
+ * put 36 of 36 totals in their band at 6s p50 for $1.70/1k; Haiku 5.5 put 31 (it marks English
+ * IELTS essays too low) at 21s p50 for $2.75/1k. A blind read by GPT-6.1 Sol preferred Ember's
+ * grading on 11 essays and Haiku's on 3: Haiku invented errors and docked points the essays
+ * earned. Gemini 3.8 Flash at high also kept every total in band on 11 essays (8 Nov 2026), at
+ * $16.59/1k.
  */
-const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
 
 /**
  * `ap`: each row is worth its own whole points. `custom`: every other written answer, each

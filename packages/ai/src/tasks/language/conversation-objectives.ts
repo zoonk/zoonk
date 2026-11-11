@@ -16,11 +16,14 @@ import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * GPT-Live delegates only to the client, so the voice model can't call a tool to mark objectives
- * and a text model reads the transcript. Luna got 22 of 23 on its eval without ticking a goal early
- * or hearing a goodbye that wasn't said (2 Nov 2026).
+ * and a text model reads the transcript, after each learner answer during the call. Over three runs
+ * of 23 cases (11 Nov 2026), Muse Ember without reasoning got 68 of 69 at 1.0s p50 and 1.4s p95 for
+ * $0.15/1k; Luna got 66 (it never ticks a finished TOEFL repetition) at 1.8s p50 and up to 3.3s
+ * p95 for the same cost. Ember's default thinking triples its cost without a gain.
  */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+const defaultModel = "meta/muse-ember";
+const defaultReasoning: Reasoning = "none";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 
 const testSystemPrompt = `${basePrompt}\n${testPrompt}`;
 
@@ -82,7 +85,13 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  * read says whether the call's last exchange was a mutual goodbye, so the app can hang up.
  */
 export async function checkConversationObjectives(params: CheckConversationObjectivesParams) {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
   const [first, ...rest] = params.objectives.map((objective) => objective.label);
 
   if (!first) {
