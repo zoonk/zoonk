@@ -151,8 +151,16 @@ internal class EditorDrafts(
     weekendOn: Boolean? = null,
     bases: BasesDraft? = null,
     tool: ToolDraft? = null,
+    picking: PlanPicker? = null,
+    countryAsked: CountryAsked? = null,
 ) {
     var datePicking by mutableStateOf(datePicking)
+
+    /** The aim's, language's or content country's picker while it's open. */
+    var picking by mutableStateOf(picking)
+
+    /** The new content country while the learner is asked to confirm it. */
+    var countryAsked by mutableStateOf(countryAsked)
 
     /** Null follows the plan: on while its weekend has its own time. */
     var weekendOn by mutableStateOf(weekendOn)
@@ -166,11 +174,27 @@ internal class EditorDrafts(
     companion object {
         val Saver =
             listSaver<EditorDrafts, Any?>(
-                save = { listOf(it.datePicking, it.weekendOn, it.bases, it.tool) },
-                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?, it[2] as BasesDraft?, it[3] as ToolDraft?) },
+                save = { listOf(it.datePicking, it.weekendOn, it.bases, it.tool, it.picking, it.countryAsked) },
+                restore = {
+                    EditorDrafts(
+                        it[0] as Boolean,
+                        it[1] as Boolean?,
+                        it[2] as BasesDraft?,
+                        it[3] as ToolDraft?,
+                        it[4] as PlanPicker?,
+                        it[5] as CountryAsked?,
+                    )
+                },
             )
     }
 }
+
+internal enum class PlanPicker { Aim, Variety, Country }
+
+internal data class CountryAsked(
+    val code: String,
+    val name: String,
+) : Serializable
 
 /** The choices not saved yet, by skill; [opening] tells this opening's save from an earlier one's. */
 internal data class BasesDraft(
@@ -288,6 +312,8 @@ internal fun ColumnScope.PlanEditorBody(
                 LanguageAimRow(
                     aim.value,
                     languageAim.choices,
+                    open = drafts.picking == PlanPicker.Aim,
+                    onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },
                     onPick = { next, done ->
                         edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
                             if (it?.status ==
@@ -308,6 +334,7 @@ internal fun ColumnScope.PlanEditorBody(
         page.variety?.let { variety ->
             VarietyRow(
                 variety,
+                drafts,
                 onPick = edits.setRegion,
                 pending = edits.isPending(PlanPart.Region),
                 failed = edits.hasFailed(PlanPart.Region),
@@ -318,6 +345,7 @@ internal fun ColumnScope.PlanEditorBody(
             ContentCountryRow(
                 page.goal,
                 country,
+                drafts,
                 onPick = edits.setContentCountry,
                 pending = edits.isPending(PlanPart.Country),
                 failed = edits.hasFailed(PlanPart.Country),

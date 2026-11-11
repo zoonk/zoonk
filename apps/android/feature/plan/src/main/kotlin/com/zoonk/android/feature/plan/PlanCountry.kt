@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -56,17 +55,15 @@ internal val LearnerSummaryGoal.editableCountry: GoalContentCountry?
 internal fun ContentCountryRow(
     goal: LearnerSummaryGoal,
     country: GoalContentCountry,
+    drafts: EditorDrafts,
     onPick: (String, () -> Unit) -> Unit,
     pending: Boolean,
     failed: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    var asking by rememberSaveable { mutableStateOf<String?>(null) }
-    var askingName by rememberSaveable { mutableStateOf("") }
     val lessonLanguage = lessonLanguageLine(country.lessonVariety)
     // A failed save closes the question, and the picker shows the error with the old country still picked.
-    LaunchedEffect(failed) { if (failed) asking = null }
+    LaunchedEffect(failed) { if (failed) drafts.countryAsked = null }
 
     ListRow(
         headline = { Text(stringResource(R.string.country_content_label)) },
@@ -78,47 +75,42 @@ internal fun ContentCountryRow(
         },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
-        onClick = { open = true },
+        onClick = { drafts.picking = PlanPicker.Country },
         modifier = modifier,
     )
-    if (open) {
+    if (drafts.picking == PlanPicker.Country) {
         CountrySheet(
             title = stringResource(R.string.onboarding_variety_title),
             suggested = goal.suggested.choices(),
             language = goal.language,
             selected = country.code,
-            onPick = { choice: CountryChoice? ->
-                choice?.let {
-                    asking = it.code
-                    askingName = it.name
-                }
-            },
-            onDismiss = { open = false },
+            onPick = { choice: CountryChoice? -> choice?.let { drafts.countryAsked = CountryAsked(it.code, it.name) } },
+            onDismiss = { drafts.picking = null },
             pending = pending,
             failed = failed,
         )
     }
-    asking?.let { code ->
+    drafts.countryAsked?.let { asked ->
         AlertDialog(
-            onDismissRequest = { if (!pending) asking = null },
+            onDismissRequest = { if (!pending) drafts.countryAsked = null },
             title = { Text(stringResource(R.string.country_change_title)) },
             text = {
-                Text(stringResource(R.string.country_change_body, askingName), Modifier.verticalScroll(rememberScrollState()))
+                Text(stringResource(R.string.country_change_body, asked.name), Modifier.verticalScroll(rememberScrollState()))
             },
             confirmButton = {
                 TextButton(
                     busy = pending,
                     enabled = !pending,
                     onClick = {
-                        onPick(code) {
-                            asking = null
-                            open = false
+                        onPick(asked.code) {
+                            drafts.countryAsked = null
+                            drafts.picking = null
                         }
                     },
                 ) { Text(stringResource(R.string.country_change_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { asking = null }, enabled = !pending) { Text(stringResource(R.string.plan_cancel)) }
+                TextButton(onClick = { drafts.countryAsked = null }, enabled = !pending) { Text(stringResource(R.string.plan_cancel)) }
             },
         )
     }

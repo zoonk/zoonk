@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -239,7 +240,11 @@ class PlanCountryScreenshots {
                 ),
             )
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            ContentCountryRow(goal, goal.contentCountry!!, onPick = { _, _ -> }, pending = false, failed = false)
+            ContentCountryRow(goal, goal.contentCountry!!, remember { EditorDrafts() }, onPick = {
+                _,
+                _,
+                ->
+            }, pending = false, failed = false)
             CountryFacts(general)
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, null, {})
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, OfferSave.Saved, {})

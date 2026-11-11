@@ -2,7 +2,11 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
@@ -52,9 +56,12 @@ internal fun ScheduleAim(
                 else -> stringResource(R.string.onboarding_aim_from_level, level, time)
             }
         }
+    var aimOpen by rememberSaveable { mutableStateOf(false) }
     LanguageAimRow(
         aim,
         languageAim.choices,
+        aimOpen,
+        { aimOpen = it },
         context.change,
         context.pending,
         context.failed,
