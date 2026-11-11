@@ -5,6 +5,8 @@ import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/goals/un
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type AnalyticsPlatform } from "../../analytics/shared-properties";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { type ExamLookup, type FoundExam, listExamLookups } from "./_utils/exam-facts";
@@ -68,7 +70,7 @@ export async function recordUnderstandingRun({
     return;
   }
 
-  await writeLearnerChange({ userId: draft.userId }, async (tx) => {
+  const recorded = await writeLearnerChange({ userId: draft.userId }, async (tx) => {
     const { count } = await tx.onboardingDraft.updateMany({
       data: { runId },
       where: {
@@ -78,8 +80,12 @@ export async function recordUnderstandingRun({
       },
     });
 
-    return count === 0 ? unchanged(null) : null;
+    return count === 0 ? unchanged(false) : true;
   });
+
+  if (recorded) {
+    revalidateCacheTags([getOnboardingDraftsCacheTag(draft.userId)]);
+  }
 }
 
 function toReading({
@@ -194,12 +200,16 @@ export async function failUnderstandingDraft(draftId: string): Promise<void> {
     return;
   }
 
-  await writeLearnerChange({ userId: draft.userId }, async (tx) => {
+  const failed = await writeLearnerChange({ userId: draft.userId }, async (tx) => {
     const { count } = await tx.onboardingDraft.updateMany({
       data: { status: "failed" },
       where: { id: draftId, status: "understanding", userId: draft.userId },
     });
 
-    return count === 0 ? unchanged(null) : null;
+    return count === 0 ? unchanged(false) : true;
   });
+
+  if (failed) {
+    revalidateCacheTags([getOnboardingDraftsCacheTag(draft.userId)]);
+  }
 }

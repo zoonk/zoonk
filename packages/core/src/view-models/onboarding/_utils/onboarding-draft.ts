@@ -9,6 +9,8 @@ import {
   type AnalyticsPlatform,
 } from "../../../analytics/shared-properties";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
+import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
+import { getOnboardingDraftsCacheTag } from "../../../cache/tags";
 import { countActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
@@ -172,6 +174,7 @@ export async function completeDraft({
   });
 
   if (saved.changed) {
+    revalidateCacheTags([getOnboardingDraftsCacheTag(draft.userId)]);
     const at = Date.now();
 
     after(() =>

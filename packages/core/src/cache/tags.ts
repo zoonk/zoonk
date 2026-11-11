@@ -75,6 +75,10 @@ export function getGoalsCacheTag(userId: string): string {
   return `goals:${userId}`;
 }
 
+export function getOnboardingDraftsCacheTag(userId: string): string {
+  return `onboarding-drafts:${userId}`;
+}
+
 export function getInstrumentWaitlistCacheTag(userId: string): string {
   return `instrument-waitlist:${userId}`;
 }

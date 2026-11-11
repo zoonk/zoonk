@@ -104,7 +104,10 @@ async function applyEdit({
     : { status: "conflict" };
 }
 
-/** Requires ownership; returns conflict during generation or after goal creation, and invalid for an inapplicable edit. */
+/**
+ * Requires ownership; returns conflict during generation or after goal creation, and invalid for an
+ * inapplicable edit. Expires no cache tag: rerendering /start would remount the card being fixed.
+ */
 export async function reviseOnboardingDraft({
   draftId,
   edit,

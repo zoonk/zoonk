@@ -1,6 +1,6 @@
 import "server-only";
 import { cacheTag } from "next/cache";
-import { getGoalsCacheTag } from "../../cache/tags";
+import { getGoalsCacheTag, getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
 import { type ResumeDraft, findResumeDraft } from "./_utils/resume-draft";
 
@@ -13,6 +13,6 @@ export async function getUnfinishedOnboardingDraft(): Promise<ResumeDraft | null
     return null;
   }
 
-  cacheTag(getGoalsCacheTag(session.user.id));
+  cacheTag(getGoalsCacheTag(session.user.id), getOnboardingDraftsCacheTag(session.user.id));
   return findResumeDraft(session.user.id);
 }
