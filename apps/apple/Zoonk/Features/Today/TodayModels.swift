@@ -126,6 +126,8 @@ struct TodayView: Decodable, Equatable, Sendable {
     let source: String
     let status: String
     let todaySession: String?
+
+    var setsFocus: Bool { operations.contains { $0.kind == "focusAreas" } }
   }
 
   struct Pattern: Decodable, Equatable, Sendable {

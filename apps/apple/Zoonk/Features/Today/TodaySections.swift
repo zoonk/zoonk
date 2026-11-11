@@ -401,12 +401,15 @@ struct TodayPlanChangeSection: View {
 
   @ViewBuilder
   private var details: some View {
-    let effect = [
-      // Only a plan without a date says its new end, as main does.
-      view.goal.targetDate == nil
-        ? planEffectText(change.effect, today: view.session.localDate, isEstimated: true) : nil,
-      planLessonsEffectText(change.effect),
-    ].compactMap(\.self)
+    let today = view.session.localDate
+    let effect =
+      (change.setsFocus ? planAreaEndTexts(change.effect, today: today) : [])
+      + [
+        // Only a plan without a date says its new end, as main does.
+        view.goal.targetDate == nil
+          ? planEffectText(change.effect, today: today, isEstimated: true) : nil,
+        planLessonsEffectText(change.effect),
+      ].compactMap(\.self)
 
     if !effect.isEmpty {
       Text(effect.joinedSentences())
