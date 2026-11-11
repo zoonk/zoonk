@@ -8,7 +8,6 @@ import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { FocusTestFlow } from "@zoonk/learn/focus-test";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { OnboardingFrame } from "@zoonk/learn/onboarding/frame";
-import { useMemo } from "react";
 
 export function FocusTestClient({
   backHref,
@@ -20,7 +19,6 @@ export function FocusTestClient({
   subject: string;
 }) {
   const router = useRouter();
-  const actions = useMemo(() => getFocusTestActions(goalId), [goalId]);
 
   // The pages kept from before were read before the test changed the plan.
   const leave = async () => {
@@ -33,7 +31,7 @@ export function FocusTestClient({
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <OnboardingFrame>
         <FocusTestFlow
-          actions={actions}
+          actions={getFocusTestActions(goalId)}
           host="plan"
           onDone={leave}
           plan={{
