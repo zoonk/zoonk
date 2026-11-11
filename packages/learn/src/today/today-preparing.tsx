@@ -9,10 +9,12 @@ import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { TodayEyebrow } from "./today-heading";
 
 export function TodayPreparing({
+  banner = null,
   goalTitle,
   onRefresh,
   run,
 }: {
+  banner?: React.ReactNode;
   goalTitle: string;
   onRefresh: () => void;
   run: GenerationRun;
@@ -23,6 +25,7 @@ export function TodayPreparing({
 
   return (
     <Page data-slot="today-preparing">
+      {banner}
       <PageHeader>
         <PageHeaderContent>
           <TodayEyebrow>

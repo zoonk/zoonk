@@ -11,6 +11,7 @@ import {
   mergeLearningProfile,
   mergeUserProgress,
 } from "./_utils/merge-progress";
+import { mergeStudyReminder } from "./_utils/merge-study-reminder";
 import { movePrivateCourses } from "./_utils/move-private-courses";
 import { moveTutorThreads } from "./_utils/move-tutor-threads";
 
@@ -90,11 +91,15 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
 
 async function moveGuestData({
   attempt = 1,
+  guestSessionId,
   guestUserId,
+  sessionId,
   userId,
 }: {
   attempt?: number;
+  guestSessionId?: string;
   guestUserId: string;
+  sessionId?: string;
   userId: string;
 }): Promise<void> {
   const result = await safeAsync(() =>
@@ -130,6 +135,7 @@ async function moveGuestData({
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
       await mergeLearningProfile({ ...context, takeGuestSupport });
+      await mergeStudyReminder({ ...context, guestSessionId, sessionId });
 
       // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.
       await transaction.user.delete({ where: { id: guestUserId } });
@@ -141,7 +147,7 @@ async function moveGuestData({
   }
 
   if (attempt < TRANSFER_ATTEMPTS && isRetryableTransferError(result.error)) {
-    return moveGuestData({ attempt: attempt + 1, guestUserId, userId });
+    return moveGuestData({ attempt: attempt + 1, guestSessionId, guestUserId, sessionId, userId });
   }
 
   throw result.error;
@@ -149,14 +155,18 @@ async function moveGuestData({
 
 export async function linkGuestAccount({
   account,
+  guestSessionId,
   guestUserId,
+  sessionId,
 }: {
   account: { id: string };
+  guestSessionId?: string;
   guestUserId: string;
+  sessionId?: string;
 }) {
   if (guestUserId === account.id) {
     return;
   }
 
-  await moveGuestData({ guestUserId, userId: account.id });
+  await moveGuestData({ guestSessionId, guestUserId, sessionId, userId: account.id });
 }

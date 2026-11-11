@@ -155,6 +155,26 @@ describe("native Apple sign-in through Apple's endpoints", () => {
     async ({ client, clientIdentifier, redirectURI }) => {
       const guest = await guestAuth.api.signInAnonymous();
       const goal = await createGoal(guest.user.id);
+
+      const guestSession = await prisma.session.findUniqueOrThrow({
+        where: { token: guest.token },
+      });
+
+      const pushToken = randomUUID();
+
+      await prisma.studyReminder.create({
+        data: {
+          locale: "en",
+          pushLabel: "Phone",
+          pushOn: true,
+          pushPlatform: "ios",
+          pushSessionId: guestSession.id,
+          pushToken,
+          time: "19:00",
+          userId: guest.user.id,
+        },
+      });
+
       const credentials = await authorizeWithApple({ audience: clientIdentifier });
       const ip = createRequestIP();
       requestIPs.add(ip);
@@ -176,6 +196,14 @@ describe("native Apple sign-in through Apple's endpoints", () => {
       expect(session.user.id).not.toBe(guest.user.id);
       expect(movedGoal.userId).toBe(session.user.id);
       expect(account.refreshToken).toBe(`apple-refresh-${account.accountId}`);
+
+      const accountSession = await prisma.session.findUniqueOrThrow({
+        where: { token: session.token },
+      });
+
+      await expect(
+        prisma.studyReminder.findUniqueOrThrow({ where: { userId: session.user.id } }),
+      ).resolves.toMatchObject({ pushOn: true, pushSessionId: accountSession.id, pushToken });
 
       const exchange = apple.tokenRequests.find(
         (body) => body.get("code") === credentials.authorizationCode,

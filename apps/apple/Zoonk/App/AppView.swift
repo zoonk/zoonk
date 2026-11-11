@@ -2,7 +2,9 @@ import SwiftUI
 
 struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(PushNotifications.self) private var notifications
   @Environment(SessionStore.self) private var session
+  @Environment(StudyRemindersStore.self) private var reminders
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @State private var wasInBackground = false
 
@@ -33,8 +35,19 @@ struct AppView: View {
             expectedAccountID: expectedAccountID)
         }
       }
-      .onChange(of: scenePhase) { _, scenePhase in
+      .task(id: session.authenticatedSession) {
+        if session.authenticatedSession != nil {
+          await reminders.refreshPhoneToken()
+        }
+      }
+      .onChange(of: scenePhase, initial: true) { _, scenePhase in
         reconcileSessionOnReturn(scenePhase)
+
+        if scenePhase == .active {
+          Task {
+            await notifications.clearDeliveredReminders()
+          }
+        }
       }
   }
 

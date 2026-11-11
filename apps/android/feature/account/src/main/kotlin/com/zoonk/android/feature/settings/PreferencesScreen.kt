@@ -277,15 +277,15 @@ internal fun UsageDataSection(
 }
 
 @Composable
-private fun SwitchRow(
+internal fun SwitchRow(
     title: String,
-    description: String,
+    description: String?,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     ListRow(
         headline = { Text(title) },
-        supporting = { Text(description) },
+        supporting = description?.let { { Text(it) } },
         trailing = { Switch(checked = checked, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
     )

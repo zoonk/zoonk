@@ -98,6 +98,7 @@ export async function finishEmptyBlock({
       missions: settled.missions,
       netScore: null,
       reached: { energy: null, level: null },
+      reminderOffer: null,
       testOutOffer: null,
       topHyperdrive: 0,
       total: 0,

@@ -88,13 +88,18 @@ const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
     return;
   }
 
-  const guest = await findRequestGuest(context);
+  const guestSession = await findRequestGuest(context);
 
-  if (!guest || guest.id === newSession.user.id) {
+  if (!guestSession || guestSession.user.id === newSession.user.id) {
     return;
   }
 
-  await linkGuestAccount({ account: newSession.user, guestUserId: guest.id });
+  await linkGuestAccount({
+    account: newSession.user,
+    guestSessionId: guestSession.id,
+    guestUserId: guestSession.user.id,
+    sessionId: newSession.session.id,
+  });
 });
 
 export function accessGuardsPlugin() {
