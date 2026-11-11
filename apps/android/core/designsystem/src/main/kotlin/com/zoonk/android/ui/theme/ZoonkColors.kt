@@ -40,10 +40,13 @@ data class ZoonkColors(
     val beltRed: Color,
     val beltGray: Color,
     val beltBlack: Color,
-    /** A chart's series, in order; nothing else. */
     val vizAccent: Color,
     val vizSecondary: Color,
     val vizHighlight: Color,
+    /** A chart's fourth to sixth series, after the three above; nothing else. */
+    val vizSeries4: Color,
+    val vizSeries5: Color,
+    val vizSeries6: Color,
     /** Main's `--viz-grid`: a drawing's grids, axes and guide lines, never as strong as its shapes. */
     val vizGrid: Color,
     /** By subject key (a course category, or `general`); read through `Subject.colors`. */
@@ -79,6 +82,9 @@ internal fun ZoonkPalette.zoonkColors() =
         vizAccent = vizAccent,
         vizSecondary = vizSecondary,
         vizHighlight = vizHighlight,
+        vizSeries4 = vizSeries4,
+        vizSeries5 = vizSeries5,
+        vizSeries6 = vizSeries6,
         vizGrid = vizGrid,
         subjects = subjects,
     )
