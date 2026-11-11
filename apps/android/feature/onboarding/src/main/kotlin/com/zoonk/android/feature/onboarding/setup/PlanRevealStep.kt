@@ -128,6 +128,7 @@ internal fun ColumnScope.PlanRevealStep(
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
     var opening by rememberSaveable { mutableStateOf(false) }
     var starting by remember { mutableStateOf(false) }
+    var startingStep by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(opening) {
         if (!opening) return@LaunchedEffect
         val progress =
@@ -175,19 +176,35 @@ internal fun ColumnScope.PlanRevealStep(
                 val syllabus by plans.syllabus[goal.id].collectShown()
                 val todayState = today?.collectShown()?.value
                 val preview = todayState?.value
+                val day = preview?.today?.toDayView()
                 RevealBody(
                     plan = plan,
                     reveal = preview,
-                    onOpenStep = onOpenStep.takeUnless { opening || (saving && openingStep == null) },
+                    onOpenStep =
+                        onOpenStep?.takeUnless { opening || saving }?.let { open ->
+                            { day, step ->
+                                startingStep = false
+                                open(day, step)
+                            }
+                        },
                     openingStep = openingStep,
                     failedStep = failedStep,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
-                    starting = starting || (saving && openingStep == null),
-                    saveFailed = saveFailed,
+                    starting = starting || (saving && (openingStep == null || startingStep)),
+                    saveFailed = saveFailed || (startingStep && failedStep != null),
                     playMoment = !planRevealed && remember { playMoment() },
-                    onStart = { if (onReveal != null) onReveal { opening = true } else opening = true },
+                    onStart = {
+                        val step = day?.steps?.firstOrNull { it.position == day.nextPosition && it.canOpen }
+                        if (day != null && step != null && onOpenStep != null) {
+                            startingStep = true
+                            onOpenStep(day, step)
+                        } else {
+                            startingStep = false
+                            if (onReveal != null) onReveal { opening = true } else opening = true
+                        }
+                    },
                     // Adjust opens the Plan tab until the plan editor (F16) can open here.
                     onAdjust = {
                         navigator.closeSection()

@@ -25,12 +25,20 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.OnboardingApi
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.planOf
+import com.zoonk.android.feature.onboarding.revealTodayOf
 import com.zoonk.android.feature.onboarding.syllabusOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
+import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
@@ -39,10 +47,18 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.PlanRevealToday
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Rule
@@ -66,10 +82,23 @@ class PlanRevealStepFlowTest {
     private fun show(
         prepareToday: suspend () -> Unit = {},
         restoration: StateRestorationTester? = null,
+        reveal: PlanRevealToday? = null,
+        onOpenStep: ((DayView, DayStep) -> Unit)? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val plans = PlanStore(planApi, cache)
+        val onboarding =
+            OnboardingStore(
+                object : OnboardingApi by FakeOnboardingApi() {
+                    override suspend fun revealToday(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                    ) = requireNotNull(reveal)
+                },
+                cache,
+                session,
+            ) { SignInResult.SignedIn }
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
@@ -86,6 +115,8 @@ class PlanRevealStepFlowTest {
                             navigator,
                             SETUP,
                             prepareToday,
+                            onOpenStep = onOpenStep,
+                            today = reveal?.let { onboarding.revealToday[GOAL_ID] },
                         )
                     }
                 }
@@ -118,6 +149,40 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
         assertEquals(1, opened)
         rule.onNodeWithText("Start lesson 1").assertExists()
+    }
+
+    @Test
+    fun startOpensTheTaggedStepThroughTheRowCallback() {
+        val reveal = revealWithNextPosition(1)
+        var opened: Pair<DayView, DayStep>? = null
+        show(reveal = reveal, onOpenStep = { day, step -> opened = day to step })
+        navigator.open(SETUP)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        val day = reveal.today.toDayView()
+        assertEquals(day to day.steps.first { it.position == day.nextPosition }, opened)
+        assertEquals(SETUP, navigator.currentRoute)
+    }
+
+    @Test
+    fun startFallsBackToTodayWhenThereIsNoNextStep() {
+        show(reveal = revealWithNextPosition(null), onOpenStep = { _, _ -> error("Must not open a step") })
+        navigator.open(SETUP)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    private fun revealWithNextPosition(position: Long?): PlanRevealToday {
+        val reveal = ApiJson.encodeToJsonElement(revealTodayOf()).jsonObject
+        val today = reveal.getValue("today").jsonObject
+        return ApiJson.decodeFromJsonElement(
+            JsonObject(reveal + ("today" to JsonObject(today + ("nextPosition" to (position?.let(::JsonPrimitive) ?: JsonNull))))),
+        )
     }
 
     @Test
