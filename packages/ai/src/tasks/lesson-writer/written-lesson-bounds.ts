@@ -1,4 +1,8 @@
+import { fitOptions } from "../_utils/fit-options";
 import { MAX_CHECK_OPTIONS, MAX_GUESS_OPTIONS } from "./written-lesson-schema";
+
+/** The app lays picture options out two by two. */
+const MAX_PICTURE_OPTIONS = 4;
 
 const MAX_OPTIONS_BY_KIND: Readonly<Partial<Record<string, number>>> = {
   check: MAX_CHECK_OPTIONS,
@@ -9,33 +13,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/**
- * Drops wrong options from the end until the screen holds as many as it may. Which options are
- * right is the model's call, so with too many right ones nothing is dropped and the answer fails.
- */
-function fitOptions(options: unknown[], max: number): unknown[] {
-  const surplus = options.length - max;
-
-  if (surplus <= 0) {
-    return options;
-  }
-
-  const dropped = new Set(
-    options
-      .flatMap((option, index) => (isRecord(option) && option.isCorrect === false ? [index] : []))
-      .slice(-surplus),
-  );
-
-  return dropped.size === surplus ? options.filter((_, index) => !dropped.has(index)) : options;
-}
-
 function fitScreen(screen: unknown): unknown {
   if (!isRecord(screen)) {
     return screen;
   }
 
-  const max = typeof screen.kind === "string" ? MAX_OPTIONS_BY_KIND[screen.kind] : undefined;
   const options: unknown[] | undefined = Array.isArray(screen.options) ? screen.options : undefined;
+  const pictured = options?.some((option) => isRecord(option) && isRecord(option.picture));
+  const kindMax = typeof screen.kind === "string" ? MAX_OPTIONS_BY_KIND[screen.kind] : undefined;
+  const max = pictured ? MAX_PICTURE_OPTIONS : kindMax;
   const fitted = options && max !== undefined ? fitOptions(options, max) : options;
 
   return fitted ? { ...screen, options: fitted } : screen;

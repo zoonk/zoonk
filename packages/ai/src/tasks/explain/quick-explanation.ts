@@ -5,9 +5,11 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../provider-options";
+import { fitOptions } from "../_utils/fit-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { imageRequestSchema } from "../images/image-request-schema";
+import { MAX_CHECK_OPTIONS } from "../lesson-writer/written-lesson-schema";
 import systemPrompt from "./quick-explanation.prompt.md";
 
 /**
@@ -87,5 +89,12 @@ ${formatUntrustedInput({ QUESTION: question })}
     task: "quick-explanation",
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  const { check } = result.output;
+
+  const data = {
+    ...result.output,
+    check: { ...check, options: fitOptions(check.options, MAX_CHECK_OPTIONS) },
+  };
+
+  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
