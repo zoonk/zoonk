@@ -11,4 +11,19 @@ extension Locale {
   func languageTitle(_ tag: String) -> String {
     languageName(tag).labelCased(self)
   }
+
+  /// "Spanish (Argentina)" with the country the learner chose, "Spanish" without: never from a
+  /// goal's flag, so no country shows that they didn't choose.
+  func varietyName(language: String, region: String?) -> String {
+    languageTitle(varietyTag(language: language, region: region))
+  }
+
+  /// `varietyName` inside a sentence, in this locale's mid-sentence casing ("espanhol (Argentina)").
+  func varietyNameInSentence(language: String, region: String?) -> String {
+    languageName(varietyTag(language: language, region: region))
+  }
+}
+
+private func varietyTag(language: String, region: String?) -> String {
+  region.map { "\(language)-\($0)" } ?? language
 }

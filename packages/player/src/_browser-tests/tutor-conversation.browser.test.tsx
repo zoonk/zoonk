@@ -3,8 +3,8 @@ import {
   LESSON_QUESTION_REPLACED_CHANGES_PART,
   LESSON_QUESTION_SAVED_ANSWER_PART,
   LESSON_QUESTION_TOOL_OFFER_PART,
-  type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Activity, type ReactNode, useState, useTransition } from "react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";

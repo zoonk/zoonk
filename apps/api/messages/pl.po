@@ -424,3 +424,8 @@ msgstr "Poniżej możesz ustawić to jako nowy cel i zacząć naukę."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "Poniżej znajdziesz swoje statystyki."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "Poniżej możesz wybrać tę odmianę języka dla swojego kumpla i do rozmów treningowych."

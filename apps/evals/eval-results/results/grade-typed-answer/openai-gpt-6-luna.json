@@ -792,17 +792,17 @@
       },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1933,6 +1933,200 @@
           "language": "en",
           "question": "Light travels about 300,000,000 meters per second. Write that speed in scientific notation.",
           "sampleAnswer": "$3 \\times 10^8$ m/s"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-argentine-voseo-right-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "¿Quieres venir a la fiesta el sábado?"
+          ],
+          "keyPoints": [
+            "Pergunta se a pessoa quer vir à festa",
+            "Diz que a festa é no sábado"
+          ],
+          "language": "pt",
+          "practicedLanguage": "es",
+          "question": "Escreva em espanhol: «Você quer vir à festa no sábado?»",
+          "sampleAnswer": "¿Quieres venir a la fiesta el sábado?",
+          "answer": "¿Querés venir a la fiesta el sábado?"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true] and corrections [\"venir\"]; got wrong with [true,true] and [\"venir\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true] and corrections [\"venir\"]; got wrong with [true,true] and [\"venir\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true] and corrections [\"venir\"]; got wrong with [true,true] and [\"venir\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": [
+            "venir"
+          ],
+          "isCorrect": false,
+          "keyPoints": [
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-argentine-voseo-mistake-kept-in-vos-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "¿Quieres venir a la fiesta el sábado?"
+          ],
+          "keyPoints": [
+            "Pergunta se a pessoa quer vir à festa",
+            "Diz que a festa é no sábado"
+          ],
+          "language": "pt",
+          "practicedLanguage": "es",
+          "question": "Escreva em espanhol: «Você quer vir à festa no sábado?»",
+          "sampleAnswer": "¿Quieres venir a la fiesta el sábado?",
+          "answer": "¿Vos querés vení a la fiesta el sábado?"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections [\"quieres\"]; got wrong with [true,false] and [\"Quieres\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections [\"quieres\"]; got wrong with [true,false] and [\"Quieres\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections [\"quieres\"]; got wrong with [true,false] and [\"Quieres\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": [
+            "quieres"
+          ],
+          "isCorrect": false,
+          "keyPoints": [
+            true,
+            false
+          ]
+        },
+        "id": "pt-language-asked-tu-answered-vos-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "¿Quieres venir a la fiesta el sábado?"
+          ],
+          "keyPoints": [
+            "Pergunta se a pessoa quer vir à festa no sábado",
+            "Usa a forma de «tú»: `quieres`"
+          ],
+          "language": "pt",
+          "practicedLanguage": "es",
+          "question": "Escreva em espanhol, tratando a pessoa por «tú»: «Você quer vir à festa no sábado?»",
+          "sampleAnswer": "¿Quieres venir a la fiesta el sábado?",
+          "answer": "¿Querés venir a la fiesta el sábado?"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true
+          ]
+        },
+        "id": "en-language-european-portuguese-right-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Estou estudando no trem."
+          ],
+          "answer": "Estou a estudar no comboio.",
+          "keyPoints": [
+            "Says they are studying right now",
+            "Says where: on the train"
+          ],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Write in Portuguese: “I'm studying on the train.”",
+          "sampleAnswer": "Estou estudando no trem."
         }
       }
     }

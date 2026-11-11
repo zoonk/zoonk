@@ -4,13 +4,15 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.api.apis.MistakesApi
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
 import com.zoonk.api.models.Today
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -51,7 +53,7 @@ class LiveTodayApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) {
-        perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = GoalUpdateInput.Status.ACTIVE)) }
+        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("status", LearnerSummaryGoal.Status.ACTIVE.value) }) }
     }
 
     override suspend fun answerInsight(

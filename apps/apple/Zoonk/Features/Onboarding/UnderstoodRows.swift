@@ -9,6 +9,7 @@ enum UnderstoodField: String, Equatable, Sendable {
   case targetCourse
   case targetPosition
   case targetScore
+  case targetRegion
   case studyTime
 
   enum Editor {
@@ -67,6 +68,7 @@ struct UnderstoodFacts: Decodable {
   let language: String
   let targetDate: String?
   let targetLanguage: String?
+  let targetRegion: String?
   let details: Details?
 
   struct Details: Decodable {
@@ -97,8 +99,10 @@ struct UnderstoodFacts: Decodable {
 
 /// What the title already says gets no row of its own.
 enum UnderstoodRows {
+  /// `countryAsked` keeps the country's row after the learner clears it, so they can pick again.
   static func rows(
     for goal: Components.Schemas.UnderstoodGoal,
+    countryAsked: Bool = false,
     today: Date = .now,
     locale: Locale = .current
   ) -> [UnderstoodRow] {
@@ -118,7 +122,16 @@ enum UnderstoodRows {
       rows.append(date)
     }
 
-    rows += languageRows(facts: facts, locale: locale)
+    rows += languageRows(facts: facts, countryAsked: countryAsked, locale: locale)
+
+    if let target = facts.targetLanguage,
+      let index = rows.firstIndex(where: { $0.id == "targetLanguage" })
+    {
+      rows[index].note = varietyNote(
+        language: target, region: facts.targetRegion,
+        taughtRegion: goal.regionChoices.first(where: \.taught)?.code)
+    }
+
     rows += detailRows(facts: facts, cutoff: goal.cutoff?.value1)
 
     // The card's aim row opens the aims it can change to, never free text that sizes nothing.
@@ -195,22 +208,26 @@ enum UnderstoodRows {
     title.localizedStandardContains(value)
   }
 
-  static func languageRows(facts: UnderstoodFacts, locale: Locale) -> [UnderstoodRow] {
+  static func languageRows(facts: UnderstoodFacts, countryAsked: Bool = false, locale: Locale)
+    -> [UnderstoodRow]
+  {
     guard facts.kind == "language", let target = facts.targetLanguage else {
       return []
     }
 
-    let language = locale.languageTitle(target)
+    let language = locale.varietyName(language: target, region: facts.targetRegion)
+    let hasCountry = facts.targetRegion != nil || countryAsked
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
-    if !isSaid(language, in: facts.displayName) {
+    // A country shows even when the title names the language: its row is where it changes.
+    if hasCountry || !isSaid(language, in: facts.displayName) {
       rows.append(
         UnderstoodRow(
           id: "targetLanguage",
           label: LocalizedStringResource(
             "Language", table: "Onboarding", comment: "Row with the language a goal learns"),
-          value: language))
+          value: language, field: hasCountry ? .targetRegion : nil))
     }
 
     rows.append(

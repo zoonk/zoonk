@@ -6,7 +6,10 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
-import systemPrompt from "./explain-spoken-answer.prompt.md";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
+import taskPrompt from "./explain-spoken-answer.prompt.md";
+
+const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * Stored and reused for everyone who says the same thing: Luna scored 8.90 at 2.9s p50 (Sep 2026).

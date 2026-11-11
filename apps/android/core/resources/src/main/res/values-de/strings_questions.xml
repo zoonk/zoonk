@@ -3,15 +3,11 @@
 {
   "questions_correct": "dd1a0e63ea70646e75930076d1b83692b0ad037fc27ac147ff92e5216303943c",
   "questions_dont_know_yet": "d71fcb0b55415b7b9f168ac94a043d1ce28aae0a84514b2a4dd9450209a1d34e",
-  "questions_drill_last_answer": "4f866a2efdbc9c4d8856e1449ad5aa686b15abf8c804d870c367a7b38574b9c4",
   "questions_drill_no_guessing": "5acfde2f7461f0587ad11309107ba5758b6ceb421fd653c93cd9ddf832429658",
   "questions_drill_not_sure": "e030ccffcbfaea93ef84aaf6ab7674d350c45931cb158ea96d4c7759d33db7d4",
   "questions_drill_not_sure_praise": "78f8f8d4e3f126bfb114f4ccff54fc5de1990ec50fa138dbf5e82c2d9820b9c1",
   "questions_drill_open_lesson": "6bb6957d5fd122c6a30802eacc461471a9a8ac2eaf0db060a64b157aa772d037",
-  "questions_drill_read_carefully": "aa7116c49fe959f5a59950d4dd8628c5005727636f509582308829729b099e52",
-  "questions_drill_reteach": "36fac50cf3bb4e84963d76bb04a2b1be93533e1b39b9e4958852548ae6073144",
   "questions_drill_reteach_ideas": "7824b3a340203b617f90df41265643603f274458d55ec9a5698fa97d487d2112",
-  "questions_drill_retry": "b85920e51f2a2ccb4a3d1aa1d9d6a3f6ad5ae8633265891ef3dadc72ceb893d2",
   "questions_drill_seconds_left": "c4268a05126d2a9a8d310cff45f424a306bb6c8c25d64b8c1847dab383a2c40e",
   "questions_drill_spot_the_trap": "6e91ebaff6f6938c838d9522d3f5fcd0b876db911099b394f44d9d8bebc88d3d",
   "questions_drill_start": "7c565608d2ac13fe4360f2d20b21d0368d4ffba91671fab56a83d3f58f205419",
@@ -125,18 +121,13 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
     <string name="questions_drill_reteach_ideas">Erst verstehen, dann anwenden.</string>
-    <string name="questions_drill_reteach">Zurück zu einem Konzept, das du noch nicht verstanden hast.</string>
-    <string name="questions_drill_read_carefully">Lies jedes Wort, bevor du antwortest.</string>
     <string name="questions_drill_spot_the_trap">Hier versteckt sich eine Falle. Finde sie, bevor du antwortest.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">%d Sekunde pro Frage, wie in der Prüfung.</item>
         <item quantity="other">%d Sekunden pro Frage, wie in der Prüfung.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Antworte nur, wenn du sicher bist. Es ist okay zu sagen, dass du unsicher bist.</string>
-    <string name="questions_drill_retry">Versuch es noch einmal.</string>
     <string name="questions_drill_start">Fragen starten</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">Deine letzte Antwort: %1$s</string>
     <string name="questions_drill_timed_out">Die Zeit ist um. Das zählt als Fehler, deshalb kommt die Frage wieder.</string>
     <string name="questions_drill_not_sure_praise">Gut entschieden. Zu sagen, dass du unsicher bist, ist besser als zu raten.</string>
     <string name="questions_drill_trap">Die Falle:</string>

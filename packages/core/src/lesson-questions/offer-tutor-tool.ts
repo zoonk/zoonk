@@ -28,6 +28,7 @@ import {
   offerPlus,
   offerPronunciation,
   offerStartGoal,
+  offerVariety,
 } from "./_utils/feature-offers";
 import { type TutorToolResult } from "./_utils/tutor-tool-result";
 import { type TutorTool } from "./contract";
@@ -199,6 +200,8 @@ async function offerMockExam(goal: Goal): Promise<TutorToolResult> {
 type OfferRequest = {
   /** For a chapter's test: the plan area whose next chapter to test, as the plan names it. */
   area: string | null;
+  /** For a variety: the country the learner asked for. */
+  country: string | null;
   /** For a new goal: what the learner wants, in their words. */
   goalWords: string | null;
   tool: TutorTool;
@@ -208,6 +211,7 @@ type OfferRequest = {
 
 function resolveOffer({
   area,
+  country,
   goal,
   goalWords,
   tool,
@@ -230,6 +234,8 @@ function resolveOffer({
       return offerConversationCall(goal);
     case "pronunciation":
       return offerPronunciation(goal);
+    case "variety":
+      return Promise.resolve(offerVariety({ country, goal }));
     case "stats":
     case "logbook":
     case "memory":
@@ -244,6 +250,7 @@ function resolveOffer({
 /** Only the claimed answer generation may save offers for its question's goal. Unavailable features return a reason; locked ones stay visible. */
 export async function offerTutorTool({
   area = null,
+  country = null,
   goalWords = null,
   questionId,
   revision,
@@ -270,7 +277,14 @@ export async function offerTutorTool({
     return { status: "notFound" };
   }
 
-  const result = await resolveOffer({ area: area?.trim() || null, goal, goalWords, tool, topic });
+  const result = await resolveOffer({
+    area: area?.trim() || null,
+    country,
+    goal,
+    goalWords,
+    tool,
+    topic,
+  });
 
   if (result.status !== "offered") {
     return result;

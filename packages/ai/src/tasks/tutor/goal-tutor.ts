@@ -171,7 +171,13 @@ function getSystemPrompt({
   links,
 }: Pick<GoalTutorInput, "contextSnapshot" | "learnerNeeds" | "links">): string {
   const template = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
-  const goalPrompt = selectTutorLanguage({ language: contextSnapshot.language, template });
+
+  const goalPrompt = selectTutorLanguage({
+    language: contextSnapshot.language,
+    template,
+    variety: contextSnapshot.goal.variety !== undefined,
+  });
+
   const withPages = `${goalPrompt}\n${getPageGuide({ contextSnapshot, links })}`;
   const { screen } = contextSnapshot;
 

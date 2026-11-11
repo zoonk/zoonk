@@ -4,6 +4,7 @@ import {
   type LessonQuestionResource,
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
@@ -16,7 +17,9 @@ function readChangeStatus(changeId: string) {
     .then((change) => change.status);
 }
 
-type BuddyAnswer = { answer: string; planChange?: PlanChangeView };
+const SAVED = "Saved. You can change it in your plan.";
+
+type BuddyAnswer = { answer: string; planChange?: PlanChangeView; toolOffer?: TutorToolOffer };
 
 async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
   const asked: { question: string }[] = [];
@@ -52,9 +55,10 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
   await page.route("**/v1/questions/*/answers", async (route) => {
     const next = queue.shift() ?? { answer: "Okay." };
 
-    const parts = next.planChange
-      ? [{ data: next.planChange, type: "data-plan-change" as const }]
-      : [];
+    const parts = [
+      next.planChange && { data: next.planChange, type: "data-plan-change" as const },
+      next.toolOffer && { data: next.toolOffer, type: "data-tool-offer" as const },
+    ].filter((part) => part !== undefined);
 
     await fulfillTutorAnswer(route, next.answer, parts);
   });
@@ -108,6 +112,74 @@ test.describe("Buddy tab", () => {
       await card.getByRole("button", { name: "Undo" }).click();
       await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
+    });
+  });
+
+  test("the buddy offers the country a learner asked for, which saves only on their tap and gives way to the next one", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const readCountry = async () => {
+        const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+        return goal.targetRegion;
+      };
+
+      const englishOffer = (region: string): TutorToolOffer => ({
+        goalId: user.goalId,
+        kind: "variety",
+        languageFlag: region.toLowerCase(),
+        targetLanguage: "en",
+        targetRegion: region,
+        taughtRegion: "US",
+      });
+
+      await stubBuddy({
+        answers: [
+          {
+            answer: "Your lessons stay the same. Tap Apply and I'll use Canadian English.",
+            toolOffer: englishOffer("CA"),
+          },
+          {
+            answer: "Your lessons stay the same. Tap Apply and I'll use Australian English.",
+            toolOffer: englishOffer("AU"),
+          },
+        ],
+        page,
+      });
+
+      await page.goto("/buddy");
+
+      const conversation = page.getByRole("region", { name: /^Conversation with /u });
+      const composer = conversation.getByRole("textbox", { name: /^Message /u });
+
+      const ask = async (question: string) => {
+        await composer.fill(question);
+        await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
+        await composer.press("Enter");
+      };
+
+      await ask("Can I practice Canadian English?");
+
+      const canada = conversation.getByRole("region", { name: "English (Canada)" });
+      const status = canada.getByRole("status");
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(status).toBeEmpty();
+      expect(await readCountry()).toBeNull();
+
+      await canada.getByRole("button", { name: "Apply" }).click();
+      await expect(status).toHaveText(SAVED);
+      await expect(canada).toBeFocused();
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeHidden();
+      await expect.poll(readCountry).toBe("CA");
+
+      await ask("Actually, Australian English?");
+
+      const australia = conversation.getByRole("region", { name: "English (Australia)" });
+      await australia.getByRole("button", { name: "Apply" }).click();
+      await expect(australia.getByRole("status")).toHaveText(SAVED);
+      await expect.poll(readCountry).toBe("AU");
+      await expect(canada.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(status).toBeEmpty();
     });
   });
 });

@@ -29,9 +29,11 @@ class LearnerAccessTest {
         isSettingUp = false,
         kind = kind,
         languageFlag = null,
+        regionChoices = emptyList(),
         status = status,
         targetDate = null,
         targetLanguage = null,
+        targetRegion = null,
         title = "Goal",
         displayName = "Goal",
     )

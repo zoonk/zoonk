@@ -9,6 +9,7 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
+import { type RegionChoice } from "@zoonk/utils/language-regions";
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -50,7 +51,20 @@ export type PlanActions = {
 /** A null `buddy` uses the default buddy. */
 export type PlanTutor = { buddy: Pick<LearnBuddy, "kind" | "name"> | null; href: string };
 
-export type PlanGoal = { kind: "exam" | "explain" | "language" | "learn"; displayName: string };
+/** A language goal's country, for a language that has countries to pick from. */
+type PlanCountry = {
+  choices: readonly RegionChoice[];
+  language: string;
+  /** Resolves to whether it saved. The plan doesn't change. */
+  onSave: (region: string | null) => Promise<boolean>;
+  region: string | null;
+};
+
+export type PlanGoal = {
+  country?: PlanCountry | null;
+  displayName: string;
+  kind: "exam" | "explain" | "language" | "learn";
+};
 
 type PlanScreenValue = {
   actions: PlanActions;

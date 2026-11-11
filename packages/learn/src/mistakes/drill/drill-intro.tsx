@@ -113,41 +113,29 @@ function IdeaScreen({
 function DrillNote({
   answered,
   drill,
-  lastAnswer,
   lessonHref,
 }: {
   answered: boolean;
   drill: Drill;
-  lastAnswer: string | null;
   lessonHref: LessonHref | null;
 }) {
-  const t = useExtracted();
   const drillLine = useDrillLine();
   const Icon = DRILL_ICON[drill.kind];
+  const line = answered ? null : drillLine(drill);
   const lesson = drill.kind === "reteach" ? drill.lesson : null;
 
-  if (drill.kind === "retry" && !lastAnswer) {
-    return null;
+  if (lesson && lessonHref) {
+    return <LessonLink lesson={lesson} lessonHref={lessonHref} />;
   }
 
-  if (answered && !lastAnswer && !(lesson && lessonHref)) {
+  if (!line) {
     return null;
   }
 
   return (
     <Callout>
       <Icon aria-hidden="true" />
-      <div className="flex min-w-0 flex-col gap-1">
-        {!answered && <p className="font-medium">{drillLine(drill)}</p>}
-
-        {lastAnswer && (
-          <p className="text-muted-foreground">
-            {t("Last time you answered: {answer}", { answer: lastAnswer })}
-          </p>
-        )}
-
-        {lesson && lessonHref && <LessonLink lesson={lesson} lessonHref={lessonHref} />}
-      </div>
+      <p className="font-medium">{line}</p>
     </Callout>
   );
 }
@@ -155,13 +143,11 @@ function DrillNote({
 export function DrillIntro({
   answered = false,
   drill,
-  lastAnswer = null,
   lessonHref,
   onStart,
 }: {
   answered?: boolean;
   drill: Drill;
-  lastAnswer?: string | null;
   lessonHref: LessonHref | null;
   onStart?: () => void;
 }) {
@@ -172,19 +158,12 @@ export function DrillIntro({
   }
 
   if (!onStart) {
-    return (
-      <DrillNote
-        answered={answered}
-        drill={drill}
-        lastAnswer={lastAnswer}
-        lessonHref={lessonHref}
-      />
-    );
+    return <DrillNote answered={answered} drill={drill} lessonHref={lessonHref} />;
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <DrillNote answered={false} drill={drill} lastAnswer={lastAnswer} lessonHref={lessonHref} />
+      <DrillNote answered={false} drill={drill} lessonHref={lessonHref} />
       <StartButton onStart={onStart} />
     </div>
   );

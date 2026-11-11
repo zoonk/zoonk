@@ -102,6 +102,10 @@
     }
 
     func switchGoal(token: String, goalID: String) async throws {}
+
+    func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
+      true
+    }
   }
 
   private struct UITestBuddyAPI: BuddyAPIClient {

@@ -6,8 +6,8 @@ import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes
 import {
   type OnboardingDraftView,
   goalUnderstandingInputSchema,
-  onboardingDraftEditSchema,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { onboardingDraftEditSchema } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { reviseOnboardingDraft } from "@zoonk/core/view-models/onboarding/revise-draft";
 import { startGoalUnderstanding } from "@zoonk/core/view-models/onboarding/start-understanding";

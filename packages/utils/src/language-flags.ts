@@ -93,8 +93,6 @@ const LANGUAGE_FLAGS = {
 
 export type LanguageFlagCode = (typeof LANGUAGE_FLAGS)[keyof typeof LANGUAGE_FLAGS];
 
-const COUNTRY_CODE = /^[a-z]{2}$/u;
-
 function isFlagLanguage(language: string): language is keyof typeof LANGUAGE_FLAGS {
   return Object.hasOwn(LANGUAGE_FLAGS, language);
 }
@@ -102,24 +100,4 @@ function isFlagLanguage(language: string): language is keyof typeof LANGUAGE_FLA
 export function getLanguageFlagCode(language: string): LanguageFlagCode | null {
   const key = isFlagLanguage(language) ? language : getBaseLanguage(language);
   return isFlagLanguage(key) ? LANGUAGE_FLAGS[key] : null;
-}
-
-export function getLanguageFlagLabel({
-  language,
-  userLanguage,
-}: {
-  language: string;
-  userLanguage: string;
-}): string | null {
-  const flag = getLanguageFlagCode(language);
-
-  if (!flag) {
-    return null;
-  }
-
-  const base = getBaseLanguage(language);
-  const tag = COUNTRY_CODE.test(flag) ? `${base}-${flag.toUpperCase()}` : base;
-  const name = new Intl.DisplayNames([userLanguage], { type: "language" }).of(tag) ?? base;
-
-  return name.charAt(0).toUpperCase() + name.slice(1);
 }

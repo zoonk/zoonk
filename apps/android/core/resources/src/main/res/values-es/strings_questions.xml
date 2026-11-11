@@ -3,15 +3,11 @@
 {
   "questions_correct": "6b2890a1ed7a21646dfdc966af77660935f32b73f9ba643026fcc9b06ff5d45b",
   "questions_dont_know_yet": "cfa07450995d20e9f3a455009aa61e1aa6b2208119b08bf7b8db291361634835",
-  "questions_drill_last_answer": "c870272fff6f75e2b0fa2bcacbf03906345f44b5c45fcb06ae71b4340e98a725",
   "questions_drill_no_guessing": "2d7442a353ffd534f9e15a2b28928afe3219c7a867ff67caeafa7ac7340cac70",
   "questions_drill_not_sure": "e5ed71f2bf5f69a760aa6c262f1d0bbc9a7e12609d821483cc672bc0a33e1b0e",
   "questions_drill_not_sure_praise": "1bc7b0fd0cc1b59f319301aa99e5947efb340bffe37d33ea872176e64eae57fe",
   "questions_drill_open_lesson": "57ca868893639d92a4648fc01df4c73bdabcd27efaa0ba4ef55ba7fa3f1d805d",
-  "questions_drill_read_carefully": "555f3264c5fc582f9d77440849e6a458f338aa5e7f0c4acf2215bb7fc3467ddc",
-  "questions_drill_reteach": "952ea7cc074ab870f75bd7c8b26fe55fe1dcc1157903adfd0faa802147cd2302",
   "questions_drill_reteach_ideas": "d4636792c9382d3024ccd5d10466160ba6ce002f9b2f011afdb96626dcffdc09",
-  "questions_drill_retry": "6952195b3c7aa97b728c85779f07b52586a8f33e15adb9b35739d3d31eba62e1",
   "questions_drill_seconds_left": "431fc245f6010bb4b376ebb8624ea556a6332a52f1fa3ad789800475ea28cf8e",
   "questions_drill_spot_the_trap": "d04bb0f40673a72267ddd2e27e84a897944ce0e494a270dbdded0cf1d6bd1359",
   "questions_drill_start": "fc61a4e3e8eed85c6b4a65c62c9c74f008a6f6328bb90094da7525d33a35d086",
@@ -129,8 +125,6 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Pregunta de un examen anterior · %1$s</string>
     <string name="questions_drill_reteach_ideas">Primero la idea, luego ponla en práctica.</string>
-    <string name="questions_drill_reteach">Volvamos a una idea que no te quedó clara.</string>
-    <string name="questions_drill_read_carefully">Lee cada palabra antes de responder.</string>
     <string name="questions_drill_spot_the_trap">Aquí hay una trampa. Encuéntrala antes de responder.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">%d segundo por pregunta, como el día del examen.</item>
@@ -138,10 +132,7 @@
         <item quantity="other">%d segundos por pregunta, como el día del examen.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Responde solo cuando no tengas dudas. Está bien decir que no lo tienes claro.</string>
-    <string name="questions_drill_retry">Inténtalo de nuevo.</string>
     <string name="questions_drill_start">Empezar con las preguntas</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">La última vez respondiste: %1$s</string>
     <string name="questions_drill_timed_out">Se acabó el tiempo. Cuenta como un error, así que la pregunta volverá a aparecer.</string>
     <string name="questions_drill_not_sure_praise">Buena decisión. Es mejor decir que no lo tienes claro que hacer una suposición.</string>
     <string name="questions_drill_trap">La trampa:</string>

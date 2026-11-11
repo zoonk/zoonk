@@ -50,6 +50,8 @@ import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
+import com.zoonk.android.feature.plan.Variety
+import com.zoonk.android.feature.plan.VarietySheet
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
@@ -68,6 +70,7 @@ import com.zoonk.api.models.OnboardingDraftEditOneOf
 import com.zoonk.api.models.OnboardingDraftEditOneOf1
 import com.zoonk.api.models.OnboardingDraftEditOneOf2
 import com.zoonk.api.models.OnboardingDraftEditOneOf3
+import com.zoonk.api.models.OnboardingDraftEditOneOf4
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
@@ -95,6 +98,7 @@ internal fun ColumnScope.UnderstoodScreen(
     val is24Hour = DateFormat.is24HourFormat(LocalContext.current)
     val rows = remember(resources, locale, is24Hour) { UnderstoodRows(resources, locale, is24Hour) }
     var rewriting by rememberSaveable { mutableStateOf(false) }
+    var clearedCountry by rememberSaveable { mutableStateOf(listOf<Int>()) }
     val firstGoalRows =
         listOfNotNull(
             rows.materialRow(material),
@@ -125,19 +129,25 @@ internal fun ColumnScope.UnderstoodScreen(
 
     startable.forEachIndexed { index, understood ->
         Column {
-            (rows.rows(understood) + if (index == 0) firstGoalRows else emptyList()).forEachIndexed { place, row ->
+            (rows.rows(understood, index in clearedCountry) + if (index == 0) firstGoalRows else emptyList()).forEachIndexed { place, row ->
                 if (place > 0) HorizontalDivider()
                 val key = "$index:${row.editable?.key ?: row.id}"
                 FactRow(
                     row = row,
                     timeZone = timeZone,
                     languageAim = understood.languageAim.takeIf { row.id == "targetScore" },
+                    variety = understood.variety().takeIf { row.editable == EditableField.TargetRegion },
                     editValue = editValue(understood, row),
                     editing = edits.editing == key,
                     saving = edits.saving != null,
                     failed = edits.failed == key,
                     onEdit = { edits.onEdit(if (it) key else null) },
-                    onSave = { value -> row.editable?.let { field -> edits.onRevise(key, draftEdit(field, index, value)) } },
+                    onSave = { value ->
+                        row.editable?.let { field ->
+                            if (field == EditableField.TargetRegion && value.isEmpty()) clearedCountry = clearedCountry + index
+                            edits.onRevise(key, draftEdit(field, index, value))
+                        }
+                    },
                 )
             }
         }
@@ -245,6 +255,7 @@ internal class FactEdits(
 private fun FactRow(
     row: UnderstoodRow,
     languageAim: com.zoonk.api.models.LanguageAim? = null,
+    variety: Variety? = null,
     timeZone: String,
     editValue: String,
     editing: Boolean,
@@ -342,7 +353,16 @@ private fun FactRow(
     if (editing && editor == EditorKind.Time) {
         TimeEditor(initial = editValue, onDismiss = { onEdit(false) }, onPick = save)
     }
+    if (editing && variety != null) {
+        VarietySheet(variety, onDismiss = { onEdit(false) }, onPick = { save(it.orEmpty()) }, pending = saving, failed = failed)
+    }
 }
+
+private fun UnderstoodGoal.variety() =
+    draft.targetLanguage
+        ?.takeIf {
+            regionChoices.isNotEmpty()
+        }?.let { Variety(it, draft.targetRegion, regionChoices) }
 
 @Composable
 private fun RowNote(row: UnderstoodRow) {
@@ -432,7 +452,7 @@ private fun editValue(
     row: UnderstoodRow,
 ): String =
     when (row.editable) {
-        null, EditableField.StudyTime -> {
+        null, EditableField.StudyTime, EditableField.TargetRegion -> {
             row.editDefault ?: row.value
         }
 
@@ -458,7 +478,13 @@ private fun draftEdit(
 ): OnboardingDraftEdit =
     when (field) {
         EditableField.StudyTime -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.STUDY_TIME, value))
+            OnboardingDraftEdit.OnboardingDraftEditOneOf4Value(OnboardingDraftEditOneOf4(OnboardingDraftEditOneOf4.Field.STUDY_TIME, value))
+        }
+
+        EditableField.TargetRegion -> {
+            OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(
+                OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.TARGET_REGION, goal.toLong(), value.ifEmpty { null }),
+            )
         }
 
         EditableField.DisplayName -> {

@@ -6,6 +6,8 @@ import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
 
+vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
+
 vi.mock("./grade-essay.prompt.md", () => ({
   default: [
     "Grade the essay.",
@@ -73,7 +75,10 @@ describe(gradeEssay, () => {
       rubric: { kind: "enem" },
     });
 
-    expect(systemPrompt).toBe("Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n");
+    expect(systemPrompt).toBe(
+      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.",
+    );
+
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(systemPrompt);
 
     await expect(requestedSchemaFields()).resolves.toStrictEqual([
@@ -121,7 +126,7 @@ describe(gradeEssay, () => {
         rubric,
       });
 
-      expect(systemPrompt).toBe(`Grade the essay.\n${prompt}\nAnswer.\n`);
+      expect(systemPrompt).toBe(`Grade the essay.\n${prompt}\nAnswer.\n\nRegional forms.`);
       await expect(requestedSchemaFields()).resolves.toStrictEqual(["criteria"]);
       expect(data.enemInterventionElements).toBeNull();
       expect(data.zeroReason).toBeNull();
@@ -138,6 +143,9 @@ describe(gradeEssay, () => {
 
     expect(generateText).not.toHaveBeenCalled();
     expect(data.zeroReason).toBe("tooShort");
-    expect(systemPrompt).toBe("Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n");
+
+    expect(systemPrompt).toBe(
+      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.",
+    );
   });
 });

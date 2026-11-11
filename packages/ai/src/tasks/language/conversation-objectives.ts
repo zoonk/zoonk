@@ -37,6 +37,7 @@ export type CheckConversationObjectivesParams = {
   /** Unset or null for a role play. */
   exam?: SpeakingMockExam | null;
   targetLanguage: string;
+  targetRegion?: string | null;
   learnerLanguage: string;
   model?: string;
   useFallback?: boolean;
@@ -57,6 +58,7 @@ export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildS
 function buildUserPrompt(params: CheckConversationObjectivesParams): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
+    targetRegion: params.targetRegion,
     userLanguage: params.learnerLanguage,
   });
 

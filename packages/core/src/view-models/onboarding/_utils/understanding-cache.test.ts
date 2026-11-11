@@ -32,12 +32,14 @@ describe(findCachedUnderstanding, () => {
     });
   });
 
-  it("keeps what an exam's learner aims for and how its day is set", async () => {
+  it("keeps what an exam's learner aims for, its subjects and how its day is set", async () => {
     const user = await userFixture();
     const goal = `a high score on the gmat ${randomUUID()}`;
 
     const exam = {
+      displayName: "GMAT",
       examDay: "booked",
+      examSubjects: ["Quantitative Reasoning"],
       examTarget: "score",
       kind: "exam",
       subject: "GMAT",
@@ -47,7 +49,37 @@ describe(findCachedUnderstanding, () => {
     await goalUnderstandingFixture({ goal, result: { ...RESULT, goals: [exam] }, userId: user.id });
 
     await expect(readCached({ goal, userId: user.id })).resolves.toMatchObject({
-      goals: [{ examDay: "booked", examTarget: "score" }],
+      goals: [
+        {
+          displayName: "GMAT",
+          examDay: "booked",
+          examSubjects: ["Quantitative Reasoning"],
+          examTarget: "score",
+        },
+      ],
+    });
+  });
+
+  it("keeps the country a language learner asked for", async () => {
+    const user = await userFixture();
+    const goal = `learn argentine spanish ${randomUUID()}`;
+
+    const language = {
+      kind: "language",
+      subject: "Spanish",
+      targetLanguage: "es",
+      targetRegion: "AR",
+      title: "Learn Argentine Spanish",
+    } as const;
+
+    await goalUnderstandingFixture({
+      goal,
+      result: { ...RESULT, goals: [language] },
+      userId: user.id,
+    });
+
+    await expect(readCached({ goal, userId: user.id })).resolves.toMatchObject({
+      goals: [{ targetLanguage: "es", targetRegion: "AR" }],
     });
   });
 

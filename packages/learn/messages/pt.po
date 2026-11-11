@@ -988,6 +988,7 @@ msgstr "Sons"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Idioma"
@@ -2909,6 +2910,7 @@ msgid "Use my date anyway"
 msgstr "Usar minha data mesmo assim"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -2976,6 +2978,17 @@ msgstr "Uma conversa curta em voz alta, no seu nível."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Fazer um simulado"
+
+#. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "axUi06"
+msgid "Your buddy and practice calls use {variety}."
+msgstr "Seu parceiro e as conversas de prática usam {variety}."
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "n-Iy44"
+msgid "Saved. You can change it in your plan."
+msgstr "Salvo. Você pode mudar isso no seu plano."
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -5409,6 +5422,23 @@ msgctxt "qm_eL5"
 msgid "Something else"
 msgstr "Outra coisa"
 
+#: src/language-variety/country-field.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "Sem preferência"
+
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "O país que você escolher vale para seu parceiro e as conversas de prática. As aulas e seus áudios usam {taughtVariety}."
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
+#: src/language-variety/use-variety-words.ts
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "Seu parceiro e as conversas de prática usam {variety}. As aulas e seus áudios usam {taughtVariety}."
+
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
 #: src/plan/plan-activities.tsx
@@ -7739,25 +7769,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "Começar as perguntas"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "Da última vez, você respondeu: {answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "Primeiro a ideia, depois a prática."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "Vamos rever uma ideia que não ficou clara."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "Leia cada palavra antes de responder."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7773,11 +7788,6 @@ msgstr "{seconds, number} segundos por pergunta, como no dia da prova."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Responda só quando tiver certeza. Tudo bem dizer que não tem certeza."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "Tente de novo."
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
@@ -10766,6 +10776,12 @@ msgstr "A gente vai ler de novo. Para corrigir um detalhe, use o lápis correspo
 msgctxt "Q47TXB"
 msgid "Read it again"
 msgstr "Ler de novo"
+
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "País"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
@@ -13828,6 +13844,12 @@ msgstr "Revisões"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Revisão rápida"
+
+#. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
+#: src/shell/goal-mark.tsx
+msgctxt "goalSwitcher.4dyYDe"
+msgid ", {variety}"
+msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"

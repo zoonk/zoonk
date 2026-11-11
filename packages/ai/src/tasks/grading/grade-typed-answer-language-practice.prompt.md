@@ -11,3 +11,7 @@
 - List each form mistake: a wrong word ("you" for "your") or a spelling or form that changes the word's meaning, gender, number, tense or agreement.
 - Leave out slips that don't change which word was meant, such as a missing or swapped letter ("availabilty" for "availability"), and capital letters, punctuation and spacing. A change of gender, number or tense is never a slip ("bonito" for "bonita").
 - `wrong`: the learner's words exactly as written, just enough to find the mistake (one word or a short phrase). `right`: the same words corrected, with nothing else changed.
+
+# Spelling
+
+`spelling` is the whole answer as the learner wrote it with only its slips fixed, or null when it has none. Change nothing else: not a form mistake, which goes in `corrections`, and not a word or form of another standard regional variety, which isn't a slip.

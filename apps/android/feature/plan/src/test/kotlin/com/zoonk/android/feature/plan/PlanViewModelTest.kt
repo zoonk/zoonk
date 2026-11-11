@@ -8,7 +8,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.HeldRuns
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.writingWaits
-import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangeDecisionInput
@@ -59,9 +59,9 @@ class PlanViewModelTest {
     @Test
     fun archivingLeavesThePlanOnceSaved() =
         runTest {
-            viewModel.setStatus(GoalUpdateInput.Status.ARCHIVED)
+            viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
 
-            assertEquals(listOf(GoalUpdateInput.Status.ARCHIVED), api.statuses)
+            assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
             assertEquals(PlanEvent.Archived, viewModel.events.first())
             assertFalse(viewModel.isSaving.value)
         }
@@ -71,7 +71,7 @@ class PlanViewModelTest {
         runTest {
             api.statusFailure = ApiException(ApiError.Unavailable, code = "GOAL_LIMIT_REACHED", status = 429)
 
-            viewModel.setStatus(GoalUpdateInput.Status.ACTIVE)
+            viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
 
             assertEquals(PlanEvent.GoalLimitReached, viewModel.events.first())
         }
@@ -81,7 +81,7 @@ class PlanViewModelTest {
         runTest {
             api.statusFailure = ApiException(ApiError.Network)
 
-            viewModel.setStatus(GoalUpdateInput.Status.PAUSED)
+            viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
 
             assertEquals(PlanEvent.SaveFailed, viewModel.events.first())
         }

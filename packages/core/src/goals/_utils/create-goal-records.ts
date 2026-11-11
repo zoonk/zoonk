@@ -79,6 +79,7 @@ export async function insertGoalWithPlan(
       studyTime: input.studyTime ?? null,
       targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
       targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
+      targetRegion: draft.targetRegion ?? null,
       timezone: input.timeZone ?? null,
       title: draft.title,
       userId,

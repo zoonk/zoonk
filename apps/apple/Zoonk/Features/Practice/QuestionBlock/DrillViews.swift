@@ -15,20 +15,16 @@ extension PracticeDrill.Kind {
 }
 
 extension PracticeDrill {
-  var line: LocalizedStringResource {
+  var line: LocalizedStringResource? {
     switch kind {
     case .reteach:
       isIdeaFirst
         ? LocalizedStringResource(
           "The idea first, then put it to use.", table: "Practice",
           comment: "How a content-gap drill goes, when it shows the lesson's ideas first.")
-        : LocalizedStringResource(
-          "Back to an idea you missed.", table: "Practice",
-          comment: "How a content-gap drill goes, without ideas to show.")
-    case .readCarefully:
-      LocalizedStringResource(
-        "Read every word before you answer.", table: "Practice",
-        comment: "How a misread drill goes.")
+        : nil
+    case .readCarefully, .retry:
+      nil
     case .spotTheTrap:
       LocalizedStringResource(
         "There's a trap in here. Find it before you answer.", table: "Practice",
@@ -41,41 +37,21 @@ extension PracticeDrill {
       LocalizedStringResource(
         "Only answer when you're sure. Saying you're not sure is fine.", table: "Practice",
         comment: "How a no-guessing drill goes.")
-    case .retry:
-      LocalizedStringResource(
-        "Try it again.", table: "Practice", comment: "How a plain retry drill goes.")
     }
   }
 }
 
-/// Once graded only the last answer and the lesson stay.
+/// What the drill asks until it's answered, or the lesson behind a content gap.
 struct DrillNoteView: View {
   let drill: PracticeDrill
-  var lastAnswer: String?
   var isAnswered = false
 
   var body: some View {
-    let lesson = drill.kind == .reteach ? drill.lesson : nil
-
-    if !(drill.kind == .retry && lastAnswer == nil)
-      && !(isAnswered && lastAnswer == nil && lesson == nil)
-    {
+    if drill.kind == .reteach, let lesson = drill.lesson {
+      LessonLinkButton(lessonId: lesson.id)
+    } else if !isAnswered, let line = drill.line {
       PracticeCallout(systemImage: drill.kind.systemImage) {
-        if !isAnswered {
-          Text(drill.line).typeWeight(.medium)
-        }
-
-        if let lastAnswer {
-          Text(
-            "Last time you answered: \(lastAnswer)", tableName: "Practice",
-            comment: "A mistake drill's note: what the learner answered when they got it wrong."
-          )
-          .foregroundStyle(.mutedForeground)
-        }
-
-        if let lesson {
-          LessonLinkButton(lessonId: lesson.id)
-        }
+        Text(line).typeWeight(.medium)
       }
     }
   }
@@ -111,7 +87,9 @@ struct DrillIdeaView: View {
     VStack(alignment: .leading, spacing: 20) {
       VStack(alignment: .leading, spacing: 6) {
         Text(lesson.title).typeStyle(.section)
-        Text(drill.line).foregroundStyle(.mutedForeground)
+        if let line = drill.line {
+          Text(line).foregroundStyle(.mutedForeground)
+        }
       }
 
       VStack(alignment: .leading, spacing: 0) {

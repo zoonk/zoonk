@@ -207,13 +207,8 @@ internal fun MistakeLessonQuestion(
                     DrillCountdown(seconds, { viewModel.checkLesson(dontKnow = true, timedOut = true) })
                 }
             }
-            if (part.showsScreen) {
-                DrillNote(
-                    task.drill,
-                    onOpenLesson = null,
-                    answered = checked || task.drill.isIdeaFirst,
-                    lastAnswer = task.lastAnswer,
-                )
+            if (part.showsScreen && !task.drill.isIdeaFirst) {
+                DrillNote(task.drill, onOpenLesson = null, answered = checked)
             }
             StepView(task.step, lesson, screen, actions, navigator, language, part, writingOptions = false)
             if (part.showsTurn) {

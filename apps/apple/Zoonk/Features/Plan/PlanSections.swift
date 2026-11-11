@@ -660,6 +660,16 @@ struct PlanSettingsSection: View {
           "Study days", tableName: "Plan", comment: "Setting: the days of the week to study"),
         value: Text(studyDaysText(schedule.weekdayMinutes)), section: .days)
 
+      if let variety = context.goal.variety {
+        setting(
+          label: Text(
+            "Language", tableName: "Plan", comment: "Setting: the language a goal learns"),
+          value: Text(variety.name)
+        ) {
+          context.show(.language)
+        }
+      }
+
       ForEach(context.plan.examChoices) { choice in
         setting(
           label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
@@ -689,9 +699,13 @@ struct PlanSettingsSection: View {
   }
 
   private func setting(label: Text, value: Text, section: AdjustPlanSheet.Section) -> some View {
-    Button {
+    setting(label: label, value: value) {
       context.adjust(section)
-    } label: {
+    }
+  }
+
+  private func setting(label: Text, value: Text, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
       LabeledContent {
         value
       } label: {

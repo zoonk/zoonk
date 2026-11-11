@@ -10,6 +10,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type ConversationTurn,
   formatConversationTranscript,
@@ -43,7 +44,8 @@ const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["meta/muse-ember", "google/gemini-3.8-flash"] as const;
 
 function withRubric({ english, rubric }: { english: boolean; rubric: string }): string {
-  return `${selectPromptVariants({ template: basePrompt, variants: { english } })}\n${rubric}`;
+  const prompt = selectPromptVariants({ template: basePrompt, variants: { english } });
+  return `${prompt}\n${rubric}\n${regionalFormsPrompt}`;
 }
 
 const SYSTEM_PROMPTS: Record<SpeakingExam | SpeakingMockExam, string> = {

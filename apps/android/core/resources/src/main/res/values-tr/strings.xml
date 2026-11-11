@@ -38,6 +38,7 @@
   "gate_start_goal_description": "deaa2ea6ca4b0fec746572a513c23f1f0a43ccc7ca6da2d732bbb8bd9d155efa",
   "gate_start_goal_title": "9098152f6ae7e967f28d4a2a604f9a275911f44659dc162bd591b97fce3ceacd",
   "gate_start_something_new": "f1e6e1e1db0cb11c86042f1d025e9061cff5b97b0f3d4c8a20cbcaffcb800fd2",
+  "goal_with_variety": "6ee698ff66d1896d082e76a3dbab3d9dfd38c50259e8ac40a42ae091d39f3103",
   "lesson_summaries_title": "2de26e8f6392c2ee5c38a7ff4f2b9dc097f0cf9de8739357158a8f4fce78efe9",
   "lessons_coming_up": "3887cc7048b723f97fed5493e898b02d294751b12ebdda1d28455909b9b84716",
   "lessons_done": "ed45acafd4346d70be118aa7c46a954e5298fecaf0d667ed830d83b7dda7e5a3",
@@ -100,6 +101,8 @@
     <string name="gate_start_goal_title">Bir hedefle başla</string>
     <string name="gate_start_goal_description">Ne öğrenmek istediğini söyle, hedefine ulaşana kadar her gününü biz planlayalım.</string>
     <string name="gate_start_goal">Bir hedefe başla</string>
+    <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
+    <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">Beyaz kuşak</string>
     <string name="belt_yellow">Sarı kuşak</string>
     <string name="belt_orange">Turuncu kuşak</string>
