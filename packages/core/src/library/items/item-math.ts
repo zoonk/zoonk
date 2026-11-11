@@ -2,9 +2,9 @@ import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/it
 import { evaluateFormula } from "../activities/expression/evaluate-expression";
 import { withinTolerance } from "../activities/templates/_utils/pattern-checks";
 import { type MathValues, fillMathStep, fillMathText, getValues } from "./_utils/math-values";
-import { ANY_NUMBER, fitsEntry, matchesEntry } from "./_utils/numeric-entry";
+import { ANY_NUMBER, fitsEntry, isWholeNumber, matchesEntry } from "./_utils/numeric-entry";
 
-const MAX_NEW_NUMBER_TRIES = 20;
+const MAX_NEW_NUMBER_TRIES = 50;
 const DECIMAL_PRECISION = 12;
 
 /** Binary rounding can make slider endpoints unreachable or leak long decimals into questions. */
@@ -29,6 +29,41 @@ function drawValues(math: GeneratedMathProblem, random: () => number): MathValue
 }
 
 type AnswerRules = { entry?: NumericEntry; otherSolutions?: readonly string[] };
+
+type ShownResult = { expression: string; written: number };
+
+function getShownResults(math: GeneratedMathProblem): ShownResult[] {
+  const values = getValues(math);
+
+  return [math.solution, ...math.steps.flatMap((step) => step.expression ?? [])].flatMap(
+    (expression) => {
+      const result = evaluateFormula(expression, values);
+      return result.ok ? [{ expression, written: result.value }] : [];
+    },
+  );
+}
+
+/**
+ * Code can't tell a count (customers) from a measure (money), so a result the written question
+ * shows whole stays whole, and every result keeps its sign (a net yield never turns negative).
+ */
+function keepsWrittenForm({
+  shown,
+  values,
+}: {
+  shown: readonly ShownResult[];
+  values: MathValues;
+}): boolean {
+  return shown.every(({ expression, written }) => {
+    const result = evaluateFormula(expression, values);
+
+    return (
+      result.ok &&
+      Math.sign(toDecimal(result.value)) === Math.sign(toDecimal(written)) &&
+      (!isWholeNumber(written) || isWholeNumber(result.value))
+    );
+  });
+}
 
 function getAcceptedValues({
   math,
@@ -75,11 +110,13 @@ function isUsableDraw({
   entry,
   math,
   otherSolutions,
+  shown,
   values,
 }: {
   entry: NumericEntry;
   math: GeneratedMathProblem;
   otherSolutions?: readonly string[];
+  shown: readonly ShownResult[];
   values: MathValues;
 }): boolean {
   const accepted = getAcceptedValues({ math, otherSolutions, values });
@@ -87,6 +124,7 @@ function isUsableDraw({
   return (
     accepted !== null &&
     accepted.every((value) => fitsEntry({ entry, value })) &&
+    keepsWrittenForm({ shown, values }) &&
     !isMistakeIndistinct({ accepted, entry, math, values })
   );
 }
@@ -141,13 +179,14 @@ export function withNewNumbers({
   ...text
 }: MathText & AnswerRules & { random?: () => number }): MathVersion {
   const { math } = text;
+  const shown = getShownResults(math);
   const draws = Array.from({ length: MAX_NEW_NUMBER_TRIES }, () => drawValues(math, random));
 
   const found = draws
     .map((values) => ({ result: evaluateFormula(math.solution, values), values }))
     .find(
       (draw) =>
-        draw.result.ok && isUsableDraw({ entry, math, otherSolutions, values: draw.values }),
+        draw.result.ok && isUsableDraw({ entry, math, otherSolutions, shown, values: draw.values }),
     );
 
   if (!found?.result.ok) {

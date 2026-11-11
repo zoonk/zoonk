@@ -118,6 +118,59 @@ describe(withNewNumbers, () => {
     ).toMatchObject({ question: "Em 2025, mais 5 anos?" });
   });
 
+  it("skips draws that make a whole count in the written question fractional", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 15.5,
+      commonMistakes: [
+        { expression: "increase - decrease", misconception: "Subtracts rates", reason: "No." },
+      ],
+      solution:
+        "round((weekday * increase / 100 - weekend * decrease / 100) / (weekday + weekend) * 100, 1)",
+      steps: [{ expression: "weekday * increase / 100", text: "{result} more weekday customers." }],
+      tolerance: { kind: "absolute", value: 0.05 },
+      variables: [
+        { max: 500, min: 300, name: "weekday", step: 10, unit: "customers", value: 400 },
+        { max: 200, min: 100, name: "weekend", step: 10, unit: "customers", value: 150 },
+        { max: 40, min: 20, name: "increase", step: 5, unit: "%", value: 25 },
+        { max: 15, min: 5, name: "decrease", step: 5, unit: "%", value: 10 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      context: "{weekday} weekday and {weekend} weekend customers; +{increase}% and -{decrease}%.",
+      math,
+      question: "Percent change?",
+      random: sequence(0.25, 0.25, 0.25, 0.25, 0.3, 0.3, 0.3, 0.3),
+    });
+
+    expect(result.steps).toStrictEqual(["90 more weekday customers."]);
+  });
+
+  it("skips draws that flip the sign of the written answer", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 2,
+      commonMistakes: [{ expression: "made / glucose", misconception: "No cost", reason: "No." }],
+      solution: "(made - spent) / glucose",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [
+        { max: 6, min: 2, name: "glucose", step: 1, unit: null, value: 2 },
+        { max: 12, min: 4, name: "spent", step: 2, unit: "ATP", value: 4 },
+        { max: 24, min: 8, name: "made", step: 4, unit: "ATP", value: 8 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      math,
+      question: "{glucose} glucose, {spent} ATP spent, {made} ATP made. Net per glucose?",
+      random: sequence(0, 0.999, 0, 0, 0, 0.5),
+    });
+
+    expect(result.answer).toBe(6);
+  });
+
   it("keeps the checked numbers when no new draw works", () => {
     const math: GeneratedMathProblem = {
       ...discountMath,
