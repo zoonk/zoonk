@@ -50,7 +50,8 @@ function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
 
 export type TestSkillAnswers = {
   answered: number;
-  durationMs: number;
+  paceAnswers: number;
+  paceDurationMs: number;
   right: number;
   sittingAnswers: number;
   skillId: string;
@@ -70,7 +71,9 @@ async function loadTestSkills({
   return tx.$queryRaw<TestSkillAnswers[]>`
     SELECT skill_id AS "skillId", COUNT(*)::int AS answered,
       COUNT(*) FILTER (WHERE is_correct)::int AS right,
-      COALESCE(SUM(LEAST(duration_ms, ${MAX_PACED_ANSWER_MS})), 0)::float8 AS "durationMs",
+      COUNT(*) FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb))::int AS "paceAnswers",
+      COALESCE(SUM(LEAST(duration_ms, ${MAX_PACED_ANSWER_MS}))
+        FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb)), 0)::float8 AS "paceDurationMs",
       COUNT(*) FILTER (WHERE study_session_id IS NULL AND step_id IS NULL
         AND item_id IS NOT NULL AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
     FROM attempts

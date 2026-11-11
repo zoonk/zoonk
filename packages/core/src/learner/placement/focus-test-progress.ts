@@ -79,13 +79,14 @@ export function getTestProgress({
   sittingOutcomes: readonly ("correct" | "dontKnow" | "wrong")[];
 }): TestProgress {
   const answered = testSkills.reduce((sum, skill) => sum + skill.answered, 0);
-  const durationMs = testSkills.reduce((sum, skill) => sum + skill.durationMs, 0);
+  const paceAnswers = testSkills.reduce((sum, skill) => sum + skill.paceAnswers, 0);
+  const durationMs = testSkills.reduce((sum, skill) => sum + skill.paceDurationMs, 0);
   const sittingAnswers = testSkills.reduce((sum, skill) => sum + skill.sittingAnswers, 0);
   const sitting = record?.sitting ?? null;
 
   return {
     answers: answered,
-    paceMs: getPaceMs({ answers: answered, durationMs }),
+    paceMs: getPaceMs({ answers: paceAnswers, durationMs }),
     sitting: sitting && {
       answered: sittingAnswers,
       id: sitting.id,

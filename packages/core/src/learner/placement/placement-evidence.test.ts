@@ -56,7 +56,10 @@ describe("diagnostic progress outside the recent model evidence window", () => {
 
     const read = await loadEvidence({ skillIds: skills.map((skill) => skill.id), userId: user.id });
     expect(read.evidence).toHaveLength(1000);
-    expect(read.testSkills).toMatchObject([{ answered: 5, durationMs: 660_000 }]);
+
+    expect(read.testSkills).toMatchObject([
+      { answered: 5, paceAnswers: 5, paceDurationMs: 660_000 },
+    ]);
 
     const answered = await loadAnsweredTestItems({
       itemIds: items.map((item) => item.id),
