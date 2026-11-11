@@ -7,6 +7,7 @@ import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
 import { replanAfterPlacement } from "../../../plans/replan-after-placement";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
+import { readFocusTestRecord } from "../focus-test-state";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
 import { settleFocusTest } from "./settle-focus-test";
@@ -55,10 +56,12 @@ function trackSittingFinished({ closed, goal }: { closed: ClosedSitting | null; 
 export async function completePlacement({
   goal,
   plan,
+  sittingId = readFocusTestRecord(goal)?.sitting?.id ?? null,
   timeZone,
 }: {
   goal: Goal;
   plan: GoalPlan;
+  sittingId?: string | null;
   timeZone: string;
 }): Promise<PlacementCompletion> {
   const { id: goalId, userId } = goal;
@@ -67,7 +70,11 @@ export async function completePlacement({
 
   if (tested) {
     const skillIds = plan.skills.map((skill) => skill.id);
-    trackSittingFinished({ closed: await closeTestSitting({ goal, skillIds, timeZone }), goal });
+
+    trackSittingFinished({
+      closed: await closeTestSitting({ goal, sittingId, skillIds, timeZone }),
+      goal,
+    });
   }
 
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });

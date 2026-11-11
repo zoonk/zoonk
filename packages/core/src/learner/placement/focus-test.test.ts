@@ -1,8 +1,14 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import {
@@ -365,6 +371,60 @@ describe("an exam goal's Focus test", () => {
       status: "asking",
     });
   });
+
+  it.each(["start", "finish"] as const)(
+    "%s closes only the sitting it observed before waiting for the learner lock",
+    async (action) => {
+      const { goal, user } = await examTestGoalFixture({
+        subjects: [{ name: "Biologia", questions: 10, skills: 4 }],
+      });
+
+      const first = await startSitting(goal.id);
+      await answerTimes({ goalId: goal.id, placement: first, times: 4 });
+      const before = await readRecord(goal.id);
+      const successorId = randomUUID();
+
+      const lock = holdLearnerLock({
+        beforeCommit: async (tx) => {
+          await tx.goal.update({
+            data: {
+              details: {
+                focusTest: {
+                  ...before,
+                  sitting: {
+                    answered: 0,
+                    id: successorId,
+                    kind: "continuation",
+                    questions: 4,
+                    startedAt: new Date().toISOString(),
+                  },
+                },
+              },
+            },
+            where: { id: goal.id },
+          });
+        },
+        userId: user.id,
+      });
+
+      const holder = await lock.pid;
+
+      const request = Promise.allSettled([
+        action === "start" ? startSitting(goal.id) : finish(goal.id),
+      ]);
+
+      try {
+        await waitForBlockedStatement(holder, LEARNER_LOCK);
+      } finally {
+        lock.release();
+        await lock.done;
+        await request;
+      }
+
+      await expect(request).resolves.toMatchObject([{ status: "fulfilled" }]);
+      await expect(readRecord(goal.id)).resolves.toMatchObject({ sitting: { id: successorId } });
+    },
+  );
 
   it("says its starting points are set once nothing useful is left to ask", async () => {
     const { goal } = await examTestGoalFixture({ subjects: THREE_SUBJECTS.slice(0, 2) });

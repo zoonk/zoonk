@@ -91,6 +91,7 @@ async function loadFocusFacts({
 }
 
 type FocusTestLoad = {
+  sittingId: string | null;
   /** The focus to propose now; null when none is due. */
   dueFocus: string[] | null;
   summary: FocusTestSummaryRecord;
@@ -152,6 +153,7 @@ async function loadTurnFocusTest({
 
   return {
     dueFocus: focusPlan.due,
+    sittingId: progress.sitting?.id ?? null,
     summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
     view: toFocusTestView({
       asking: {

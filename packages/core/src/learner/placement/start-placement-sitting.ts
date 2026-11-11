@@ -53,7 +53,12 @@ export async function startPlacementSitting({
   }
 
   if (sitting) {
-    await completePlacement({ goal, plan: await loadPlacementPlan(goalId), timeZone });
+    await completePlacement({
+      goal,
+      plan: await loadPlacementPlan(goalId),
+      sittingId: open.focusTest?.sittingId ?? null,
+      timeZone,
+    });
   }
 
   const { focusTest, state } = sitting ? await read() : open;

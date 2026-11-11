@@ -112,7 +112,11 @@ function getStatus({
 
 type PlacementLoad = {
   /** What an exam goal's writes need beside the state; null for other goals. */
-  focusTest: { dueFocus: string[] | null; summary: FocusTestSummaryRecord } | null;
+  focusTest: {
+    dueFocus: string[] | null;
+    sittingId: string | null;
+    summary: FocusTestSummaryRecord;
+  } | null;
   state: PlacementState;
 };
 
@@ -282,7 +286,11 @@ export async function loadPlacementWithSummary({
   });
 
   return {
-    focusTest: focusTest && { dueFocus: focusTest.dueFocus, summary: focusTest.summary },
+    focusTest: focusTest && {
+      dueFocus: focusTest.dueFocus,
+      sittingId: focusTest.sittingId,
+      summary: focusTest.summary,
+    },
     state: {
       answered,
       areas: getAreaStarts({ skills, statuses }),

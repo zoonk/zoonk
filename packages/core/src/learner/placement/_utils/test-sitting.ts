@@ -82,15 +82,17 @@ export type ClosedSitting = {
 };
 
 /**
- * Closes the open sitting, once: on a plan the learner has seen, its time and Energy count in the
+ * Closes only the observed sitting, once: on a plan the learner has seen, its time and Energy count in the
  * same write, so a repeated close counts nothing twice. Null when no sitting was open.
  */
 export async function closeTestSitting({
   goal,
+  sittingId,
   skillIds,
   timeZone,
 }: {
   goal: Pick<Goal, "id" | "planRevealedAt" | "userId">;
+  sittingId: string | null;
   /** The plan's skills, which say which of the learner's answers are this goal's. */
   skillIds: string[];
   timeZone: string;
@@ -99,12 +101,13 @@ export async function closeTestSitting({
 
   const closed = await writeLearnerChange({ userId }, async (tx) => {
     const { before } = await changeFocusTestRecord({
-      change: (record) => ({ ...record, sitting: null }),
+      change: (record) =>
+        record.sitting?.id === sittingId ? { ...record, sitting: null } : record,
       goalId,
       tx,
     });
 
-    if (!before.sitting) {
+    if (!before.sitting || before.sitting.id !== sittingId) {
       return null;
     }
 
