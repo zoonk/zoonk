@@ -46730,7 +46730,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -47095,7 +47094,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -47538,7 +47536,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -47961,7 +47958,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -48363,7 +48359,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -48781,7 +48776,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -49154,7 +49148,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -49499,7 +49492,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -50081,7 +50073,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -50494,7 +50485,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -50889,7 +50879,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -51289,7 +51278,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -51755,7 +51743,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -52084,7 +52071,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -52624,7 +52610,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -53041,7 +53026,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -53421,7 +53405,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -53869,7 +53852,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -54337,7 +54319,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -54834,7 +54815,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -55221,7 +55201,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -55621,7 +55600,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56004,7 +55982,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56367,7 +56344,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -56743,7 +56719,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -57159,7 +57134,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -57542,7 +57516,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -57925,7 +57898,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -58322,7 +58294,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -58699,7 +58670,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -59155,7 +59125,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -59488,7 +59457,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -59832,7 +59800,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -60263,7 +60230,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -61313,7 +61279,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -66294,7 +66259,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -66750,7 +66714,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -66984,7 +66947,6 @@
                           },
                           "parts": {
                             "minItems": 2,
-                            "maxItems": 6,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -70647,7 +70609,6 @@
                 "properties": {
                   "ideas": {
                     "minItems": 1,
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -70906,7 +70867,6 @@
                 "type": "object",
                 "properties": {
                   "acceptedAnswers": {
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -70942,7 +70902,6 @@
                   },
                   "keyPoints": {
                     "minItems": 1,
-                    "maxItems": 5,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -71366,7 +71325,6 @@
                       },
                       "parts": {
                         "minItems": 2,
-                        "maxItems": 6,
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -71393,7 +71351,6 @@
                   },
                   "steps": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",

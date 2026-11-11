@@ -42,10 +42,8 @@ export const pictureRequestSchema = z
   .object({ alt: optionTextSchema, prompt: explanationSchema })
   .strict();
 
-const MAX_NUMBERED_PARTS = 6;
-
 export const stepImageRequestSchema = pictureRequestSchema
-  .extend({ parts: z.array(partSchema).min(2).max(MAX_NUMBERED_PARTS).optional() })
+  .extend({ parts: z.array(partSchema).min(2).optional() })
   .strict();
 
 function hasUniqueIds(items: readonly { id: string }[]): boolean {
