@@ -7,7 +7,14 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { continueToLastStep } from "./result-steps";
-import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
+import {
+  answerRight,
+  createStudyDay,
+  openAs,
+  pressUntil,
+  saveMissions,
+  writeStudyLesson,
+} from "./study-day";
 
 const WAITING_CHECK_MS = 5000;
 
@@ -216,6 +223,44 @@ test.describe("Today's session", () => {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
     await replayFromToday(page, lesson);
+    await page.context().close();
+  });
+
+  test("a saved day's practice mission opens its intro and starts only on Start", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay({ reviewDone: true });
+    const page = await openAs(browser, user);
+
+    const practice = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "practice", sessionId: session.id },
+    });
+
+    await saveMissions(session.id, [
+      {
+        anchor: { blockKind: "practice" },
+        kind: "practice",
+        opens: { blockId: practice.id, kind: "block" },
+        total: 1,
+      },
+    ]);
+
+    await page.goto("/today");
+
+    const mission = page
+      .getByRole("region", { name: "Today's missions" })
+      .getByRole("button", { name: /^Practice/u });
+
+    await expectHydrated(mission);
+    await mission.click();
+    await expect(page).toHaveURL((url) => url.searchParams.get("block") === practice.id);
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: practice.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+    await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page.getByRole("heading", { name: /^Practice one/u })).toBeVisible();
     await page.context().close();
   });
 

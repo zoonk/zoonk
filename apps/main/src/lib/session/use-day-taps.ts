@@ -60,6 +60,16 @@ function waitsForStart({
   );
 }
 
+function getStepHref({ goalId, step }: { goalId: string; step: TapStep }): string | null {
+  if (step.screen !== "session") {
+    return null;
+  }
+
+  return getSessionHref(
+    step.blockId ? { blockId: step.blockId, limit: null } : { goalId, limit: null },
+  );
+}
+
 type TapRequest = {
   next: boolean;
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
@@ -131,6 +141,25 @@ async function settleEntry({
   }
 }
 
+/** Takes the learner to a step's intro when the step waits for Start there; says whether it did. */
+function useShowIntro(shown: TapDay["shown"]) {
+  const router = useRouter();
+
+  return useCallback(
+    (step: TapStep): boolean => {
+      const href = getStepHref({ goalId: shown.goalId, step });
+
+      if (!href || !waitsForStart({ day: shown.day, origin: getCurrentLocation(), step })) {
+        return false;
+      }
+
+      router.push(href);
+      return true;
+    },
+    [router, shown],
+  );
+}
+
 /**
  * Nothing here starts AI work on its own: only a tapped step's start does. A tap that stops because
  * the learner left resolves true: the screen they left has nothing to report, even when they return.
@@ -172,6 +201,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     [go, refresh],
   );
 
+  const showIntro = useShowIntro(shown);
+
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
       const learnerHere = learnerStaying(shown.userId);
@@ -179,17 +210,9 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const here = openingHere(shown.userId);
       const focusMain = isFocusOnControl();
 
-      const href =
-        step.screen === "session"
-          ? getSessionHref(
-              step.blockId
-                ? { blockId: step.blockId, limit: null }
-                : { goalId: shown.goalId, limit: null },
-            )
-          : null;
+      const href = getStepHref({ goalId: shown.goalId, step });
 
-      if (href && waitsForStart({ day: shown.day, origin, step })) {
-        router.push(href);
+      if (showIntro(step)) {
         return true;
       }
 
@@ -234,7 +257,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       return applyHere(answered.answer, here);
     },
-    [applyHere, day, request, router, shown],
+    [applyHere, day, request, router, shown, showIntro],
   );
 
   const openKept = useCallback(
@@ -320,5 +343,6 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       return prepared.answer;
     },
+    showIntro,
   };
 }

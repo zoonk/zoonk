@@ -57,9 +57,12 @@ export function useMissionLinks(
     learner,
     openStep,
     refresh,
+    showIntro,
   }: {
     learner?: string;
     openStep?: (ref: DayBlockRef) => Promise<boolean>;
+    /** Whether it took the learner to the block's intro instead, as the block's own row would. */
+    showIntro?: (blockId: string) => boolean;
     refresh?: () => void;
   } = {},
 ): MissionLinks {
@@ -78,6 +81,10 @@ export function useMissionLinks(
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
       openBlock: async (blockId) => {
+        if (showIntro?.(blockId)) {
+          return true;
+        }
+
         const opened = await openMissionBlock(blockId);
 
         if (opened !== "changed") {
@@ -93,6 +100,6 @@ export function useMissionLinks(
       },
       openStep,
     }),
-    [goalId, openMissionBlock, openStep, reread],
+    [goalId, openMissionBlock, openStep, reread, showIntro],
   );
 }

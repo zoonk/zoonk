@@ -147,7 +147,21 @@ export function TodayClient({
     [steps, taps],
   );
 
-  const missionLinks = useMissionLinks(today.goal.id, { learner: userId, openStep, refresh });
+  const showIntro = useCallback(
+    (blockId: string) => {
+      const step = steps.find((candidate) => candidate.blockId === blockId);
+      return step ? taps.showIntro(step) : false;
+    },
+    [steps, taps],
+  );
+
+  const missionLinks = useMissionLinks(today.goal.id, {
+    learner: userId,
+    openStep,
+    refresh,
+    showIntro,
+  });
+
   const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
   const [uploadDismissed, setUploadDismissed] = useState(false);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
