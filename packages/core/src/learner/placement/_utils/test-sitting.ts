@@ -230,7 +230,6 @@ export async function refreshTestSummary({
   await keepTestSummary({ goalId, tx, userId: goal.userId });
 }
 
-/** `refreshTestSummary` for a plan write, which only a change to the test's subjects needs. */
 export async function keepPlanTestSummary({
   after,
   before,

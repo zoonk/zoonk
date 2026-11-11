@@ -33,7 +33,6 @@ async function readSummary(goalId: string) {
     ?.summary;
 }
 
-/** What a summary written now would hold. */
 async function computeSummary({ id, userId }: { id: string; userId: string }) {
   const plan = await loadPlacementPlan(id);
   const read = await loadPlacementWithSummary({ goalId: id, plan, userId });
