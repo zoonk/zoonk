@@ -11,7 +11,7 @@ final class FocusTestPhaseTests: XCTestCase {
 
     XCTAssertEqual(
       phase(.done, test, opening: true),
-      .invitation(test, next: .init(questions: 15, minutes: 15, pastCeiling: 9)))
+      .invitation(test, next: offered))
   }
 
   func testShowsTheResultOnceTheLearnerHasAnswersAndNoSittingIsOpen() throws {
@@ -39,12 +39,11 @@ final class FocusTestPhaseTests: XCTestCase {
     }
   }
 
-  func testOffersASittingLeftBeforeItsFirstAnswerAgainWithItsOwnNumbers() throws {
-    let test = try focusTest(sitting: sitting(answered: 0))
+  func testInvitesAgainWhenASittingWasLeftBeforeItsFirstAnswer() throws {
+    let test = try focusTest(sitting: sitting(answered: 0), offer: offer)
 
     XCTAssertEqual(
-      phase(.asking, test, next: question, opening: true),
-      .invitation(test, next: .init(questions: 15, minutes: 15, pastCeiling: 0)))
+      phase(.asking, test, next: question, opening: true), .invitation(test, next: offered))
   }
 
   func testEndsASittingThatHasNothingMoreToAskWithItsReason() throws {
@@ -68,7 +67,7 @@ final class FocusTestPhaseTests: XCTestCase {
 
     XCTAssertEqual(
       phase(.preparing, test, opening: true),
-      .invitation(test, next: .init(questions: 15, minutes: 15, pastCeiling: 9)))
+      .invitation(test, next: offered))
   }
 
   func testHasNothingToShowForAGoalWithNoTestOrATestWithNothingToAsk() throws {
@@ -86,6 +85,7 @@ final class FocusTestPhaseTests: XCTestCase {
   }
 
   private let offer = #"{"kind":"first","questions":15,"minutes":15,"pastCeiling":9}"#
+  private let offered = FocusTest.Offer(kind: .first, questions: 15, minutes: 15, pastCeiling: 9)
   private let checkpoint = #"{"focus":null,"lessonsSkipped":4}"#
 
   private func sitting(answered: Int, end: String? = nil) -> String {

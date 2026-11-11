@@ -86,6 +86,8 @@ struct FocusTest: Decodable, Equatable, Sendable {
     let end: End?
   }
 
+  /// What Start or Continue the test opens, said before the tap. A sitting left before its first
+  /// answer is still offered as it was promised.
   struct Offer: Decodable, Equatable, Sendable {
     let kind: SittingKind
     let questions: Int
@@ -146,28 +148,6 @@ struct FocusTest: Decodable, Equatable, Sendable {
   let sitting: Sitting?
   /// Every subject, in the notice's order.
   let subjects: [Subject]
-
-  /// What Start or Continue the test opens. A sitting opened and left before its first answer is
-  /// offered again with its own numbers.
-  var nextSitting: NextSitting? {
-    if let offer {
-      return NextSitting(
-        questions: offer.questions, minutes: offer.minutes, pastCeiling: offer.pastCeiling)
-    }
-
-    guard let sitting, sitting.answered == 0, sitting.left > 0 else {
-      return nil
-    }
-
-    return NextSitting(questions: sitting.questions, minutes: sitting.minutes, pastCeiling: 0)
-  }
-
-  /// A sitting's size, said before the tap that opens it.
-  struct NextSitting: Equatable, Sendable {
-    let questions: Int
-    let minutes: Int
-    let pastCeiling: Int
-  }
 }
 
 /// Whether sessions ask a few test questions each.

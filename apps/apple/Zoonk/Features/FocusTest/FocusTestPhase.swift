@@ -13,7 +13,7 @@ enum FocusTestPhase: Equatable {
   case unavailable
   /// `answered`: the learner has test answers, so leaving the wait uses them.
   case waiting(answered: Bool, failure: GenerationFailure?)
-  case invitation(FocusTest, next: FocusTest.NextSitting)
+  case invitation(FocusTest, next: FocusTest.Offer)
   case resume(FocusTestQuestion)
   case question(FocusTestQuestion)
   /// A sitting that's over and not closed yet: the learner came back to it, or closing it failed.
@@ -79,6 +79,6 @@ enum FocusTestPhase: Equatable {
       return .checkpoint(focusTest, end: nil)
     }
 
-    return focusTest.nextSitting.map { .invitation(focusTest, next: $0) }
+    return focusTest.offer.map { .invitation(focusTest, next: $0) }
   }
 }

@@ -38,7 +38,7 @@ private struct SaveFailure: View {
 /// Main's `FocusTestInvitation`: optional, with its length up front.
 struct FocusTestInvitation: View {
   let focusTest: FocusTest
-  let next: FocusTest.NextSitting
+  let next: FocusTest.Offer
   let subject: String
   let host: FocusTestHost
   let pressed: FocusTestPress?

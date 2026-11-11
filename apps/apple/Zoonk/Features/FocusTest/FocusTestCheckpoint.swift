@@ -17,7 +17,7 @@ struct FocusTestCheckpoint: View {
   @State private var showsSubjects = false
 
   var body: some View {
-    let next = focusTest.nextSitting
+    let next = focusTest.offer
 
     ZoonkList {
       StepHeader(
