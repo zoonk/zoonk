@@ -16,6 +16,7 @@
   "reached": { "energy": null, "level": null },
   "reminderOffer": null,
   "sessionBar": { "completed": 1, "total": 3 },
+  "dayProgress": { "catchUp": null, "lead": "done", "lessonsComing": false, "percent": 33 },
   "deferredLessonsCount": 0,
   "minutes": { "dailyGoal": 0, "done": 0, "left": 0, "planned": 0 },
   "sessionCompleted": false,
