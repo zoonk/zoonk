@@ -272,7 +272,7 @@ export function WeekDayCell({
         {challenge && (
           <p className="flex items-center gap-1.5 text-xs">
             <KindIcon className="size-3.5" kind={getChallengeKind(challenge)} />
-            {dayName(challenge)}
+            {toLabelCase(dayName(challenge))}
           </p>
         )}
       </PopoverContent>
