@@ -98,7 +98,11 @@ export async function resolveNewGoalCountry({
   const saved =
     isJsonObject(understood) && isJsonObject(understood.draft)
       ? understood.draft.contentCountry
-      : null;
+      : undefined;
+
+  if (saved === null) {
+    return { contentCountry: null, countryDependent, source: "picked" };
+  }
 
   if (typeof saved === "string" && isCountryCode(saved)) {
     return { contentCountry: saved, countryDependent, source: "said" };

@@ -74,7 +74,7 @@ export async function insertGoalWithPlan(
       : {
           contentCountrySource: country.source,
           countryDependent: country.countryDependent,
-          ...((draft.contentCountry !== undefined || country.contentCountry !== null) && {
+          ...(country.source !== "default" && {
             answered: [...new Set([...answered, "contentCountry"])],
           }),
         };

@@ -220,46 +220,56 @@ describe("country onboarding lifecycle", () => {
     },
   );
 
-  it("choosing the own country (null) on the review card is not asked again", async () => {
-    const user = await userFixture();
-    await learningProfileFixture({ homeCountry: "PT", userId: user.id });
-    const title = "Financas pessoais";
+  it.each([false, true])(
+    "keeps the reviewed own country when the request omits it: %s",
+    async (omitted) => {
+      const user = await userFixture();
+      await learningProfileFixture({ homeCountry: "PT", userId: user.id });
+      const title = "Financas pessoais";
 
-    const card = await onboardingDraftFixture({
-      understanding: {
-        goals: [
-          {
-            contentCountry: { code: "PT", source: "home" },
-            countryDependent: true,
-            draft: { contentCountry: null, kind: "learn", title },
-          },
-        ],
-        status: "goals",
-      },
-      userId: user.id,
-    });
+      const card = await onboardingDraftFixture({
+        understanding: {
+          goals: [
+            {
+              contentCountry: { code: "BR", source: "picked" },
+              countryDependent: true,
+              draft: { contentCountry: null, kind: "learn", title },
+            },
+          ],
+          status: "goals",
+        },
+        userId: user.id,
+      });
 
-    const draft = {
-      contentCountry: null,
-      details: { onboardingId: card.id },
-      kind: "learn" as const,
-      language: "pt",
-      prompt: title,
-      title,
-    };
+      const draft = {
+        ...(!omitted && { contentCountry: null }),
+        details: { onboardingId: card.id },
+        kind: "learn" as const,
+        language: "pt",
+        prompt: title,
+        title,
+      };
 
-    mockSession(user.id);
+      mockSession(user.id);
 
-    const created = await createGoals({ dailyMinutes: 15, goals: [draft] });
+      const created = await createGoals({ dailyMinutes: 15, goals: [draft] });
 
-    if (created.status !== "created" || !created.goals[0]) {
-      throw new Error("Expected the reviewed goal to start");
-    }
+      if (created.status !== "created" || !created.goals[0]) {
+        throw new Error("Expected the reviewed goal to start");
+      }
 
-    expect(
-      getMissingQuestions({ details: created.goals[0].details, kind: "learn", targetDate: null }),
-    ).not.toContain("contentCountry");
-  });
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: created.goals[0].id } }),
+      ).resolves.toMatchObject({
+        contentCountry: null,
+        details: { contentCountrySource: "picked" },
+      });
+
+      expect(
+        getMissingQuestions({ details: created.goals[0].details, kind: "learn", targetDate: null }),
+      ).not.toContain("contentCountry");
+    },
+  );
 });
 
 describe("country rebuild continuity", () => {
