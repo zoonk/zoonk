@@ -69,9 +69,10 @@ export async function settleFocusTest({
   if (proposed.status === "proposed" || proposed.status === "unchanged") {
     await keepHandledSuggestion({
       areas,
+      dailyMinutes: focusTest.dailyMinutes,
       goalId,
       outcome: proposed.status === "unchanged" ? proposed.reason : "proposed",
-      planVersion: focusTest.planVersion,
+      targetDate: focusTest.targetDate,
       userId,
     });
 

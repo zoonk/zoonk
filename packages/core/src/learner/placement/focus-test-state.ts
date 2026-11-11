@@ -42,14 +42,15 @@ const recordSchema = z.object({
    */
   focus: z.array(z.string()).nullable().default(null),
   /**
-   * The last verdict stays visible until the test settles again. Its saved plan version decides
-   * whether that settlement reconsiders the suggestion; unrelated answers don't expire it.
+   * Plan verdicts depend on the exam date and daily time; a proposal's status holds the learner's
+   * decision for those suggested subjects across replans.
    */
   handled: z
     .object({
       areas: z.array(z.string()),
+      dailyMinutes: z.int(),
       outcome: z.enum(["proposed", "alreadyIn", "cantMove"]),
-      planVersion: z.int(),
+      targetDate: z.iso.date().nullable(),
     })
     .nullable()
     .default(null),

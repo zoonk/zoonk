@@ -358,9 +358,11 @@ describe("the Focus test on a plan whose time is short", () => {
       });
 
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-      expect(readFocusTestRecord(stored)?.handled).toMatchObject({ planVersion: plan.version });
+      expect(readFocusTestRecord(stored)?.handled).toMatchObject({
+        dailyMinutes: stored.dailyMinutes,
+        targetDate: stored.targetDate?.toISOString().slice(0, 10) ?? null,
+      });
     },
   );
 

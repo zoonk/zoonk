@@ -146,7 +146,7 @@ const focusTestFocusSchema = z
       .enum(["ifTimeShort", "proposed", "current", "alreadyFits", "handPicked"])
       .meta({
         description:
-          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; retained across replans until the test settles again. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it",
+          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; valid while the exam date and daily time are unchanged, including across daily replans. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it",
       }),
   })
   .meta({ id: "FocusTestFocus" });
@@ -159,7 +159,7 @@ const focusTestCheckpointSchema = z
       .nullable()
       .meta({
         description:
-          "Where the plan should give more time. Null without a date, with one subject, on a shown plan whose time covers everything, or when the learner has no focus and the suggestion cannot move the plan",
+          "Where the plan should give more time. Null without a date, with one subject, on a shown plan whose time covers everything, when the learner has no focus and the suggestion cannot move the plan, or while a changed exam date or daily time awaits the next test settlement",
       }),
     lessonsSkipped: countSchema.meta({
       description:

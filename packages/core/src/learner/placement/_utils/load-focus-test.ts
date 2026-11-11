@@ -49,19 +49,18 @@ function getHandledSuggestion({
   const handled = setup.record?.handled;
 
   if (!handled || !isSameFocus(handled.areas, suggested)) {
-    return { current: null, last: null };
+    return null;
   }
 
-  return {
-    current:
-      status === "proposed" ||
-      status === "applied" ||
-      isDismissed(status) ||
-      handled.planVersion === setup.plan.version
-        ? handled
-        : null,
-    last: handled,
-  };
+  const sameInputs =
+    handled.dailyMinutes === setup.goal.dailyMinutes &&
+    handled.targetDate === (setup.goal.targetDate ? toIsoDate(setup.goal.targetDate) : null);
+
+  const handledProposal =
+    handled.outcome === "proposed" &&
+    (status === "proposed" || status === "applied" || isDismissed(status));
+
+  return handledProposal || sameInputs ? handled : null;
 }
 
 function isDismissed(status: PlanChangeStatus | undefined): boolean {
@@ -105,18 +104,15 @@ async function loadFocusFacts({
   const handled = getHandledSuggestion({ setup, status: suggestion?.status, suggested });
 
   const due =
-    proposes &&
-    !handled.current &&
-    !isSameFocus(focusAreas, suggested) &&
-    isSameFocus(focusAreas, focus);
+    proposes && !handled && !isSameFocus(focusAreas, suggested) && isSameFocus(focusAreas, focus);
 
   return {
-    covered: handled.last?.outcome === "alreadyIn",
+    covered: handled?.outcome === "alreadyIn",
     due: due ? suggested : null,
     focusAreas,
     handPicked:
       (focusAreas.length > 0 && !isSameFocus(focusAreas, focus)) ||
-      (handled.last?.outcome === "proposed" && isDismissed(suggestion?.status)),
+      (handled?.outcome === "proposed" && isDismissed(suggestion?.status)),
     proposal:
       suggestion?.status === "proposed"
         ? await loadPlanChangeView(suggestion.id, { timeZone })
@@ -129,7 +125,8 @@ async function loadFocusFacts({
 type FocusTestLoad = {
   planId: string;
   plan: FocusPlan;
-  planVersion: number;
+  dailyMinutes: number;
+  targetDate: string | null;
   sittingId: string | null;
   /** The focus to propose now; null when none is due. */
   dueFocus: string[] | null;
@@ -195,13 +192,14 @@ async function loadTurnFocusTest({
   });
 
   return {
+    dailyMinutes: goal.dailyMinutes,
     dueFocus: focusPlan.due,
     plan: focusPlan,
     planId: setup.plan.id,
-    planVersion: setup.plan.version,
     rows,
     sittingId: progress.sitting?.id ?? null,
     summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
+    targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     view: toFocusTestView({
       asking: {
         nextSubject: found.asked && found.nextSkillId ? subjectOf(found.nextSkillId) : null,
