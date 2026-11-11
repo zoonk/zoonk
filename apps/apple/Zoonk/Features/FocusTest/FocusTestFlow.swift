@@ -266,17 +266,29 @@ struct FocusTestFlow: View {
     Task {
       defer { isAnswering = false }
 
+      let result: Components.Schemas.PlacementAnswerResult
+
       do {
-        let result = try await store.answerPlacement(
+        result = try await store.answerPlacement(
           goalID: goalID, itemID: asked.question.itemId, answer: answer,
           duration: .milliseconds(sent.durationMs))
-        questionFailures = 0
-        failedAnswer = nil
-        try await show(result.placement)
       } catch is CancellationError {
+        return
       } catch {
         failedAnswer = sent
         questionFailures += 1
+        return
+      }
+
+      questionFailures = 0
+      failedAnswer = nil
+
+      // The answer saved; a sitting it ended that didn't close holds its retry on its own screen.
+      do {
+        try await show(result.placement)
+      } catch is CancellationError {
+      } catch {
+        failed = true
       }
     }
   }
@@ -308,18 +320,18 @@ struct FocusTestFlow: View {
     }
 
     let followed = await PlacementWaitScreen.follow(
-      generationID: onboarding?.generationId, store: store, apply: { run.apply($0) }
-    ) {
-      guard phase.isWaiting, pressed == nil else {
-        return false
-      }
+      generationID: onboarding?.generationId, store: store, apply: { run.apply($0) },
+      isWaiting: {
+        guard phase.isWaiting, pressed == nil else {
+          return false
+        }
 
-      if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
-        try? await show(placement)
-      }
+        if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
+          try? await show(placement)
+        }
 
-      return phase.isWaiting
-    }
+        return phase.isWaiting
+      })
 
     if !followed, phase.isWaiting {
       phase = .waiting(answered: answered, failure: .connection)

@@ -68,9 +68,9 @@ struct PlacementStep: View {
     steps
       .task { await resume() }
       .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
-      isReport: true)
+        isPresented: $showsSaveReport,
+        context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
+        isReport: true)
   }
 
   /// Questions that couldn't be written show at once, as on main: there's nothing to be ready for.
@@ -273,15 +273,15 @@ struct PlacementStep: View {
     }
 
     let followed = await PlacementWaitScreen.follow(
-      generationID: view.generationId, store: onboarding, apply: { run.apply($0) }
-    ) {
-      guard case .waiting = phase else {
-        return false
-      }
+      generationID: view.generationId, store: onboarding, apply: { run.apply($0) },
+      isWaiting: {
+        guard case .waiting = phase else {
+          return false
+        }
 
-      await read()
-      return phase.isWaiting
-    }
+        await read()
+        return phase.isWaiting
+      })
 
     if !followed, case .waiting = phase {
       phase = .waiting(failure: .connection)

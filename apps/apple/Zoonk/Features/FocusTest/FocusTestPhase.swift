@@ -24,12 +24,22 @@ enum FocusTestPhase: Equatable {
     if case .waiting = self { true } else { false }
   }
 
+  init(_ placement: GoalPlacement, opening: Bool) {
+    self.init(
+      status: placement.status,
+      focusTest: placement.focusTest.flatMap { try? PracticeJSON.recode($0, as: FocusTest.self) },
+      next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
+      labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
+      opening: opening)
+  }
+
   /// `opening` is the screen's first read, which never drops the learner into a question: a sitting
   /// with answers shows its resume screen, and one without is offered again.
-  init(_ placement: GoalPlacement, opening: Bool) {
-    let focusTest = placement.focusTest.flatMap { try? PracticeJSON.recode($0, as: FocusTest.self) }
-
-    switch placement.status {
+  init(
+    status: Components.Schemas.PlacementStatus, focusTest: FocusTest?, next: PracticeQuestion?,
+    labels: PracticeTrueFalseLabels, opening: Bool
+  ) {
+    switch status {
     case .unavailable, .failed:
       self = .unavailable
     case .preparing, .waitingForQuestions:
@@ -46,17 +56,12 @@ enum FocusTestPhase: Equatable {
         return
       }
 
-      guard let next = placement.next,
-        let question = try? PracticeJSON.recode(next, as: PracticeQuestion.self)
-      else {
+      guard let next else {
         self = .ended(sitting.end)
         return
       }
 
-      let asked = FocusTestQuestion(
-        question: question,
-        labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
-        sitting: sitting)
+      let asked = FocusTestQuestion(question: next, labels: labels, sitting: sitting)
 
       if !opening {
         self = .question(asked)
