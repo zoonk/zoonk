@@ -49,7 +49,7 @@ export async function listDueStudyReminders(now: Date): Promise<string[]> {
       ORDER BY goal.created_at
       LIMIT 1
     ) AS active_goal ON TRUE
-    LEFT JOIN pg_timezone_names AS zone ON zone.name = active_goal.timezone
+    LEFT JOIN pg_timezone_names AS zone ON lower(zone.name) = lower(active_goal.timezone)
     CROSS JOIN LATERAL (
       SELECT ${now.toISOString()}::timestamptz AT TIME ZONE COALESCE(zone.name, 'UTC') AS local_now
     ) AS clock

@@ -177,6 +177,14 @@ describe("finding due study reminders", () => {
     expect(listed).not.toContain(processed.user.id);
     expect(listed).not.toContain(tokyo.user.id);
   });
+
+  it("reads a zone saved in another case as that zone, as Intl does", async () => {
+    const { user } = await learnerWithReminder({ timezone: "asia/tokyo" });
+
+    await expect(listDueStudyReminders(new Date("2026-10-07T10:10:00Z"))).resolves.toContain(
+      user.id,
+    );
+  });
 });
 
 describe("reading a study reminder's delivery", () => {
