@@ -7,19 +7,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 950,
-          "outputTokens": 256,
-          "reasoningTokens": 169
+          "inputTokens": 984,
+          "outputTokens": 366,
+          "reasoningTokens": 186
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The sentence correctly says the notice changed and the question count is now 100, but does not specify that this count applies to the objective test, as required.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The sentence says the notice changed and the question count is now 100, but does not specify that this count applies to the objective test, as required. Otherwise, it meets the language, length, ordering, and neutrality requirements.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Replace “o total de questões” with “a prova objetiva” and adjust the wording to make the scope explicit: “O edital mudou: a prova objetiva agora tem 100 questões.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the notice changed and the objective test now has 100 items (or questions), in Portuguese.",
@@ -37,15 +45,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1024,
-          "outputTokens": 134,
-          "reasoningTokens": 77
+          "inputTokens": 1057,
+          "outputTokens": 164,
+          "reasoningTokens": 107
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the exam date moved to 22 November 2026 (in Portuguese), and may add \"e mais\" for the other change.",
@@ -63,22 +83,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 951,
-          "outputTokens": 430,
-          "reasoningTokens": 265
+          "inputTokens": 982,
+          "outputTokens": 87,
+          "reasoningTokens": 30
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The phrase 'and more' vaguely implies additional changes without identifying supporting details. Otherwise, the sentence names the documentation first, accurately states the version and removed API from the supplied lines, and meets the language, length, and punctuation requirements.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Remove the vague ending: 'The Next.js documentation changed: version 17 removes getServerSideProps.'",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
@@ -97,24 +121,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 981,
-          "outputTokens": 334,
-          "reasoningTokens": 160
+          "inputTokens": 1023,
+          "outputTokens": 405,
+          "reasoningTokens": 270
         }
       },
       "steps": [
         {
-          "conclusion": "The sentence says the exam changed rather than explicitly saying the dates changed, and it omits Mathematik, leaving the new date insufficiently identified. The new date itself, 06.05.2027, is correct.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "“Die Abitur Bayern 2027 Prüfung” is an awkward German noun construction. Otherwise, the result is one sentence under 120 characters and contains no unsupported reasons, advice, judgments, promises, or prohibited punctuation.",
+          "conclusion": "The opening claims that a notification changed, although the supplied data only shows a date change. It should name the dates as what changed. The German sentence otherwise gives the correct new Mathematik date, stays within 120 characters, and avoids prohibited additions and punctuation.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "A clearer formulation is: “Die Termine für das Abitur Bayern 2027 wurden geändert: Mathematik findet nun am 6. Mai 2027 statt.”",
+          "conclusion": "A more direct formulation would be: \"Die Termine wurden geändert: Die Mathematikprüfung findet nun am 6. Mai 2027 statt.\"",
           "kind": "potentialImprovements",
           "score": 9
         }

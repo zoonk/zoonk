@@ -8,6 +8,296 @@
       },
       "steps": [
         {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": null
+        },
+        "id": "en-scientific-notation-code-match-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "3e8"
+          ],
+          "answer": "3e8",
+          "keyPoints": [
+            "The front number is 3, between 1 and 10",
+            "The point jumps 8 places, so the power is 8"
+          ],
+          "language": "en",
+          "question": "Write 300000000 in scientific notation.",
+          "sampleAnswer": "3e8"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points null and corrections []; got correct with null and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": null
+        },
+        "id": "en-rounded-number-code-match-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "11.88"
+          ],
+          "answer": "12",
+          "keyPoints": [
+            "States the percentage rise",
+            "Explains how the percentage was calculated"
+          ],
+          "language": "en",
+          "question": "What was the percentage rise?",
+          "sampleAnswer": "11.88%"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-recruiter-english-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact about the professional registration requirements? Thank you!"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-recruiter-english-paraphrase-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hello! I'd like to ask who is the right person to talk to about the requirements for my professional registration. Thanks in advance."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": false,
+          "keyPoints": [
+            true,
+            false,
+            true
+          ]
+        },
+        "id": "pt-language-recruiter-missing-registration-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact? Thanks!"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": false,
+          "keyPoints": [
+            false,
+            false,
+            false
+          ]
+        },
+        "id": "pt-language-recruiter-portuguese-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva em inglês uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Olá, você poderia me dizer com quem devo falar sobre as exigências do registro profissional? Obrigado!"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
           "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "majorErrors",
           "score": 10
@@ -360,23 +650,23 @@
     {
       "classification": {
         "expected": "wrong",
-        "predicted": "correct"
+        "predicted": "wrong"
       },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
@@ -449,24 +739,277 @@
     },
     {
       "classification": {
-        "expected": "correct",
+        "expected": "wrong",
         "predicted": "wrong"
       },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [false,true,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [false,true,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [false,true,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": [
+            "bonita"
+          ],
+          "isCorrect": false,
+          "keyPoints": [
+            false
+          ]
+        },
+        "id": "pt-language-gender-agreement-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Ela é bonita"
+          ],
+          "answer": "Ela é bonito",
+          "keyPoints": [
+            "Uses the feminine form of the adjective to agree with 'ela'"
+          ],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Translate into Portuguese: 'She is pretty.'",
+          "sampleAnswer": "Ela é bonita."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": [
+            "your"
+          ],
+          "isCorrect": false,
+          "keyPoints": [
+            true,
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by thursday to confirm you availability."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-slip-not-a-mistake-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by Thursday to confirm your availabilty."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "wrong",
+        "predicted": "wrong"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": [
+            "sua"
+          ],
+          "isCorrect": false,
+          "keyPoints": [
+            true,
+            true,
+            true
+          ]
+        },
+        "id": "en-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Por favor, confirme sua presença até sexta-feira."
+          ],
+          "answer": "Por favor, confirme seu presença até sexta-feira.",
+          "keyPoints": [
+            "Asks politely with `Por favor`",
+            "Asks the person to confirm their attendance",
+            "Gives Friday (`até sexta-feira`) as the deadline"
+          ],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Write in Portuguese: “Please confirm your attendance by Friday.”",
+          "sampleAnswer": "Por favor, confirme sua presença até sexta-feira."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "isCorrect": true,
+          "keyPoints": [
+            true,
+            true
+          ]
+        },
+        "id": "pt-language-own-words-paraphrase-of-taught-phrase-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "I'll stay with a friend.",
+            "I will stay with a friend.",
+            "I'm going to stay with a friend.",
+            "I am going to stay with a friend."
+          ],
+          "answer": "I'll stay at a friend's house.",
+          "keyPoints": [
+            "Indica um plano futuro de hospedagem.",
+            "Usa “stay with a friend” para dizer que vai ficar na casa de um amigo."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem com seu plano de hospedagem: “Vou ficar na casa de um amigo.”",
+          "sampleAnswer": "I'll stay with a friend."
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "correct",
+        "predicted": "correct"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
         }
       ],
       "testCase": {
@@ -1125,19 +1668,19 @@
       },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,true,false] and [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,true,false] and [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,true,false] and [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -1400,413 +1943,6 @@
       },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": true,
-          "keyPoints": [
-            true,
-            true,
-            true
-          ]
-        },
-        "id": "pt-language-recruiter-english-answer-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
-          "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hi, could you tell me who I should contact about the professional registration requirements? Thank you!"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "correct",
-        "predicted": "correct"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": true,
-          "keyPoints": [
-            true,
-            true,
-            true
-          ]
-        },
-        "id": "pt-language-recruiter-english-paraphrase-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
-          "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hello! I'd like to ask who is the right person to talk to about the requirements for my professional registration. Thanks in advance."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": false,
-          "keyPoints": [
-            true,
-            false,
-            true
-          ]
-        },
-        "id": "pt-language-recruiter-missing-registration-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
-          "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hi, could you tell me who I should contact? Thanks!"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": false,
-          "keyPoints": [
-            false,
-            false,
-            false
-          ]
-        },
-        "id": "pt-language-recruiter-portuguese-answer-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
-          "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva em inglês uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Olá, você poderia me dizer com quem devo falar sobre as exigências do registro profissional? Obrigado!"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "corrections": [
-            "bonita"
-          ],
-          "isCorrect": false,
-          "keyPoints": [
-            false
-          ]
-        },
-        "id": "pt-language-gender-agreement-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Ela é bonita"
-          ],
-          "answer": "Ela é bonito",
-          "keyPoints": [
-            "Uses the feminine form of the adjective to agree with 'ela'"
-          ],
-          "language": "en",
-          "practicedLanguage": "pt",
-          "question": "Translate into Portuguese: 'She is pretty.'",
-          "sampleAnswer": "Ela é bonita."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your availability\"].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "corrections": [
-            "your"
-          ],
-          "isCorrect": false,
-          "keyPoints": [
-            true,
-            true,
-            true
-          ]
-        },
-        "id": "pt-language-form-mistake-idea-stated-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Please reply by Thursday to confirm your availability.",
-            "Please respond by Thursday to confirm your availability."
-          ],
-          "keyPoints": [
-            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
-            "Usa `by Thursday` para indicar o prazo.",
-            "Pede a confirmação da disponibilidade."
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
-          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
-          "answer": "Please reply by thursday to confirm you availability."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "correct",
-        "predicted": "correct"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": true,
-          "keyPoints": [
-            true,
-            true,
-            true
-          ]
-        },
-        "id": "pt-language-slip-not-a-mistake-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Please reply by Thursday to confirm your availability.",
-            "Please respond by Thursday to confirm your availability."
-          ],
-          "keyPoints": [
-            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
-            "Usa `by Thursday` para indicar o prazo.",
-            "Pede a confirmação da disponibilidade."
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
-          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
-          "answer": "Please reply by Thursday to confirm your availabilty."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "corrections": [
-            "sua"
-          ],
-          "isCorrect": false,
-          "keyPoints": [
-            true,
-            true,
-            true
-          ]
-        },
-        "id": "en-language-form-mistake-idea-stated-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Por favor, confirme sua presença até sexta-feira."
-          ],
-          "answer": "Por favor, confirme seu presença até sexta-feira.",
-          "keyPoints": [
-            "Asks politely with `Por favor`",
-            "Asks the person to confirm their attendance",
-            "Gives Friday (`até sexta-feira`) as the deadline"
-          ],
-          "language": "en",
-          "practicedLanguage": "pt",
-          "question": "Write in Portuguese: “Please confirm your attendance by Friday.”",
-          "sampleAnswer": "Por favor, confirme sua presença até sexta-feira."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "correct",
-        "predicted": "correct"
-      },
-      "steps": [
-        {
           "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
           "kind": "majorErrors",
           "score": 10
@@ -1991,56 +2127,6 @@
           "practicedLanguage": "pt",
           "question": "Write in Portuguese: “I'm studying on the train.”",
           "sampleAnswer": "Estou estudando no trem."
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "correct",
-        "predicted": "correct"
-      },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "isCorrect": true,
-          "keyPoints": [
-            true,
-            true
-          ]
-        },
-        "id": "pt-language-own-words-paraphrase-of-taught-phrase-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "I'll stay with a friend.",
-            "I will stay with a friend.",
-            "I'm going to stay with a friend.",
-            "I am going to stay with a friend."
-          ],
-          "answer": "I'll stay at a friend's house.",
-          "keyPoints": [
-            "Indica um plano futuro de hospedagem.",
-            "Usa “stay with a friend” para dizer que vai ficar na casa de um amigo."
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem com seu plano de hospedagem: “Vou ficar na casa de um amigo.”",
-          "sampleAnswer": "I'll stay with a friend."
         }
       }
     }

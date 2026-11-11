@@ -7704,12 +7704,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "脳力を+{points}獲得しました。"
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "今日の脳力+{points}は獲得済みです。"
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "たった今達成"

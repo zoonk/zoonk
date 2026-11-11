@@ -22,6 +22,170 @@
       "testCase": {
         "expected": {
           "counts": {
+            "1": 25,
+            "2": 25,
+            "3": 25
+          },
+          "status": "found"
+        },
+        "id": "en-jee-main-paper-1-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ],
+          "today": "2026-10-06",
+          "total": 75
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 90
+          },
+          "status": "found"
+        },
+        "id": "en-neet-ug-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "NEET (UG)",
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Biology (Botany and Zoology)"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 54,
+            "2": 44
+          },
+          "status": "found"
+        },
+        "id": "en-sat-1",
+        "userInput": {
+          "board": "College Board",
+          "exam": "SAT",
+          "subjects": [
+            "Reading and Writing",
+            "Math"
+          ],
+          "today": "2026-10-06",
+          "total": 98
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 45,
+            "4": 45
+          },
+          "status": "found"
+        },
+        "id": "pt-enem-1",
+        "userInput": {
+          "board": "Inep",
+          "exam": "Enem",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
             "20": 8
           },
           "status": "found"
@@ -198,170 +362,6 @@
           ],
           "today": "2026-10-30",
           "total": 170
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 25,
-            "2": 25,
-            "3": 25
-          },
-          "status": "found"
-        },
-        "id": "en-jee-main-paper-1-1",
-        "userInput": {
-          "board": "NTA",
-          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
-          "subjects": [
-            "Physics",
-            "Chemistry",
-            "Mathematics"
-          ],
-          "today": "2026-10-06",
-          "total": 75
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 45,
-            "2": 45,
-            "3": 90
-          },
-          "status": "found"
-        },
-        "id": "en-neet-ug-1",
-        "userInput": {
-          "board": "NTA",
-          "exam": "NEET (UG)",
-          "subjects": [
-            "Physics",
-            "Chemistry",
-            "Biology (Botany and Zoology)"
-          ],
-          "today": "2026-10-06",
-          "total": 180
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 54,
-            "2": 44
-          },
-          "status": "found"
-        },
-        "id": "en-sat-1",
-        "userInput": {
-          "board": "College Board",
-          "exam": "SAT",
-          "subjects": [
-            "Reading and Writing",
-            "Math"
-          ],
-          "today": "2026-10-06",
-          "total": 98
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "counts": {
-            "1": 45,
-            "2": 45,
-            "3": 45,
-            "4": 45
-          },
-          "status": "found"
-        },
-        "id": "pt-enem-1",
-        "userInput": {
-          "board": "Inep",
-          "exam": "Enem",
-          "subjects": [
-            "Linguagens, Códigos e suas Tecnologias",
-            "Ciências Humanas e suas Tecnologias",
-            "Ciências da Natureza e suas Tecnologias",
-            "Matemática e suas Tecnologias"
-          ],
-          "today": "2026-10-06",
-          "total": 180
         }
       }
     }

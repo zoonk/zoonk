@@ -1,0 +1,92 @@
+{
+ "pair-1": {
+  "case": "ap-biology-frq-partial-en-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-2": {
+  "case": "ap-english-language-phones-argument-en-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-3": {
+  "case": "ap-us-history-leq-railroads-feedback-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-4": {
+  "case": "cebraspe-discursive-lai-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-5": {
+  "case": "enem-conditional-proposal-pt-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-6": {
+  "case": "enem-human-rights-proposal-pt-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-7": {
+  "case": "enem-mid-missing-means-feedback-en-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-8": {
+  "case": "enem-mid-missing-means-pt-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-9": {
+  "case": "enem-no-proposal-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-10": {
+  "case": "enem-off-topic-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-11": {
+  "case": "enem-strong-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-12": {
+  "case": "enem-tangent-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-13": {
+  "case": "enem-too-short-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-14": {
+  "case": "enem-vague-proposal-pt-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-15": {
+  "case": "enem-weak-norm-errors-pt-1",
+  "X": "anthropic-claude-haiku-5.5:high",
+  "Y": "meta-muse-ember"
+ },
+ "pair-16": {
+  "case": "ielts-task-2-free-university-en-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-17": {
+  "case": "ielts-task-2-remote-work-strong-en-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ },
+ "pair-18": {
+  "case": "oab-peca-consumer-refund-pt-1",
+  "X": "meta-muse-ember",
+  "Y": "anthropic-claude-haiku-5.5:high"
+ }
+}

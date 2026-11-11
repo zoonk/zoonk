@@ -7704,12 +7704,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "Udało ci się zdobyć +{points} pkt Mocy Umysłu."
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "Masz już +{points} pkt Mocy Umysłu za dziś."
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "Właśnie ukończona"

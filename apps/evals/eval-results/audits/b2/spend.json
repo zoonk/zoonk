@@ -1,0 +1,1978 @@
+{
+  "total": 13.588417445000001,
+  "entries": [
+    {
+      "file": "apps/evals/eval-results/outputs/changing-facts/anthropic-claude-haiku-5.5.json",
+      "generation": 0.0007207200000000001,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/changing-facts/meta-muse-ember.json",
+      "generation": 0.0019686,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-cited-facts/meta-muse-ember.json",
+      "generation": 0.0100983,
+      "judge": 0,
+      "changed": [
+        "points-worked-out-1",
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "sat-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-exam-reading/meta-muse-ember.json",
+      "generation": 0.0187511,
+      "judge": 0,
+      "changed": [
+        "pt-oab-48-without-ethics-1",
+        "pt-oab-48-complete-1",
+        "pt-enem-2026-count-left-out-1",
+        "pt-camara-2026-complete-1",
+        "en-sat-complete-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/compare-release-lessons/meta-muse-ember.json",
+      "generation": 0.011040600000000001,
+      "judge": 0,
+      "changed": [
+        "en-web-framework-major-release-1",
+        "en-web-framework-patch-release-1",
+        "en-phone-new-model-1",
+        "pt-video-editor-new-version-1",
+        "en-notes-app-injected-instructions-1",
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-exam-blueprint/meta-muse-ember.json",
+      "generation": 0.59629825,
+      "judge": 0,
+      "changed": [
+        "cgu-2026-affc-ti-points-1",
+        "enem-2026-1",
+        "enem-2026-matriz-1",
+        "tcdf-2026-1",
+        "cgu-2026-auditor-specialties-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/meta-muse-ember.json",
+      "generation": 0.032230299999999996,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-jee-choice-everywhere-numeric-section-b-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-choice-options/meta-muse-ember.json",
+      "generation": 0.029151028000000002,
+      "judge": 0,
+      "changed": [
+        "pt-enem-1",
+        "pt-oab-1a-fase-1",
+        "en-sat-1",
+        "en-sqe1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-course-weights/meta-muse-ember.json",
+      "generation": 0.029526064,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "en-enem-medicine-ufrj-1",
+        "pt-enem-instituicao-inexistente-1",
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-exam-date/meta-muse-ember.json",
+      "generation": 0.035751064,
+      "judge": 0,
+      "changed": [
+        "pt-camara-registro-redacao-1",
+        "pt-enem-2026-1",
+        "pt-pf-agente-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-official-sources/meta-muse-ember.json",
+      "generation": 0.08701157200000001,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-product-pages/meta-muse-ember.json",
+      "generation": 0.070656608,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-subject-questions/meta-muse-ember.json",
+      "generation": 0.101624528,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1",
+        "pt-oab-1a-fase-without-ethics-1",
+        "pt-camara-registro-redacao-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-target-cutoff/meta-muse-ember.json",
+      "generation": 0.052888816,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "pt-enem-direito-ufpe-1",
+        "pt-enem-instituicao-inexistente-1",
+        "pt-concurso-pf-agente-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-topic-frequency/meta-muse-ember.json",
+      "generation": 0.059990076,
+      "judge": 0,
+      "changed": [
+        "pt-camara-portugues-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-input-safety-rewrite/anthropic-claude-haiku-5.5.json",
+      "generation": 0.0011533,
+      "judge": 0,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-input-safety-rewrite/meta-muse-ember.json",
+      "generation": 0.0019911,
+      "judge": 0,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-scene/anthropic-claude-haiku-5.5.json",
+      "generation": 0.00423194,
+      "judge": 0,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-scene/meta-muse-ember.json",
+      "generation": 0.0210411,
+      "judge": 0,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1",
+        "overloaded-water-cycle-1",
+        "printing-press-en-1",
+        "question-cell-diagram-pt-1",
+        "brain-lobes-en-1",
+        "paintings-comparison-pt-1",
+        "syntax-tree-en-1",
+        "lever-en-1",
+        "two-moments-become-one-pt-1",
+        "hand-cut-microbes-pt-1",
+        "hand-cut-microbes-findings-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/past-questions/meta-muse-ember.json",
+      "generation": 0.030683099999999998,
+      "judge": 0,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/read-product-pages/meta-muse-ember.json",
+      "generation": 0.0159691,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "iphone-learner-model-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/research-plan/meta-muse-ember.json",
+      "generation": 0.008534700000000001,
+      "judge": 0,
+      "changed": [
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "cgu-2026-specialty-1",
+        "oab-first-phase-1",
+        "oab-second-phase-area-1",
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-change-notice/anthropic-claude-haiku-5.5.json",
+      "generation": 0.000575,
+      "judge": 0,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-change-notice/meta-muse-ember.json",
+      "generation": 0.0023106000000000003,
+      "judge": 0,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-research-plan/meta-muse-ember.json",
+      "generation": 0.006755100000000001,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1",
+        "nextjs-1",
+        "iphone-13-1",
+        "jira-to-linear-1",
+        "employer-kept-out-1",
+        "protheus-release-only-in-learner-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/translate-pass-marks/meta-muse-ember.json",
+      "generation": 0.006433699999999999,
+      "judge": 0,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/changing-facts/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/changing-facts/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-cited-facts/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "points-worked-out-1",
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "sat-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-exam-reading/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-oab-48-without-ethics-1",
+        "pt-oab-48-complete-1",
+        "pt-enem-2026-count-left-out-1",
+        "pt-camara-2026-complete-1",
+        "en-sat-complete-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/compare-release-lessons/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-web-framework-major-release-1",
+        "en-web-framework-patch-release-1",
+        "en-phone-new-model-1",
+        "pt-video-editor-new-version-1",
+        "en-notes-app-injected-instructions-1",
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-exam-blueprint/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "cgu-2026-affc-ti-points-1",
+        "enem-2026-1",
+        "enem-2026-matriz-1",
+        "tcdf-2026-1",
+        "cgu-2026-auditor-specialties-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-jee-choice-everywhere-numeric-section-b-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-choice-options/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-1",
+        "pt-oab-1a-fase-1",
+        "en-sat-1",
+        "en-sqe1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-course-weights/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "en-enem-medicine-ufrj-1",
+        "pt-enem-instituicao-inexistente-1",
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-exam-date/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-camara-registro-redacao-1",
+        "pt-enem-2026-1",
+        "pt-pf-agente-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-subject-questions/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1",
+        "pt-oab-1a-fase-without-ethics-1",
+        "pt-camara-registro-redacao-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-target-cutoff/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "pt-enem-direito-ufpe-1",
+        "pt-enem-instituicao-inexistente-1",
+        "pt-concurso-pf-agente-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-topic-frequency/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-camara-portugues-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-input-safety-rewrite/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0.09485,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-input-safety-rewrite/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0.09453,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-scene/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0.34240000000000004,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-scene/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0.6877500000000001,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1",
+        "overloaded-water-cycle-1",
+        "printing-press-en-1",
+        "question-cell-diagram-pt-1",
+        "brain-lobes-en-1",
+        "paintings-comparison-pt-1",
+        "syntax-tree-en-1",
+        "lever-en-1",
+        "two-moments-become-one-pt-1",
+        "hand-cut-microbes-pt-1",
+        "hand-cut-microbes-findings-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/past-questions/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0.6698375000000001,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/read-product-pages/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "iphone-learner-model-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/research-plan/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "cgu-2026-specialty-1",
+        "oab-first-phase-1",
+        "oab-second-phase-area-1",
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-change-notice/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0.08613000000000001,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-change-notice/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0.0916,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-research-plan/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1",
+        "nextjs-1",
+        "iphone-13-1",
+        "jira-to-linear-1",
+        "employer-kept-out-1",
+        "protheus-release-only-in-learner-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/translate-pass-marks/meta-muse-ember.json",
+      "generation": 0,
+      "judge": 0.09960000000000001,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/changing-facts/google-gemini-3.5-flash-lite.json",
+      "generation": 0.00153,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/changing-facts/openai-gpt-6-luna.json",
+      "generation": 0.0005782999999999999,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-cited-facts/anthropic-claude-haiku-5.5.json",
+      "generation": 0.0025788399999999998,
+      "judge": 0,
+      "changed": [
+        "points-worked-out-1",
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "sat-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-cited-facts/google-gemini-3.8-flash.json",
+      "generation": 0.037236750000000006,
+      "judge": 0,
+      "changed": [
+        "points-worked-out-1",
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "sat-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-cited-facts/openai-gpt-6-luna.json",
+      "generation": 0.0020289999999999996,
+      "judge": 0,
+      "changed": [
+        "points-worked-out-1",
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "sat-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-exam-reading/anthropic-claude-haiku-5.5.json",
+      "generation": 0.021477829999999993,
+      "judge": 0,
+      "changed": [
+        "pt-oab-48-without-ethics-1",
+        "pt-oab-48-complete-1",
+        "pt-enem-2026-count-left-out-1",
+        "pt-camara-2026-complete-1",
+        "en-sat-complete-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-exam-reading/google-gemini-3.8-flash.json",
+      "generation": 0.15402675,
+      "judge": 0,
+      "changed": [
+        "pt-oab-48-without-ethics-1",
+        "pt-oab-48-complete-1",
+        "pt-enem-2026-count-left-out-1",
+        "pt-camara-2026-complete-1",
+        "en-sat-complete-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/check-exam-reading/openai-gpt-6-luna.json",
+      "generation": 0.013042099999999997,
+      "judge": 0,
+      "changed": [
+        "pt-oab-48-without-ethics-1",
+        "pt-oab-48-complete-1",
+        "pt-enem-2026-count-left-out-1",
+        "pt-camara-2026-complete-1",
+        "en-sat-complete-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/compare-release-lessons/anthropic-claude-haiku-5.5.json",
+      "generation": 0.00451123,
+      "judge": 0,
+      "changed": [
+        "en-web-framework-major-release-1",
+        "en-web-framework-patch-release-1",
+        "en-phone-new-model-1",
+        "pt-video-editor-new-version-1",
+        "en-notes-app-injected-instructions-1",
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/compare-release-lessons/google-gemini-3.5-flash-lite.json",
+      "generation": 0.005265400000000001,
+      "judge": 0,
+      "changed": [
+        "en-web-framework-major-release-1",
+        "en-web-framework-patch-release-1",
+        "en-phone-new-model-1",
+        "pt-video-editor-new-version-1",
+        "en-notes-app-injected-instructions-1",
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/compare-release-lessons/openai-gpt-6-luna.json",
+      "generation": 0.0027949999999999997,
+      "judge": 0,
+      "changed": [
+        "en-web-framework-major-release-1",
+        "en-web-framework-patch-release-1",
+        "en-phone-new-model-1",
+        "pt-video-editor-new-version-1",
+        "en-notes-app-injected-instructions-1",
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-exam-blueprint/google-gemini-3.8-flash.json",
+      "generation": 2.925986275000001,
+      "judge": 0,
+      "changed": [
+        "ielts-academic-1",
+        "ielts-academic-research-pages-1",
+        "pte-academic-1",
+        "jee-advanced-2026-paper-1-1",
+        "toefl-ibt-1",
+        "cacd-2025-1",
+        "tjsp-escrevente-2025-news-page-1",
+        "tjsp-escrevente-2025-notice-copy-1",
+        "pau-spain-ciencias-1",
+        "dele-b2-sittings-1",
+        "abitur-bayern-2027-1",
+        "bac-2027-1",
+        "pt-class-notes-biologia-celular-1",
+        "en-class-notes-ap-biology-unit-2-1",
+        "exani-ii-modules-1",
+        "camara-2026-registro-redacao-1",
+        "oab-47-1",
+        "oab-48-1a-fase-1",
+        "oab-48-1a-fase-told-ethics-1",
+        "sat-1",
+        "ap-calculus-ab-2027-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-exam-blueprint/openai-gpt-6-luna.json",
+      "generation": 1.4102958550000002,
+      "judge": 0,
+      "changed": [
+        "camara-2026-registro-redacao-1",
+        "oab-47-1",
+        "oab-48-1a-fase-1",
+        "oab-48-1a-fase-told-ethics-1",
+        "sat-1",
+        "ap-calculus-ab-2027-1",
+        "cgu-2026-affc-ti-points-1",
+        "enem-2026-1",
+        "enem-2026-matriz-1",
+        "tcdf-2026-1",
+        "cgu-2026-auditor-specialties-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/anthropic-claude-haiku-5.5.json",
+      "generation": 0.26027225,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-jee-choice-everywhere-numeric-section-b-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/google-gemini-3.5-flash-lite.json",
+      "generation": 0.0101692,
+      "judge": 0,
+      "changed": [
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1",
+        "en-jee-advanced-2026-paper-1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/google-gemini-3.8-flash.json",
+      "generation": 0.11271524999999999,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-jee-choice-everywhere-numeric-section-b-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/google-gemini-3.8-flash:low.json",
+      "generation": 0.00401325,
+      "judge": 0,
+      "changed": [
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/openai-gpt-6-luna.json",
+      "generation": 0.042342254999999995,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-jee-choice-everywhere-numeric-section-b-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/extract-question-formats/openai-gpt-6.1-sol.json",
+      "generation": 0.20987319999999998,
+      "judge": 0,
+      "changed": [
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1",
+        "en-jee-advanced-2026-paper-1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-choice-options/anthropic-claude-haiku-5.5.json",
+      "generation": 0.024343000000000004,
+      "judge": 0,
+      "changed": [
+        "pt-enem-1",
+        "pt-oab-1a-fase-1",
+        "en-sat-1",
+        "en-sqe1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-choice-options/google-gemini-3.8-flash.json",
+      "generation": 0.04033475,
+      "judge": 0,
+      "changed": [
+        "pt-enem-1",
+        "pt-oab-1a-fase-1",
+        "en-sat-1",
+        "en-sqe1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-choice-options/openai-gpt-6-luna.json",
+      "generation": 0.021907095,
+      "judge": 0,
+      "changed": [
+        "pt-enem-1",
+        "pt-oab-1a-fase-1",
+        "en-sat-1",
+        "en-sqe1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-course-weights/anthropic-claude-haiku-5.5.json",
+      "generation": 0.02550542,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "en-enem-medicine-ufrj-1",
+        "pt-enem-instituicao-inexistente-1",
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-course-weights/google-gemini-3.8-flash.json",
+      "generation": 0.07066895,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "en-enem-medicine-ufrj-1",
+        "pt-enem-instituicao-inexistente-1",
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-course-weights/openai-gpt-6-luna.json",
+      "generation": 0.022153605,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "en-enem-medicine-ufrj-1",
+        "pt-enem-instituicao-inexistente-1",
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-exam-date/anthropic-claude-haiku-5.5.json",
+      "generation": 0.02522038,
+      "judge": 0,
+      "changed": [
+        "pt-camara-registro-redacao-1",
+        "pt-enem-2026-1",
+        "pt-pf-agente-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-exam-date/google-gemini-3.8-flash.json",
+      "generation": 0.0431975,
+      "judge": 0,
+      "changed": [
+        "pt-camara-registro-redacao-1",
+        "pt-enem-2026-1",
+        "pt-pf-agente-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-exam-date/openai-gpt-6-luna.json",
+      "generation": 0.022112859999999998,
+      "judge": 0,
+      "changed": [
+        "pt-camara-registro-redacao-1",
+        "pt-enem-2026-1",
+        "pt-pf-agente-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-official-sources/anthropic-claude-haiku-5.5.json",
+      "generation": 0.06591364,
+      "judge": 0,
+      "changed": [
+        "enem-2026:parallel-1",
+        "tcdf-2026:parallel-1",
+        "oab-47:parallel-1",
+        "piracema-2026:parallel-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-official-sources/google-gemini-3.8-flash.json",
+      "generation": 0.083402,
+      "judge": 0,
+      "changed": [
+        "enem-2026:parallel-1",
+        "tcdf-2026:parallel-1",
+        "oab-47:parallel-1",
+        "piracema-2026:parallel-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-official-sources/openai-gpt-6-luna.json",
+      "generation": 0.086214435,
+      "judge": 0,
+      "changed": [
+        "enem-2026:parallel-1",
+        "tcdf-2026:parallel-1",
+        "oab-47:parallel-1",
+        "piracema-2026:parallel-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-product-pages/anthropic-claude-haiku-5.5.json",
+      "generation": 0.049060955,
+      "judge": 0,
+      "changed": [
+        "nextjs-1",
+        "iphone-13-1",
+        "linear-1",
+        "nubank-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-product-pages/google-gemini-3.8-flash.json",
+      "generation": 0.07307695,
+      "judge": 0,
+      "changed": [
+        "nextjs-1",
+        "iphone-13-1",
+        "linear-1",
+        "nubank-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-product-pages/openai-gpt-6-luna.json",
+      "generation": 0.06329301999999999,
+      "judge": 0,
+      "changed": [
+        "nextjs-1",
+        "iphone-13-1",
+        "linear-1",
+        "nubank-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-subject-questions/anthropic-claude-haiku-5.5.json",
+      "generation": 0.02575384,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1",
+        "pt-oab-1a-fase-without-ethics-1",
+        "pt-camara-registro-redacao-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-subject-questions/google-gemini-3.8-flash.json",
+      "generation": 0.079490875,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1",
+        "pt-oab-1a-fase-without-ethics-1",
+        "pt-camara-registro-redacao-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-subject-questions/openai-gpt-6-luna.json",
+      "generation": 0.033711450000000004,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1",
+        "pt-oab-1a-fase-without-ethics-1",
+        "pt-camara-registro-redacao-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-target-cutoff/anthropic-claude-haiku-5.5.json",
+      "generation": 0.025252099999999996,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "pt-enem-direito-ufpe-1",
+        "pt-enem-instituicao-inexistente-1",
+        "pt-concurso-pf-agente-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-target-cutoff/google-gemini-3.8-flash.json",
+      "generation": 0.04281275,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "pt-enem-direito-ufpe-1",
+        "pt-enem-instituicao-inexistente-1",
+        "pt-concurso-pf-agente-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-target-cutoff/openai-gpt-6-luna.json",
+      "generation": 0.033969805,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1",
+        "pt-enem-direito-ufpe-1",
+        "pt-enem-instituicao-inexistente-1",
+        "pt-concurso-pf-agente-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-topic-frequency/anthropic-claude-haiku-5.5.json",
+      "generation": 0.09083383,
+      "judge": 0,
+      "changed": [
+        "pt-enem-natureza-1",
+        "pt-enem-humanas-1",
+        "pt-camara-portugues-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-topic-frequency/google-gemini-3.8-flash.json",
+      "generation": 0.10909967500000001,
+      "judge": 0,
+      "changed": [
+        "pt-enem-natureza-1",
+        "pt-enem-humanas-1",
+        "pt-camara-portugues-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/find-topic-frequency/openai-gpt-6-luna.json",
+      "generation": 0.0342391,
+      "judge": 0,
+      "changed": [
+        "pt-enem-natureza-1",
+        "pt-enem-humanas-1",
+        "pt-camara-portugues-1",
+        "pt-cgu-2026-new-board-and-syllabus-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-input-safety-rewrite/deepseek-deepseek-v4-flash.json",
+      "generation": 0.004440854,
+      "judge": 0,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-input-safety-rewrite/google-gemini-3.5-flash-lite.json",
+      "generation": 0.0013726,
+      "judge": 0,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-input-safety-rewrite/openai-gpt-6-luna.json",
+      "generation": 0.0006221,
+      "judge": 0,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-scene/google-gemini-3.8-flash.json",
+      "generation": 0.0270555,
+      "judge": 0,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/image-scene/openai-gpt-6-luna.json",
+      "generation": 0.002479635,
+      "judge": 0,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/past-questions/anthropic-claude-haiku-5.5.json",
+      "generation": 0.025539725,
+      "judge": 0,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/past-questions/google-gemini-3.5-flash-lite.json",
+      "generation": 0.05144910000000001,
+      "judge": 0,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/past-questions/openai-gpt-6-luna.json",
+      "generation": 0.010273089999999999,
+      "judge": 0,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/read-product-pages/anthropic-claude-haiku-5.5.json",
+      "generation": 0.026365059999999996,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "iphone-learner-model-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/read-product-pages/google-gemini-3.5-flash-lite.json",
+      "generation": 0.13272299999999998,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "iphone-learner-model-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/read-product-pages/openai-gpt-6-luna.json",
+      "generation": 0.020717609999999997,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "iphone-learner-model-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/research-plan/anthropic-claude-haiku-5.5.json",
+      "generation": 0.00262168,
+      "judge": 0,
+      "changed": [
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "cgu-2026-specialty-1",
+        "oab-first-phase-1",
+        "oab-second-phase-area-1",
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/research-plan/google-gemini-3.5-flash-lite.json",
+      "generation": 0.004555200000000001,
+      "judge": 0,
+      "changed": [
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "cgu-2026-specialty-1",
+        "oab-first-phase-1",
+        "oab-second-phase-area-1",
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/research-plan/openai-gpt-6-luna.json",
+      "generation": 0.0021885999999999997,
+      "judge": 0,
+      "changed": [
+        "enem-2026-1",
+        "tcdf-2026-1",
+        "cgu-2026-specialty-1",
+        "oab-first-phase-1",
+        "oab-second-phase-area-1",
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-change-notice/google-gemini-3.5-flash-lite.json",
+      "generation": 0.0008844,
+      "judge": 0,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-change-notice/openai-gpt-6-luna.json",
+      "generation": 0.00046540000000000004,
+      "judge": 0,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-research-plan/anthropic-claude-haiku-5.5.json",
+      "generation": 0.002136555,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1",
+        "nextjs-1",
+        "iphone-13-1",
+        "jira-to-linear-1",
+        "employer-kept-out-1",
+        "protheus-release-only-in-learner-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-research-plan/google-gemini-3.5-flash-lite.json",
+      "generation": 0.0041062,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1",
+        "nextjs-1",
+        "iphone-13-1",
+        "jira-to-linear-1",
+        "employer-kept-out-1",
+        "protheus-release-only-in-learner-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/source-research-plan/openai-gpt-6-luna.json",
+      "generation": 0.0020182999999999998,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1",
+        "nextjs-1",
+        "iphone-13-1",
+        "jira-to-linear-1",
+        "employer-kept-out-1",
+        "protheus-release-only-in-learner-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/translate-pass-marks/anthropic-claude-haiku-5.5.json",
+      "generation": 0.0031118499999999993,
+      "judge": 0,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/translate-pass-marks/google-gemini-3.5-flash-lite.json",
+      "generation": 0.0050771,
+      "judge": 0,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/outputs/translate-pass-marks/openai-gpt-6-luna.json",
+      "generation": 0.0011087999999999998,
+      "judge": 0,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/changing-facts/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/changing-facts/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "enem-1",
+        "sat-1",
+        "abitur-1",
+        "bac-1",
+        "income-tax-1",
+        "gdpr-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-cited-facts/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-cited-facts/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-cited-facts/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "class-test-announced-formats-1",
+        "enem-2026-1",
+        "pte-academic-highlight-incorrect-words-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-exam-reading/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-exam-reading/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-2026-count-left-out-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/check-exam-reading/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/compare-release-lessons/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/compare-release-lessons/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-language-removed-module-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/compare-release-lessons/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-exam-blueprint/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-exam-blueprint/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "cgu-2026-affc-ti-points-1",
+        "enem-2026-1",
+        "enem-2026-matriz-1",
+        "tcdf-2026-1",
+        "cgu-2026-auditor-specialties-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-gre-general-test-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1",
+        "en-jee-advanced-2026-paper-1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-valid-mixed-known-and-unknown-scope-1",
+        "en-gre-general-test-1",
+        "pt-class-notes-in-passing-1",
+        "pt-camara-2026-registro-redacao-1",
+        "pt-oab-48-1a-fase-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/google-gemini-3.8-flash:low.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-jee-advanced-2026-paper-1-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-gre-general-test-1",
+        "pt-camara-2026-registro-redacao-1",
+        "en-jee-advanced-2026-paper-1-1",
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/extract-question-formats/openai-gpt-6.1-sol.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-fixed-credit-per-correct-option-1",
+        "pt-fixed-credit-per-correct-option-1",
+        "en-jee-advanced-2026-paper-1-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-choice-options/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-choice-options/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-choice-options/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-oab-1a-fase-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-course-weights/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-course-weights/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "en-enem-medicine-ufpe-recife-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-course-weights/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-exam-date/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-exam-date/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-exam-date/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-2026-1",
+        "pt-oab-first-phase-march-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-official-sources/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-official-sources/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-official-sources/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-product-pages/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "nextjs-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-product-pages/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-product-pages/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-subject-questions/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-subject-questions/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-subject-questions/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-target-cutoff/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-target-cutoff/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-direito-ufpe-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-target-cutoff/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-medicina-ufmg-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-topic-frequency/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-topic-frequency/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-natureza-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/find-topic-frequency/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "pt-enem-natureza-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-input-safety-rewrite/deepseek-deepseek-v4-flash.json",
+      "generation": 0,
+      "judge": 0.11617000000000002,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-input-safety-rewrite/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0.1051,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-input-safety-rewrite/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0.10754,
+      "changed": [
+        "copyrighted-character-course-thumbnail-1",
+        "copyrighted-franchise-select-image-option-1",
+        "cybersecurity-operational-hacking-step-image-1",
+        "pt-copyrighted-comic-chapter-image-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-scene/google-gemini-3.8-flash.json",
+      "generation": 0,
+      "judge": 0.3341700000000001,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/image-scene/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0.3358500000000001,
+      "changed": [
+        "discount-en-1",
+        "electron-cloud-pt-1",
+        "microwave-en-1",
+        "language-house-1",
+        "rule-of-three-pt-1",
+        "one-place-not-two-pt-1",
+        "alt-names-two-moments-pt-1",
+        "two-scenes-to-compare-pt-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/past-questions/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0.64378,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/past-questions/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0.7020225000000001,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/past-questions/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0.6389920000000001,
+      "changed": [
+        "pt-enem-style-percentages-1",
+        "pt-cebraspe-style-principios-1",
+        "en-clerical-exam-money-1",
+        "pt-enem-2023-full-day-2-1",
+        "en-algebra-one-regents-june-2025-full-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/read-product-pages/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "protheus-learner-release-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/read-product-pages/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "nextjs-current-1",
+        "moderninha-learner-model-1",
+        "protheus-lifecycle-1",
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/read-product-pages/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "protheus-learner-release-1",
+        "protheus-release-notes-by-month-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/research-plan/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/research-plan/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/research-plan/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "sat-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-change-notice/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0.09156,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-change-notice/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0.08445000000000001,
+      "changed": [
+        "tcdf-question-count-1",
+        "exam-date-moved-1",
+        "software-docs-1",
+        "abitur-date-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-research-plan/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": [
+        "irpf-2027-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-research-plan/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/source-research-plan/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0,
+      "changed": []
+    },
+    {
+      "file": "apps/evals/eval-results/results/translate-pass-marks/anthropic-claude-haiku-5.5.json",
+      "generation": 0,
+      "judge": 0.09013,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/translate-pass-marks/google-gemini-3.5-flash-lite.json",
+      "generation": 0,
+      "judge": 0.10520000000000002,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    },
+    {
+      "file": "apps/evals/eval-results/results/translate-pass-marks/openai-gpt-6-luna.json",
+      "generation": 0,
+      "judge": 0.08575,
+      "changed": [
+        "es-dele-b2-groups-1",
+        "pt-oab-objective-1",
+        "en-two-pass-marks-1"
+      ]
+    }
+  ]
+}

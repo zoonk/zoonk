@@ -1,0 +1,58 @@
+{
+  "en-ar-fable-1": {
+    "winner": "B",
+    "A": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "B": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "reason": "All 20 keys and 5 translations in both banks are defensible, with plausible wrong alternatives and clear A1-C1 progression. MSA script and agreement fit. B has more distinctive voices, especially the vegetable-box humor and engineer's qualified approval. A is sound but uses more familiar stock productivity framing. Slight B preference, not a correctness difference."
+  },
+  "pt-ar-fable-1": {
+    "winner": "A",
+    "A": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "B": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "reason": "All 20 keys and 5 translations per bank checked. No confirmed wrong or ambiguous key, misleveling, language defect or instruction leak. A is more distinctive: the indirect request for a call room at B2 and the self-ironic office preference and machine-translation qualification at C1 are more discriminating than B. Bare seven/eight in A Q7 retains the reservation context, without competing AM/PM options; not counted as a wrong key."
+  },
+  "fr-de-fable-1": {
+    "winner": "A",
+    "A": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "B": {
+      "key": 1,
+      "level": 0,
+      "other": 0
+    },
+    "reason": "B Q13 says management explained the decision and its numbers are hardly disputable, while the writer wistfully packs plants. French option 0 (convinced by management arguments) is compatible with option 1 (accepts without really approving). No wording in option 0 excludes personal reluctance. Both are defensible; require unequivocally wrong opposition rather than conflating reasoned acceptance with enthusiasm. All other keys, alternatives and five translations checked; no confirmed level or language defects or leaks. A wins on answer separation and the C1 formal/informal hierarchy contrast."
+  },
+  "ja-en-fable-1": {
+    "winner": "tie",
+    "A": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "B": {
+      "key": 0,
+      "level": 0,
+      "other": 0
+    },
+    "reason": "All 20 keys, distractors and 5 speaking translations checked per bank. Both have natural Japanese, faithful amounts and AM/PM distinctions, distinct A1-C1 demands and nuanced C1 stance. No instruction leaks or confirmed key/level/language defects. A has strong office/social-cost implications; B has equally effective register contrast and a qualified family-care choice. No meaningful overall quality difference."
+  }
+}

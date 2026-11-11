@@ -1,0 +1,212 @@
+[
+  {
+    "id": "68db609a-209b-4f23-9c90-bae606a47de7",
+    "task": "image-scene",
+    "case": "discount-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "93829d2b-972b-4a26-88f1-60345b924257",
+    "task": "image-scene",
+    "case": "electron-cloud-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "b3ddbead-74d7-4cb2-8dac-0575704990e7",
+    "task": "image-scene",
+    "case": "microwave-en-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "0d8681bc-dd3a-44f0-8d4e-fe0eeba287b6",
+    "task": "image-scene",
+    "case": "language-house-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "db5e1866-6bc2-40a5-bc56-c4823cb01a8d",
+    "task": "image-scene",
+    "case": "rule-of-three-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "61da56df-3d22-437e-8585-2df4a3b8df85",
+    "task": "image-scene",
+    "case": "one-place-not-two-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "dbb930b0-203f-43be-b67f-7656a122ff0c",
+    "task": "image-scene",
+    "case": "alt-names-two-moments-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "f6e68c9b-c068-4f9d-9958-f0e9beb73aeb",
+    "task": "image-scene",
+    "case": "two-scenes-to-compare-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "527d8933-b863-4ca2-8b70-95f5567fac65",
+    "task": "extract-question-formats",
+    "case": "en-valid-mixed-known-and-unknown-scope-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "2405b858-09a9-4751-bc38-0610fd85eed3",
+    "task": "extract-question-formats",
+    "case": "en-jee-choice-everywhere-numeric-section-b-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "1324de5b-51b9-4100-879f-9066ce3deadd",
+    "task": "extract-question-formats",
+    "case": "en-gre-general-test-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "7a1bddf2-10d6-422c-924a-b045354accd3",
+    "task": "extract-question-formats",
+    "case": "pt-class-notes-in-passing-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "4dab7b58-2dd9-4359-822f-47311a3b1b7f",
+    "task": "extract-question-formats",
+    "case": "en-jee-advanced-2026-paper-1-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "3c37ad12-2115-4169-81c6-7c0176f8c20c",
+    "task": "extract-question-formats",
+    "case": "pt-camara-2026-registro-redacao-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "ab75a7a9-5763-4502-aaf6-06b32fc337b3",
+    "task": "extract-question-formats",
+    "case": "pt-oab-48-1a-fase-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "9c895e90-d7b2-4a35-841e-77c836c67203",
+    "task": "past-questions",
+    "case": "pt-enem-style-percentages-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "f8d0ddf1-8f60-4dd4-9258-08a0c3c0537b",
+    "task": "past-questions",
+    "case": "pt-cebraspe-style-principios-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "87c34f3a-5893-4e7c-abda-f778137bd3ce",
+    "task": "past-questions",
+    "case": "en-clerical-exam-money-1",
+    "A": "openai-gpt-6-luna",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "4356acac-fbcd-4fbe-99f9-8f8113ceea13",
+    "task": "past-questions",
+    "case": "pt-enem-2023-full-day-2-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna"
+  },
+  {
+    "id": "5e434f05-3d8f-4026-9c91-f1ad248b4a6b",
+    "task": "past-questions",
+    "case": "en-algebra-one-regents-june-2025-full-1",
+    "A": "meta-muse-ember",
+    "B": "openai-gpt-6-luna"
+  },
+  {
+    "id": "057474c2-e941-4366-9c67-ab856b542c91",
+    "task": "image-scene",
+    "case": "overloaded-water-cycle-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "f52f4273-0a17-4f21-8999-7ff40bba76f7",
+    "task": "image-scene",
+    "case": "printing-press-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "3e76e55e-7ebc-494f-b31f-8330ce1bbf24",
+    "task": "image-scene",
+    "case": "question-cell-diagram-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "a4fec070-9f50-4f5b-a2fd-1c16d7436d38",
+    "task": "image-scene",
+    "case": "brain-lobes-en-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "b60fccc6-b038-4fd3-a05d-9038963077e6",
+    "task": "image-scene",
+    "case": "paintings-comparison-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "c3f087bc-b49b-4d9b-bf06-98e41ef2bbf9",
+    "task": "image-scene",
+    "case": "syntax-tree-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "28f21e19-82d5-4b29-8af6-60fd947136b4",
+    "task": "image-scene",
+    "case": "lever-en-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "5ba43c33-7986-484e-8374-a7f35cbe9d81",
+    "task": "image-scene",
+    "case": "two-moments-become-one-pt-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  },
+  {
+    "id": "12a9bfad-9db3-4934-b3c3-dc2a486fc950",
+    "task": "image-scene",
+    "case": "hand-cut-microbes-pt-1",
+    "A": "google-gemini-3.8-flash",
+    "B": "meta-muse-ember"
+  },
+  {
+    "id": "a33f0873-5884-4380-b09b-e0c60b6343fb",
+    "task": "image-scene",
+    "case": "hand-cut-microbes-findings-pt-1",
+    "A": "meta-muse-ember",
+    "B": "google-gemini-3.8-flash"
+  }
+]

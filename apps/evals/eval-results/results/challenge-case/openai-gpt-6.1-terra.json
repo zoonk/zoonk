@@ -5,42 +5,42 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional retailer, checkout conversion rates, random assignment, and product manager's launch pressure are credible workplace details. However, the immediate meeting deadline conflicts with starting a test whose results arrive days later, weakening the sense of a coherent working day.",
-          "score": 8,
+          "reasoning": "The fictional shop, randomized checkout experiment, purchase counts, four-day deadline, and product manager's launch pressure form a credible analyst work scenario. The statistics skills directly support a real business decision.",
+          "score": 9,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices produce different replies, sensible momentum changes, and different endings; time jumps also supply fresh numbers. The strong choice is not always first, longest, or most cautious. Nevertheless, the analyst supplies the answer immediately before every decision, while the alternatives either skip the requested check or overclaim. The explicit cap for an obvious right answer at every step applies.",
+          "reasoning": "Choices change replies, evidence and time meters, and endings; time jumps also update the visitor and purchase counts consistently. However, the strongest answer is obvious at every decision and always occupies the second position. The alternatives often contrast sensible checking with conspicuously unsupported claims or unnecessary delay. The explicit obvious-answer cap applies.",
           "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The product manager, data analyst, and AI have distinct roles. The product manager pushes for speed, the analyst challenges unsupported conclusions, and asking the AI is a genuine, valued choice that returns useful estimates and test results. No colleague or learner is given a personal name.",
-          "score": 10,
+          "reasoning": "The product manager pushes for speed, the data analyst protects the experiment's interpretation, and the AI provides useful calculations. Asking for help is an actual choice and is rewarded appropriately. Colleagues have roles and placeholder identifiers rather than personal names, and the learner is unnamed.",
+          "score": 9,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback is decision-specific, kind, and focused on strategies rather than intelligence. Improvement notes give actionable alternatives, including better wording for communicating uncertainty. Each skill has a short, feasible practice activity, and each summary sentence expresses one practiced idea.",
-          "score": 10,
+          "reasoning": "Feedback is specific, kind, and focused on strategies such as checking the planned sample and avoiding guarantees. Improvement notes give actionable alternatives, including usable wording for communicating results. Practice tasks are short enough for about five minutes, and the summaries reinforce the case's central lessons.",
+          "score": 9,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The statistical numbers check out: 400/4,000 versus 480/4,000 gives a two-sided p-value of approximately 0.0043, and 100/1,000 versus 110/1,000 gives approximately 0.466. About 4,000 visitors per version is a reasonable estimate for 80% power to detect 10% versus 12% at a 5% threshold. The case correctly avoids treating an inconclusive result as equality or promising future lift. The unresolved 'today' deadline across multi-day jumps is a consistency flaw, but no incorrect statistical fact is taught as right.",
-          "score": 8,
+          "reasoning": "Purchase percentages and time-jump counts are consistent. For 180/1,800 versus 234/1,800, a standard two-sided comparison gives a p-value of approximately 0.0048, matching 'about 0.5%.' Approximately 1,800 visitors per group also provides about 80% power for detecting a change from 10% to 13% at the conventional 5% threshold. The case respects the planned stopping point and does not teach that one day or an early lead proves a lasting winner.",
+          "score": 9,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "The case uses English consistently, appropriate number formats, accessible sample and percentage-point explanations, and conditional plain-language interpretations of the test results. It makes no unsupported promises. However, the 5% threshold is introduced as a convention without explaining what it means, leaving an important beginner concept underexplained.",
+          "reasoning": "The English, number formatting, plain-language hypothesis-test explanation, and qualifications about future gains suit a beginner work case. However, 'two-sided test' appears in the initial AI explanation without an immediate definition; its meaning becomes clearer only later through 'either direction.' The sample-planning explanation would also benefit from a brief explanation of the assumed testing threshold.",
           "score": 8,
           "label": "Depth, language and honesty",
           "weight": 10
@@ -58,24 +58,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 5074,
-          "outputTokens": 1159,
-          "reasoningTokens": 329
+          "inputTokens": 5289,
+          "outputTokens": 1107,
+          "reasoningTokens": 316
         }
       },
       "steps": [
         {
-          "conclusion": "The correct choice is obvious at every decision: the analyst explicitly cues sample-size planning or a chance check immediately before the learner chooses, and the strong option directly follows that cue. Although choices change replies, meters, and endings, this triggers the decisions category's maximum score of 6.",
+          "conclusion": "The decisions are too transparently graded: each node has an obvious evidence-checking answer, and the strongest choice is always second. The final alternatives—promise a lasting gain or request more data without checking—make the correct choice especially easy to identify. This triggers the decisions category's cap of 6.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The deadline is 3:00 p.m. today, but the test has not started and every initial choice jumps forward two days or a week without updating the deadline. Also, the beginner-facing chat introduces a '5% test threshold' without explaining its false-alarm meaning.",
+          "conclusion": "The initial sample-size explanation uses 'two-sided test' without explaining it for beginners. The sample-size estimate also leaves its assumed significance threshold unstated, making the AI's check less transparent than it could be.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the choices less signposted by presenting competing, plausible recommendations with genuine trade-offs. Clarify that today's meeting is for approving the test plan, then establish a new results-meeting deadline after the time jump. Briefly explain the 5% threshold in everyday language.",
+          "conclusion": "Use more credible competing recommendations and vary the strongest option's position. Strengthen sample-size practice by having the learner ask what improvement the business wants to detect and how that affects the visitor requirement, rather than only recording an existing plan.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -111,43 +111,43 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The learner manipulates a light source and openings, and the chapter's ideas determine observable consequences. This is an actual simulated experiment rather than merely a factual quiz. However, the 'what if' framing supplies little playful curiosity beyond an imaginary laboratory, so the experience remains a fairly dry demonstration.",
-          "score": 7,
+          "reasoning": "The chapter's ideas determine the simulated outcomes, but the mission is explicitly to explore and discover physics through two instructional tests. There is no playful hypothetical predicament beyond an imaginary laboratory. This is a quiz in disguise, so the explicit cap of 6 applies.",
+          "score": 6,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices produce different replies and three meaningful endings. However, the preferred actions are consistently easy to identify, particularly when the dialogue explicitly proposes two openings or weakening the light immediately before the corresponding choice. Every strong option is second. The obvious-answer cap limits this category to 6.",
-          "score": 6,
+          "reasoning": "Choices produce different replies, observations, feedback, and atom endings. The first decision offers two plausible experimental approaches, so the cap for obvious answers at every step is not triggered. However, the second answer is supplied in advance, and the final endings discard the first experiment's outcome. Strong choices vary in position and are not consistently the longest.",
+          "score": 7,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "There are two unnamed, role-based colleagues with distinct expertise, and their explanations are useful. Nevertheless, asking either colleague for help is never a decision option. Their dialogue also lacks the differing wants, pressure, or disagreement requested by the category.",
+          "reasoning": "There are two unnamed colleagues with distinct stated roles, and their explanations are useful. However, neither decision offers asking for help, and their dialogue largely serves as tutorial narration rather than showing differentiated expertise through competing priorities or advice.",
           "score": 6,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback specifically connects each action to its experimental consequence, praises strategies rather than intelligence, and gives actionable alternatives without judgment. The short practice tasks are feasible within five minutes, and the summary accurately consolidates the practiced ideas. The practice activities could be made more concrete, but there is no meaningful debrief failure.",
-          "score": 9,
+          "reasoning": "Feedback is kind and specific to the selected action, with concrete alternatives such as repeating the experiment without measuring the path. Practice activities are small enough for roughly five minutes. The first summary entry combines light packets and atomic energy changes, contrary to the one-idea-per-summary-sentence expectation. Some praise emphasizes selecting the correct packet more than the reasoning strategy.",
+          "score": 8,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The overview physics is correct: same-color light packets have equal energy, sufficiently weak light can yield individually recorded arrivals, and accumulated detections in an appropriate two-opening experiment reveal an interference pattern. Strong illumination obscures individual arrivals without eliminating wave behavior. The result makes no claims about magic or conscious observation, and the branches and endings are consistent.",
+          "reasoning": "The overview physics is sound: blue light packets carry more energy than red ones, a specified atomic transition requires matching energy, individual light detections can accumulate into an interference pattern, and obtaining which-path information removes that interference. The absorption claims are appropriately scoped to the simulated transition. Nothing invokes magic or a conscious observer, and no numerical inconsistencies appear.",
           "score": 10,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "Every path contains exactly two decisions. Learner-facing text is in accessible Brazilian Portuguese, quantum is explained simply, and formulas and unexplained technical jargon are absent. The treatment is appropriately introductory, although the overview 'whatIf' tone could be more playful.",
-          "score": 8,
+          "reasoning": "Every path contains exactly two decisions, the learner-facing text is in Brazilian Portuguese, and there are no formulas or promises of grades or jobs. However, “fóton” is additional technical vocabulary despite the explicit allowance of only “quantum,” and the instructional laboratory tone falls short of the requested light, playful overview.",
+          "score": 6,
           "label": "Depth, language and honesty",
           "weight": 10
         },
@@ -164,26 +164,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3476,
-          "outputTokens": 1060,
-          "reasoningTokens": 294
+          "inputTokens": 3883,
+          "outputTokens": 999,
+          "reasoningTokens": 196
         }
       },
       "steps": [
         {
-          "conclusion": "The decisions largely signal their preferred answers: the second-stage dialogue recommends the experiment that the strong option then repeats, and the strong option is always second. This triggers the decisions cap of 6 for consistently obvious answers. There is also no decision offering a genuine opportunity to ask a colleague or the AI for help, despite that explicit requirement.",
+          "conclusion": "The scenario functions mainly as a simulator quiz rather than a playful “E se?” situation, triggering the realism cap of 6. Neither decision lets the learner ask a colleague or the AI for help. Introducing “fóton,” even with an explanation, also violates the explicit restriction against jargon beyond “quantum.”",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The imaginary laboratory feels more like a straightforward guided demonstration than a playful 'E se?' situation. The two colleagues have distinct expertise, but mainly explain and operate equipment; neither expresses a preference, concern, or disagreement.",
+          "conclusion": "The second decision gives away its answer: the panel specifies red, and one branch explicitly says blue has too much energy. The colleagues mainly explain instructions and results rather than express distinct priorities. Endings report only the atom experiment, losing the earlier decision's outcome, and the first summary entry combines two ideas rather than stating one.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the practice activities slightly more concrete—for example, ask the learner to sketch two screens showing sparse arrival points and accumulated bands, then explain them briefly. A simple comparison of bright and dim light of the same color could also reinforce that dimming changes the rate of arriving packets rather than shrinking each packet.",
+          "conclusion": "Build the two decisions around a playful practical predicament, with plausible competing actions rather than a stated energy-matching answer. Make consulting a colleague useful, and carry both experimental outcomes into the ending. Use “pacote de luz” instead of introducing another technical term.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -213,43 +213,43 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "Weight-based pediatric medication verification is authentic nursing work, with realistic product concentration and a stated deadline. However, the ward is generic, no fictional institution is established, the patient's clinical need is unspecified, and colleagues exert little practical pressure. The case remains a plausible work task rather than a disguised academic quiz.",
-          "score": 7,
+          "reasoning": "The fictional hospital, pediatric prescription discrepancy, pharmacy-prepared solution, scheduled dose, and prescription-update workflow form a credible nursing task. However, the ward context and colleague pressure are lightly developed, and the deadline is not anchored to a current time.",
+          "score": 8,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices affect replies, safety, time, and whether administration occurs; strong choices also change position. Nevertheless, the correct action is obvious at every step, triggering the explicit cap of 6. Several reasonable checking or waiting choices terminate immediately rather than opening a further decision, limiting meaningful recovery.",
+          "reasoning": "Choices produce different replies, safety changes, and administration-versus-hold endings; the strong choice also changes position. Nevertheless, the preferred action is obvious at every node, triggering the explicit cap of 6. The unexplained time meter further weakens the practical meaning of the trade-offs.",
           "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The responsible nurse, prescriber, and AI have distinct, useful functions. Asking for help is available and contributes to safe verification; the nurse actively stops unsafe preparation. No colleague or learner is named. The first human colleague is consistently feminine and the second masculine wherever Portuguese marks gender.",
+          "reasoning": "The senior nurse, prescriber, and AI have distinct and useful responsibilities. Consulting the AI is a genuine option, and the nurse intervenes when preparation is unsafe. The AI appropriately does not authorize administration. No colleague or learner receives a personal name, and the first colleague is consistently feminine while the second is masculine.",
           "score": 9,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback is kind, decision-specific, and praises checking and communication strategies rather than ability. Practice tasks are feasible in about five minutes, and summaries identify the practiced safety principles. However, the communication improvement note following 'double-check' gives no example wording; the separate waiting branch does provide one.",
-          "score": 8,
+          "reasoning": "Feedback identifies the specific strategy used or the corrective action needed without judging the learner. Communication improvements include clear, respectful example wording containing both dose values. Each skill has a short, feasible practice activity, and the summary reinforces the calculation, escalation, and final-check workflow.",
+          "score": 9,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "All dose and volume calculations are correct: 20 kg × 10 mg/kg is 200 mg, and 200 mg at 200 mg/mL is 1 mL; 2 mL contains 400 mg. The reference is explicitly case-specific. The strong path obtains a documented prescriber correction and verifies dose, concentration, volume, and route. Unsafe alternatives are interrupted, and no questionable dose is administered.",
+          "reasoning": "All calculations and units are consistent: 18 kg × 10 mg/kg gives 180 mg, 180 mg at 10 mg/mL gives 18 mL, and 20 mL contains 200 mg. The case distinguishes the intended plan from the current prescription, requires prescriber clarification and an updated order, and prevents administration on every unresolved or incorrect path. No incorrect fact is taught as correct.",
           "score": 10,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "Learner-facing text is consistently Brazilian Portuguese, with appropriate nursing terminology and clear units. The work scenario fits the intermediate dose-checking skills without unnecessary jargon or promises of outcomes, employment, or grades.",
-          "score": 9,
+          "reasoning": "Learner-facing content is in natural Brazilian Portuguese with appropriate nursing terminology and unit notation. The depth suits an intermediate dose-calculation case, and the AI's limited role is stated honestly. There are no promises of clinical outcomes, grades, or employment.",
+          "score": 10,
           "label": "Depth, language and honesty",
           "weight": 10
         },
@@ -266,24 +266,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 5548,
-          "outputTokens": 1053,
-          "reasoningTokens": 275
+          "inputTokens": 5351,
+          "outputTokens": 963,
+          "reasoningTokens": 194
         }
       },
       "steps": [
         {
-          "conclusion": "The best answer is obvious at every decision: compare and clarify the discrepancy, then prepare the explicitly established 1 mL. Alternatives mainly omit required checks, delay unnecessarily, or repeat the incorrect dose. This triggers the decisions category's maximum score of 6, despite meaningful differences in replies, meters, and endings.",
+          "conclusion": "The preferred action is obvious at every decision: calculate and compare, contact the immediately available prescriber, and select 18 mL rather than 20 mL. Although choices change replies, meters, and endings, they offer little genuine judgment under pressure. This triggers the decisions category's maximum score of 6.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The workplace context has little clinical detail or colleague pressure. The time meter starts at 75 without explaining its relationship to the 20-minute deadline. In the 'double-check' branch, communication improvement feedback lacks an example of better wording, although that is explicitly required.",
+          "conclusion": "The deadline lacks a current clock time, and 'Tempo até a dose' starts at an unexplained 70, making time costs difficult to interpret. Workplace pressure is also thin: colleagues are readily available and largely cooperative, with no competing ward demand.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Add a concrete hospital context and reason the dose is needed now, make remaining time interpretable, and let learners continue after requesting a useful nursing double-check rather than immediately ending with the dose held. Include a sample prescriber message wherever communication feedback recommends improvement.",
+          "conclusion": "Add a concrete current time and a plausible competing ward task to make prioritization meaningful without compromising safety. A communication decision could offer several realistic messages that differ in completeness and clarity, rather than mainly contrasting contacting the doctor with waiting.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -319,43 +319,43 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional shop, sales meeting, manager's deadline, and imperfect order file form a credible junior-analyst assignment. Duplicate rows, inconsistent channel names, and a missing channel are realistic issues. Six rows make the assignment feel somewhat like a miniature demonstration rather than a full workday problem, but the skills genuinely belong in this job.",
+          "reasoning": "The fictional retailer, unchecked order export, morning deadline, and manager's pressure make a credible beginner analyst assignment. However, the actual regional breakdown is never shown, leaving the central work deliverable less concrete than the setup promises.",
           "score": 8,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices produce different replies, meter changes, and three meaningful outcomes, including recovery after initially trusting the AI. Strong choices change position, and holding the report is a plausible middle option. However, later correct choices are largely supplied by the preceding dialogue, and increasing time remaining for quick actions is not a sensible deadline mechanic. The initial colleague-versus-AI tradeoff provides some genuine judgment, so the cap for an obvious answer at every step is not triggered.",
-          "score": 7,
+          "reasoning": "Choices change replies, meters, and endings, and a rushed learner can recover. Strong options also vary in position. Nevertheless, the correct answer is obvious at every decision, especially when the alternative explicitly presents 97 known-region orders as the complete total after explaining there are 99. The explicit cap of 6 applies.",
+          "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The analyst, manager, and AI have distinct functions and useful contributions. Asking for help is a real decision option, the manager expresses pressure and reporting needs, and the analyst challenges the AI's removal. No colleague or learner is given a personal name; colleague references in choice text use placeholders.",
+          "reasoning": "The manager, analyst, and AI have distinct roles and provide useful, job-like responses. Asking AI for help is a real choice, and checking its findings with the analyst is valued. Neither colleagues nor the learner receive personal names.",
           "score": 9,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback is kind, decision-specific, and strategy-focused, with actionable alternatives and useful wording examples. All three practice tasks are small enough for about five minutes. However, one positive note misidentifies the duplicated order, another credits preservation of the original without establishing that action, and the second summary sentence combines several lessons rather than stating one idea.",
-          "score": 7,
+          "reasoning": "Feedback is kind, decision-specific, and focused on strategies, with actionable corrections and suitable communication examples. Practice tasks fit roughly five minutes. However, the first scan choice receives verification-related praise before verification is chosen, and several summary sentences combine multiple practices.",
+          "score": 8,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The arithmetic is correct: the original six rows total $155, removing the repeated $25 produces five orders totaling $130, and additionally dropping order 104 produces $110. The incorrect AI draft is appropriately exposed as an error. However, the rush/inspect good-feedback note attributes a duplicate to the $20 order, when only order 102 for $25 is duplicated. Because this incorrect fact appears as endorsed instruction, the explicit maximum score of 5 applies. The increasing remaining-time meter is another consistency problem.",
-          "score": 5,
+          "reasoning": "The stated cleaning arithmetic is correct: removing one duplicate from 100 rows leaves 99 orders, comprising 97 known-region orders and 2 unknowns; dropping both unknowns leaves 97. Unsafe reporting choices are explicitly corrected rather than taught as right. The time-left increase is inconsistent with a fixed deadline, and absent regional subtotals prevent checking the promised breakdown.",
+          "score": 8,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "The language is accessible English, amounts use consistent English-language formatting, and data cleaning and duplicates are explained in the chat. The task stays within beginner-level inspection, cleaning, and verification without unnecessary technical terminology or promises of results, jobs, or grades.",
-          "score": 10,
+          "reasoning": "The English is clear and appropriately introductory. Cleaning and duplicates are explained in the conversation, while formatting fixes and unknown regions are described plainly. The case avoids unnecessary technical detail and makes no promises of jobs, grades, or guaranteed outcomes.",
+          "score": 9,
           "label": "Depth, language and honesty",
           "weight": 10
         },
@@ -372,24 +372,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 4986,
-          "outputTokens": 1303,
-          "reasoningTokens": 420
+          "inputTokens": 4832,
+          "outputTokens": 1018,
+          "reasoningTokens": 234
         }
       },
       "steps": [
         {
-          "conclusion": "The positive feedback for rush/inspect incorrectly refers to removing the valid $20 order's duplicate. Order 104 has no duplicate; the repeated order is 102 for $25. This teaches an incorrect account of the cleaning operation, despite the correct final total. The 'Time before the meeting' meter also increases when quick actions are taken, although the deadline never moves.",
+          "conclusion": "Every decision has an obvious instructional answer: inspect rather than rush, verify rather than discard, and disclose unknowns rather than call an incomplete total complete. This triggers the decisions cap of 6 despite meaningful branching. The case also never supplies counts for individual regions, so the learner cannot check the regional breakdown that the mission and successful ending claim to deliver.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The review/check-send feedback praises keeping the original file, but the choice only establishes checking against it, not explicitly preserving an unchanged copy. Later decisions are heavily signposted by the analyst's immediately preceding advice, reducing the learner's opportunity to diagnose the problem independently. The time meter has no stated unit.",
+          "conclusion": "Starting to count increases 'Time left for the meeting' by 5 without a deadline change; saving effort should consume less time, not move the clock backward. The initial AI-scan feedback praises treating AI as non-authoritative before the learner has chosen whether to verify it. Some summary sentences bundle several practices rather than stating one idea each.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make preserving an original copy an explicit action, and have the learner identify which AI removal was unjustified before the analyst supplies the answer. Present remaining time in minutes and subtract only the time each action actually takes. A compact original-versus-cleaned row view would make verification more concrete.",
+          "conclusion": "Provide a small before-and-after extract and regional totals that sum to 97, alongside 2 unknowns. Make at least one decision a genuine trade-off between plausible approaches, such as sending a verified partial breakdown now or spending additional time resolving missing regions. Express the time meter in minutes and keep its changes consistent with elapsed time.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -425,43 +425,43 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "There is a fictional organization, a concrete deadline, and pressure from a nurse educator. However, the work centers on choosing an educational lesson using quiz performance, not assessing a ward routine's effect on a rate. The explicit cap for lesson-planning meta tasks applies.",
+          "reasoning": "The nurse manager's deadline and rollout pressure are credible, but the central problem is an A/B reminder experiment about optional training, not the required ward routine and rate. The organization is not clearly established as a hospital, and the 800-nurse comparison lacks a ward-level operational context.",
           "score": 6,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices produce different replies, meter changes, and endings, and the strongest option is not always first. Nevertheless, every decision has an obvious endorsed answer, often stated immediately beforehand by the analyst. The obvious-answer cap applies. The evidence meter also changes with planning decisions rather than additional evidence.",
+          "reasoning": "Choices change replies, meters, and endings, and the week-long jumps introduce updated counts. However, every strong choice is second, longest, and explicitly includes the recommended check. Alternatives such as proceeding 'without checking its size' make the answer conspicuous. The cap of 6 for obvious right answers applies.",
           "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The nurse educator and quality analyst have distinct priorities and expertise. Consulting the AI is a meaningful option, its answers are useful, and human review is explicitly valued. No colleague or learner is personally named. The educator's deadline pressure provides credible, if modest, disagreement.",
+          "reasoning": "Two unnamed colleagues have distinguishable priorities: the manager wants a timely rollout, while the infection-prevention nurse checks the evidence. Asking the AI is a genuine selectable action with useful numerical answers. Colleagues push back on premature conclusions, and no learner or colleague receives a personal name.",
           "score": 9,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback is specific, kind, and focused on strategies rather than intelligence. Improvement notes give actionable alternatives, including replacement wording for overconfident claims. Practice activities are brief and practical, and each summary sentence captures a distinct practiced idea.",
+          "reasoning": "Feedback is specific, kind, and focused on strategies rather than intelligence. Improvement notes give actionable alternatives, including better wording for communicating uncertainty. Each practice activity is feasible in about five minutes, and the summary separates the three practiced ideas.",
           "score": 9,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The 20-percentage-point difference is correct. The approximately 33% chance calculation is consistent with a two-sided Fisher exact test, and about 400 participants per group is a reasonable estimate for detecting a difference between 50% and 60% with 80% power at a 5% significance level. Proposed recruitment is not presented as completed research, uncertainty is preserved, and every ending maintains safe practice. Identifying the test underlying the 33% figure would improve transparency.",
+          "reasoning": "Counts and percentages remain consistent. Standard two-proportion tests give approximately 25% for the early comparison and 0.1% for the full comparison, matching the stated approximations. Four hundred per group is sufficient for at least 80% power under conventional testing assumptions. The small sample is not treated as decisive, and no ending causes patient harm.",
           "score": 9,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "The English is accessible, hypothesis testing receives a plain-language explanation, and the result avoids promises or requiring clinical knowledge. However, the unexplained '5% cutoff' leaves a key beginner concept unclear, particularly alongside the separate 33% and 80% figures.",
-          "score": 8,
+          "reasoning": "The English is accessible for beginners, hypothesis testing is explained in ordinary language, and 'two-sided' is clarified through 'either direction.' Formulas are avoided, number formatting is appropriate, and the result explicitly avoids guaranteeing future outcomes.",
+          "score": 9,
           "label": "Depth, language and honesty",
           "weight": 10
         },
@@ -478,24 +478,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 5700,
-          "outputTokens": 1060,
-          "reasoningTokens": 267
+          "inputTokens": 5163,
+          "outputTokens": 1118,
+          "reasoningTokens": 343
         }
       },
       "steps": [
         {
-          "conclusion": "The case substitutes planning a nursing lesson and comparing quiz answers for the requested hospital-ward routine and rate comparison. This triggers the realism cap for a lesson-planning meta task. Decisions also consistently telegraph the correct answer: follow the analyst's stated advice rather than choose an unsupported sample size or claim the pilot proves improvement. This triggers the obvious-answer cap despite genuine branching.",
+          "conclusion": "The scenario violates the requested task fit: it compares A/B training reminders rather than a ward's fall-prevention or hand-hygiene routine and its clinical rate. Nursing is largely a backdrop to the prohibited A/B-style experiment. Decisions are also consistently signposted: the strong option is always second, longest, and most cautious, while alternatives openly omit checks or repeat a warning the colleague just gave.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The 'Strength of evidence' meter rises when the learner requests advice, plans recruitment, or makes a recommendation, although no new observations strengthen the evidence for a lesson effect. The beginner-facing explanation also introduces a '5% cutoff' without explaining what it means.",
+          "conclusion": "The confidence meter is generic rather than ward-specific. The sample-size and explanation skills receive limited active practice: the AI approves an existing sample plan, and colleagues supply the final explanation rather than the learner choosing between plausible interpretations.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Retain the useful statistical checks and supportive feedback, but apply them to a fictional ward's routine outcome. Make choices trade off credible operational constraints rather than repeat advice already supplied. Rename the evidence meter to reflect review or planning quality, and briefly explain the testing cutoff.",
+          "conclusion": "Rebuild the comparison around rates on two units or across two months in an explicitly fictional hospital. Preserve the sound chance-versus-sample-size contrast, but introduce credible competing recommendations, vary strong-option placement, and let the learner choose both a meaningful difference and wording for the team update.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -532,42 +532,42 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional retail store, same-day meeting, promotional material and manager's pressure establish a credible workplace. However, the unspecified product and absence of a commercial goal make much of the interaction feel like calculation checking rather than a fully grounded retail decision. The final approval decision provides enough genuine workplace substance that the quiz-in-disguise cap does not apply.",
+          "reasoning": "The fictional store, printing deadline, manager's pressure, cost information and approval workflow establish a credible retail task rather than a detached quiz. However, the unspecified product and unexplained price increase leave the promotion's commercial purpose thin.",
           "score": 8,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices change replies, meters and final outcomes, and proposing the extra discount subject to approval is a credible middle option. However, the calculation choices are heavily signposted, AI assistance is consistently ranked above equally correct manual work, and the final strong choice lacks a business criterion supporting its superiority. Different outcomes exist, so the no-consequences cap is not triggered.",
-          "score": 7,
+          "reasoning": "Choices produce different replies, sensible meter movements and three distinct endings, and the strongest option changes position. Nevertheless, the preferred action is obvious at every decision: check rather than skip checks, then select the already-identified margin-compliant discount. The exception route lacks a concrete business advantage. The explicit maximum of 6 therefore applies.",
+          "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The manager pushes for publication, the analyst checks prices and margins, and the AI provides useful step-by-step calculations when asked. Placeholder-only identities are respected. However, the buyer and finance roles requested in the case expectations are absent, and the analyst mostly confirms calculations rather than contributing a distinct commercial perspective.",
-          "score": 8,
+          "reasoning": "The manager pushes for an attractive offer and timely printing, while the commercial analyst checks pricing and margin. Both are identified by role rather than personal names. Asking the AI is a genuine, valued option, and its answers provide useful, correct calculations.",
+          "score": 9,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback is specific, kind and focused on strategies, with actionable corrections for using the wrong percentage base. Both practice activities are feasible in about five minutes. The second summary sentence, however, combines two separate practiced ideas: defining margin and verifying AI output. No generic or judgmental-feedback cap applies.",
-          "score": 8,
+          "reasoning": "Feedback is kind and decision-specific, praises checking and approval strategies rather than intelligence, and supplies actionable alternatives. Communication-related improvement notes include usable wording. Both practice activities fit approximately five minutes, and the summary sentences each express a practiced idea.",
+          "score": 9,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "All calculations check out: R$ 120,00 × 1,25 × 0,80 = R$ 120,00; R$ 40,00 ÷ R$ 120,00 gives approximately 33,33%; and R$ 28,00 ÷ R$ 108,00 gives approximately 25,93%. Incorrect choices are identified as errors rather than taught as correct. Panels, replies and endings agree, monetary formatting is Brazilian, and approval safeguards prevent unverified publication.",
-          "score": 10,
+          "reasoning": "All monetary calculations and formats are correct and consistent: the successive 20% changes yield R$ 96,00 and approximately 16,67% margin; the 15% discount yields R$ 102,00 and approximately 21,57% margin. However, the endorsed promotion uses a newly increased reference price without validating it, despite ending above the original selling price. This weakens safe professional practice. There is no demonstrated arithmetic or factual error requiring the wrong-fact cap.",
+          "score": 7,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "Learner-facing content is in Brazilian Portuguese with appropriate local number formats. Successive percentage bases and margin are explained plainly in the chat at a beginner level. The scope of the cost calculation is explicitly limited, and there are no promises of employment, grades or guaranteed commercial results.",
+          "reasoning": "The learner-facing content is in Brazilian Portuguese, uses local monetary and percentage formats, and explains successive percentages and gross margin at beginner level. The cost-only scope of gross margin is stated, and there are no promises of results, employment or grades.",
           "score": 10,
           "label": "Depth, language and honesty",
           "weight": 10
@@ -585,26 +585,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 5535,
-          "outputTokens": 1270,
-          "reasoningTokens": 421
+          "inputTokens": 5503,
+          "outputTokens": 1274,
+          "reasoningTokens": 472
         }
       },
       "steps": [
         {
-          "conclusion": "The final recommendation is not grounded in a commercial objective: nothing establishes whether preserving margin or attracting customers with the extra discount matters more. Nevertheless, keeping R$ 120,00 is rated stronger. The case therefore practices calculation more convincingly than deciding which promotion is right.",
+          "conclusion": "The preferred choices are obvious throughout: checking beats explicitly skipping checks, and the analyst supplies the margin-compliant answer before the final decision. Requesting an exception has no stated commercial benefit to justify its delay. This triggers the decisions category's maximum score of 6, despite the genuinely different endings.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "Correct independent calculations are repeatedly rated below asking AI, without an established need for additional verification. The requested buyer and finance perspectives are replaced by one price analyst. The second summary sentence combines the margin definition with a separate instruction about checking AI calculations.",
+          "conclusion": "The successful ending endorses advertising R$ 102,00 as a discounted offer even though the current price is R$ 100,00, without establishing that R$ 120,00 is a legitimate reference price. The arithmetic is correct, but the case leaves an important professional advertising safeguard unaddressed.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "Give the promotion a concrete business constraint, such as a minimum acceptable margin, and let colleagues advocate different commercial priorities. Make verification valuable when uncertainty warrants it rather than inherently superior to correct independent work. Explicitly compare the extra 10% discount with the 30% reduction in per-unit profit, from R$ 40,00 to R$ 28,00.",
+          "conclusion": "Give the promotion a concrete commercial purpose, such as clearing seasonal stock, and provide evidence that could reasonably support an exception. Clarify the reference-price history or offer an honest alternative such as retaining the current R$ 100,00 price, which meets the 20% margin floor. These changes would make the decision less predetermined and the retail situation more useful.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {

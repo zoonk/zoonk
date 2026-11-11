@@ -9,14 +9,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
@@ -32,11 +38,28 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
+/** A tooltip per place it can sit: under a top-row day, over a bottom-row one, and over each kind of column. */
+private val INSPECTED =
+    mapOf(
+        StatsPage.Activity to listOf("top-row-day" to "Oct 25", "bottom-row-day" to "Oct 17"),
+        StatsPage.Energy to listOf("day" to "Oct 21"),
+        StatsPage.Patterns to
+            listOf(
+                "best-day" to "Tuesday, 92%, 50 answers",
+                "too-few-answers" to "Friday",
+                "no-answers" to "Saturday",
+                "best-time" to "Best time, Morning",
+            ),
+    )
+
 /** Review screenshots of every stats page, written only on demand: `--tests '*StatsScreenshots*' --rerun -Pzoonk.shots=<folder>`. */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class StatsScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -60,6 +83,14 @@ class StatsScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w700dp-h1400dp-xhdpi")
+    fun medium() = captureAll("stats-medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun openBook() = captureAll("stats-book", open = true)
+
+    @Test
     @Config(qualifiers = "w1280dp-h1200dp-xhdpi")
     fun tablet() = captureAll("stats-tablet")
 
@@ -67,6 +98,7 @@ class StatsScreenshots {
         prefix: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        open: Boolean = false,
     ) {
         var shown by mutableIntStateOf(0)
 
@@ -91,12 +123,28 @@ class StatsScreenshots {
             }
         }
 
+        if (open) compose.unfoldBook(folds)
+
         StatsPage.entries.forEachIndexed { index, page ->
+            val name = "$prefix-${page.name.lowercase()}"
             shown = index
-            compose.waitForIdle()
-            val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
-            val file = File(folder, "$prefix-${page.name.lowercase()}.png").apply { parentFile?.mkdirs() }
-            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            capture(name)
+
+            INSPECTED[page].orEmpty().forEach { (state, point) ->
+                compose
+                    .onAllNodes(
+                        hasContentDescription(point, substring = true),
+                    ).onFirst()
+                    .performSemanticsAction(SemanticsActions.OnClick)
+                capture("$name-$state")
+            }
         }
+    }
+
+    private fun capture(name: String) {
+        compose.waitForIdle()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 }

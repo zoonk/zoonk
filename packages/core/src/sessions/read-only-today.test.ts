@@ -137,7 +137,7 @@ describe("Today reads without learner actions", () => {
   });
 
   it.each([false, true])(
-    "offers a pattern once beside the unopened day that picked its drill (earned elsewhere: %s)",
+    "offers a pattern once beside the unopened day that picked its drill (another goal earned its bonus: %s)",
     async (earnedElsewhere) => {
       const { goal, user } = await languageGoalFixture();
       mockSession(user.id);
@@ -166,9 +166,7 @@ describe("Today reads without learner actions", () => {
         expect.objectContaining({ opens: { kind: "pattern", patternId: pattern.id } }),
       );
 
-      expect(result.today.pattern).toStrictEqual(
-        earnedElsewhere ? { id: pattern.id, kind: "pattern", title: "Since and for" } : null,
-      );
+      expect(result.today.pattern).toBeNull();
     },
   );
 

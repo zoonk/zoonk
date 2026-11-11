@@ -1622,10 +1622,11 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "Más"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "-eNLo_"
-msgid "{date} · {count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{date} · {count, plural, =0 {No estudiaste} one {# actividad} other {# actividades}}"
+msgctxt "FjcEak"
+msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
+msgstr "{count, plural, =0 {No estudiaste} one {# actividad} other {# actividades}}"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1684,15 +1685,17 @@ msgctxt "AxMhQr"
 msgid "High"
 msgstr "Alto"
 
+#. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "5ZmEgv"
-msgid "{date} · No Energy recorded"
-msgstr "{date} · Sin registro de Energía"
+msgctxt "VmQeBl"
+msgid "No Energy recorded"
+msgstr "Sin registro de Energía"
 
+#. A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "beOKv0"
-msgid "{date} · {percentage} Energy"
-msgstr "{date} · {percentage} de Energía"
+msgctxt "J89SkG"
+msgid "{percentage} Energy"
+msgstr "{percentage} de Energía"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "0i1UHO"
@@ -1822,6 +1825,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "En qué momentos respondiste mejor en los últimos 90 días."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {Sin respuestas} one {# respuesta} other {# respuestas}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, one {# respuesta} other {# respuestas}}, se necesitan {minimum, number} para detectar un patrón"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "Mejor día"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "A lo largo de la semana"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "Mejor momento"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "A lo largo del día"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1841,21 +1879,6 @@ msgstr "Tarde"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Noche"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {Sin respuestas} one {# respuesta} other {# respuestas}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "A lo largo de la semana"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "A lo largo del día"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1896,18 +1919,6 @@ msgstr "Aún no hay suficientes respuestas"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, one {# respuesta} other {# respuestas}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "Mejor día"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "Mejor momento"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"

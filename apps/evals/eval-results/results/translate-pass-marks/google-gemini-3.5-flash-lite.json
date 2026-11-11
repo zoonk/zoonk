@@ -7,9 +7,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1443,
-          "outputTokens": 368,
-          "reasoningTokens": 311
+          "inputTokens": 1440,
+          "outputTokens": 444,
+          "reasoningTokens": 287
         }
       },
       "steps": [
@@ -19,9 +19,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The Polish translation uses the nonstandard word \"Zdanio\" for the passing grade. Replace it with \"Zaliczone\" or \"Zdane\", retaining the quoted \"Apto\" immediately afterward. The required English, Portuguese, French and German translations preserve the thresholds and official grade correctly.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
           "conclusion": "None",
@@ -57,9 +57,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1478,
-          "outputTokens": 377,
-          "reasoningTokens": 225
+          "inputTokens": 1488,
+          "outputTokens": 431,
+          "reasoningTokens": 251
         }
       },
       "steps": [
@@ -69,7 +69,7 @@
           "score": 10
         },
         {
-          "conclusion": "The English opening, \"Passes the objective test anyone who gets...\", uses unnatural word order for US English. \"Anyone who gets at least 50% of the answers correct passes the objective test...\" would be more natural without changing the meaning or numerical thresholds.",
+          "conclusion": "The English opening, \"Passes the objective test anyone who gets...\", is unnatural; \"Anyone who gets ... passes the objective test\" would be idiomatic. The Mexican Spanish translation uses \"40,00\" rather than the locally standard decimal-point form \"40.00\", contrary to the requested localized decimal notation. The required translations otherwise preserve the 50% threshold and inclusive 40-point passing score.",
           "kind": "minorErrors",
           "score": 8
         },
@@ -107,9 +107,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1659,
-          "outputTokens": 323,
-          "reasoningTokens": 194
+          "inputTokens": 1657,
+          "outputTokens": 312,
+          "reasoningTokens": 197
         }
       },
       "steps": [
@@ -119,14 +119,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The Brazilian Portuguese phrase “pontuar pelo menos 20 pontos” is awkward; “obter pelo menos 20 pontos” is more natural. “Compreensão auditiva” is also a clearer exam-skill label than “audição.” These wording issues do not change the scoring requirements.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "Minor wording refinements could improve fluency: Portuguese could use 'obter pelo menos 20 pontos' instead of the repetitive 'pontuar pelo menos 20 pontos', and German could use the more idiomatic 'mindestens 60 von 100 Punkten'. All requested languages have both lines, the numerical requirements are preserved, and no advice or unsupported claims are added.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
