@@ -58,7 +58,8 @@ struct ReviewIntro: View {
             comment: "How reviews work: how answers move an idea's next review"),
           Text(
             "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner.",
-            tableName: "Session", comment: "How reviews work: how answers move an idea's next review"))
+            tableName: "Session",
+            comment: "How reviews work: how answers move an idea's next review"))
 
         row(
           "timer",
