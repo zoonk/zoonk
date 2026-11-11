@@ -23,9 +23,6 @@ vi.mock("@zoonk/auth", async () => {
   const { baseAuthConfig, baseAuthPlugins } =
     await import("../../../../../../../packages/auth/src/server");
 
-  const { appAttestPlugin } =
-    await import("../../../../../../../packages/auth/src/plugins/app-attest");
-
   const { guestPlugin } = await import("../../../../../../../packages/auth/src/plugins/guest");
 
   const { createEmailOTPPlugin } =
@@ -37,7 +34,6 @@ vi.mock("@zoonk/auth", async () => {
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
       plugins: [
         ...baseAuthPlugins,
-        appAttestPlugin(),
         createEmailOTPPlugin({ storeOTP: "hashed" }),
         bearer(),
         guestPlugin(),

@@ -7,8 +7,7 @@
     "./access-contract": "./src/access-contract.ts",
     "./active-subscription": "./src/active-subscription.ts",
     "./account-deletion": "./src/account-deletion.ts",
-    "./app-attest": "./src/app-attest/native-app-attest.ts",
-    "./app-attest-contract": "./src/app-attest/app-attest-contract.ts",
+    "./app-challenge": "./src/native-app-challenge.ts",
     "./auth-events": "./src/auth-events.ts",
     "./available-username": "./src/available-username.ts",
     "./certificate-issuance": "./src/certificate-issuance.ts",
@@ -56,7 +55,6 @@
     "better-auth": "1.7.20",
     "jose": "catalog:",
     "mailchecker": "6.0.21",
-    "node-app-attest": "1.0.1",
     "stripe": "23.1.0",
     "zod": "catalog:"
   },

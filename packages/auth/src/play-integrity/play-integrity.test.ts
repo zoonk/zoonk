@@ -1,25 +1,18 @@
 import { createHash } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { APP_ATTEST_OPERATIONS, type AppAttestBinding } from "../app-attest/app-attest-contract";
 import { issueAppChallenge } from "../request-guards/app-challenge";
 import { decodePlayIntegrityToken } from "./decode-play-integrity-token";
-import { hasPlayIntegrityProof } from "./play-integrity";
+import { type PlayIntegrityBinding, hasPlayIntegrityProof } from "./play-integrity";
 import { PLAY_INTEGRITY_HEADERS } from "./play-integrity-contract";
 
 /** Google decrypts the token; everything Zoonk checks about its answer stays real. */
 vi.mock("./decode-play-integrity-token", () => ({ decodePlayIntegrityToken: vi.fn() }));
 
-const RESTORE_KEY: AppAttestBinding = {
-  fields: ["credential-1"],
-  operation: APP_ATTEST_OPERATIONS.restoreKey,
-};
+const RESTORE_KEY: PlayIntegrityBinding = { fields: ["credential-1"], operation: "restore-key" };
 
-const OTHER_KEY: AppAttestBinding = {
-  fields: ["credential-2"],
-  operation: APP_ATTEST_OPERATIONS.restoreKey,
-};
+const OTHER_KEY: PlayIntegrityBinding = { fields: ["credential-2"], operation: "restore-key" };
 
-function requestHash({ binding, challenge }: { binding: AppAttestBinding; challenge: string }) {
+function requestHash({ binding, challenge }: { binding: PlayIntegrityBinding; challenge: string }) {
   const clientData = ["zoonk-app-attest:1", challenge, binding.operation, ...binding.fields];
   return createHash("sha256").update(clientData.join("\n")).digest("base64url");
 }
@@ -32,7 +25,7 @@ function decodedToken({
   requestPackageName = "com.zoonk",
 }: {
   appRecognitionVerdict?: string;
-  binding?: AppAttestBinding;
+  binding?: PlayIntegrityBinding;
   challenge: string;
   deviceRecognitionVerdict?: string[];
   requestPackageName?: string;

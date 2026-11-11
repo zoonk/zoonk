@@ -5,7 +5,6 @@ import { getAndroidApps } from "@zoonk/utils/android-apps";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
-import { APP_ATTEST_OPERATIONS } from "../app-attest/app-attest-contract";
 import { GOOGLE_PLAY_PACKAGE_NAME } from "../google/service-account";
 import { hasPlayIntegrityProof } from "../play-integrity/play-integrity";
 import { PLAY_INTEGRITY_HEADERS } from "../play-integrity/play-integrity-contract";
@@ -151,7 +150,7 @@ async function hasAppProof({ credentialId, headers }: { credentialId: string; he
   }
 
   return hasPlayIntegrityProof({
-    binding: { fields: [credentialId], operation: APP_ATTEST_OPERATIONS.restoreKey },
+    binding: { fields: [credentialId], operation: "restore-key" },
     headers,
   });
 }

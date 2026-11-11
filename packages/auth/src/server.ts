@@ -33,7 +33,7 @@ import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
-import { appAttestPlugin } from "./plugins/app-attest";
+import { appChallengePlugin } from "./plugins/app-challenge";
 import { cliLoginPlugins } from "./plugins/cli-login";
 import { guestPlugin } from "./plugins/guest";
 import { restoreKeyPlugin } from "./plugins/restore-key";
@@ -161,7 +161,7 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
-  appAttestPlugin(),
+  appChallengePlugin(),
   restoreKeyPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),

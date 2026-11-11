@@ -502,7 +502,7 @@
     },
     "/app-attest/challenges": {
       "post": {
-        "description": "A one-time challenge for app attestation and restore keys. The iOS app uses it to attest its App Attest key. The Android app uses it for Play Integrity proof when registering a restore key, and as the WebAuthn challenge when registering or redeeming a restore key (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`).",
+        "description": "A one-time challenge for the Android app's restore keys: the Play Integrity proof when registering one, and the WebAuthn challenge when registering or redeeming one (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`). The path keeps its original name for released apps.",
         "operationId": "createAppAttestChallenge",
         "security": [],
         "summary": "Get an app proof challenge",
@@ -516,74 +516,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AppAttestChallenge"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
-            "headers": {
-              "Retry-After": {
-                "required": true,
-                "description": "Seconds until another attempt can be made",
-                "schema": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991,
-                  "description": "Seconds until another attempt can be made"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/app-attest/keys": {
-      "post": {
-        "description": "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys from App Attest's development environment are refused in production.",
-        "operationId": "createAppAttestKey",
-        "security": [],
-        "summary": "Register an App Attest key",
-        "tags": [
-          "Sessions"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AppAttestKeyRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Key registered"
-          },
-          "400": {
-            "description": "Request validation failed, or the attestation is invalid or its challenge was already used or expired. Error code: APP_ATTESTATION_INVALID.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -25670,39 +25602,6 @@
         "description": "A complete replacement for one optional profile answer",
         "type": "object"
       },
-      "AppAttestKeyRequest": {
-        "type": "object",
-        "properties": {
-          "attestation": {
-            "type": "string",
-            "maxLength": 16384,
-            "format": "base64",
-            "contentEncoding": "base64",
-            "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$",
-            "description": "Base64 of the attestation object `DCAppAttestService.attestKey` returned"
-          },
-          "challenge": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128,
-            "description": "The challenge from `POST /v1/app-attest/challenges` the attestation was made over"
-          },
-          "keyId": {
-            "type": "string",
-            "maxLength": 64,
-            "format": "base64",
-            "contentEncoding": "base64",
-            "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$",
-            "description": "The key ID `DCAppAttestService.generateKey` returned"
-          }
-        },
-        "required": [
-          "attestation",
-          "challenge",
-          "keyId"
-        ],
-        "additionalProperties": false
-      },
       "StudySessionTimeZone": {
         "type": "object",
         "properties": {
@@ -32858,7 +32757,7 @@
           "challenge": {
             "type": "string",
             "minLength": 1,
-            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; a Play Integrity token's request hash covers its request client data (see the `x-play-integrity-token` header). A restore key's WebAuthn request uses it as its `challenge`, unchanged."
+            "description": "Single-use and valid for five minutes. A Play Integrity token's request hash covers it (see the `x-play-integrity-token` header); a restore key's WebAuthn request uses it as its `challenge`, unchanged."
           }
         },
         "required": [
