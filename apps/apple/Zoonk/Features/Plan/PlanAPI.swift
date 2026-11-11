@@ -34,8 +34,9 @@ protocol PlanAPIClient: Sendable {
   /// Nil when the plan can't take the change.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   /// False when the change is out of date: answered elsewhere, or the plan moved on.
+  /// The change as it stands after the answer; nil when it can't take that answer anymore.
   func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> Bool
+    async throws -> TodayView.PlanChange?
   /// The learner's switches on an exam goal's Focus test.
   func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
     -> FocusTestSummary
@@ -254,7 +255,7 @@ struct PlanAPI: PlanAPIClient {
 
   /// Undoes the plan's latest change while the plan is still as it left it.
   func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> Bool
+    async throws -> TodayView.PlanChange?
   {
     let body: Components.Schemas.PlanChangeDecisionInput = try PracticeJSON.recode(
       PlanDecision(status: decision.rawValue, timeZone: timeZone))
@@ -263,8 +264,8 @@ struct PlanAPI: PlanAPIClient {
       switch try await client.decidePlanChange(
         path: .init(goalId: goalId, changeId: changeId), body: .json(body))
       {
-      case .ok: return true
-      case .conflict, .unprocessableContent: return false
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      case .conflict, .unprocessableContent: return nil
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }

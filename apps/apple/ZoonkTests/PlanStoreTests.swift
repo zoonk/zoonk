@@ -259,11 +259,22 @@ private actor PlanAPIStub: PlanAPIClient {
   }
 
   func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> Bool
+    async throws -> TodayView.PlanChange?
   {
     calls.undone.append(changeId)
-    return undoes
+    guard undoes else {
+      return nil
+    }
+
+    return try JSONDecoder().decode(TodayView.PlanChange.self, from: Self.undoneChange)
   }
+
+  private static let undoneChange = Data(
+    #"""
+    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice",
+    "id":"change-1","kind":"edited","officialDate":null,"operations":[],"reason":null,
+    "source":"planEdit","status":"undone","todaySession":null}
+    """#.utf8)
 
   func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
     -> FocusTestSummary

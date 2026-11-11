@@ -189,7 +189,7 @@ final class PlanStore {
 
   /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.
   func decide(goalId: String, changeId: String, decision: PlanChangeDecision) async
-    -> MutationResult<Bool>
+    -> MutationResult<TodayView.PlanChange?>
   {
     let api = api
     return await cache.mutate(invalidating: [.goals, .learnerModel, .userSession]) { identity in

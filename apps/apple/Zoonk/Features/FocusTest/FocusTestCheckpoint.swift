@@ -200,6 +200,8 @@ private struct FocusTestProposal: View {
 
   @Environment(PlanStore.self) private var plans
   @State private var decision: PlanChangeDecision?
+  /// The change as the answer left it, which says whether it can still be undone.
+  @State private var answered: TodayView.PlanChange?
   @State private var pressed: PlanChangeDecision?
   @State private var failed = false
 
@@ -260,7 +262,7 @@ private struct FocusTestProposal: View {
         Text(Self.result(decision))
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        if proposal.canUndo {
+        if answered?.canUndo == true {
           BusyButton(isBusy: pressed == .undone, icon: .undo) {
             decide(.undone)
           } label: {
@@ -306,9 +308,10 @@ private struct FocusTestProposal: View {
       defer { pressed = nil }
 
       switch await plans.decide(goalId: goalID, changeId: proposal.id, decision: status) {
-      case .done:
+      case .done(let change?):
+        answered = change
         decision = status
-      case .failed:
+      case .done(nil), .failed:
         failed = true
       case .obsolete:
         break
