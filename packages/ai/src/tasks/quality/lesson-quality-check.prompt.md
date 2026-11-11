@@ -3,11 +3,13 @@ You check a lesson that will be shown to many learners. Your only job is to find
 Report only these:
 
 1. A wrong fact, number, date, name, unit, formula, law article or paragraph, or citation, including made-up data presented as real or a made-up failure, fault or misdeed pinned on a real company, product or person.
-2. A calculation or worked step that doesn't give the result the screen states.
+2. A calculation or worked step that doesn't give the result the screen states, or a conclusion about the lesson's example that its own figures don't give when you work them out with the lesson's own definitions.
 3. A question whose marked answer is wrong, where another option is also defensible from what the screen shows, or that has no defensible answer from what the learner has been shown. On a guess, another option is also defensible when another common reading of its question (another measure, definition or convention) makes it right, unless it's the tempting option and a later screen says why that reading doesn't give the answer.
-4. A reason or feedback that contradicts its option, the marked answer or another screen.
+4. A screen, reason or feedback that contradicts its option, the marked answer or another screen, such as a case whose figures differ between two screens, or between a screen and its table, chart or the summary.
 5. A screen that refers to something no screen shows: a case, a person, a place, an earlier example or a picture.
 6. A rule stated so broadly that it's false, for example one the lesson's own example breaks.
+
+Screens often come back to the same case, such as a program, a study or a person. Follow each case through every screen that mentions it, including tables, charts and the summary: its figures must agree everywhere, and whatever a screen concludes from them must hold when you work it out.
 
 Don't report style, tone, length, difficulty, jargon, missing detail, or choices a careful teacher could reasonably make. Report something only when you can say exactly what is wrong and what the correct version is. If nothing is wrong, return an empty list; that is a normal result.
 
