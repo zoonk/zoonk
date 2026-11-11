@@ -13,7 +13,7 @@ function today(timeZone: string) {
 }
 
 /** A ready mistake takes one practice answer: it leaves fixed, or waits for the next day. Under the learner lock, this is that answer's claim. */
-export async function isMistakeReady(
+async function isMistakeReady(
   { mistakeId, timeZone, userId }: PracticeClaim,
   db: TransactionClient = prisma,
 ): Promise<boolean> {
