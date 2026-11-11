@@ -95,6 +95,7 @@ export function listFocusRows({
 export type FocusPlan = {
   /** The plan already gives the suggested subjects their time, so a focus on them changes nothing. */
   covered: boolean;
+  declined: boolean;
   focusAreas: readonly string[];
   handPicked: boolean;
   /** The test's waiting proposal on this plan. */
@@ -130,6 +131,10 @@ function getFocusState({
 
   if (plan.handPicked) {
     return "handPicked";
+  }
+
+  if (plan.declined) {
+    return "declined";
   }
 
   return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : null;

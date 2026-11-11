@@ -143,10 +143,10 @@ const focusTestFocusSchema = z
       .meta({ description: "For `proposed`: the change to apply or decline, with its effect" }),
     rows: z.array(focusRowSchema).meta({ description: "Up to three, the most needed first" }),
     state: z
-      .enum(["ifTimeShort", "proposed", "current", "alreadyFits", "handPicked"])
+      .enum(["ifTimeShort", "proposed", "current", "alreadyFits", "handPicked", "declined"])
       .meta({
         description:
-          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; valid while the exam date and daily time are unchanged, including across daily replans. `handPicked`: the learner chose their own focus, declined the test's proposal or undid it",
+          "`ifTimeShort`: the plan isn't shown yet; saving a daily time that doesn't cover everything sets this focus. `proposed`: `proposal` waits for the learner's answer. `current`: the plan's focus areas match these subjects. `alreadyFits`: the last settled test verdict found these subjects already covered without a focus; valid while the exam date and daily time are unchanged, including across daily replans. `handPicked`: the learner chose their own focus. `declined`: the learner dismissed this suggestion with Not now or Undo; it stays dismissed for the same suggested subjects across replans and date or daily-time edits",
       }),
   })
   .meta({ id: "FocusTestFocus" });

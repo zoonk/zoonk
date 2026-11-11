@@ -379,7 +379,7 @@ describe("the Focus test on a plan whose time is short", () => {
     const again = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     expect(again.status === "ready" && again.completion.focusTest?.checkpoint?.focus).toMatchObject(
-      { proposal: null, state: "handPicked" },
+      { proposal: null, state: "declined" },
     );
 
     await expect(
@@ -388,6 +388,29 @@ describe("the Focus test on a plan whose time is short", () => {
         where: { payload: { equals: "focusTest", path: ["source"] }, planId: plan.id },
       }),
     ).resolves.toStrictEqual([{ status: "declined" }]);
+  });
+
+  it("reserves handPicked for a focus the learner chose themselves", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    const completion = await sit(goal.id, [DONT_KNOW]);
+
+    await decidePlanChange({
+      changeId: completion.focusTest?.checkpoint?.focus?.proposal?.id ?? "",
+      goalId: goal.id,
+      input: { status: "declined" },
+    });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: ["Ética"], kind: "focusAreas" }] },
+        trackAnalytics: false,
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { focusTest: { checkpoint: { focus: { proposal: null, state: "handPicked" } } } },
+    });
   });
 
   it.each(["declined", "undone"] as const)(
@@ -406,9 +429,7 @@ describe("the Focus test on a plan whose time is short", () => {
       ).resolves.toMatchObject({ change: { status }, status: "updated" });
 
       await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
-        placement: {
-          focusTest: { checkpoint: { focus: { proposal: null, state: "handPicked" } } },
-        },
+        placement: { focusTest: { checkpoint: { focus: { proposal: null, state: "declined" } } } },
       });
 
       await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject({
@@ -418,7 +439,7 @@ describe("the Focus test on a plan whose time is short", () => {
       await writeLearnerChange({ planInputs: true, userId: user.id }, async () => null);
 
       await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
-        placement: { focusTest: { checkpoint: { focus: { state: "handPicked" } } } },
+        placement: { focusTest: { checkpoint: { focus: { state: "declined" } } } },
       });
 
       await expect(
@@ -443,9 +464,7 @@ describe("the Focus test on a plan whose time is short", () => {
       ).resolves.toMatchObject({ status: "applied" });
 
       await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
-        completion: {
-          focusTest: { checkpoint: { focus: { proposal: null, state: "handPicked" } } },
-        },
+        completion: { focusTest: { checkpoint: { focus: { proposal: null, state: "declined" } } } },
       });
 
       await expect(

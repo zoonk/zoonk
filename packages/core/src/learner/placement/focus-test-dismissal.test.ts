@@ -110,7 +110,7 @@ describe("Focus test dismissals after replanning", () => {
     const settled = await read(goal.id);
 
     expect(settled.areas).toStrictEqual(before.areas);
-    expect(settled.focus).toBe("handPicked");
+    expect(settled.focus).toBe("declined");
     expect(settled.focusTestChanges).toStrictEqual([status]);
     expect(settled.todayAsks).not.toBe("focusTest:proposed");
   });
@@ -149,14 +149,14 @@ describe("Focus test dismissals after replanning", () => {
 
     expect(undone.status).toBe("updated");
     const beforeSettle = await read(goal.id);
-    expect(beforeSettle.focus).toBe("handPicked");
+    expect(beforeSettle.focus).toBe("declined");
     expect(beforeSettle.focusTestChanges).toStrictEqual(["undone"]);
     expect(beforeSettle.todayAsks).toBeNull();
 
     await sit(goal.id, 0);
     const settled = await read(goal.id);
     expect(settled.areas).toStrictEqual(beforeSettle.areas);
-    expect(settled.focus).toBe("handPicked");
+    expect(settled.focus).toBe("declined");
     expect(settled.focusTestChanges).toStrictEqual(["undone"]);
     expect(settled.todayAsks).not.toBe("focusTest:proposed");
   });

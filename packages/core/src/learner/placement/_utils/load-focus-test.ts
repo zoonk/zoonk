@@ -108,11 +108,10 @@ async function loadFocusFacts({
 
   return {
     covered: handled?.outcome === "alreadyIn",
+    declined: handled?.outcome === "proposed" && isDismissed(suggestion?.status),
     due: due ? suggested : null,
     focusAreas,
-    handPicked:
-      (focusAreas.length > 0 && !isSameFocus(focusAreas, focus)) ||
-      (handled?.outcome === "proposed" && isDismissed(suggestion?.status)),
+    handPicked: focusAreas.length > 0 && !isSameFocus(focusAreas, focus),
     proposal:
       suggestion?.status === "proposed"
         ? await loadPlanChangeView(suggestion.id, { timeZone })
