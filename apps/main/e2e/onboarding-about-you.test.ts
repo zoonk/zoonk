@@ -104,9 +104,10 @@ test("picked conditions are saved with Something else's words, and the next scre
 
   await expect(page.getByRole("heading", { name: "What helps you learn?" })).toBeVisible();
 
-  await expect(
-    page.getByText("We checked what often helps with what you picked. Change anything you like."),
-  ).toBeVisible();
+  await expect(page.getByRole("checkbox", { name: /^Step by step/u })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: /^Short answers/u })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: /^Shorter study days/u })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: /^Examples first/u })).not.toBeChecked();
 
   const conditions = await prisma.learnerCondition.findMany({
     orderBy: { condition: "asc" },
