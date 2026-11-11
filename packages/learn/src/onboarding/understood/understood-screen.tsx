@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  type OnboardingDraftEdit,
-  type UnderstoodGoalView,
-} from "@zoonk/core/view-models/onboarding/contract";
+import { type UnderstoodGoalView } from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";

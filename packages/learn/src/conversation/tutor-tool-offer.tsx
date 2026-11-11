@@ -1,6 +1,6 @@
 "use client";
 
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { CrosshairIcon, FastForwardIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -232,6 +232,8 @@ export function TutorToolOfferCard({
       return <PlaceOffer href={hrefs[offer.kind]} kind={offer.kind} />;
     case "plus":
       return <PlusOffer offer={offer} />;
+    case "variety":
+      return null;
     default:
       return offer satisfies never;
   }

@@ -308,3 +308,8 @@ msgstr "Bunu aşağıdan yeni bir hedef olarak başlatabilirsin."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "İstatistiklerin aşağıda."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "Aşağıdan ders arkadaşın ve pratik sohbetlerin için bu dil çeşidini seçebilirsin."

@@ -1,4 +1,4 @@
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { type TutorCardActions, getTutorCards } from "@zoonk/learn/tutor-cards";
 import { describe, expect, it, vi } from "vitest";

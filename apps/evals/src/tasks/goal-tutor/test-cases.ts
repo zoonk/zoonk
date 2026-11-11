@@ -1211,6 +1211,14 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "quero estudar para o concurso da polícia federal também",
   }),
   goalCase({
+    appTools: { variety: { country: "GB" } },
+    context: INTERVIEW_PLAN,
+    expectations:
+      "She wants British English instead of the American English her lessons teach. offeredTools has variety, offered, with GB as the country; the answer says in a sentence or two that the card switches her buddy and practice calls to British English while lessons and their audio stay as they are, and that it changes when she taps the card's button. Proposing a plan change that adds lessons for British English, or saying the app can't do it, is a major error (cap 5.0). proposedChange is null.",
+    id: "pt-interview-british-english",
+    question: "dá pra eu aprender inglês britânico em vez do americano? sem pagar nada a mais",
+  }),
+  goalCase({
     appTools: { startGoal: { plusRequired: true } },
     context: CONCURSO_PLAN,
     expectations:

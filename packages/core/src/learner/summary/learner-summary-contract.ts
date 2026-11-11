@@ -6,6 +6,7 @@ import {
   type GoalStatus,
 } from "@zoonk/db/enums";
 import { type BeltColor } from "@zoonk/utils/belt-level";
+import { type RegionChoice } from "@zoonk/utils/language-regions";
 import { type GoalCreateInput } from "../../goals/goal-contract";
 
 /** Timestamps are epoch milliseconds; signedInAt distinguishes separate sessions for the same learner. */
@@ -32,12 +33,16 @@ export type LearnerSummaryGoal = {
   /** Questions are left before its plan is set, so continuing it opens its setup instead of Today. */
   isSettingUp: boolean;
   kind: GoalKind;
-  /** The language's flag, as a language course's: a `flag-icons` code; null without one. */
+  /** A `flag-icons` code: the goal's country's flag, else its language's; null without one. */
   languageFlag: string | null;
+  /** The countries a language goal can pick, named in its language; empty for other goals. */
+  regionChoices: RegionChoice[];
   status: GoalStatus;
   /** `YYYY-MM-DD`, or null for a goal without a date. */
   targetDate: string | null;
   targetLanguage: string | null;
+  /** Set only when the learner asked for a country. */
+  targetRegion: string | null;
   title: string;
 };
 

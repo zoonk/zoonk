@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getTaughtRegion, isLanguageRegion } from "@zoonk/utils/language-regions";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { type Allowance } from "../../entitlements/contract";
@@ -10,7 +11,7 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
 import { loadSyllabusInput } from "../../view-models/syllabus/_utils/load-syllabus";
-import { type TutorToolOffer } from "../contract";
+import { type TutorToolOffer } from "../tutor-tool-offer-contract";
 import { type TutorOfferAccess, type TutorToolResult } from "./tutor-tool-result";
 
 const MAX_GOAL_WORDS = 500;
@@ -144,6 +145,36 @@ export async function offerPronunciation(goal: Goal): Promise<TutorToolResult> {
   return due
     ? { offer: { ...due, goalId: goal.id, kind: "pronunciation" }, status: "offered" }
     : { reason: "nothingDue", status: "unavailable" };
+}
+
+export function offerVariety({
+  country,
+  goal,
+}: {
+  country: string | null;
+  goal: Goal;
+}): TutorToolResult {
+  const { targetLanguage } = goal;
+
+  if (goal.kind !== "language" || !targetLanguage) {
+    return { reason: "notLanguage", status: "unavailable" };
+  }
+
+  const region = country?.trim().toUpperCase() ?? "";
+  const taughtRegion = getTaughtRegion(targetLanguage);
+
+  if (!taughtRegion || !isLanguageRegion({ language: targetLanguage, region })) {
+    return { reason: "countryNotOffered", status: "unavailable" };
+  }
+
+  if (region === goal.targetRegion) {
+    return { reason: "alreadySet", status: "unavailable" };
+  }
+
+  return {
+    offer: { goalId: goal.id, kind: "variety", targetLanguage, targetRegion: region, taughtRegion },
+    status: "offered",
+  };
 }
 
 export async function offerPlus(): Promise<TutorToolResult> {

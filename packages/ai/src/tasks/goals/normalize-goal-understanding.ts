@@ -1,3 +1,4 @@
+import { splitTargetLanguage } from "@zoonk/utils/language-regions";
 import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 
 const DAYS_PER_WEEK = 7;
@@ -82,6 +83,8 @@ export type UnderstoodGoal = {
   targetCourse?: string;
   targetDate?: string;
   targetLanguage?: string;
+  /** A language goal's country, when the learner named one or a place where it's spoken. */
+  targetRegion?: string;
   targetPosition?: string;
   targetScore?: string;
   title: string;
@@ -153,7 +156,29 @@ function cleanTargetDate({ date, today }: { date: string | null; today: string }
 
 function cleanLanguageCode(code: string | null): string | undefined {
   const trimmed = code?.trim();
-  return trimmed && LANGUAGE_CODE_PATTERN.test(trimmed) ? toCanonicalLanguage(trimmed) : undefined;
+  return trimmed && LANGUAGE_CODE_PATTERN.test(trimmed) ? trimmed : undefined;
+}
+
+function cleanNativeLanguage(code: string | null): string | undefined {
+  const tag = cleanLanguageCode(code);
+  return tag && toCanonicalLanguage(tag);
+}
+
+function cleanTargetLanguage({
+  code,
+  kind,
+}: {
+  code: string | null;
+  kind: UnderstoodGoalKind;
+}): Pick<UnderstoodGoal, "targetLanguage" | "targetRegion"> {
+  const tag = cleanLanguageCode(code);
+
+  if (!tag) {
+    return {};
+  }
+
+  const { targetLanguage, targetRegion } = splitTargetLanguage(tag);
+  return { targetLanguage, targetRegion: (kind === "language" && targetRegion) || undefined };
 }
 
 const MONTHS_PER_YEAR = 12;
@@ -178,7 +203,11 @@ function normalizeGoal({
   today: string;
 }): UnderstoodGoal | null {
   const title = cleanText(goal.title.slice(0, MAX_TITLE_LENGTH));
-  const targetLanguage = cleanLanguageCode(goal.targetLanguage);
+
+  const { targetLanguage, targetRegion } = cleanTargetLanguage({
+    code: goal.targetLanguage,
+    kind: goal.kind,
+  });
 
   if (!title || (goal.kind === "language" && !targetLanguage)) {
     return null;
@@ -195,7 +224,7 @@ function normalizeGoal({
     institution: cleanText(goal.institution),
     kind: goal.kind,
     level: cleanText(goal.level),
-    nativeLanguage: goal.kind === "language" ? cleanLanguageCode(goal.nativeLanguage) : undefined,
+    nativeLanguage: goal.kind === "language" ? cleanNativeLanguage(goal.nativeLanguage) : undefined,
     ownLevel: goal.ownLevel ?? undefined,
     purpose: goal.kind === "learn" ? (goal.purpose ?? undefined) : undefined,
     reason: cleanText(goal.reason),
@@ -205,6 +234,7 @@ function normalizeGoal({
     targetDate: cleanTargetDate({ date: goal.targetDate, today }),
     targetLanguage,
     targetPosition: cleanText(goal.targetPosition),
+    targetRegion,
     targetScore: cleanText(goal.targetScore),
     title,
   };

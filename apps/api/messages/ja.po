@@ -308,3 +308,8 @@ msgstr "下で新しい目標として始められます。"
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "下で統計情報を確認できます。"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "下でそのバリエーションを選んで、相棒や会話練習で使えます。"

@@ -38,7 +38,7 @@ const LANGUAGE_REGIONS = {
 export type LanguageRegion = (typeof LANGUAGE_REGIONS)[keyof typeof LANGUAGE_REGIONS][number];
 
 export type RegionChoice = {
-  code: LanguageRegion;
+  code: string;
   /** In the learner's language, as CLDR names it. */
   name: string;
   /** The country whose variety lessons and their audio teach. */
@@ -54,7 +54,7 @@ function capitalize(name: string): string {
 }
 
 /** Empty for a language without countries to pick from, or a tag that isn't a bare language. */
-export function getLanguageRegions(language: string): readonly LanguageRegion[] {
+function getLanguageRegions(language: string): readonly LanguageRegion[] {
   return isRegionLanguage(language) ? LANGUAGE_REGIONS[language] : [];
 }
 

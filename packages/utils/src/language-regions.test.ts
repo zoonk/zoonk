@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  getLanguageRegions,
   getRegionChoices,
   getTaughtRegion,
   getVarietyFlagCode,
@@ -69,9 +68,16 @@ describe(getRegionChoices, () => {
   it("names every country in the learner's language, sorted, marking the taught one", () => {
     const choices = getRegionChoices({ language: "pt", userLanguage: "es" });
 
-    expect(choices.map((choice) => choice.code).toSorted()).toStrictEqual(
-      [...getLanguageRegions("pt")].toSorted(),
-    );
+    expect(choices.map((choice) => choice.code).toSorted()).toStrictEqual([
+      "AO",
+      "BR",
+      "CV",
+      "GW",
+      "MZ",
+      "PT",
+      "ST",
+      "TL",
+    ]);
 
     expect(choices.slice(0, 2)).toStrictEqual([
       { code: "AO", name: "Angola", taught: false },

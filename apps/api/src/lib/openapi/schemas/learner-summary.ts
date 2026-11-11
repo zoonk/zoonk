@@ -1,4 +1,4 @@
-import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
+import { goalCreateInputSchema, regionChoiceSchema } from "@zoonk/core/goals/contract";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { BuddyGlasses, BuddyKind, CourseLevel, GoalKind, GoalStatus } from "@zoonk/db";
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
@@ -45,11 +45,24 @@ const learnerSummaryGoalSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+          "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
+      }),
+    regionChoices: z
+      .array(regionChoiceSchema)
+      .meta({
+        description:
+          "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries",
       }),
     status: z.enum(GoalStatus),
     targetDate: z.iso.date().nullable(),
     targetLanguage: z.string().nullable(),
+    targetRegion: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          'A language goal\'s country, a two-letter code, only when the learner asked for one: name the language with it ("Spanish (Argentina)"), and without it name only the language',
+      }),
     title: z.string(),
   })
   .meta({ id: "LearnerSummaryGoal" });

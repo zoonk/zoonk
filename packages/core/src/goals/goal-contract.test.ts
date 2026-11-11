@@ -44,6 +44,48 @@ describe("a goal draft's languages", () => {
   });
 });
 
+describe("a goal draft's country", () => {
+  const spanish = { kind: "language", language: "en", prompt: "Spanish", title: "Spanish" };
+
+  function parseDraft(fields: Record<string, string>) {
+    return goalDraftSchema.safeParse({ ...spanish, ...fields });
+  }
+
+  it("keeps the language bare, taking the country from the tag or the field", () => {
+    expect(parseDraft({ targetLanguage: "es-AR" }).data).toMatchObject({
+      targetLanguage: "es",
+      targetRegion: "AR",
+    });
+
+    expect(parseDraft({ targetLanguage: "es", targetRegion: "ES" }).data).toMatchObject({
+      targetLanguage: "es",
+      targetRegion: "ES",
+    });
+
+    expect(parseDraft({ targetLanguage: "es-419" }).data).not.toHaveProperty("targetRegion");
+  });
+
+  it("refuses a country the language doesn't list, one that contradicts the tag, or one on another kind", () => {
+    expect(parseDraft({ targetLanguage: "es", targetRegion: "PT" }).success).toBe(false);
+    expect(parseDraft({ targetLanguage: "es-MX", targetRegion: "AR" }).success).toBe(false);
+    expect(parseDraft({ targetLanguage: "ja", targetRegion: "JP" }).success).toBe(false);
+
+    expect(parseDraft({ kind: "exam", targetLanguage: "en", targetRegion: "GB" }).success).toBe(
+      false,
+    );
+  });
+
+  it("drops a country from a tag on a goal that isn't a language goal", () => {
+    expect(parseDraft({ kind: "exam", targetLanguage: "en-GB" }).data).toMatchObject({
+      targetLanguage: "en",
+    });
+
+    expect(parseDraft({ kind: "exam", targetLanguage: "en-GB" }).data).not.toHaveProperty(
+      "targetRegion",
+    );
+  });
+});
+
 describe("a goal's details", () => {
   const draft = { kind: "learn", language: "en", prompt: "Learn biology", title: "Biology" };
 
