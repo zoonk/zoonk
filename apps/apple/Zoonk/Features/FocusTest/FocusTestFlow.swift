@@ -28,7 +28,9 @@ struct FocusTestFlow: View {
   let onDone: () async throws -> Void
 
   @Environment(OnboardingStore.self) private var store
-  @State private var phase = FocusTestPhase.loading
+  @State private var opening: Resource<GoalPlacement>?
+  /// Where the learner's saves and the wait took the test; until then it shows the opening read.
+  @State private var reached: FocusTestPhase?
   @State private var pressed: FocusTestPress?
   @State private var failed = false
   @State private var isAnswering = false
@@ -42,25 +44,45 @@ struct FocusTestFlow: View {
 
   var body: some View {
     Group {
-      if phase == .unavailable {
-        ready
+      if let opening {
+        test(opening)
+          .loads(opening, refreshable: false)
       } else {
-        WaitHold(
-          surface: .placementWait, isReady: !phase.isWaiting,
-          announcement: PlacementWaitScreen.questionsReady
-        ) { stage in
-          switch stage {
-          case .waiting(let holding): waiting(holding: holding)
-          case .ready: ready
-          }
-        }
+        StepLoading()
       }
     }
-    .task { await open() }
+    .onAppear {
+      if opening == nil {
+        opening = store.openingPlacement(goalID: goalID)
+      }
+    }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "focus-test-question", reportType: .saveFailure),
       isReport: true)
+  }
+
+  private var phase: FocusTestPhase {
+    reached ?? opening?.value.map { FocusTestPhase($0, opening: true) } ?? .loading
+  }
+
+  @ViewBuilder
+  private func test(_ opening: Resource<GoalPlacement>) -> some View {
+    if reached == nil, case .failed(let error) = opening.state {
+      PracticeLoadFailureView(error: error) { Task { await opening.refresh() } }
+    } else if phase == .unavailable {
+      ready
+    } else {
+      WaitHold(
+        surface: .placementWait, isReady: !phase.isWaiting,
+        announcement: PlacementWaitScreen.questionsReady
+      ) { stage in
+        switch stage {
+        case .waiting(let holding): waiting(holding: holding)
+        case .ready: ready
+        }
+      }
+    }
   }
 
   @ViewBuilder
@@ -85,7 +107,7 @@ struct FocusTestFlow: View {
     case .resume(let asked):
       FocusTestResume(sitting: asked.sitting, subject: subject, pressed: pressed, failed: failed) {
         failed = false
-        phase = .question(asked)
+        reached = .question(asked)
       } onUseAnswers: {
         save(.other) { try await leave(closing: true) }
       }
@@ -165,7 +187,7 @@ struct FocusTestFlow: View {
         save(.other) { try await leave(closing: answered || host == .onboarding) }
       },
       onRetry: { _ in
-        phase = .waiting(answered: answered, failure: nil)
+        reached = .waiting(answered: answered, failure: nil)
         waitRound += 1
       }
     )
@@ -173,19 +195,6 @@ struct FocusTestFlow: View {
   }
 
   // MARK: - Saves
-
-  private func open() async {
-    guard case .loading = phase else {
-      return
-    }
-
-    if let placement = try? await store.placement(goalID: goalID) {
-      phase = FocusTestPhase(placement, opening: true)
-    } else {
-      // The wait reads again.
-      phase = .waiting(answered: false, failure: nil)
-    }
-  }
 
   /// A button's save: it spins, the other waits, and a save that fails stays on screen to try again.
   private func save(_ button: FocusTestPress, _ action: @escaping () async throws -> Void) {
@@ -218,7 +227,7 @@ struct FocusTestFlow: View {
     let next = FocusTestPhase(placement, opening: false)
 
     guard case .ended(let end) = next else {
-      phase = next
+      reached = next
       waitRound += next.isWaiting ? 1 : 0
       return
     }
@@ -226,7 +235,7 @@ struct FocusTestFlow: View {
     do {
       try await close(end)
     } catch {
-      phase = next
+      reached = next
       throw error
     }
   }
@@ -236,7 +245,7 @@ struct FocusTestFlow: View {
     let focusTest = try await store.finishPlacement(goalID: goalID)
 
     if let focusTest, focusTest.checkpoint != nil {
-      phase = .checkpoint(focusTest, end: end)
+      reached = .checkpoint(focusTest, end: end)
     } else {
       try await onDone()
     }
@@ -334,7 +343,7 @@ struct FocusTestFlow: View {
       })
 
     if !followed, phase.isWaiting {
-      phase = .waiting(answered: answered, failure: .connection)
+      reached = .waiting(answered: answered, failure: .connection)
     }
   }
 }

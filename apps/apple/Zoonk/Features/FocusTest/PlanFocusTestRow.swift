@@ -8,29 +8,24 @@ struct PlanFocusTestRow: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
-  /// What the switch saved, until the plan's read catches up with it.
-  @State private var switched: FocusTestSummary?
   @State private var isSwitching = false
   @State private var failed = false
 
   var body: some View {
-    let shown = switched ?? summary
-
     Button {
       router.open(.focusTest(goalId: goalId))
     } label: {
       ListRow(
         Text("Focus test", tableName: "FocusTest", comment: "Title of an exam goal's Focus test"),
-        description: Text(FocusTestCopy.stateFacts(shown).joinedFacts())
+        description: Text(FocusTestCopy.stateFacts(summary).joinedFacts())
       ) {
         Image(systemName: "scope")
       }
       .disclosureChevron()
     }
-    .onChange(of: summary) { switched = nil }
 
-    if shown.sessionQuestions != .off {
-      questionsSwitch(paused: shown.sessionQuestions == .paused)
+    if summary.sessionQuestions != .off {
+      questionsSwitch(paused: summary.sessionQuestions == .paused)
     }
   }
 
@@ -84,15 +79,10 @@ struct PlanFocusTestRow: View {
     Task {
       defer { isSwitching = false }
 
-      switch await plans.updateFocusTest(
+      if case .failed = await plans.updateFocusTest(
         goalId: goalId, FocusTestControls(sessionQuestions: sessionQuestions))
       {
-      case .done(let saved):
-        switched = saved
-      case .failed:
         failed = true
-      case .obsolete:
-        break
       }
     }
   }

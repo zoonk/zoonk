@@ -8,7 +8,9 @@ struct PlacementStep: View {
   let onDone: () async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var phase = Phase.loading
+  @State private var opening: Resource<GoalPlacement>?
+  /// Where the learner's taps and the wait took the step; until then it shows the opening read.
+  @State private var reached: Phase?
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
@@ -65,18 +67,42 @@ struct PlacementStep: View {
   }
 
   var body: some View {
-    steps
-      .task { await resume() }
-      .feedbackSheet(
-        isPresented: $showsSaveReport,
-        context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
-        isReport: true)
+    Group {
+      if let opening {
+        steps(opening)
+          .loads(opening, refreshable: false)
+      } else {
+        StepLoading()
+      }
+    }
+    .onAppear {
+      if opening == nil {
+        opening = onboarding.openingPlacement(goalID: view.goal.id)
+      }
+    }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
+      isReport: true)
+  }
+
+  private var phase: Phase {
+    reached ?? opening?.value.map { $0.started ? Phase($0) : .intro } ?? .loading
+  }
+
+  private var progress: (answered: Int, spent: Double) {
+    let opened = opening?.value
+    return (
+      max(shown.answered, opened?.answered ?? 0), max(shown.spent, opened?.dayBudgetSpent ?? 0)
+    )
   }
 
   /// Questions that couldn't be written show at once, as on main: there's nothing to be ready for.
   @ViewBuilder
-  private var steps: some View {
-    if phase == .unavailable {
+  private func steps(_ opening: Resource<GoalPlacement>) -> some View {
+    if reached == nil, case .failed(let error) = opening.state {
+      PracticeLoadFailureView(error: error) { Task { await opening.refresh() } }
+    } else if phase == .unavailable {
       ready
     } else {
       WaitHold(
@@ -102,7 +128,8 @@ struct PlacementStep: View {
       EmptyView()
     case .question(let question, let labels):
       PlacementQuestionScreen(
-        subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
+        subject: subject, number: progress.answered + 1, progress: progress.spent,
+        question: question,
         labels: labels, isSaving: isSaving, failures: questionFailures,
         saveFailure: finishFailed ? Self.saveFailureMessage : nil,
         onReport: { showsSaveReport = true },
@@ -218,23 +245,6 @@ struct PlacementStep: View {
     .onboardingColumn()
   }
 
-  private func resume() async {
-    guard case .loading = phase else {
-      return
-    }
-
-    guard let placement = try? await onboarding.placement(goalID: view.goal.id) else {
-      phase = .intro
-      return
-    }
-
-    if placement.started {
-      show(placement)
-    } else {
-      phase = .intro
-    }
-  }
-
   /// Start reads first, so questions that already exist never flash the wait.
   private func start() async {
     guard !isSaving, !isStarting else {
@@ -255,7 +265,7 @@ struct PlacementStep: View {
       return
     }
 
-    phase = .waiting(failure: nil)
+    reached = .waiting(failure: nil)
     waitRound += 1
   }
 
@@ -284,7 +294,7 @@ struct PlacementStep: View {
       })
 
     if !followed, case .waiting = phase {
-      phase = .waiting(failure: .connection)
+      reached = .waiting(failure: .connection)
     }
   }
 
@@ -297,7 +307,7 @@ struct PlacementStep: View {
       shown = (max(shown.answered, placement.answered), max(shown.spent, placement.dayBudgetSpent))
     }
 
-    phase = next
+    reached = next
   }
 
   private func submit(_ answer: PracticeAnswer, to question: PracticeQuestion) {

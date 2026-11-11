@@ -181,10 +181,21 @@ final class PlanStore {
     FocusTestSummary
   > {
     let api = api
-    return await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+    let result = await cache.mutate { identity in
       try await api.updateFocusTest(
         token: identity.bearerToken, goalId: goalId, controls: controls)
     }
+
+    if case .done(let saved) = result {
+      plans[goalId]?.update { read in
+        var read = read
+        read.plan.focusTest = saved
+        return read
+      }
+      cache.invalidate([.goals, .userSession])
+    }
+
+    return result
   }
 
   /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.

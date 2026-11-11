@@ -347,6 +347,18 @@ final class OnboardingStore {
     }
   }
 
+  /// A new resource on each call, for the screen that opens on it to keep for one visit: the next
+  /// visit never acts on this one's answer or failure.
+  func openingPlacement(goalID: String) -> Resource<GoalPlacement> {
+    cache.resource(audience: .signedIn) { [api] session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.placement(goalID: goalID, token: session.bearerToken)
+    }
+  }
+
   /// Reading it writes nothing.
   func placement(goalID: String) async throws -> GoalPlacement {
     guard let token = session.authenticatedSession?.bearerToken else {

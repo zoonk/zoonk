@@ -229,7 +229,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   /// An exam goal's Focus test; nil for other goals.
-  let focusTest: FocusTestSummary?
+  var focusTest: FocusTestSummary?
   let goalId: String
   /// A language goal's level the course goes up to and the aims to change it to; nil for others.
   let languageAim: LanguageAimView?
@@ -553,7 +553,7 @@ struct SkillOutline: Decodable, Equatable, Sendable {
 /// Returning to the Plan asks the cheap `getPlanChangedSince` before reading the expensive plan
 /// again.
 struct PlanRead: Equatable, Sendable {
-  let plan: GoalPlan
+  var plan: GoalPlan
   let readAt: Date
 }
 
