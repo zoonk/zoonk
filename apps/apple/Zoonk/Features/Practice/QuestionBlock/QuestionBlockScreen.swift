@@ -65,7 +65,7 @@ struct QuestionBlockScreen: View {
     return PracticeBlockTitle.title(for: run.detail.block)
   }
 
-  /// After it, the block as the day now has it: one left with no questions is gone from the day.
+  /// After it, the block as the day now has it: one left with no questions is skipped, so gone from the day.
   private var skipsToday: SkipTestQuestionsAction? {
     guard let skipTestQuestions else {
       return nil
@@ -78,8 +78,13 @@ struct QuestionBlockScreen: View {
 
       await read()
 
-      if case .failed(.notFound) = load {
+      switch load {
+      case .failed(.notFound):
         onGone?()
+      case .loaded(let run) where run.detail.block.status == .skipped:
+        onGone?()
+      default:
+        break
       }
 
       return true
