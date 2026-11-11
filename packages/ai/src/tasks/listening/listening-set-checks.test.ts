@@ -204,6 +204,22 @@ describe(toListeningItem, () => {
 });
 
 describe(findListeningSetProblems, () => {
+  it("hears a number answer through the sample's spoken words when only digits fit the limit", () => {
+    const set = setOf({
+      questions: [
+        choice("Thursday the twelfth would be best", "Which day does Tom want the hall?"),
+        gap({
+          acceptedAnswers: ["12", "12th"],
+          context: "Day booked: Thursday ______",
+          plusNumber: true,
+          sampleAnswer: "the twelfth",
+        }),
+      ],
+    });
+
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
+  });
+
   it("flags a typed question none of whose accepted answers fits its limit and gap", () => {
     const set = setOf({
       questions: [
