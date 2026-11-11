@@ -14,7 +14,7 @@ import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
-  leadsWithGains,
+  getFocusedAreas,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaStartTexts,
@@ -56,8 +56,6 @@ function useChangeFootnote() {
       return null;
     }
 
-    const gainsFirst = leadsWithGains(operations);
-
     const ends: ChangeEffect["areaEnds"] = effect.areaEnds ?? [];
 
     const starts = (effect.areaStarts ?? []).filter(
@@ -66,19 +64,19 @@ function useChangeFootnote() {
         (!effect.reviewFirst && !ends.some((areaEnd) => areaEnd.area === start.area)),
     );
 
-    const startTexts = areaStartTexts(starts);
+    const focused = getFocusedAreas(operations);
 
-    // An end that moves is in the diff; one that stays says why, and a focus says what it gains.
-    const endTexts = areaEndTexts(
-      ends.filter(
-        ({ after, before, lessonsGained = 0 }) =>
-          after === before || (gainsFirst && lessonsGained > 0 && after > before),
-      ),
-      { estimated: effect.lessonsAddedEstimated },
+    const gains = ends.filter(
+      ({ after, area, before, lessonsGained = 0 }) =>
+        focused.includes(area) && lessonsGained > 0 && after > before,
     );
 
     const sentences = [
-      ...(gainsFirst ? [...endTexts, ...startTexts] : [...startTexts, ...endTexts]),
+      // An end that moves is in the diff, but a focus still says what its subjects gain first.
+      ...areaEndTexts(gains, { estimated: effect.lessonsAddedEstimated }),
+      ...areaStartTexts(starts),
+      // An end that stays says why.
+      ...areaEndTexts(ends.filter((areaEnd) => areaEnd.after === areaEnd.before)),
       reviewFirstText(effect),
       lessonsText(effect, { named: true }),
       addedTopicsStartText(effect),

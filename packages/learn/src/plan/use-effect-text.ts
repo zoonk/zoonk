@@ -8,7 +8,7 @@ import { useSentenceSpace } from "../_utils/locale";
 import { getShownEndMove } from "../plan-diff/end-move";
 import { useFormatPlanDate } from "./plan-date-text";
 import {
-  leadsWithGains,
+  getFocusedAreas,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaLessonTexts,
@@ -192,17 +192,22 @@ function useEffectSentences() {
         (!change.effect?.reviewFirst && !ends.some((end) => end.area === start.area)),
     );
 
-    const startTexts = areaStartTexts(starts);
-
-    const lessonTexts = [
-      ...areaEndTexts(ends, { estimated: change.effect?.lessonsAddedEstimated }),
-      ...areaLessonTexts(change.effect?.areaLessons ?? []),
-    ];
+    const lessons = change.effect?.areaLessons ?? [];
+    const focused = getFocusedAreas(change.operations);
+    const estimated = { estimated: change.effect?.lessonsAddedEstimated };
 
     const sentences = [
-      ...(leadsWithGains(change.operations)
-        ? [...lessonTexts, ...startTexts]
-        : [...startTexts, ...lessonTexts]),
+      ...areaEndTexts(
+        ends.filter(({ area }) => focused.includes(area)),
+        estimated,
+      ),
+      ...areaLessonTexts(lessons.filter(({ area }) => focused.includes(area))),
+      ...areaStartTexts(starts),
+      ...areaEndTexts(
+        ends.filter(({ area }) => !focused.includes(area)),
+        estimated,
+      ),
+      ...areaLessonTexts(lessons.filter(({ area }) => !focused.includes(area))),
       reviewFirstText(change.effect),
       weeklyEventsText(change.effect),
       nextMockText(change.effect),

@@ -11,10 +11,13 @@ type AreaLessons = NonNullable<NonNullable<PlanChangeView["effect"]>["areaLesson
 
 /**
  * A focus gives its subjects more lessons, so its effect says what they gain before when they
- * start: opening on a later start read as the focus costing them time.
+ * start: opening on a later start read as the focus costing them time. Only their own lines lead;
+ * what another subject loses keeps its place.
  */
-export function leadsWithGains(operations: readonly PlanOperation[] = []): boolean {
-  return operations.some((operation) => operation.kind === "focusAreas");
+export function getFocusedAreas(operations: readonly PlanOperation[] = []): string[] {
+  return operations.flatMap((operation) =>
+    operation.kind === "focusAreas" ? operation.areas : [],
+  );
 }
 
 /** The learner is the subject, so an area's name never needs a verb to agree with it. */
