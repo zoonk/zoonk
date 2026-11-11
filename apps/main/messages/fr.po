@@ -1825,6 +1825,41 @@ msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
 msgstr "Les moments où tu réponds le mieux sur les 90 derniers jours."
 
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "VcCKQU"
+msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
+msgstr "{count, plural, =0 {Aucune réponse} one {# réponse} other {# réponses}}"
+
+#. A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”.
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
+msgctxt "l0d7rx"
+msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
+msgstr "{count, plural, one {# réponse} other {# réponses}}, il en faut {minimum, number} pour dégager une tendance"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "Meilleur jour"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "Au fil de la semaine"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "Meilleur moment"
+
+#: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "Au fil de la journée"
+
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-names.ts
 msgctxt "00_IyC"
 msgid "Night"
@@ -1844,21 +1879,6 @@ msgstr "Après-midi"
 msgctxt "mPEpnN"
 msgid "Evening"
 msgstr "Soir"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "VcCKQU"
-msgid "{count, plural, =0 {No answers} one {# answer} other {# answers}}"
-msgstr "{count, plural, =0 {Aucune réponse} one {# réponse} other {# réponses}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "2oIGIh"
-msgid "Throughout the week"
-msgstr "Au fil de la semaine"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-rows.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "Au fil de la journée"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
 msgctxt "cwmQSC"
@@ -1899,18 +1919,6 @@ msgstr "Pas encore assez de réponses"
 msgctxt "9DVTlI"
 msgid "{score} · {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} · {count, plural, one {# réponse} other {# réponses}}"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "Meilleur jour"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "Meilleur moment"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "WDXXIC"

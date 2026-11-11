@@ -6,15 +6,16 @@ import {
 } from "@zoonk/core/progress/get-score-patterns";
 import { getSession } from "@zoonk/core/users/session";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { CalendarDaysIcon, ClockIcon, ListChecksIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { STAT_PAGE_TILES_CLASS, StatTilesSkeleton } from "../_components/stats-tiles";
-import { DayPatterns, WeekPatterns } from "./pattern-rows";
+import { PatternChartSkeleton } from "./pattern-chart";
+import { DayPatterns, WeekPatterns } from "./pattern-charts";
 import { PatternsNote, getBestDayName, getBestTimeName } from "./pattern-summary";
+import { TimePeriodIcon } from "./time-period-icon";
 
 const DASH = "–";
 
@@ -54,6 +55,8 @@ async function PatternTiles({ patterns }: { patterns: ScorePatternsData }) {
   const format = await getFormatter();
   const answers = patterns.weekdays.reduce((total, day) => total + day.totalAnswers, 0);
 
+  const { timeVerdict } = patterns;
+
   const dayName = await getBestDayName(patterns.dayVerdict);
   const timeName = await getBestTimeName(patterns.timeVerdict);
   const dayDetail = await getVerdictDetail(patterns.dayVerdict);
@@ -70,7 +73,13 @@ async function PatternTiles({ patterns }: { patterns: ScorePatternsData }) {
       />
       <StatTile
         detail={timeDetail}
-        icon={<ClockIcon />}
+        icon={
+          timeVerdict.kind === "best" ? (
+            <TimePeriodIcon period={timeVerdict.best.period} />
+          ) : (
+            <ClockIcon />
+          )
+        }
         label={t("Best time")}
         tone="success"
         value={<TileName>{timeName}</TileName>}
@@ -124,14 +133,8 @@ export function PatternsContentSkeleton() {
     <ProgressContent aria-hidden="true">
       <StatTilesSkeleton count={3} />
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <div className="flex flex-col gap-3">
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-96 w-full rounded-lg" />
-        </div>
-        <div className="flex flex-col gap-3">
-          <Skeleton className="h-4 w-40" />
-          <Skeleton className="h-56 w-full rounded-lg" />
-        </div>
+        <PatternChartSkeleton columns={7} titleClassName="w-36" />
+        <PatternChartSkeleton columns={4} icons titleClassName="w-40" />
       </div>
     </ProgressContent>
   );
