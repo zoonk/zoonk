@@ -8,7 +8,7 @@ import {
   writtenTemperatureLesson,
   writtenTypedAnswer,
 } from "./_test-utils/written-lessons";
-import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
+import { checkScreenText, checkWrittenLesson, toReviewedLesson } from "./lesson-code-checks";
 
 type CheckOptions = {
   allowActivityFallback?: boolean;
@@ -761,6 +761,22 @@ describe(checkWrittenLesson, () => {
     };
 
     expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
+  });
+});
+
+describe(toReviewedLesson, () => {
+  it("shows the review the ranges practice draws a math check's new numbers from", () => {
+    const lesson = writtenTemperatureLesson();
+    const mathCheck = lesson.screens[3];
+
+    if (mathCheck?.kind !== "mathCheck") {
+      throw new Error("Screen 4 is a calculation.");
+    }
+
+    const reviewed = toReviewedLesson({ lesson, screens: check(lesson).screens });
+
+    expect(reviewed.screens[3]?.content).toMatchObject({ newNumbers: mathCheck.math.variables });
+    expect(reviewed.screens[0]?.content).not.toHaveProperty("newNumbers");
   });
 });
 
