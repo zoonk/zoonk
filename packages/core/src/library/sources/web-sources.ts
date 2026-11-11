@@ -6,6 +6,7 @@ import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
 import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
+import { isFileNameTitle } from "./file-name-title";
 import { getSourceValidUntil } from "./freshness-schedule";
 import { hashDocument, hashFirstReading, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
@@ -98,7 +99,7 @@ function saveChangedContent({
   sourceId,
   topic,
 }: {
-  content: ReturnType<typeof toSourceContent>;
+  content: ReturnType<typeof toSourceContent> & { title?: string };
   firstReadingHash: string | null;
   sourceId: string;
   topic: SourceTopic;
@@ -141,13 +142,19 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
   });
 
   const stored = await prisma.source.findUnique({
-    select: { contentHash: true, id: true, readVersion: true },
+    select: { contentHash: true, id: true, readVersion: true, title: true },
     where,
   });
 
+  // A name learners and statute drills read is never replaced; a page's file name is.
+  const retitle =
+    stored && isFileNameTitle(stored.title) && !isFileNameTitle(input.title)
+      ? { title: input.title }
+      : {};
+
   if (stored && stored.contentHash !== content.contentHash) {
     return saveChangedContent({
-      content,
+      content: { ...content, ...retitle },
       firstReadingHash: await hashStoredReading({ fetched, readVersion: stored.readVersion }),
       sourceId: stored.id,
       topic: input.topic,
@@ -168,7 +175,7 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
       visibility: "public",
     },
     omit: { extractedText: true },
-    update: content,
+    update: { ...content, ...retitle },
     where,
   });
 }

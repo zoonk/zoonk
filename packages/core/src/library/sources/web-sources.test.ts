@@ -236,6 +236,26 @@ describe(storeWebSource, () => {
     expect(again.contentHash).toBe(source.contentHash);
   });
 
+  it("names a page stored under its file name once a later store knows its own name", async () => {
+    const url = newUrl();
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = { ...EDITAL, topic: "regulation" as const, url };
+    const source = await storeWebSource({ ...law, title: "L9784" });
+    await storeWebSource({ ...law, title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+    await storeWebSource({ ...law, title: "L9784" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+
+    await storeWebSource({ ...law, title: "Lei do Processo Administrativo" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+  });
+
   it("keeps a law longer than an upload whole, down to its last article", async () => {
     const articles = Array.from(
       { length: 4000 },

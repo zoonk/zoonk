@@ -69,6 +69,30 @@ describe(readLawLookup, () => {
   });
 });
 
+describe(recordLawLookup, () => {
+  it("names a law stored under its page's file name, and keeps a name already given", async () => {
+    const law = lawRequest(uniqueWord());
+
+    const [fileNamed, named] = await Promise.all([
+      storedLaw({ title: "L9784", word: uniqueWord() }),
+      storedLaw({ title: "Código de Defesa do Consumidor", word: uniqueWord() }),
+    ]);
+
+    await recordLawLookup({ law, sourceId: fileNamed.id });
+    await recordLawLookup({ law, sourceId: named.id });
+
+    const titles = await prisma.source.findMany({
+      orderBy: { title: "asc" },
+      select: { title: true },
+      where: { id: { in: [fileNamed.id, named.id] } },
+    });
+
+    expect(titles.map((source) => source.title).toSorted()).toStrictEqual(
+      ["Código de Defesa do Consumidor", law.name].toSorted(),
+    );
+  });
+});
+
 describe(findStoredLawSource, () => {
   beforeEach(() => {
     vi.resetAllMocks();
