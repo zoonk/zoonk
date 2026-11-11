@@ -4498,7 +4498,7 @@ msgstr "Kurs ukończony"
 #: src/journey/goal-actions.tsx
 msgctxt "hnzjLt"
 msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "Masz już tyle aktywnych celów, na ile pozwala bezpłatny pakiet. Wstrzymaj inny cel, żeby wrócić do tego, lub przejdź na Plus, by realizować więcej celów naraz."
+msgstr "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -9308,7 +9308,7 @@ msgstr "Więcej celów naraz z pakietem Plus"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "tqq0xx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
-msgstr "Masz już tyle aktywnych celów, na ile pozwala bezpłatny pakiet. Aby zrobić miejsce na kolejny cel, wstrzymaj jeden z obecnych w menu swojego Planu. Szybkie pytania możesz zadawać w każdej chwili."
+msgstr "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden z nich w menu na ekranie Plan. Szybkie pytania możesz zadawać w każdej chwili."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9557,7 +9557,7 @@ msgstr "{exam, select, abitur {Zdać Abitur} bac {Zdać bac} enem {Zdać ENEM} e
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
-msgstr "Masz już tyle aktywnych celów, na ile pozwala bezpłatny pakiet. Aby zrobić miejsce na kolejny cel, wstrzymaj jeden z obecnych w menu swojego Planu lub przejdź na Plus."
+msgstr "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden ze swoich celów w menu na ekranie Plan lub przejdź na Plus."
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts

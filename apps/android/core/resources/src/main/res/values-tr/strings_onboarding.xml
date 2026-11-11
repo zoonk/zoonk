@@ -447,8 +447,8 @@
   "onboarding_understanding_title": "7a443eac87fdb4132426e7789491dacc00626511aa968361860e9a62d6e9e5ce",
   "onboarding_understood_description": "1e46c5f0c3159604f95781af70b30a52f70d65b8386f913c492e2d1289ea0a5b",
   "onboarding_understood_description_shared": "8e97611806e8c6d2c317f08aecf89e60d53051599370296eb5271647144be2cb",
-  "onboarding_understood_locked_goal": "1d7a882435f55b4f7287fe6992d32acf14bcafdd6895aa1536b8730b5fa7c82e",
-  "onboarding_understood_locked_goals": "134e46ed4069d67992af6ac5009b775745e3818335b3af51a83e12ad8ac57052",
+  "onboarding_understood_locked_goal": "abca02ea3d009315161e77db9ca0ce77ada4682fa316c0d2fb50c469ed45c19a",
+  "onboarding_understood_locked_goals": "3c5c8d219a142ee5079282f6bbb3dcfe95f91588dabe413d0f32288f8730816d",
   "onboarding_understood_title": "90a292c49ee6b99ee0b658bdc5f500482ffc010b49f74fce10f835af49a790f1",
   "onboarding_upload_file": "2bc2c500d0c0ccac3b411d6192fa6225dc7f0c4eba31b0fbd7b713b2f73bb6ea",
   "onboarding_use_this_date": "9b759ece8f7f4875dca78eb1211091a6b26911e6478af7d06ad65d7532f612ad",
@@ -532,9 +532,9 @@
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Günlük çalışma süren bu hedefler arasında paylaşılır. Bunların hepsini daha sonra değiştirebilirsin.</string>
     <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_understood_locked_goal">Plus ile aynı anda daha fazla hedefi takip edebilirsin. O zamana kadar bu hedef, hedef listende bekleyecek.</string>
+    <string name="onboarding_understood_locked_goal">Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedef şimdilik hedef listende bekliyor.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Plus ile aynı anda daha fazla hedefi takip edebilirsin. O zamana kadar bu hedefler, hedef listende bekleyecek.</string>
+    <string name="onboarding_understood_locked_goals">Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedefler şimdilik hedef listende bekliyor.</string>
     <string name="onboarding_looks_right">Onayla</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->

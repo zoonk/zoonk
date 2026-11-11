@@ -1002,7 +1002,7 @@ msgstr "Lekcje, powtórki i ćwiczenia na każdy dzień, by osiągnąć cel."
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "hnzjLt"
 msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "Masz już tyle aktywnych celów, na ile pozwala bezpłatny pakiet. Wstrzymaj inny cel, żeby wrócić do tego, lub przejdź na Plus, by realizować więcej celów naraz."
+msgstr "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"

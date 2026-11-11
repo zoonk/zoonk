@@ -62,7 +62,7 @@
   "tutor_offer_essay_plus": "64d67cdf7590b7492168de46c341141c8d91ed360d2161826ed74d47bf953f0d",
   "tutor_offer_essay_weekly": "a9172750f9031443baaab54258a0c6a717fa94d954df75f5bb9dca1c7b2b8289",
   "tutor_offer_goal": "098d3d189edd1d1ba22ed74044056d3e8b1a3803bfa0324ee97c3d45d7911dca",
-  "tutor_offer_goal_limit": "6a7988d2b0911a60304a9bc0459eae3b513093f3507912afb6f3a1481d78c34e",
+  "tutor_offer_goal_limit": "0a22c1a4ff01ca71d1da7c501fe3a9d14cb3326fad947ad590d408faad85cd5c",
   "tutor_offer_logbook": "80595a35567b06081aef0b93ba266c7df7ecbaf06842e0323a9c44bfdf5aa804",
   "tutor_offer_logbook_description": "f99d898932861db68112e38016af28935a4c8219dbd73830f99f9d0439a833e9",
   "tutor_offer_manage": "eb3c140c1d224562464a233737f204d4b00902468f3e368c4d9b3ced10520ab3",
@@ -214,7 +214,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">„%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_limit">Żeby teraz zacząć realizować kolejny cel, potrzebujesz pakietu Plus. Na razie pracuj dalej nad obecnymi celami.</string>
+    <string name="tutor_offer_goal_limit">Z pakietem Plus możesz już teraz rozpocząć kolejny cel. Na razie pracuj dalej nad obecnymi celami.</string>
     <string name="tutor_offer_catalog_course">Gotowy kurs w katalogu</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

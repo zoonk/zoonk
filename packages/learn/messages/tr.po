@@ -9308,7 +9308,7 @@ msgstr "Plus ile aynı anda daha fazla hedef"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "tqq0xx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
-msgstr "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden bir hedefi duraklat. Kısa sorularını istediğin zaman sorabilirsin."
+msgstr "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat. Kısa sorularını istediğin zaman sorabilirsin."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"

@@ -10739,7 +10739,7 @@ msgstr "内容はすべて後から変更できます。"
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "Hs12te"
 msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, other {Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧で待機します。}}"
+msgstr "{count, plural, other {Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"

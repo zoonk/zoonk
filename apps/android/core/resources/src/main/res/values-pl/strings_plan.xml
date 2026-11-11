@@ -299,7 +299,7 @@
   "plan_get_recommendation": "2b7f15621faabcb916f53b284a1ddf801dfe20c17d6b57f253d3bb749669f303",
   "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
-  "plan_goal_limit_reached": "49f2aa6ef9f4894c79691c86a9bbac46bba66880db2865e661821e6bec610bb5",
+  "plan_goal_limit_reached": "6115920c97f10d9fd1e6c8615f31ad276f75158537a163903b88aa96f314aef9",
   "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
   "plan_going_deeper": "447bbdfa0893be60d0b8d121cef6526c25808a3775dd6366054e023b88a0c06c",
   "plan_how_is_it_going": "31f83eced9ed98a469d61c0eeed564e671e75eb6ae5ba536dc4337520740d5c5",
@@ -655,7 +655,7 @@
     <string name="plan_resume">Wznów</string>
     <string name="plan_cancel">Anuluj</string>
     <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">Masz już tyle aktywnych celów, na ile pozwala pakiet Free. Wstrzymaj inny cel, żeby wrócić do tego, lub przejdź na Plus, by realizować więcej celów jednocześnie.</string>
+    <string name="plan_goal_limit_reached">Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej.</string>
     <string name="plan_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">Ukończono %1$d z %2$d etapu</item>

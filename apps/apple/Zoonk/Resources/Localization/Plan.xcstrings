@@ -33771,13 +33771,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du verfolgst so viele Ziele, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele zu verfolgen."
+            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya sigues tantos objetivos como permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para seguir más."
+            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos."
           }
         },
         "fr" : {
@@ -33789,19 +33789,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stai già seguendo tutti gli obiettivi che la formula Free consente. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
+            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無料プランで同時に進められる上限まで目標を進めています。この目標を再開するには、ほかの目標を一時停止するか、より多くの目標を進められるPlusに登録してください。"
+            "value" : "無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 만큼 목표를 진행하고 있어요. 이 목표를 재개하려면 다른 목표를 일시 중지하거나 Plus를 구독해 더 많은 목표를 진행해 보세요."
+            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
           }
         },
         "pl" : {
@@ -33813,13 +33813,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já acompanha tantos objetivos quanto o plano Grátis permite. Pause outro objetivo para retomar este ou assine o Plus para acompanhar mais."
+            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Pause outro objetivo para retomar este ou assine o Plus para ter mais objetivos ativos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsiz paketin izin verdiği kadar hedef üzerinde çalışıyorsun. Bu hedefe devam etmek için başka bir hedefini duraklat ya da daha fazla hedef için Plus’a geç."
+            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat ya da daha fazla hedefi takip etmek için Plus’a geç."
           }
         }
       }

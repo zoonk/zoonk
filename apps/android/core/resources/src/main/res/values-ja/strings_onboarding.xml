@@ -148,7 +148,7 @@
   "onboarding_level_test_description": "df3fd3ea198c082f988d741e433d7e791c2371240ddce49bf9c264aeb526a688",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
   "onboarding_library_course_fits": "0ac1b31ced991a297312e4b54b3845e935e5f4de760d9482707c09749cd5418d",
-  "onboarding_limit_active_goals": "27a5daf9e484fb297cde67973f20467553bb430831ad57b53fc80f4e57fd858c",
+  "onboarding_limit_active_goals": "e66915c7b19c0d9996cdd92b6638c13d6663139aa037cf86b1972351515d37a8",
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
@@ -222,7 +222,7 @@
   "onboarding_plan_so_far": "47d56d3b06b5eb573bb143aff2c5421dbdc55831f055a9037e522193d8297260",
   "onboarding_plan_stopped": "0d4bf8ba8790edd2b5dbab6b8bf2ed297183524b7c1366fb798a23ec5498131a",
   "onboarding_plus_more_goals": "0c5cd8b3de7f6f49dac3085af0dff6cf4a8855c9fabbfcc4bf469ffad873e4cf",
-  "onboarding_plus_more_goals_up_front": "e0cacca1790e35cd7c3f08411d0523e0820394bf61c3c2f2d9b4272116a3f5ed",
+  "onboarding_plus_more_goals_up_front": "dd294237c13285c038ce5e8491feae7fb0732f50d5eb2f5b900d6dd0c35491db",
   "onboarding_position_description": "a89f60e1c4847bcc789d4b07bc118b7ffca672106d529e575f6184013a7472bf",
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
@@ -447,8 +447,8 @@
   "onboarding_understanding_title": "82d2ec7ee65659994f0df07c4596ec58939145a8f559e008df5f6f3cf1b1188a",
   "onboarding_understood_description": "c95ed50831f3f2f786221223932d5ec46773d70b6cf6eb300cb2ee29fa273501",
   "onboarding_understood_description_shared": "8add3c711bf1633097f5869d819be71bf2d3e5002166f63d3d7f268cccee2706",
-  "onboarding_understood_locked_goal": "472a78caab6a067f3c9d70919e071f96af0351c50c17d4510e8fbcda366003c8",
-  "onboarding_understood_locked_goals": "e545837a0879aed62ed001c43ba68f856babad23257301b3facb741a28202a0f",
+  "onboarding_understood_locked_goal": "9ae441754b582fd731363b0a05f12b2f5866da179c151930de6bf9d861112093",
+  "onboarding_understood_locked_goals": "501236edabc6bffbe0f2461c5da20c8e4851e00fc46f1519851c0932e167e864",
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
@@ -497,7 +497,7 @@
     <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_limit_active_goals">無料プランで同時に進められる目標数の上限に達しています。別の目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。</string>
+    <string name="onboarding_limit_active_goals">無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。</string>
     <string name="onboarding_limit_sign_up_required">続けるには、無料アカウントを作成してください。</string>
     <string name="onboarding_limit_slow_down">短時間にいくつも目標を始めています。数分後にもう一度試してください。</string>
     <string name="onboarding_read_limit_guest">アカウントなしで送信できる新しい目標は1日に数件です。続けるには、無料アカウントを作成してください。</string>
@@ -515,7 +515,7 @@
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Plusなら複数の目標に同時に取り組めます</string>
     <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
-    <string name="onboarding_plus_more_goals_up_front">無料プランで同時に進められる目標数の上限に達しています。別の目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。</string>
+    <string name="onboarding_plus_more_goals_up_front">無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。</string>
     <string name="onboarding_go_to_plan">学習計画を見る</string>
     <string name="onboarding_see_plus">Plusを見る</string>
     <string name="onboarding_create_account">無料アカウントを作成する</string>
@@ -531,9 +531,9 @@
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">1日の学習時間をこれらの目標に振り分けます。あとですべて変更できます。</string>
     <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_understood_locked_goal">Plusなら、同時に進められる目標が増えます。この目標は、始められるようになるまで目標一覧に残ります。</string>
+    <string name="onboarding_understood_locked_goal">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Plusなら、同時に進められる目標が増えます。これらの目標は、始められるようになるまで目標一覧に残ります。</string>
+    <string name="onboarding_understood_locked_goals">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->

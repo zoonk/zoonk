@@ -5631,13 +5631,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus kannst du jetzt gleich ein weiteres Ziel starten. Bis dahin machst du mit deinen aktuellen Zielen weiter."
+            "value" : "Um jetzt ein weiteres Ziel zu starten, brauchst du Plus. Mach bis dahin mit deinen aktuellen Zielen weiter."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puedes empezar otro objetivo ahora mismo. Mientras tanto, sigue con tus objetivos actuales."
+            "value" : "Para crear otro objetivo ahora necesitas Plus. Mientras tanto, sigue con tus objetivos actuales."
           }
         },
         "fr" : {
@@ -5649,37 +5649,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puoi iniziare subito un altro obiettivo. Nel frattempo, continua con i tuoi obiettivi attuali."
+            "value" : "Per iniziare un altro obiettivo adesso serve Plus. Nel frattempo, continua con i tuoi obiettivi attuali."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusに登録すると、今すぐ別の目標を始められます。それまでは、今の目標を続けましょう。"
+            "value" : "今すぐ別の目標を始めるには、Plusへの登録が必要です。それまでは、今取り組んでいる目標を続けましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 구독하면 지금 바로 다른 목표를 시작할 수 있어요. 그전까지는 지금 목표를 계속 진행해 보세요."
+            "value" : "지금 목표를 하나 더 시작하려면 Plus가 필요해요. 그동안 진행 중인 목표를 이어 가세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W pakiecie Plus możesz od razu zacząć kolejny cel. Na razie kontynuuj swoje obecne cele."
+            "value" : "Z pakietem Plus możesz już teraz rozpocząć kolejny cel. Na razie pracuj dalej nad obecnymi celami."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você pode começar outro objetivo agora mesmo. Até lá, continue com seus objetivos atuais."
+            "value" : "Com o Plus, você pode começar outro objetivo agora. Até lá, continue com seus objetivos atuais."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hemen başka bir hedefe başlamak Plus’a özel. O zamana kadar mevcut hedeflerinle devam et."
+            "value" : "Şu anda başka bir hedefe başlamak için Plus gerekiyor. Şimdilik mevcut hedeflerine devam et."
           }
         }
       }

@@ -10739,7 +10739,7 @@ msgstr "Você pode mudar tudo isso depois."
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "Hs12te"
 msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, other {Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, o que não começar agora fica esperando na sua lista de objetivos.}}"
+msgstr "{count, plural, one {Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos.} other {Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"

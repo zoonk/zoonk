@@ -124,7 +124,7 @@
   "today_rest_welcome_back": "7c86c6192aa5efc0a65bb16eb8e25760b95b39ca2dab9ec7c363c7b5a53c656b",
   "today_resume_effect": "695a467ed129fea4c7a7b75fa3990c05ee5bae54a678799539083b5ac007607d",
   "today_resume_goal": "776039f1cd55a27b75f68f5d991cc9b74111b699d031e82c1b8f67203627b3e8",
-  "today_resume_goal_limit": "ba02e4272b8e3f800563e8214a72df6dacf670b958c967febe8eaf4caae0d659",
+  "today_resume_goal_limit": "316eff46fe6ea97a9c2010aa178878f4847348454b59b0670d3cd843a8e7fe54",
   "today_save_failed": "9ca8b48792f3149522121de8fda9dd639a8d815c70f66f616169ee00673289fb",
   "today_see_day_challenge": "0e3057408cac453491613fa016218824541758bc526bc8349ce3641e73b01d97",
   "today_see_day_mock": "3f12ffb6d7b913d261ddbd983f46a7b6dffd208d12c37e628bd1c9468d1de1c4",
@@ -342,7 +342,7 @@
     <string name="today_new_goal">Wyznacz nowy cel</string>
     <string name="today_resume_effect">Od dziś kontynuujesz plan, zaczynając od lekcji zaplanowanych na dni przerwy.</string>
     <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="today_resume_goal_limit">Masz już tyle aktywnych celów, na ile pozwala pakiet Free. Wstrzymaj inny cel, żeby wrócić do tego, lub przejdź na Plus, by realizować więcej celów jednocześnie.</string>
+    <string name="today_resume_goal_limit">Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej.</string>
     <string name="today_setting_up">Przygotowujemy</string>
     <string name="today_setting_up_goal">Twój plan czeka na jeszcze kilka odpowiedzi: %1$s.</string>
     <string name="today_setting_up_detail">Tworzymy go na podstawie twoich odpowiedzi.</string>

@@ -10600,49 +10600,49 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puedes seguir más objetivos a la vez. Mientras tanto, estos objetivos se quedan en tu lista de objetivos."
+            "value" : "Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, estos objetivos esperan en tu lista de objetivos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec Plus, tu peux suivre davantage d’objectifs à la fois. En attendant, ces objectifs t’attendent dans ta liste d’objectifs."
+            "value" : "Avec Plus, tu peux suivre plus d’objectifs en même temps. D’ici là, ces objectifs restent en attente dans ta liste d’objectifs."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questi obiettivi ti aspettano tra i tuoi obiettivi."
+            "value" : "Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questi obiettivi restano in attesa nel tuo elenco di obiettivi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、これらの目標は目標一覧に残ります。"
+            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요. 그전까지 이 목표들은 내 목표 목록에서 기다려요."
+            "value" : "더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na twojej liście celów."
+            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você pode seguir mais objetivos ao mesmo tempo. Até lá, esses objetivos ficam na sua lista de objetivos."
+            "value" : "Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aynı anda daha fazla hedef üzerinde çalışmak Plus’a özel. O zamana kadar bu hedefler hedef listende bekler."
+            "value" : "Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedefler şimdilik hedef listende bekliyor."
           }
         }
       }
@@ -10659,49 +10659,49 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puedes seguir más objetivos a la vez. Mientras tanto, este objetivo se queda en tu lista de objetivos."
+            "value" : "Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, este objetivo espera en tu lista de objetivos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec Plus, tu peux suivre davantage d’objectifs à la fois. En attendant, cet objectif t’attend dans ta liste d’objectifs."
+            "value" : "Avec Plus, tu peux suivre plus d’objectifs en même temps. D’ici là, cet objectif reste en attente dans ta liste d’objectifs."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questo obiettivo ti aspetta tra i tuoi obiettivi."
+            "value" : "Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questo obiettivo resta in attesa nel tuo elenco di obiettivi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、この目標は目標一覧に残ります。"
+            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요. 그전까지 이 목표는 내 목표 목록에서 기다려요."
+            "value" : "더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na twojej liście celów."
+            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você pode seguir mais objetivos ao mesmo tempo. Até lá, esse objetivo fica na sua lista de objetivos."
+            "value" : "Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aynı anda daha fazla hedef üzerinde çalışmak Plus’a özel. O zamana kadar bu hedef hedef listende bekler."
+            "value" : "Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedef şimdilik hedef listende bekliyor."
           }
         }
       }
@@ -30522,37 +30522,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du verfolgst so viele Ziele, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres zu schaffen, pausier eines über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
+            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier ein Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya sigues tantos objetivos como permite el plan gratis. Para hacerle espacio a otro, pausa uno desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
+            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets-en un en pause depuis le menu de ton plan. Tu peux poser des questions rapides à tout moment."
+            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets-en un en pause depuis le menu de ton Plan. Tu peux poser des questions rapides à tout moment."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stai già seguendo tutti gli obiettivi che la formula Free consente. Per fare spazio a un altro, mettine uno in pausa dal menu del tuo Piano. Le domande rapide sono sempre disponibili."
+            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, mettine uno in pausa dal menu del tuo Piano. Puoi fare domande rapide in qualsiasi momento."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無料プランで同時に進められる上限まで目標を進めています。別の目標を始めるには、「学習計画」のメニューから目標を1つ一時停止してください。ちょっとした質問はいつでもできます。"
+            "value" : "無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 만큼 목표를 진행하고 있어요. 다른 목표를 추가하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
+            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
           }
         },
         "pl" : {
@@ -30564,13 +30564,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já acompanha tantos objetivos quanto o plano Grátis permite. Para abrir espaço para outro, pause um deles pelo menu do seu plano. As perguntas rápidas estão sempre disponíveis."
+            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um deles pelo menu do seu Plano. Você pode fazer perguntas rápidas a qualquer hora."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsiz paketin izin verdiği kadar hedef üzerinde çalışıyorsun. Başka bir hedefe yer açmak için Plan ekranındaki menüden birini duraklat. İstediğin zaman hızlı soru sorabilirsin."
+            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat. Kısa sorularını istediğin zaman sorabilirsin."
           }
         }
       }
@@ -30581,37 +30581,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du verfolgst so viele Ziele, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres zu schaffen, pausier eines deiner Ziele über das Menü in deinem Plan oder hol dir Plus."
+            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier eines deiner Ziele über das Menü in deinem Plan oder hol dir Plus."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya sigues tantos objetivos como permite el plan gratis. Para hacerle espacio a otro, pausa uno de tus objetivos desde el menú de tu Plan u obtén Plus."
+            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno de tus objetivos desde el menú de tu Plan u obtén Plus."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets l’un de tes objectifs en pause depuis le menu de ton plan, ou passe à Plus."
+            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets l’un de tes objectifs en pause depuis le menu de ton Plan, ou passe à Plus."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stai già seguendo tutti gli obiettivi che la formula Free consente. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
+            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無料プランで同時に進められる上限まで目標を進めています。別の目標を始めるには、「学習計画」のメニューから目標を1つ一時停止するか、Plusに登録してください。"
+            "value" : "無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 만큼 목표를 진행하고 있어요. 다른 목표를 추가하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
+            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
           }
         },
         "pl" : {
@@ -30623,13 +30623,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já acompanha tantos objetivos quanto o plano Grátis permite. Para abrir espaço para outro, pause um dos seus objetivos pelo menu do seu plano ou assine o Plus."
+            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um dos seus objetivos pelo menu do seu Plano ou assine o Plus."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsiz paketin izin verdiği kadar hedef üzerinde çalışıyorsun. Başka bir hedefe yer açmak için Plan ekranındaki menüden hedeflerinden birini duraklat ya da Plus’a geç."
+            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat ya da Plus’a geç."
           }
         }
       }

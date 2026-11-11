@@ -62,7 +62,7 @@
   "tutor_offer_essay_plus": "fcc70cae9ce18eaa86ca37a26e80ff87d12f031139e69c1910f12e9b02592e6e",
   "tutor_offer_essay_weekly": "de83316b0cda3691d18871ac08f4b9bafde6d6cfb4f950f836492a0ad803c713",
   "tutor_offer_goal": "f3b12b93174567311d66308058903b723985effb2b2053570c49d8e32aa6dd18",
-  "tutor_offer_goal_limit": "d7fb33596feb1ab9f0831d10f83200b75d9ce4e553439fa06b6ce52bf065785d",
+  "tutor_offer_goal_limit": "d12349765e107173a1fcd86019fd4e7afbee9e0ba782285f5845834429ef60c8",
   "tutor_offer_logbook": "9edd1ef149ed0976a2ebb56f79475a4955320c451ffe1eb55ab32670c8f69cf8",
   "tutor_offer_logbook_description": "1e653811a081dc546ba1a90e64ede14c4a24a4009e560b13243ff014501f9279",
   "tutor_offer_manage": "de797e742950fbebbfd64c927389ee43d88b3a0fb5407d2bd9157df831c8f304",
@@ -214,7 +214,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_limit">Şu anda başka bir hedefe başlamak için Plus gerekiyor. O zamana kadar mevcut hedeflerinle devam et.</string>
+    <string name="tutor_offer_goal_limit">Şu anda başka bir hedefe başlamak için Plus gerekiyor. Şimdilik mevcut hedeflerine devam et.</string>
     <string name="tutor_offer_catalog_course">Katalogda hazır bir kurs</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

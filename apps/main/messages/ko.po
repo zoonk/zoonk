@@ -1002,7 +1002,7 @@ msgstr "목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요."
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "hnzjLt"
 msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 다른 목표를 일시 중지해 이 목표를 다시 진행하거나 Plus를 구독해 더 많은 목표를 동시에 진행해 보세요."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"

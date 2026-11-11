@@ -124,7 +124,7 @@
   "today_rest_welcome_back": "076422d03df7ac7727b073c02901b887f3b23fe36e4923b69bea19fa28e55070",
   "today_resume_effect": "f762dcc9f752550a4dbb5637f8c91db57253ca11df61efedfd40bca471396261",
   "today_resume_goal": "b04d886521356324023cf5afc3f1f038562895ce4150d8619bd81278100233de",
-  "today_resume_goal_limit": "e38b36dc28efb18ce41a4c9214979fdd273de322fc27cea7a882cb1d1edda639",
+  "today_resume_goal_limit": "9382b3c2c29acd7ef941aec3f8a9562b6952d611dc6bd0e0a388c4372a1a343c",
   "today_save_failed": "37584d4a01b5d654d720b1b7a2e6c20a1a09b8ded1fe333c7197375abc3ec9c4",
   "today_see_day_challenge": "3be8ee99f8540f11909602dbab91003acff8561cc44b52b4f6e85fe9eb29469d",
   "today_see_day_mock": "ecbfab6a326be3750150e0fdc56776978b6e1a11a06c30eeaf5825edce384552",
@@ -322,7 +322,7 @@
     <string name="today_new_goal">Neues Ziel</string>
     <string name="today_resume_effect">Dein Plan geht ab heute weiter. Du beginnst mit den Lektionen, die für die Tage deiner Pause geplant waren.</string>
     <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="today_resume_goal_limit">Du verfolgst bereits so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen.</string>
+    <string name="today_resume_goal_limit">Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen.</string>
     <string name="today_setting_up">Einrichtung</string>
     <string name="today_setting_up_goal">Für deinen %1$s-Plan fehlen noch ein paar Antworten.</string>
     <string name="today_setting_up_detail">Er wird anhand deiner Antworten erstellt.</string>

@@ -148,7 +148,7 @@
   "onboarding_level_test_description": "9d03f364d552253924da5d8bb1df3b245c1003068d3faaedddb81da631df7cf7",
   "onboarding_level_title": "683f36ee3509a7337c08da16d4f2f3fdb1c7fb33795c98e501bc30ceb2314290",
   "onboarding_library_course_fits": "a59e4d795032f81a09e333c6911e214dca4c889b1f214c72ec98b8f20d0da850",
-  "onboarding_limit_active_goals": "3bf55cd09c4a8f266bc6f9aaed74087eb500fa09290bcc40d41d562d501b34ae",
+  "onboarding_limit_active_goals": "70d6c156a87df5c00989d195cd5d035692dfb6ca1e22af9658914c89645b65c0",
   "onboarding_limit_daily_explanations": "aafe2d182e26be6389b588817d0231d38caa6ff424e7909ed905df3a7ec23572",
   "onboarding_limit_daily_goals": "ad3cbfad7b8cc4198bdcd771e519cb0b00f887012ca8d37614db6ca6c1b16170",
   "onboarding_limit_guest": "bb0dd743d50803e6ed89f4bb82abc0dc0e7b9cb96da33205001aa08a9ae3630d",
@@ -222,7 +222,7 @@
   "onboarding_plan_so_far": "242521df30ba65966efc29f1b5fda6a9a17a2a4ee54a8f2b3a34dc905d9a85f5",
   "onboarding_plan_stopped": "70f1bb3e3077ab4db36ca834ae53c34502627d71b24fdff2939de43f7e2b2264",
   "onboarding_plus_more_goals": "dc5c80546fe7621deac2bfaa59b8b453e0fd8ccd817268f726b0d4f8e6989011",
-  "onboarding_plus_more_goals_up_front": "bca19c6503503d7b5ff8b71fb11af9ca78127b88c962b86ae6a751620a4382d5",
+  "onboarding_plus_more_goals_up_front": "21e2c243957b0df511040d0146b7915d1126bd0af53b69906be5481b97bff8e3",
   "onboarding_position_description": "b2812f0450013c546c12d5e435040e4215c06acb1bae1c3f8b38fd5ca241d762",
   "onboarding_position_label": "92342a01caaa650b75221f578d63feb0addabd265afcec523b3bfeb735077a0e",
   "onboarding_position_title": "ebeca67cca2c0444571d2e35057300b9ff1747f941b5ff42a20f74dd18358db5",
@@ -497,7 +497,7 @@
     <string name="onboarding_limit_monthly_explanations">Você já fez todas as perguntas novas que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_monthly_goals">Você já começou todos os objetivos novos que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_limit_active_goals">Você já tem o máximo de objetivos ativos que o plano Grátis permite. Para abrir espaço para outro, pause um dos seus objetivos no menu do seu Plano ou assine o Plus.</string>
+    <string name="onboarding_limit_active_goals">Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um dos seus objetivos pelo menu do seu Plano ou assine o Plus.</string>
     <string name="onboarding_limit_sign_up_required">Crie sua conta grátis para continuar.</string>
     <string name="onboarding_limit_slow_down">Você está começando objetivos muito rápido. Tente de novo em alguns minutos.</string>
     <string name="onboarding_read_limit_guest">Sem uma conta, você pode enviar alguns objetivos novos por dia. Crie uma conta grátis para continuar.</string>
@@ -517,7 +517,7 @@
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Mais objetivos ao mesmo tempo com o Plus</string>
     <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
-    <string name="onboarding_plus_more_goals_up_front">Você já tem o máximo de objetivos ativos que o plano Grátis permite. Para abrir espaço para outro, pause um deles no menu do seu Plano. Você pode fazer perguntas rápidas a qualquer hora.</string>
+    <string name="onboarding_plus_more_goals_up_front">Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um deles pelo menu do seu Plano. Você pode fazer perguntas rápidas a qualquer hora.</string>
     <string name="onboarding_go_to_plan">Ir para seu Plano</string>
     <string name="onboarding_see_plus">Conhecer o Plus</string>
     <string name="onboarding_create_account">Criar uma conta grátis</string>

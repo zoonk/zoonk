@@ -4498,7 +4498,7 @@ msgstr "Curso completado"
 #: src/journey/goal-actions.tsx
 msgctxt "hnzjLt"
 msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "Tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos."
+msgstr "Ya tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -9308,7 +9308,7 @@ msgstr "Más objetivos a la vez con Plus"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "tqq0xx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
-msgstr "Tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
+msgstr "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9557,7 +9557,7 @@ msgstr "{exam, select, abitur {Aprobar el Abitur} bac {Aprobar el bac} enem {Apr
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
-msgstr "Tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno de tus objetivos desde el menú de tu Plan u obtén Plus."
+msgstr "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno de tus objetivos desde el menú de tu Plan u obtén Plus."
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts

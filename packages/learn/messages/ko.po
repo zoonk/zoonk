@@ -4498,7 +4498,7 @@ msgstr "코스 완료"
 #: src/journey/goal-actions.tsx
 msgctxt "hnzjLt"
 msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 다른 목표를 일시 중지해 이 목표를 다시 진행하거나 Plus를 구독해 더 많은 목표를 동시에 진행해 보세요."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -9308,7 +9308,7 @@ msgstr "Plus로 여러 목표를 동시에 진행"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "tqq0xx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 내 계획의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9557,7 +9557,7 @@ msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 내 계획의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
 
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
