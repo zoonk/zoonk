@@ -104,7 +104,7 @@ enum FocusTestCopy {
     switch reason {
     case .answers:
       String(
-        localized: "Your answers suggest reviewing this subject.", table: "FocusTest",
+        localized: "Your answers suggest giving this subject more time.", table: "FocusTest",
         comment: "Why the plan gives a subject more time: a miss or an \"I don't know yet\"")
     case .minimumScore:
       String(

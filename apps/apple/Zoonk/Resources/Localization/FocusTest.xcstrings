@@ -4664,61 +4664,61 @@
         }
       }
     },
-    "Your answers suggest reviewing this subject." : {
+    "Your answers suggest giving this subject more time." : {
       "comment" : "Why the plan gives a subject more time: a miss or an \"I don't know yet\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antworten sprechen dafür, dieses Fach zu wiederholen."
+            "value" : "Deine Antworten sprechen dafür, mehr Zeit für dieses Fach einzuplanen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus respuestas indican que conviene repasar esta materia."
+            "value" : "Tus respuestas sugieren dedicarle más tiempo a esta materia."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes réponses suggèrent de réviser cette matière."
+            "value" : "Tes réponses suggèrent de consacrer plus de temps à cette matière."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tue risposte suggeriscono di ripassare questa materia."
+            "value" : "Le tue risposte suggeriscono di dedicare più tempo a questa materia."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回答を見ると、この科目は復習したほうがよさそうです。"
+            "value" : "回答内容から、この科目にはもう少し時間をかけるとよさそうです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "답안을 보니 이 과목을 복습하면 좋겠어요."
+            "value" : "답변을 보면 이 과목에 시간을 더 들이는 게 좋겠어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje odpowiedzi wskazują, że warto powtórzyć ten przedmiot."
+            "value" : "Twoje odpowiedzi wskazują, że warto poświęcić temu przedmiotowi więcej czasu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas indicam que vale revisar esta matéria."
+            "value" : "Suas respostas sugerem dedicar mais tempo a essa matéria."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cevaplarına göre bu branşı tekrar etmen iyi olur."
+            "value" : "Cevaplarına göre bu branşa daha fazla zaman ayırman iyi olur."
           }
         }
       }
