@@ -31,6 +31,8 @@ internal data class PlacementItem(
 internal sealed interface PlacementPhase {
     data object Loading : PlacementPhase
 
+    data object LoadFailed : PlacementPhase
+
     data object Intro : PlacementPhase
 
     data object Waiting : PlacementPhase
@@ -64,6 +66,7 @@ internal fun placementPhase(
     shown: Shown,
 ): PlacementPhase {
     if (placement.isPending) return PlacementPhase.Loading
+    if (placement is LoadState.Failed) return PlacementPhase.LoadFailed
 
     val read = placement.value
     val ready = read?.takeIf { it.status == PlacementStatus.ASKING || it.status == PlacementStatus.DONE }

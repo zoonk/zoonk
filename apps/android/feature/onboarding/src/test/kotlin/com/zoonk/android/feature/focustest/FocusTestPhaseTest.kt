@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.focustest
 
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.focusCheckpointOf
 import com.zoonk.android.feature.onboarding.focusOfferOf
@@ -75,6 +76,11 @@ class FocusTestPhaseTest {
 
         assertEquals(FocusTestPhase.Waiting(answered = true), phase(placementOf(status = "preparing", next = null, focusTest = answered)))
         assertEquals(FocusTestPhase.Waiting(answered = false), phase(placementOf(status = "preparing", next = null)))
+    }
+
+    @Test
+    fun aReadThatNeverCameBackSaysItDidNotLoadInsteadOfWaitingForQuestions() {
+        assertEquals(FocusTestPhase.LoadFailed, focusTestPhase(LoadState.Failed(ApiError.Network), entered = false, closed = null))
     }
 
     @Test

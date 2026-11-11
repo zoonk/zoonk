@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.api.models.Placement
@@ -17,6 +18,12 @@ class PlacementPhaseTest {
     @Test
     fun waitsForTheRead() {
         assertEquals(PlacementPhase.Loading, placementPhase(LoadState.Loading, started = false, Shown()))
+    }
+
+    @Test
+    fun aReadThatNeverCameBackSaysItDidNotLoadBeforeOrAfterStart() {
+        assertEquals(PlacementPhase.LoadFailed, placementPhase(LoadState.Failed(ApiError.Network), started = false, Shown()))
+        assertEquals(PlacementPhase.LoadFailed, placementPhase(LoadState.Failed(ApiError.Unavailable), started = true, Shown()))
     }
 
     @Test

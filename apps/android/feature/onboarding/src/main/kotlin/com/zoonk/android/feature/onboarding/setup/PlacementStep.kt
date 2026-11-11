@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +62,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
@@ -79,6 +81,7 @@ import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonVisual as ApiLessonVisual
@@ -101,6 +104,7 @@ internal fun ColumnScope.PlacementStep(
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)
+    val scope = rememberCoroutineScope()
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
@@ -112,6 +116,10 @@ internal fun ColumnScope.PlacementStep(
     when (shown) {
         PlacementPhase.Loading -> {
             StepLoading()
+        }
+
+        PlacementPhase.LoadFailed -> {
+            SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
         }
 
         PlacementPhase.Intro -> {

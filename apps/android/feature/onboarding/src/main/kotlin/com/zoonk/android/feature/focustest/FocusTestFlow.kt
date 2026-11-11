@@ -6,6 +6,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,8 +28,10 @@ import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.FocusTestSitting
+import kotlinx.coroutines.launch
 
 /**
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
@@ -51,8 +54,10 @@ internal fun ColumnScope.FocusTestFlow(
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle()) }
-    val placement by store.placements[goalId].collectShown()
+    val resource = store.placements[goalId]
+    val placement by resource.collectShown()
     val phase = vm.phase(placement)
+    val scope = rememberCoroutineScope()
     val waiting = phase is FocusTestPhase.Waiting
     val poll = rememberPoll(active = waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = !waiting)
@@ -65,6 +70,10 @@ internal fun ColumnScope.FocusTestFlow(
     when (shown) {
         FocusTestPhase.Loading -> {
             StepLoading()
+        }
+
+        FocusTestPhase.LoadFailed -> {
+            SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
         }
 
         is FocusTestPhase.Waiting -> {

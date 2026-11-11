@@ -27,6 +27,8 @@ internal data class Closed(
 internal sealed interface FocusTestPhase {
     data object Loading : FocusTestPhase
 
+    data object LoadFailed : FocusTestPhase
+
     data object Unavailable : FocusTestPhase
 
     /** [answered]: the learner has test answers, so leaving the wait uses them. */
@@ -77,6 +79,7 @@ private fun resting(test: FocusTest): FocusTestPhase? {
  * Until the learner [entered] the test in this visit, opening it never drops them into a question:
  * a sitting with answers shows its resume screen, and one without is offered again. A sitting
  * [closed] in this visit shows its result. A test with no result and nothing to ask is unavailable.
+ * A read that never came back is [FocusTestPhase.LoadFailed], never the questions' wait.
  */
 internal fun focusTestPhase(
     placement: LoadState<Placement>,
@@ -85,6 +88,7 @@ internal fun focusTestPhase(
 ): FocusTestPhase {
     if (closed != null) return FocusTestPhase.Checkpoint(closed.test, closed.end)
     if (placement.isPending) return FocusTestPhase.Loading
+    if (placement is LoadState.Failed) return FocusTestPhase.LoadFailed
 
     val read = placement.value
     if (read?.status == PlacementStatus.UNAVAILABLE) return FocusTestPhase.Unavailable
