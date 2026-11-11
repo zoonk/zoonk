@@ -59,7 +59,6 @@ sealed interface LessonAction {
     data class CheckConfirmed(
         val stepId: String,
         val attemptId: String,
-        val nextReviewAt: Instant?,
         val savedMistake: Boolean,
     ) : LessonAction
 
@@ -225,7 +224,7 @@ private fun LessonPlayerState.confirmCheck(action: LessonAction.CheckConfirmed):
 
     if (current == null || current.attemptId != action.attemptId) return this
 
-    val confirmed = current.copy(nextReviewAt = action.nextReviewAt, savedMistake = action.savedMistake)
+    val confirmed = current.copy(savedMistake = action.savedMistake)
     return copy(results = results + (action.stepId to confirmed))
 }
 

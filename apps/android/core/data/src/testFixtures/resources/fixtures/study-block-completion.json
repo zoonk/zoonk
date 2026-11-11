@@ -5,7 +5,6 @@
   "ceremony": null,
   "certificates": [],
   "checkpoint": null,
-  "comesBackOn": null,
   "completedMissions": [],
   "correct": 2,
   "fullMeal": { "bonus": 20, "paid": true },

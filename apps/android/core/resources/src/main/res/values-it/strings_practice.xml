@@ -23,11 +23,6 @@
   "practice_progress": "63ced42c687b4de8b06c6d07706afa979966c5ada810d55b3c9a279e59817905",
   "practice_save_error": "493f47a58ca46c3ed2911649b9426ade122f21251988d8b915b229fd138fcfe8",
   "practice_save_error_repeat": "8f46b00a79a57ddbe492cca7d2c47d41a486a4a72267d293ce512b4b187b0eb9",
-  "practice_time_machine_answered": "4371816a9536bab4d9365a0e98926646b0fd12e1aa065d22e78a7063194f1877",
-  "practice_time_machine_right_again": "0cbea6f0040a1960aa6e8ff4c5fb63de7aff6e05eff8070e40c481ebffba1120",
-  "practice_time_machine_right_before": "1679fc8d6179f023a8b6c765ae20a196b21a0e8b2a51834f05f7dcbab968512d",
-  "practice_time_machine_seen": "50057fb80273aa907e2a9cac8ddc8340faccfdf491ce6eb09cfe603cddfec4a3",
-  "practice_time_machine_tripped": "25d39f0e9e4a942e3de02a3539993f102356f9034c3e997d5b5bd69b6b30f01c",
   "practice_try_again": "bb065067bef4f2987211b04701b54af4111b2a1d433a0701989801b1cc4e97b6",
   "practice_undo": "967d8f8ef9d170756eeef00d0abb413eb2d464d51c7179fcb26c1233a822aa7b",
   "practice_undo_failed": "6de3313fa856044a6f0b9fde1026606394f392e7cb01fb4d469814b2131298dd"
@@ -67,13 +62,6 @@
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">Una risposta sbagliata ne annulla una giusta. Hai dubbi? Lascia in bianco.</string>
-    <!-- %1$s is a day and month, like October 8. -->
-    <string name="practice_time_machine_seen">Hai visto questa domanda il giorno %1$s.</string>
-    <string name="practice_time_machine_right_again">Hai risposto bene anche stavolta, come il %1$s.</string>
-    <string name="practice_time_machine_right_before">Il %1$s avevi risposto bene. Ripassare ora ti aiuta a ricordare.</string>
-    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
-    <string name="practice_time_machine_answered">Il giorno %1$s hai risposto “%2$s”.</string>
-    <string name="practice_time_machine_tripped">Il %1$s questa domanda ti ha messo in difficoltà.</string>
     <string name="practice_pause_text">Qualche errore di fila. Una breve pausa spesso aiuta e tutto quello che hai fatto oggi conta.</string>
     <string name="practice_pause_stop">Fermati per oggi</string>
     <string name="practice_pause_failed">Non siamo riusciti a interrompere la sessione. Riprova.</string>

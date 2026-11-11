@@ -73,13 +73,6 @@ export const studyBlockQuestionSchema = z.object({
         "The passage, case, chart or recording the question shares with the set's other questions, which the block asks back to back; null for a question on its own",
     }),
   skillId: idSchema,
-  timeMachine: z
-    .object({ answer: z.string().nullable(), answeredAt: z.iso.datetime(), isCorrect: z.boolean() })
-    .nullable()
-    .meta({
-      description:
-        "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-    }),
   unit: questionUnitSchema,
   visual: questionVisualSchema,
 });

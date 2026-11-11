@@ -5,10 +5,10 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockAdminSession, mockSession } from "../_test-utils/mock-session";
 import { claimStudyReminderOffer } from "./claim-study-reminder-offer";
 import { signStudyReminderUnsubscribeToken, turnOffStudyReminderEmail } from "./email-unsubscribe";
-import { getStudyReminder } from "./get-study-reminder";
+import { getStudyReminder, getStudyReminderForAdmin } from "./get-study-reminder";
 import { selectStudyReminderPhone } from "./study-reminder-phone";
 import { updateStudyReminder } from "./update-study-reminder";
 
@@ -160,6 +160,33 @@ describe("study reminder settings", () => {
     ]);
 
     await expect(getStudyReminder()).resolves.toMatchObject({ quiet: false });
+  });
+});
+
+describe(getStudyReminderForAdmin, () => {
+  it("shows an admin what the learner's Settings show", async () => {
+    const user = await accountLearner();
+    const device = phone();
+    await selectStudyReminderPhone(device);
+    await updateStudyReminder({ locale: "en", pushOn: true, time: "08:15" });
+    const learnerView = await getStudyReminder();
+
+    const admin = await userFixture({ role: "admin" });
+    mockAdminSession(admin.id);
+
+    await expect(getStudyReminderForAdmin(user.id)).resolves.toStrictEqual(learnerView);
+
+    expect(learnerView).toMatchObject({
+      push: { on: true, phone: { label: device.label, platform: "ios" } },
+      time: "08:15",
+    });
+  });
+
+  it("shows nothing to someone who isn't an admin", async () => {
+    const [learner, someoneElse] = await Promise.all([userFixture(), userFixture()]);
+    mockSession(someoneElse.id);
+
+    await expect(getStudyReminderForAdmin(learner.id)).resolves.toBeNull();
   });
 });
 

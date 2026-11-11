@@ -78,6 +78,14 @@ function setOf(overrides: Partial<ListeningSet> = {}): ListeningSet {
   };
 }
 
+function femaleSpeakers(count: number): ListeningSet["speakers"] {
+  return Array.from({ length: count }, (_, index) => ({
+    accent: "British English",
+    gender: "female",
+    name: `Speaker ${index + 1}`,
+  }));
+}
+
 describe(repairListeningSet, () => {
   it("drops what a voice would read aloud, joins one speaker's lines, puts questions in the order they're heard and keeps skills on the list", () => {
     const repaired = repairListeningSet(
@@ -184,6 +192,14 @@ describe(findListeningSetProblems, () => {
         "The script has 6 words; a recording needs at least 40.",
       ]),
     );
+  });
+
+  it("takes as many speakers as there are voices to tell them apart, and flags one more", () => {
+    const eight = findListeningSetProblems(setOf({ speakers: femaleSpeakers(8) }), REQUEST);
+    const nine = findListeningSetProblems(setOf({ speakers: femaleSpeakers(9) }), REQUEST);
+
+    expect(eight.join("\n")).not.toContain("female speakers");
+    expect(nine).toContain("Has 9 female speakers; only 8 voices tell them apart.");
   });
 
   it("counts the words of a script written without spaces", () => {

@@ -33,16 +33,10 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.questions.ItemSet
-import com.zoonk.android.feature.questions.NoteRow
-import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.SetPlace
-import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.feature.questions.plainItemLine
-import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Facts
-import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.PageLoading
@@ -51,17 +45,11 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.leadingIconInset
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
-import java.time.Instant
-import java.time.ZoneId
-import com.zoonk.android.feature.questions.TimeMachine as TimeMachineFacts
 
 /** Where a wrong answer cancels a right one: this visit's count and what leaving blank is for. */
 @Composable
@@ -87,49 +75,6 @@ fun SwipeScore(tally: NetTally) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
         )
-    }
-}
-
-/** Before the answer, only that the learner saw it: an earlier answer could give today's away. */
-@Composable
-fun TimeMachine(
-    machine: TimeMachineFacts,
-    format: QuestionFormat,
-    words: TrueFalseWords,
-) {
-    NoteRow(R.drawable.ic_history) { NoteText(timeMachineText(machine, format, words, right = null)) }
-}
-
-@Composable
-fun TimeMachineNote(
-    machine: TimeMachineFacts,
-    format: QuestionFormat,
-    words: TrueFalseWords,
-    right: Boolean,
-) {
-    FeedbackNote(timeMachineText(machine, format, words, right))
-}
-
-@Composable
-private fun timeMachineText(
-    machine: TimeMachineFacts,
-    format: QuestionFormat,
-    words: TrueFalseWords,
-    right: Boolean?,
-): String {
-    val date =
-        formatDate(Instant.parse(machine.answeredAt).atZone(ZoneId.systemDefault()).toLocalDate(), currentLocale(), DateStyle.DayMonth)
-    val answer =
-        machine.answer?.let {
-            if (format == QuestionFormat.TrueFalse) savedAnswerText(it, words) else plainItemLine(it).trimEnd('.')
-        }
-
-    return when {
-        right == null -> stringResource(R.string.practice_time_machine_seen, date)
-        machine.isCorrect && right -> stringResource(R.string.practice_time_machine_right_again, date)
-        machine.isCorrect -> stringResource(R.string.practice_time_machine_right_before, date)
-        !answer.isNullOrEmpty() -> stringResource(R.string.practice_time_machine_answered, date, answer)
-        else -> stringResource(R.string.practice_time_machine_tripped, date)
     }
 }
 

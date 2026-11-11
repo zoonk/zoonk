@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "“{heard}” diye duyduk"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "{date} tarihinde tekrar karşına çıkacak."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Bu kelimeyi artık doğru söylüyorsun. Bir daha karşına çıkmayacak."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Aksanın sana asla engel olmaz. Hâlâ farklı telaffuz ettiğin kelimeler yarın tekrar karşına çıkar."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Aksanın sana asla engel olmaz."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -13398,12 +13388,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Dersin henüz kaydedilmedi"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Tekrar tarihi: {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13603,11 +13587,6 @@ msgid "Saved to your mistakes"
 msgstr "Yanlış defterine kaydedildi"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Yanlış defterine kaydedildi · yarın tekrar karşına çıkacak"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Boş bırakıldı"
@@ -13643,31 +13622,6 @@ msgstr "net {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Bir yanlış cevap bir doğru cevabı götürür. Emin değil misin? Boş bırak."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Bunu {date} tarihinde gördün."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Yine doğru, tıpkı {date} tarihinde olduğu gibi."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "{date} tarihinde doğru cevapladın. Şimdi tekrar etmek aklında kalmasına yardımcı olur."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "{date} tarihinde “{answer}” cevabını verdin."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "{date} tarihinde bu soruda zorlandın."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13806,12 +13760,6 @@ msgstr "Bir dakikadan kısa sürede tamamlandı"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} içinde tamamlandı"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Tekrar zamanı: {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

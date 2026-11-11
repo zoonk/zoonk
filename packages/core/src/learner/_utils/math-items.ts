@@ -3,7 +3,6 @@ import { logError } from "@zoonk/utils/logger";
 import { formatMathAnswer, getUnitPosition } from "@zoonk/utils/math-answer";
 import { hashSeed, seededRandom } from "@zoonk/utils/seeded-random";
 import { z } from "zod";
-import { type MathValues } from "../../library/items/_utils/math-values";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
 import { type MathVersion, checkMathAnswer, withNewNumbers } from "../../library/items/item-math";
 import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../../mistakes/mistake-snapshot";
@@ -120,28 +119,4 @@ const recordedMathSchema = z.object({
 export function readRecordedMath(answer: unknown): z.infer<typeof recordedMathSchema> | null {
   const parsed = recordedMathSchema.safeParse(answer);
   return parsed.success ? parsed.data : null;
-}
-
-function isSameVersion(a: Readonly<MathValues>, b: Readonly<MathValues>): boolean {
-  const names = Object.keys(a);
-  return names.length === Object.keys(b).length && names.every((name) => a[name] === b[name]);
-}
-
-/** Returns nothing unless the recorded answer used the same numbers as the current serving. */
-export function describeEarlierMathAnswer({
-  answer,
-  item,
-  version,
-}: {
-  answer: unknown;
-  item: MathItem;
-  version: MathVersion;
-}): string | null {
-  const recorded = readRecordedMath(answer);
-
-  if (!recorded || recorded.number === null || !isSameVersion(recorded.values, version.values)) {
-    return null;
-  }
-
-  return formatAnswer({ item, value: recorded.number });
 }

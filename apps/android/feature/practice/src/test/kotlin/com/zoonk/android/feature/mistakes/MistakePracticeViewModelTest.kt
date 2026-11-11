@@ -433,7 +433,6 @@ class MistakePracticeViewModelTest {
                             feedback = "Compare",
                             isCorrect = false,
                             keyPoints = null,
-                            nextReviewAt = null,
                             savedMistake = false,
                             score = null,
                             spelling = null,
