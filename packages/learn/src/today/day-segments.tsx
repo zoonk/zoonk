@@ -4,13 +4,12 @@ import { METER_PARTS_CLASS, MeterPart } from "../_components/meter";
 
 const PERCENT = 100;
 
-export type DaySegmentState = "ahead" | "current" | "done" | "skipped";
+export type DaySegmentState = "ahead" | "current" | "done";
 
 const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
   ahead: "",
   current: "bg-transparent ring-success ring-[1.5px] ring-inset",
   done: "bg-success",
-  skipped: "bg-foreground/25",
 };
 
 function getAheadClass(kind?: LearnKind): string {
@@ -69,8 +68,8 @@ export type DayMeterPart = {
 /**
  * The day's blocks as equal parts, so the meter, the count and the percent say one thing. `held`
  * adds one part for time the day keeps for lessons not on the list yet, so the meter never looks
- * full while more is coming. Without a `label` it hides from assistive tech, for a screen whose
- * words already say it.
+ * full while more is coming. A day of one part draws no meter. Without a `label` it hides from
+ * assistive tech, for a screen whose words already say it.
  */
 export function DayMeter({
   className,
@@ -85,6 +84,10 @@ export function DayMeter({
   label?: string;
   parts: readonly DayMeterPart[];
 }) {
+  if (parts.length + Number(held) < 2) {
+    return null;
+  }
+
   return (
     <div
       aria-hidden={label ? undefined : true}

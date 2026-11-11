@@ -4,13 +4,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { useFormatDuration } from "../_utils/time-format";
-import { getBlockKind } from "../session/block-kind";
+import { getDayMeterParts } from "../session/day-meter-parts";
+import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { DayMeter, type DaySegmentState } from "./day-segments";
+import { DayMeter } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
-import { isFinished } from "./today-queue";
-import { getDaySegmentCount, getDayTime, getHeldMinutes } from "./today-time";
+import { getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
   if (block.status !== "active" || block.questions === 0) {
@@ -20,27 +20,12 @@ function getBlockShare(block: DayStep): number {
   return Math.min(1, block.answered / block.questions);
 }
 
-function getSegmentState(block: DayStep, current: boolean): DaySegmentState {
-  if (block.status === "completed") {
-    return "done";
-  }
-
-  if (block.status === "skipped") {
-    return "skipped";
-  }
-
-  return current ? "current" : "ahead";
-}
-
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, nextPosition } = today.session;
-  const done = blocks.filter((block) => isFinished(block)).length;
-
-  if (getDaySegmentCount(today.session) < 2) {
-    return null;
-  }
+  const { blocks, nextPosition, sessionBar } = today.session;
+  const rows = getSessionQueue({ blocks, nextPosition });
+  const next = blocks.find((block) => block.position === nextPosition);
 
   return (
     <DayMeter
@@ -48,14 +33,9 @@ export function DayProgress({ className }: { className?: string }) {
       held={getHeldMinutes(today.session) > 0}
       label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-        { done, total: blocks.length },
+        { done: sessionBar.completed, total: sessionBar.total },
       )}
-      parts={blocks.map((block) => ({
-        id: block.position,
-        kind: getBlockKind(block),
-        share: block.position === nextPosition ? getBlockShare(block) : 0,
-        state: getSegmentState(block, block.position === nextPosition),
-      }))}
+      parts={getDayMeterParts({ nextShare: next ? getBlockShare(next) : 0, rows })}
     />
   );
 }
@@ -89,8 +69,7 @@ export function DayMeta({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const speaking = useTodayContinueSpeaking();
-  const { blocks, minutes } = today.session;
-  const done = blocks.filter((block) => isFinished(block)).length;
+  const { blocks, minutes, sessionBar } = today.session;
 
   if (blocks.length === 0 && minutes.left === 0) {
     return null;
@@ -104,11 +83,11 @@ export function DayMeta({ className }: { className?: string }) {
       )}
       data-slot="today-day-meta"
     >
-      {!speaking && blocks.length > 0 && (
+      {!speaking && sessionBar.total > 0 && (
         <span>
           {t(
             "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-            { done, total: blocks.length },
+            { done: sessionBar.completed, total: sessionBar.total },
           )}
         </span>
       )}

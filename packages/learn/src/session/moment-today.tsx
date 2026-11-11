@@ -5,18 +5,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
-import { DayMeter, type DaySegmentState } from "../today/day-segments";
-import { getBlockKind } from "./block-kind";
+import { DayMeter } from "../today/day-segments";
+import { getDayMeterParts } from "./day-meter-parts";
 import { type SessionQueueRow } from "./session-queue-rows";
 import { type StudyMomentView } from "./session-types";
 
 const PERCENT = 100;
-
-const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], DaySegmentState> = {
-  ahead: "ahead",
-  done: "done",
-  next: "current",
-};
 
 function leadNumber(chunks: React.ReactNode) {
   return <span className="font-semibold tabular-nums">{chunks}</span>;
@@ -122,17 +116,11 @@ export function MomentToday({
         )}
       </p>
 
-      {rows.length + Number(lead === "open") > 1 && (
-        <DayMeter
-          fillingId={celebrate ? moment.blockId : null}
-          held={lead === "open"}
-          parts={rows.map((row) => ({
-            id: "id" in row.block ? row.block.id : row.block.position,
-            kind: getBlockKind(row.block),
-            state: SEGMENT_BY_STATE[row.state],
-          }))}
-        />
-      )}
+      <DayMeter
+        fillingId={celebrate ? moment.blockId : null}
+        held={lead === "open"}
+        parts={getDayMeterParts({ rows })}
+      />
 
       {caption && (
         <p
