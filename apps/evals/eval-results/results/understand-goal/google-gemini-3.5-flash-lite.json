@@ -2635,6 +2635,1031 @@
           "today": "2026-09-28"
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-statistics-is-the-same-everywhere-1",
+        "userInput": {
+          "goal": "Estatística",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-personal-finance-depends-on-a-country-not-named-1",
+        "userInput": {
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-personal-finance-depends-on-a-country-not-named-2",
+        "userInput": {
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "DE",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-taxes-in-germany-names-the-country-1",
+        "userInput": {
+          "goal": "Quero entender como funcionam os impostos na Alemanha",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "DE",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-taxes-in-germany-names-the-country-2",
+        "userInput": {
+          "goal": "Quero entender como funcionam os impostos na Alemanha",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "PT",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-where-they-live-names-the-country-1",
+        "userInput": {
+          "goal": "Moro em Lisboa e quero organizar as minhas finanças",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "PT",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-where-they-live-names-the-country-2",
+        "userInput": {
+          "goal": "Moro em Lisboa e quero organizar as minhas finanças",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-the-content-country-1",
+        "userInput": {
+          "goal": "Sou brasileiro e quero aprender a investir meu dinheiro",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-the-content-country-2",
+        "userInput": {
+          "goal": "Sou brasileiro e quero aprender a investir meu dinheiro",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-on-a-general-subject-1",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to learn Python for data analysis",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-on-a-general-subject-2",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to learn Python for data analysis",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-is-never-waiting-for-a-country-1",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-is-never-waiting-for-a-country-2",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "es",
+              "targetRegion": "UY"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-country-destination-1",
+        "userInput": {
+          "goal": "quero aprender espanhol porque vou me mudar para Montevidéu no ano que vem",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "es",
+              "targetRegion": "UY"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-country-destination-2",
+        "userInput": {
+          "goal": "quero aprender espanhol porque vou me mudar para Montevidéu no ano que vem",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "pt",
+              "targetRegion": "PT"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-country-destination-portugal-1",
+        "userInput": {
+          "goal": "I want to learn Portuguese before I move to Porto",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "pt",
+              "targetRegion": "PT"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-country-destination-portugal-2",
+        "userInput": {
+          "goal": "I want to learn Portuguese before I move to Porto",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "en",
+              "targetRegion": "AU"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-language-country-work-city-1",
+        "userInput": {
+          "goal": "Quiero aprender inglés para trabajar en Sídney",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "en",
+              "targetRegion": "AU"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "es-language-country-work-city-2",
+        "userInput": {
+          "goal": "Quiero aprender inglés para trabajar en Sídney",
+          "language": "es",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "de",
+              "targetRegion": "AT"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-country-named-variety-1",
+        "userInput": {
+          "goal": "I'd like to learn Austrian German",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "de",
+              "targetRegion": "AT"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-country-named-variety-2",
+        "userInput": {
+          "goal": "I'd like to learn Austrian German",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "fr",
+              "targetRegion": null
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-no-country-from-nationality-1",
+        "userInput": {
+          "goal": "I'm Canadian and I want to finally learn French",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "fr",
+              "targetRegion": null
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-no-country-from-nationality-2",
+        "userInput": {
+          "goal": "I'm Canadian and I want to finally learn French",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "es",
+              "targetRegion": null
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-no-country-named-1",
+        "userInput": {
+          "goal": "I want to learn Spanish",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "targetLanguage": "es",
+              "targetRegion": null
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-no-country-named-2",
+        "userInput": {
+          "goal": "I want to learn Spanish",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
     }
   ],
   "taskId": "understand-goal"
