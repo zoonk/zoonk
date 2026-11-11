@@ -312,7 +312,7 @@ test.describe("Today API", () => {
 
     expect(view.mockFunding).toStrictEqual(expected);
     expect(view.session.minutes.dailyGoal).toBe(14.875);
-    expect(Number.isInteger(view.session.week.time.targetMinutes)).toBe(false);
+    expect(view.session.week.days.find((weekDay) => weekDay.isToday)?.goalMinutes).toBe(14.875);
 
     const planResponse = await api.get(`/v1/goals/${goal.id}/plan`);
     expect(planResponse.status(), await planResponse.text()).toBe(200);

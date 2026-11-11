@@ -55,6 +55,24 @@ type RunSource = {
   userId: string;
 };
 
+/** A lesson played in a goal's study session is that goal's study, whichever goal is active. */
+async function findRunGoalId({
+  studySessionId,
+  userId,
+}: {
+  studySessionId: string | null;
+  userId: string;
+}): Promise<string | null> {
+  const session = studySessionId
+    ? await prisma.studySession.findFirst({
+        select: { goalId: true },
+        where: { id: studySessionId, userId },
+      })
+    : null;
+
+  return session?.goalId ?? findActiveGoalId(userId);
+}
+
 async function openLessonRun({
   bindSession,
   lesson,
@@ -64,7 +82,7 @@ async function openLessonRun({
   userId,
 }: RunSource) {
   const [goalId, existing] = await Promise.all([
-    findActiveGoalId(userId),
+    findRunGoalId({ studySessionId, userId }),
     findResumableRun(prisma, { lessonId: lesson.id, now, userId }),
   ]);
 
@@ -87,6 +105,7 @@ async function openLessonRun({
               ...(isJsonObject(resumable.contentIds) ? resumable.contentIds : {}),
               studySessionId,
             },
+            goalId,
           },
           where: { id: resumable.id },
         });

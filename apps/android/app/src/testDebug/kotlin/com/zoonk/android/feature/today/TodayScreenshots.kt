@@ -478,10 +478,6 @@ class TodayScreenshots {
                         },
                     )
                     put("nextStudyDate", "2026-10-29")
-                    putJsonObject("time") {
-                        put("studiedMinutes", 80)
-                        put("targetMinutes", 225)
-                    }
                 }
             val sessionBlocks = if (unopened) blocks.map { JsonObject(it - "id") } else blocks
             val session =

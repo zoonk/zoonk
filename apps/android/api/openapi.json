@@ -83599,12 +83599,12 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+                "description": "Actual recorded study seconds for this goal this week, summed before rounding down to minutes"
               },
               "targetMinutes": {
                 "type": "number",
                 "minimum": 0,
-                "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "description": "This goal's weekly time budget, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                 "example": 105
               }
             },
@@ -83613,7 +83613,7 @@
               "targetMinutes"
             ],
             "additionalProperties": false,
-            "description": "This week's study time against the learner's weekly budget, in the goal's week: the same numbers as Today's `week.time`"
+            "description": "This goal's study time this week against its weekly budget, in the goal's week"
           },
           "writtenPractice": {
             "nullable": true,
@@ -91315,7 +91315,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91334,17 +91334,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -91361,41 +91361,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           }
         },
         "required": [
@@ -91684,7 +91661,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91703,17 +91680,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -91730,41 +91707,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           },
           "blocks": {
             "type": "array",

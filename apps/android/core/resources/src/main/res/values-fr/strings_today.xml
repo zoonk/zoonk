@@ -185,7 +185,6 @@
   "today_week_day": "4027d9b220d1e62a115dbf721f012996eb312662abf7a94434aa8d4e24eacfbc",
   "today_week_day_planned": "ca76eb647c273070dbc53223552eaab9467767c65a90e97ad5d455f834137155",
   "today_week_day_studied_of": "6da770f378c5b9b196f9bf97aa805896a0840a3f128daf99abf90b325f91d335",
-  "today_week_days": "8a5b9eb284fb302d4c757a84a7d3c366a8a0a1c7dd4127f3a0b68101010d83ea",
   "today_week_deadline": "801629645a0de1deb90634c270366bf8db78d17962124b96dcc1f23caebdae2c",
   "today_week_exam_day": "408a467408a8557c041f08d1aedfa79a83e7c6c5f95d366f90416e3c17d18c2d",
   "today_week_full_review_detail": "e12ef4bb8e383a2d4198fbf6abd652172cdfc9d3b7a010c28d2698f0262fc918",
@@ -198,7 +197,6 @@
   "today_week_planned": "11d42423dc1f26fa6ade3a382b03707fed083d836579e6550ed568c10eb95203",
   "today_week_rest_day": "1fd5283662fc22c51c60f95eab007d43f6c5706df3e2a3efea3408ee450cd0ba",
   "today_week_studied": "baeab8c6b50b476370fdd19015287e843d1369f23bf915f6cbfe2552d4615eda",
-  "today_week_time": "2bfaf832d6313564545d1fd28390a8a88acbb50cea9bd1697ab189d2c1ec466d",
   "today_week_title": "e09406b7563fb74cbbac62a00097c5e4bbe454b1828eae0dcbcc6dc3e4186bfd",
   "today_week_today": "6452260abc6076eb832d3790bc43d66762bede4df66d57dee50707985caa5079",
   "today_welcome_back": "9d81fa6c1541fe4f0a90f8989030c141226cce423d8c63290f81f9c3d0909783"
@@ -353,14 +351,6 @@
     <string name="today_quick_explanation">Explication rapide</string>
     <string name="today_continue_explanation">Continuer l’explication</string>
     <string name="today_week_title">Cette semaine</string>
-    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
-    <plurals name="today_week_days">
-        <item quantity="one">%1$s jour sur %2$d</item>
-        <item quantity="many">%1$s jours sur %2$d</item>
-        <item quantity="other">%1$s jours sur %2$d</item>
-    </plurals>
-    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
-    <string name="today_week_time">%1$s sur %2$s d’étude cette semaine</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s : %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
