@@ -1,11 +1,14 @@
 package com.zoonk.android.ui.components
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Expected values are what main's `@zoonk/utils/plot-scale` and `getCategoryLabels` give. */
 class LessonVisualTest {
+    private val width = { label: String -> label.length * 6.6f + 6 }
+
     @Test
     fun niceDomainsAndTicksMatchMain() {
         val cases =
@@ -33,25 +36,29 @@ class LessonVisualTest {
     }
 
     @Test
-    fun categoryLabelsWrapThenSkipWhenAWordDoesntFit() {
-        val width = { label: String -> label.length * 6.6f + 6 }
-
-        assertEquals(CategoryLabels(listOf(listOf("2019"), listOf("2020")), 1), categoryLabels(40f, listOf("2019", "2020"), width))
+    fun barNamesStandUnderTheirBarsInAtMostTwoLines() {
+        assertEquals(listOf(listOf("2019"), listOf("2020")), uprightBarLabels(40f, listOf("2019", "2020"), width))
         assertEquals(
-            CategoryLabels(listOf(listOf("Gross", "income"), listOf("Net", "income")), 1),
-            categoryLabels(50f, listOf("Gross income", "Net income"), width),
+            listOf(listOf("Gross", "income"), listOf("Net", "income")),
+            uprightBarLabels(50f, listOf("Gross income", "Net income"), width),
         )
+    }
+
+    @Test
+    fun barsLieOnTheirSideWhenANameDoesntFitUnderItsBar() {
+        assertNull(uprightBarLabels(30f, listOf("Brazilian", "Argentinian", "Chilean"), width))
+        assertNull(uprightBarLabels(60f, listOf("North America", "South-East Asia"), width))
+    }
+
+    @Test
+    fun lineChartNamesWrapThenSkipWhenAWordDoesntFit() {
         assertEquals(
             CategoryLabels(listOf(listOf("North", "America"), listOf("South-", "East", "Asia")), 1),
             categoryLabels(60f, listOf("North America", "South-East Asia"), width),
         )
         assertEquals(
-            CategoryLabels(
-                listOf(listOf("Responses", "from the", "regional", "customer", "support team"), listOf("Junho")),
-                1,
-            ),
-            categoryLabels(90f, listOf("Responses from the regional customer support team", "Junho"), width),
+            CategoryLabels(listOf(listOf("2019"), listOf("2020"), listOf("2021"), listOf("2022")), 2),
+            categoryLabels(20f, listOf("2019", "2020", "2021", "2022"), width),
         )
-        assertEquals(3, categoryLabels(30f, listOf("Brazilian", "Argentinian", "Chilean"), width).step)
     }
 }
