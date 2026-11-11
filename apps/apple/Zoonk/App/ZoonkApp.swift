@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct ZoonkApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
   @State private var buddy: BuddyStore
   @State private var certificates: CertificatesStore
   @State private var completedLessons: CompletedLessonsStore
@@ -17,6 +18,7 @@ struct ZoonkApp: App {
   @State private var progress: ProgressStore
   @State private var session: SessionStore
   @State private var settings: SettingsStore
+  @State private var studyReminders: StudyRemindersStore
   @State private var studySession: StudySessionStore
   @State private var subscriptions: AppStoreSubscriptionStore
   @State private var today: TodayStore
@@ -65,6 +67,7 @@ struct ZoonkApp: App {
     _progress = State(initialValue: dependencies.progressStore)
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
+    _studyReminders = State(initialValue: dependencies.studyRemindersStore)
     _studySession = State(initialValue: dependencies.studySessionStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
     _today = State(initialValue: dependencies.todayStore)
@@ -102,6 +105,8 @@ struct ZoonkApp: App {
         .environment(progress)
         .environment(session)
         .environment(settings)
+        .environment(studyReminders)
+        .environment(PushNotifications.shared)
         .environment(studySession)
         .environment(subscriptions)
         .environment(today)
@@ -124,6 +129,8 @@ struct ZoonkApp: App {
 }
 
 private struct AppWindow: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PushNotifications.self) private var notifications
   @Environment(SessionStore.self) private var session
   @Environment(VoiceServices.self) private var voice
   @State private var router: AppRouter
@@ -151,6 +158,13 @@ private struct AppWindow: View {
       .onOpenURL { url in
         if !router.open(url: url) {
           session.handleGoogleSignInURL(url)
+        }
+      }
+      .onChange(of: notifications.openedGoalID, initial: true) {
+        if let goalID = notifications.takeOpenedGoal() {
+          Task {
+            await router.openStudyReminder(goalID: goalID) { await learner.switchGoal(to: $0) }
+          }
         }
       }
       // Once the saved sign-in is checked, so the result only reopens for a learner it can load for;

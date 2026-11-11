@@ -3,6 +3,7 @@ import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readFinishedChapter } from "../mind-maps/finished-chapters";
+import { findReminderOffer } from "../reminders/_utils/reminder-offer";
 import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyBlock } from "./_utils/finish-empty-block";
 import {
@@ -203,6 +204,7 @@ async function finishQuestionBlock(
       correct: settlement.correct,
       finishedChapter: null,
       netScore,
+      reminderOffer: null,
       testOutOffer: null,
       topHyperdrive: settlement.topHyperdrive,
       total: settlement.total,
@@ -249,7 +251,7 @@ export async function finishLessonBlock({
     trackBlockCompleted({ block: owned.block, seconds: finish.seconds, session: owned.session });
   }
 
-  const [comesBackOn, testOutOffer, finishedChapter] = await Promise.all([
+  const [comesBackOn, testOutOffer, finishedChapter, reminderOffer] = await Promise.all([
     getLessonComesBack({
       lessonId,
       targetDate: owned.session.goal?.targetDate ?? null,
@@ -261,6 +263,10 @@ export async function finishLessonBlock({
     prisma.learningEvent
       .findUniqueOrThrow({ select: { contentIds: true }, where: { id: finish.id } })
       .then((event) => readFinishedChapter(event.contentIds)),
+    findReminderOffer({
+      goalStudyTime: owned.session.goal?.studyTime ?? null,
+      userId: owned.userId,
+    }),
   ]);
 
   const completion = await completeBlockMoment({
@@ -276,6 +282,7 @@ export async function finishLessonBlock({
       correct: finish.correctAnswers,
       finishedChapter,
       netScore: null,
+      reminderOffer,
       testOutOffer,
       topHyperdrive: 0,
       total: finish.correctAnswers + finish.incorrectAnswers,

@@ -13,6 +13,8 @@ struct LessonCompletionView: View {
   let finish: () -> Void
   let close: () -> Void
 
+  @State private var reminderOffer: ReminderOfferState?
+
   var body: some View {
     PaneSplit {
       page {
@@ -27,6 +29,7 @@ struct LessonCompletionView: View {
     } secondary: {
       page {
         planRevealRow
+        reminderOfferCard
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }
@@ -36,9 +39,16 @@ struct LessonCompletionView: View {
         dayMoment
         finishedChapter
         planRevealRow
+        reminderOfferCard
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+    }
+    .onChange(of: offer, initial: true) {
+      if let offer, reminderOffer == nil {
+        reminderOffer = ReminderOfferState(
+          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
+      }
     }
     .completionMoments(day)
     .feedbackSheet(
@@ -147,6 +157,17 @@ struct LessonCompletionView: View {
   private var dayMoment: some View {
     if let day, !day.isEmpty {
       DayMomentSections(result: day)
+    }
+  }
+
+  private var offer: ReminderOffer? {
+    completion.status == .saved ? completion.summary?.block?.reminderOffer : nil
+  }
+
+  @ViewBuilder
+  private var reminderOfferCard: some View {
+    if let offer = Binding($reminderOffer) {
+      ReminderOfferCard(offer: offer)
     }
   }
 

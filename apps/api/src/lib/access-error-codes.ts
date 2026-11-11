@@ -7,4 +7,6 @@ export const accessErrorCodes = {
   emailNotVerified: "EMAIL_NOT_VERIFIED",
   glassesNotEarned: "GLASSES_NOT_EARNED",
   goalNotFound: "GOAL_NOT_FOUND",
+  phoneRequired: "PHONE_REQUIRED",
+  timeNotOnQuarterHour: "TIME_NOT_ON_QUARTER_HOUR",
 } as const;

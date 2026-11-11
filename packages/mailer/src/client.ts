@@ -6,17 +6,39 @@ import { getLocalInboxUrl } from "./local-inbox";
 const apiUrl = "https://api.zeptomail.com/v1.1/email";
 const localInboxUrl = getLocalInboxUrl();
 
+/** Study reminders go through their own ZeptoMail mail agent, so their reputation stays apart from sign-in codes. */
+const SENDERS = {
+  hello: { address: "hello@zoonk.com", apiKeyName: "MAILER_API_KEY" },
+  reminders: { address: "reminders@zoonk.com", apiKeyName: "MAILER_REMINDERS_API_KEY" },
+} as const;
+
 type SendEmailParams = {
   to: string;
   subject: string;
   htmlBody?: string;
   textBody?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
+  sender?: keyof typeof SENDERS;
 };
 
+/** ZeptoMail refused the email; its status and `Retry-After` let the caller decide whether to try again. */
+export class MailerError extends Error {
+  readonly retryAfter: string | null;
+  readonly status: number;
+
+  constructor({ retryAfter, status }: { retryAfter: string | null; status: number }) {
+    super(`Email send failed with status ${status}`);
+    this.name = "MailerError";
+    this.retryAfter = retryAfter;
+    this.status = status;
+  }
+}
+
 export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Response>> {
-  const { to, subject, htmlBody, textBody, replyTo } = params;
-  const apiKey = process.env.MAILER_API_KEY;
+  const { to, subject, htmlBody, textBody, replyTo, headers, sender = "hello" } = params;
+  const { address, apiKeyName } = SENDERS[sender];
+  const apiKey = process.env[apiKeyName];
 
   if (!apiKey) {
     return handleMissingMailerApiKey(params);
@@ -25,10 +47,11 @@ export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Res
   try {
     const response = await fetch(apiUrl, {
       body: JSON.stringify({
-        from: { address: "hello@zoonk.com", name: "Zoonk" },
+        from: { address, name: "Zoonk" },
         ...(htmlBody && { htmlBody }),
         ...(textBody && { textbody: textBody }),
         ...(replyTo && { reply_to: [{ address: replyTo }] }),
+        ...(headers && { mime_headers: headers }),
         subject,
         to: [{ email_address: { address: to } }],
       }),
@@ -43,7 +66,13 @@ export async function sendEmail(params: SendEmailParams): Promise<SafeReturn<Res
     if (!response.ok) {
       logError("Email send failed", await response.text());
 
-      return { data: null, error: new Error(`Email send failed: ${response.statusText}`) };
+      return {
+        data: null,
+        error: new MailerError({
+          retryAfter: response.headers.get("Retry-After"),
+          status: response.status,
+        }),
+      };
     }
 
     return { data: response, error: null };
@@ -62,7 +91,9 @@ async function handleMissingMailerApiKey(params: SendEmailParams): Promise<SafeR
     return { data: Response.json({ ok: true }), error: null };
   }
 
-  const error = new Error("MAILER_API_KEY is required to send email outside development.");
+  const error = new Error(
+    `${SENDERS[params.sender ?? "hello"].apiKeyName} is required to send email outside development.`,
+  );
 
   logError("Email send failed", error.message);
 

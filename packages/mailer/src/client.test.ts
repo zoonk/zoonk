@@ -101,4 +101,35 @@ describe("sendEmail", () => {
     expect(JSON.stringify(errorLog.mock.calls)).not.toContain(otpBody);
     expect(JSON.stringify(info.mock.calls)).not.toContain(otpBody);
   });
+
+  it("sends reminders from their own agent with custom headers, and reports a refusal's status", async () => {
+    vi.stubEnv("MAILER_REMINDERS_API_KEY", "reminders-key");
+
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("busy", { headers: { "Retry-After": "30" }, status: 429 }));
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const sendEmail = await getSendEmail();
+    const { MailerError } = await import("./client");
+
+    const { error } = await sendEmail({
+      headers: { "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+      sender: "reminders",
+      subject: "Study reminder",
+      textBody: "Italian is next",
+      to: "user@example.com",
+    });
+
+    expect(error).toStrictEqual(new MailerError({ retryAfter: "30", status: 429 }));
+
+    const [, init] = fetchMock.mock.calls[0] ?? [];
+
+    expect(init?.headers).toMatchObject({ Authorization: "reminders-key" });
+
+    expect(JSON.parse(typeof init?.body === "string" ? init.body : "")).toMatchObject({
+      from: { address: "reminders@zoonk.com" },
+      mime_headers: { "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+    });
+  });
 });
