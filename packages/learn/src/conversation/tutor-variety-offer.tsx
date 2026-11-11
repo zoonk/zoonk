@@ -8,6 +8,7 @@ import { LanguagesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { StatusRegion } from "../_components/status-region";
 import { useAppLocale } from "../_utils/locale";
 import { useVarietyName, useVarietyNote } from "../language-variety/use-variety-words";
 import { OfferButton, OfferCard, OfferTile } from "./tutor-offer-card";
@@ -45,6 +46,7 @@ export function VarietyOffer({
   const [isPending, startTransition] = useTransition();
   const [outcome, setOutcome] = useState<"failed" | "saved" | null>(null);
   const { targetLanguage: language, targetRegion: region, taughtRegion } = offer;
+  const isSaved = saved || outcome === "saved";
 
   const apply = () => {
     setOutcome(null);
@@ -75,11 +77,11 @@ export function VarietyOffer({
       tile={<VarietyTile flag={offer.languageFlag} />}
       title={varietyName({ language, region })}
     >
-      {saved || outcome === "saved" ? (
-        <p className="text-muted-foreground text-sm" role="status">
-          {t("Saved. You can change it in your plan.")}
-        </p>
-      ) : (
+      <StatusRegion className="text-muted-foreground text-sm">
+        {isSaved && t("Saved. You can change it in your plan.")}
+      </StatusRegion>
+
+      {!isSaved && (
         <form action={apply}>
           <OfferButton busy={isPending} type="submit">
             {t("Apply")}

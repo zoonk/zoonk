@@ -10,6 +10,7 @@ import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
 import { CHIP_CLASS } from "../_components/chip";
 import { ChangeSaveError } from "../_components/save-error";
+import { StatusRegion } from "../_components/status-region";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -258,11 +259,7 @@ export function TutorPlanChange({
       {footnote && <p className="text-muted-foreground text-xs leading-snug">{footnote}</p>}
       {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
-      {statusLine && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {statusLine}
-        </p>
-      )}
+      <StatusRegion className="text-muted-foreground text-sm">{statusLine}</StatusRegion>
 
       <ChangeActions
         answer={answer}
