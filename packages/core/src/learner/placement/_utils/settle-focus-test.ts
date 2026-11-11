@@ -9,7 +9,7 @@ import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
 import { toFocus } from "../focus-test-view";
-import { type PlacementState } from "./load-placement-state";
+import { type PlacementState, loadPlacementState } from "./load-placement-state";
 import { saveTestSummary } from "./test-sitting";
 
 /**
@@ -65,6 +65,16 @@ export async function settleFocusTest({
     source: FOCUS_TEST_SOURCE,
     timeZone,
   });
+
+  if (proposed.status === "notDue") {
+    return loadPlacementState({
+      goalId,
+      plan: await loadPlacementPlan(goalId),
+      timeZone,
+      today,
+      userId,
+    });
+  }
 
   if (proposed.status !== "proposed") {
     return state;

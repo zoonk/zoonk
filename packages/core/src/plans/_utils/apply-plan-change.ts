@@ -29,6 +29,7 @@ import { getGoalUpdate } from "./plan-unchanged";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type ComputedChange, type PlanChangeRecord, revalidatePlanTags } from "./replan";
+import { savePlanProposal } from "./save-plan-proposal";
 import { getAskedAreas, getChangePlanning } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
@@ -278,7 +279,7 @@ export async function proposeChange({
   approval?: "always" | "whenLarge";
   notice?: NoticeChange | null;
   payload?: Pick<PlanChangePayload, "releaseId">;
-}): Promise<AppliedChange | UnchangedPlan | { status: "saved" }> {
+}): Promise<AppliedChange | UnchangedPlan | { status: "notDue" | "saved" }> {
   const result = await applyChangeOperations({ context, noticeGraph: notice?.graph, operations });
 
   if ("error" in result) {
@@ -309,44 +310,29 @@ export async function proposeChange({
     return commitEdit({ change, context, extraWrites, operations, provenance, reason, source });
   }
 
-  const proposal = await writePlanMetadata({
+  const proposal = await savePlanProposal({
     context,
-    write: async (tx) => {
-      const created = await tx.planChange.create({
-        data: {
-          kind: "edited",
-          payload: toPlanChangePayload({
-            ...payload,
-            effect: change.effect,
-            noticeEdition: notice?.edition ?? null,
-            noticeGraph: notice?.graph ?? null,
-            noticeId: notice?.noticeId ?? null,
-            officialDate,
-            operations: [...operations],
-            previewBasis: getPlanPreviewBasis(context),
-            source,
-          }),
-          planId: context.plan.id,
-          reason,
-          status: "proposed",
-          ...provenance,
-        },
-      });
-
-      await extraWrites?.(tx);
-
-      const replaced = await replaceWaitingProposals({
-        applied: false,
-        except: created.id,
-        operations,
-        planId: context.plan.id,
-        source,
-        tx,
-      });
-
-      return { id: created.id, replaced };
-    },
+    extraWrites,
+    operations,
+    payload: toPlanChangePayload({
+      ...payload,
+      effect: change.effect,
+      noticeEdition: notice?.edition ?? null,
+      noticeGraph: notice?.graph ?? null,
+      noticeId: notice?.noticeId ?? null,
+      officialDate,
+      operations: [...operations],
+      previewBasis: getPlanPreviewBasis(context),
+      source,
+    }),
+    provenance,
+    reason,
+    source,
   });
+
+  if (!proposal) {
+    return { status: "notDue" };
+  }
 
   revalidatePlanTags(context.goal.userId);
 

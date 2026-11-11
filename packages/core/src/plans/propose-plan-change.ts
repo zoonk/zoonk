@@ -6,7 +6,10 @@ import { type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation } from "./plan-contract";
 
-export type PlanProposalResult = AppliedChange | UnchangedPlan | { status: "notFound" | "saved" };
+export type PlanProposalResult =
+  | AppliedChange
+  | UnchangedPlan
+  | { status: "notDue" | "notFound" | "saved" };
 
 /**
  * Callers pass a goal id they already resolved for the learner; `reason` is the sentence the

@@ -6,6 +6,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import * as proposals from "../../plans/propose-plan-change";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
@@ -137,6 +138,68 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
 
       await expect(sit(goal.id, 0)).resolves.toMatchObject({ state: "proposed" });
       await expect(read(goal.id)).resolves.toMatchObject({ changes: ["replaced", "proposed"] });
+    },
+  );
+
+  it.each(["declined", "undone"] as const)(
+    "keeps an in-flight completion from proposing a set the learner just %s",
+    async (status) => {
+      const { goal } = await shortPlanExamGoalFixture({ goal: SHOWN });
+      const placement = await startSitting(goal.id);
+
+      await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer: { dontKnow: true }, durationMs: 20_000, itemId: placement.next!.itemId },
+      });
+
+      const paused = Promise.withResolvers<null>();
+      const resume = Promise.withResolvers<null>();
+      const original = proposals.proposePlanChange;
+
+      const spy = vi.spyOn(proposals, "proposePlanChange").mockImplementationOnce(async (input) => {
+        paused.resolve(null);
+        await resume.promise;
+        return original(input);
+      });
+
+      const slow = finishGoalPlacement({ goalId: goal.id, input: {} });
+
+      try {
+        await paused.promise;
+        const fast = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+        if (fast.status !== "ready") {
+          throw new Error(fast.status);
+        }
+
+        const changeId = fast.completion.focusTest!.checkpoint!.focus!.proposal!.id;
+
+        if (status === "undone") {
+          const applied = await decidePlanChange({
+            changeId,
+            goalId: goal.id,
+            input: { status: "applied" },
+          });
+
+          if (applied.status !== "updated") {
+            throw new Error(applied.status);
+          }
+        }
+
+        await expect(
+          decidePlanChange({ changeId, goalId: goal.id, input: { status } }),
+        ).resolves.toMatchObject({ status: "updated" });
+      } finally {
+        resume.resolve(null);
+        await slow.finally(() => spy.mockRestore());
+      }
+
+      await expect(read(goal.id)).resolves.toStrictEqual({ changes: [status], focus: "declined" });
+
+      await expect(slow).resolves.toMatchObject({
+        completion: { focusTest: { checkpoint: { focus: { proposal: null, state: "declined" } } } },
+        status: "ready",
+      });
     },
   );
 
