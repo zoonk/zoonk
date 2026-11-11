@@ -163,6 +163,30 @@ class LessonVisualScreenshots {
                         30,
                         22,
                     ).copy(chart = Chart.Kind.Line),
+                "five-series" to months(5),
+                "five-series-line" to months(5).copy(chart = Chart.Kind.Line),
+                "eight-series" to months(8),
+                "eight-series-line" to months(8).copy(chart = Chart.Kind.Line),
+            )
+
+        private fun months(series: Int) =
+            Chart(
+                chart = Chart.Kind.Bar,
+                title = "Ofícios por região",
+                categoryLabel = "Mês",
+                valueLabel = "Ofícios",
+                categories = listOf("Jan", "Fev", "Mar", "Abr"),
+                series =
+                    listOf(
+                        Chart.Series("Norte", listOf(12.0, 18.0, 24.0, 31.0)),
+                        Chart.Series("Nordeste", listOf(20.0, 22.0, 19.0, 27.0)),
+                        Chart.Series("Sudeste", listOf(8.0, 14.0, 22.0, 16.0)),
+                        Chart.Series("Sul", listOf(28.0, 25.0, 30.0, 36.0)),
+                        Chart.Series("Centro-Oeste", listOf(15.0, 11.0, 13.0, 21.0)),
+                        Chart.Series("Capital", listOf(33.0, 29.0, 26.0, 24.0)),
+                        Chart.Series("Interior", listOf(5.0, 9.0, 12.0, 10.0)),
+                        Chart.Series("Litoral", listOf(24.0, 31.0, 35.0, 40.0)),
+                    ).take(series),
             )
 
         private fun bars(
