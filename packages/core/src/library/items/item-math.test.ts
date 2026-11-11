@@ -118,6 +118,105 @@ describe(withNewNumbers, () => {
     ).toMatchObject({ question: "Em 2025, mais 5 anos?" });
   });
 
+  it("skips draws that make a whole count in the written question fractional", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 15.5,
+      commonMistakes: [
+        { expression: "increase - decrease", misconception: "Subtracts rates", reason: "No." },
+      ],
+      solution:
+        "round((weekday * increase / 100 - weekend * decrease / 100) / (weekday + weekend) * 100, 1)",
+      steps: [{ expression: "weekday * increase / 100", text: "{result} more weekday customers." }],
+      tolerance: { kind: "absolute", value: 0.05 },
+      variables: [
+        { max: 500, min: 300, name: "weekday", step: 10, unit: "customers", value: 400 },
+        { max: 200, min: 100, name: "weekend", step: 10, unit: "customers", value: 150 },
+        { max: 40, min: 20, name: "increase", step: 5, unit: "%", value: 25 },
+        { max: 15, min: 5, name: "decrease", step: 5, unit: "%", value: 10 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      context: "{weekday} weekday and {weekend} weekend customers; +{increase}% and -{decrease}%.",
+      math,
+      question: "Percent change?",
+      random: sequence(0.25, 0.25, 0.25, 0.25),
+    });
+
+    expect(result.steps).toStrictEqual(["60 more weekday customers."]);
+  });
+
+  it("skips draws that flip the sign of a computed value", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 2,
+      commonMistakes: [{ expression: "income / months", misconception: "No costs", reason: "No." }],
+      solution: "(income - costs) / months",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [
+        { max: 6, min: 2, name: "months", step: 1, unit: null, value: 2 },
+        { max: 12, min: 4, name: "costs", step: 2, unit: "R$", value: 4 },
+        { max: 24, min: 8, name: "income", step: 4, unit: "R$", value: 8 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      math,
+      question: "{income} earned and {costs} spent over {months} months. Profit per month?",
+      random: sequence(0, 0.999, 0, 0, 0, 0.5),
+    });
+
+    expect(result.values).toStrictEqual({ costs: 4, income: 16, months: 2 });
+  });
+
+  it("skips draws that make a count fractional even when no step shows it", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 15,
+      commonMistakes: [{ expression: "increase", misconception: "Ignores losses", reason: "No." }],
+      solution: "round((weekday * increase / 100 - weekend * decrease / 100) / weekday * 100)",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0.5 },
+      variables: [
+        { max: 500, min: 400, name: "weekday", step: 100, unit: "customers", value: 400 },
+        { max: 200, min: 180, name: "weekend", step: 10, unit: "customers", value: 200 },
+        { max: 20, min: 20, name: "increase", step: 5, unit: "%", value: 20 },
+        { max: 10, min: 5, name: "decrease", step: 5, unit: "%", value: 10 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      context: "{weekday} weekday and {weekend} weekend customers; +{increase}% and -{decrease}%.",
+      math,
+      question: "Percent change against weekdays?",
+      random: sequence(0, 0.5, 0, 0, 0, 0, 0, 0.999),
+    });
+
+    expect(result.values).toStrictEqual({ decrease: 10, increase: 20, weekday: 400, weekend: 180 });
+  });
+
+  it("holds a step that shows a variable to its written form", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 4,
+      commonMistakes: [{ expression: "guests", misconception: "One each", reason: "No." }],
+      solution: "2 * guests",
+      steps: [{ expression: "guests", text: "There are {result} guests." }],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [{ max: 3, min: 2, name: "guests", step: 0.5, unit: null, value: 2 }],
+    };
+
+    const result = withNewNumbers({
+      math,
+      question: "{guests} guests, 2 tickets each?",
+      random: () => 0.5,
+    });
+
+    expect(result.steps).toStrictEqual(["There are 2 guests."]);
+  });
+
   it("keeps the checked numbers when no new draw works", () => {
     const math: GeneratedMathProblem = {
       ...discountMath,

@@ -6,7 +6,7 @@ import { getScreenPictures } from "./screen-pictures";
 
 const WRITTEN_AT = new Date("2026-10-13T00:00:00.000Z");
 const PICTURE_WAIT_MS = 300_000;
-const row = { generatedAt: WRITTEN_AT, mediaAsset: null };
+const row = { generatedAt: WRITTEN_AT, mediaAsset: null, pictureRemovedAt: null };
 
 describe("picture omission and completion share a generation deadline", () => {
   afterEach(() => vi.useRealTimers());
