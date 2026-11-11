@@ -167,6 +167,7 @@ export function GoalSwitcher({
   explanationHref,
   exploreHref,
   goals,
+  hasAccount,
   newGoalHref,
   onSelect,
   onStartWaiting,
@@ -177,6 +178,7 @@ export function GoalSwitcher({
   explanationHref: string;
   exploreHref: string;
   goals: SwitcherGoal[];
+  hasAccount: boolean;
   newGoalHref: string;
   /** Resolves to whether the goal is now the active one. */
   onSelect: (goalId: string) => Promise<boolean>;
@@ -252,6 +254,7 @@ export function GoalSwitcher({
             {waitingGoals.map((goal) => (
               <WaitingOption
                 goal={goal}
+                hasAccount={hasAccount}
                 isStarting={isPending}
                 key={goal.id}
                 onStart={(waitingGoalId) =>

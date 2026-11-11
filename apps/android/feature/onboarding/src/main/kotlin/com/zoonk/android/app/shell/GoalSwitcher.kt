@@ -111,6 +111,7 @@ fun GoalSwitcher(
                 followed,
                 learner.waitingGoals,
                 explanations,
+                hasAccount = !learner.identity.isAnonymous,
                 onDismiss = { expanded = false },
                 navigator = navigator,
                 viewModel = viewModel,
@@ -148,6 +149,7 @@ private fun MenuItems(
     followed: List<LearnerSummaryGoal>,
     waiting: List<LearnerSummaryWaitingGoal>,
     explanations: List<LearnerSummaryGoal>,
+    hasAccount: Boolean,
     onDismiss: () -> Unit,
     navigator: AppNavigator,
     viewModel: GoalSwitcherViewModel,
@@ -181,7 +183,11 @@ private fun MenuItems(
                         Text(
                             text =
                                 stringResource(
-                                    if (goal.locked) R.string.goal_switcher_starts_with_plus else R.string.goal_switcher_ready_to_start,
+                                    when {
+                                        !goal.locked -> R.string.goal_switcher_ready_to_start
+                                        hasAccount -> R.string.goal_switcher_starts_with_plus
+                                        else -> R.string.goal_switcher_starts_with_free_account
+                                    },
                                 ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium,
@@ -191,10 +197,10 @@ private fun MenuItems(
                 leadingIcon = { GoalMark(name) },
                 onClick = {
                     onDismiss()
-                    if (goal.locked) {
-                        navigator.open(AppRoute.Subscription)
-                    } else {
-                        viewModel.start(goal) { navigator.open(AppRoute.GoalSetup(it)) }
+                    when {
+                        !goal.locked -> viewModel.start(goal) { navigator.open(AppRoute.GoalSetup(it)) }
+                        hasAccount -> navigator.open(AppRoute.Subscription)
+                        else -> navigator.open(AppRoute.Login)
                     }
                 },
             )

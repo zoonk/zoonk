@@ -237,7 +237,13 @@ private struct GoalSwitcher: View {
               } label: {
                 Text(goal.displayName)
 
-                if goal.locked {
+                if goal.locked && isGuest {
+                  Text(
+                    "Starts with a free account", tableName: "Navigation",
+                    comment:
+                      "Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like \"Starts with Plus\" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up"
+                  )
+                } else if goal.locked {
                   Text(
                     "Starts with Plus", tableName: "Navigation",
                     comment:
@@ -344,7 +350,7 @@ private struct GoalSwitcher: View {
 
   private func start(_ goal: LearnerWaitingGoal) {
     guard !goal.locked else {
-      router.present(.subscription)
+      router.present(isGuest ? .signIn : .subscription)
       return
     }
 
@@ -361,6 +367,10 @@ private struct GoalSwitcher: View {
         showsFailure = true
       }
     }
+  }
+
+  private var isGuest: Bool {
+    summary.identity.isAnonymous
   }
 
   private var shownGoal: LearnerGoal? {

@@ -90,6 +90,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
       explanationHref="/explain"
       exploreHref="/courses"
       goals={toSwitcherGoals(learner.summary.goals)}
+      hasAccount={!learner.summary.identity.isAnonymous}
       newGoalHref="/start"
       onSelect={switchGoal}
       onStartWaiting={startWaiting}

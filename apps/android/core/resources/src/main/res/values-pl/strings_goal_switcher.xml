@@ -12,6 +12,7 @@
   "goal_switcher_ready_to_start": "4e810a4ce5094384edc4e71079a04b6a636451f187cff473738f7d04b2e1270e",
   "goal_switcher_start_failed": "108f83a8ec761ec346e3f80326824f93938ba52816ba5de73576f3471eeb2e9c",
   "goal_switcher_start_goal": "11ad4758b3aece2a7c92c2e4b34f921a2d77cf4228eb5bc36e4ff3c962d26f40",
+  "goal_switcher_starts_with_free_account": "9ece3685b7f73660d0ec5e8a4b839a5f7a194c7b3df7f48255ee4c333dc60eb1",
   "goal_switcher_starts_with_plus": "d87c9a7907c6be78f010a57d17e26bace8356248d0624ebbea2e7745e776e7ba",
   "goal_switcher_your_goals": "189aec31990202f801326be80f3366653bd4780c4a08d23816bb3cf11f7f79eb"
 }
@@ -31,6 +32,8 @@
     <string name="goal_switcher_failed">Nie udało się zmienić celu. Spróbuj ponownie.</string>
     <!-- Under a goal the learner typed with their goals that their plan didn't start, because the free plan follows only so many goals at the same time (not a cap on new goals per day or month). Plus is the name of Zoonk's paid plan, not the word "more". -->
     <string name="goal_switcher_starts_with_plus">Możesz zacząć z pakietem Plus</string>
+    <!-- Under a goal a guest typed with their goals that they can't start yet, because without an account they follow one goal at a time. A "free account" is a signed-up account on the free plan, not the paid plan; it follows more goals at once (goals followed at the same time, not new goals started per day or month). The goal comes with them when they create the account. Tapping it opens sign-up. -->
+    <string name="goal_switcher_starts_with_free_account">Wymaga bezpłatnego konta</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Możesz zacząć</string>
     <string name="goal_switcher_start_failed">Nie udało się rozpocząć pracy nad tym celem. Spróbuj ponownie.</string>
