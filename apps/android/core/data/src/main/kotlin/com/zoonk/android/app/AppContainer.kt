@@ -206,7 +206,7 @@ class AppContainer private constructor(
             scope = scope,
         )
 
-    val plans = PlanStore(LivePlanApi(api), cache)
+    val plans = PlanStore(LivePlanApi(api), cache, learnerSummary.summary)
     val goalContent = GoalContentStore(LiveGoalContentApi(api), cache)
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 

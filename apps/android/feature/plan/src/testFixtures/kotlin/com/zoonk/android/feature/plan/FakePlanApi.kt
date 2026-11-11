@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.plan
 
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -18,6 +20,12 @@ import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
+
+/** For a test that never reads the learner summary a goal's saves update. */
+fun PlanStore(
+    api: PlanApi,
+    cache: AppCache,
+) = PlanStore(api, cache, cache.resource(Audience.SignedIn) { null })
 
 class FakePlanApi : PlanApi {
     var plans = 0
@@ -124,13 +132,13 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         displayName: String,
-    ) = Unit
+    ) = displayName
 
     override suspend fun setRegion(
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    ) = Unit
+    ) = region
 
     override suspend fun change(
         session: AuthenticatedSession,

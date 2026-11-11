@@ -17,6 +17,7 @@ import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.GoalProgress
+import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
@@ -103,18 +104,19 @@ interface PlanApi {
         status: LearnerSummaryGoal.Status,
     )
 
+    /** Answers the name saved. */
     suspend fun rename(
         session: AuthenticatedSession,
         goalId: UUID,
         displayName: String,
-    )
+    ): String
 
-    /** A language goal's country, or null for none: only the buddy and practice calls change, never the plan. */
+    /** A language goal's country, or null for none: only the buddy and practice calls change, never the plan. Answers the country saved. */
     suspend fun setRegion(
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    )
+    ): String?
 
     suspend fun change(
         session: AuthenticatedSession,
@@ -241,17 +243,13 @@ class LivePlanApi(
         session: AuthenticatedSession,
         goalId: UUID,
         displayName: String,
-    ) {
-        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("displayName", displayName) }) }
-    }
+    ) = perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("displayName", displayName) }) }.goal.displayName
 
     override suspend fun setRegion(
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    ) {
-        perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("targetRegion", region) }) }
-    }
+    ) = perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("targetRegion", region) }) }.goal.targetRegion
 
     override suspend fun change(
         session: AuthenticatedSession,
@@ -346,6 +344,7 @@ data class GoalEnd(
 class PlanStore(
     private val api: PlanApi,
     private val cache: AppCache,
+    private val summary: Resource<LearnerSummary>,
     private val now: () -> Instant = Clock.System::now,
 ) {
     val plan: KeyedResources<UUID, PlanRead> =
@@ -389,14 +388,40 @@ class PlanStore(
         goalId: UUID,
         displayName: String,
     ): MutationResult<Unit> =
-        cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.rename(it, goalId, displayName) }
+        saveGoal(goalId, WRITE_DOMAINS + DataDomain.LearningProfile, { api.rename(it, goalId, displayName) }) { copy(displayName = it) }
 
     /** From the Plan's picker or the buddy's card; the plan stays as it is. */
     suspend fun setRegion(
         goalId: UUID,
         region: String?,
     ): MutationResult<Unit> =
-        cache.mutate(invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile)) { api.setRegion(it, goalId, region) }
+        saveGoal(
+            goalId,
+            setOf(DataDomain.Goals, DataDomain.LearningProfile),
+            { api.setRegion(it, goalId, region) },
+        ) { copy(targetRegion = it) }
+
+    /** The summary shows what the server saved even when reading it again fails, so a pick never looks undone. */
+    private suspend fun <T> saveGoal(
+        goalId: UUID,
+        invalidating: Set<DataDomain>,
+        write: suspend (AuthenticatedSession) -> T,
+        saved: LearnerSummaryGoal.(T) -> LearnerSummaryGoal,
+    ): MutationResult<Unit> =
+        when (val result = cache.mutate(invalidating, write = write)) {
+            is MutationResult.Done -> {
+                summary.update { shown -> shown.copy(goals = shown.goals.map { if (it.id == goalId) it.saved(result.value) else it }) }
+                MutationResult.Done(Unit)
+            }
+
+            is MutationResult.Failed -> {
+                result
+            }
+
+            MutationResult.Obsolete -> {
+                MutationResult.Obsolete
+            }
+        }
 
     /** A learner's edit, from their tap. */
     suspend fun change(
