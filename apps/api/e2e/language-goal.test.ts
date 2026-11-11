@@ -432,7 +432,8 @@ test.describe("Language goal API", () => {
       data: { answerIndex: 0, questionId: first.next.question.id },
     });
 
-    expect(stale.status()).toBe(422);
+    expect(stale.status()).toBe(200);
+    expect(await stale.json()).toMatchObject({ answered: 1, lastCorrect: null });
 
     const finished = await apiContext.post(`${path}/completions`);
 

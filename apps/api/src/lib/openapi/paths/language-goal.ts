@@ -81,7 +81,7 @@ const levelTestPaths = {
     post: {
       ...common,
       description:
-        "Answers the test's current question. `answerIndex` null means \"I don't know\".",
+        "Answers the test's current question. `answerIndex` null means \"I don't know\". An answer to any other question, such as one sent twice or one the test no longer asks, saves nothing and returns the test as it is now.",
       operationId: "answerLanguageLevelTest",
       requestBody: {
         content: { "application/json": { schema: levelTestAnswerInputSchema } },

@@ -2,8 +2,15 @@ import { describe, expect, it } from "vitest";
 import { normalizeDistractorKey, sanitizeDistractors } from "./distractors";
 
 describe(normalizeDistractorKey, () => {
-  it("normalizes punctuation, accents, and spacing into one lookup key", () => {
-    expect(normalizeDistractorKey("  Café!  ")).toBe(normalizeDistractorKey("cafe"));
+  it("normalizes punctuation, case, spacing and Unicode composition into one lookup key", () => {
+    expect(normalizeDistractorKey("  Café!  ")).toBe(normalizeDistractorKey("cafe\u0301"));
+  });
+
+  it("keeps words that differ only by accents or tone marks apart", () => {
+    const keys = ["ma", "má", "mà", "mả", "mã", "mạ"].map((word) => normalizeDistractorKey(word));
+
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(normalizeDistractorKey("tú")).not.toBe(normalizeDistractorKey("tu"));
   });
 });
 
