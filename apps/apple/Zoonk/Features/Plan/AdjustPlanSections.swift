@@ -177,6 +177,7 @@ private struct PlanExamChoiceSection: View {
 
 /// Only when the learner's time doesn't cover everything in depth.
 private struct PlanFocusSection: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
   @State private var picked: Set<String>?
 
@@ -196,6 +197,7 @@ private struct PlanFocusSection: View {
       Section {
         if let focusTest = plan.focusTest {
           Button {
+            dismiss()
             router.open(.focusTest(goalId: goal.id))
           } label: {
             ListRow(

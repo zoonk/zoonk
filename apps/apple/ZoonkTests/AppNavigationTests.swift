@@ -102,6 +102,17 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
+  func testOpeningATaskAlreadyOpenGoesBackToItInsteadOfStackingACopy() {
+    let router = AppRouter()
+    router.open(.focusTest(goalId: "g1"))
+    router.open(.essay(blockId: "b1"))
+
+    router.open(.focusTest(goalId: "g1"))
+
+    XCTAssertEqual(router.tasks, [.focusTest(goalId: "g1")])
+  }
+
+  @MainActor
   func testEachWindowPlaysItsOwnQuestionBlock() {
     let first = AppRouter()
     let second = AppRouter()

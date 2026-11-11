@@ -482,13 +482,7 @@ extension AppRouter {
     }
 
     guard let step = destination.step else {
-      if let session = tasks.firstIndex(of: .session) {
-        task(at: session + 1).wrappedValue = nil
-      } else {
-        open(.session)
-      }
-
-      return
+      return open(.session)
     }
 
     if tasks.contains(.session) {
