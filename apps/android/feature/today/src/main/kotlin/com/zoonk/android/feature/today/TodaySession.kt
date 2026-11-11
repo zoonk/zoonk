@@ -58,8 +58,8 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
+import com.zoonk.android.feature.session.dayParts
 import com.zoonk.android.feature.session.drawsDayProgress
-import com.zoonk.android.feature.session.learnKind
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.feature.subscription.PlusMark
@@ -69,10 +69,8 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
@@ -532,18 +530,14 @@ private fun TodayDayProgress(
     modifier: Modifier,
 ) {
     val day = model.day
-    val tertiary = MaterialTheme.colorScheme.tertiary
-    val fills =
-        day.steps.filter { it.status != StudyBlock.Status.SKIPPED }.map { step ->
-            when {
-                step.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(tertiary)
-                step.position == day.nextPosition -> MeterPart.Fill.Place(step.share)
-                step.learnKind == LearnKind.Lesson -> MeterPart.Fill.Track
-                else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
-            }
-        }
+    val next = day.steps.firstOrNull { it.position == day.nextPosition }
 
-    DayProgress(fills, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(day.sessionBar))
+    DayProgress(
+        dayParts(day.steps, isNext = { it.position == day.nextPosition }, nextShare = next?.share ?: 0f),
+        held = day.heldMinutes > 0,
+        modifier,
+        contentDescription = stepsDone(day.sessionBar),
+    )
 }
 
 private val DayStep.share: Float
@@ -699,4 +693,3 @@ private fun TodayDayStatus(
 private const val DONE_ROWS = 1
 private const val FOLD_MORE = "fold-more"
 private const val OPEN_BACKLOG_LIMIT = 5
-private const val AHEAD_ALPHA = 0.5f
