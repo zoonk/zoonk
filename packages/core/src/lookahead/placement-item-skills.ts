@@ -39,7 +39,7 @@ export type PlacementItemSkill = {
   ownerId: string | null;
   /** The language a language goal's skill practices ("en"); its questions are in it. */
   targetLanguage: string | null;
-  /** Avoid these question openings so new cases do not repeat old situations under different names. */
+  /** Openings of every question the goal's learner can be served for the skill, so new cases do not repeat one under other names. */
   usedSituations: string[];
 };
 
@@ -119,7 +119,12 @@ function isQuickFormat(format: PlacementItemFormat): format is PlacementQuickFor
   return format !== "typed";
 }
 
-type SkillItem = { attempts: { id: string }[]; content: unknown; format: ItemFormat };
+type SkillItem = {
+  attempts: { id: string }[];
+  content: unknown;
+  examBlueprintId: string | null;
+  format: ItemFormat;
+};
 
 type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & { items: SkillItem[] };
 
@@ -129,24 +134,26 @@ function isAnswered(item: SkillItem): boolean {
 
 /** Questions incompatible with the goal's current format or option count do not satisfy coverage. */
 function toPick({
+  covers,
   exam,
   exceptAnswered,
-  fits,
   quickFormat,
   quickNeeded,
   row,
   writesTyped,
 }: {
+  covers: (item: SkillItem) => boolean;
   exam: PlacementItemExam | null;
   /** Questions the goal's learner already answered don't cover the skill: they won't be asked. */
   exceptAnswered: boolean;
-  fits: (item: SkillItem) => boolean;
   quickFormat: PlacementQuickFormat;
   quickNeeded: number;
   row: SkillRow;
   writesTyped: boolean;
 }): PlacementItemPick | null {
-  const fitting = row.items.filter((item) => fits(item) && !(exceptAnswered && isAnswered(item)));
+  const fitting = row.items.filter(
+    (item) => covers(item) && !(exceptAnswered && isAnswered(item)),
+  );
 
   const formats = new Set(fitting.map((item) => item.format));
   const quick = fitting.filter((item) => item.format === quickFormat).length;
@@ -167,21 +174,6 @@ function toPick({
     targetLanguage: row.targetLanguage,
     usedSituations: getUsedSituations(row.items),
   };
-}
-
-/** Never count another exam's, a field's, or a stimulus set's questions as standalone coverage. */
-function getCoveringItemFilter({
-  blueprintId,
-  exam,
-  formats,
-}: {
-  blueprintId: string | null;
-  exam: PlacementItemExam | null;
-  formats?: readonly PlacementItemFormat[];
-}) {
-  return exam && !formats
-    ? { examBlueprintId: exam.blueprintId, field: null, setId: null }
-    : getItemAudienceFilter({ examBlueprintId: blueprintId });
 }
 
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
@@ -229,12 +221,20 @@ export async function pickPlacementItemSkills({
   const fits = (item: SkillItem) =>
     formats ? fitsExamOptions({ choices, item }) : fitsExamChoice({ choices, item });
 
+  /** Without asked formats, an exam writes its own questions even where general ones exist. */
+  const ownExamOnly = Boolean(exam && !formats);
+
   const quickFormat =
     formats?.find((format) => isQuickFormat(format)) ?? getPlacementQuickFormat(structure);
 
   const writesTyped = formats?.includes("typed") ?? (goal !== null && confirmsInWriting(goal));
   const confirmingCount = getConfirmingCount({ forPlacement, formats, quickFormat, writesTyped });
-  const needed: ItemFormat[] = [quickFormat, "typed"];
+  const needed = new Set<ItemFormat>([quickFormat, "typed"]);
+
+  const covers = (item: SkillItem) =>
+    needed.has(item.format) &&
+    (!ownExamOnly || item.examBlueprintId === exam?.blueprintId) &&
+    fits(item);
 
   const skills = await prisma.skill.findMany({
     select: {
@@ -249,12 +249,10 @@ export async function pickPlacementItemSkills({
             where: { userId: { in: goal ? [goal.userId] : [] } },
           },
           content: true,
+          examBlueprintId: true,
           format: true,
         },
-        where: {
-          format: { in: needed },
-          ...getCoveringItemFilter({ blueprintId: blueprint?.id ?? null, exam, formats }),
-        },
+        where: getItemAudienceFilter({ examBlueprintId: blueprint?.id ?? null }),
       },
       language: true,
       level: true,
@@ -265,7 +263,7 @@ export async function pickPlacementItemSkills({
     where: { id: { in: picked } },
   });
 
-  const rules = { exam, exceptAnswered, fits, quickFormat, writesTyped };
+  const rules = { covers, exam, exceptAnswered, quickFormat, writesTyped };
 
   const picks = picked
     .map((id) => skills.find((row) => row.id === id))
