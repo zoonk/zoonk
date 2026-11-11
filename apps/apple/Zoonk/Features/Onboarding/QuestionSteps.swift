@@ -788,6 +788,7 @@ private struct DateQuestion: View {
             self.date = nil
           } label: {
             Text("Remove date", tableName: "Onboarding", comment: "Clears the goal's date")
+              .underline()
           }
         } else {
           Button {
