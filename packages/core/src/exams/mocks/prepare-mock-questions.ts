@@ -99,10 +99,7 @@ export async function loadMockWritingSkills({
   skillIds: readonly string[];
 }): Promise<PlacementItemSkill[]> {
   const [goal, rows] = await Promise.all([
-    prisma.goal.findUnique({
-      select: { examBlueprint: true, userId: true },
-      where: { id: goalId },
-    }),
+    prisma.goal.findUnique({ select: { examBlueprint: true }, where: { id: goalId } }),
     prisma.skill.findMany({
       select: {
         description: true,
@@ -120,11 +117,7 @@ export async function loadMockWritingSkills({
   const blueprint = goal?.examBlueprint ?? null;
   const exam = blueprint ? toItemExam(blueprint) : null;
 
-  const usedSituations = await loadUsedSituations({
-    examBlueprintId: blueprint?.id,
-    skillIds,
-    userId: goal?.userId,
-  });
+  const usedSituations = await loadUsedSituations({ examBlueprintId: blueprint?.id, skillIds });
 
   return Promise.all(
     skillIds

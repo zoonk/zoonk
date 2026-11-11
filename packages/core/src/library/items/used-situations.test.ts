@@ -1,8 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  choiceItemContent,
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+  textSetContent,
+} from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { loadUsedSituations } from "./used-situations";
 
@@ -36,30 +40,42 @@ describe(loadUsedSituations, () => {
     expect(forField.get(skill.id)?.toSorted()).toStrictEqual(["General case.", "Nursing case."]);
   });
 
-  it("puts the cases its learner already answered first, and gives a skill without questions none", async () => {
-    const [user, skill, empty] = await Promise.all([userFixture(), skillFixture(), skillFixture()]);
-
-    const answered = await caseItem({
-      context: "Answered case.",
-      createdAt: new Date("2026-10-01T00:00:00Z"),
-      skillId: skill.id,
-    });
-
-    await Promise.all([
-      attemptFixture({ itemId: answered.id, skillId: skill.id, userId: user.id }),
-      caseItem({
-        context: "Newer case.",
-        createdAt: new Date("2026-10-02T00:00:00Z"),
-        skillId: skill.id,
-      }),
+  it("takes a set question's case from its shared stimulus, once per set", async () => {
+    const [skill, exam] = await Promise.all([
+      skillFixture(),
+      examBlueprintFixture({ identityKey: `exam-${randomUUID()}` }),
     ]);
 
-    const situations = await loadUsedSituations({
-      skillIds: [skill.id, empty.id],
-      userId: user.id,
+    const set = await itemSetFixture({
+      content: { ...textSetContent(), text: "The town's library opened on Sundays." },
+      examBlueprintId: exam.id,
     });
 
-    expect(situations.get(skill.id)).toStrictEqual(["Answered case.", "Newer case."]);
+    await Promise.all(
+      ["Why did visits rise?", "Who came most?"].map((question) =>
+        itemFixture({
+          content: choiceItemContent(question),
+          examBlueprintId: exam.id,
+          setId: set.id,
+          skillId: skill.id,
+        }),
+      ),
+    );
+
+    const situations = await loadUsedSituations({ examBlueprintId: exam.id, skillIds: [skill.id] });
+
+    expect(situations.get(skill.id)).toStrictEqual(["The town's library opened on Sundays."]);
+  });
+
+  it("lists every case a skill's bank holds, and none for a skill without questions", async () => {
+    const [skill, empty] = await Promise.all([skillFixture(), skillFixture()]);
+    const cases = Array.from({ length: 12 }, (_, index) => `Case ${index}.`);
+
+    await Promise.all(cases.map((context) => caseItem({ context, skillId: skill.id })));
+
+    const situations = await loadUsedSituations({ skillIds: [skill.id, empty.id] });
+
+    expect(situations.get(skill.id)?.toSorted()).toStrictEqual(cases.toSorted());
     expect(situations.get(empty.id)).toStrictEqual([]);
   });
 });

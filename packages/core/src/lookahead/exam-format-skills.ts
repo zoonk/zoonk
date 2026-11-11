@@ -99,7 +99,6 @@ export async function pickExamFormatSkills({
       kind: true,
       plan: { select: { graph: true } },
       targetLanguage: true,
-      userId: true,
     },
     where: { id: goalId },
   });
@@ -183,7 +182,6 @@ export async function pickExamFormatSkills({
   const usedSituations = await loadUsedSituations({
     examBlueprintId: blueprint.id,
     skillIds: picks.map(({ skill }) => skill.id),
-    userId: goal?.userId,
   });
 
   return Promise.all(

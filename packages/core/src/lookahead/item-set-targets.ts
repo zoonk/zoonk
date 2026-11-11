@@ -38,7 +38,6 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
       kind: true,
       plan: { select: { graph: true } },
       targetLanguage: true,
-      userId: true,
     },
     where: { id: goalId },
   });
@@ -102,7 +101,6 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   const usedSituations = await loadUsedSituations({
     examBlueprintId: blueprint.id,
     skillIds: targets.flatMap((target) => target.skills.map((skill) => skill.id)),
-    userId: goal?.userId,
   });
 
   return Promise.all(

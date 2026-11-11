@@ -126,13 +126,7 @@ export async function pickFreeResponseSkills({
   goalId: string;
 }): Promise<PlacementItemSkill[]> {
   const goal = await prisma.goal.findUnique({
-    select: {
-      examBlueprint: true,
-      kind: true,
-      plan: { select: { graph: true } },
-      title: true,
-      userId: true,
-    },
+    select: { examBlueprint: true, kind: true, plan: { select: { graph: true } }, title: true },
     where: { id: goalId },
   });
 
@@ -175,7 +169,6 @@ export async function pickFreeResponseSkills({
   const usedSituations = await loadUsedSituations({
     examBlueprintId: blueprint.id,
     skillIds: picked.map((skill) => skill.id),
-    userId: goal?.userId,
   });
 
   return picked.map((skill) => {

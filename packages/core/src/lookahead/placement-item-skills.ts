@@ -23,7 +23,7 @@ import {
 } from "../learner/placement/placement-quick-format";
 import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../library/items/item-field";
-import { toUsedSituations } from "../library/items/used-situations";
+import { loadUsedSituations } from "../library/items/used-situations";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
@@ -126,7 +126,7 @@ function toPick({
   quickNeeded: number;
   row: SkillRow;
   writesTyped: boolean;
-}): PlacementItemPick | null {
+}): Omit<PlacementItemPick, "usedSituations"> | null {
   const fitting = row.items.filter((item) => covers(item) && !(exceptAnswered && isAnswered(item)));
 
   const formats = new Set(fitting.map((item) => item.format));
@@ -146,7 +146,6 @@ function toPick({
     needsTyped: writesTyped && !formats.has("typed"),
     ownerId: row.ownerId,
     targetLanguage: row.targetLanguage,
-    usedSituations: toUsedSituations(row.items),
   };
 }
 
@@ -246,7 +245,16 @@ export async function pickPlacementItemSkills({
     )
     .filter((pick) => pick !== null);
 
-  return { confirmingCount, quickFormat, skills: picks };
+  const usedSituations = await loadUsedSituations({
+    examBlueprintId: blueprint?.id,
+    skillIds: picks.map((pick) => pick.id),
+  });
+
+  return {
+    confirmingCount,
+    quickFormat,
+    skills: picks.map((pick) => ({ ...pick, usedSituations: usedSituations.get(pick.id) ?? [] })),
+  };
 }
 
 export async function readPlacementPlanRunId(goalId: string): Promise<string | null> {
