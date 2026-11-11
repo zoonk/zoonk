@@ -138,8 +138,8 @@ function InsightActions({
         insight.planChange?.status === "applied" ||
         insight.planChange?.canApply) && (
         <SuggestionAction
+          action={() => onAnswer("accepted")}
           disabled={isPending}
-          onClick={() => onAnswer("accepted")}
           variant={choices.dismiss ? "default" : "outline"}
         >
           {choices.accept}
@@ -148,8 +148,8 @@ function InsightActions({
 
       {choices.dismiss && (
         <SuggestionAction
+          action={() => onAnswer("dismissed")}
           disabled={isPending}
-          onClick={() => onAnswer("dismissed")}
           variant="outline"
         >
           {choices.dismiss}

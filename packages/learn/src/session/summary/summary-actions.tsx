@@ -56,16 +56,18 @@ export function KeepGoingButton({
   const t = useExtracted();
 
   return (
-    <Button
-      busy={keepGoing.isPending}
-      className={cn("shrink-0", className)}
-      icon={<PlayIcon aria-hidden="true" />}
-      onClick={keepGoing.run}
-      size="xl"
-      variant="outline"
-    >
-      {t("Keep going")}
-    </Button>
+    <form action={() => void keepGoing.run()} className="contents">
+      <Button
+        busy={keepGoing.isPending}
+        className={cn("shrink-0", className)}
+        icon={<PlayIcon aria-hidden="true" />}
+        size="xl"
+        type="submit"
+        variant="outline"
+      >
+        {t("Keep going")}
+      </Button>
+    </form>
   );
 }
 

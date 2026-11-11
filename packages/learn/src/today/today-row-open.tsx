@@ -61,17 +61,18 @@ export function RowOpen({
 
   return (
     <>
-      <button
-        aria-busy={pending || undefined}
-        aria-disabled={pending || undefined}
-        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
-        className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
-        data-slot="today-row-open"
-        onClick={pending ? undefined : open}
-        type="button"
-      >
-        {children}
-      </button>
+      <form action={() => open()} className="contents">
+        <button
+          aria-busy={pending || undefined}
+          aria-disabled={pending || undefined}
+          aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+          className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
+          data-slot="today-row-open"
+          type={pending ? "button" : "submit"}
+        >
+          {children}
+        </button>
+      </form>
 
       {failed && <StepOpenFailed />}
     </>

@@ -253,14 +253,16 @@ export function UnderstoodScreen({
         </OnboardingFooter>
       ) : (
         <GoalFooter error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton
-            busy={isCreating}
-            disabled={rewriting}
-            icon={<CheckIcon aria-hidden="true" />}
-            onClick={onConfirm}
-          >
-            {t("Looks right")}
-          </OnboardingPrimaryButton>
+          <form action={() => onConfirm()} className="contents">
+            <OnboardingPrimaryButton
+              busy={isCreating}
+              disabled={rewriting}
+              icon={<CheckIcon aria-hidden="true" />}
+              type="submit"
+            >
+              {t("Looks right")}
+            </OnboardingPrimaryButton>
+          </form>
           <OnboardingSecondaryButton
             disabled={isCreating || rewriting}
             onClick={() => setRewriting(true)}

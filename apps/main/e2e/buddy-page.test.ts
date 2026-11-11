@@ -7,6 +7,7 @@ import {
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { fulfillTutorAnswer, proposeFutureRestDay, toProposal } from "./tutor-answer";
@@ -112,6 +113,40 @@ test.describe("Buddy tab", () => {
       await card.getByRole("button", { name: "Undo" }).click();
       await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
+    });
+  });
+
+  test("Not now pressed before the page hydrates declines the change once it does", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+      const { change, name: day } = await proposeFutureRestDay(plan.id);
+
+      await prisma.lessonQuestion.create({
+        data: {
+          answer: `Tap Apply to free your ${day}s.`,
+          contextKind: "plan",
+          contextSnapshot: {},
+          goal: { connect: { id: user.goalId } },
+          planChange: { connect: { id: change.id } },
+          question: `No studying on ${day}s`,
+          requestFingerprint: randomUUID(),
+          requestId: randomUUID(),
+          status: "completed",
+          thread: { create: { goalId: user.goalId, kind: "plan", userId: user.id } },
+        },
+      });
+
+      const release = await holdScripts(page);
+      await page.goto("/buddy", { waitUntil: "domcontentloaded" });
+
+      const card = page.getByRole("region", { name: "Change to your plan" });
+      await card.getByRole("button", { name: "Not now" }).click();
+      await release();
+
+      await expect(card.getByRole("status")).toHaveText("Not applied. Your plan stays as it was.");
+      await expect.poll(() => readChangeStatus(change.id)).toBe("declined");
     });
   });
 
