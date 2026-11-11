@@ -43881,7 +43881,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "At most two words the learner said that are often hard to say"
+            "description": "Words the learner said that are often hard to say, usually none to two"
           },
           "wentWell": {
             "type": "array",
