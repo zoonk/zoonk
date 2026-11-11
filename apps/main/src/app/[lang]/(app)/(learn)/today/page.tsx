@@ -81,12 +81,6 @@ async function loadOpenExplanation(): Promise<Explanation | null> {
   return explanation ? { id: explanation.id, title: explanation.title } : null;
 }
 
-/** A goal card typed after the learner's newest goal and not confirmed yet, which Today offers back. */
-async function loadUnfinishedGoal(): Promise<UnfinishedGoal | null> {
-  "use cache: private";
-  return getUnfinishedOnboardingDraft();
-}
-
 async function UnfinishedGoalOffer({ goal }: { goal: Promise<UnfinishedGoal | null> }) {
   const unfinished = await goal;
   return unfinished && <UnfinishedGoalNotice goal={unfinished} />;
@@ -162,7 +156,7 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
   const { goal } = await searchParams;
 
   // Read beside the day, but the day never waits for it.
-  const unfinishedGoal = loadUnfinishedGoal();
+  const unfinishedGoal = getUnfinishedOnboardingDraft();
   const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
 
   const reminder = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;

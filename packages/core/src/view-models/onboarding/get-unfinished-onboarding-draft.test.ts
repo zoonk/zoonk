@@ -2,8 +2,10 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { cacheTag } from "next/cache";
+import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { getGoalsCacheTag } from "../../cache/tags";
 import { getUnfinishedOnboardingDraft } from "./get-unfinished-onboarding-draft";
 
 async function signedInGuest() {
@@ -41,5 +43,14 @@ describe(getUnfinishedOnboardingDraft, () => {
     await goalFixture({ status: "archived", userId: user.id });
 
     await expect(getUnfinishedOnboardingDraft()).resolves.toBeNull();
+  });
+
+  it("expires with the learner's goals, since confirming the card supersedes it", async () => {
+    const user = await signedInGuest();
+    vi.mocked(cacheTag).mockClear();
+
+    await getUnfinishedOnboardingDraft();
+
+    expect(vi.mocked(cacheTag).mock.calls.flat()).toContain(getGoalsCacheTag(user.id));
   });
 });
