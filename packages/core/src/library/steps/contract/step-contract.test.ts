@@ -8,6 +8,10 @@ const options = [
   { id: "b", isCorrect: false, reason: "That's the discount, not the price.", text: "$15" },
 ];
 
+function many<ITEM>(count: number, item: (index: number) => ITEM): ITEM[] {
+  return Array.from({ length: count }, (_, index) => item(index + 1));
+}
+
 const contents: StepContentByKind = {
   activity: {
     check: { explanation: "Each jump is drawn.", kind: "interaction" },
@@ -179,10 +183,8 @@ describe("step contract", () => {
   });
 
   it("keeps lists a model wrote past the prompt's count", () => {
-    const many = (count: number, text: (index: number) => string) =>
-      Array.from({ length: count }, (_, index) => text(index + 1));
-
     const summary = { ideas: many(7, (index) => ({ text: `Idea ${index}.` })) };
+
     const worked = {
       ...contents.workedExample,
       steps: many(10, (index) => ({ text: `Move ${index}.` })),
