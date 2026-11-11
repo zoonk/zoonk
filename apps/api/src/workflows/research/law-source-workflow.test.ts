@@ -88,7 +88,12 @@ describe(lawSourceWorkflow, () => {
   it("keeps the whole official text from the first address that gives it and reads as the law", async () => {
     const law = lawToLookUp();
     const refused = lawAddress({});
-    const camara = lawAddress({ url: `https://www2.camara.leg.br/legin/${randomUUID()}.html` });
+
+    const camara = lawAddress({
+      title: "L12813",
+      url: `https://www2.camara.leg.br/legin/${randomUUID()}.html`,
+    });
+
     const mirror = lawAddress({ url: `https://www.jusbrasil.com.br/${randomUUID()}` });
 
     const summary = lawAddress({
@@ -105,7 +110,13 @@ describe(lawSourceWorkflow, () => {
     const lookup = await readLawLookup(law);
     const source = await prisma.source.findUniqueOrThrow({ where: { id: lookup?.sourceId ?? "" } });
 
-    expect(source).toMatchObject({ extractedText: LAW_TEXT, kind: "official", url: camara.url });
+    expect(source).toMatchObject({
+      extractedText: LAW_TEXT,
+      kind: "official",
+      title: law.name,
+      url: camara.url,
+    });
+
     expect(source.nextCheckAt).not.toBeNull();
     expect(fetchedUrls()).toStrictEqual([refused.url, camara.url]);
   });
