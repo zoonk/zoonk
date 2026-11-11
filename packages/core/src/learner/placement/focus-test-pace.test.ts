@@ -54,4 +54,14 @@ describe("the learner's pace from chosen test answers", () => {
     const { summary } = await readPace([60_000, 60_000, 60_000, 60_000, 900_000]);
     expect(summary).toMatchObject({ paceMs: 84_000 });
   });
+
+  it("floors the saved pace and continuation estimate after fast chosen answers", async () => {
+    const { finished, summary } = await readPace([150, 150, 150, 150, 150]);
+
+    expect(summary).toMatchObject({ paceMs: 20_000 });
+
+    expect(finished).toMatchObject({
+      completion: { focusTest: { offer: { minutes: 3, questions: 10 } } },
+    });
+  });
 });

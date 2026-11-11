@@ -69,6 +69,14 @@ describe("the learner's pace", () => {
   it("is the mean of their answers, quick taps included", () => {
     expect(getPaceMs({ answers: 5, durationMs: 226_000 })).toBe(45_200);
   });
+
+  it("keeps a twenty-second floor for fast chosen answers", () => {
+    const paceMs = getPaceMs({ answers: 5, durationMs: 750 });
+
+    expect(paceMs).toBe(20_000);
+    expect(getSittingMinutes({ paceMs, questions: 10 })).toBe(3);
+    expect(getPaceMs({ answers: 5, durationMs: 100_000 })).toBe(20_000);
+  });
 });
 
 describe('the hint after "I don\'t know yet" answers', () => {

@@ -13,6 +13,7 @@ const START_PACE_MS = MS_PER_MINUTE;
 const SITTING_MINUTES = 15;
 
 const MIN_PACE_ANSWERS = 5;
+const MIN_PACE_MS = 20_000;
 
 /** A break in the middle of a question isn't the learner's pace. */
 export const MAX_PACED_ANSWER_MS = 3 * MS_PER_MINUTE;
@@ -41,7 +42,7 @@ export function getPaceMs({
   answers: number;
   durationMs: number;
 }): number {
-  return answers < MIN_PACE_ANSWERS ? START_PACE_MS : Math.max(1, durationMs / answers);
+  return answers < MIN_PACE_ANSWERS ? START_PACE_MS : Math.max(MIN_PACE_MS, durationMs / answers);
 }
 
 /** The most questions a sitting promises: what fits about fifteen minutes at the learner's pace. */
