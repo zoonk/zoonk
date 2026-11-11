@@ -272,8 +272,5 @@ export function getLessonSpecIssues({
   novice?: boolean;
   spec: LessonSpec;
 }): LessonSpecIssue[] {
-  return [
-    ...getShapeIssues({ novice, spec }),
-    ...getSkillIssues(spec),
-  ];
+  return [...getShapeIssues({ novice, spec }), ...getSkillIssues(spec)];
 }

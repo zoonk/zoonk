@@ -159,9 +159,7 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(questionFirst)).toContain("earlyCheck");
 
     expect(
-      getLessonSpecIssues({ novice: true, spec: oneScreenFirst }).map(
-        (issue) => issue.code,
-      ),
+      getLessonSpecIssues({ novice: true, spec: oneScreenFirst }).map((issue) => issue.code),
     ).toContain("earlyCheck");
 
     expect(getCodes(oneScreenFirst)).not.toContain("earlyCheck");
