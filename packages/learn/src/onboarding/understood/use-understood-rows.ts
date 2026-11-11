@@ -11,6 +11,7 @@ import {
   type OnboardingExamDate,
   type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { type RegionChoice } from "@zoonk/utils/language-regions";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
@@ -18,11 +19,17 @@ import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format"
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { useAimWords } from "../../language-aim/use-aim-words";
 import { useReasonCopy } from "../../language-aim/use-reason-copy";
+import {
+  findTaughtRegion,
+  useVarietyName,
+  useVarietyNote,
+} from "../../language-variety/use-variety-words";
 import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
 
 export type EditableField =
   | { kind: "aim"; key: "targetScore" }
+  | { kind: "country"; key: "targetRegion" }
   | { kind: "date"; key: "targetDate" }
   | {
       kind: "text";
@@ -36,6 +43,8 @@ export type UnderstoodRow = {
   aimChoices?: readonly LanguageAimChoice[];
   badge?: string;
   choiceDates?: string[];
+  /** For a `country` row, the language and the countries it can change to. */
+  country?: { choices: readonly RegionChoice[]; language: string };
   editable?: EditableField;
   editDefault?: string;
   editLabel?: string;
@@ -50,6 +59,7 @@ export type UnderstoodRow = {
 type GoalFacts = Pick<GoalDraft, "kind" | "language" | "displayName"> & {
   details?: Record<string, unknown> | null;
   targetLanguage?: string | null;
+  targetRegion?: string | null;
 };
 
 function readText(details: GoalFacts["details"], key: string): string | null {
@@ -57,27 +67,52 @@ function readText(details: GoalFacts["details"], key: string): string | null {
   return typeof value === "string" && value.trim() ? value : null;
 }
 
+/**
+ * A country the learner asked for shows with the language, even when the title names it: the row
+ * says where lessons differ and is where the country changes. `countryAsked` keeps that row after
+ * the learner clears the country, so they can put it back.
+ */
 export function useLanguageRows() {
   const t = useExtracted();
   const locale = useAppLocale();
+  const varietyName = useVarietyName();
+  const varietyNote = useVarietyNote();
 
-  return (draft: GoalFacts): UnderstoodRow[] => {
+  return ({
+    countryAsked = false,
+    draft,
+    regionChoices,
+  }: {
+    countryAsked?: boolean;
+    draft: GoalFacts;
+    regionChoices: readonly RegionChoice[];
+  }): UnderstoodRow[] => {
     if (draft.kind !== "language" || !draft.targetLanguage) {
       return [];
     }
 
     const nativeLanguage = readText(draft.details, "nativeLanguage") ?? draft.language;
-
-    const language = getLanguageName({
-      targetLanguage: draft.targetLanguage,
-      userLanguage: locale,
-    });
+    const { targetLanguage } = draft;
+    const region = draft.targetRegion ?? null;
+    const language = getLanguageName({ targetLanguage, userLanguage: locale });
+    const hasCountryRow = regionChoices.length > 0 && (Boolean(region) || countryAsked);
 
     const rows: (UnderstoodRow | false)[] = [
-      !isSaidInTitle({ title: draft.displayName ?? "", value: language }) && {
+      (hasCountryRow || !isSaidInTitle({ title: draft.displayName ?? "", value: language })) && {
+        ...(hasCountryRow && {
+          country: { choices: regionChoices, language: targetLanguage },
+          editLabel: t("Country"),
+          editable: { key: "targetRegion", kind: "country" },
+        }),
         id: "targetLanguage",
         label: t("Language"),
-        value: language,
+        note:
+          varietyNote({
+            language: targetLanguage,
+            region,
+            taughtRegion: findTaughtRegion(regionChoices),
+          }) ?? undefined,
+        value: region ? varietyName({ language: targetLanguage, region }) : language,
       },
       {
         id: "nativeLanguage",
@@ -212,15 +247,19 @@ export function useUnderstoodRows() {
   const detailRows = useDetailRows();
 
   return ({
+    countryAsked,
     cutoff,
     draft,
     examDates,
     languageAim,
+    regionChoices,
   }: {
+    countryAsked?: boolean;
     cutoff: TargetCutoff | null;
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
     languageAim: LanguageAimView | null;
+    regionChoices: readonly RegionChoice[];
   }): UnderstoodRow[] => {
     const levelNote = readText(draft.details, "levelNote");
 
@@ -232,7 +271,7 @@ export function useUnderstoodRows() {
         value: draft.displayName ?? "",
       },
       dateRow({ draft, examDates }),
-      ...languageRows(draft),
+      ...languageRows({ countryAsked, draft, regionChoices }),
       ...detailRows(draft, cutoff, languageAim),
       Boolean(levelNote) && {
         badge: t("you said"),

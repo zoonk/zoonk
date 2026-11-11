@@ -78,6 +78,8 @@ type LessonPlayerConfig = {
 
 type LessonPlayerRuntime = {
   actions: LessonPlayerActions;
+  /** Every screen's own attempt, for the screens kept out of view (`state` shows the one in view). */
+  played: LessonPlayerState;
   screen: LessonScreen;
   state: LessonPlayerState;
 };

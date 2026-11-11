@@ -39,7 +39,6 @@ import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runReportTarget
-import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
@@ -192,7 +191,6 @@ internal fun PracticeRun(
                     inlineSet = inlineSet,
                     draft = draft,
                     onDraft = { answer -> saved = Draft(run.index, it.itemId, answer) },
-                    lastAnswer = state.read.lastAnswers[run.index]?.let { answer -> savedAnswerText(answer, state.read.words) },
                 )
             }
         }

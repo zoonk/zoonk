@@ -254,32 +254,6 @@ export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   });
 }
 
-function squashSpaces(text: string): string {
-  return text.replaceAll(/\s+/gu, " ").trim();
-}
-
-/**
- * The notebook saves a lesson's question with its context before it, and a bank question as it's
- * asked.
- */
-export function isMistakeQuestion(step: PracticeStep): boolean {
-  if (step.lesson) {
-    return true;
-  }
-
-  if (!step.question) {
-    return false;
-  }
-
-  const saved = squashSpaces(step.entry.snapshot.question);
-  const { context, question } = step.question;
-
-  return (
-    saved === squashSpaces(question) ||
-    (Boolean(context) && saved === squashSpaces(`${context} ${question}`))
-  );
-}
-
 export function getPracticeAnswer(state: PracticeState): PracticeAnswer | null {
   if (state.phase.kind === "answering") {
     return state.phase.selected;

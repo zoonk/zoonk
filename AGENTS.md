@@ -107,6 +107,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Main product capabilities                                       | [Main app](apps/main/AGENTS.md)                                                    |
 | API routes, OpenAPI, or durable workflows                       | [API app](apps/api/AGENTS.md)                                                      |
 | Admin data access                                               | [Admin app](apps/admin/AGENTS.md)                                                  |
+| The staff CLI (`pnpm zoonk`)                                    | [CLI](apps/cli/AGENTS.md)                                                          |
 | Apple app                                                       | [Apple app](apps/apple/AGENTS.md)                                                  |
 | Android UI                                                      | [Android Material guidelines](.agents/skills/android-material-guidelines/SKILL.md) |
 | AI task prompts                                                 | [AI package](packages/ai/AGENTS.md)                                                |
@@ -114,6 +115,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Delegating to subagents or running agents in parallel           | [Agent orchestration](.agents/guides/orchestration.md)                             |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
 | Addressing, fixing or verifying a GitHub issue                  | [Addressing an issue](.agents/skills/zoonk-address-issue/SKILL.md)                 |
+| Reading production data, such as for a production bug           | [Staff data](.agents/skills/zoonk-staff-data/SKILL.md)                             |
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |

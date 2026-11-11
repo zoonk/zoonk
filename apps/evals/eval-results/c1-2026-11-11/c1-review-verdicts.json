@@ -1,0 +1,177 @@
+[
+  {
+    "id": "real-1-1",
+    "winner": "B",
+    "reason": "A returned no issues. B correctly flags the summary's false universal 'Para defender uma resposta, a regra vem antes', which contradicts the lesson's own rule that order matters only when one ground depends on another (the park defense has no rule at all). B's screen 7 flag also holds against the lesson's own principle: the rule and the fact don't depend on each other, so fact → rule → consequence is equally valid, but the processOrder activity accepts only one order. This is the weaker of B's two catches but it is an answer-key issue, not style. A missed both.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [
+      "summary: 'a regra vem antes' presented as universal",
+      "screen 7: processOrder rejects the equally valid fact → rule → consequence order"
+    ],
+    "missedB": []
+  },
+  {
+    "id": "real-2-1",
+    "winner": "A",
+    "reason": "A correctly flags screen 6 ('não pode gastar sem permissão na LOA') and the same claim in the screen 10 feedback as a false universal: the cited CF art. 167, II itself refers to 'créditos orçamentários ou adicionais', and special or extraordinary credits authorize spending the original LOA did not provide for. A notes that the marked answer on screen 10 stays correct. B returned no issues.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": [
+      "screen 6 / screen 10 feedback: authorization treated as LOA-only, ignoring créditos adicionais that the cited art. 167, II names"
+    ]
+  },
+  {
+    "id": "real-3-1",
+    "winner": "B",
+    "reason": "B correctly flags the summary's 'só vira proposição quando o valor de x é fixado': quantifying the variable ('Existe x real maior que 10') also yields a proposition, so the exclusive claim is false. A returned no issues.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [
+      "summary: an open sentence becomes a proposition 'only' by fixing x (quantification also works)"
+    ],
+    "missedB": []
+  },
+  {
+    "id": "real-4-1",
+    "winner": "B",
+    "reason": "Both catch the core false universal on screen 13 ('o presidente só sai antes do prazo se cometer um ato grave...'), its repeat in the summary and in option d's feedback on screen 15. A splits it into three issues, and B consolidates it with accurate counterexamples (resignation, death, a common crime judged by the STF under art. 86, electoral annulment, art. 83 absence). B also makes a valid extra catch: screen 15's feedbacks talk about 'Teresina' while statement I names only a generic 'Município autônomo', and Teresina appears nowhere in the lesson. A adds an unsupported flag on screen 5: in context, 'quem deve obediência a outra norma' means subordination to a higher entity's constitution, which is the standard autonomy-vs-sovereignty distinction, so A's objection that Brazil obeys its own Constitution is a wording objection, not a demonstrable error (borderline). B's prose cites 'tela 16' (one-based) once, but its screen fields are correct.",
+    "falseFlagsA": [
+      "screen 5: 'Quem deve obediência a outra norma tem autonomia, não soberania' flagged as false; in context it is the standard subordination test (borderline wording objection)"
+    ],
+    "falseFlagsB": [],
+    "missedA": [
+      "screen 15: feedback names Teresina, which the item and the lesson never introduce"
+    ],
+    "missedB": []
+  },
+  {
+    "id": "real-5-1",
+    "winner": "A",
+    "reason": "Both correctly flag the screen 2 guess: before odds are defined, 'Permanece igual' holds only for the odds ratio (9 → 9). The probability ratio falls from 5 to 3 and the difference rises from 40 to 50 points, which makes 'Diminui' and 'Aumenta' defensible. A also correctly flags screen 7 and the summary ('Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem') as a false universal turned from one example into a general rule, since expansion can coexist with a changing origin advantage. B missed that. A's cross-reference to 'screen 9' for the quoting check is one-based (the check is index 8), which is minor.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": [
+      "screen 7 + summary: 'Abrir mais vagas no topo ... sem tirar o peso da origem' stated as a general rule"
+    ]
+  },
+  {
+    "id": "real-6-1",
+    "winner": "tie",
+    "reason": "Both returned no issues. The cited articles check out (Lei 12.813/2013 art. 3º I, art. 4º §2º, art. 5º II; Lei 9.784/1999 arts. 18 I, 19, 20), and the answer keys are correct. Nothing was missed.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "en-temperature-clean-1",
+    "winner": "tie",
+    "reason": "Both returned no issues. All calculations and option reasons are correct (−3+5=2, −4+7=3, −3+8=5, −6+9=3, and the distractors match their stated mistakes).",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-clean-1",
+    "winner": "tie",
+    "reason": "Both returned no issues. All rule-of-three calculations check out (5 h, 6 h, 4 h, 5 h, and every distractor's arithmetic), and the summary is accurate.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "en-temperature-wrong-math-1",
+    "winner": "tie",
+    "reason": "Both correctly catch the screen 3 worked example (3 degrees left over and a 3 °C result instead of 2) with the same fix. B's cross-reference to 'screens 3 and 8' as giving 2 °C is one-based (they are indices 2 and 7), which is minor imprecision, not a false flag.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-case-before-shown-1",
+    "winner": "tie",
+    "reason": "Both correctly flag screen 4, which refers to 'o pedido da Lorena', a case no earlier screen introduces. They give equivalent fixes.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-worked-example-trap-1",
+    "winner": "tie",
+    "reason": "Both correctly catch the direct ratio 6×8/4=12 used for an inverse relation on screen 5 and give the correct fix (6×4/8=3). B's 'screen 4' quote reference is one-based, which is minor.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "en-temperature-mismatched-reason-1",
+    "winner": "tie",
+    "reason": "Both correctly flag the screen 8 feedback for −3 °C: moving down 9 degrees gives −15 °C, not −3 °C. Both fixes are correct.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-wrong-summary-1",
+    "winner": "tie",
+    "reason": "Both correctly flag the summary's 'todas as razões entram na mesma ordem, sem inverter nenhuma' as false and as contradicting the inverted 3/5 ratio on screens 7–8. Both fixes are correct.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "en-temperature-numbered-picture-clean-1",
+    "winner": "tie",
+    "reason": "Both returned no issues. The numbered marks (1 = −6, 2 = zero, 3 = 3 °C) match the answer key and reasons.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-jargon-1",
+    "winner": "tie",
+    "reason": "Both returned no issues. The jargon-heavy screen 1 is a style and pedagogy problem, not a factual one: x·y=k and the constant y/x are correct. Not flagging it is right under this criterion.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-real-brand-failure-1",
+    "winner": "tie",
+    "reason": "Both correctly flag screen 4 for attributing an invented outage to the real company Mercado Livre as fact. A's added remark that it is irrelevant to the question is a side comment, not a separate flag.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "en-temperature-two-right-options-1",
+    "winner": "tie",
+    "reason": "Both correctly flag screen 8. Option c ('left out the minus sign') describes the same mistake as the keyed answer (3+5=8), and its feedback ('counted the rise in the wrong direction') is false, since counting down gives −8. Both fixes are valid.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  },
+  {
+    "id": "pt-regra-over-broad-summary-1",
+    "winner": "tie",
+    "reason": "Both correctly flag the summary's claim that moving together or in opposite directions makes quantities proportional. B adds a concrete counterexample (a square's side and area), which is slightly stronger evidence, but the catch and the fixes are equivalent.",
+    "falseFlagsA": [],
+    "falseFlagsB": [],
+    "missedA": [],
+    "missedB": []
+  }
+]

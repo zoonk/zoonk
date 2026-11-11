@@ -455,6 +455,10 @@
   "onboarding_understood_title": "afbb4bea56134a1a5a91c824c1591b15daf073956170fd3cf80ba8b2f0fce60f",
   "onboarding_upload_file": "d2d52367d480fbb119d1abcd9e2199c560bd75085940a316d3fa597eca0eaf09",
   "onboarding_use_this_date": "e594cc95859d175246e34b9dc7436892c9410b9e862acdd8262b77ff0373414e",
+  "onboarding_variety_description": "5f586705a8fee4500e5c12b0e20cba38860639a90e763aa66db384d4d21db020",
+  "onboarding_variety_none": "afec222bbba63b7053d1be0050ab4f704e9ef45219de8694e525927eee058d07",
+  "onboarding_variety_note": "0551030eba2b0facc7f5317cb06f91049881b832346267de58135a502a075f2c",
+  "onboarding_variety_title": "7adbda650c598dc76e1b91d8ef6feea1e5bdc033198a43a3a9652e58500e9c23",
   "onboarding_waitlist_joined": "3493f63bc039557a44f598290eda4ef97172426122ec762d20bc4ed9208b86f9",
   "onboarding_waitlist_sign_in": "669ea77ceed9a281f29dff02168e5cedaff364ece7d1984434cbce9231550277",
   "onboarding_weekend_time": "31a0ac3b63068c329d8e8e140c23a8c50123bdfc05d2943c210691038a1f996d",
@@ -1100,4 +1104,12 @@
     <string name="onboarding_understood_locked_goal_guest">더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals_guest">더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">국가</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
+    <string name="onboarding_variety_description">짝꿍과 연습 대화에는 선택한 국가가 반영돼요. 레슨과 오디오에는 %1$s을(를) 사용해요.</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">상관없어요</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">짝꿍과 대화 연습에는 %1$s을(를) 사용해요. 레슨과 오디오에는 %2$s을(를) 사용해요.</string>
 </resources>

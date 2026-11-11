@@ -15,13 +15,20 @@ import toolPrompt from "./step-variant-tool.prompt.md";
 import basePrompt from "./step-variant.prompt.md";
 
 /**
- * At low reasoning on 4 cases (8 Nov 2026), Luna scored 9.32 (EN 9.65, PT 9.00) at $0.24/1k,
- * Gemini 3.8 Flash 8.96 at $1.52/1k and Terra 9.38 at $2.08/1k, too small a lead for nine times
- * the cost.
+ * At low reasoning on 8 cases (11 Nov 2026), Luna scored 8.91 (EN 9.04, PT 8.79) at 3.8 s p50 for
+ * $0.25/1k, Muse Ember 8.99 at 2.2 s for $0.54/1k and Gemini 3.8 Flash 8.76 at 4.0 s for $1.62/1k.
+ * A blind read split Ember and Flash 2 to 2 with 4 ties, so Ember falls back first at a third of
+ * Flash's cost. Terra's 30 Oct outputs on 4 of those cases scored 9.38 at $2.04/1k, too small a
+ * lead for eight times Luna's cost.
  */
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "low";
-const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-terra"] as const;
+
+const fallbackModels = [
+  "meta/muse-ember",
+  "google/gemini-3.8-flash",
+  "openai/gpt-6.1-terra",
+] as const;
 
 const toolSystemPrompt = `${basePrompt}\n${toolPrompt}`;
 const noInstallSystemPrompt = `${basePrompt}\n${noInstallPrompt}`;

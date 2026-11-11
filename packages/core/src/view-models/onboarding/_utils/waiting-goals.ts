@@ -4,6 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { type EntitlementTier } from "../../../entitlements/contract";
 import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
+import { getGoalLanguageFlag } from "../../../goals/_utils/goal-language-flag";
 import { type GoalCreateInput, type GoalDraft } from "../../../goals/goal-contract";
 import { withPlannableDate } from "../../../plans/target-date-range";
 import { type UnderstoodGoalView, type UnderstoodSchedule } from "../onboarding-contract";
@@ -14,6 +15,7 @@ export type WaitingGoal = {
   displayName: string;
   id: string;
   input: GoalCreateInput;
+  languageFlag: string | null;
   locked: boolean;
 };
 
@@ -123,6 +125,7 @@ export async function findWaitingGoals({
               displayName: goal.draft.displayName ?? defaultDisplayName(goal.draft),
               id: `${draft.id}:${place}`,
               input: toWaitingInput({ goal, place, schedule: understanding.schedule, today }),
+              languageFlag: getGoalLanguageFlag(goal.draft),
               locked,
             },
           ],

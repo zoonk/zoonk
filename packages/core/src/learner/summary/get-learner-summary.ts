@@ -14,6 +14,7 @@ import {
 } from "../../cache/tags";
 import { followsCourse } from "../../goals/_utils/follows-course";
 import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
+import { getGoalRegionChoices } from "../../goals/_utils/goal-region";
 import {
   type PlanPhaseFacts,
   getCurrentPhaseFromFacts,
@@ -81,9 +82,11 @@ function toSummaryGoals({
         isSettingUp: isGoalSetupLeft(goal),
         kind: goal.kind,
         languageFlag: getGoalLanguageFlag(goal),
+        regionChoices: getGoalRegionChoices(goal),
         status: goal.status,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         targetLanguage: goal.targetLanguage,
+        targetRegion: goal.targetRegion,
         title: goal.title,
       };
     });

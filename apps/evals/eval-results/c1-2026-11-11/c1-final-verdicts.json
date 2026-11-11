@@ -1,0 +1,175 @@
+[
+  {
+    "id": "lesson-spec:en-tax-deadlines-sourced-1",
+    "winner": "A",
+    "reason": "Both are accurate to the IRS source. A is tighter: it adds a table and a timeline for the two dates, a check on a late Form 4868 (April 20 means the return is already past due), and an application that uses withholding ($4,200 owed minus $3,700 withheld = $500 to pay with Form 4868). B explains the payment rule before it explains what an extension or Form 4868 is, and screen 10 repeats screen 4.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": [
+      "Screen 10 repeats screen 4's point (an extension doesn't delay payment), so it adds nothing new",
+      "The payment-deadline rule is explained (screen 4) before the extension and Form 4868 are introduced (screens 6-7)",
+      "The guess offers only two options, and the hook is tagged with both skills"
+    ]
+  },
+  {
+    "id": "lesson-spec:pt-estabilidade-sourced-1",
+    "winner": "A",
+    "reason": "A keeps one lesson grounded in the supplied art. 41. It has stronger checks with named traps: a commissioned post held 4 years with a top rating, and an appealable sentence. It adds a matchPairs activity and a table separating the special evaluation from the periodic one. B splits into two lessons without need. It teaches art. 169, which is correct law but beyond the supplied source, and most of its checks are yes/no with obvious distractors.",
+    "demonstrableDefectsA": [
+      "The lesson description calls the three art. 41 cases 'as únicas formas' a stable servant loses office, but CF art. 169 §4 is a fourth",
+      "Four explanation screens in a row (screens 7-10) before the next check"
+    ],
+    "demonstrableDefectsB": [
+      "Splits two linked skills into two lessons",
+      "Adds three art. 169 explanation screens that are not in the supplied source and are uncited",
+      "Checks are mostly yes/no with obvious distractors ('Sim, sempre', 'precisa de cinco anos'), and the guesses have two options"
+    ]
+  },
+  {
+    "id": "lesson-spec:es-tablas-dinamicas-beginner-1",
+    "winner": "B",
+    "reason": "B is one coherent lesson whose numbers all check: Norte 700/300 and Sur 450; Recuento gives 3 and 4; Norte-Marzo is $1,000. Each worked example is followed by a check. A has two screens with no content (an application and a hook that only repeat the useCase sentence), no guess in either lesson, and a miscomputed distractor.",
+    "demonstrableDefectsA": [
+      "Lesson 1 application brief is just the skill's useCase sentence, with no situation and no question",
+      "Lesson 2 hook is also just the useCase sentence, with no scene; screen 2 then refers to 'los folios de Héctor', which were never set up",
+      "No guess screen in either lesson",
+      "Iker check: the distractor '$1,600 (sumar todo T1)' is wrong, because the T1 total is 1,000+600+400 = $2,000"
+    ],
+    "demonstrableDefectsB": []
+  },
+  {
+    "id": "lesson-spec:pt-enzimas-exam-prep-activities-1",
+    "winner": "B",
+    "reason": "This is ENEM prep. B gives activities where doing beats reading (matchPairs for structure levels, processOrder for the catalysis cycle) and data visuals with exact values (an activation-energy chart, temperature and saturation curves, a pH table). Its 5-option checks have real traps, such as pepsin tubes at 4 °C versus 75 °C and saturation, where the fix is adding enzyme. A is accurate and in scope, but it has no activity and no data visuals, and its distractors are mostly absurd.",
+    "demonstrableDefectsA": [
+      "No activity at all in an exam-prep lesson where ordering and sorting fit",
+      "Checks rely on absurd distractors ('transformação em gordura', 'desaparecimento da proteína')",
+      "Near-duplicate bromelain picture on screens 8 and 9; three explanations in a row (screens 11-13)"
+    ],
+    "demonstrableDefectsB": [
+      "The same picture description is repeated verbatim on three consecutive screens (primária, secundária, terciária)",
+      "Scope grows from the 2 outline skills to 4 across 2 lessons (adds quaternary structure and pH/temperature/saturation kinetics)"
+    ]
+  },
+  {
+    "id": "challenge-case:en-ab-test-work-1",
+    "winner": "A",
+    "reason": "Every number in A checks: about 8,200 per arm for 5%→6% at α .05 and 80% power; about 14 days at 1,200 per day; the fresh test 410 vs 492 gives z≈2.81, p≈0.005. The analyst reviews each AI result, and A explicitly rejects reading p as '99.5% chance B is better'. B's computations are right and its decisions richer, but it repeatedly teaches the wrong meaning of the p-value as if it were right, and nobody checks the AI.",
+    "demonstrableDefectsA": [
+      "Only two choices per node, with no middle option; the strong choice is fairly obvious"
+    ],
+    "demonstrableDefectsB": [
+      "Teaches the p-value as the probability the gap is luck: the panel says '84% chance a 4-buyer gap is random', the analyst says 'A 1-in-5 chance of pure luck' and '58% chance of pure luck is basically a coin flip', and the correction of the misreading repeats the same error",
+      "The analyst says p=0.84 'means both checkouts sell at the same rate' (treats absence of evidence as proof)",
+      "The AI's tests and sample sizes are never checked by anyone"
+    ]
+  },
+  {
+    "id": "challenge-case:pt-quantum-what-if-1",
+    "winner": "A",
+    "reason": "A is a playful puzzle in which the quantum idea decides the outcome. 400 W of red light only heats the plate to 49 °C, while 1 W of violet unlocks it. Then the collector goes on a bright band, a dark band, or behind a taped slit. A has three choices per node, two decisions per path, four distinct endings and consistent counts (6,030 and 3,030). B's physics is correct, but its first decision changes nothing.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": [
+      "Decision 1 changes nothing downstream: both choices lead to the same node, and the endings depend only on decision 2",
+      "Uses terms like 'padrão de interferência' and 'fóton' in an overview case",
+      "Only two choices per node"
+    ]
+  },
+  {
+    "id": "challenge-case:pt-nursing-dose-work-1",
+    "winner": "B",
+    "reason": "Both are arithmetically correct and safe. B has more meaningful pressure decisions. Its numbers: 60 mg every 8 h = 180 mg/day = 15 mg/kg/day, twice the 7.5 maximum; 40 mg/mL gives 1.5 mL; the 60÷80 slip gives a 30 mg underdose. Its traps include a verbal order ('do it now, I'll fix it later') and skipping the double check. The best choice sits in different positions. A's strong choice is always the longest, most cautious option among two.",
+    "demonstrableDefectsA": [
+      "Two choices per node, and the strong one is always the longest and most cautious, so every decision is predictable"
+    ],
+    "demonstrableDefectsB": [
+      "The fair choice that skips the double check reaches the same best ending as the strong path, and that ending says 'dupla checagem registrada'",
+      "'gentamicina nunca vai em bolus' is stated more absolutely than practice supports"
+    ]
+  },
+  {
+    "id": "challenge-case:en-career-change-data-cleaning-1",
+    "winner": "A",
+    "reason": "A is a realistic work case with all numbers consistent: 1,050−50−15 = 985; $51,900−$2,500 = $49,400; plus 15×$40 = $50,000; CA $18,000 + $4,000 = $22,000. It has three choices per node, a recovery branch, and a row-count check that catches the AI deleting rows. B is accurate and careful (order number vs item line, blank filled from the source), but an 8-row export is toy-scale and its decisions are fewer and more obvious.",
+    "demonstrableDefectsA": [
+      "The 15 blank prices are said to come from 'a promo code', yet they are filled at the $40 list price on the AI's word alone, and the ending calls the total 'verified'",
+      "In the fix-states branch the lead says the AI 'also spotted' duplicates, though the AI was never asked there"
+    ],
+    "demonstrableDefectsB": [
+      "An 8-row sales export is toy-scale for a work case",
+      "Two decisions per path; both strong choices are the obvious 'check with {{data}}' option"
+    ]
+  },
+  {
+    "id": "challenge-case:en-statistics-field-nursing-1",
+    "winner": "A",
+    "reason": "A's numbers all verify: 4/25 vs 1/25 has Fisher p=0.349; n≈140 per group for 15%→5%, or 14 days at 20 per day; 20/140 vs 18/140 gives p≈0.73; 7/50 vs 5/50 gives p≈0.54. It offers richer decisions: watching a few more patients, doubling to 50, peeking daily, and jargon vs plain vs misread replies. Time jumps bring new data. B is careful and accurate (Fisher p=0.301, n≈82), and the QI nurse reviews every AI result. But it has two choices per node with obvious strong answers and no result after the plan.",
+    "demonstrableDefectsA": [
+      "Calls the null result proof that 'the early lead was luck' ('really was a lucky streak'), which contradicts its own debrief that a high p-value doesn't prove the options are equal",
+      "Nobody checks the AI's p-values or sample size"
+    ],
+    "demonstrableDefectsB": [
+      "Two choices per node with no middle option; the strong choice is always 'ask AI, then have {{quality}} review'"
+    ]
+  },
+  {
+    "id": "challenge-case:pt-porcentagem-field-retail-1",
+    "winner": "A",
+    "reason": "A's numbers all verify: 200→160→144 is 28% off, not 30%; 24/144 = 16.7%; the floor is R$150; 152 gives 21.1%; 160×1.2 = 192, and +25% restores 200. A two-part arc (Pix stacking, then Monday's price restore) gives three real choices per node. B is accurate (48/192 = 25% vs 48/144 = 33.3%; R$216 = 33.3%), but a colleague states the answer right before each choice.",
+    "demonstrableDefectsA": [
+      "Adds a third skill ('Conferir contas e alinhar a equipe') that is not in the input SKILLS",
+      "'subir-30' says 'sem avisar {{gerente}}', but the manager replies in the same beat",
+      "The 'digitar-manual' branch ends in end-mixed, which says items were registered at R$192, though that shoe was typed in at R$200"
+    ],
+    "demonstrableDefectsB": [
+      "Strong choices are telegraphed: the analyst defines margin on the sale price right before the margin choice, and proposes the 10%/R$216 alternative right before the final choice"
+    ]
+  },
+  {
+    "id": "lesson-fix:real-citation-1",
+    "winner": "tie",
+    "reason": "A and B are byte-identical. Both return the lesson unchanged with changedScreens []. That is the correct response: Lei 12.813/2013 art. 4º §2º is the clause saying a conflict exists regardless of harm (lesão) or gain (vantagem), while §1º is about consulting the Comissão de Ética. So the reviewer's request to cite §1º would have introduced an error.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": []
+  },
+  {
+    "id": "lesson-fix:real-term-1",
+    "winner": "A",
+    "reason": "Both fix the false claim that only impeachment ends a presidential term early, in all three places it appears: screen 14, the screen 16 option reason, and summary idea 4. Both change nothing else on the screens. A's fix is minimal and keeps every summary label. B's fix is more informative (crime de responsabilidade, art. 52, renúncia), but it also rewrites all five summary labels, which nobody asked for.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": [
+      "Rewrote all five summary idea labels without being asked (e.g. 'Federação indissolúvel' → 'Federação: união sem separação')"
+    ]
+  },
+  {
+    "id": "lesson-fix:en-temperature-code-problems-1",
+    "winner": "tie",
+    "reason": "Both remove the 'It's important to note' filler on screen 2 and add the expression 'start + rise' to screen 5 step 2. Both also sync the screen 2 image prompt with the arrow the plan describes. B also tweaks the alt text and changes '6 am' to '6 a.m.' on one screen. Neither breaks anything.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": [
+      "'6 am' → '6 a.m.' on screen 5 only, so it no longer matches screen 7's '7 am' (minor)"
+    ]
+  },
+  {
+    "id": "lesson-fix:en-temperature-basis-follows-1",
+    "winner": "tie",
+    "reason": "Both remove the filler, update screen 5's basis quote to 'A rise always moves **up** the thermometer.' so it still matches screen 2, and add the step expression. A also tweaks the alt and prompt text and changes 6 am to 6 a.m.; B only syncs the image prompt. Neither has a defect.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": []
+  },
+  {
+    "id": "lesson-fix:en-temperature-activity-answer-1",
+    "winner": "tie",
+    "reason": "Both set screen 7's check.answer to 5 and its explanation to −3 + 8 = 5, keep the moves (3+5), and change '7 am' to '7 a.m.'. A also adds data {isExample: true}, which the schema allows and which is harmless.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": []
+  },
+  {
+    "id": "lesson-fix:en-scientific-notation-keeps-math-1",
+    "winner": "A",
+    "reason": "Both rewrite screen 10 as a mistake about Ryan's 7.02 × 10^-4 m entry, keep the math right and leave the other screens untouched. A asks for the fix, with four tempting real fixes in LaTeX (−5, positive power, dropping the inside zero, leaving −4, which equals 0.000702 m). B asks what the mistake was, but two of its distractors are refuted by the entry printed in the context, so the check is nearly free.",
+    "demonstrableDefectsA": [],
+    "demonstrableDefectsB": [
+      "Distractors 'He used a positive exponent' and 'He dropped the zero inside 7.02' contradict the entry shown in the context (−4 and 7.02), so only 'six moves' competes with the answer"
+    ]
+  }
+]

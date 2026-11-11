@@ -16,12 +16,12 @@ import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockTimeZoneInput
@@ -47,6 +47,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
@@ -370,7 +372,7 @@ class LiveOnboardingApi(
                 .clients(
                     session,
                 ).goals
-                .updateGoal(UUID.fromString(goalId), GoalUpdateInput(status = GoalUpdateInput.Status.ARCHIVED))
+                .updateGoal(UUID.fromString(goalId), buildJsonObject { put("status", LearnerSummaryGoal.Status.ARCHIVED.value) })
         }
     }
 

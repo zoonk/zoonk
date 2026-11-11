@@ -1,0 +1,372 @@
+{
+  "modelId": "google/gemini-4-carbon",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All five answers are supported unambiguously by the recording: Bramwell, 12 October, Garden, display boards and 40. The alternative dates and rooms are rejected, and £30 is explicitly an outdated deposit. Each blank requires information from the recording, and the accepted answers fit the word limit. No key-related cap applies.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The two-person community-centre booking conversation, ordered form-completion blanks, spelled surname, rejected alternatives and price distractors are appropriate for IELTS Part 1. However, the equipment answer falls outside the explicitly requested answer types, there is no genuine speaker self-correction, and approximately 990 words would normally run beyond four to five minutes. These are meaningful task-fit weaknesses despite the otherwise authentic format.",
+          "score": 7,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue generally sounds conversational, with contractions, reactions, natural greetings and closing, and plausible British/Australian expressions. Speaker accents match the requested varieties, and the turns contain only spoken content. The food question is a noticeable pragmatic lapse: the caller asks the receptionist what his own group will do rather than asking permission. The prose-like/exercise-like cap is not triggered.",
+          "score": 8,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 5,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1136,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4275,
+          "outputTokens": 1016,
+          "reasoningTokens": 446
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The set misses two explicit task requirements: 'display boards' is equipment rather than a name, number, date, price or address, and none of the answers follows a speaker correcting themselves. The deposit changes historically from £30 to £40; the speaker never retracts an incorrect statement. The roughly 990-word script also risks exceeding the requested four-to-five-minute duration at a natural listening-test pace.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Kevin's 'Will we be bringing our own food in?' awkwardly asks the receptionist about his own group's intentions. 'Can we bring our own food?' would make the exchange coherent.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the equipment blank with a required detail type, such as the contact number already spoken. Make the deposit answer follow an explicit self-correction, and time a read-through to trim the conversation to the requested duration.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), at the real length of about 4 to 5 minutes (600 words or more) even though only 5 of the part's 10 questions are asked, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits, each within the two-word limit and listed once. Speakers mix the British and Australian accents listed.",
+        "id": "en-ielts-part-1-form-completion-1",
+        "userInput": {
+          "accents": [
+            "British English",
+            "Australian English"
+          ],
+          "count": 5,
+          "exam": "IELTS",
+          "formats": [
+            "typed"
+          ],
+          "language": "en",
+          "level": "band 6",
+          "plays": 1,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Catch names, numbers, dates and prices in an everyday conversation, including spelled words and corrections",
+              "name": "Note specific details in everyday conversations"
+            },
+            {
+              "description": "Follow what two people agree on as the conversation changes",
+              "name": "Follow a conversation's decisions"
+            }
+          ],
+          "task": "Part 1: a conversation between two people set in an everyday social context; form completion, write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer. 10 questions in the real test."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All four keys are uniquely supported by the conversation: Caleb requests a replacement research site; Keisha ultimately recommends the Student Union; her response implies that the proposed early observations would be unproductive; and Caleb must complete online safety training before card activation. The distractors are contradicted or unsupported, and each question requires information from the recording.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The campus conversation, two speakers, four-option questions, chronological progression, and coverage of purpose, details, and implied meaning fit the task. Distractors effectively use rejected suggestions, a corrected building recommendation, and obsolete procedures. However, roughly 740 words would run substantially beyond the specified 2–3 minutes, triggering the maximum score of 7 for a recording that is far too long.",
+          "score": 7,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue uses natural contractions, reactions, self-correction, mild humor, and conversational openings and closings. Both accents are permitted, and the spoken wording is plausible in a North American campus setting. There are no stage directions or narrator intrusions. The reasons and misconceptions are in Brazilian Portuguese and accurately connect the options to what the speakers said.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 4,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1130,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4841,
+          "outputTokens": 960,
+          "reasoningTokens": 473
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The conversation contains roughly 740 spoken words, requiring about 4.5–5 minutes at a natural delivery rate. This substantially exceeds the expected 2–3 minutes and adds excessive listening and memory demands.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Condense the conversation to approximately 350–450 words. Shorten the opening paperwork discussion and access-procedure exchanges while preserving the building correction, the implied criticism of early observations, and the online-training requirement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "TOEFL iBT \"Listen to a Conversation\" for a Brazilian learner: a campus conversation between a student and a professor or staff member, about 2 to 3 minutes, with 4-option multiple-choice questions on the main purpose, details and a speaker's attitude or implied meaning, in English. Reasons and misconceptions are in Brazilian Portuguese. Speakers use North American English, with a British or Australian accent allowed.",
+        "id": "pt-toefl-campus-conversation-1",
+        "userInput": {
+          "accents": [
+            "American English",
+            "British English",
+            "Australian English"
+          ],
+          "count": 4,
+          "exam": "TOEFL iBT",
+          "formats": [
+            "multipleChoice"
+          ],
+          "language": "pt",
+          "level": "B2",
+          "optionCount": 4,
+          "plays": 1,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Understand why a student and a professor or staff member are talking",
+              "name": "Identify the purpose of a campus conversation"
+            },
+            {
+              "description": "Understand the details that support the conversation's main points",
+              "name": "Understand key details in academic conversations"
+            },
+            {
+              "description": "Infer what a speaker means or feels from how they say it",
+              "name": "Infer a speaker's attitude and implied meaning"
+            }
+          ],
+          "task": "Listen to a Conversation: a conversation on a university campus between a student and a professor or a staff member; multiple-choice questions with one answer."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All six answers follow from the recording: chemistry, a railway station, heavy traffic, pink glass, sawdust and a public library. The final answer correctly follows the speaker's correction from theatre to library. Each gap requires a recording-specific detail, and the accepted-answer lists contain no duplicate entries.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The set has exactly six ordered sentence-completion questions, short spoken answers and one speaker discussing her work. The roughly 620-word monologue can fit near the upper end of the requested duration at a reasonably brisk delivery. Questions generally paraphrase the recording, and nearby distractors are present throughout. However, the twice-played instruction is absent, and the repeated assumption-versus-fact structure makes the listening challenge more predictable than an authentic paper.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The script uses contractions, a natural introduction, conversational British expressions and an appropriate closing, with no stage directions. Supporting notes are in English. Its main weakness is the repeated, polished construction of mistaken assumptions followed by explicit corrective answers, which sometimes sounds engineered for the gaps rather than spontaneously spoken.",
+          "score": 8,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 6,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1142,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3706,
+          "outputTokens": 876,
+          "reasoningTokens": 412
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The learner instructions do not communicate that the recording will be played twice. The script also repeatedly introduces answers through other people's mistaken assumptions, making the distractor pattern unusually predictable.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a brief instruction announcing two plays. Vary the distractor delivery with personal recollections, changed plans or practical comparisons rather than repeatedly contrasting public assumptions with the correct detail.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cambridge B2 First Listening Part 2 for an English-speaking learner: one speaker talking for 3 to 4 minutes about their work, a hobby or an experience, with sentence completion: each question is a sentence with a gap, filled with a word or short phrase the speaker says. Gaps target concrete details with distractors nearby (two things mentioned, one corrected). Exactly 6 questions; accepted answers fit a short phrase and are listed once. Played twice. British English.",
+        "id": "en-cambridge-first-part-2-sentence-completion-1",
+        "userInput": {
+          "accents": [
+            "British English"
+          ],
+          "count": 6,
+          "exam": "Cambridge B2 First",
+          "formats": [
+            "typed"
+          ],
+          "language": "en",
+          "level": "B2",
+          "plays": 2,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Catch the specific word or phrase a speaker says about a topic, ignoring nearby distractors",
+              "name": "Pick out specific information in a monologue"
+            }
+          ],
+          "task": "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All five keys are uniquely supported by the recording: the grandmother’s unused tools, the agreement with local property owners, embarrassment about borrowing, quarterly volunteering after the explicit correction, and the importance of remaining small and local. The questions require information from the recording rather than common knowledge.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The single-speaker radio testimony, roughly 500-word script, five Spanish questions with three options each, and B2 vocabulary fit the specified task. Questions follow the recording’s order and paraphrase its content. Distractors effectively exploit rejected proposals, an unsuccessful municipal application, an attributed opinion, a superseded rule, and an explicit monthly-to-quarterly correction.",
+          "score": 10,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The testimony has a credible radio opening and closing, natural Castilian expressions, conversational transitions, and a restrained self-correction. It contains only spoken content, and all reasons and misconceptions are in appropriate Brazilian Portuguese and refer to the recording. The isolated unnatural phrase “Les dijimos que no rotundo” slightly weakens otherwise fluent Spanish.",
+          "score": 8,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 5,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1136,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4598,
+          "outputTokens": 783,
+          "reasoningTokens": 347
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The closing paragraph contains a small Spanish usage error: “Les dijimos que no rotundo” should be “Les dimos un no rotundo” or “Les dijimos que no, rotundamente.” It does not affect comprehension or the answers.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE B2 Prueba de comprensión auditiva, Tarea 5, for a Brazilian learner: a monologue in Spanish (a talk, a lecture or a testimony on radio), about 3 minutes, with 3-option multiple-choice questions in Spanish, played twice. Wrong options use what the speaker also says or a near-paraphrase that changes a detail. Reasons and misconceptions are in Brazilian Portuguese. The Spanish is Spain's or Latin America's as the accents list.",
+        "id": "pt-dele-b2-tarea-5-monologue-1",
+        "userInput": {
+          "accents": [
+            "Castilian Spanish",
+            "Mexican Spanish"
+          ],
+          "count": 5,
+          "exam": "DELE B2",
+          "formats": [
+            "multipleChoice"
+          ],
+          "language": "pt",
+          "level": "B2",
+          "optionCount": 3,
+          "plays": 2,
+          "scriptLanguage": "es",
+          "skills": [
+            {
+              "description": "Entender la idea principal y los detalles de una charla o un testimonio",
+              "name": "Comprender monólogos extensos"
+            },
+            {
+              "description": "Distinguir lo que afirma el hablante de lo que solo menciona",
+              "name": "Identificar la postura del hablante"
+            }
+          ],
+          "task": "Tarea 5: un monólogo (conferencia, testimonio o charla de radio) de unos 3 minutos; preguntas de selección múltiple con tres opciones. Se escucha dos veces."
+        }
+      }
+    }
+  ],
+  "taskId": "write-listening-set"
+}

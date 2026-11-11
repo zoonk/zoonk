@@ -424,3 +424,8 @@ msgstr "아래에서 새 목표로 시작할 수 있어요."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "아래에서 통계를 확인할 수 있어요."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "아래에서 짝꿍과 대화 연습에 그 방언을 사용하도록 설정할 수 있어요."

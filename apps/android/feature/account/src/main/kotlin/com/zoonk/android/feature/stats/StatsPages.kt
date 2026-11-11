@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.stats
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +29,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
@@ -36,6 +37,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
+import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -56,7 +58,6 @@ import com.zoonk.android.ui.format.formatHourRange
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -209,7 +210,7 @@ private fun OverviewContent(
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
         StatTiles(columns = if (context.wide) 4 else 2, tiles = tiles)
-        Beside(context.stats.activity) { activity -> activity?.let { ActivityCalendar(it) } }
+        Beside(context.stats.activity) { activity -> activity?.let { ActivityCalendar(it, context.inspector) } }
 
         // Main shows the trend and the patterns from `md`, side by side from `lg`; narrower, a row leads to the patterns.
         when {
@@ -547,11 +548,15 @@ internal fun EnergyPage(context: StatsContext) {
                 ?.toJavaLocalDate()
         val days =
             energy.days.map { day ->
-                val date = formatDate(day.date.toJavaLocalDate(), locale, DateStyle.Day, today = newest ?: day.date.toJavaLocalDate())
-                val label =
-                    day.energy?.let { stringResource(R.string.stats_day_energy, date, metricPercent(it, locale)) }
-                        ?: stringResource(R.string.stats_day_no_energy, date)
-                CalendarDay(day.date.toJavaLocalDate(), energyBand(day.energy), label)
+                val date = day.date.toJavaLocalDate()
+                CalendarDay(
+                    date = date,
+                    band = energyBand(day.energy),
+                    label = formatDate(date, locale, DateStyle.Day, today = newest ?: date),
+                    value =
+                        day.energy?.let { stringResource(R.string.stats_energy_amount, metricPercent(it, locale)) }
+                            ?: stringResource(R.string.stats_no_energy),
+                )
             }
 
         YearCalendar(
@@ -567,7 +572,7 @@ internal fun EnergyPage(context: StatsContext) {
                     percent(energy.currentEnergy, locale),
                     insights?.let { metricPercent(it.averageEnergy, locale) } ?: DASH,
                 ),
-            start = energy.days.indexOfLast { it.energy != null }.takeIf { it >= 0 } ?: energy.days.lastIndex,
+            inspector = context.inspector,
         )
 
         StatsLine(stringResource(R.string.stats_energy_line))
@@ -622,12 +627,15 @@ internal fun ActivityPage(context: StatsContext) {
                 ),
         )
 
-        ActivityCalendar(activity)
+        ActivityCalendar(activity, context.inspector)
     }
 }
 
 @Composable
-private fun ActivityCalendar(activity: CurrentUserActivityResponseActivity) {
+private fun ActivityCalendar(
+    activity: CurrentUserActivityResponseActivity,
+    inspector: ChartInspector,
+) {
     val locale = currentLocale()
     val maximum = activity.days.maxOfOrNull { it.activitiesCompleted } ?: 0
     val active = activity.days.count { it.activitiesCompleted > 0 }
@@ -638,15 +646,19 @@ private fun ActivityCalendar(activity: CurrentUserActivityResponseActivity) {
             ?.toJavaLocalDate()
     val days =
         activity.days.map { day ->
-            val date = formatDate(day.date.toJavaLocalDate(), locale, DateStyle.Day, today = newest ?: day.date.toJavaLocalDate())
+            val date = day.date.toJavaLocalDate()
             val count = day.activitiesCompleted
-            val label =
-                if (count == 0L) {
-                    stringResource(R.string.stats_day_no_study, date)
-                } else {
-                    pluralStringResource(R.plurals.stats_day_activities, count.toInt(), date, whole(count, locale))
-                }
-            CalendarDay(day.date.toJavaLocalDate(), activityBand(count, maximum), label)
+            CalendarDay(
+                date = date,
+                band = activityBand(count, maximum),
+                label = formatDate(date, locale, DateStyle.Day, today = newest ?: date),
+                value =
+                    if (count == 0L) {
+                        stringResource(R.string.stats_no_study)
+                    } else {
+                        pluralStringResource(R.plurals.stats_activities, count.toInt(), whole(count, locale))
+                    },
+            )
         }
 
     YearCalendar(
@@ -663,7 +675,7 @@ private fun ActivityCalendar(activity: CurrentUserActivityResponseActivity) {
                 whole(active.toLong(), locale),
                 pluralStringResource(R.plurals.stats_activities, maximum.toInt(), whole(maximum, locale)),
             ),
-        start = activity.days.indexOfLast { it.activitiesCompleted > 0 }.takeIf { it >= 0 } ?: activity.days.lastIndex,
+        inspector = inspector,
     )
 }
 
@@ -743,6 +755,48 @@ internal fun PatternsPage(context: StatsContext) {
     val answers = patterns.weekdays.sumOf { it.totalAnswers }
     val bestDay = (summary.days as? Verdict.Best)?.key
     val bestTime = (summary.times as? Verdict.Best)?.key
+    val fullBar = if (context.wide) WIDE_PATTERN_BAR else PATTERN_BAR
+
+    val week: @Composable (Modifier) -> Unit = { modifier ->
+        PatternChart(
+            title = stringResource(R.string.stats_throughout_week),
+            bestLabel = stringResource(R.string.stats_best_day),
+            columns =
+                patterns.weekdays.map {
+                    patternColumn(
+                        name = weekdayName(it.dayOfWeek.value, locale),
+                        pattern = Pattern(it.score, it.totalAnswers, best = it.dayOfWeek.value == bestDay),
+                        minimumAnswers = patterns.minimumAnswers,
+                        label = weekdayName(it.dayOfWeek.value, locale, TextStyle.SHORT_STANDALONE),
+                    )
+                },
+            fullBar = fullBar,
+            inspector = context.inspector,
+            modifier = modifier,
+            footer = (summary.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
+        )
+    }
+    val day: @Composable (Modifier) -> Unit = { modifier ->
+        PatternChart(
+            title = stringResource(R.string.stats_throughout_day),
+            bestLabel = stringResource(R.string.stats_best_time),
+            columns =
+                DAY_ORDER.mapNotNull { period -> patterns.times.find { it.period.value == period } }.map {
+                    val hours = TIME_HOURS.getValue(it.period.value)
+                    patternColumn(
+                        name = timeName(it.period.value),
+                        pattern = Pattern(it.score, it.totalAnswers, best = it.period.value == bestTime),
+                        minimumAnswers = patterns.minimumAnswers,
+                        hours = formatHourRange(hours.first, hours.last, locale, is24Hour),
+                        icon = timeIcon(it.period.value),
+                    )
+                },
+            fullBar = fullBar,
+            inspector = context.inspector,
+            modifier = modifier,
+            footer = (summary.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
+        )
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
         StatsLine(stringResource(R.string.stats_patterns_intro))
@@ -766,7 +820,7 @@ internal fun PatternsPage(context: StatsContext) {
                             value = bestTimeName(summary.times) ?: DASH,
                             detail = verdictDetail(summary.times),
                             tone = StatTone.Success,
-                            icon = icon(R.drawable.ic_schedule),
+                            icon = icon(bestTime?.let(::timeIcon) ?: R.drawable.ic_schedule),
                             modifier = modifier,
                         )
                     },
@@ -782,108 +836,90 @@ internal fun PatternsPage(context: StatsContext) {
                 ),
         )
 
-        PatternBars(
-            stringResource(R.string.stats_throughout_week),
-            patterns.minimumAnswers,
-            patterns.weekdays.map {
-                PatternBar(weekdayName(it.dayOfWeek.value, locale), null, it.score, it.totalAnswers, it.dayOfWeek.value == bestDay)
-            },
-        )
-        PatternBars(
-            stringResource(R.string.stats_throughout_day),
-            patterns.minimumAnswers,
-            patterns.times.map {
-                val hours = TIME_HOURS.getValue(it.period.value)
-                PatternBar(
-                    name = timeName(it.period.value),
-                    hours = formatHourRange(hours.first, hours.last, locale, is24Hour),
-                    score = it.score,
-                    answers = it.totalAnswers,
-                    best = it.period.value == bestTime,
-                )
-            },
-        )
-        PatternsNote(summary, patterns.minimumAnswers)
+        BoxWithConstraints {
+            if (maxWidth >= PATTERNS_BESIDE) {
+                Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                    week(Modifier.weight(1f))
+                    day(Modifier.weight(1f))
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+                    week(Modifier)
+                    day(Modifier)
+                }
+            }
+        }
+
+        PatternsNote(summary = null, patterns.minimumAnswers)
     }
 }
 
-private data class PatternBar(
-    val name: String,
-    val hours: String?,
+private class Pattern(
     val score: Double,
     val answers: Long,
     val best: Boolean,
 )
 
-/** Main's rows: a group with too few answers to count stays gray, so a lucky answer never reads as a result. */
+/** A group without answers says so instead of reading as 0%. */
 @Composable
-private fun PatternBars(
-    title: String,
+private fun patternColumn(
+    name: String,
+    pattern: Pattern,
     minimumAnswers: Long,
-    rows: List<PatternBar>,
-) {
+    label: String = name,
+    hours: String? = null,
+    @DrawableRes icon: Int? = null,
+): PatternColumn {
     val locale = currentLocale()
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-
-    if (rows.isEmpty()) return
-
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(title)
-        rows.forEach { row ->
-            val counted = row.answers >= minimumAnswers
-            val count =
-                if (row.answers == 0L) {
-                    stringResource(R.string.stats_no_answers)
-                } else {
-                    pluralStringResource(R.plurals.stats_answer_count, row.answers.toInt(), whole(row.answers, locale))
-                }
-            val bar =
-                when {
-                    !counted -> MaterialTheme.colorScheme.onSurface.copy(alpha = UNCOUNTED_BAR_ALPHA)
-                    row.best -> MaterialTheme.colorScheme.tertiary
-                    else -> MaterialTheme.colorScheme.tertiary.copy(alpha = OTHER_BAR_ALPHA)
-                }
-
-            Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        row.name.replaceFirstChar { it.titlecase(locale) },
-                        modifier = Modifier.alignByBaseline(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (row.best) FontWeight.Medium else null,
-                    )
-                    row.hours?.let {
-                        Text(
-                            it,
-                            modifier = Modifier.alignByBaseline(),
-                            color = muted,
-                            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
-                        )
-                    }
-                    Box(Modifier.weight(1f))
-                    Text(
-                        if (row.answers > 0) percent(row.score, locale) else DASH,
-                        modifier = Modifier.alignByBaseline(),
-                        color = if (counted) MaterialTheme.colorScheme.onSurface else muted,
-                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-                    )
-                }
-                Text(count, color = muted, style = MaterialTheme.typography.bodySmall.withTabularFigures())
-                Meter(if (row.answers > 0) (row.score / PERCENT).toFloat() else 0f, color = bar)
-            }
+    val count = whole(pattern.answers, locale)
+    val state =
+        when {
+            pattern.answers == 0L -> PatternState.None
+            pattern.answers < minimumAnswers -> PatternState.Few
+            pattern.best -> PatternState.Best
+            else -> PatternState.Counted
         }
-    }
+
+    return PatternColumn(
+        name = name,
+        label = label,
+        state = state,
+        share = (pattern.score.coerceIn(0.0, PERCENT) / PERCENT).toFloat(),
+        value = if (state == PatternState.None) stringResource(R.string.stats_no_answers) else percent(pattern.score, locale),
+        note =
+            when (state) {
+                PatternState.None -> {
+                    null
+                }
+
+                PatternState.Few -> {
+                    pluralStringResource(
+                        R.plurals.stats_answers_to_count,
+                        pattern.answers.toInt(),
+                        count,
+                        whole(minimumAnswers, locale),
+                    )
+                }
+
+                else -> {
+                    pluralStringResource(R.plurals.stats_answer_count, pattern.answers.toInt(), count)
+                }
+            },
+        hours = hours,
+        icon = icon,
+    )
 }
 
+/** Without [summary] it leaves out what each chart says under itself. */
 @Composable
 private fun PatternsNote(
-    summary: PatternsSummary,
+    summary: PatternsSummary?,
     minimumAnswers: Long,
 ) {
     val sentences =
         listOfNotNull(
-            (summary.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
-            (summary.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
+            (summary?.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
+            (summary?.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
             pluralStringResource(R.plurals.stats_min_answers, minimumAnswers.toInt(), minimumAnswers.toInt()),
         )
     StatsLine(sentences.joinSentences())
@@ -929,7 +965,7 @@ private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) 
 private fun bestDayName(verdict: Verdict): String? =
     when (verdict) {
         is Verdict.Even -> stringResource(R.string.stats_any_day)
-        is Verdict.Best -> weekdayName(verdict.key, currentLocale()).replaceFirstChar { it.titlecase(currentLocale()) }
+        is Verdict.Best -> weekdayName(verdict.key, currentLocale())
         Verdict.NotEnough -> null
     }
 
@@ -967,7 +1003,8 @@ private fun Verdict.bestScore(locale: Locale): String? = (this as? Verdict.Best)
 private fun weekdayName(
     key: String,
     locale: Locale,
-): String = DayOfWeek.valueOf(key.uppercase()).getDisplayName(TextStyle.FULL_STANDALONE, locale)
+    style: TextStyle = TextStyle.FULL_STANDALONE,
+): String = DayOfWeek.valueOf(key.uppercase()).getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
 @Composable
 private fun timeName(key: String): String =
@@ -980,14 +1017,28 @@ private fun timeName(key: String): String =
         },
     )
 
+/** Main's sunrise, sun, sunset and moon, as [com.zoonk.android.feature.activities.sorting] maps lucide's. */
+@DrawableRes
+private fun timeIcon(key: String): Int =
+    when (key) {
+        "night" -> R.drawable.ic_dark_mode
+        "morning" -> R.drawable.ic_wb_twilight
+        "afternoon" -> R.drawable.ic_sunny
+        else -> R.drawable.ic_nights_stay
+    }
+
 /** Main's `TIME_PERIOD_HOURS`, in the learner's own time zone. */
 private val TIME_HOURS = mapOf("night" to 0..6, "morning" to 6..12, "afternoon" to 12..18, "evening" to 18..24)
 
+/** The API counts periods from midnight; a learner's day runs from the morning to the night after it. */
+private val DAY_ORDER = listOf("morning", "afternoon", "evening", "night")
+
+private val PATTERN_BAR = 112.dp
+private val WIDE_PATTERN_BAR = 144.dp
+private val PATTERNS_BESIDE = 720.dp
 private const val PERCENT = 100.0
 private const val DASH = "–"
 private const val LEVELS_PER_BELT = 10L
 private const val BRAIN_POWER_PER_LESSON = 10L
 private const val SCORE_WINDOW_DAYS = 90
 private const val PANEL_TINT = 0.1f
-private const val UNCOUNTED_BAR_ALPHA = 0.2f
-private const val OTHER_BAR_ALPHA = 0.45f

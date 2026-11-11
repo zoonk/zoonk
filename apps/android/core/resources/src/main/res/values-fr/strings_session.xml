@@ -33,6 +33,7 @@
   "session_energy_glowing_brightest": "af47c1ee29e5e2f948e878746f15c95b9fbd7f1cffd2de04980bc04fbf753e95",
   "session_energy_max": "f5a8582a80ae25784d7a319428fbacaea37a0f7e3ab8ff0a9b5d4f556894b3f7",
   "session_level_up": "9ebf40b654dcc8315b07de863dc883ae0e2f0726b70d1988d232a3daa6e9b66e",
+  "session_next_continue": "7a9fa061c18068c3a1ff2d144812949a01fed3626f2bb5b9ac9b9174e9cc5543",
   "session_next_eyebrow": "f6c59bc49295e97b030ed9537c19a95f7be2ec2544b16be13d58f8dd8a721d48",
   "session_next_instead": "fea6a3f5549574e86737666066c307d2ddd6715aeeb6ed3639e5b56f0196f0fa",
   "session_next_lesson_ready": "6bd01547980cf502e95a4332b9d661791236479936c3618d1a2e880c3552875d",
@@ -43,6 +44,16 @@
   "session_next_writing_note": "2ec9722d0fbb57d8c32c3a2aa7d47cb4d60f0a25fe05aaa0f9d494eac6bb483a",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
+  "session_review_intro_first_week": "1e4541d89c2b3485aefe6749486afe61cf2cf771621148f1d2cef64d0a7a2423",
+  "session_review_intro_forget": "5ddf20fd7339bec013adcc17f431d6760d9dc03cb360777b5c4655e59387d0ed",
+  "session_review_intro_forget_title": "c0aa953b97149429401e1325480c968b7f15a65897cdd5c3bab7e3ef45d6a41c",
+  "session_review_intro_short": "5af634a2b1bd6fadf9b88f11a8ad1c885b00ea57c609fdf1fe8175d6acea10db",
+  "session_review_intro_short_title": "e45a91c11181455a9fd89ed9903f1c46c803902692fe5295b5962d1cecbbc688",
+  "session_review_intro_spacing": "401e878fd1f204caa9634d2363acbf347ba9d0fab46873a0049bc568dc5d22b0",
+  "session_review_intro_spacing_title": "27f841a07a84bb5191ecaafc9328c4866665c68fadb366597c03a6cfce1bff9c",
+  "session_review_intro_title": "f76a3a5bf179653e7c75ea69b87c98c68dd61c5ca1d6578ebbe34f6d16c783f9",
+  "session_review_intro_weakest": "7268016c0c30592f4937351174a0df59b3cda0c5fadebebe7a4506c15011979f",
+  "session_review_intro_weakest_title": "d54b4ce9a445f73a7d341f32c20cb950a61ffc2418943f58382b0129e5797578",
   "session_summary_back_on": "5bad32a470696aaf3c05c8795ca38fc769c494c3f4d255789101825ab5432e0e",
   "session_summary_brain_power": "2eb9b12d19b6a4f6437292a2b1be8c4749ecf9ece67fbc912950ff30f089fb3a",
   "session_summary_buddy_happy": "cc6fc44b85fe7cb9fe94e4615cc592929d89b0e48cfed551a20a9c6bebb1824e",
@@ -203,6 +214,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">À suivre</string>
     <string name="session_next_start">Commencer</string>
+    <string name="session_next_continue">Continuer</string>
+    <string name="session_review_intro_title">Comment fonctionnent les révisions</string>
+    <string name="session_review_intro_forget_title">Juste avant d’oublier</string>
+    <string name="session_review_intro_forget">Chaque notion que tu étudies revient juste avant que tu commences à l’oublier.</string>
+    <string name="session_review_intro_spacing_title">Les bonnes réponses espacent les révisions</string>
+    <string name="session_review_intro_spacing">Si tu réponds juste, la notion revient après quelques jours, puis quelques semaines, puis quelques mois. Si tu te trompes, elle revient plus tôt.</string>
+    <string name="session_review_intro_short_title">D’abord, des révisions toujours courtes</string>
+    <string name="session_review_intro_short">Les révisions ouvrent ta séance et n’en occupent qu’une petite partie, même après plusieurs jours de pause.</string>
+    <string name="session_review_intro_weakest_title">Les sujets les plus difficiles pour toi aujourd’hui</string>
+    <string name="session_review_intro_weakest">Tu as encore bien en tête ce que tu as appris, alors tu t’entraînes sur ce qui t’a donné le plus de mal.</string>
+    <string name="session_review_intro_first_week">Quelques questions rapides pour vérifier ce que tu sais déjà.</string>
     <string name="session_next_writing_note">Cette leçon est en cours de préparation pour toi. Elle est généralement prête en quelques minutes.</string>
     <string name="session_next_lesson_ready">Ta leçon est prête.</string>
     <string name="session_next_stop">Arrêter pour aujourd’hui</string>

@@ -1,7 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
-import { goalDraftSchema } from "../../goals/goal-contract";
+import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
   type GoalUnderstandingView,
@@ -60,6 +60,13 @@ const understoodGoalSchema = z
       .meta({
         description:
           "Language goals only: the level the words aim for and the aims the card offers instead. Edit it with field targetScore set to one of the choices' aims; null for other goals",
+      }),
+    regionChoices: z
+      .array(regionChoiceSchema)
+      .default([])
+      .meta({
+        description:
+          "The countries a language goal can pick for `draft.targetRegion`, named in the learner's language; edit it with field targetRegion. Empty for other goals and languages without countries",
       }),
   })
   .meta({ id: "UnderstoodGoal" }) satisfies z.ZodType<UnderstoodGoalView>;

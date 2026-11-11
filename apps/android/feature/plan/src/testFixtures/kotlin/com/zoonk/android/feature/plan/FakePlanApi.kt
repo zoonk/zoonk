@@ -1,9 +1,12 @@
 package com.zoonk.android.feature.plan
 
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
-import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.android.feature.onboarding.examGoal
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
@@ -19,11 +22,17 @@ import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
 
+/** For a test that never reads the learner summary a goal's saves update. */
+fun PlanStore(
+    api: PlanApi,
+    cache: AppCache,
+) = PlanStore(api, cache, cache.resource(Audience.SignedIn) { null })
+
 class FakePlanApi : PlanApi {
     var plans = 0
     var changed = false
     var statusFailure: ApiException? = null
-    val statuses = mutableListOf<GoalUpdateInput.Status>()
+    val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
     var planFailure: ApiException? = null
@@ -114,7 +123,7 @@ class FakePlanApi : PlanApi {
     override suspend fun setStatus(
         session: AuthenticatedSession,
         goalId: UUID,
-        status: GoalUpdateInput.Status,
+        status: LearnerSummaryGoal.Status,
     ) {
         statusFailure?.let { throw it }
         statuses += status
@@ -124,7 +133,13 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         displayName: String,
-    ) = Unit
+    ) = displayName
+
+    override suspend fun setRegion(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        region: String?,
+    ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
 
     override suspend fun change(
         session: AuthenticatedSession,

@@ -4,7 +4,7 @@ import SwiftUI
 struct CalendarDay: Equatable, Sendable {
   let date: ProgressDate
   let step: Int
-  let label: String
+  let detail: ChartPointDetail
   let value: Double?
 }
 
@@ -50,7 +50,8 @@ enum CalendarSteps {
   }
 }
 
-/// The grid is one control, so the squares stay small without hundreds of tiny targets.
+/// The grid is one control, so the squares stay small without hundreds of tiny targets. Tapping a
+/// day shows its detail in a tooltip beside it (`ChartInspection`).
 struct StatsCalendar: View {
   let title: Text
   let gridLabel: Text
@@ -62,16 +63,22 @@ struct StatsCalendar: View {
   let chartTitle: String
   let chartSummary: String
 
-  @State private var picked: Int?
+  @Environment(ChartInspection.self) private var inspection
+  @Namespace private var chart
   @State private var width = 0.0
+  @State private var scroll = CalendarScroll()
+  @State private var position = ScrollPosition()
   @ScaledMetric(relativeTo: .caption2) private var headerHeight = 16.0
   @ScaledMetric(relativeTo: .caption2) private var swatchSize = 10.0
 
   private let gap = 2.0
-  private let ringInset = 3.0
+
+  private var inspected: Int? {
+    inspection.index(in: chart).flatMap { days.indices.contains($0) ? $0 : nil }
+  }
 
   private var activeIndex: Int {
-    picked ?? CalendarSteps.defaultIndex(days)
+    inspected ?? CalendarSteps.defaultIndex(days)
   }
 
   private var weeks: Int {
@@ -79,7 +86,7 @@ struct StatsCalendar: View {
   }
 
   private var cell: Double {
-    let fitted = ((width - 2 * ringInset + gap) / Double(max(weeks, 1)) - gap).rounded(.down)
+    let fitted = ((width + gap) / Double(max(weeks, 1)) - gap).rounded(.down)
     return fitted >= 10 ? min(fitted, 16) : 20
   }
 
@@ -92,7 +99,7 @@ struct StatsCalendar: View {
       return cell + gap
     }
 
-    return (width - 2 * ringInset - cell) / Double(weeks - 1)
+    return (width - cell) / Double(weeks - 1)
   }
 
   var body: some View {
@@ -110,31 +117,46 @@ struct StatsCalendar: View {
         }
       }
 
-      if fits {
-        grid
-      } else {
-        // Capped rather than fixed, here and on the grid, so a narrower width (a fold, a rotation,
-        // a smaller window) can still reach the measurement the widths come from.
-        ScrollView(.horizontal) {
-          grid
+      viewport
+        .background {
+          CalendarTooltip(
+            detail: inspected.map { days[$0].detail }, square: square(inspected ?? 0),
+            scroll: fits ? nil : scroll)
         }
-        .defaultScrollAnchor(.trailing)
-        .frame(maxWidth: wholeWeeksWidth)
-        .frame(maxWidth: .infinity, alignment: .trailing)
-      }
-
-      if days.indices.contains(activeIndex) {
-        Text(days[activeIndex].label)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
-      }
+        .frame(maxWidth: .infinity, alignment: fits ? .leading : .trailing)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .onGeometryChange(for: Double.self) {
       $0.size.width
     } action: {
       width = $0
+    }
+    .onChange(of: inspected) { _, inspected in
+      if let inspected, !fits {
+        reveal(square(inspected))
+      }
+    }
+  }
+
+  /// What shows of the grid: all of it, or the weeks that fit with the rest a swipe away.
+  @ViewBuilder
+  private var viewport: some View {
+    if fits {
+      grid
+    } else {
+      // Capped rather than fixed, here and on the grid, so a narrower width (a fold, a rotation,
+      // a smaller window) can still reach the measurement the widths come from.
+      ScrollView(.horizontal) {
+        grid
+          .onGeometryChange(for: Double.self) {
+            -$0.frame(in: .scrollView(axis: .horizontal)).minX
+          } action: {
+            scroll.offset = $0
+          }
+      }
+      .defaultScrollAnchor(.trailing)
+      .scrollPosition($position)
+      .frame(maxWidth: wholeWeeksWidth)
     }
   }
 
@@ -173,43 +195,52 @@ struct StatsCalendar: View {
         }
       }
 
-      if let picked, days.indices.contains(picked) {
+      // Inside the square, where a scrolling grid's edge can't cut it; the page-colored line keeps
+      // the ring readable on every shade.
+      if let inspected {
+        let square = square(inspected)
         context.stroke(
-          Path(roundedRect: square(picked).insetBy(dx: -2, dy: -2), cornerRadius: 3),
-          with: .color(.primary), lineWidth: 2)
+          Path(roundedRect: square.insetBy(dx: 1, dy: 1), cornerRadius: 2),
+          with: .color(Color(.foreground)), lineWidth: 2)
+        context.stroke(
+          Path(roundedRect: square.insetBy(dx: 2.5, dy: 2.5), cornerRadius: 1),
+          with: .color(Color(.systemBackground)), lineWidth: 1)
       }
 
       for (week, text, isLast) in monthLabels {
         let label = context.resolve(
           Text(text).font(TypeStyle.small.monospaced().font(in: context.environment))
             .foregroundStyle(Color.faint))
-        let x = ringInset + Double(week) * step + (isLast ? cell : 0)
+        let x = Double(week) * step + (isLast ? cell : 0)
         context.draw(label, at: CGPoint(x: x, y: 0), anchor: isLast ? .topTrailing : .topLeading)
       }
     }
     .frame(idealWidth: gridWidth(step: step), maxWidth: gridWidth(step: step))
-    .frame(height: headerHeight + 7 * cell + 6 * gap + ringInset)
+    .frame(height: headerHeight + 7 * cell + 6 * gap)
     .contentShape(.rect)
-    .gesture(SpatialTapGesture().onEnded { pick(at: $0.location) })
+    .gesture(SpatialTapGesture().onEnded { inspect(at: $0.location) })
     .onContinuousHover { phase in
-      if case .active(let location) = phase {
-        pick(at: location)
+      switch phase {
+      case .active(let location):
+        inspect(at: location)
+      case .ended:
+        inspection.close(chart)
       }
     }
-    .focusable()
-    .onKeyPress(keys: [.upArrow, .downArrow, .leftArrow, .rightArrow]) { press in
-      picked = CalendarSteps.index(from: activeIndex, key: press.key, count: days.count)
-      return .handled
+    .chartPointKeys(
+      [.upArrow, .downArrow, .leftArrow, .rightArrow], in: chart, from: activeIndex
+    ) { index, key in
+      CalendarSteps.index(from: index, key: key, count: days.count)
     }
     .accessibilityElement()
     .accessibilityLabel(gridLabel)
-    .accessibilityValue(days.indices.contains(activeIndex) ? days[activeIndex].label : "")
+    .accessibilityValue(days.indices.contains(activeIndex) ? days[activeIndex].detail.spoken : "")
     .accessibilityAdjustableAction { direction in
       switch direction {
       case .increment:
-        picked = min(activeIndex + 1, days.count - 1)
+        inspection.inspect(min(activeIndex + 1, days.count - 1), in: chart)
       case .decrement:
-        picked = max(activeIndex - 1, 0)
+        inspection.inspect(max(activeIndex - 1, 0), in: chart)
       @unknown default:
         break
       }
@@ -217,16 +248,16 @@ struct StatsCalendar: View {
     .accessibilityAction(
       named: Text(
         "Next week", tableName: "Progress",
-        comment: "VoiceOver action moving a calendar's readout a week later")
+        comment: "VoiceOver action moving a calendar's picked day a week later")
     ) {
-      picked = min(activeIndex + 7, days.count - 1)
+      inspection.inspect(min(activeIndex + 7, days.count - 1), in: chart)
     }
     .accessibilityAction(
       named: Text(
         "Previous week", tableName: "Progress",
-        comment: "VoiceOver action moving a calendar's readout a week earlier")
+        comment: "VoiceOver action moving a calendar's picked day a week earlier")
     ) {
-      picked = max(activeIndex - 7, 0)
+      inspection.inspect(max(activeIndex - 7, 0), in: chart)
     }
     .accessibilityChartDescriptor(
       CalendarChartDescriptor(title: chartTitle, summary: chartSummary, days: days))
@@ -234,17 +265,17 @@ struct StatsCalendar: View {
 
   /// A whole number of weeks, so no week is cut at the oldest edge.
   private var wholeWeeksWidth: Double {
-    let columns = max(((width - ringInset) / (cell + gap)).rounded(.down), 1)
-    return columns * (cell + gap) + ringInset
+    let columns = max(((width + gap) / (cell + gap)).rounded(.down), 1)
+    return columns * (cell + gap) - gap
   }
 
   private func gridWidth(step: Double) -> Double {
-    Double(max(weeks - 1, 0)) * step + cell + 2 * ringInset
+    Double(max(weeks - 1, 0)) * step + cell
   }
 
   private func square(_ index: Int) -> CGRect {
     CGRect(
-      x: ringInset + Double(index / 7) * step,
+      x: Double(index / 7) * step,
       y: headerHeight + Double(index % 7) * (cell + gap),
       width: cell, height: cell)
   }
@@ -268,19 +299,46 @@ struct StatsCalendar: View {
     }
   }
 
-  private func pick(at location: CGPoint) {
-    let week = Int(((location.x - ringInset + (step - cell) / 2) / step).rounded(.down))
+  /// A tap or a pointer off every day closes the tooltip.
+  private func inspect(at location: CGPoint) {
+    let week = Int(((location.x + (step - cell) / 2) / step).rounded(.down))
     let weekday = Int(((location.y - headerHeight) / (cell + gap)).rounded(.down))
-
-    guard (0..<7).contains(weekday), week >= 0 else {
-      return
-    }
-
     let index = week * 7 + weekday
 
-    if days.indices.contains(index), picked != index {
-      picked = index
+    if (0..<7).contains(weekday), week >= 0, days.indices.contains(index) {
+      inspection.inspect(index, in: chart)
+    } else {
+      inspection.close(chart)
     }
+  }
+
+  /// Scrolls a day the arrow keys or VoiceOver moved to into sight, where its tooltip shows.
+  private func reveal(_ square: CGRect) {
+    if square.minX < scroll.offset {
+      position.scrollTo(x: square.minX)
+    } else if square.maxX > scroll.offset + wholeWeeksWidth {
+      position.scrollTo(x: square.maxX - wholeWeeksWidth)
+    }
+  }
+}
+
+/// How far a calendar wider than its column is scrolled. Only the tooltip reads it, so scrolling
+/// redraws the tooltip and not the grid.
+@MainActor
+@Observable
+private final class CalendarScroll {
+  var offset = 0.0
+}
+
+/// Spans what shows of the grid, so the page's tooltip follows its day as the calendar scrolls
+/// and stays inside the visible weeks.
+private struct CalendarTooltip: View {
+  let detail: ChartPointDetail?
+  let square: CGRect
+  let scroll: CalendarScroll?
+
+  var body: some View {
+    Color.clear.chartTooltip(detail, at: square.offsetBy(dx: -(scroll?.offset ?? 0), dy: 0))
   }
 }
 
@@ -291,7 +349,7 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
 
   func makeChartDescriptor() -> AXChartDescriptor {
     let values = days.compactMap(\.value)
-    let labels = days.map(\.label)
+    let labels = days.map(\.detail.spoken)
 
     let xAxis = AXNumericDataAxisDescriptor(
       title: String(

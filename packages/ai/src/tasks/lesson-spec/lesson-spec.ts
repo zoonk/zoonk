@@ -30,11 +30,13 @@ import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
- * needs. On the 22 visual plans (8 Nov 2026), once the eval judged each question's visual, Sol
- * scored 9.16 to Terra's 8.66, and a blind read preferred Sol on 11 and Terra on none: Terra left
- * questions without the diagram, chart or setup they ask about. Terra scored a bit higher on the
- * 24-plan mix (8.76 to 8.52) at 40% of the cost. Opus, the other provider, last ran an older
- * prompt. A learner's own lesson is planned with its scope's models.
+ * needs. On the 22 visual plans (8 Nov 2026), Sol scored 9.16 to Terra's 8.66, and a blind read
+ * preferred Sol on 11 and Terra on none: Terra left questions without the diagram, chart or setup
+ * they ask about. Terra scored a bit higher on the 24-plan mix (8.76 to 8.52) at 40% of the cost.
+ * On 4 plans (11 Nov 2026), Sol scored EN 9.62 and PT 9.27 at $82/1k, Opus 9.08 and 8.35 at
+ * $365/1k, and Gemini 4 Carbon 9.08 and 8.00 at $268/1k with a 1,122 s p95; a blind read liked
+ * Carbon's richer visuals on 3 of 4 despite its factual and scope flaws. A learner's own lesson is
+ * planned with its scope's models.
  */
 const defaultModel = "openai/gpt-6.1-sol";
 const defaultFallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;

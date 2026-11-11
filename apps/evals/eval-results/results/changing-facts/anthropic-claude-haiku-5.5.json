@@ -1,0 +1,216 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
+        "id": "enem-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
+        "id": "sat-1",
+        "language": "en",
+        "userInput": {
+          "goal": "Get a 1450 on the SAT in March"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
+        "id": "abitur-1",
+        "language": "de",
+        "userInput": {
+          "goal": "Abitur 2027 in Bayern bestehen, Mathe und Deutsch"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "exam",
+        "predicted": "exam"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "exam"
+          ]
+        },
+        "id": "bac-1",
+        "language": "fr",
+        "userInput": {
+          "goal": "réussir le bac de philo en juin"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
+        "id": "income-tax-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "declarar meu imposto de renda 2027 sozinho"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "regulation",
+        "predicted": "regulation"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "regulation"
+          ]
+        },
+        "id": "gdpr-1",
+        "language": "en",
+        "userInput": {
+          "goal": "GDPR compliance for my startup's app"
+        }
+      }
+    }
+  ],
+  "taskId": "changing-facts"
+}

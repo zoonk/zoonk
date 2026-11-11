@@ -138,6 +138,10 @@
     <string name="tutor_offer_memory_description">See, correct or delete what your buddy remembers about you.</string>
     <string name="tutor_offer_stats">Statistics</string>
     <string name="tutor_offer_stats_description">Energy, level, right answers and when you study best.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">Your buddy and practice calls use %1$s.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">Saved. You can change it in your plan.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">What Plus includes and its price.</string>
     <string name="tutor_offer_plus_subscribed">Your plan and its billing.</string>

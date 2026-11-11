@@ -67,7 +67,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.`,
+    expectations: `Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors), and every hint is correct US English the learner can copy: "I've had a fever since Monday", never "I have a fever since Monday". Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-en-b1-doctor",
     userInput: {
       canDo: [
@@ -143,7 +143,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says "du" to the caller: a line that addresses them, in the opening line or the hints, uses "Sie" ("Wie kann ich Ihnen helfen?"), and the brief tells the voice model to use "Sie". An opening that addresses no one is fine. Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
+    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says "du" to the caller: a line that addresses them, in the opening line or the hints, uses "Sie" ("Wie kann ich Ihnen helfen?"), and the brief tells the voice model to use "Sie". An opening that addresses no one is fine. A date the brief gives falls on the weekday it names (27.09.2026 is a Sunday, never "Monday, 27.09.2026"). Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-de-b1-doctor",
     userInput: {
       canDo: [

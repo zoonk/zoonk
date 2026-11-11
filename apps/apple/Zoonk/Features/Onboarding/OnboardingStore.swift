@@ -81,9 +81,11 @@ final class OnboardingStore {
     draftID: String,
     field: UnderstoodField,
     goal: Int,
-    value: String
+    value: String?
   ) async throws -> OnboardingDraft {
-    var edit: [String: Any] = ["field": field.rawValue, "value": value]
+    var edit: [String: Any] = [
+      "field": field.rawValue, "value": value.map { $0 as Any } ?? NSNull(),
+    ]
 
     if field != .studyTime {
       edit["goal"] = goal

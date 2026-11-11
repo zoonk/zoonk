@@ -209,6 +209,42 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).not.toContain("You are the other candidate");
   });
 
+  it("speaks the learner's country's variety and may say the opening line in it", () => {
+    const call = { ...apartmentCall, targetLanguage: "es", targetRegion: "AR" };
+    const starting = buildLiveConversationInstructions(call);
+    const continuing = buildLiveConversationInstructions({ ...call, continuesCall: true });
+
+    expect(starting).not.toContain("{{");
+    expect(starting).toContain("Speak only Español (Argentina)");
+    expect(starting).toContain("the grammar forms of Español (Argentina)");
+    expect(starting).toContain("You may reword it as a native speaker of Español (Argentina)");
+    expect(continuing).toContain("the grammar forms of Español (Argentina)");
+    expect(continuing).not.toContain("You may reword it");
+  });
+
+  it.each([null, "MX"])("keeps the call as it was with a country of %s", (targetRegion) => {
+    const call = { ...apartmentCall, targetLanguage: "es" };
+
+    expect(buildLiveConversationInstructions({ ...call, targetRegion })).toBe(
+      buildLiveConversationInstructions(call),
+    );
+  });
+
+  it("keeps an exam's own variety whatever the learner's country", () => {
+    const examTask = {
+      card: { instructions: ["Hable."], prompts: [] },
+      exam: "dele",
+      task: { brief: "A talk.", name: "Tarea 1", role: "examiner" },
+      title: "DELE B2",
+    } as const;
+
+    const call = { ...apartmentCall, examTask, kind: "examTask", targetLanguage: "es" } as const;
+
+    expect(buildLiveConversationInstructions({ ...call, targetRegion: "AR" })).toBe(
+      buildLiveConversationInstructions(call),
+    );
+  });
+
   it("plays the other candidate of a paired Cambridge task in British English, at the exam's level", () => {
     const instructions = buildLiveConversationInstructions({
       ...apartmentCall,

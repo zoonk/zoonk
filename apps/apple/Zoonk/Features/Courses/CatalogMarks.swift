@@ -129,20 +129,10 @@ struct CourseMark: View {
     }
   }
 
+  /// The language the course teaches, never its flag's country.
   private var flagLabel: String {
-    guard let targetLanguage, let languageFlag else {
-      return ""
-    }
-
-    return languageFlagLabel(language: targetLanguage, flag: languageFlag)
+    targetLanguage.map { Locale.current.languageTitle($0) } ?? ""
   }
-}
-
-/// main's `getLanguageFlagLabel`: the language in the flag's country ("Chinese (Taiwan)").
-func languageFlagLabel(language: String, flag: String, locale: Locale = .current) -> String {
-  let base = Locale.Language(identifier: language).languageCode?.identifier ?? language
-  let identifier = flag.count == 2 ? "\(base)-\(flag.uppercased())" : base
-  return locale.languageTitle(identifier)
 }
 
 extension CourseMark {

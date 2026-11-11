@@ -29,15 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
 function toUpNext(goals: GoalView[]): CertificateUpNext[] {
   return goals
     .filter((goal) => goal.status === "active" && CERTIFIED_GOAL_KINDS.has(goal.kind))
-    .map((goal) => ({
-      goal: { displayName: goal.displayName, kind: goal.kind, targetLanguage: goal.targetLanguage },
-      id: goal.id,
+    .filter((goal) => goal.kind === "language" || goal.plan?.lessonsTotal)
+    .map(({ displayName, id, kind, languageFlag, plan, targetLanguage, targetRegion }) => ({
+      goal: { displayName, languageFlag, targetLanguage, targetRegion },
+      id,
       progress:
-        goal.kind === "language" || !goal.plan?.lessonsTotal
-          ? null
-          : goal.plan.lessonsDone / goal.plan.lessonsTotal,
-    }))
-    .filter((item) => item.goal.kind === "language" || item.progress !== null);
+        kind === "language" || !plan?.lessonsTotal ? null : plan.lessonsDone / plan.lessonsTotal,
+    }));
 }
 
 async function CertificatesContent() {

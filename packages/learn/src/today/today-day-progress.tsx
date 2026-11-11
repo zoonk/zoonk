@@ -4,13 +4,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { METER_PARTS_CLASS } from "../_components/meter";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatDuration } from "../_utils/time-format";
-import { getBlockKind } from "../session/block-kind";
 import { type DayStep } from "../session/session-types";
-import { DaySegment, type DaySegmentState } from "./day-segments";
+import { type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
+import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDaySegmentCount, getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
@@ -33,18 +34,22 @@ function getSegmentState(block: DayStep, current: boolean): DaySegmentState {
   return current ? "current" : "ahead";
 }
 
+const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
+
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, nextPosition } = today.session;
   const done = blocks.filter((block) => isFinished(block)).length;
   const held = getHeldMinutes(today.session);
+  const focusPosition = nextPosition ?? blocks[0]?.position;
 
   if (getDaySegmentCount(today.session) < 2) {
     return null;
   }
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
     <div
       aria-label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
@@ -52,18 +57,19 @@ export function DayProgress({ className }: { className?: string }) {
       )}
       className={cn(METER_PARTS_CLASS, className)}
       data-slot="today-day-progress"
-      role="img"
+      onKeyDown={moveBetweenSegments}
+      role="group"
     >
       {blocks.map((block) => (
-        <DaySegment
+        <BlockSegment
+          block={block}
+          focusable={block.position === focusPosition}
           key={block.position}
-          kind={getBlockKind(block)}
-          minutes={block.estimatedMinutes}
           share={block.position === nextPosition ? getBlockShare(block) : 0}
           state={getSegmentState(block, block.position === nextPosition)}
         />
       ))}
-      {held > 0 && <DaySegment kind="lesson" minutes={held} state="ahead" />}
+      {held > 0 && <HeldSegment minutes={held} />}
     </div>
   );
 }

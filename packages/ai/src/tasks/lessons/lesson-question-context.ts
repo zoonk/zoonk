@@ -161,6 +161,11 @@ export type PlanScopeContext = {
     } | null;
     targetDate: string | null;
     title: string;
+    /**
+     * Only when the learner chose a country for a language goal: its variety, which the buddy and
+     * practice calls use, and the one lessons and their audio teach, named in English.
+     */
+    variety?: { chosen: string; lessons: string };
   };
   language: string;
   /** Newest first, open and fixed. */

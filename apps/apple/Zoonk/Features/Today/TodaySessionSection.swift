@@ -41,7 +41,7 @@ struct TodaySessionSection: View {
     }
 
     Section {
-      let lead = TodayDayLead(view: view)
+      let lead = TodayDayLead(view: view, writingStalled: writingStalled)
 
       if !view.dayLeadJoinsHeader, !lead.isEmpty {
         lead
@@ -399,6 +399,7 @@ extension TodayView {
 /// What opens main's `TodaySession` before its queue: why the day is as it is, then its meter.
 struct TodayDayLead: View {
   let view: TodayView
+  let writingStalled: Bool
 
   private var session: StudyDay { view.session }
 
@@ -415,7 +416,7 @@ struct TodayDayLead: View {
       mockFunding
 
       if session.showsDayProgress {
-        DayProgressRow(session: session)
+        DayProgressRow(session: session, writingStalled: writingStalled)
       }
     }
   }
@@ -489,19 +490,6 @@ struct TodayDayLead: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
-  }
-}
-
-private struct DayProgressRow: View {
-  let session: StudyDay
-
-  var body: some View {
-    MeterParts(parts: session.meterParts)
-      .accessibilityElement(children: .ignore)
-      .accessibilityLabel(
-        Text(
-          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
-          tableName: "Today", comment: "How far the day's session is"))
   }
 }
 

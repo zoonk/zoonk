@@ -66,3 +66,22 @@ export const planDateChangeInvalidResponse = {
   },
   description: `PLAN_CHANGE_INVALID: ${planChangeInvalidResponse.description} ${TARGET_DATE_OUT_OF_RANGE_DESCRIPTION}`,
 } as const;
+
+const targetRegionNotOfferedErrorSchema = errorSchema
+  .extend({
+    error: errorSchema.shape.error.extend({ code: z.literal("TARGET_REGION_NOT_OFFERED") }),
+  })
+  .meta({ id: "TargetRegionNotOfferedError" });
+
+export const goalUpdateInvalidResponse = {
+  content: {
+    "application/json": {
+      schema: z.union([
+        planChangeInvalidErrorSchema,
+        targetDateOutOfRangeErrorSchema,
+        targetRegionNotOfferedErrorSchema,
+      ]),
+    },
+  },
+  description: `${planDateChangeInvalidResponse.description} TARGET_REGION_NOT_OFFERED: the \`targetRegion\` isn't one of the goal's \`regionChoices\`, or the goal isn't a language goal. Nothing was saved.`,
+} as const;

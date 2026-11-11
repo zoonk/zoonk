@@ -32,6 +32,44 @@ function isFocusOnControl(): boolean {
   return active instanceof HTMLElement && active !== document.body;
 }
 
+function isSessionScreen(location: string): boolean {
+  return location === SESSION_PATH || location.startsWith(`${SESSION_PATH}?`);
+}
+
+/**
+ * A question block that hasn't begun opens on its screen and waits for Start there, so the learner
+ * reads what it is before it starts. A lesson's tap starts its writing at once. An unopened day's
+ * address shows only its next step.
+ */
+function waitsForStart({
+  day,
+  origin,
+  step,
+}: {
+  day: TapDay["shown"]["day"];
+  origin: string;
+  step: TapStep;
+}): boolean {
+  const block = day.blocks.find((candidate) => candidate.position === step.position);
+
+  return (
+    !isSessionScreen(origin) &&
+    block?.kind !== "learn" &&
+    block?.status !== "active" &&
+    (step.blockId !== null || step.position === day.nextPosition)
+  );
+}
+
+function getStepHref({ goalId, step }: { goalId: string; step: TapStep }): string | null {
+  if (step.screen !== "session") {
+    return null;
+  }
+
+  return getSessionHref(
+    step.blockId ? { blockId: step.blockId, limit: null } : { goalId, limit: null },
+  );
+}
+
 type TapRequest = {
   next: boolean;
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
@@ -104,6 +142,44 @@ async function settleEntry({
 }
 
 /**
+ * Takes the learner to a step's intro when the step waits for Start there; says whether it did. Its
+ * entry draws the intro at once from this day while the session screen loads.
+ */
+function useShowIntro(day: TapDay) {
+  const router = useRouter();
+
+  return useCallback(
+    ({ next, step }: { next: boolean; step: TapStep }): boolean => {
+      const { shown } = day;
+      const href = getStepHref({ goalId: shown.goalId, step });
+
+      if (!href || !waitsForStart({ day: shown.day, origin: getCurrentLocation(), step })) {
+        return false;
+      }
+
+      const focusMain = isFocusOnControl();
+      router.push(href);
+
+      beginDayEntry({
+        day,
+        focusMain,
+        here: stayingHere(shown.userId),
+        href,
+        // A saved day's Start opens the block shown, as the session screen's own Start does: a block
+        // finished elsewhere since Today's read never starts the one after it unseen.
+        next: next && day.sessionId === null,
+        step,
+        tappedAt: Date.now(),
+        waiting: true,
+      });
+
+      return true;
+    },
+    [day, router],
+  );
+}
+
+/**
  * Nothing here starts AI work on its own: only a tapped step's start does. A tap that stops because
  * the learner left resolves true: the screen they left has nothing to report, even when they return.
  */
@@ -144,6 +220,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     [go, refresh],
   );
 
+  const showIntro = useShowIntro(day);
+
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
       const learnerHere = learnerStaying(shown.userId);
@@ -151,14 +229,11 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const here = openingHere(shown.userId);
       const focusMain = isFocusOnControl();
 
-      const href =
-        step.screen === "session"
-          ? getSessionHref(
-              step.blockId
-                ? { blockId: step.blockId, limit: null }
-                : { goalId: shown.goalId, limit: null },
-            )
-          : null;
+      const href = getStepHref({ goalId: shown.goalId, step });
+
+      if (showIntro({ next, step })) {
+        return true;
+      }
 
       const stillHere = async () =>
         (await learnerHere()) && [origin, href].includes(getCurrentLocation());
@@ -168,7 +243,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       if (href) {
         // Within the session screen the step replaces the one shown; Back still leads to Today.
-        if (href !== origin && (origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`))) {
+        if (href !== origin && isSessionScreen(origin)) {
           router.replace(href);
         } else if (href !== origin) {
           router.push(href);
@@ -182,6 +257,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           next,
           step,
           tappedAt: Date.now(),
+          waiting: false,
         });
 
         void answer.then((result) => settleEntry({ id: entry.id, learnerHere, origin, result }));
@@ -201,7 +277,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       return applyHere(answered.answer, here);
     },
-    [applyHere, day, request, router, shown],
+    [applyHere, day, request, router, shown, showIntro],
   );
 
   const openKept = useCallback(
@@ -287,5 +363,6 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       return prepared.answer;
     },
+    showIntro,
   };
 }

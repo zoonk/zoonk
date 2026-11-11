@@ -258,12 +258,11 @@ class MistakePracticeViewModelTest {
                 FakeMistakesApi(
                     practice(
                         practiceEntry(FIRST_MISTAKE, planet, star),
-                        practiceEntry(SECOND_MISTAKE, star, planet, snapshot = "Which is a star?" to "Venus"),
+                        practiceEntry(SECOND_MISTAKE, star, planet),
                     ),
                 )
             val viewModel = viewModel(api)
             val read = started(viewModel).read
-            assertEquals(mapOf(0 to "Moon", 2 to "Venus"), read.lastAnswers)
 
             api.answer = { practiceFeedback(isCorrect = true) }
             viewModel.answer()
@@ -346,24 +345,16 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
-    fun theLastAnswerShowsOnlyBesideTheMistakesOwnQuestion() {
+    fun eachQuestionCarriesItsMistakeAndDrill() {
         val read =
             practice(
                 practiceEntry(
                     FIRST_MISTAKE,
-                    practiceQuestion(FIRST, "context" to "Look up tonight.", "question" to "Which is   a planet?"),
+                    practiceQuestion(FIRST),
                     practiceQuestion(SECOND, "question" to "Which orbits the Sun?"),
                 ),
-            ).let {
-                it.copy(
-                    practice =
-                        it.practice.map { entry ->
-                            entry.copy(snapshot = entry.snapshot.copy(question = "Look up tonight. Which is a planet?"))
-                        },
-                )
-            }.toQuestions()
+            ).toQuestions()
 
-        assertEquals(mapOf(0 to "Moon"), read.lastAnswers)
         assertEquals(listOf(FIRST_MISTAKE, FIRST_MISTAKE), read.questions.map { it.mistakeId })
         assertEquals(Drill.Kind.Retry, read.questions[1].drill?.kind)
         assertEquals(TrueFalseWords.TrueFalse, read.words)

@@ -1,6 +1,10 @@
-import { type TutorToolOffer } from "../contract";
+import { type TutorToolOffer } from "../tutor-tool-offer-contract";
 
 type UnavailableReason =
+  /** The goal already uses that country. */
+  | "alreadySet"
+  /** The goal's language doesn't list that country. */
+  | "countryNotOffered"
   /** Includes a one-subject plan where there is no depth choice. */
   | "everythingFits"
   | "noMistakes"

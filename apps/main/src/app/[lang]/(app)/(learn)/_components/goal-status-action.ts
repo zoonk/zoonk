@@ -23,6 +23,20 @@ export async function setGoalStatusAction(
   return result.status === "updated" ? "saved" : "failed";
 }
 
+export async function setGoalCountryAction(
+  goalId: string,
+  targetRegion: unknown,
+): Promise<boolean> {
+  const input = goalUpdateInputSchema.safeParse({ targetRegion });
+
+  if (!input.success) {
+    return false;
+  }
+
+  const result = await updateGoal({ goalId, input: input.data });
+  return result.status === "updated";
+}
+
 export async function renameGoalAction(goalId: string, displayName: unknown): Promise<boolean> {
   const input = goalUpdateInputSchema.safeParse({ displayName });
 

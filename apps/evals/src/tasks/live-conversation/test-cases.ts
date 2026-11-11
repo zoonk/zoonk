@@ -180,4 +180,29 @@ export const TEST_CASES: TestCase<LiveConversationExpected, LiveConversationInpu
       },
     },
   },
+  {
+    expectations: `The learner chose Argentine Spanish, so Javier, the same upstairs neighbor in Madrid, speaks Rioplatense Spanish to a B1 learner (US English speaker): vos and its verb forms ("sos", "tenés", "podés"), never tú forms. He may reword his opening line with vos ("¿Sos el vecino del tercero?"), keeping its meaning. He speaks in clear sentences of up to about 15 words, is a little defensive at first, then reasonable, and only agrees to what his notes allow (stop by 10pm on weeknights, a rug, Fridays stay his band's night). He never switches to English and never corrects the learner.`,
+    expected: { objectivesMet: ["Explicar el problema", "Llegar a un acuerdo"] },
+    id: "en-es-ar-b1-neighbor",
+    userInput: {
+      call: {
+        kind: "unit",
+        learnerLanguage: "en",
+        level: "B1",
+        scenario: NEIGHBOR_SCENARIO,
+        targetLanguage: "es",
+        targetRegion: "AR",
+      },
+      learner: {
+        about:
+          "Alex, 35, an American software engineer living on the third floor in Madrid, who learns Argentine Spanish for a move to Buenos Aires and gets up at 6:30 on weekdays for work.",
+        plan: [
+          "Say yes, it's you, apologize for bothering him, and explain that his music keeps you awake on weeknights.",
+          "Say you get up at 6:30 on weekdays for work.",
+          "Propose they finish at ten on weeknights, and say that on Fridays they can play later.",
+          "Accept the deal and thank him by name.",
+        ],
+      },
+    },
+  },
 ];

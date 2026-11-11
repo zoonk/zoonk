@@ -23,7 +23,10 @@ import { runObjectiveCheck } from "./objective-check";
 
 type ReviewInput = {
   level: CefrLevel;
-  row: Pick<LanguageConversation, "goalId" | "language" | "objectivesMet" | "targetLanguage">;
+  row: Pick<
+    LanguageConversation,
+    "goalId" | "language" | "objectivesMet" | "targetLanguage" | "targetRegion"
+  >;
   scenario: SavedScenario;
   spokenSeconds: number;
   turns: ConversationTurn[];
@@ -106,6 +109,7 @@ async function writeCallFeedback(
       title: input.scenario.title,
     },
     targetLanguage: input.row.targetLanguage,
+    targetRegion: input.row.targetRegion,
     turns: input.turns,
   });
 

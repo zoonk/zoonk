@@ -1,6 +1,6 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { getLanguagePromptContext, getPromptVarietyName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
 import {
@@ -54,7 +54,12 @@ type LiveConversationRole =
   | { exam: SpeakingMockExam; kind: "speakingMock" }
   | { examTask: ExamTaskRole; kind: "examTask" };
 
-type LiveConversationLanguages = { targetLanguage: string; learnerLanguage: string };
+type LiveConversationLanguages = {
+  targetLanguage: string;
+  /** The learner's country, snapshotted with the call. */
+  targetRegion?: string | null;
+  learnerLanguage: string;
+};
 
 export type LiveConversationInstructionsParams = LiveConversationRole &
   LiveConversationLanguages & {
@@ -157,6 +162,16 @@ function getExamTaskValues(params: LiveConversationRole): Record<string, string>
   };
 }
 
+/** The learner's country's variety; an exam's examiner speaks the exam's own. */
+export function hasLiveCallVariety(
+  params: LiveConversationRole & LiveConversationLanguages,
+): boolean {
+  return (
+    params.kind !== "examTask" &&
+    getPromptVarietyName({ language: params.targetLanguage, region: params.targetRegion }) !== null
+  );
+}
+
 /** An exam's examiner speaks its own variety: Cambridge's British English, DELE's Spain Spanish. */
 export function getLiveConversationLanguageName(
   params: LiveConversationRole & LiveConversationLanguages,
@@ -167,6 +182,7 @@ export function getLiveConversationLanguageName(
 
   return getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
+    targetRegion: params.targetRegion,
     userLanguage: params.learnerLanguage,
   }).targetLanguageName;
 }
@@ -182,12 +198,13 @@ export function buildLiveConversationInstructions(
   });
 
   const targetLanguageName = getLiveConversationLanguageName(params);
+  const variety = hasLiveCallVariety(params);
   const { levelRules, template: roleTemplate, variants } = getRoleRules(params);
 
   const role = fillTemplate(
     selectPromptVariants({
       template: roleTemplate,
-      variants: { ...variants, starting: !continuesCall },
+      variants: { ...variants, starting: !continuesCall, variety },
     }),
     {
       ...getExamTaskValues(params),
@@ -206,7 +223,7 @@ export function buildLiveConversationInstructions(
   const instructions = fillTemplate(
     selectPromptVariants({
       template,
-      variants: { resuming: continuesCall, rolePlay: params.kind === "unit" },
+      variants: { resuming: continuesCall, rolePlay: params.kind === "unit", variety },
     }).replace("{{ROLE}}", () => role.trim()),
     {
       LEARNER_LANGUAGE: userLanguageName,

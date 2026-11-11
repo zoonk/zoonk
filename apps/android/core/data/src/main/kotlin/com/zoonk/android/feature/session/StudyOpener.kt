@@ -292,6 +292,26 @@ fun StudyBlockOpening.route(): AppRoute? =
 /** A lesson step whose lesson is picked but not written, which a tap asks [StudyOpener] to write. */
 fun DayStep.isUnwrittenLesson(): Boolean = kind == StudyBlock.Kind.LEARN && screen == StudyBlock.Screen.SESSION && lessonId != null
 
+/**
+ * Where a tap on Today leads instead of opening [step], when the session screen plays it and it
+ * hasn't started: its intro, which waits for the learner's Start, so they read what it is first. A
+ * lesson opens on its own screen, a step already under way goes on, and a day not opened yet shows
+ * only its next step there.
+ */
+fun DayView.introTo(
+    step: DayStep,
+    goalId: UUID,
+): AppRoute.Session? {
+    if (step.screen != StudyBlock.Screen.SESSION || step.kind == StudyBlock.Kind.LEARN || step.status != StudyBlock.Status.PENDING) {
+        return null
+    }
+    return when {
+        sessionId != null && step.id != null -> AppRoute.Session(blockId = step.id.toString(), sessionId = sessionId.toString())
+        step.position == nextPosition -> AppRoute.Session(goalId = (this.goalId ?: goalId).toString())
+        else -> null
+    }
+}
+
 /** Names the shown step by its work, never by position alone, so a changed day never opens other work. */
 internal fun openDayBody(
     shownDate: LocalDate,

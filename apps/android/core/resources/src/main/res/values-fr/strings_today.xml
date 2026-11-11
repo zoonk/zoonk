@@ -132,6 +132,15 @@
   "today_see_plan": "8edcf497ef13cd57637ea6416cc73af42e98ecb2e2c61a3ce0418900be169085",
   "today_see_summary": "4c6379005d72c5b88466e46ec80090577139dd54c84a033325659a643eb72b85",
   "today_see_your_plan": "f945b4ec612db48dbd50690fe2f8350423dc89d174b4379fc832597fdffd91cc",
+  "today_segment_challenge_note": "e83e946569b7aac830f2dc7baaa657bd19dc0debfea034d2291a7c124e3a9c1d",
+  "today_segment_essay_note": "7110e0301c45d36d128be85d23922eb40e9a38473b815cf2b30e7bfa5a7d2c91",
+  "today_segment_label": "7fa36d180373ef68a641c2d4a6116b504a542225303bb51f964c2c45c8c4bce8",
+  "today_segment_mistakes_note": "c169857f0ecd537693443cdef6c379e7dec358af95d9db7de5e7e8ec49fc8bba",
+  "today_segment_mock_note": "235f8da75e984bb0c85390b6546f015268ec5b3e28640ffcc83c84f816ef160a",
+  "today_segment_practice_note": "4b495815349c4e63cef4c86e379bc95ee84808eb2e013a7b8ac6b163e7f71ff9",
+  "today_segment_questions": "bb029f0e2d4418abfb2d2d561c19b8a4f61663ccbb490b0071854f2228707db6",
+  "today_segment_review_note": "454d6514da44b2dbbd9156d0c9341c9f6303eba23d1809de1b4f241cb4f0e662",
+  "today_segment_up_next": "dfc0cc3e2caacea4cb87cb2606be19f05008bbe179d72053739181bd107784a4",
   "today_setting_up": "14cc0bce5b5ac4db1d77986310335b133aadfe580cf074d24d10196bf200d1d9",
   "today_setting_up_detail": "9d6a3622a5bfead2c527c6cfaef5406643b4840f28d01c8a49b240a552545cbb",
   "today_setting_up_goal": "075f01d49c8dae331b486d28c1a98f7200fae8dc691576939aa3a0943c964c4b",
@@ -175,6 +184,8 @@
   "today_week_challenge_day": "69ba1ed0941349681d6155b2bda52af8452838de9769729472563d7b9c788a2b",
   "today_week_challenge_name": "f30a1a49fc4b5a99b8d2089a759241cc361913da06951210fa00593607abfd96",
   "today_week_day": "4027d9b220d1e62a115dbf721f012996eb312662abf7a94434aa8d4e24eacfbc",
+  "today_week_day_planned": "ca76eb647c273070dbc53223552eaab9467767c65a90e97ad5d455f834137155",
+  "today_week_day_studied_of": "6da770f378c5b9b196f9bf97aa805896a0840a3f128daf99abf90b325f91d335",
   "today_week_days": "8a5b9eb284fb302d4c757a84a7d3c366a8a0a1c7dd4127f3a0b68101010d83ea",
   "today_week_deadline": "801629645a0de1deb90634c270366bf8db78d17962124b96dcc1f23caebdae2c",
   "today_week_exam_day": "408a467408a8557c041f08d1aedfa79a83e7c6c5f95d366f90416e3c17d18c2d",
@@ -503,4 +514,21 @@
     <string name="today_coming_stalled">Ça prend plus de temps que d’habitude</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Pas encore préparées.</string>
+    <string name="today_segment_up_next">À suivre</string>
+    <string name="today_segment_review_note">Te fait revoir ce que tu as étudié avant que tu l’oublies.</string>
+    <string name="today_segment_practice_note">De nouvelles questions qui mélangent ce que tu as appris.</string>
+    <string name="today_segment_mistakes_note">Tu reprends les questions où tu as fait des erreurs.</string>
+    <string name="today_segment_challenge_note">Vérifie ce que tu as appris jusqu’ici.</string>
+    <string name="today_segment_mock_note">Un examen blanc, comme le vrai.</string>
+    <string name="today_segment_essay_note">Tu expliques ce que tu as appris avec tes propres mots.</string>
+    <string name="today_week_day_studied_of">%1$s d’étude sur %2$s</string>
+    <string name="today_week_day_planned">Durée prévue : %1$s</string>
+    <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
+    <string name="today_segment_label">%1$s : %2$s</string>
+    <!-- %1$s is a formatted number of questions answered, %2$d the step's questions: "3 of 12 questions". -->
+    <plurals name="today_segment_questions">
+        <item quantity="one">%1$s sur %2$d question</item>
+        <item quantity="many">%1$s sur %2$d questions</item>
+        <item quantity="other">%1$s sur %2$d questions</item>
+    </plurals>
 </resources>

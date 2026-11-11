@@ -86,6 +86,8 @@
   "tutor_offer_stats": "f52f3730929dc1e166cb155dda2ac911665c20de43cf1027b42b6780f8d32288",
   "tutor_offer_stats_description": "1454bfae2745eaca61f5c5bcbe768724b49279cecefbf1d26d592e88c79976f2",
   "tutor_offer_take_test": "4ad2cac9c66f7f9e86b33ae22e350b7a580b7971e66bd0ad10581edefeab3d0a",
+  "tutor_offer_variety_applied": "19931206484a79fa8722ae654cb98addc0c43288efab6b8aa68a0e538577d219",
+  "tutor_offer_variety_description": "0f90ea439abd2d132eb43bf2a5d3c0825ad4e810aae776ad9ba0f1c04dab0b77",
   "tutor_page_sign_up": "b21cf9fdcce86db8fb7fdcc78b8af677020d2a760a8b4791e963debb0931b5c0",
   "tutor_placeholder_answer": "bb897194ac19037e38c4e46a833476b79ec820121b80434ba856b388bb157677",
   "tutor_placeholder_chapter": "982b1980eeb66fd78c5fbb7c5672c380d68f666c0f5a960cc4c0b03860a58565",
@@ -255,6 +257,10 @@
     <string name="tutor_offer_memory_description">Arkadaşının senin hakkında hatırladıklarını gör, düzelt veya sil.</string>
     <string name="tutor_offer_stats">İstatistikler</string>
     <string name="tutor_offer_stats_description">Enerjin, seviyen, doğru cevapların ve en verimli çalıştığın zamanlar.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">Ders arkadaşınla ve pratik sohbetlerinde %1$s kullanılır.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">Kaydedildi. Planında değiştirebilirsin.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Plus’ın sundukları ve fiyatı.</string>
     <string name="tutor_offer_plus_subscribed">Paketin ve ödeme bilgilerin.</string>

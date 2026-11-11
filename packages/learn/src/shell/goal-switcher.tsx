@@ -22,7 +22,7 @@ import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "r
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
-import { GoalMark } from "./goal-mark";
+import { GoalCountryName, GoalMark } from "./goal-mark";
 import {
   GOAL_ROW_CLASS,
   type GoalKind,
@@ -35,9 +35,11 @@ type SwitcherGoal = {
   dailyMinutes: number;
   id: string;
   kind: GoalKind;
+  languageFlag: string | null;
   status: "active" | "completed" | "paused";
   targetDate: string | null;
   targetLanguage: string | null;
+  targetRegion: string | null;
   displayName: string;
 };
 
@@ -115,7 +117,10 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
     <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col">
-        <span>{goal.displayName}</span>
+        <span>
+          {goal.displayName}
+          <GoalCountryName goal={goal} />
+        </span>
         <GoalLine goal={goal} />
       </span>
     </DropdownMenuRadioItem>
@@ -232,6 +237,7 @@ export function GoalSwitcher({
           {selected?.displayName ?? t("Start a goal")}
         </span>
         {/* After the title, so the trigger's name starts with the words on screen. */}
+        {selected && <GoalCountryName goal={selected} />}
         {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
         <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       </DropdownMenuTrigger>

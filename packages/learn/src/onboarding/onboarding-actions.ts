@@ -14,10 +14,10 @@ import {
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import {
   type OnboardingAnswerInput,
-  type OnboardingDraftEdit,
   type OnboardingDraftView,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";

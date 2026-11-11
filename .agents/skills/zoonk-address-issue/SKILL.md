@@ -4,7 +4,7 @@ description: Verify and address a zoonk/zoonk GitHub issue together with the iss
 license: MIT
 metadata:
   author: zoonk
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Addressing an issue
@@ -114,7 +114,7 @@ These need `gh` 2.97 or newer, which sets a field by name, and the `project` sco
 
 Confirm each problem before judging it:
 
-- **A bug:** reproduce it at the cheapest layer that shows it: trace the code path, write a failing test, or use the running app.
+- **A bug:** reproduce it at the cheapest layer that shows it: trace the code path, write a failing test, or use the running app. When it depends on what's stored in production, such as one learner's goal or sessions, read it with [zoonk-staff-data](../zoonk-staff-data/SKILL.md).
 - **Anything else:** see how Zoonk handles it today, in the code or the running app, on each platform it touches.
 
 If it doesn't reproduce, find out why. It may be fixed on `main` since it was filed: close it as completed, with a comment naming the PR or commit that fixed it. Or the issue may lack what you need ([when information is missing](#when-information-is-missing)).

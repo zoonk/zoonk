@@ -75,14 +75,12 @@
         <item quantity="one">%1$s activity</item>
         <item quantity="other">%1$s activities</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · No study</string>
-    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
-    <plurals name="stats_day_activities">
-        <item quantity="one">%1$s · %2$s activity</item>
-        <item quantity="other">%1$s · %2$s activities</item>
-    </plurals>
-    <string name="stats_day_no_energy">%1$s · No Energy recorded</string>
-    <string name="stats_day_energy">%1$s · %2$s Energy</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
+    <string name="stats_no_study">No study</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
+    <string name="stats_no_energy">No Energy recorded</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
+    <string name="stats_energy_amount">%1$s Energy</string>
     <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today, %2$s on average since you started</string>
 
     <string name="stats_right_answers">Right answers</string>
@@ -124,6 +122,11 @@
         <item quantity="other">%1$s answers</item>
     </plurals>
     <string name="stats_no_answers">No answers</string>
+    <!-- A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, as in "7 answers, needs 10 to count". -->
+    <plurals name="stats_answers_to_count">
+        <item quantity="one">%1$s answer, needs %2$s to count</item>
+        <item quantity="other">%1$s answers, needs %2$s to count</item>
+    </plurals>
     <string name="stats_throughout_week">Throughout the week</string>
     <string name="stats_throughout_day">Throughout the day</string>
     <string name="stats_any_day">Any day</string>

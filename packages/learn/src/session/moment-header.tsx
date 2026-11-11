@@ -57,7 +57,7 @@ export function MomentSavingTitle() {
 
 export function PendingMainAction({ children }: { children: React.ReactNode }) {
   return (
-    <Button aria-busy className={TASK_MAIN_ACTION_CLASS} disabled focusableWhenDisabled size="xl">
+    <Button className={TASK_MAIN_ACTION_CLASS} disabled focusableWhenDisabled size="xl">
       {children}
     </Button>
   );

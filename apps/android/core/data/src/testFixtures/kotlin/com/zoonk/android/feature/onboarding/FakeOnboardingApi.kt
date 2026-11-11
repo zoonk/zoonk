@@ -88,7 +88,7 @@ internal fun goalCreated(): GoalCreateResponse =
         {"generations":[],"refused":[],"research":[],"goals":[{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":15,"details":{},
          "examBlueprintId":null,"id":"$GOAL_ID","isActive":true,"kind":"exam","language":"en","plan":null,"primaryCourseId":null,
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
-         "timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
+         "targetRegion":null,"regionChoices":[],"timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
         """.trimIndent(),
     )
 
@@ -131,7 +131,7 @@ fun setupView(
             "\"$it\""
         } ?: "null"},"targetLanguage":${targetLanguage?.let {
             "\"$it\""
-        } ?: "null"},"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
+        } ?: "null"},"targetRegion":null,"regionChoices":[],"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
         """.trimIndent(),
     )
 

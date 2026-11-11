@@ -333,88 +333,6 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "This is an everyday, safe clinic call that directly practices booking and explaining symptoms and duration. Emma is a plausible US receptionist meeting the learner as a service worker. The clinic name and appointment times are realistic, and no learner identity or personal background is assumed.",
-          "score": 10,
-          "label": "Fits the unit and real life",
-          "weight": 25
-        },
-        {
-          "categoryId": "level",
-          "reasoning": "The opening greets, identifies the speaker and clinic, and invites the learner to speak without completing an objective. Its length and the hints' vocabulary and structures fit B1. However, hint coverage is incomplete: there is no clear model for confirming the offered day and exact time.",
-          "score": 8,
-          "label": "At the learner's level",
-          "weight": 20
-        },
-        {
-          "categoryId": "objectives",
-          "reasoning": "The three objectives are speech-checkable, manageable in a short call, and have appropriately sized verb-led labels. However, 'para esta semana' supplies a timing choice that the learner should make, so the explicit cap of 6 applies. The descriptions otherwise avoid revealing the unavailable-slot twist or the offered appointment times.",
-          "score": 6,
-          "label": "Objectives",
-          "weight": 25
-        },
-        {
-          "categoryId": "brief",
-          "reasoning": "The English brief supplies personality, B1 guidance, concrete appointment times, symptom questions, and a closing procedure. However, Monday is simultaneously described as available and taken. The twist is also conditional on requesting Monday rather than reliably presenting the required first-time-unavailable complication. Necessary scheduling facts are present, so the missing-facts cap does not apply.",
-          "score": 7,
-          "label": "Character brief",
-          "weight": 15
-        },
-        {
-          "categoryId": "languages",
-          "reasoning": "The title, situation, role, and objective descriptions use natural Brazilian Portuguese. The place, opening, labels, and hints are in US English, and the brief is in English. There are no emojis or em dashes.",
-          "score": 10,
-          "label": "Right language per field",
-          "weight": 15
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2620,
-          "outputTokens": 1194,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The first objective preselects 'this week' rather than leaving appointment timing to the learner, triggering the cap for descriptions that supply a learner choice. The brief also contradicts itself by listing Monday at 10:00 a.m. as available and then saying it is taken. Its twist depends on the learner requesting Monday, so it may never occur, especially because a hint suggests Tuesday.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The hints do not clearly model confirming the offered day and exact time. 'Can I come in on Tuesday afternoon?' requests a broad period instead, while the insurance-card hint covers an action outside the stated objectives.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Describe the booking objective without prescribing a week. Make the unavailable first slot and available alternative unambiguous, and ensure the small scheduling twist occurs without requiring a particular learner request. Include a hint that explicitly confirms the offered appointment.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.",
-        "id": "pt-en-b1-doctor-1",
-        "userInput": {
-          "canDo": [
-            "Marcar uma consulta",
-            "Explicar sintomas e desde quando",
-            "Entender as instruções do remédio"
-          ],
-          "learnerLanguage": "pt",
-          "level": "B1",
-          "targetLanguage": "en",
-          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
-          "unitTitle": "No médico e na farmácia"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "unitFit",
           "reasoning": "This is a safe, everyday weekend-planning call with an existing friend. The situation explicitly identifies Liam as the learner's friend, and the opening sounds familiar rather than transactional. Liam is a suitable US name, the diner and afternoon time are plausible, and no learner name, city, or personal plans are assumed.",
           "score": 9,
           "label": "Fits the unit and real life",
@@ -823,88 +741,6 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "This is an appropriate, everyday phone call to a German medical practice, with achievable appointment and symptom-reporting goals. The receptionist is a suitable service stranger, and the symptoms are part of the scenario premise rather than unsupported personal assumptions. However, naming both the doctor and receptionist Mia creates role ambiguity, and the incorrect calendar details weaken realism. No unit-fit cap is triggered.",
-          "score": 8,
-          "label": "Fits the unit and real life",
-          "weight": 25
-        },
-        {
-          "categoryId": "level",
-          "reasoning": "The opening identifies the practice and speaker, greets naturally, and invites the learner to speak without completing an objective. The opening and complete-sentence hints are accessible at B1. Formal Sie is used appropriately. The final hint could align more directly with confirming an offered appointment instead of proposing one.",
-          "score": 8,
-          "label": "At the learner's level",
-          "weight": 20
-        },
-        {
-          "categoryId": "objectives",
-          "reasoning": "There are three concise, speech-checkable objectives in a workable order for a short call. However, the first description prescribes requesting an appointment today, which is a choice the learner should make; the explicit cap of 6 applies. All three labels also place the infinitive last rather than starting with a verb.",
-          "score": 6,
-          "label": "Objectives",
-          "weight": 25
-        },
-        {
-          "categoryId": "brief",
-          "reasoning": "The English brief supplies personality, B1 and Sie instructions, opening hours, an appointment slot, a simple availability twist, and a clear wrap-up. Necessary appointment facts are present, so the missing-facts cap does not apply. However, both weekday/date pairings are factually wrong, and the stated current date falls outside the practice's opening days. These errors undermine the scheduling information the voice model needs.",
-          "score": 6,
-          "label": "Character brief",
-          "weight": 15
-        },
-        {
-          "categoryId": "languages",
-          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are German, and the brief is English. The opening uses Sie and the brief explicitly requires it. There are no emojis or em dashes, and no wrong-language field triggers a cap.",
-          "score": 10,
-          "label": "Right language per field",
-          "weight": 15
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2713,
-          "outputTokens": 972,
-          "reasoningTokens": 248
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The brief contains incorrect calendar facts: 27.09.2026 is Sunday, not Monday, and 28.09.2026 is Monday, not Tuesday. This also conflicts with the stated Monday–Friday opening hours. The first objective description dictates that the learner request an appointment today, although descriptions must not prescribe the learner's choice; this triggers the objectives score cap of 6.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "None of the objective labels starts with a verb, as required. The situation names the doctor as Mia Weber while the character is a receptionist named Mia, creating avoidable ambiguity about who answers the call.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the final hint model confirmation of the offered appointment rather than asking whether that appointment works. Keep the initial appointment request open so the learner can choose whether to request a particular day.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says \"du\" to the caller: a line that addresses them, in the opening line or the hints, uses \"Sie\" (\"Wie kann ich Ihnen helfen?\"), and the brief tells the voice model to use \"Sie\". An opening that addresses no one is fine. Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.",
-        "id": "pt-de-b1-doctor-1",
-        "userInput": {
-          "canDo": [
-            "Marcar uma consulta",
-            "Explicar sintomas e desde quando",
-            "Entender as instruções do remédio"
-          ],
-          "learnerLanguage": "pt",
-          "level": "B1",
-          "targetLanguage": "de",
-          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
-          "unitTitle": "No médico"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "unitFit",
           "reasoning": "This is a plausible first phone call to a landlord, with an appropriate French name, street, euro prices, and phone-achievable goals. However, it omits charges and asking what is included, an explicit part of the expected rental interaction.",
           "score": 8,
           "label": "Fits the unit and real life",
@@ -1226,6 +1062,170 @@
           "targetLanguage": "tr",
           "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
           "unitTitle": "Renting an apartment"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday clinic phone call covering appointment booking and symptom reporting. Emma is a plausible receptionist meeting the learner for the first time, the appointment times are realistic, and the scenario does not assume personal facts beyond the illness premise.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies Emma and the clinic, invites the learner to speak, and stays within approximately 15 words. The hints are grammatical, copyable B1 US English, including the correct present perfect for ongoing symptoms. However, they do not clearly provide a complete day-and-time confirmation for the final objective.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are speech-checkable, feasible in a short call, and ordered naturally as an appointment request, symptom explanation, and confirmation. Labels start with verbs and contain two to five words. Descriptions do not reveal the appointment slots or the twist.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, B1 guidance, concrete appointment times, symptom questions, and a closing procedure. However, Monday at 10:00 a.m. is inconsistently described as both available and taken. The twist is conditional on a Monday request rather than reliably occurring during the call, particularly because a learner hint suggests Tuesday.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are US English, and the brief is English. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2758,
+          "outputTokens": 1076,
+          "reasoningTokens": 440
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The brief lists Monday at 10:00 a.m. as available, then instructs Emma to say it is taken. This contradiction can produce inconsistent scheduling. The required twist also depends on the learner requesting Monday morning, while a hint directs them to Tuesday, allowing the twist to be skipped.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The hints do not clearly model the final objective of confirming both the appointment day and time. Asking about Tuesday afternoon is less precise than confirming an agreed appointment, and the insurance-card hint supports an extra action instead.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add an onset-based hint such as \"I've had a fever since Monday\" alongside the correct duration-based example. This would give learners useful practice with both 'since' and 'for'.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors), and every hint is correct US English the learner can copy: \"I've had a fever since Monday\", never \"I have a fever since Monday\". Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-b1-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Marcar uma consulta",
+            "Explicar sintomas e desde quando",
+            "Entender as instruções do remédio"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+          "unitTitle": "No médico e na farmácia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "Booking a clinic appointment and explaining symptoms fit the unit and are achievable by phone. A receptionist is the appropriate stranger, and the German name and clinic hours are plausible. However, the contradictory appointment calendar undermines real-life usability, and the doctor/receptionist identity is ambiguous.",
+          "score": 7,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies both the practice and speaker, invites the learner to speak, and correctly uses Sie. The opening and complete-sentence hints are accessible at B1. The hints cover booking, symptoms, and duration, but the final question is a weaker model for confirming an offered appointment.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives achievable in a short call. However, 'marcar uma consulta para hoje' supplies the learner's day preference, triggering the maximum score of 6 for prescribing a choice. All labels also fail the explicit verb-first requirement.",
+          "score": 6,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, opening hours, an appointment slot, a simple twist, a wrap-up, and explicit B1 and Sie instructions. Its concrete scheduling facts are nevertheless incorrect: both dates have the wrong weekday, and the stated current date is a Sunday despite weekday-only opening hours. These errors materially compromise the voice model's appointment information.",
+          "score": 6,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese; the place, opening, labels, and hints are German; and the brief is English. There are no emojis or em dashes, and formal address is used correctly.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2807,
+          "outputTokens": 924,
+          "reasoningTokens": 254
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The brief gives incorrect weekdays: 27.09.2026 is Sunday, not Monday, and 28.09.2026 is Monday, not Tuesday. This also makes 'today' fall outside the stated opening days. The first objective description prescribes requesting an appointment today, although descriptions must not choose the learner's preferred day.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "All three objective labels put the verb last rather than starting with a verb as required. The situation identifies Mia Weber as the doctor, while the character and brief identify Mia as the receptionist, creating avoidable ambiguity. The final hint asks whether a slot works rather than clearly confirming the offered appointment.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Tell the receptionist to leave room for the learner to explain symptoms and their duration before wrapping up. Make the final hint a direct confirmation rather than a new availability question.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says \"du\" to the caller: a line that addresses them, in the opening line or the hints, uses \"Sie\" (\"Wie kann ich Ihnen helfen?\"), and the brief tells the voice model to use \"Sie\". An opening that addresses no one is fine. A date the brief gives falls on the weekday it names (27.09.2026 is a Sunday, never \"Monday, 27.09.2026\"). Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-de-b1-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Marcar uma consulta",
+            "Explicar sintomas e desde quando",
+            "Entender as instruções do remédio"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "de",
+          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+          "unitTitle": "No médico"
         }
       }
     }

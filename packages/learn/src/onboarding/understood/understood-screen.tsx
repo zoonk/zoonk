@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  type OnboardingDraftEdit,
-  type UnderstoodGoalView,
-} from "@zoonk/core/view-models/onboarding/contract";
+import { type UnderstoodGoalView } from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -51,6 +49,10 @@ function readEditValue({ draft, row }: { draft: GoalDraft; row: UnderstoodRow })
     return draft.targetDate ?? row.editDefault ?? "";
   }
 
+  if (field.key === "targetRegion") {
+    return draft.targetRegion ?? "";
+  }
+
   const value = draft.details?.[field.key];
   return typeof value === "string" ? value : "";
 }
@@ -66,6 +68,10 @@ function toDraftEdit({
 }): OnboardingDraftEdit {
   if (field.key === "studyTime") {
     return { field: "studyTime", value };
+  }
+
+  if (field.key === "targetRegion") {
+    return { field: "targetRegion", goal, value: value || null };
   }
 
   return { field: field.key, goal, value };
@@ -98,13 +104,17 @@ function GoalCard({
   timeZone: string;
 }) {
   const rowsFor = useUnderstoodRows();
+  // oxlint-disable-next-line react/hook-use-state -- What the card opened with never changes, so there is no setter.
+  const [countryAsked] = useState(Boolean(goal.draft.targetRegion));
 
   const rows = [
     ...rowsFor({
+      countryAsked,
       cutoff: goal.cutoff,
       draft: goal.draft,
       examDates: goal.examDates,
       languageAim: goal.languageAim,
+      regionChoices: goal.regionChoices,
     }),
     ...extraRows,
   ];
@@ -135,6 +145,7 @@ function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
     draft: goal.draft,
     examDates: goal.examDates,
     languageAim: goal.languageAim,
+    regionChoices: goal.regionChoices,
   });
 
   return (

@@ -33,7 +33,7 @@ import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type ExtraTime } from "./extra-time";
 import { type Mission } from "./missions";
-import { getDayMissions, hasDayMissionBonus } from "./missions/get-day-missions";
+import { getDayMissions } from "./missions/get-day-missions";
 
 const SECONDS_PER_MINUTE = 60;
 
@@ -137,7 +137,7 @@ export async function getStudySessionSummary({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
 
-  const [answers, after, missions, mistakesSaved, seconds, fullMealEarned] = await Promise.all([
+  const [answers, after, missions, mistakesSaved, seconds] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
     measureSummaryState({ session, timeZone, userId }),
     getDayMissions({
@@ -147,11 +147,6 @@ export async function getStudySessionSummary({
     }),
     prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
     sumSessionSeconds(prisma, { sessionId, userId }),
-    hasDayMissionBonus({
-      session,
-      timeZone,
-      ...(isCurrentSession({ now: new Date(), session, timeZone }) && { now: new Date() }),
-    }),
   ]);
 
   const moves = snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [];
@@ -164,7 +159,6 @@ export async function getStudySessionSummary({
     current: isCurrentSession({ now: new Date(), session, timeZone }),
     dayMinutes: session.plannedMinutes,
     examAccess: { includesMockExams: true, trialEnded: false },
-    fullMealEarned,
     missions,
     session,
     week: { days: [], nextStudyDate: null, time: { studiedMinutes: 0, targetMinutes: 0 } },

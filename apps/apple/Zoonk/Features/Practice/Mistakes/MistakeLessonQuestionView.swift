@@ -93,9 +93,9 @@ struct MistakeLessonQuestionView: View {
       if showsIdea, let lesson = entry.drill.lesson {
         DrillIdeaView(drill: entry.drill, lesson: lesson)
       } else {
-        DrillNoteView(
-          drill: entry.drill, lastAnswer: entry.snapshotAnswer,
-          isAnswered: grade != nil || entry.drill.isIdeaFirst)
+        if !entry.drill.isIdeaFirst {
+          DrillNoteView(drill: entry.drill, isAnswered: grade != nil)
+        }
         if let seconds = entry.drill.timeLimitSeconds, grade == nil, state.phase == .playing {
           DrillCountdownView(seconds: seconds, start: shownAt) {
             Task { await send(dontKnow: true, timedOut: true) }

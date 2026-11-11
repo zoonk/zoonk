@@ -56,7 +56,6 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
-import com.zoonk.android.feature.session.learnKind
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.feature.subscription.PlusMark
@@ -66,11 +65,8 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
@@ -82,7 +78,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
 import kotlinx.datetime.toJavaLocalDate
@@ -522,36 +517,6 @@ private fun FoldRow(
     }
 }
 
-/** Main's `DayProgress`: the day's blocks by their minutes, the ones ahead in their kind's color. */
-@Composable
-private fun DayProgress(
-    model: TodayDayModel,
-    modifier: Modifier,
-) {
-    val day = model.day
-    val done = day.steps.count(DayStep::isFinished)
-    val tertiary = MaterialTheme.colorScheme.tertiary
-    val skipped = MaterialTheme.colorScheme.onSurface.copy(alpha = SKIPPED_ALPHA)
-    val parts =
-        day.steps.map { step ->
-            val current = step.position == day.nextPosition
-            val fill =
-                when {
-                    step.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(tertiary)
-                    step.status == StudyBlock.Status.SKIPPED -> MeterPart.Fill.Solid(skipped)
-                    current -> MeterPart.Fill.Place(step.share)
-                    step.learnKind == LearnKind.Lesson -> MeterPart.Fill.Track
-                    else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
-                }
-            MeterPart(fill, weight = step.estimatedMinutes.coerceAtLeast(1).toFloat())
-        } + listOfNotNull(day.heldMinutes.takeIf { it > 0 }?.let { MeterPart(MeterPart.Fill.Track, weight = it.toFloat()) })
-
-    MeterParts(parts, modifier, contentDescription = stepsDone(done, day.steps.size))
-}
-
-private val DayStep.share: Float
-    get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
-
 @Composable
 internal fun stepsDone(
     done: Int,
@@ -688,5 +653,3 @@ private fun TodayDayStatus(
 private const val DONE_ROWS = 1
 private const val FOLD_MORE = "fold-more"
 private const val OPEN_BACKLOG_LIMIT = 5
-private const val SKIPPED_ALPHA = 0.25f
-private const val AHEAD_ALPHA = 0.5f

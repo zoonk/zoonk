@@ -2,6 +2,7 @@ import "server-only";
 import { type PlanScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
 import { type Goal, prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
+import { getTaughtRegion, getVarietyName } from "@zoonk/utils/language-regions";
 import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
@@ -182,6 +183,17 @@ function getGoalTarget(goal: Goal): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
+function getGoalVariety({ targetLanguage: language, targetRegion: region }: Goal) {
+  if (!language || !region) {
+    return null;
+  }
+
+  return {
+    chosen: getVarietyName({ language, region, userLanguage: "en" }),
+    lessons: getVarietyName({ language, region: getTaughtRegion(language), userLanguage: "en" }),
+  };
+}
+
 function toGoalContext({
   cutoff,
   dailyMinutes,
@@ -191,6 +203,8 @@ function toGoalContext({
   dailyMinutes: number;
   goal: Goal;
 }): PlanScopeContext["goal"] {
+  const variety = getGoalVariety(goal);
+
   return {
     cutoff,
     dailyMinutes,
@@ -198,6 +212,7 @@ function toGoalContext({
     target: getGoalTarget(goal),
     targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     title: goal.title,
+    ...(variety && { variety }),
   };
 }
 

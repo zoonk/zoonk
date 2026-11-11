@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { GoalMark } from "./goal-mark";
+import { GoalCountryName, GoalMark } from "./goal-mark";
 
 export type GoalKind = "exam" | "explain" | "language" | "learn";
 
@@ -15,9 +15,10 @@ export const GOAL_ROW_CLASS = cn(MENU_ROW_CLASS, "gap-2.5 py-1.5");
 
 export type WaitingGoal = {
   id: string;
-  kind: GoalKind;
+  languageFlag: string | null;
   locked: boolean;
   targetLanguage: string | null;
+  targetRegion: string | null;
   displayName: string;
 };
 
@@ -50,7 +51,10 @@ export function WaitingOption({
     <>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col">
-        <span>{goal.displayName}</span>
+        <span>
+          {goal.displayName}
+          <GoalCountryName goal={goal} />
+        </span>
         <span className="text-muted-foreground font-mono text-[0.71875rem]">
           {goal.locked ? lock.label : t("Ready to start")}
         </span>

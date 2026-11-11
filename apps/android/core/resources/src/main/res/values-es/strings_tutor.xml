@@ -86,6 +86,8 @@
   "tutor_offer_stats": "53ce5c63e0ab3258fe11c8f18b0f8951542e13edc1ebb3937173523a203b6d97",
   "tutor_offer_stats_description": "0aa4939c5fb11f344eed147397ddbde0c45bb630cb18a6e7849bc471dc9904d9",
   "tutor_offer_take_test": "cd8eda0f4ab496ff82508c3bfb1e90323a91ade0df68cf37814d67557b849793",
+  "tutor_offer_variety_applied": "8dcebb9c71abdf80d6b752086a9d7f34d25671aab37f7c9ef32d4ccfc6707240",
+  "tutor_offer_variety_description": "b5020afc38fcb20b276484b8d8527ee58961184942df77c3bc9a4e66f2cddea5",
   "tutor_page_sign_up": "349a8b2de9f39977b0cd54eebcff21a3a4643f4deec83e02a949af825eb65ab3",
   "tutor_placeholder_answer": "104c0b18cb6c7b307b9a3def09f3dc47be2e04de023fcac4a99d2ad8b9e06754",
   "tutor_placeholder_chapter": "cdfae927d4934de7ba2f07cf7d56ad35a51785c9b8812b1cee88c769c154b23f",
@@ -258,6 +260,10 @@
     <string name="tutor_offer_memory_description">Consulta, corrige o elimina lo que tu compañero recuerda de ti.</string>
     <string name="tutor_offer_stats">Estadísticas</string>
     <string name="tutor_offer_stats_description">Energía, nivel, respuestas correctas y cuándo estudias mejor.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">Tu compañero y las llamadas de práctica usan %1$s.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">Se guardó. Puedes cambiar esta preferencia en tu plan.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Lo que incluye Plus y su precio.</string>
     <string name="tutor_offer_plus_subscribed">Tu plan y su facturación.</string>

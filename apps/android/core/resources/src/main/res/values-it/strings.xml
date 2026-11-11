@@ -38,6 +38,7 @@
   "gate_start_goal_description": "7bdf46c16999970253a324a32d50b67472dd48dfc08d35443d96adcd7913961d",
   "gate_start_goal_title": "c89c148383fd02b24158cfbbfd260a15ca6fc443bc7a9b667dd58aa8f764bfa4",
   "gate_start_something_new": "98a85cb195070b255c6f51e0e33a089d1c322f541eff6dcb3636fda7ca687bb9",
+  "goal_with_variety": "36b8befb562fd64c0c0fb7abc720ee9e38fda44b2247a4db5d1593b5352f7eed",
   "lesson_summaries_title": "30974f74285de27bd6ed77f3284255174914c86a4a2b3ffd13de65e0d01e603a",
   "lessons_coming_up": "898b6e93718078615bf413783304eaae9c0b0f18a0688f0443eee2bf83a4fed1",
   "lessons_done": "6bef4ffa0b75e8c5028175995b835db7614bb9d443e79542d4318ec0bcb6db31",
@@ -100,6 +101,8 @@
     <string name="gate_start_goal_title">Inizia con un obiettivo</string>
     <string name="gate_start_goal_description">Dicci cosa vuoi imparare e organizzeremo lo studio giorno per giorno fino al traguardo.</string>
     <string name="gate_start_goal">Inizia un obiettivo</string>
+    <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
+    <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">Cintura bianca</string>
     <string name="belt_yellow">Cintura gialla</string>
     <string name="belt_orange">Cintura arancione</string>
