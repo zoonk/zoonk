@@ -35,8 +35,8 @@ model WordPronunciation {
   word          Word      @relation(fields: [wordId], references: [id], onDelete: Cascade)
   userLanguage  String    @map("user_language") @db.VarChar(10)
   pronunciation String
-  /// Null when there is no real trap. Rows written before tips existed are filled the next time the
-  /// word is taught.
+  /// Null when there is no real trap. Each lesson that teaches the word replaces the guide and tip
+  /// together, so they always come from the same writer.
   tip           String?
   model         String?
   promptVersion String?   @map("prompt_version")
