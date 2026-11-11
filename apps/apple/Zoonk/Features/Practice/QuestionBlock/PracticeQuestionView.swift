@@ -190,24 +190,17 @@ private struct PlacementNote: View {
   @State private var failed = false
 
   var body: some View {
+    let note = String(
+      localized: "Fine-tuning your plan. A miss here is never saved as a mistake.",
+      table: "Practice", comment: "Note above a placement question in the first week's sessions.")
+
     VStack(alignment: .leading, spacing: 4) {
       QuestionNote(systemImage: "safari") {
-        Text(
-          "Fine-tuning your plan. A miss here is never saved as a mistake.",
-          tableName: "Practice",
-          comment: "Note above a placement question in the first week's sessions.")
-      }
-
-      if canSkipToday, let skipToday {
-        BusyButton(isBusy: isSkipping) {
-          skip(skipToday)
-        } label: {
-          Text(
-            "Not today", tableName: "FocusTest",
-            comment: "Takes today's Focus test questions out of the session")
+        if canSkipToday, let skipToday {
+          noteEndingInNotToday(note, skipToday)
+        } else {
+          Text(note)
         }
-        .buttonStyle(.ghost)
-        .controlSize(.small)
       }
 
       if failed {
@@ -217,6 +210,30 @@ private struct PlacementNote: View {
             comment: "A Focus test switch couldn't be saved"))
       }
     }
+  }
+
+  /// As main, "Not today" closes the note's sentence instead of taking a line of its own.
+  private func noteEndingInNotToday(_ note: String, _ skipToday: SkipTestQuestionsAction)
+    -> some View
+  {
+    let action = String(
+      localized: "Not today", table: "FocusTest",
+      comment: "Takes today's Focus test questions out of the session")
+    var link = AttributedString(action)
+    link.link = URL(string: "zoonk-session:not-today")
+    link.foregroundColor = isSkipping ? Color(.mutedForeground) : Color(.foreground)
+    link.underlineStyle = .single
+
+    return Text(AttributedString("\(note) ") + link)
+      .tint(Color(.foreground))
+      .environment(
+        \.openURL,
+        OpenURLAction { _ in
+          skip(skipToday)
+          return .handled
+        }
+      )
+      .accessibilityAction(named: Text(action)) { skip(skipToday) }
   }
 
   private func skip(_ skipToday: SkipTestQuestionsAction) {
