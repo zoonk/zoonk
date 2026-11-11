@@ -2,7 +2,6 @@
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { FreeWeekOverNotice } from "../../_components/free-week-over";
@@ -27,6 +26,8 @@ import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { SyllabusTopicsSheet, useSyllabusSummaryText } from "../../syllabus/syllabus-summary";
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
+
+const LINKS_CLASS = "flex flex-wrap gap-x-4 gap-y-1 text-sm";
 
 function CoveredWords({ coverage }: { coverage: Coverage }) {
   const coveredText = useCoveredText();
@@ -114,7 +115,7 @@ function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text
     <div className="flex flex-col gap-2" data-slot="reveal-coverage">
       <p className="text-muted-foreground text-sm text-pretty">{text}</p>
 
-      <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+      <p className={LINKS_CLASS}>
         {links.map((entry) => (
           <Fragment key={entry.key}>{entry.link}</Fragment>
         ))}
@@ -182,21 +183,17 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
             </Button>
           </>
         )}
-        {shown && (
-          <>
-            <span aria-hidden="true">{" · "}</span>
-            <SyllabusTopicsSheet syllabus={shown} />
-          </>
-        )}
       </p>
 
-      {testOffer && (
-        <LearnLink
-          className={cn(buttonVariants({ variant: "link" }), "self-start text-sm")}
-          href={testOffer.href}
-        >
-          {checkFocusLabel(testOffer.minutes)}
-        </LearnLink>
+      {(shown || testOffer) && (
+        <p className={LINKS_CLASS}>
+          {shown && <SyllabusTopicsSheet syllabus={shown} />}
+          {testOffer && (
+            <LearnLink className={buttonVariants({ variant: "link" })} href={testOffer.href}>
+              {checkFocusLabel(testOffer.minutes)}
+            </LearnLink>
+          )}
+        </p>
       )}
 
       <MoveDateFailure move={move} />
