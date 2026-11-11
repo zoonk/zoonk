@@ -174,21 +174,21 @@ private struct UnderstoodCard: View {
         Section {
           LockedGoalsNote(
             count: locked.count,
-            isGuest: learner.summary.value?.identity.isAnonymous == true,
+            isGuest: isGuest,
             offersRemedy: error?.limit?.isPlusLimit != true && error?.needsAccount != true)
         }
       }
 
-      if startable.isEmpty {
+      if startable.isEmpty, !isGuest {
         GoalLimitNoticeSection(reason: .activeGoals)
-      } else if let limit = error?.limit, limit.isPlusLimit {
+      } else if let limit = shownError?.limit, limit.isPlusLimit {
         GoalLimitNoticeSection(reason: limit)
       } else {
-        if let error {
-          GoalErrorSection(error: error)
+        if let shownError {
+          GoalErrorSection(error: shownError)
         }
 
-        if error?.needsAccount != true {
+        if shownError?.needsAccount != true {
           StepButtons(
             canContinue: !rewriting,
             canSkip: !isCreating && !rewriting,
@@ -208,6 +208,20 @@ private struct UnderstoodCard: View {
         }
       }
     }
+  }
+
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
+  }
+
+  /// A full card's way on for a guest is a free account, which has room; for an account it's a
+  /// pause or Plus.
+  private var shownError: GoalError? {
+    guard startable.isEmpty, isGuest else {
+      return error
+    }
+
+    return GoalError(message: GoalLimitReason.guest.message, needsAccount: true, limit: .guest)
   }
 
   private var startable: Range<Int> {
