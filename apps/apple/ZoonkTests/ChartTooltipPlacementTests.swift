@@ -30,22 +30,14 @@ final class ChartTooltipPlacementTests: XCTestCase {
     let nearEnd = CGRect(x: 320, y: 60, width: 20, height: 20)
 
     XCTAssertEqual(
-      ChartTooltipPlacement.origin(of: tall, anchor: middle, in: bounds, staysInside: true),
+      ChartTooltipPlacement.origin(of: tall, anchor: middle, in: bounds),
       CGPoint(x: 188, y: 10))
     XCTAssertEqual(
-      ChartTooltipPlacement.origin(of: tall, anchor: nearEnd, in: bounds, staysInside: true),
+      ChartTooltipPlacement.origin(of: tall, anchor: nearEnd, in: bounds),
       CGPoint(x: 202, y: 10))
   }
 
-  func testRisesAboveAChartItNeedNotStayInside() {
-    let column = CGRect(x: 300, y: 0, width: 50, height: 0)
-
-    XCTAssertEqual(
-      ChartTooltipPlacement.origin(of: size, anchor: column, in: bounds, staysInside: false),
-      CGPoint(x: 240, y: -60))
-  }
-
   private func origin(anchor: CGRect) -> CGPoint {
-    ChartTooltipPlacement.origin(of: size, anchor: anchor, in: bounds, staysInside: true)
+    ChartTooltipPlacement.origin(of: size, anchor: anchor, in: bounds)
   }
 }

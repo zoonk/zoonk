@@ -222,7 +222,7 @@ private struct PatternColumn: Identifiable {
 }
 
 /// Columns on a 0–100% scale, rising from one baseline. Tapping a column shows its detail in a
-/// tooltip above it (`ChartInspection`).
+/// tooltip beside it (`ChartInspection`).
 private struct PatternChart: View {
   let title: Text
   /// Spoken before the best column's name.
@@ -233,7 +233,7 @@ private struct PatternChart: View {
 
   @Environment(ChartInspection.self) private var inspection
   @Namespace private var chart
-  @State private var width = 0.0
+  @State private var size = CGSize.zero
 
   private var inspected: Int? {
     inspection.index(in: chart).flatMap { columns.indices.contains($0) ? $0 : nil }
@@ -258,10 +258,10 @@ private struct PatternChart: View {
         }
       }
       .chartsPlotText()
-      .onGeometryChange(for: Double.self) {
-        $0.size.width
+      .onGeometryChange(for: CGSize.self) {
+        $0.size
       } action: {
-        width = $0
+        size = $0
       }
       .onContinuousHover { phase in
         switch phase {
@@ -272,12 +272,7 @@ private struct PatternChart: View {
           inspection.close(chart)
         }
       }
-      .overlay {
-        if let inspected {
-          ChartTooltip(detail: details[inspected])
-            .placed(at: columnFrame(inspected), staysInside: false)
-        }
-      }
+      .chartTooltip(inspected.map { details[$0] }, at: columnFrame(inspected ?? 0))
       .chartPointKeys(
         [.leftArrow, .rightArrow], in: chart,
         from: columns.firstIndex { $0.state == .best } ?? 0
@@ -294,11 +289,11 @@ private struct PatternChart: View {
   }
 
   private var columnWidth: Double {
-    width / Double(max(columns.count, 1))
+    size.width / Double(max(columns.count, 1))
   }
 
   private func columnFrame(_ index: Int) -> CGRect {
-    CGRect(x: Double(index) * columnWidth, y: 0, width: columnWidth, height: 0)
+    CGRect(x: Double(index) * columnWidth, y: 0, width: columnWidth, height: size.height)
   }
 
   private func spoken(_ column: PatternColumn, detail: ChartPointDetail) -> String {

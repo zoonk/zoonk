@@ -47,8 +47,8 @@ struct ChartTooltip: View {
 
 extension ChartTooltip {
   /// Over its chart, beside the point whose frame in the chart is `anchor`. It never takes a touch.
-  func placed(at anchor: CGRect, staysInside: Bool = true) -> some View {
-    ChartTooltipPlacement(anchor: anchor, staysInside: staysInside) {
+  func placed(at anchor: CGRect) -> some View {
+    ChartTooltipPlacement(anchor: anchor) {
       self
     }
     .allowsHitTesting(false)
@@ -88,6 +88,15 @@ extension View {
     modifier(ChartInspectionScope())
   }
 
+  /// Shows `detail` beside `point`, a frame in this chart, over the page `inspectsCharts()` marks, so
+  /// it can leave the chart to stay in sight however far the page is scrolled. It never crosses the
+  /// chart's sides, and hides once the point leaves sight.
+  func chartTooltip(_ detail: ChartPointDetail?, at point: CGRect) -> some View {
+    anchorPreference(key: PageChartTooltip.self, value: .bounds) { chart in
+      detail.map { PageChartTooltip.Tooltip(detail: $0, point: point, chart: chart) }
+    }
+  }
+
   /// Makes a chart one focus stop, as main's: its tooltip opens at `start` with keyboard focus, the
   /// arrow keys move it from point to point, and it closes when focus leaves.
   func chartPointKeys(
@@ -103,6 +112,22 @@ private struct ChartInspectionScope: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .overlayPreferenceValue(PageChartTooltip.self) { tooltip in
+        if let tooltip {
+          GeometryReader { page in
+            let chart = page[tooltip.chart]
+            let point = tooltip.point.offsetBy(dx: 0, dy: chart.minY)
+            let sight = CGRect(x: chart.minX, y: 0, width: chart.width, height: page.size.height)
+
+            if point.maxY > sight.minY, point.minY < sight.maxY {
+              ChartTooltip(detail: tooltip.detail)
+                .placed(at: point)
+                .frame(width: sight.width, height: sight.height)
+                .offset(x: sight.minX)
+            }
+          }
+        }
+      }
       .contentShape(.rect)
       .onTapGesture {
         inspection.close()
@@ -111,6 +136,22 @@ private struct ChartInspectionScope: ViewModifier {
         inspection.close()
       }
       .environment(inspection)
+  }
+}
+
+private struct PageChartTooltip: PreferenceKey {
+  struct Tooltip {
+    let detail: ChartPointDetail
+    let point: CGRect
+    let chart: Anchor<CGRect>
+  }
+
+  static var defaultValue: Tooltip? {
+    nil
+  }
+
+  static func reduce(value: inout Tooltip?, nextValue: () -> Tooltip?) {
+    value = nextValue() ?? value
   }
 }
 
@@ -141,16 +182,14 @@ private struct ChartPointKeys: ViewModifier {
   }
 }
 
-/// Places a tooltip centered above its point. Where that would leave the chart it goes below the
-/// point, and beside it if neither fits; a tooltip that doesn't stay inside always goes above. It
-/// never crosses the chart's sides.
+/// Places a tooltip centered above its point. Where that would leave its bounds it goes below the
+/// point, and beside it if neither fits. It never crosses the bounds' sides.
 struct ChartTooltipPlacement: Layout {
   static let gap = 8.0
   /// Main's note wraps at 14rem inside the card's padding.
   static let maxWidth = 248.0
 
   let anchor: CGRect
-  var staysInside = true
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     proposal.replacingUnspecifiedDimensions()
@@ -165,23 +204,19 @@ struct ChartTooltipPlacement: Layout {
 
     let size = tooltip.sizeThatFits(
       ProposedViewSize(width: min(bounds.width, Self.maxWidth), height: nil))
-    let origin = Self.origin(
-      of: size, anchor: anchor, in: CGRect(origin: .zero, size: bounds.size),
-      staysInside: staysInside)
+    let origin = Self.origin(of: size, anchor: anchor, in: CGRect(origin: .zero, size: bounds.size))
 
     tooltip.place(
       at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y),
       proposal: ProposedViewSize(size))
   }
 
-  static func origin(
-    of size: CGSize, anchor: CGRect, in bounds: CGRect, staysInside: Bool
-  ) -> CGPoint {
+  static func origin(of size: CGSize, anchor: CGRect, in bounds: CGRect) -> CGPoint {
     let centeredX = clamp(anchor.midX - size.width / 2, bounds.minX, bounds.maxX - size.width)
     let above = CGPoint(x: centeredX, y: anchor.minY - gap - size.height)
     let below = CGPoint(x: centeredX, y: anchor.maxY + gap)
 
-    if !staysInside || above.y >= bounds.minY {
+    if above.y >= bounds.minY {
       return above
     }
 
