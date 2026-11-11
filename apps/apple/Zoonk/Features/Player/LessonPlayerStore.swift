@@ -140,7 +140,8 @@ final class LessonPlayerStore {
   private var reportedFirstScene = false
   private var reportedFirstAnswer = false
   @ObservationIgnored let promptAudio = LessonPromptAudio()
-  @ObservationIgnored private var works: [String: (round: Int, work: ActivityWork)] = [:]
+  /// By screen and round: a retry's work stays while the learner looks back at its first attempt.
+  @ObservationIgnored private var works: [WorkKey: ActivityWork] = [:]
 
   init(
     lessonId: String, studySessionId: String?, fromCatalog: Bool = false,
@@ -188,12 +189,14 @@ final class LessonPlayerStore {
   }
 
   func work(for stepId: String, round: Int) -> ActivityWork {
-    if let kept = works[stepId], kept.round == round {
-      return kept.work
+    let key = WorkKey(stepId: stepId, round: round)
+
+    if let kept = works[key] {
+      return kept
     }
 
     let work = ActivityWork()
-    works[stepId] = (round, work)
+    works[key] = work
     return work
   }
 
@@ -1056,4 +1059,9 @@ extension LessonAnswer {
     default: nil
     }
   }
+}
+
+private struct WorkKey: Hashable {
+  let stepId: String
+  let round: Int
 }

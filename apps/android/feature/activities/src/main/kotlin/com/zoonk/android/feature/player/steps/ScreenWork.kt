@@ -30,11 +30,13 @@ class ScreenWork internal constructor(
 
 val LocalScreenWork = staticCompositionLocalOf<ScreenWork?> { null }
 
+/** [firstRound]: the round of a question's first attempt, whose work its earlier copy still shows after the retry starts. */
 @Composable
 fun rememberScreenWork(
     holder: SaveableStateHolder,
     stepId: String,
     round: Int,
+    firstRound: Int?,
 ): ScreenWork {
     val id = workKey(stepId, round)
     val part =
@@ -47,8 +49,8 @@ fun rememberScreenWork(
             }
         }
 
-    LaunchedEffect(stepId, round) {
-        (0 until round).map { workKey(stepId, it) }.forEach { ended ->
+    LaunchedEffect(stepId, round, firstRound) {
+        (0 until round).filter { it != firstRound }.map { workKey(stepId, it) }.forEach { ended ->
             listOf(ended, pageKey(ended, turn = true), pageKey(ended, turn = false)).forEach(holder::removeState)
         }
     }
