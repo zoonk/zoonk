@@ -2174,11 +2174,11 @@ msgctxt "Fvi-xC"
 msgid "Tests and exams"
 msgstr "Pruebas y exámenes"
 
-#. {exams} lists the exams people in your country study for, such as “Enem, vestibular, concurso ou OAB”, and opens the sentence. In Brazilian Portuguese: “{exams}: o plano segue as matérias e os tópicos da sua prova. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola: o plano segue as matérias e os tópicos dela. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "V41OCV"
-msgid "{exams}: your plan follows your exam's subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
-msgstr "{exams}: tu plan sigue las materias y los temas de tu examen. En la recta final, los simulacros con el formato y la duración del examen real te muestran una estimación de tu puntaje y lo que aún falta."
+msgctxt "3tM-ty"
+msgid "Any exam, such as {exams}: your plan follows its subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
+msgstr "Cualquier examen, como {exams}: tu plan sigue sus materias y temas. En la recta final, los simulacros con el formato y la duración del examen real muestran una estimación de tu puntaje y lo que aún te falta."
 
 #. In Brazilian Portuguese: “Tudo o que cai, dividido até o dia da prova.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2269,11 +2269,11 @@ msgctxt "Jd18jf"
 msgid "What if I miss a day?"
 msgstr "¿Qué pasa si un día no estudio?"
 
-#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "qxT1fv"
-msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
-msgstr "Prácticamente cualquier cosa. Exámenes como el {exam}, exámenes de admisión a la universidad, concursos para puestos públicos y exámenes para ejercer la abogacía, idiomas, una nueva carrera o cualquier tema que quieras aprender. Escribe tu objetivo con tus propias palabras."
+msgctxt "r4pGG1"
+msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "Cualquier examen, como {exams}. También idiomas, una nueva carrera o cualquier tema que quieras aprender. Escribe tu objetivo con tus propias palabras."
 
 #. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2291,7 +2291,7 @@ msgctxt "kxCNVz"
 msgid "Still have questions? Write to <email></email>."
 msgstr "¿Aún tienes dudas? Escríbenos a <email></email>."
 
-#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no Enem” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
+#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
