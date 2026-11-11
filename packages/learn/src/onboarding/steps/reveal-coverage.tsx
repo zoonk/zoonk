@@ -114,12 +114,9 @@ function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text
     <div className="flex flex-col gap-2" data-slot="reveal-coverage">
       <p className="text-muted-foreground text-sm text-pretty">{text}</p>
 
-      <p className="text-muted-foreground text-sm">
-        {links.map((entry, index) => (
-          <Fragment key={entry.key}>
-            {index > 0 && <span aria-hidden="true">{" · "}</span>}
-            {entry.link}
-          </Fragment>
+      <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        {links.map((entry) => (
+          <Fragment key={entry.key}>{entry.link}</Fragment>
         ))}
       </p>
 
