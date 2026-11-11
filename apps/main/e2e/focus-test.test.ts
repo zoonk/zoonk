@@ -1,12 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
-import {
-  goalFixture,
-  planChangeFixture,
-  planFixture,
-  planItemFixture,
-} from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
@@ -105,43 +100,9 @@ async function createExamGoalAtFocusTest(
   return goal;
 }
 
-function isoDayFromToday(days: number) {
-  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
-}
-
-/**
- * The focus the test proposes on a plan already seen, as core stores it for the learner to answer.
- * Its subject gains a lesson and starts later, as a focus sharing its days with another does.
- */
-async function proposeFocus(goalId: string) {
+async function readProposalStatus(goalId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-  const today = isoDayFromToday(0);
-  const [area = ""] = SUBJECTS;
-
-  return planChangeFixture({
-    kind: "edited",
-    payload: {
-      effect: {
-        areaEnds: [
-          { after: isoDayFromToday(21), area, before: isoDayFromToday(20), lessonsGained: 1 },
-        ],
-        areaStarts: [{ after: isoDayFromToday(8), area, before: isoDayFromToday(5) }],
-        endDateAfter: today,
-        endDateBefore: null,
-        lessonsAdded: 0,
-        lessonsRemoved: 0,
-      },
-      operations: [{ areas: [area], kind: "focusAreas" }],
-      previewBasis: { planVersion: plan.version, studyDay: today, timeZone: "UTC" },
-      source: "focusTest",
-    },
-    planId: plan.id,
-    status: "proposed",
-  });
-}
-
-async function readChangeStatus(id: string) {
-  const change = await prisma.planChange.findUniqueOrThrow({ where: { id } });
+  const change = await prisma.planChange.findFirstOrThrow({ where: { planId: plan.id } });
   return change.status;
 }
 
@@ -280,31 +241,28 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
   await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
 
-  const change = await proposeFocus(goal.id);
-  await page.reload();
-
   const update = page.getByRole("button", { name: "Update my plan" });
   const done = page.getByRole("button", { exact: true, name: "Done" });
-
   const intro = page.getByText(/Your plan can give these more time\./u);
-  const effect = page.getByText(/gets 1 more lesson.+You start Portuguese on/u);
 
   await expect(update).toBeVisible();
   await expect(intro).toBeVisible();
-  await expect(effect).toBeVisible();
   await expect(done).not.toHaveAttribute("aria-keyshortcuts", "Enter");
 
   await update.click();
   await expect(page.getByText("Done. Your plan now gives these more time.")).toBeVisible();
   await expect(intro).toBeHidden();
   await expect(done).toHaveAttribute("aria-keyshortcuts", "Enter");
-  expect(await readChangeStatus(change.id)).toBe("applied");
+  expect(await readProposalStatus(goal.id)).toBe("applied");
 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
-  await expect(effect).toBeHidden();
   await expect(intro).toBeHidden();
-  expect(await readChangeStatus(change.id)).toBe("undone");
+  expect(await readProposalStatus(goal.id)).toBe("undone");
+
+  await page.reload();
+  await expect(page.getByText("You kept your plan as it is.")).toBeVisible();
+  await expect(update).toBeHidden();
 });
 
 test("a skip that doesn't save says so on the wait for questions, and the same button retries it", async ({
