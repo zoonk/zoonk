@@ -2,6 +2,7 @@ import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as logger from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -90,6 +91,40 @@ describe("GET /staff/me", () => {
     const byCookie = await getStaffMe();
 
     expect([byBearer.status, byCookie.status]).toStrictEqual([401, 401]);
+  });
+
+  it("writes one audit line per call like every staff route, refusals included", async () => {
+    const [admin, learner] = await Promise.all([adminFixture(), userFixture()]);
+
+    const [staffLogin, learnerLogin] = await Promise.all([
+      cliTokenFixture({ user: admin }),
+      cliTokenFixture({ user: learner }),
+    ]);
+
+    const log = vi.spyOn(logger, "logInfo");
+    log.mockClear();
+
+    const responses = [
+      await whoami(`Bearer ${staffLogin.accessToken}`),
+      await whoami(`Bearer ${learnerLogin.accessToken}`),
+    ];
+
+    expect(responses.map((response) => response.status)).toStrictEqual([200, 403]);
+
+    expect(log.mock.calls.map(([line]): unknown => JSON.parse(String(line)))).toStrictEqual([
+      expect.objectContaining({
+        actorUserId: admin.id,
+        event: "staff.read",
+        outcome: "ready",
+        verb: "me",
+      }),
+      expect.objectContaining({
+        actorUserId: learner.id,
+        event: "staff.read",
+        outcome: "forbidden",
+        verb: "me",
+      }),
+    ]);
   });
 
   it("refuses a learner's token with the message every staff route gives", async () => {

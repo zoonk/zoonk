@@ -18,8 +18,14 @@ type ReadData<T> =
   | { data: T; rows: number }
   | { status: "notFound"; message: string; rows: number };
 
+type StaffActor = { clientId: string; userId: string };
+
 type ReadOptions<T, Input extends object> = { call: Call } & (
-  | { input: unknown; schema: ZodType<Input>; run: (input: Input) => Promise<ReadData<T>> }
+  | {
+      input: unknown;
+      schema: ZodType<Input>;
+      run: (input: Input, actor: StaffActor) => Promise<ReadData<T>>;
+    }
   | { run: () => Promise<ReadData<T>> }
 );
 
@@ -127,7 +133,7 @@ export async function staffRead<T extends object, Input extends object = never>(
   }
 
   const { data, error } = await safeAsync(async () => {
-    const prepared = await prepareRead(options);
+    const prepared = await prepareRead(options, actor);
     return { call: prepared.call, ...(await safeAsync(prepared.run)) };
   });
 
@@ -136,14 +142,17 @@ export async function staffRead<T extends object, Input extends object = never>(
   return result;
 }
 
-async function prepareRead<T, Input extends object>(options: ReadOptions<T, Input>) {
+async function prepareRead<T, Input extends object>(
+  options: ReadOptions<T, Input>,
+  actor: StaffActor,
+) {
   if (!("schema" in options)) {
     return options;
   }
 
   const input = await parseStaffInput(options.schema, options.input);
   const call = { ...input, ...options.call };
-  return { call, run: () => options.run(input) };
+  return { call, run: () => options.run(input, actor) };
 }
 
 export function staffTransaction<T>(run: (client: TransactionClient) => Promise<T>): Promise<T> {
