@@ -13463,11 +13463,6 @@ msgid "Saved to your mistakes"
 msgstr "Ajouté à ton carnet d’erreurs"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Enregistré dans ton carnet d’erreurs · à revoir demain"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Sans réponse"
@@ -13478,6 +13473,7 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count} bonnes réponses d’affilée"
 
+#: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "amJs-w"
 msgid "Right answer: {answer}"
@@ -13606,12 +13602,6 @@ msgstr "Terminé en moins d’une minute"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Terminé en {time}"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "À revoir : {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

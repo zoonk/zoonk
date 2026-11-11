@@ -106,25 +106,6 @@ function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
   );
 }
 
-function ComesBackDetail({ comesBack }: { comesBack: StudySessionSummary["comesBack"] }) {
-  const t = useExtracted();
-  const format = useFormatter();
-
-  if (comesBack.length === 0) {
-    return null;
-  }
-
-  const days = comesBack.map(({ date }) =>
-    format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
-  );
-
-  return t({
-    description: 'When the skills to review come back. {days} lists days, like "May 5 and May 7".',
-    message: "Back {days}",
-    values: { days: format.list(days, { type: "conjunction" }) },
-  });
-}
-
 function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {
   const t = useExtracted();
   const beltName = useBeltName();
@@ -180,7 +161,6 @@ function SessionNumbers() {
       )}
 
       <StatTile
-        detail={<ComesBackDetail comesBack={summary.comesBack} />}
         icon={<RotateCcwIcon />}
         label={t("To review")}
         value={format.number(summary.comesBack.reduce((sum, day) => sum + day.skills, 0))}

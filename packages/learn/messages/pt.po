@@ -13463,11 +13463,6 @@ msgid "Saved to your mistakes"
 msgstr "Salvo no seu caderno de erros"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Salvo no seu Caderno de erros · volta amanhã"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Deixou em branco"
@@ -13478,6 +13473,7 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count} acertos seguidos"
 
+#: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "amJs-w"
 msgid "Right answer: {answer}"
@@ -13606,12 +13602,6 @@ msgstr "Concluído em menos de um minuto"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Concluído em {time}"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Voltam em {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

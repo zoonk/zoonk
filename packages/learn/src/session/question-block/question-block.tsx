@@ -56,7 +56,7 @@ function getQuestionSegments({
   });
 }
 
-type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "minutes">;
+type SessionContext = Pick<StudySession, "blocks" | "id" | "minutes">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -216,7 +216,6 @@ export function QuestionBlock({
           <>
             <QuestionFeedback
               answer={phase.answer}
-              examTomorrow={session.examTomorrow}
               feedback={phase.feedback}
               question={question}
               timedOut={blockDrill.timedOut}
