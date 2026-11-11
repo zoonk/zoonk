@@ -1,8 +1,9 @@
+import { spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { type IncomingMessage, type Server, type ServerResponse, createServer } from "node:http";
 import { type AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { afterEach, describe, expect, it } from "vitest";
 import { WHOAMI_REQUEST } from "./args.ts";
@@ -18,6 +19,7 @@ type FakeApiOptions = {
 
 const HOUR_MS = 3_600_000;
 const ME = { user: { email: "owner@zoonk.test", id: "user-1", name: "Owner", role: "admin" } };
+const MAIN = join(import.meta.dirname, "main.ts");
 const directories: string[] = [];
 const servers: Server[] = [];
 
@@ -25,6 +27,18 @@ function createCredentialsFile(): string {
   const configHome = mkdtempSync(join(tmpdir(), "zoonk-cli-"));
   directories.push(configHome);
   return credentialsPath({ XDG_CONFIG_HOME: configHome });
+}
+
+/** Each CLI command is its own process, waiting on the credentials file's lock without blocking the test. */
+function runWhoami({ file, origin }: { file: string; origin: string }): Promise<number | null> {
+  const child = spawn(process.execPath, [MAIN, "whoami", "--api", origin], {
+    env: { ...process.env, XDG_CONFIG_HOME: dirname(dirname(file)) },
+    stdio: "ignore",
+  });
+
+  return new Promise((resolve) => {
+    child.on("close", resolve);
+  });
 }
 
 function storedLogin(name: string, expiresAt: number): StoredLogin {
@@ -157,12 +171,12 @@ describe(sendAuthorized, () => {
 
     await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
-    const results = await Promise.all([
-      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
-      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    const exitCodes = await Promise.all([
+      runWhoami({ file, origin: api.origin }),
+      runWhoami({ file, origin: api.origin }),
     ]);
 
-    expect(results.map((result) => result.status)).toStrictEqual([200, 200]);
+    expect(exitCodes).toStrictEqual([0, 0]);
     expect(api.refreshRequests).toHaveLength(1);
   });
 

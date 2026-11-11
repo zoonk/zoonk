@@ -38,13 +38,13 @@ describe("credentials file", () => {
 
     expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("production-renewed"));
     expect(readLogin({ file, origin: LOCAL })).toStrictEqual(login("local"));
-    expect(file).toMatch(/\/zoonk\/credentials\.json$/u);
+    expect(file).toMatch(/\/zoonk\/credentials\.db$/u);
     expect(permissions(file)).toBe("600");
     expect(permissions(dirname(file))).toBe("700");
-    expect(readdirSync(dirname(file))).toStrictEqual(["credentials.json"]);
+    expect(readdirSync(dirname(file))).toStrictEqual(["credentials.db"]);
   });
 
-  it("removes one API's login and frees the lock even when a change fails", async () => {
+  it("rolls back a change that fails, and removes only the API's login it's asked to", async () => {
     const file = createCredentialsFile();
 
     await saveLogin({ file, login: login("production"), origin: PRODUCTION });
@@ -62,7 +62,6 @@ describe("credentials file", () => {
 
     expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("production"));
     expect(readLogin({ file, origin: LOCAL })).toBeNull();
-    expect(readdirSync(dirname(file))).toStrictEqual(["credentials.json"]);
   });
 
   it("reads a login whose tokens a header can't carry as no login", async () => {

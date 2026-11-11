@@ -6,5 +6,5 @@
 - No runtime dependencies: the CLI holds production credentials, and a later phase publishes it on npm for learners and organizations.
 - Data commands print only JSON on stdout. Messages and errors go to stderr, with the exit codes `src/help.ts` lists. Never print a token.
 - Every request goes through `sendRequest` in `src/http.ts`, which refuses redirects and never prints a request's own error text: either could carry a token.
-- Every read-then-write of the credentials file goes through `changeLogin` in `src/credentials.ts`, which holds the file's lock. A refresh token sent twice, or after another command rotated it, can end every CLI login of that person.
+- Every read-then-write of a login goes through `changeLogin` in `src/credentials.ts`, one SQLite `BEGIN IMMEDIATE` transaction from the read to the save. A refresh token sent twice, or after another command rotated it, can end every CLI login of that person.
 - The OAuth client id, scopes and endpoint paths live in `src/oauth.ts`; the staff routes in `src/args.ts` match the API's `apps/api/src/app/staff` routes.
