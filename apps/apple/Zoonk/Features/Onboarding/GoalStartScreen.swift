@@ -14,7 +14,9 @@ struct GoalStartScreen: View {
   var body: some View {
     GoalStartFlow(
       sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
-      limit: settings.allowance.value?.goalStartLimit, room: settings.allowance.value?.activeGoals
+      limit: settings.allowance.value?.goalStartLimit,
+      room: RoomRead(
+        cap: settings.allowance.value?.activeGoals, isReading: settings.allowance.isRefreshing)
     )
     .loads(settings.allowance, refreshable: false)
   }
@@ -93,6 +95,12 @@ private enum StartPage: Hashable {
   case questions
 }
 
+/// Goals followed at once against the plan's cap, and whether the allowance is reading it again.
+private struct RoomRead: Equatable {
+  let cap: PlanAllowance.Cap?
+  let isReading: Bool
+}
+
 private enum DraftState {
   case opening(id: String)
   case sending(String)
@@ -101,9 +109,9 @@ private enum DraftState {
 
 private struct GoalStartFlow: View {
   let limit: GoalLimitReason?
-  /// Goals followed at once against the plan's cap. Signing up, Plus or pausing a goal changes it,
-  /// and a draft whose room disagrees is read again.
-  let room: PlanAllowance.Cap?
+  /// Signing up, Plus or pausing a goal changes the room, and a draft whose room disagrees with it
+  /// is read again.
+  let room: RoomRead
   /// Decided when the flow opens: the goal this flow creates mustn't turn it into the gate.
   @State private var needsAccount: Bool
 
@@ -122,7 +130,7 @@ private struct GoalStartFlow: View {
 
   init(
     sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
-    limit: GoalLimitReason?, room: PlanAllowance.Cap?
+    limit: GoalLimitReason?, room: RoomRead
   ) {
     self.limit = limit
     self.room = room
@@ -214,12 +222,8 @@ private struct GoalStartFlow: View {
           draft = nil
         }
       }
-      .onChange(of: room) { _, room in
-        if let room, case .draft(let value, let sentHere) = draft,
-          value.activeGoalsLeft != room.left
-        {
-          Task { await reread(value, sentHere: sentHere) }
-        }
+      .onChange(of: room) {
+        rereadIfRoomDiffers()
       }
       .onDisappear {
         sending?.cancel()
@@ -255,7 +259,9 @@ private struct GoalStartFlow: View {
         onRewrite: send,
         onBack: { path = [] },
         onCreated: { goalID = $0 },
-        sourceIDs: material.map(\.id))
+        sourceIDs: material.map(\.id)
+      )
+      .onAppear(perform: rereadIfRoomDiffers)
     case nil:
       EmptyView()
     }
@@ -279,6 +285,18 @@ private struct GoalStartFlow: View {
         path = []
       }
     }
+  }
+
+  /// Checked each time the allowance's read ends and each time the card appears, so a card read
+  /// that failed is tried again then; a read leaves both unchanged, so it can't start another.
+  private func rereadIfRoomDiffers() {
+    guard !room.isReading, let cap = room.cap, case .draft(let value, let sentHere) = draft,
+      value.activeGoalsLeft != cap.left
+    else {
+      return
+    }
+
+    Task { await reread(value, sentHere: sentHere) }
   }
 
   /// The card stays as it was when the read fails, and a read that lands after the learner left
