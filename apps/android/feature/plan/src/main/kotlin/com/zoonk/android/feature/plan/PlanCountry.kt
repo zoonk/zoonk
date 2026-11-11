@@ -33,7 +33,6 @@ import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.country.CountrySheet
 import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.country.lessonLanguageLine
-import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ListRow
@@ -86,7 +85,7 @@ internal fun ContentCountryRow(
         CountrySheet(
             title = stringResource(R.string.onboarding_variety_title),
             suggested = goal.suggested.choices(),
-            language = shownLanguage(),
+            language = goal.language,
             selected = country.code,
             onPick = { choice: CountryChoice? ->
                 choice?.let {

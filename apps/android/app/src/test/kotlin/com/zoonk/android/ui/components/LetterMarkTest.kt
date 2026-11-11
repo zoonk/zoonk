@@ -62,6 +62,7 @@ class LetterMarkTest {
                 isActive = true,
                 isSettingUp = false,
                 kind = LearnerSummaryGoal.Kind.EXAM,
+                language = "en",
                 languageFlag = null,
                 regionChoices = emptyList(),
                 contentCountry = null,

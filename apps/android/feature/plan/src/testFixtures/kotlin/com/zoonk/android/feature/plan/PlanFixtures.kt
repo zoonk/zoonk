@@ -162,7 +162,7 @@ fun learnerSummary(
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":"$GOAL",
          "analytics":{"disabled":false,"goal":null,"plan":"free","usageDataSharing":null,"shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
-         "day":null,"homeCountry":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"active",
+         "day":null,"homeCountry":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","language":"en","status":"active",
           "targetDate":"2027-01-31","targetLanguage":null,"targetRegion":null,"regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"title":"$title","displayName":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
          "level":null,"missions":null,"nextChangeAt":1793186000000,
