@@ -144,6 +144,12 @@ describe(toFocusTestPhase, () => {
     ).toStrictEqual({ answered: false, kind: "waiting" });
   });
 
+  it("says a read that failed didn't load, never that questions are being written", () => {
+    expect(toFocusTestPhase({ opening: true, outcome: { status: "failed" } })).toStrictEqual({
+      kind: "loadFailed",
+    });
+  });
+
   it("still invites while the plan is being written, when the sitting's size is known", () => {
     const focusTest = testWith({ offer: OFFER });
 

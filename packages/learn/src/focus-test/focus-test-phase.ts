@@ -18,7 +18,7 @@ export type QuestionPhase = {
 
 export type FocusTestPhase =
   | QuestionPhase
-  | { kind: "loading" | "unavailable" }
+  | { kind: "loadFailed" | "loading" | "unavailable" }
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | { answered: boolean; kind: "waiting" }
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
@@ -38,7 +38,7 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
 /**
  * `opening` is a page load, which never drops the learner into a question: a sitting with answers
  * shows its resume screen, and one without is offered again. A test with no result and nothing to
- * ask is `unavailable`.
+ * ask is `unavailable`, and a read that failed is `loadFailed`.
  */
 export function toFocusTestPhase({
   opening,
@@ -47,6 +47,10 @@ export function toFocusTestPhase({
   opening: boolean;
   outcome: PlacementOutcome;
 }): FocusTestPhase {
+  if (outcome.status === "failed") {
+    return { kind: "loadFailed" };
+  }
+
   if (outcome.status === "unavailable") {
     return { kind: "unavailable" };
   }

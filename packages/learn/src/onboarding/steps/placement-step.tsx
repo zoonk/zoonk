@@ -25,7 +25,7 @@ type ReadyOutcome = Extract<PlacementOutcome, { status: "ready" }>;
 
 type Phase =
   | { answered: number; forToday: boolean; kind: "done" }
-  | { kind: "intro" | "loading" | "unavailable" | "waiting" }
+  | { kind: "intro" | "loadFailed" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
       failures: number;
@@ -83,6 +83,10 @@ function toResumedPhase({
   outcome: PlacementOutcome;
   tapped: boolean;
 }): Phase {
+  if (outcome.status === "failed") {
+    return { kind: "loadFailed" };
+  }
+
   if (outcome.status === "ready" && (tapped || outcome.started)) {
     return toPhase(outcome);
   }
@@ -240,6 +244,9 @@ export function PlacementStep({
   switch (phase.kind) {
     case "loading":
       return <StepLoading />;
+    case "loadFailed":
+      // The route's error page says it didn't load, and its Try again opens the step again.
+      throw new Error("Placement couldn't be read");
     case "intro":
       return (
         <PlacementIntro

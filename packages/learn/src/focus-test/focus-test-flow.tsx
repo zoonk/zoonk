@@ -100,6 +100,9 @@ export function FocusTestFlow({
   switch (phase.kind) {
     case "loading":
       return <StepLoading />;
+    case "loadFailed":
+      // The route's error page says it didn't load, and its Try again opens the test again.
+      throw new Error("The Focus test couldn't be read");
     case "waiting":
       return (
         <PlacementWaiting
