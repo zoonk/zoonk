@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -31,6 +31,7 @@ describe("notebook practice mission moments", () => {
   it("announces a fixed mistake before the other missions are done", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
 
     const [item] = await Promise.all([
       itemFixture({ content: choiceItemContent(), skillId: skill.id }),
@@ -160,6 +161,7 @@ describe("notebook practice mission moments", () => {
     async (dontKnow, reopened, reviewDone, refixed) => {
       const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
       const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+      await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
 
       const [ordinaryItem, practiceItem] = await Promise.all([
         itemFixture({ content: choiceItemContent(), skillId: skill.id }),

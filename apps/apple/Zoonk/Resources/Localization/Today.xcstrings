@@ -15928,65 +15928,6 @@
         }
       }
     },
-    "Today's +%lld Brain Power is already earned." : {
-      "comment" : "Another goal already earned the day's missions reward",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die heutigen +%lld Brain Power hast du bereits verdient."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya ganaste los +%lld puntos de Poder Mental de hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as déjà gagné les +%lld Puissance Mentale du jour."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai già guadagnato il bonus di oggi: +%lld punti di Potenza Mentale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の脳力ボーナス（+%lld）は獲得済みです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 두뇌력 +%lld 보상은 이미 받았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz już dzisiejsze +%lld pkt Mocy Umysłu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já ganhou os +%lld de Poder Mental de hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü +%lld Beyin Gücü zaten kazanıldı."
-          }
-        }
-      }
-    },
     "Today's lessons are taking longer than usual." : {
       "comment" : "The day's lessons are taking long to outline",
       "localizations" : {

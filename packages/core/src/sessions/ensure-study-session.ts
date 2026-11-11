@@ -49,7 +49,7 @@ export async function ensureStudySession(day: {
 }
 
 /** Only active owned goals qualify; language activities credit only goals learning that language. */
-async function findActivityGoal({
+export async function findActivityGoal({
   goalId,
   language,
   userId,

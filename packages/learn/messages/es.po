@@ -396,6 +396,7 @@ msgstr "{done, number} de {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +455,7 @@ msgstr "Está tardando más de lo normal. Se abrirá automáticamente, no hace f
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1874,6 +1875,7 @@ msgstr "Imprimir"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -7152,7 +7154,7 @@ msgid "Couldn't undo. Try again."
 msgstr "No se pudo deshacer. Inténtalo de nuevo."
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7164,87 @@ msgstr "No pudimos conectarnos con el servidor. Revisa tu conexión."
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "Capítulo completado"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Ver en pantalla completa"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "La imagen tenía errores, así que aquí tienes el mapa mental en texto."
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Mapa mental"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Sus ideas principales en una imagen"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Crear"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lección por preparar} other {# lecciones por preparar}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {Primero se prepara # lección, lo que toma unos minutos.} other {Primero se preparan # lecciones, lo que toma unos minutos.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {Primero se prepara # lección y cuenta para tu límite de lecciones gratis.} other {Primero se preparan # lecciones y cuentan para tu límite de lecciones gratis.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Ver como texto"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Mapa mental listo"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Esto tarda unos minutos. Puedes salir; estará aquí."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Preparando las lecciones y después el mapa mental…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Aproximadamente medio minuto. Puedes salir; estará aquí."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Dibujando el mapa mental…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "Esta vez no se pudo crear."
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7265,6 @@ msgstr "Mapa mental: {title}. {idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "En resumen:"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, one {# lección por preparar} other {# lecciones por preparar}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, one {Primero se prepara # lección, lo que toma unos minutos.} other {Primero se preparan # lecciones, lo que toma unos minutos.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {Primero se prepara # lección y cuenta para tu límite de lecciones gratis.} other {Primero se preparan # lecciones y cuentan para tu límite de lecciones gratis.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "Sus ideas principales en una imagen"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Ver como texto"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "La imagen tenía errores, así que aquí tienes el mapa mental en texto."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "Mapa mental listo"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "Esto tarda unos minutos. Puedes salir; estará aquí."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Preparando las lecciones y después el mapa mental…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "Aproximadamente medio minuto. Puedes salir; estará aquí."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Dibujando el mapa mental…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "Esta vez no se pudo crear."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Mapa mental"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Crear"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7663,12 +7674,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "Ganaste +{points} de Poder Mental."
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "Ya ganaste +{points} de Poder Mental hoy."
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "Recién completada"
@@ -7934,17 +7939,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Aún no lo sé"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {# errores corregidos} one {# error corregido. Sale de tu cuaderno.} other {# errores corregidos. Salen de tu cuaderno.}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Comentarios sobre la respuesta"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {# errores corregidos} one {# error corregido. Sale de tu cuaderno.} other {# errores corregidos. Salen de tu cuaderno.}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "Respuesta correcta: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9779,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Se borran tus respuestas para este objetivo y vuelves a escribir uno."
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "Saltar el resto de las preguntas sobre ti"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "Saltar todas"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Saltar el resto de las preguntas sobre ti"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -13493,11 +13504,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count} aciertos seguidos"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Respuesta correcta: {answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -15014,8 +15020,3 @@ msgstr "La próxima semana"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Respuestas correctas en esta habilidad cada día de la semana"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Ver en pantalla completa"

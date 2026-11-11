@@ -75,7 +75,7 @@ export const studySessionResponseSchema = z
       .object({ bonus: z.number().int(), earned: z.boolean(), ready: z.boolean() })
       .meta({
         description:
-          "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals.",
+          "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting this goal's completions from any supported source. Earned means this day already paid the bonus. Each goal's day pays its own bonus once.",
       }),
     goalId: idSchema.nullable(),
     hyperdrive: hyperdriveSchema,
