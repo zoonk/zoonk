@@ -86,6 +86,8 @@ struct DayProgressBlock: View {
   private var bar: SessionBar { moment.sessionBar }
 
   var body: some View {
+    let segments = moment.daySegments
+
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 2) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -109,7 +111,7 @@ struct DayProgressBlock: View {
       .accessibilityElement(children: .combine)
 
       if segments.count >= 2 {
-        DaySegments(segments: segments, finished: celebrates ? bar.completed - 1 : nil)
+        DaySegments(segments: segments, finished: celebrates ? moment.finishedSegment : nil)
       }
 
       if moment.deferredLessonsCount > 0 {
@@ -169,13 +171,24 @@ struct DayProgressBlock: View {
       nil
     }
   }
+}
 
+/// Main's `getDayMeterParts` on the completion's blocks, so the part that fills is the block just
+/// finished, wherever it sits in the day.
+extension BlockMoment {
   /// A day holding time for lessons not listed yet ends in one part for them, so the meter never
   /// looks full while time is still held.
-  private var segments: [DaySegments.Segment] {
-    let blocks = (0..<max(bar.total, 0)).map {
-      $0 < bar.completed ? DaySegments.Segment.done : .ahead
-    }
-    return progress.lead == .open ? blocks + [.ahead] : blocks
+  var daySegments: [DaySegments.Segment] {
+    let parts = countedBlocks.map { $0.daySegment(nextPosition: next?.block.position) }
+    return dayProgress.lead == .open ? parts + [.ahead] : parts
+  }
+
+  var finishedSegment: Int? {
+    countedBlocks.firstIndex { $0.id == blockId }
+  }
+
+  /// Core's `getSessionBar`: a skipped block is neither done nor counted.
+  private var countedBlocks: [StudyBlock] {
+    blocks.filter { $0.status != .skipped }
   }
 }

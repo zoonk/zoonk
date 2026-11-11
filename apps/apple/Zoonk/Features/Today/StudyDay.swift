@@ -158,17 +158,8 @@ struct StudyDay: Decodable, Equatable, Sendable {
   }
 
   var daySegments: [DaySegments.Segment] {
-    var segments = blocks.filter { $0.status != .skipped }.map { block -> DaySegments.Segment in
-      if block.status == .completed {
-        return .done
-      }
-
-      if block.position == nextPosition {
-        return .current
-      }
-
-      let kind = block.learnKind
-      return kind == .lesson ? .ahead : .kind(kind.color)
+    var segments = blocks.filter { $0.status != .skipped }.map {
+      $0.daySegment(nextPosition: nextPosition)
     }
 
     if lessonsComing || lessonsToPrepare, foldedMinutes(showing: blocks) > 0 {
@@ -275,6 +266,19 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   /// the plan, and finished review, practice or challenge work was made for its day.
   var lessonToReopen: String? {
     status == .completed && kind == .learn ? lessonId : nil
+  }
+
+  /// Its part of the day's meter: done, next up, or waiting in its kind's color.
+  func daySegment(nextPosition: Int?) -> DaySegments.Segment {
+    if status == .completed {
+      return .done
+    }
+
+    if position == nextPosition {
+      return .current
+    }
+
+    return learnKind == .lesson ? .ahead : .kind(learnKind.color)
   }
 
   /// Mirrors main's `getBlockKind`.
