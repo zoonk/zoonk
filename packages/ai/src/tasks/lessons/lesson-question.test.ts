@@ -9,6 +9,11 @@ import {
 import { type LessonScopeContext } from "./lesson-question-context";
 import type * as Ai from "ai";
 
+vi.mock("../_utils/address-form.prompt.md", () => ({
+  default:
+    "{{#neutral}}Neutral address.{{/neutral}}{{#feminine}}Feminine address.{{/feminine}}{{#masculine}}Masculine address.{{/masculine}}",
+}));
+
 vi.mock("server-only", () => ({}));
 vi.mock("../tutor/learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor in {{LEARNER_LANGUAGE}}." }));
@@ -109,6 +114,7 @@ describe(generateLessonQuestionAnswer, () => {
 
     const personal = await generateLessonQuestionAnswer({
       ...input,
+      addressForm: "feminine",
       learnerNeeds: { note: null, variants: ["adhd"] },
     });
 
@@ -129,6 +135,7 @@ describe(generateLessonQuestionAnswer, () => {
 
     const personal = streamLessonQuestionAnswer({
       ...input,
+      addressForm: "feminine",
       learnerNeeds: { note: null, variants: ["adhd"] },
     });
 
@@ -140,33 +147,33 @@ describe(generateLessonQuestionAnswer, () => {
 
   it("sends each scope only its own rules after the shared ones", async () => {
     await expect(getInstructions(lessonSnapshot("step"))).resolves.toBe(
-      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.\nNeutral address.",
     );
 
     await expect(getInstructions(lessonSnapshot("answer"))).resolves.toBe(
-      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.\nNeutral address.",
     );
 
     await expect(getInstructions(lessonSnapshot("lesson"))).resolves.toBe(
-      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.\nNeutral address.",
     );
 
     await expect(getInstructions(lessonSnapshot("step", false))).resolves.toBe(
-      "Tutor in US English.\nAnswer directly.\nWeigh their reasoning.",
+      "Tutor in US English.\nAnswer directly.\nWeigh their reasoning.\nNeutral address.",
     );
 
     const guess = { content: { variant: "guess" }, kind: "hook" };
 
     await expect(getInstructions(lessonSnapshot("step", false, guess))).resolves.toBe(
-      "Tutor in US English.\n\nHint until it's revealed.Weigh their reasoning.",
+      "Tutor in US English.\n\nHint until it's revealed.Weigh their reasoning.\nNeutral address.",
     );
 
     await expect(getInstructions(CHAPTER)).resolves.toBe(
-      "Tutor in US English.\nBeyond a lesson.\nChapter rules.",
+      "Tutor in US English.\nBeyond a lesson.\nChapter rules.\nNeutral address.",
     );
 
     await expect(getInstructions(MOCK)).resolves.toBe(
-      "Tutor in US English.\nBeyond a lesson.\nMock rules.",
+      "Tutor in US English.\nBeyond a lesson.\nMock rules.\nNeutral address.",
     );
   });
 
@@ -178,6 +185,8 @@ describe(generateLessonQuestionAnswer, () => {
         ...snapshot,
         course: { ...snapshot.course, language: "pt", targetLanguage: "it", title: "Italiano" },
       }),
-    ).resolves.toBe("Tutor in Português Brasileiro.\nHint, never reveal.\nWeigh their reasoning.");
+    ).resolves.toBe(
+      "Tutor in Português Brasileiro.\nHint, never reveal.\nWeigh their reasoning.\nNeutral address.",
+    );
   });
 });

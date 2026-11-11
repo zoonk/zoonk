@@ -103,8 +103,14 @@ export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed
 
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
-  /** Goals past this many on the card are Plus's: shown locked and left out of the goals created. Null on Plus. */
-  activeGoalLimit: number | null;
+  /**
+   * How many more goals the learner's plan follows now: its cap less the active goals they follow,
+   * read with this view; null on Plus. Clients show and send only this many of the card's first
+   * goals; the rest are Plus's, shown locked, and stay on the draft to start from the learner's
+   * goals once one of the card's goals has started and another fits. At 0, clients show the plan's
+   * limit instead of confirming. When `goalId` is set, they open that goal's setup instead.
+   */
+  activeGoalsLeft: number | null;
   /** The run reading the words; null when none is needed (a cached understanding) or none started. */
   generationId: string | null;
   goalId: string | null;

@@ -94,7 +94,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
     return <PendingGoalMenu placement={placement} />;
   }
 
-  const { tier, waitingGoals } = learner.summary;
+  const { waitingGoals } = learner.summary;
 
   const startWaiting = async ({
     pauseGoalId,
@@ -124,10 +124,10 @@ function GoalMenu({ placement }: { placement?: Placement }) {
   return (
     <GoalSwitcher
       activeGoalId={learner.summary.activeGoalId}
-      canMakeRoom={tier !== "guest"}
       explanationHref="/explain"
       exploreHref="/courses"
       goals={toSwitcherGoals(learner.summary.goals)}
+      hasAccount={!learner.summary.identity.isAnonymous}
       newGoalHref="/start"
       onSelect={switchGoal}
       onStartWaiting={startWaiting}

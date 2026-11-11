@@ -41,16 +41,8 @@ import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import kotlin.time.Instant
-import kotlin.time.toJavaInstant
 
 private enum class Verdict(
     val label: Int,
@@ -80,7 +72,6 @@ private fun verdictOf(
 
 /** Where the question goes next, said once under the verdict. */
 data class ResultNext(
-    val nextReviewAt: Instant?,
     val savedMistake: Boolean,
     val willReturn: Boolean,
 )
@@ -305,109 +296,15 @@ private fun KeyPoints(keyPoints: List<AnswerKeyPoint>) {
     }
 }
 
-private sealed interface ReviewDay {
-    data object Today : ReviewDay
-
-    data object Tomorrow : ReviewDay
-
-    data class Weekday(
-        val day: LocalDate,
-    ) : ReviewDay
-
-    data class Date(
-        val day: LocalDate,
-    ) : ReviewDay
-}
-
-private const val DAYS_IN_A_WEEK = 7
-
-private fun reviewDay(
-    reviewAt: Instant,
-    today: LocalDate = LocalDate.now(),
-): ReviewDay {
-    val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-    val days = ChronoUnit.DAYS.between(today, day)
-
-    return when {
-        days <= 0 -> ReviewDay.Today
-        days == 1L -> ReviewDay.Tomorrow
-        days < DAYS_IN_A_WEEK -> ReviewDay.Weekday(day)
-        else -> ReviewDay.Date(day)
-    }
-}
-
 /** Where the question goes next; nothing when it goes nowhere special. */
 @Composable
 internal fun ResultNote(next: ResultNext) {
-    val review = next.nextReviewAt?.let(::reviewDay)
-    val locale = currentLocale()
-
     val text =
         when {
-            next.savedMistake && next.willReturn -> {
-                stringResource(R.string.player_saved_to_mistakes_back_at_end)
-            }
-
-            next.savedMistake -> {
-                when (review) {
-                    null -> {
-                        stringResource(R.string.player_saved_to_mistakes)
-                    }
-
-                    ReviewDay.Today -> {
-                        stringResource(R.string.player_saved_to_mistakes_back_today)
-                    }
-
-                    ReviewDay.Tomorrow -> {
-                        stringResource(R.string.player_saved_to_mistakes_back_tomorrow)
-                    }
-
-                    is ReviewDay.Weekday -> {
-                        stringResource(
-                            R.string.player_saved_to_mistakes_back_weekday,
-                            formatDate(review.day, locale, DateStyle.Weekday),
-                        )
-                    }
-
-                    is ReviewDay.Date -> {
-                        stringResource(
-                            R.string.player_saved_to_mistakes_back_date,
-                            formatDate(review.day, locale, DateStyle.Day),
-                        )
-                    }
-                }
-            }
-
-            next.willReturn -> {
-                stringResource(R.string.player_comes_back_at_end)
-            }
-
-            else -> {
-                when (review) {
-                    null -> {
-                        return
-                    }
-
-                    ReviewDay.Today -> {
-                        stringResource(R.string.player_comes_back_today)
-                    }
-
-                    ReviewDay.Tomorrow -> {
-                        stringResource(R.string.player_comes_back_tomorrow)
-                    }
-
-                    is ReviewDay.Weekday -> {
-                        stringResource(
-                            R.string.player_comes_back_weekday,
-                            formatDate(review.day, locale, DateStyle.Weekday),
-                        )
-                    }
-
-                    is ReviewDay.Date -> {
-                        stringResource(R.string.player_comes_back_date, formatDate(review.day, locale, DateStyle.Day))
-                    }
-                }
-            }
+            next.savedMistake && next.willReturn -> stringResource(R.string.player_saved_to_mistakes_back_at_end)
+            next.savedMistake -> stringResource(R.string.player_saved_to_mistakes)
+            next.willReturn -> stringResource(R.string.player_comes_back_at_end)
+            else -> return
         }
 
     FeedbackNote(text)

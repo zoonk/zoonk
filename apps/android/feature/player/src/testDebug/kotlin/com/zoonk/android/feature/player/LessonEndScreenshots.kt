@@ -308,7 +308,7 @@ private val IN_SESSION =
         "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
          "blocks":[],"dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33},"sessionId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5c",
          "minutes":{"dailyGoal":240,"left":220,"done":5,"planned":240},"deferredLessonsCount":2,
-         "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
+         "checkpoint":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},
          "reminderOffer":null,"sessionBar":{"completed":1,"total":3},"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":0,"total":3}

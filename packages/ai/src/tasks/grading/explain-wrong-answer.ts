@@ -5,9 +5,12 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import systemPrompt from "./explain-wrong-answer.prompt.md";
+import taskPrompt from "./explain-wrong-answer.prompt.md";
+
+const systemPrompt = `${taskPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
 /**
  * Made once per mistake and shared, so quality wins: Terra scored 9.69 at 2.1s p50 against Sol's

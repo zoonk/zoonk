@@ -1,6 +1,6 @@
 import Foundation
 
-/// Resuming can hit the free plan's one active goal.
+/// Resuming can hit the free plan's limit on active goals.
 enum GoalStatusOutcome: Equatable, Sendable {
   case failed
   case limitReached

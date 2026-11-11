@@ -192,7 +192,6 @@ export function LessonStage({
   const result = state.results[step.id];
 
   const next = result && {
-    nextReviewAt: result.nextReviewAt,
     savedMistake: result.savedMistake && !result.isCorrect,
     willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
   };

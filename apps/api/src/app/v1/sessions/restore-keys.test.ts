@@ -33,8 +33,8 @@ vi.mock("@zoonk/auth", async () => {
   const { baseAuthConfig, baseAuthPlugins } =
     await import("../../../../../../packages/auth/src/server");
 
-  const { appAttestPlugin } =
-    await import("../../../../../../packages/auth/src/plugins/app-attest");
+  const { appChallengePlugin } =
+    await import("../../../../../../packages/auth/src/plugins/app-challenge");
 
   const { guestPlugin } = await import("../../../../../../packages/auth/src/plugins/guest");
 
@@ -44,7 +44,13 @@ vi.mock("@zoonk/auth", async () => {
   return {
     auth: betterAuth({
       ...baseAuthConfig,
-      plugins: [...baseAuthPlugins, appAttestPlugin(), bearer(), guestPlugin(), restoreKeyPlugin()],
+      plugins: [
+        ...baseAuthPlugins,
+        appChallengePlugin(),
+        bearer(),
+        guestPlugin(),
+        restoreKeyPlugin(),
+      ],
       rateLimit: { enabled: false },
       secret: "restore-key-api-test-secret-with-enough-entropy",
     }),

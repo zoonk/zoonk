@@ -76,6 +76,18 @@ describe(findNumberFormatFlaws, () => {
     ]);
   });
 
+  it(String.raw`reads math between \( \) and \[ \] as math, as the players typeset it`, () => {
+    expect(
+      findNumberFormatFlaws({
+        language: "pt",
+        value: String.raw`A carga é \(k = 9,0 \times 10^9\) e a área \[A = 10000\].`,
+      }),
+    ).toStrictEqual([
+      String.raw`Writes a decimal comma in LaTeX math as a bare comma, which shows as a list: "k = 9,0 \times 10^9". Brace it, as in 0{,}5.`,
+      String.raw`Writes 10000 without grouping its digits; write 10.000.`,
+    ]);
+  });
+
   it("reads prices in dollars as text, not math", () => {
     const value = "Hannah pays $6 to start plus $3 for each hour, $45000 a year.";
 

@@ -144,6 +144,24 @@ extension TypeStyle {
       pointSize: pointSize(environment.dynamicTypeSize), legibility: environment.legibilityWeight)
   }
 
+  /// How wide `text` draws on one line in this role, for a layout that must know whether text fits
+  /// before it draws it.
+  func width(of text: String, dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?)
+    -> Double
+  {
+    let pointSize = pointSize(dynamicTypeSize)
+    let weight = legibility == .bold ? weight.withBoldText : weight
+    let descriptor = UIFontDescriptor(fontAttributes: [
+      .family: family, .traits: [UIFontDescriptor.TraitKey.weight: weight.uiFontWeight],
+    ])
+    let font = UIFont(descriptor: descriptor, size: pointSize)
+
+    return NSAttributedString(
+      string: isUppercase ? text.uppercased() : text,
+      attributes: [.font: font, .kern: tracking * pointSize]
+    ).size().width
+  }
+
   fileprivate func pointSize(_ dynamicTypeSize: DynamicTypeSize) -> Double {
     UIFontMetrics(forTextStyle: relativeTo.uiTextStyle).scaledValue(
       for: size,
@@ -285,6 +303,15 @@ extension Font.Weight {
     }
 
     return weights[min(index + 2, weights.count - 1)]
+  }
+
+  fileprivate var uiFontWeight: UIFont.Weight {
+    let weights: [(Font.Weight, UIFont.Weight)] = [
+      (.ultraLight, .ultraLight), (.thin, .thin), (.light, .light), (.medium, .medium),
+      (.semibold, .semibold), (.bold, .bold), (.heavy, .heavy), (.black, .black),
+    ]
+
+    return weights.first { $0.0 == self }?.1 ?? .regular
   }
 }
 

@@ -404,7 +404,6 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
             energyDelta: 1,
             incorrectCount: 1,
             isFirstCompletion: true,
-            nextReviewAt: "2026-11-04T12:00:00.000Z",
             reached: { energy: 80, level: null },
             seconds: 190,
             studyBlock: null,

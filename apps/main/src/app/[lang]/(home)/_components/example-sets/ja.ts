@@ -30,11 +30,10 @@ export const ja: ExampleSet = {
       review: ["2次関数", "場合の数と確率"],
       scores: [{ label: "数学Ⅰ・A", range: "62–70点" }],
     },
-    name: "共通テスト",
     sittings: ["2027-01-16"],
     timeZone: "Asia/Tokyo",
   },
-  exams: "共通テスト、大学の個別試験、資格試験、TOEIC",
+  exams: "共通テスト、大学の個別試験、資格試験、TOEIC、学校の定期テスト",
   move: "london",
   topic: {
     chapters: [

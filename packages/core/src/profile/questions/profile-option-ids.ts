@@ -9,6 +9,7 @@ export const PROFILE_OPTION_IDS = {
     "fixBuild",
     "pets",
   ],
+  addressForm: ["feminine", "masculine", "neutral"],
   conditions: [
     "adhd",
     "autism",

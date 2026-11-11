@@ -14,7 +14,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
 import { AnswersSaveError } from "../../_components/save-error";
@@ -38,8 +38,6 @@ const PERCENT = 100;
 
 function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   const t = useExtracted();
-  const format = useFormatter();
-  const nextReview = grade.nextReviewAt ? new Date(grade.nextReviewAt) : null;
 
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-1" role="status">
@@ -48,14 +46,6 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
       ) : (
         <p className="font-semibold">{t("We heard “{heard}”", { heard: grade.transcript })}</p>
       )}
-
-      <p className="text-muted-foreground text-sm">
-        {nextReview
-          ? t("It comes back {date}.", {
-              date: format.dateTime(nextReview, { day: "numeric", month: "long" }),
-            })
-          : t("You've got this one. It won't come back.")}
-      </p>
     </div>
   );
 }
@@ -72,9 +62,7 @@ function RoundResult({
   return (
     <>
       <MomentHeader
-        detail={t(
-          "An accent never blocks you. Words that still sound different come back tomorrow.",
-        )}
+        detail={t("An accent never blocks you.")}
         title={result ? t("Practice done") : t("Nothing said this time")}
       >
         {result && (

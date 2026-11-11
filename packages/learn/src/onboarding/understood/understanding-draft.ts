@@ -13,17 +13,17 @@ export type UnderstandingDraft = {
 };
 
 export function toUnderstandingDraft({
-  activeGoalLimit,
+  activeGoalsLeft,
   timeZone,
   understanding: { goals, schedule },
 }: {
-  activeGoalLimit: number | null;
+  activeGoalsLeft: number | null;
   timeZone: string;
   understanding: { goals: UnderstoodGoalView[]; schedule: UnderstoodSchedule };
 }): UnderstandingDraft {
   const answered = goals[0]?.draft.details?.answered;
   const minutesSaid = Array.isArray(answered) && answered.includes("schedule");
-  const allowed = activeGoalLimit ?? goals.length;
+  const allowed = activeGoalsLeft ?? goals.length;
 
   return {
     goals: goals.slice(0, allowed),

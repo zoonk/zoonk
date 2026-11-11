@@ -30,7 +30,6 @@ export type StartUnderstandingOutcome =
   | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
-  | { status: "browserBlocked" }
   | { status: "failed" };
 
 export type UnderstandingActions = {
@@ -44,15 +43,13 @@ export type UnderstandingActions = {
   start: (input: { goal: string; language: string }) => Promise<StartUnderstandingOutcome>;
 };
 
-/** `browserBlocked`: the bot check refused to make this browser a guest. */
 export type GoalLimitReason =
-  | "browserBlocked"
+  | "activeGoals"
   | "dailyExplanations"
   | "dailyGoals"
   | "guest"
   | "monthlyExplanations"
   | "monthlyGoals"
-  | "oneActiveGoal"
   | "signUpRequired"
   | "slowDown";
 

@@ -1,4 +1,5 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
+import { countActiveGoals } from "./active-goals-left";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 export type UsageCounts = {
@@ -97,7 +98,7 @@ export async function loadUsageTotals({
       by: ["kind"],
       where: { createdAt: { gte: starts.day }, userId },
     }),
-    client.goal.count({ where: { kind: { not: "explain" }, status: "active", userId } }),
+    countActiveGoals({ db: client, userId }),
   ]);
 
   const monthOf = new Map(thisMonth.map((group) => [group.kind, group]));

@@ -49,19 +49,7 @@ function passingLesson(): LessonSpec {
 }
 
 function failingLesson(): LessonSpec {
-  return lesson([
-    "hook",
-    "explanation",
-    "guess",
-    "explanation",
-    "explanation",
-    "workedExample",
-    "explanation",
-    "explanation",
-    "check",
-    "activity",
-    "application",
-  ]);
+  return lesson(["hook", "explanation", "guess", "explanation", "check", "activity"]);
 }
 
 function score(lessons: LessonSpec[], expected?: LessonSpecExpected) {
@@ -113,7 +101,7 @@ describe(scoreLessonSpec, () => {
     const result = await score([failingLesson()], expected);
 
     expect(result.score).toBe(6);
-    expect(result.steps[0]?.conclusion).toContain("a check comes after at most 4");
+    expect(result.steps[0]?.conclusion).toContain("a lesson ends with exactly one");
     expect(generateText).not.toHaveBeenCalled();
   });
 

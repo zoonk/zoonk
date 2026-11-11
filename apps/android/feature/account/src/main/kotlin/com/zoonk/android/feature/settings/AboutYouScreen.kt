@@ -93,13 +93,8 @@ private fun AboutYouRows(
     if (!view.memoryEnabled) {
         Box(Modifier.padding(horizontal = LIST_ITEM_INSET)) { MemoryOffNotice(navigator) }
     }
-    val groups =
-        listOf(
-            R.string.profile_questions_your_day to view.questions.take(3),
-            R.string.profile_questions_for_fun to view.questions.drop(3).take(5),
-            R.string.profile_questions_how_learn to view.questions.takeLast(2),
-        )
-    groups.forEach { (title, questions) ->
+    ABOUT_YOU_GROUPS.forEach { (title, ids) ->
+        val questions = ids.mapNotNull { id -> view.questions.find { it.id == id } }
         Column {
             SectionHeader(stringResource(title), Modifier.padding(horizontal = LIST_ITEM_INSET))
             questions.forEachIndexed { index, question ->
@@ -107,13 +102,23 @@ private fun AboutYouRows(
                 ListRow(
                     headline = { Text(profileRowTitle(question.id)) },
                     supporting = { Text(profileSummary(question), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                    enabled = view.memoryEnabled || question.id in listOf(ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT),
+                    enabled = view.memoryEnabled || question.id in HOW_YOU_LEARN,
                     onClick = { navigator.open(AppRoute.ProfileQuestionEdit(question.id.value)) },
                 )
             }
         }
     }
 }
+
+private val HOW_YOU_LEARN = listOf(ProfileQuestion.ADDRESS_FORM, ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT)
+
+private val ABOUT_YOU_GROUPS =
+    listOf(
+        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.TOOLS, ProfileQuestion.STUDIES),
+        R.string.profile_questions_for_fun to
+            listOf(ProfileQuestion.WATCH, ProfileQuestion.LISTEN, ProfileQuestion.PLAY, ProfileQuestion.READ, ProfileQuestion.ACTIVITIES),
+        R.string.profile_questions_how_learn to HOW_YOU_LEARN,
+    )
 
 @Composable
 private fun profileRowTitle(question: ProfileQuestion): String =
@@ -129,12 +134,16 @@ private fun profileRowTitle(question: ProfileQuestion): String =
             ProfileQuestion.ACTIVITIES -> R.string.profile_questions_row_activities
             ProfileQuestion.CONDITIONS -> R.string.profile_questions_row_conditions
             ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_row_support
+            ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_row_address
         },
     )
 
 @Composable
 private fun profileSummary(question: ProfileQuestionView): String {
     if (question.status == ProfileQuestionView.Status.DECLINED) return stringResource(R.string.profile_questions_not_shared)
+    if (question.id == ProfileQuestion.ADDRESS_FORM && question.saved.picks.isNotEmpty()) {
+        return stringResource(R.string.profile_questions_saved)
+    }
     if (question.id == ProfileQuestion.CONDITIONS &&
         question.saved.picks.isNotEmpty()
     ) {
@@ -202,7 +211,7 @@ fun ProfileQuestionScreen(
                     )
                     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                         val canEdit =
-                            shown.value.memoryEnabled || question.id in listOf(ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT)
+                            shown.value.memoryEnabled || question.id in HOW_YOU_LEARN
                         if (!canEdit) {
                             MemoryOffNotice(navigator)
                         }

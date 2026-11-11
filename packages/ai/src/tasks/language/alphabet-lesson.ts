@@ -17,13 +17,6 @@ import systemPrompt from "./alphabet-lesson.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;
 
-const MIN_INTRO = 1;
-const MAX_INTRO = 2;
-const MIN_LETTERS = 6;
-const MAX_LETTERS = 10;
-const MIN_SUMMARY = 2;
-const MAX_SUMMARY = 3;
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the script and what the lesson covers come before its screens, and a letter's sound and audio before the cue that describes them. */
 const letterSchema = z.object({
   symbol: z.string(),
@@ -39,12 +32,9 @@ const schema = z.object({
   title: z.string(),
   description: z.string(),
   canDo: z.string(),
-  intro: z
-    .array(z.object({ title: z.string(), text: z.string() }))
-    .min(MIN_INTRO)
-    .max(MAX_INTRO),
-  letters: z.array(letterSchema).min(MIN_LETTERS).max(MAX_LETTERS),
-  summary: z.array(z.string()).min(MIN_SUMMARY).max(MAX_SUMMARY),
+  intro: z.array(z.object({ title: z.string(), text: z.string() })),
+  letters: z.array(letterSchema).min(1),
+  summary: z.array(z.string()).min(1),
 });
 /* oxlint-enable eslint/sort-keys */
 

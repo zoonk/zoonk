@@ -48,7 +48,6 @@ msgstr "Ana sayfaya git"
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/footer-explore-links.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Kursları keşfet"
@@ -317,6 +316,7 @@ msgstr "Profil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "c2z6MR"
@@ -1002,10 +1002,11 @@ msgctxt "h6bnZW"
 msgid "Switch to this goal"
 msgstr "Bu hedefe geç"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "Ücretsiz pakette aynı anda tek hedef üzerinde çalışabilirsin. Bu hedefe devam etmek için diğer hedefini duraklat veya daha fazla hedef için Plus’a geç."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat ya da daha fazla hedefi takip etmek için Plus’a geç."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1086,6 +1087,16 @@ msgstr "{goal} planın için birkaç cevap daha gerekiyor."
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "Hazırlık aşamasında"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "Yazdıkların"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Devam et"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
@@ -2165,11 +2176,11 @@ msgctxt "Fvi-xC"
 msgid "Tests and exams"
 msgstr "Sınavlar"
 
-#. {exams} lists the exams people in your country study for, such as “Enem, vestibular, concurso ou OAB”, and opens the sentence. In Brazilian Portuguese: “{exams}: o plano segue as matérias e os tópicos da sua prova. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola: o plano segue as matérias e os tópicos dela. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "V41OCV"
-msgid "{exams}: your plan follows your exam's subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
-msgstr "{exams}: planın sınavındaki branşlara ve konulara göre ilerler. Son düzlüğe geldiğinde, gerçek sınavla aynı formatta ve sürede yapılan deneme sınavları tahmini puanını ve nelerin eksik kaldığını gösterir."
+msgctxt "3tM-ty"
+msgid "Any exam, such as {exams}: your plan follows its subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing."
+msgstr "{exams} gibi her türlü sınav için planın sınavın branşlarına ve konularına göre hazırlanır. Sınava az kala, gerçek sınavla aynı formatta ve sürede yapılan deneme sınavları tahmini puanını ve kalan eksiklerini gösterir."
 
 #. In Brazilian Portuguese: “Tudo o que cai, dividido até o dia da prova.”
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2260,11 +2271,11 @@ msgctxt "Jd18jf"
 msgid "What if I miss a day?"
 msgstr "Bir gün çalışamazsam ne olur?"
 
-#. {exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
+#. {exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "qxT1fv"
-msgid "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words."
-msgstr "Hemen hemen her şey. {exam} gibi sınavlar, üniversiteye giriş sınavları, memurluk sınavları ve avukatlık sınavı, diller, yeni bir kariyer veya öğrenmek istediğin herhangi bir konu. Hedefini kendi sözlerinle yaz."
+msgctxt "r4pGG1"
+msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
+msgstr "{exams} gibi her türlü sınav. Diller, yeni bir kariyer ya da öğrenmek istediğin herhangi bir konu da olabilir. Hedefini kendi sözlerinle yaz."
 
 #. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2282,7 +2293,7 @@ msgctxt "kxCNVz"
 msgid "Still have questions? Write to <email></email>."
 msgstr "Başka soruların mı var? <email></email> adresine yaz."
 
-#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no Enem” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
+#. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
@@ -3322,11 +3333,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "Ücretsiz başla. <rest>Tüm özellikleri istediğinde Plus’a geç.</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "Ücretsiz paket aynı anda tek bir hedefi kapsar. Plus, büyük güne kadar tüm hedeflerini kapsar."
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "Ücretsiz paket aynı anda {goals, plural, one {bir hedefini} other {en fazla # hedefini}} destekler. Plus, büyük güne kadar tüm hedeflerinde yanında."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3523,16 +3534,6 @@ msgstr "Bu kursu başlatamadık."
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, number} tamamlandı}}"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "3snD6d"
-msgid "Popular courses"
-msgstr "Popüler kurslar"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "VKb1MS"
-msgid "Categories"
-msgstr "Kategoriler"
 
 #: src/components/public/goal-example.ts
 msgctxt "IWESF6"

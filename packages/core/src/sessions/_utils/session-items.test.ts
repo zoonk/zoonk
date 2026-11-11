@@ -2,7 +2,6 @@ import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { describe, expect, it } from "vitest";
 import { discountMath, discountQuestion } from "../../library/items/_test-utils/math-problems";
 import {
-  describeEarlierAnswer,
   gradeSessionAnswer,
   parseSessionItem,
   readRecordedAnswer,
@@ -178,20 +177,10 @@ describe("math problems in a block", () => {
     });
   });
 
-  it("reads an earlier answer as text only when it had the same numbers", () => {
+  it("reads a recorded math answer without the numbers it was asked with", () => {
     const item = parseMath();
     const { discount, paid, price } = readNumbers(toSessionQuestion({ blockId, item }).question);
     const recorded = { number: paid, values: { discount, price } };
-
-    expect(describeEarlierAnswer({ answer: recorded, blockId, item })).toBe(shownMoney(paid));
-
-    expect(
-      describeEarlierAnswer({
-        answer: { ...recorded, values: { discount, price: price + 10 } },
-        blockId,
-        item,
-      }),
-    ).toBeNull();
 
     expect(readRecordedAnswer(recorded)).toStrictEqual({ number: paid });
     expect(readRecordedAnswer({ selectedIndex: 1 })).toStrictEqual({ selectedIndex: 1 });

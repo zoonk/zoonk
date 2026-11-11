@@ -14,15 +14,9 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
 import { findClosingAnswer } from "./_utils/answer-recording";
-import {
-  type ComesBackInput,
-  checkSaved,
-  checkWithoutRecording,
-  getComesBack,
-  toCheckResult,
-} from "./_utils/check-results";
+import { checkSaved, toCheckResult } from "./_utils/check-results";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
-import { findPlayableStepRow, getAnswerSkillId, isOwnExplanation } from "./_utils/lesson-rows";
+import { findPlayableStepRow, getAnswerSkillId } from "./_utils/lesson-rows";
 import {
   findLessonRun,
   getRunStudySessionId,
@@ -83,23 +77,25 @@ type PlayableStepRow = NonNullable<Awaited<ReturnType<typeof findPlayableStepRow
 
 async function recordCheck({
   attemptId,
-  comesBack,
   input,
   receivedAt,
   row,
   run,
   skillId,
   step,
+  timeZone,
+  userId,
   verdict,
 }: {
   attemptId?: string;
-  comesBack: ComesBackInput;
   input: LessonStepCheckInput;
   receivedAt: Date;
   row: PlayableStepRow;
   run: NonNullable<Awaited<ReturnType<typeof findLessonRun>>>;
   skillId: string | null;
   step: Parameters<typeof getStepQuestion>[0];
+  timeZone: string;
+  userId: string;
   verdict: LessonAnswerVerdict;
 }): Promise<LessonStepCheckOutcome> {
   const questionText = getStepQuestion(step);
@@ -109,7 +105,7 @@ async function recordCheck({
     isCorrect: verdict.isCorrect,
     lesson: row.lesson,
     step: { ...row, kind: answeredKind },
-    userId: comesBack.userId,
+    userId,
   });
 
   const outcome = await recordAnswerOnce({
@@ -158,8 +154,8 @@ async function recordCheck({
       stepId: row.id,
       studySessionId: getRunStudySessionId(run),
       targetLanguage: row.lesson.targetLanguage,
-      timeZone: comesBack.timeZone,
-      userId: comesBack.userId,
+      timeZone,
+      userId,
     },
     refuse: async (transaction: TransactionClient) => {
       if (!(await lockOpenRun(transaction, run.id))) {
@@ -173,7 +169,7 @@ async function recordCheck({
         lessonId: row.lessonId,
         stepId: row.id,
         until: run.startedAt,
-        userId: comesBack.userId,
+        userId,
       });
 
       if (closingAnswer) {
@@ -184,7 +180,7 @@ async function recordCheck({
         attemptId,
         since: receivedAt,
         stepId: row.id,
-        userId: comesBack.userId,
+        userId,
       });
 
       return overtaken ? "overtaken" : null;
@@ -197,36 +193,22 @@ async function recordCheck({
   if (outcome.status === "refused") {
     return outcome.refusal === "runEnded"
       ? { status: "runEnded" }
-      : {
-          result: await checkWithoutRecording({ ...comesBack, skillId, verdict }),
-          status: "checked",
-        };
+      : { result: toCheckResult({ savedMistake: false, verdict }), status: "checked" };
   }
 
   if (outcome.status === "saved") {
-    const result = await checkSaved({
-      ...comesBack,
+    const result = checkSaved({
       fromCode: row.kind !== "typedAnswer",
       hasQuestion: questionText !== null,
       saved: outcome.saved,
-      skillId,
       verdict,
     });
 
     return { result, status: "checked" };
   }
 
-  const { recorded } = outcome;
-
   return {
-    result: toCheckResult({
-      nextReviewAt: await getComesBack({
-        ...comesBack,
-        ownDue: recorded.learnerSkill?.due ?? null,
-      }),
-      savedMistake: recorded.mistake !== null,
-      verdict,
-    }),
+    result: toCheckResult({ savedMistake: outcome.recorded.mistake !== null, verdict }),
     status: "checked",
   };
 }
@@ -298,29 +280,12 @@ export async function checkLessonStep({
     return { status: "invalid" };
   }
 
-  const skillId = getAnswerSkillId({
-    lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
-    stepSkillId: row.skillId,
-  });
-
-  const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
-
-  const comesBack: ComesBackInput = {
-    explanation: isOwnExplanation(row.lesson),
-    lessonId: row.lessonId,
-    runStartedAt: run.startedAt,
-    timeZone,
-    userId,
-  };
-
   if (saved) {
     return {
-      result: await checkSaved({
-        ...comesBack,
+      result: checkSaved({
         fromCode: true,
         hasQuestion: getStepQuestion(step) !== null,
         saved,
-        skillId,
         verdict,
       }),
       status: "checked",
@@ -328,11 +293,22 @@ export async function checkLessonStep({
   }
 
   if (!isRecorded || !verdict.checked) {
-    return {
-      result: await checkWithoutRecording({ ...comesBack, skillId, verdict }),
-      status: "checked",
-    };
+    return { result: toCheckResult({ savedMistake: false, verdict }), status: "checked" };
   }
 
-  return recordCheck({ attemptId, comesBack, input, receivedAt, row, run, skillId, step, verdict });
+  return recordCheck({
+    attemptId,
+    input,
+    receivedAt,
+    row,
+    run,
+    skillId: getAnswerSkillId({
+      lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
+      stepSkillId: row.skillId,
+    }),
+    step,
+    timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+    userId,
+    verdict,
+  });
 }

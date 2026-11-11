@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.onboarding.setup.PlacementFormat
 import com.zoonk.android.feature.onboarding.setup.PlacementItem
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -77,24 +78,29 @@ class SaveFailureScreenshots {
                 Surface {
                     Column(Modifier.fillMaxSize().padding(if (placement) 24.dp else 0.dp)) {
                         if (placement) {
-                            PlacementQuestion(
-                                item =
-                                    PlacementItem(
-                                        itemId = ITEM_ID,
-                                        question = "Which court hears appeals from state courts?",
-                                        context = null,
-                                        image = null,
-                                        visual = null,
-                                        format = PlacementFormat.Choice(listOf("The Supreme Court", "A district court", "A county court")),
-                                    ),
-                                eyebrow = "Bar exam · Question 3",
-                                labels = TrueFalseLabels.TRUE_FALSE,
-                                typedWords = null,
-                                pending = false,
-                                saveFailures = 2,
-                                onAnswer = { _, _ -> },
-                                onStop = {},
-                            )
+                            SetupColumn {
+                                PlacementQuestion(
+                                    item =
+                                        PlacementItem(
+                                            itemId = ITEM_ID,
+                                            question = "Which court hears appeals from state courts?",
+                                            context = null,
+                                            image = null,
+                                            visual = null,
+                                            format =
+                                                PlacementFormat.Choice(
+                                                    listOf("The Supreme Court", "A district court", "A county court"),
+                                                ),
+                                        ),
+                                    eyebrow = "Bar exam · Question 3",
+                                    labels = TrueFalseLabels.TRUE_FALSE,
+                                    typedWords = null,
+                                    pending = false,
+                                    saveFailures = 2,
+                                    onAnswer = { _, _ -> },
+                                    onStop = {},
+                                )
+                            }
                         } else {
                             SaveErrorText(failures = 2, onReport = {})
                         }

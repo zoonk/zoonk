@@ -263,24 +263,37 @@ describe(createGoals, () => {
     ]);
   });
 
-  it("creates what the free plan allows and says why the rest wasn't created", async () => {
+  it("creates the three goals the free plan follows and says why the rest wasn't created", async () => {
     await useLearner();
 
     const result = await createGoals({
-      dailyMinutes: 30,
-      goals: [draft(), draft({ title: "Chemistry" })],
+      dailyMinutes: 40,
+      goals: [
+        draft(),
+        draft({ title: "Chemistry" }),
+        draft({ title: "Statistics" }),
+        draft({ title: "Guitar" }),
+      ],
     });
 
     expect(result).toMatchObject({
-      goals: [{ title: "Understand AI" }],
+      goals: [{ title: "Understand AI" }, { title: "Chemistry" }, { title: "Statistics" }],
       refused: [
-        { decision: { limit: { resource: "activeGoals" }, status: "limitReached" }, index: 1 },
+        {
+          decision: { limit: { limit: 3, resource: "activeGoals" }, status: "limitReached" },
+          index: 3,
+        },
       ],
       status: "created",
     });
 
+    const [first] = result.status === "created" ? result.goals : [];
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: first?.id } });
+
     await expect(createGoals({ dailyMinutes: 30, goals: [draft()] })).resolves.toMatchObject({
-      refused: [{ index: 0 }],
+      refused: [
+        { decision: { limit: { period: "day", resource: "goal" }, status: "limitReached" } },
+      ],
       status: "refused",
     });
   });

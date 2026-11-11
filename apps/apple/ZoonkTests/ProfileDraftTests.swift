@@ -57,6 +57,23 @@ final class ProfileDraftTests: XCTestCase {
     XCTAssertFalse(body.contains("migraines"))
   }
 
+  func testTheAddressFormSendsOneFormAndRatherNotSayDeclinesIt() throws {
+    let feminine = try XCTUnwrap(
+      Self.fixtures.first { $0.view.id == .addressForm && $0.view.saved.picks == ["feminine"] })
+    var draft = ProfileDraft(feminine.view)
+    draft.toggle("neutral")
+
+    XCTAssertEqual(
+      try sent(draft),
+      try decode(#"{"question":"addressForm","answer":{"declined":false,"form":"neutral"}}"#))
+
+    let declined = try XCTUnwrap(
+      Self.fixtures.first { $0.view.id == .addressForm && $0.view.status == .declined })
+    XCTAssertEqual(try sent(draft.declining(.ratherNotSay)), declined.answer)
+    XCTAssertEqual(
+      try sent(ProfileDraft(declined.view).declining(.ratherNotSay)), declined.answer)
+  }
+
   func testAboutYouScreensAreNeverSetupLeft() {
     XCTAssertFalse(
       [Components.Schemas.OnboardingStep.work, .learningSupport, .plan].hasSetupQuestions)

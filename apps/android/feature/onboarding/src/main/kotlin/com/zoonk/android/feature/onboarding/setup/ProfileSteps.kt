@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
 import com.zoonk.android.feature.profile.profileJobPrefill
 import com.zoonk.android.feature.profile.profileQuestion
@@ -47,6 +48,7 @@ internal fun ColumnScope.ProfileStep(
     val draft = vm.profileDraft(question, role)
     val scope = rememberCoroutineScope()
     val memory = view.profile.memoryEnabled
+    val declinesOnSkip = id == ProfileQuestion.ADDRESS_FORM
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
@@ -63,7 +65,8 @@ internal fun ColumnScope.ProfileStep(
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },
-        onSkip = { vm.answer(profileSkip(id)) },
+        onSkip = { vm.answer(if (declinesOnSkip) ProfileDraft(declined = true).onboardingInput(id, memory) else profileSkip(id)) },
+        skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { declinesOnSkip },
         notice = {
             if (view.goal.kind == Goal.Kind.LEARN && wait.firstLesson?.ready == true && wait.onStartLesson != null) {
                 FlowRow(
@@ -117,6 +120,7 @@ internal fun ColumnScope.ProfileStep(
             memoryEnabled = memory,
             role = role,
             suggested = id == ProfileQuestion.LEARNING_SUPPORT && vm.supportsSuggested,
+            declineAsSkip = declinesOnSkip,
         )
     }
 }

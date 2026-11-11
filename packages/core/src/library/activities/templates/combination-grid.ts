@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { labelSchema } from "../../steps/contract/content-schemas";
-import { type ActivityCheckKind } from "../activity-schemas";
+import { type ActivityCheckKind, aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { isClose, issue } from "./_utils/template-helpers";
 
-const MAX_VALUES = 6;
+const VALUES_TARGET = 6;
 const MAX_FILLED_CELLS = 9;
 
 const alleleSchema = z.string().regex(/^[A-Za-z]$/u);
@@ -14,7 +14,10 @@ const alleleSideSchema = z
   .strict();
 
 const numberSideSchema = z
-  .object({ label: labelSchema, values: z.array(z.number()).min(1).max(MAX_VALUES) })
+  .object({
+    label: labelSchema,
+    values: z.array(z.number()).min(1).describe(aimForItems(VALUES_TARGET)),
+  })
   .strict();
 
 const numberGrid = { columns: numberSideSchema, rows: numberSideSchema, title: labelSchema };

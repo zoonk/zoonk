@@ -187,8 +187,13 @@ function GoalStartFlow({
 
   useFocusTitleOnNewScreen(getScreenKey(state));
 
+  const takeDraft = (draft: OnboardingDraftView) => {
+    creation.clearActiveGoalsError(draft);
+    setState((current) => toDraftState({ current, draft }));
+  };
+
   const savedDraft = useFollowSavedDraft({
-    follow: (draft) => setState((current) => toDraftState({ current, draft })),
+    follow: takeDraft,
     initialDraft,
     shown: state.kind === "draft" ? state.draft : null,
   });
@@ -196,7 +201,7 @@ function GoalStartFlow({
   const showDraft = (draft: OnboardingDraftView) => {
     navigation.showDraft(draft.id);
     savedDraft.markOwn();
-    setState((current) => toDraftState({ current, draft }));
+    takeDraft(draft);
   };
 
   const draftActions = useDraftActions({
@@ -303,12 +308,18 @@ function GoalStartFlow({
             creation={{
               error: creation.error,
               isCreating: creation.isCreating || submission.isSubmitting,
-              run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
+              run: (run) =>
+                creation.create({
+                  onCreated: navigation.toSteps,
+                  onLimit: () => void draftActions.loadRead(),
+                  run,
+                }),
               startExplanation,
             }}
             draft={state.draft}
             draftActions={draftActions}
             goalLimit={goalLimit}
+            hasAccount={canAttach}
             intent={intent}
             onBack={() => backToEntry(state.draft.prompt)}
             onRewrite={(goal) => void submission.send(goal)}

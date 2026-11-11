@@ -12,7 +12,7 @@ import { type GoalDraft } from "./goal-contract";
 
 vi.mock("../plans/planner/build-plan", { spy: true });
 
-const FREE_LIMIT = { limit: 1, period: "total", resource: "activeGoals", tier: "free" };
+const FREE_LIMIT = { limit: 3, period: "total", resource: "activeGoals", tier: "free" };
 
 function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
   return {
@@ -24,11 +24,15 @@ function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
   };
 }
 
-async function setup({ plus = false } = {}) {
+async function setup({ following = 0, plus = false } = {}) {
   const user = await userFixture();
   const goal = await goalFixture({ status: "paused", userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+  const followed = await Promise.all(
+    Array.from({ length: following }, () => goalFixture({ userId: user.id })),
+  );
 
   if (plus) {
     await prisma.subscription.create({
@@ -37,7 +41,7 @@ async function setup({ plus = false } = {}) {
   }
 
   mockSession(user.id);
-  return { goal, plan, user };
+  return { followed, goal, plan, user };
 }
 
 async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
@@ -50,7 +54,7 @@ function countGoalClaims(userId: string) {
 }
 
 async function full() {
-  const day = await setup();
+  const day = await setup({ following: 2 });
   await prisma.goal.update({ data: { status: "active" }, where: { id: day.goal.id } });
   return day;
 }
@@ -76,8 +80,8 @@ describe("onboarding counts active goals in the write that creates one", () => {
     vi.mocked(buildPlan).mockClear();
   });
 
-  it("allows only one of two simultaneous Free starts and charges only that one", async () => {
-    const day = await setup();
+  it("allows only one of two simultaneous Free starts for the last slot and charges only that one", async () => {
+    const day = await setup({ following: 2 });
     const before = await versions(day);
 
     const results = await Promise.all([
@@ -92,7 +96,11 @@ describe("onboarding counts active goals in the write that creates one", () => {
 
     const created = results.flatMap((result) => (result.status === "created" ? result.goals : []));
     const active = await prisma.goal.findMany({ where: { status: "active", userId: day.user.id } });
-    expect(active.map((goal) => goal.id)).toStrictEqual(created.map((goal) => goal.id));
+
+    expect(active.map((goal) => goal.id).toSorted()).toStrictEqual(
+      [...day.followed, ...created].map((goal) => goal.id).toSorted(),
+    );
+
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(2);
     await expect(countGoalClaims(day.user.id)).resolves.toBe(1);
 
@@ -177,7 +185,7 @@ describe("starting a goal at the active-goal limit can pause another to make roo
     });
 
     await expect(statusOf(day.goal.id)).resolves.toBe("active");
-    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(1);
+    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(3);
   });
 
   it("refuses at the limit without a goal to pause, charging nothing", async () => {

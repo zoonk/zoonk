@@ -299,7 +299,6 @@ internal fun RunQuestion(
     draft: Answer?,
     onDraft: (Answer?) -> Unit,
     netScored: Boolean = false,
-    examTomorrow: Boolean = false,
     afterFeedback: @Composable () -> Unit = {},
 ) {
     val drill = question.drill
@@ -315,7 +314,6 @@ internal fun RunQuestion(
 
     if (part.showsScreen) {
         if (netScored) SwipeScore(netTally(questions, run))
-        if (checked == null) question.timeMachine?.let { TimeMachine(it, question.format, words) }
 
         if (drill != null && !drill.isIdeaFirst && previous?.mistakeId != question.mistakeId) {
             DrillNote(drill, openLesson, answered = checked != null)
@@ -362,11 +360,9 @@ internal fun RunQuestion(
             answer = checked.answer,
             feedback = checked.feedback,
             words = words,
-            examTomorrow = examTomorrow,
             timedOut = run.timedOut,
         ) {
             DrillAnswerNotes(drill, notSure = checked.answer == Answer.DontKnow, timedOut = run.timedOut, trap = checked.feedback.trap)
-            question.timeMachine?.let { TimeMachineNote(it, question.format, words, right = checked.feedback.isCorrect) }
         }
         afterFeedback()
     }

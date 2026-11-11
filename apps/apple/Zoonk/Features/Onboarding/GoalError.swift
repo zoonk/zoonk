@@ -5,12 +5,12 @@ enum GoalLimitReason: Equatable, Sendable {
   case dailyGoals
   case guest
   case monthlyExplanations
+  case activeGoals
   case monthlyGoals
-  case oneActiveGoal
   case signUpRequired
   case slowDown
 
-  var isPlusLimit: Bool { self == .oneActiveGoal || self == .monthlyGoals }
+  var isPlusLimit: Bool { self == .activeGoals || self == .monthlyGoals }
 
   /// Mirrors main's `getGoalLimitReason`.
   init(_ limit: OnboardingLimit) {
@@ -19,7 +19,7 @@ enum GoalLimitReason: Equatable, Sendable {
     if limit.tier == "guest" {
       self = .guest
     } else if limit.resource == "activeGoals" {
-      self = .oneActiveGoal
+      self = .activeGoals
     } else if limit.resource == "explanation" {
       self = monthly ? .monthlyExplanations : .dailyExplanations
     } else {
@@ -51,10 +51,13 @@ enum GoalLimitReason: Equatable, Sendable {
       LocalizedStringResource(
         "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
         table: "Onboarding", comment: "A free learner started as many goals as allowed this month")
-    case .oneActiveGoal:
+    case .activeGoals:
       LocalizedStringResource(
-        "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
-        table: "Onboarding", comment: "A free learner already follows a goal")
+        "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
+        table: "Onboarding",
+        comment:
+          "A free learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
+      )
     case .signUpRequired:
       LocalizedStringResource(
         "Create your free account to continue.", table: "Onboarding",
@@ -191,18 +194,21 @@ struct GoalLimitNoticeSection: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            if reason == .oneActiveGoal {
+            if reason == .activeGoals {
               Text(
                 "More goals at once with Plus", tableName: "Onboarding",
-                comment: "Title of the notice that the free plan follows one goal at a time"
+                comment:
+                  "Title of the notice that the learner follows as many goals at once as the free plan allows; Plus is the subscription's name, not \"more\""
               )
               .typeStyle(.body.weight(.semibold))
 
               if upFront {
                 Text(
-                  "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.",
+                  "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime.",
                   tableName: "Onboarding",
-                  comment: "Said before typing a goal when the free plan's one goal is taken")
+                  comment:
+                    "Said before typing a goal when the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
+                )
               } else {
                 Text(reason.message)
               }
@@ -224,13 +230,13 @@ struct GoalLimitNoticeSection: View {
             comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"")
         }
 
-        if reason == .oneActiveGoal {
+        if reason == .activeGoals {
           Button {
             router.showRoot(of: .plan)
           } label: {
             Text(
               "Go to your Plan", tableName: "Onboarding",
-              comment: "Opens the Plan, whose menu pauses the current goal")
+              comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
           }
         }
       }

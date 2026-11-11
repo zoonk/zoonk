@@ -104,8 +104,11 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       } message: { outcome in
         if outcome == .limitReached {
           Text(
-            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-            tableName: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+            "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
+            tableName: "Plan",
+            comment:
+              "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
+          )
         } else {
           Text(
             "Check your connection and try again.", tableName: "Plan",

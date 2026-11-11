@@ -1,11 +1,11 @@
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getMistakePracticeBefore } from "./mistake-availability";
+import { readyMistakeWhere } from "./mistake-availability";
 import { type MistakeReplay, loadMistakeReplays, readMistakeReplay } from "./mistake-replay";
 import { isSameMistakeQuestion } from "./mistake-replay-identity";
 import { readMistakeSnapshot } from "./mistake-snapshot";
 
-/** Only recall on a later local day fixes mistakes; returns only entries this answer changed, excluding concurrent fixes. */
+/** Only recall on a later local day than the last miss fixes mistakes; returns only entries this answer changed, excluding concurrent fixes. */
 export async function fixMistakesAnsweredRight(
   {
     answeredAt,
@@ -51,17 +51,14 @@ export async function fixMistakesAnsweredRight(
     return [];
   }
 
-  const startOfToday = getMistakePracticeBefore({
-    localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
-    timeZone,
-  });
-
   const candidates = await transaction.mistake.findMany({
     where: {
       ...(practicedMistakeId ? { id: practicedMistakeId } : {}),
+      ...readyMistakeWhere({
+        localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
+        timeZone,
+      }),
       OR: targets,
-      createdAt: { lt: startOfToday },
-      status: "open",
       userId,
     },
   });

@@ -5,6 +5,7 @@ import {
 } from "@/components/public/landing-styles";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -50,9 +51,11 @@ export async function PricingHero() {
 
       <p className={cn(LEAD_CLASS, "mt-4.5")}>
         {t({
-          description: "“Free” and “Plus” are the names of the two subscription tiers.",
+          description:
+            "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.",
           message:
-            "Free covers one goal at a time. Plus covers every goal, all the way to the big day.",
+            "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day.",
+          values: { goals: getFreePlanLimits().activeGoals ?? 0 },
         })}
       </p>
     </section>

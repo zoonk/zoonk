@@ -149,6 +149,31 @@ describe("lesson visuals", () => {
     });
   });
 
+  it("tells five lines apart by color and by the shape of their points", async () => {
+    const regions: LessonVisual = {
+      ...lettersChart,
+      chart: "line",
+      series: ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"].map((name, index) => ({
+        name,
+        values: [30 + index, 36 - index, 40 + index],
+      })),
+      title: "Ofícios respondidos por região",
+    };
+
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: regions })]) });
+
+    const chart = page.getByRole("figure", { name: regions.title });
+    await expect.element(chart).toBeVisible();
+
+    const points = [...chart.element().querySelectorAll("svg[viewBox^='0 0'] path")];
+    const firstOfEachLine = points.filter((_, index) => index % regions.categories.length === 0);
+
+    expect(firstOfEachLine).toHaveLength(regions.series.length);
+    expect(new Set(firstOfEachLine.map((point) => getComputedStyle(point).color)).size).toBe(5);
+    expect(new Set(firstOfEachLine.map((point) => point.getAttribute("d"))).size).toBe(5);
+    expect(chart.element().querySelectorAll("li svg path")).toHaveLength(regions.series.length);
+  });
+
   it("labels every day of a line chart on a phone, breaking long names over two lines", async () => {
     const days: LessonVisual = {
       ...lettersChart,
@@ -171,6 +196,85 @@ describe("lesson visuals", () => {
 
       expect(labels).toStrictEqual(expect.arrayContaining(days.categories));
       expect(labels).toStrictEqual(expect.arrayContaining(["0", "2", "4", "6", "8"]));
+    });
+  });
+
+  it("names every bar of a chart in full on a narrow phone, with no text outside the card", async () => {
+    const regions: LessonVisual = {
+      ...lettersChart,
+      categories: ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"],
+      series: [{ name: "Ofícios respondidos", values: [18, 42, 64, 30, 22] }],
+      title: "Ofícios respondidos por região",
+    };
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check({ visual: regions })]) });
+
+      const chart = page.getByRole("figure", { name: regions.title });
+      await expect.element(chart).toBeVisible();
+
+      const textsOutsideCard = () => {
+        const card = chart.element().getBoundingClientRect();
+
+        return [...chart.element().querySelectorAll("svg text")]
+          .filter((text) => {
+            const box = text.getBoundingClientRect();
+            return box.left < card.left || box.right > card.right;
+          })
+          .map((text) => text.textContent);
+      };
+
+      await expect.poll(textsOutsideCard).toStrictEqual([]);
+
+      const labels = [...chart.element().querySelectorAll("svg text")].map(
+        (text) => text.textContent,
+      );
+
+      expect(labels).toStrictEqual(expect.arrayContaining(regions.categories));
+    });
+  });
+
+  it("scales a chart with a larger browser text size, so its labels don't overlap", async () => {
+    const days: LessonVisual = {
+      ...lettersChart,
+      categories: ["Norte", "Sudeste", "Nordeste", "Centro"],
+      series: [{ name: "Ofícios respondidos", values: [18, 42, 64, 30] }],
+      title: "Ofícios respondidos por zona",
+    };
+
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check({ visual: days })]) });
+
+      const chart = page.getByRole("figure", { name: days.title });
+      await expect.element(chart).toBeVisible();
+
+      const overlappingLabels = () => {
+        const boxes = [...chart.element().querySelectorAll("svg text")].map((text) => ({
+          box: text.getBoundingClientRect(),
+          label: text.textContent,
+        }));
+
+        return boxes.flatMap((a, index) =>
+          boxes
+            .slice(index + 1)
+            .filter(
+              (b) =>
+                a.box.left < b.box.right &&
+                b.box.left < a.box.right &&
+                a.box.top < b.box.bottom &&
+                b.box.top < a.box.bottom,
+            )
+            .map((b) => `${a.label} / ${b.label}`),
+        );
+      };
+
+      await expect.poll(overlappingLabels).toStrictEqual([]);
     });
   });
 

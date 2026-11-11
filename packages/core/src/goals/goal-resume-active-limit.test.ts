@@ -1,4 +1,5 @@
 import { type Goal, prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,7 +30,7 @@ async function goalFor({ ready, userId }: { ready: boolean; userId: string }): P
   return goal;
 }
 
-/** A Free learner with no active goal, so one slot is free. */
+/** A Free learner with two other active goals, so one of the three slots is free. */
 async function pausedGoals({ count, ready }: { count: number; ready: boolean }) {
   const user = await userFixture();
   mockSession(user.id);
@@ -43,6 +44,8 @@ async function pausedGoals({ count, ready }: { count: number; ready: boolean }) 
   await Promise.all(
     goals.map((goal) => updateGoal({ goalId: goal.id, input: { status: "paused" } })),
   );
+
+  await Promise.all([goalFixture({ userId: user.id }), goalFixture({ userId: user.id })]);
 
   vi.setSystemTime(A_WEEK_LATER);
 
@@ -108,11 +111,11 @@ describe("resuming a goal claims the active slot under the learner lock", () => 
       expect(results[0]).toMatchObject({ change: ready ? { kind: "resumed" } : null });
 
       expect(results[1]).toStrictEqual({
-        limit: { limit: 1, period: "total", resource: "activeGoals", tier: "free" },
+        limit: { limit: 3, period: "total", resource: "activeGoals", tier: "free" },
         status: "limitReached",
       });
 
-      await expect(countActive(user.id)).resolves.toBe(1);
+      await expect(countActive(user.id)).resolves.toBe(3);
     },
   );
 
@@ -131,7 +134,7 @@ describe("resuming a goal claims the active slot under the learner lock", () => 
 
     expect(created).toMatchObject({ status: "created" });
     expect(resumed).toMatchObject({ status: "limitReached" });
-    await expect(countActive(user.id)).resolves.toBe(1);
+    await expect(countActive(user.id)).resolves.toBe(3);
   });
 
   it.each<{ input: GoalUpdateInput; ready: boolean }>([

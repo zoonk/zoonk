@@ -37,7 +37,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   @ObservationIgnored private let maxAge: Duration
   @ObservationIgnored private let now: () -> ContinuousClock.Instant
   @ObservationIgnored private let session: SessionStore
-  private var isInvalidated = false
+  private(set) var isInvalidated = false
   /// Keeps a persistent failure (a 5xx, an undecodable response) from refetching on every redraw.
   @ObservationIgnored private var hasSettledOnFailure = false
   @ObservationIgnored private var loadedAt: ContinuousClock.Instant?

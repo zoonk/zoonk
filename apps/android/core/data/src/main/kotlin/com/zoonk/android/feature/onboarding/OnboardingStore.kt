@@ -11,8 +11,6 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.account.AccountFailure
-import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
@@ -35,6 +33,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResumeResume
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
@@ -80,9 +79,6 @@ sealed interface Refusal {
     /** Research already read this upload for an earlier ask, so it needs a different one. */
     data object AlreadyRead : Refusal
 
-    /** The security check refused to make this visitor a guest: only an account gets past it. */
-    data object GuestBlocked : Refusal
-
     /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
     @Serializable
     data class DayTooShort(
@@ -122,10 +118,19 @@ class OnboardingStore(
     private val sessions: SessionSource,
     private val startGuest: suspend () -> SignInResult,
 ) {
-    /** Each fix answers with the whole new draft; confirming it gives it a goal, so goal changes read it again. */
+    /**
+     * Each fix answers with the whole new draft. Confirming it gives it a goal, and its room counts the goals followed
+     * against the plan's cap, so goal and subscription changes read it again.
+     */
     val drafts =
-        cache.keyed<String, OnboardingDraft>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, id ->
+        cache.keyed<String, OnboardingDraft>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.UserSubscription)) { session, id ->
             session?.let { api.draft(it, id) }
+        }
+
+    /** A goal typed after the learner's newest goal and not confirmed yet, which Today offers back. */
+    val unfinishedGoal =
+        cache.resource(Audience.SignedIn, setOf(DataDomain.Goals)) { session ->
+            session?.let { (api.resume(it).resume as? OnboardingResumeResume.OnboardingResumeResumeOneOfValue)?.value }
         }
 
     /** A goal's setup; each answer replies with the whole new setup. */
@@ -166,7 +171,10 @@ class OnboardingStore(
     ): WriteOutcome<OnboardingDraft> {
         startAsGuest()?.let { return it }
         return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
-            .also { if (it is WriteOutcome.Done) sent += it.value.id.toString() }
+            .also {
+                if (it is WriteOutcome.Done) sent += it.value.id.toString()
+                unfinishedGoal.invalidate()
+            }
     }
 
     suspend fun markPlanRevealed(goalId: String) =
@@ -239,14 +247,13 @@ class OnboardingStore(
     /** A visitor's write starts a guest first; what it returns instead when none started. */
     private suspend fun startAsGuest(): WriteOutcome<Nothing>? {
         if (sessions.current != null) return null
-        return when (val started = startGuest()) {
+        return when (startGuest()) {
             SignInResult.SignedIn -> {
                 null
             }
 
             is SignInResult.Failed -> {
-                val blocked = accountFailure(started.error, started.code) == AccountFailure.BotDetected
-                if (blocked) WriteOutcome.Refused(Refusal.GuestBlocked) else WriteOutcome.Failed
+                WriteOutcome.Failed
             }
 
             SignInResult.Obsolete -> {

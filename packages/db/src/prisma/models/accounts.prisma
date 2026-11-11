@@ -149,16 +149,17 @@ model Verification {
   @@map("verifications")
 }
 
-/// Each assertion's counter must be higher than the stored one, so none is accepted twice.
+/// Unused.
 model AppAttestKey {
-  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  keyId     String   @unique @map("key_id")
-  publicKey String   @map("public_key")
-  signCount Int      @default(0) @map("sign_count")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  keyId     String?   @map("key_id")
+  publicKey String?   @map("public_key")
+  signCount Int?      @default(0) @map("sign_count")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
 
   @@map("app_attest_keys")
+  @@ignore
 }
 
 model Organization {

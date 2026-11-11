@@ -1,4 +1,3 @@
-import Charts
 import SwiftUI
 
 struct LessonRichText: View {
@@ -17,40 +16,19 @@ struct LessonRichText: View {
   }
 
   static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
-    // An escaped dollar is a price, never the edge of a formula.
-    let escaped = text.replacingOccurrences(of: "\\$", with: dollarPlaceholder)
-    var result = RichInline(text: AttributedString())
-    var rest = Substring(escaped)
-
-    while let match = rest.firstMatch(
-      of: /\$\$(.+?)\$\$|\$([^$\s][^$]*?[^$\s]|[^$\s])\$(?!\d)/.dotMatchesNewlines())
-    {
-      result += markdown(rest[..<match.range.lowerBound], literalNumbers: literalNumbers)
-      let formula = String(match.output.1 ?? match.output.2 ?? "")
-      result +=
-        match.output.1 != nil || isFormula(formula)
-        ? LessonMath.typeset(formula.replacingOccurrences(of: dollarPlaceholder, with: "\\$"))
-        : markdown(match.output.0, literalNumbers: literalNumbers)
-      rest = rest[match.range.upperBound...]
+    LessonMathSegment.split(text).reduce(RichInline(text: AttributedString())) { result, segment in
+      switch segment.kind {
+      case .text: result + markdown(segment.text, literalNumbers: literalNumbers)
+      case .math, .displayMath: result + LessonMath.typeset(segment.text)
+      }
     }
-
-    return result + markdown(rest, literalNumbers: literalNumbers)
   }
 
-  private static let dollarPlaceholder = "\u{FFFC}"
-
-  private static func markdown(_ text: Substring, literalNumbers: Bool) -> RichInline {
+  private static func markdown(_ text: String, literalNumbers: Bool) -> RichInline {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace)
-    let restored = text.replacingOccurrences(of: dollarPlaceholder, with: "$")
-    let parsed =
-      (try? AttributedString(markdown: restored, options: options)) ?? AttributedString(restored)
+    let parsed = (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
     return RichInline(text: literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed))
-  }
-
-  /// Prices ("$5 and $10") stay text: a formula between single dollars has math in it.
-  private static func isFormula(_ text: String) -> Bool {
-    text.contains { "\\^_={}+-*/<>()".contains($0) } || text.allSatisfy(\.isLetter)
   }
 }
 
@@ -380,76 +358,6 @@ struct LessonVisualView: View {
       LessonChartView(chart: chart)
     case .timeline(let timeline):
       LessonTimelineView(timeline: timeline)
-    }
-  }
-}
-
-private struct LessonChartView: View {
-  let chart: LessonChart
-
-  private struct Point: Identifiable {
-    let series: String
-    let category: String
-    let value: Double
-    var id: String { "\(series)-\(category)" }
-  }
-
-  private var points: [Point] {
-    chart.series.flatMap { series in
-      zip(chart.categories, series.values).map {
-        Point(series: series.name, category: $0, value: $1)
-      }
-    }
-  }
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(chart.title)
-        .typeStyle(.body.weight(.semibold))
-
-      Chart(points) { point in
-        if chart.chart == .bar {
-          BarMark(
-            x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
-          )
-          .foregroundStyle(by: .value(verbatim: "Series", point.series))
-          .position(by: .value(verbatim: "Series", point.series))
-        } else {
-          LineMark(
-            x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
-          )
-          .foregroundStyle(by: .value(verbatim: "Series", point.series))
-          .symbol(by: .value(verbatim: "Series", point.series))
-        }
-      }
-      .chartYScale(domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))
-      .lessonValueAxis()
-      .chartYAxisLabel(chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel)
-      .chartXAxisLabel(chart.categoryLabel)
-      .chartLegend(chart.series.count > 1 ? .visible : .hidden)
-      .frame(minHeight: 200)
-
-      if let source = chart.source {
-        Text(source)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-      }
-    }
-  }
-}
-
-extension View {
-  func lessonValueAxis() -> some View {
-    chartYAxis {
-      AxisMarks { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisTick().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
-          }
-        }
-      }
     }
   }
 }

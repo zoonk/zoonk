@@ -89,7 +89,6 @@ export async function finishEmptyBlock({
       ceremony: null,
       certificates: [],
       checkpoint: null,
-      comesBackOn: null,
       completedMissions: settled.missionResult.completed,
       correct: 0,
       finishedChapter: null,

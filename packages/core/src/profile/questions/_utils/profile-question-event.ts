@@ -29,6 +29,7 @@ function answerMetrics(input: ProfileAnswerInput) {
       };
     case "conditions":
     case "learningSupport":
+    case "addressForm":
       return { options: [], picks: 0, typedText: false };
     default:
       return input satisfies never;
@@ -54,7 +55,7 @@ export function toProfileQuestionSavedEvent({
     return { name, properties: { from, question: input.question } };
   }
 
-  if (input.question === "learningSupport") {
+  if (input.question === "learningSupport" || input.question === "addressForm") {
     return { name, properties: { from, outcome, question: input.question } };
   }
 

@@ -4,21 +4,15 @@ import {
   fitPlanToRoutine,
   listPlanSetupTasks,
   runPlanSetupTask,
-  searchRoutineMemory,
   selectRoutineMemory,
 } from "../plan-setup";
 
 export async function fitRoutineInSteps(goalId: string): Promise<void> {
-  const search = await searchRoutineMemory(goalId);
+  const memory = await selectRoutineMemory(goalId);
 
-  if (!search) {
-    return;
+  if (memory) {
+    await fitPlanToRoutine({ goalId, memory });
   }
-
-  const memory =
-    "terms" in search ? await selectRoutineMemory({ goalId, terms: search.terms }) : search.memory;
-
-  await fitPlanToRoutine({ goalId, memory });
 }
 
 function runSetupTask({ goalId, task }: { goalId: string; task: PlanSetupTask }): Promise<void> {

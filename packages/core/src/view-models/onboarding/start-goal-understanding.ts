@@ -1,5 +1,7 @@
 import "server-only";
 import { normalizeString } from "@zoonk/utils/string";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
@@ -53,6 +55,8 @@ export async function startGoalUnderstanding(
       },
     }),
   );
+
+  revalidateCacheTags([getOnboardingDraftsCacheTag(session.user.id)]);
 
   if (!cached) {
     return { draft: await toDraftView({ draft, goalId: null }), status: "understanding" };

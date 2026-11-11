@@ -53,4 +53,18 @@ describe(prepareSkillExamFormatItems, () => {
     expect(skills.find((skill) => skill.id === numeric.skill.id)?.isQuantitative).toBe(false);
     expect(skills.find((skill) => skill.id === severalPicks.skill.id)?.isQuantitative).toBeNull();
   });
+
+  it("tells the writer the cases the skill's questions already use", async () => {
+    vi.mocked(generateItems).mockResolvedValue(taskResult({ items: [] }));
+
+    const pick = await pickFor({ entry: null, format: "multipleChoice", options: null, select: 1 });
+    const usedSituations = ["Hector restocks at 80 units a week."];
+
+    await prepareSkillExamFormatItems({
+      pick: { ...pick, skill: { ...pick.skill, usedSituations } },
+      workflowRunId: crypto.randomUUID(),
+    });
+
+    expect(generateItems).toHaveBeenCalledWith(expect.objectContaining({ usedSituations }));
+  });
 });

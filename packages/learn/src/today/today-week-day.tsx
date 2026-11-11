@@ -230,7 +230,9 @@ function useDayNote() {
 
   return (day: WeekDay): string | undefined => {
     const saidByTime =
-      !day.hitGoal && (day.studied || (day.kind === "study" && !isMissed(day, localDate)));
+      !day.hitGoal &&
+      (day.minutes > 0 ||
+        (day.goalMinutes > 0 && day.kind === "study" && !isMissed(day, localDate)));
 
     return saidByTime ? undefined : toLabelCase(dayStatus(day));
   };

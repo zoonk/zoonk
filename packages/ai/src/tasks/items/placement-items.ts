@@ -14,6 +14,7 @@ import trueFalseBalance from "./placement-items-true-false.prompt.md";
 import typedAnswers from "./placement-items-typed-answers.prompt.md";
 import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
+import { formatUsedSituations, getSituationSeed } from "./used-situations";
 
 /**
  * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: on
@@ -60,17 +61,11 @@ export type PlacementSkillItems = { quick: GeneratedItem[]; typed: GeneratedItem
 
 type WrittenSkill = { skill: number; quick: GeneratedItem[]; typed?: GeneratedItem[] };
 
-function formatUsedSituations(situations: readonly string[] | undefined): string {
-  return situations?.length
-    ? situations.map((situation) => `\n     - ${situation}`).join("")
-    : " none";
-}
-
 function formatSkills(skills: readonly PlacementItemsSkill[]): string {
   return skills
     .map(
       (skill, index) =>
-        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}\n   USED_SITUATIONS:${formatUsedSituations(skill.usedSituations)}`,
+        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}${formatUsedSituations({ indent: "   ", situations: skill.usedSituations })}`,
     )
     .join("\n");
 }
@@ -95,6 +90,7 @@ function buildSystemPrompt(params: PlacementItemsParams): string {
     field: false,
     formats,
     languageGoal: Boolean(params.targetLanguage),
+    usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
   });
 }
 
@@ -112,7 +108,7 @@ function buildUserPrompt(params: PlacementItemsParams): string {
     QUICK_FORMAT: ${quickFormat}
     QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatItemSetting({ language, seed: params.skills.map((skill) => skill.name).join(":"), targetLanguage })}
+${formatItemSetting({ language, seed: getSituationSeed(params.skills), targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:

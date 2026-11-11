@@ -4,7 +4,6 @@ struct ReadDraftView: View {
   let draft: OnboardingDraft
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
-  let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
@@ -20,14 +19,21 @@ struct ReadDraftView: View {
     case .case1(let understood):
       UnderstoodCard(
         draft: draft, understood: understood, isCreating: isCreating, error: error,
-        onDraft: onDraft, onRewrite: onRewrite
+        onRewrite: onRewrite
       ) {
         create {
           try await onboarding.createGoals(
-            understood.startableGoals(limit: draft.activeGoalLimit).map(\.draft.value1),
+            understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
             schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
+        }
+      }
+      .onChange(of: draft) {
+        // The draft is read again when the learner's goals or plan change, and it may have room by
+        // then, such as after getting Plus; nil is no cap.
+        if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
+          error = nil
         }
       }
     case .case2(let explain):
@@ -100,11 +106,11 @@ private struct UnderstoodCard: View {
   let understood: Components.Schemas.GoalUnderstanding.Case1Payload
   let isCreating: Bool
   let error: GoalError?
-  let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onConfirm: () -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(LearnerSummaryStore.self) private var learner
   @State private var rewriting = false
   @State private var editing: FieldEdit?
   @State private var choosingVariety: VarietyChoice?
@@ -167,34 +173,26 @@ private struct UnderstoodCard: View {
         }
       }
 
-      if !locked.isEmpty {
+      // Only goals started from this card make the rest wait in the learner's goals.
+      if !startable.isEmpty, !locked.isEmpty {
         Section {
-          PlusNotice(
-            description: locked.count == 1
-              ? Text(
-                "Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.",
-                tableName: "Onboarding",
-                comment:
-                  "Under the one goal the free plan can't follow yet, which waits in the learner's goal list; Plus is the subscription's name, not \"more\""
-              )
-              : Text(
-                "Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.",
-                tableName: "Onboarding",
-                comment:
-                  "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\""
-              ),
-            showsSeePlus: error?.limit?.isPlusLimit != true)
+          LockedGoalsNote(
+            count: locked.count,
+            isGuest: isGuest,
+            offersRemedy: error?.limit?.isPlusLimit != true && error?.needsAccount != true)
         }
       }
 
-      if let limit = error?.limit, limit.isPlusLimit {
+      if startable.isEmpty, !isGuest {
+        GoalLimitNoticeSection(reason: .activeGoals)
+      } else if let limit = shownError?.limit, limit.isPlusLimit {
         GoalLimitNoticeSection(reason: limit)
       } else {
-        if let error {
-          GoalErrorSection(error: error)
+        if let shownError {
+          GoalErrorSection(error: shownError)
         }
 
-        if error?.needsAccount != true {
+        if shownError?.needsAccount != true {
           StepButtons(
             canContinue: !rewriting,
             canSkip: !isCreating && !rewriting,
@@ -236,8 +234,22 @@ private struct UnderstoodCard: View {
       language: facts?.targetLanguage, region: facts?.targetRegion, choices: goal.regionChoices)
   }
 
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
+  }
+
+  /// A full card's way on for a guest is a free account, which has room; for an account it's a
+  /// pause or Plus.
+  private var shownError: GoalError? {
+    guard startable.isEmpty, isGuest else {
+      return error
+    }
+
+    return GoalError(message: GoalLimitReason.guest.message, needsAccount: true, limit: .guest)
+  }
+
   private var startable: Range<Int> {
-    understood.startableGoals(limit: draft.activeGoalLimit).indices
+    understood.startableGoals(left: draft.activeGoalsLeft).indices
   }
 
   private var locked: Range<Int> {
@@ -248,7 +260,8 @@ private struct UnderstoodCard: View {
     let rows = UnderstoodRows.rows(
       for: understood.goals[index], countryAsked: countryAsked.contains(index))
 
-    guard index == 0,
+    // The schedule goes with the first goal that starts, so it leaves when none can.
+    guard index == 0, !startable.isEmpty,
       let schedule = UnderstoodRows.scheduleRow(understood)
     else {
       return rows
@@ -268,27 +281,87 @@ private struct UnderstoodCard: View {
     }
 
     do {
-      let updated = try await onboarding.revise(
-        draftID: draft.id, field: field, goal: goal, value: value)
+      try await onboarding.revise(draftID: draft.id, field: field, goal: goal, value: value)
       editing = nil
-      onDraft(updated)
       return true
     } catch is CancellationError {
       return true
     } catch {
-      // One that timed out may have landed, and the screen must show what the draft now says.
-      if let fresh = try? await onboarding.understanding(id: draft.id) {
-        onDraft(fresh)
-      }
-
       return false
     }
   }
 }
 
+/// A guest's next step is a free account, which follows more goals at once; an account's is Plus.
+private struct LockedGoalsNote: View {
+  let count: Int
+  let isGuest: Bool
+  let offersRemedy: Bool
+
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    if !isGuest {
+      PlusNotice(description: plusDescription, showsSeePlus: offersRemedy)
+    } else if offersRemedy {
+      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false) {
+        Button {
+          router.present(.signIn)
+        } label: {
+          Text(
+            "Create a free account", tableName: "Onboarding",
+            comment: "Opens sign-up; a guest's plan and progress come with them")
+        }
+      }
+    } else {
+      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false)
+    }
+  }
+
+  private var plusDescription: Text {
+    count == 1
+      ? Text(
+        "Following more goals at once comes with Plus. Until then, this goal waits in your goals.",
+        tableName: "Onboarding",
+        comment:
+          "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
+      )
+      : Text(
+        "Following more goals at once comes with Plus. Until then, these goals wait in your goals.",
+        tableName: "Onboarding",
+        comment:
+          "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
+      )
+  }
+
+  private var guestTitle: Text {
+    Text(
+      "Available with a free account", tableName: "Onboarding",
+      comment:
+        "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan"
+    )
+  }
+
+  private var guestDescription: Text {
+    count == 1
+      ? Text(
+        "Following more goals at once comes with a free account. Until then, this goal waits in your goals.",
+        tableName: "Onboarding",
+        comment:
+          "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account"
+      )
+      : Text(
+        "Following more goals at once comes with a free account. Until then, these goals wait in your goals.",
+        tableName: "Onboarding",
+        comment:
+          "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account"
+      )
+  }
+}
+
 extension Components.Schemas.GoalUnderstanding.Case1Payload {
-  fileprivate func startableGoals(limit: Int?) -> ArraySlice<Components.Schemas.UnderstoodGoal> {
-    goals.prefix(limit ?? goals.count)
+  fileprivate func startableGoals(left: Int?) -> ArraySlice<Components.Schemas.UnderstoodGoal> {
+    goals.prefix(left ?? goals.count)
   }
 }
 

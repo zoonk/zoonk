@@ -133,6 +133,18 @@ function writeSections(prompt: string) {
   };
 }
 
+function readingSkills<Skill>({ base, placeholder }: { base: Skill; placeholder: boolean }) {
+  return ["Ler", "Interpretar", "Resumir", "Comparar", "Argumentar", "Revisar"].map(
+    (verb, index) => ({
+      ...base,
+      description: placeholder && index === 0 ? "[insert example]" : `${verb} um texto.`,
+      key: `p${index}`,
+      name: `${verb} textos`,
+      prerequisites: [],
+    }),
+  );
+}
+
 describe(generateSkillGraph, () => {
   it("writes a big exam's frame first, then its subjects at once, and joins them into one graph", async () => {
     const prompts: string[] = [];
@@ -236,15 +248,10 @@ describe(generateSkillGraph, () => {
   });
 
   it("writes the graph once more when code finds it flawed, and keeps the better one", async () => {
-    const skills = (chained: boolean) =>
-      ["Ler", "Interpretar", "Resumir", "Comparar", "Argumentar", "Revisar"].map((verb, index) => ({
-        ...WHOLE_GRAPH.skills[0]!,
-        key: `p${index}`,
-        name: `${verb} textos`,
-        prerequisites: chained && index > 0 ? [`p${index - 1}`] : [],
-      }));
+    const skills = (placeholder: boolean) =>
+      readingSkills({ base: WHOLE_GRAPH.skills[0]!, placeholder });
 
-    // A subject chained in a textbook's order, then one with hard dependencies only.
+    // A skill left with a placeholder, then the graph written in full.
     vi.mocked(streamText).mockReset();
 
     vi.mocked(streamText)
@@ -263,27 +270,41 @@ describe(generateSkillGraph, () => {
     });
 
     expect(streamText).toHaveBeenCalledTimes(2);
-    expect(data.skills.every((skill) => skill.prerequisites.length === 0)).toBe(true);
+    expect(data.skills[0]?.description).toBe("Ler um texto.");
 
     const names = skills(false).map((skill) => skill.name);
     expect(named).toStrictEqual([...names, ...names]);
   });
 
-  it("writes again only a big exam's flawed section, never the whole graph", async () => {
+  it("keeps a graph whose prerequisites run in a textbook's order instead of drafting it again", async () => {
     const chained = ["Ler", "Interpretar", "Resumir", "Comparar", "Argumentar", "Revisar"].map(
       (verb, index) => ({
-        ...writeSections("WRITE:\n- S1 Português").skills[0]!,
+        ...WHOLE_GRAPH.skills[0]!,
         key: `p${index}`,
         name: `${verb} textos`,
         prerequisites: index > 0 ? [`p${index - 1}`] : [],
       }),
     );
 
+    vi.mocked(streamText).mockReset();
+
+    vi.mocked(streamText).mockReturnValue(answer({ ...WHOLE_GRAPH, skills: chained }) as never);
+
+    const { data } = await generateSkillGraph({ goal: "ENEM", goalKind: "exam", language: "pt" });
+
+    expect(streamText).toHaveBeenCalledOnce();
+
+    expect(data.skills.map((skill) => skill.prerequisites)).toStrictEqual(
+      chained.map((skill) => skill.prerequisites),
+    );
+  });
+
+  it("writes again only a big exam's flawed section, never the whole graph", async () => {
+    const base = writeSections("WRITE:\n- S1 Português").skills[0]!;
     let portugueseCalls = 0;
     vi.mocked(streamText).mockReset();
 
-    // Portuguese comes back chained in a textbook's order the first time, with hard dependencies
-    // only the second.
+    // Portuguese comes back with a placeholder the first time, written in full the second.
     vi.mocked(streamText).mockImplementation(({ prompt }) => {
       const text = typeof prompt === "string" ? prompt : "";
 
@@ -299,8 +320,7 @@ describe(generateSkillGraph, () => {
 
       portugueseCalls += 1;
 
-      const skills =
-        portugueseCalls === 1 ? chained : chained.map((skill) => ({ ...skill, prerequisites: [] }));
+      const skills = readingSkills({ base, placeholder: portugueseCalls === 1 });
 
       return answer({ skills: [...written.skills.slice(1), ...skills] }) as never;
     });
@@ -319,7 +339,10 @@ describe(generateSkillGraph, () => {
     const portuguese = data.skills.filter((skill) => skill.area === "Português");
 
     expect(portuguese).toHaveLength(6);
-    expect(portuguese.every((skill) => skill.prerequisites.length === 0)).toBe(true);
+
+    expect(portuguese.find((skill) => skill.name === "Ler textos")?.description).toBe(
+      "Ler um texto.",
+    );
   });
 
   it("keeps a graph whose phase is titled like one of its skills instead of drafting it again", async () => {

@@ -73,11 +73,13 @@
     "axe-core": "4.14.0",
     "playwright": "catalog:",
     "polyclip-ts": "0.16.8",
+    "remark-parse": "11.0.0",
     "sane-topojson": "4.0.0",
     "topojson-client": "3.1.0",
     "topojson-simplify": "3.0.3",
     "tsx": "catalog:",
     "typescript": "catalog:",
+    "unified": "11.0.5",
     "us-atlas": "3.0.1",
     "vitest": "catalog:",
     "world-atlas": "2.0.2"

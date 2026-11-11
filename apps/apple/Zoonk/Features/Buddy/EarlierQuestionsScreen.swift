@@ -73,9 +73,8 @@ private struct EarlierQuestionRow: View {
         .typeStyle(.body.weight(.semibold))
 
       if let answer = question.answer {
-        TutorAnswerText(text: answer, linksEnabled: false, buddyName: "")
+        TutorAnswerText(text: answer, linksEnabled: false, buddyName: nil)
           .typeStyle(.message)
-          .accessibilityLabel(Text(answer))
       } else {
         Text(
           "No answer was saved.", tableName: "Buddy",

@@ -24,15 +24,13 @@ export const TASK_HEADER_SIDE_CLASS = {
   start: "flex min-w-fit flex-1 basis-0 justify-start",
 } as const;
 
-const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
+export const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
+
+export const ACTION_BAR_SURFACE_CLASS = "bg-background border-border sticky bottom-0 z-20 border-t";
 
 export function TaskActionBar({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("bg-background border-border sticky bottom-0 z-20 border-t", className)}
-      data-slot="task-action-bar"
-      {...props}
-    >
+    <div className={cn(ACTION_BAR_SURFACE_CLASS, className)} data-slot="task-action-bar" {...props}>
       <div
         className={cn(TASK_BAR_ROW_CLASS, "flex flex-col gap-2 lg:items-end", BAR_PADDING_CLASS)}
       >

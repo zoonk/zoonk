@@ -110,6 +110,9 @@
   --color-viz-grid: var(--viz-grid);
   --color-viz-secondary: var(--viz-secondary);
   --color-viz-secondary-soft: var(--viz-secondary-soft);
+  --color-viz-series-4: var(--viz-series-4);
+  --color-viz-series-5: var(--viz-series-5);
+  --color-viz-series-6: var(--viz-series-6);
   --color-belt-white: var(--belt-white);
   --color-belt-yellow: var(--belt-yellow);
   --color-belt-orange: var(--belt-orange);
@@ -247,6 +250,13 @@
   --viz-highlight-soft: var(--color-amber-100);
   --viz-secondary: oklch(0.56 0.19 325);
   --viz-secondary-soft: var(--color-fuchsia-100);
+  /*
+   * A chart's fourth to sixth series. Blue, violet and pink-red mean something else, so these also
+   * step in lightness: each stays apart from the other five for color-blind readers.
+   */
+  --viz-series-4: oklch(0.48 0.13 120);
+  --viz-series-5: oklch(0.32 0.03 260);
+  --viz-series-6: oklch(0.42 0.12 40);
   /* Grids, axes and construction lines: as faint as a border, but never as strong as the shapes on them. */
   --viz-grid: var(--border);
   --belt-white: var(--color-white);
@@ -303,6 +313,9 @@
     --viz-accent: var(--color-teal-800);
     --viz-highlight: var(--color-amber-800);
     --viz-secondary: var(--color-fuchsia-800);
+    --viz-series-4: oklch(0.58 0.1 145);
+    --viz-series-5: oklch(0.17 0.03 260);
+    --viz-series-6: oklch(0.32 0.1 40);
     --viz-grid: var(--color-neutral-500);
   }
 }
@@ -350,6 +363,9 @@
     --viz-highlight-soft: var(--color-amber-950);
     --viz-secondary: oklch(0.8 0.13 325);
     --viz-secondary-soft: var(--color-fuchsia-950);
+    --viz-series-4: oklch(0.66 0.16 145);
+    --viz-series-5: oklch(0.58 0.03 260);
+    --viz-series-6: oklch(0.52 0.14 40);
     --belt-black: var(--color-neutral-700);
   }
 }
@@ -402,6 +418,9 @@
       --viz-accent: var(--color-teal-200);
       --viz-highlight: var(--color-amber-200);
       --viz-secondary: var(--color-fuchsia-200);
+      --viz-series-4: oklch(0.76 0.16 145);
+      --viz-series-5: oklch(0.68 0.03 260);
+      --viz-series-6: oklch(0.6 0.14 40);
       --viz-grid: var(--color-neutral-400);
       --belt-black: var(--color-neutral-500);
     }

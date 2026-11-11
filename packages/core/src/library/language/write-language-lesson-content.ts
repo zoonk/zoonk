@@ -11,10 +11,14 @@ import {
   listTargetBankWords,
   normalizeWordKey,
 } from "../../player/contracts/build-word-bank-options";
+import { type LibraryProvenance } from "../_utils/library-rows";
 import { finishLibraryGeneration } from "../claims/generation-claim";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
 import { fillMissingAudio } from "./_utils/language-audio";
-import { loadLanguageLessonInputs } from "./_utils/language-lesson-inputs";
+import {
+  type LanguageLessonInputs,
+  loadLanguageLessonInputs,
+} from "./_utils/language-lesson-inputs";
 import { buildLanguageLessonSteps } from "./_utils/language-lesson-steps";
 import { saveLanguageLesson } from "./_utils/save-language-lesson";
 import {
@@ -27,11 +31,17 @@ type Analytics = Parameters<typeof generateLanguageLesson>[0]["analytics"];
 
 const MIN_SENTENCES = 2;
 
+export type LanguageLessonDraft = {
+  inputs: LanguageLessonInputs;
+  lesson: LanguageLessonContent;
+  provenance: LibraryProvenance;
+};
+
 type WriteLanguageLessonResult =
   | { status: "notClaimed" }
   | { status: "notLanguageLesson" }
   | { status: "heldBack" }
-  | { sentenceCount: number; status: "published"; stepCount: number; wordCount: number };
+  | { draft: LanguageLessonDraft; status: "drafted" };
 
 async function getSharedOrganization() {
   return prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
@@ -66,8 +76,88 @@ function withSharedIds({
   };
 }
 
+/** The writer's output with what a learner can't use dropped, or null when too little is left. */
+export function cleanWrittenLanguageLesson({
+  content,
+  inputs,
+}: {
+  content: LanguageLessonContent;
+  inputs: LanguageLessonInputs;
+}): LanguageLessonContent | null {
+  const cleaned = cleanLanguageLesson({
+    content,
+    knownWords: inputs.writerInput.knownWords ?? [],
+    sameLanguage: isSameLanguage(inputs),
+  });
+
+  return cleaned.words.length === 0 || cleaned.sentences.length < MIN_SENTENCES ? null : cleaned;
+}
+
+/**
+ * Saves the lesson's shared words and sentences, the tiles its screens show and their audio, and
+ * returns the rows a version of the lesson saves.
+ */
+async function storeLanguageLesson({
+  content,
+  inputs,
+  lessonId,
+  provenance,
+}: {
+  content: LanguageLessonContent;
+  inputs: LanguageLessonInputs;
+  lessonId: string;
+  provenance: LibraryProvenance;
+}): Promise<Omit<Parameters<typeof saveLanguageLesson>[0], "workflowRunId">> {
+  const organization = await getSharedOrganization();
+
+  const shared = await saveSharedVocabulary({
+    content,
+    learnerLanguage: inputs.learnerLanguage,
+    organizationId: organization.id,
+    provenance,
+    targetLanguage: inputs.targetLanguage,
+  });
+
+  const stored = withSharedIds({ content, shared });
+
+  const steps = buildLanguageLessonSteps({
+    ...stored,
+    learnerLanguage: inputs.learnerLanguage,
+    targetLanguage: inputs.targetLanguage,
+  });
+
+  const toKey = (word: string) => normalizeWordKey({ language: inputs.targetLanguage, word });
+  const lessonWordKeys = new Set([...shared.wordIdsByText.keys()].map((text) => toKey(text)));
+
+  const bankWordIds = await saveBankWords({
+    organizationId: organization.id,
+    provenance,
+    targetLanguage: inputs.targetLanguage,
+    texts: listTargetBankWords({ sentences: stored.sentencesById, steps }).filter(
+      (word) => !lessonWordKeys.has(toKey(word)),
+    ),
+  });
+
+  await fillMissingAudio({
+    orgSlug: organization.slug,
+    sentenceIds: stored.sentenceIds,
+    targetLanguage: inputs.targetLanguage,
+    wordIds: [...shared.wordIdsByText.values(), ...bankWordIds.values()],
+  });
+
+  return {
+    content: stored.content,
+    lessonId,
+    provenance,
+    sentenceIds: stored.sentenceIds,
+    skillId: inputs.skillId,
+    steps,
+    wordIds: stored.wordIds,
+  };
+}
+
 /** Internal workflow bridge: the caller must hold the lesson's content claim. */
-export async function writeLanguageLessonContent({
+export async function writeLanguageLessonDraft({
   analytics,
   lessonId,
   serviceTier,
@@ -88,23 +178,16 @@ export async function writeLanguageLessonContent({
 
   const { inputs } = state;
 
-  const [draft, organization] = await Promise.all([
-    generateLanguageLesson({
-      ...inputs.writerInput,
-      analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
-      serviceTier,
-      speed,
-    }),
-    getSharedOrganization(),
-  ]);
-
-  const cleaned = cleanLanguageLesson({
-    content: draft.data,
-    knownWords: inputs.writerInput.knownWords ?? [],
-    sameLanguage: isSameLanguage(inputs),
+  const written = await generateLanguageLesson({
+    ...inputs.writerInput,
+    analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
+    serviceTier,
+    speed,
   });
 
-  if (cleaned.words.length === 0 || cleaned.sentences.length < MIN_SENTENCES) {
+  const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
+
+  if (!lesson) {
     await finishLibraryGeneration({
       id: lessonId,
       status: "failed",
@@ -115,58 +198,25 @@ export async function writeLanguageLessonContent({
     return { status: "heldBack" };
   }
 
-  const shared = await saveSharedVocabulary({
-    content: cleaned,
-    learnerLanguage: inputs.learnerLanguage,
-    organizationId: organization.id,
-    provenance: draft.provenance,
-    targetLanguage: inputs.targetLanguage,
-  });
+  return { draft: { inputs, lesson, provenance: written.provenance }, status: "drafted" };
+}
 
-  const stored = withSharedIds({ content: cleaned, shared });
-
-  const steps = buildLanguageLessonSteps({
-    ...stored,
-    learnerLanguage: inputs.learnerLanguage,
-    targetLanguage: inputs.targetLanguage,
-  });
-
-  const toKey = (word: string) => normalizeWordKey({ language: inputs.targetLanguage, word });
-  const lessonWordKeys = new Set([...shared.wordIdsByText.keys()].map((text) => toKey(text)));
-
-  const bankWordIds = await saveBankWords({
-    organizationId: organization.id,
-    provenance: draft.provenance,
-    targetLanguage: inputs.targetLanguage,
-    texts: listTargetBankWords({ sentences: stored.sentencesById, steps }).filter(
-      (word) => !lessonWordKeys.has(toKey(word)),
-    ),
-  });
-
-  await fillMissingAudio({
-    orgSlug: organization.slug,
-    sentenceIds: stored.sentenceIds,
-    targetLanguage: inputs.targetLanguage,
-    wordIds: [...shared.wordIdsByText.values(), ...bankWordIds.values()],
-  });
-
-  const saved = await saveLanguageLesson({
-    ...stored,
+/** Internal workflow bridge: false when `workflowRunId` no longer holds the lesson's content claim. */
+export async function publishLanguageLessonDraft({
+  draft,
+  lessonId,
+  workflowRunId,
+}: {
+  draft: LanguageLessonDraft;
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
+  const rows = await storeLanguageLesson({
+    content: draft.lesson,
+    inputs: draft.inputs,
     lessonId,
     provenance: draft.provenance,
-    skillId: inputs.skillId,
-    steps,
-    workflowRunId,
   });
 
-  if (!saved) {
-    return { status: "notClaimed" };
-  }
-
-  return {
-    sentenceCount: stored.sentenceIds.length,
-    status: "published",
-    stepCount: steps.length,
-    wordCount: stored.wordIds.length,
-  };
+  return saveLanguageLesson({ ...rows, workflowRunId });
 }

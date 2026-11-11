@@ -2793,10 +2793,11 @@ msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "Neues Ziel starten"
 
+#. On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "Zt_vKl"
-msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
-msgstr "Im Free-Tarif kannst du ein Ziel auf einmal verfolgen: Pausiere dein aktuelles Ziel über sein Menü oder verfolge mit Plus mehrere Ziele gleichzeitig."
+msgctxt "cTQ_Wv"
+msgid "Starting another goal right now comes with Plus. Until then, keep going with your current goals."
+msgstr "Um jetzt ein weiteres Ziel zu starten, brauchst du Plus. Mach bis dahin mit deinen aktuellen Zielen weiter."
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -4529,10 +4530,11 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Kurs abgeschlossen"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/journey/goal-actions.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "Im kostenlosen Tarif kannst du jeweils ein Ziel verfolgen. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen."
 
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
@@ -6770,19 +6772,9 @@ msgid "We heard “{heard}”"
 msgstr "Wir haben „{heard}“ gehört"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "Das Wort kommt am {date} wieder."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Dieses Wort sitzt. Es kommt nicht wieder."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Ein Akzent ist kein Hindernis. Wörter, die noch anders klingen, kommen morgen wieder."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Ein Akzent steht dir nie im Weg."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -8073,9 +8065,19 @@ msgid "Nothing to practice yet"
 msgstr "Noch nichts zum Üben"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "Der Rest kommt an einem anderen Tag wieder, damit du dir den Stoff besser merkst."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "Den Rest kannst du weiterhin üben."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -9461,10 +9463,11 @@ msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "Mehr Ziele gleichzeitig mit Plus"
 
+#. Shown on the screen for typing a new goal, before the learner types, when a free learner already follows as many goals as the free plan allows at once. Quick questions are short explanations that don't take one of those goals. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "KJXbLd"
-msgid "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime."
-msgstr "Im Free-Tarif kannst du ein Ziel auf einmal verfolgen. Um ein weiteres zu starten, pausiere dein aktuelles Ziel im Menü deines Plans. Schnelle Fragen kannst du jederzeit stellen."
+msgctxt "tqq0xx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
+msgstr "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier ein Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9709,11 +9712,11 @@ msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
 msgstr "{exam, select, abitur {Abitur bestehen} bac {Bac bestehen} enem {ENEM bestehen} exani {EXANI-II bestehen} kyotsu {Beim Common Test gut abschneiden} matura {Matura bestehen} maturita {Maturità bestehen} suneung {Beim CSAT gut abschneiden} yks {Beim YKS gut abschneiden} other {SAT bestehen}}"
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
+#. Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "Eine Sicherheitsprüfung hat diesen Browser blockiert. Versuch es mit einem anderen Browser oder erstell ein kostenloses Konto."
+msgctxt "goalErrors.u1Pjvx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
+msgstr "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier eines deiner Ziele über das Menü in deinem Plan oder hol dir Plus."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
@@ -9739,11 +9742,6 @@ msgstr "Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif e
 msgctxt "goalErrors.h018_j"
 msgid "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
 msgstr "Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.nMzPGK"
-msgid "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus."
-msgstr "Im Free-Tarif kannst du jeweils ein Ziel verfolgen. Um dieses Ziel zu starten, pausier dein aktuelles Ziel über das Menü in deinem Plan oder hol dir Plus."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.aFV0Wu"
@@ -9988,14 +9986,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "Ohne Termin lernst du alles in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "Kein Termin, alles lernen"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "Ohne Termin fortfahren"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Hast du einen bestimmten Termin im Blick?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "Termin entfernen"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"
@@ -10875,6 +10878,24 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Quelle: {source}"
 
+#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "Hs12te"
+msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.} other {Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.}}"
+
+#. Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "INXjEw"
+msgid "Available with a free account"
+msgstr "Mit kostenlosem Konto verfügbar"
+
+#. Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "uRiE4s"
+msgid "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.} other {Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.}}"
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10889,11 +10910,6 @@ msgstr "Diese Ziele teilen sich deine tägliche Lernzeit. Du kannst das alles sp
 msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "Du kannst das alles später ändern."
-
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "aHZ7X8"
-msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {Mit Plus kannst du mehrere Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.} other {Mit Plus kannst du mehrere Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"
@@ -12815,6 +12831,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "Was dir beim Lernen hilft"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "Wie wir dich ansprechen"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12835,6 +12857,12 @@ msgstr "Nicht beantwortet"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, other {# gespeichert}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Gespeichert"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -13013,6 +13041,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "Was hilft dir beim Lernen?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "Wie sollen wir dich ansprechen?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -13042,6 +13076,11 @@ msgstr "Optional. Wir speichern hier nur etwas, wenn du dich dafür entscheidest
 msgctxt "310Na4"
 msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "Wähl alles aus, was dir hilft. Du brauchst dafür keine Diagnose und musst dich keiner Kategorie zuordnen."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"
@@ -13482,12 +13521,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Deine Lektion ist noch nicht gespeichert"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Wiederholung am {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13687,11 +13720,6 @@ msgid "Saved to your mistakes"
 msgstr "In deinem Fehlerheft gespeichert"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "In deinem Fehlerheft gespeichert · morgen kommt die Aufgabe wieder"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Keine Antwort"
@@ -13727,31 +13755,6 @@ msgstr "netto {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Eine falsche Antwort hebt eine richtige auf. Nicht sicher? Lass die Antwort frei."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Das hast du am {date} gesehen."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Wieder richtig, genau wie am {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "Am {date} hast du das richtig beantwortet. Wenn du es jetzt wiederholst, merkst du es dir besser."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "Am {date} hast du „{answer}“ geantwortet."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "Am {date} ist dir das noch schwergefallen."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13890,12 +13893,6 @@ msgstr "In weniger als einer Minute geschafft"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "In {time} geschafft"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Wieder dran am {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -14076,10 +14073,11 @@ msgctxt "goalSwitcher._G_fp6"
 msgid "Pause a goal or get Plus"
 msgstr "Ziel pausieren oder Plus holen"
 
+#. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
-msgctxt "goalSwitcher.MIqzZd"
-msgid "Starts with Plus"
-msgstr "Startet mit Plus"
+msgctxt "goalSwitcher.VX7VBg"
+msgid "Starts with a free account"
+msgstr "Startet mit einem kostenlosen Konto"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.zbkRbA"

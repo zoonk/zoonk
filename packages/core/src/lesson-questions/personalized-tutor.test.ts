@@ -27,6 +27,7 @@ async function questionWithNeeds(task: "goal" | "lesson") {
   const fixture = await createLessonQuestionFixture();
 
   await learningProfileFixture({
+    addressForm: "masculine",
     learningNeeds: [...NEEDS],
     memoryEnabled: false,
     userId: fixture.user.id,
@@ -61,7 +62,7 @@ async function questionWithNeeds(task: "goal" | "lesson") {
 
 describe("personal tutor inputs", () => {
   it.each(["goal", "lesson"] as const)(
-    "passes needs and consented conditions to the %s task with memory off",
+    "passes needs, consented conditions and the address form to the %s task with memory off",
     async (task) => {
       const { question } = await questionWithNeeds(task);
       const claimed = await claimLessonQuestionAnswer({ questionId: question.id });
@@ -80,6 +81,7 @@ describe("personal tutor inputs", () => {
 
       expect(generate).toHaveBeenCalledWith(
         expect.objectContaining({
+          addressForm: "masculine",
           learnerMemory: [],
           learnerNeeds: { note: "I need time to read", variants },
         }),

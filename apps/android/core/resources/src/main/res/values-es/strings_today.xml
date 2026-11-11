@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "da9559b9734b9e7dccc464c621bd18c1492f1f41efe007350ce38b56d7abd26d",
   "today_connection_lost": "e6f0f994a3db5a4829855c7bbd18c88ea7575407e361fbbddf97b6a28267d296",
   "today_connection_lost_detail": "74fc6ed7ed2a4c4ec5b2d2e1cb2c33d94fb73ae3d1acd874b9af4d27514a6013",
+  "today_continue_draft": "db06a63ad8f456d980f4fb9f243db57d4f5c10b4697ef1ea6cd57379fe6745ca",
   "today_continue_explanation": "6ba568e18228f3fa421b85c12f7d2a567b7f797e4ff1a23072754602d13ecf30",
   "today_continue_mock": "06ea3d1c29301880a9d8869a105e9bd6dcc49d2a79336f5c81467615aebbbf1f",
   "today_continue_mock_detail": "d9237b9182734de69c211c8a9b0d67314db21b33824cead8b821e5092cb90641",
@@ -124,7 +125,7 @@
   "today_rest_welcome_back": "1303b06da4435eb979e07e3b7d520559ebdd2f29db560da716eb713ebb7062d3",
   "today_resume_effect": "9b34d7654ca37031f50e997e9b7c145b70fc14e66f09eb34af69c203f2d4c858",
   "today_resume_goal": "1c7c7d17cd25a58c1e2d9cbc1d1be3de1e7e86692095c750dfb63d7b5daec051",
-  "today_resume_goal_limit": "a2d03d564ca2574f70a0f615738c4d9e18e64e16f01c28d977a8d24eb7f30be7",
+  "today_resume_goal_limit": "d81b8594c0aef1bcb3d5ba80e29147211d289f028a994089bb0eac8cea1e8e41",
   "today_save_failed": "123431523d7143f3840f1393740192ca349f304d69fc1008cb07c8683e89c3f7",
   "today_see_day_challenge": "1742f9517fb8dfabfcf9b1b42c8b01fa11f1de70d92f8933c48d5f68bbe18568",
   "today_see_day_mock": "c04fc713ed41f98168b962e1bd58fafa009d79ae5e0ca55b2d2a87434fff6cd8",
@@ -347,7 +348,8 @@
     <string name="today_resume_goal">Reanudar %1$s</string>
     <string name="today_new_goal">Nuevo objetivo</string>
     <string name="today_resume_effect">Tu plan se reanuda a partir de hoy, empezando por las lecciones programadas para los días en que hiciste una pausa.</string>
-    <string name="today_resume_goal_limit">Con el plan gratis puedes seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más objetivos.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="today_resume_goal_limit">Ya tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos.</string>
     <string name="today_setting_up">Configuración en curso</string>
     <string name="today_setting_up_goal">Faltan algunas respuestas para completar tu plan de %1$s.</string>
     <string name="today_setting_up_detail">Lo creamos con lo que nos cuentas.</string>
@@ -357,6 +359,7 @@
     <string name="today_building_plan_detail">Suele tardar uno o dos minutos. Tu primer día se abrirá aquí en cuanto esté listo.</string>
     <string name="today_quick_explanation">Explicación rápida</string>
     <string name="today_continue_explanation">Continuar la explicación</string>
+    <string name="today_continue_draft">Continuar</string>
     <string name="today_week_title">Esta semana</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>

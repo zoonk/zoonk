@@ -4,11 +4,14 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type MemoryFactText, formatMemoryFactList } from "./memory-facts";
 import planChangePrompt from "./memory-insight-plan-change.prompt.md";
 import { type MemoryInsightKindName, memoryInsightOutputSchema } from "./memory-insight-rules";
-import systemPrompt from "./memory-insight.prompt.md";
+import taskPrompt from "./memory-insight.prompt.md";
+
+const systemPrompt = `${taskPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
 /** One short call per active learner per day, so the cheapest capable model. */
 const defaultModel = "openai/gpt-6-luna";

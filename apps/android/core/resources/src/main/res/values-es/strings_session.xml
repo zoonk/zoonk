@@ -63,7 +63,6 @@
   "session_review_intro_title": "e8eab05876a0c6389424961b9a2aad563db0b9cfe6510e8d592b722fb7aff90b",
   "session_review_intro_weakest": "1b89c46ef43d2727ad631c1673d4c762b8708215d51a96e3f06fa79767b26661",
   "session_review_intro_weakest_title": "d2ec0b705deb64d9867c20cc7208e7815e809c28c187b1da7a6e315fe0959e8b",
-  "session_summary_back_on": "e13e08a35c61dfd04c2c65b90492bcd0834c1d11ff712655e32cfcdc32c15464",
   "session_summary_brain_power": "d6888ae922b57b4bf759e8b52e80129f70a81761141106a41573c81661d2cb19",
   "session_summary_buddy_happy": "b007627753b20b70f8b15e046f2c3d0c7335fdee8e0d4c674993b5d11921f09f",
   "session_summary_create_account": "c5d500f052b6ec950d8cef694b6ec7e7be0d098278fa77c1ec06c6f31d952665",
@@ -191,7 +190,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Por repasar</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Vuelven el %1$s</string>
     <string name="session_summary_brain_power">Poder Mental</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

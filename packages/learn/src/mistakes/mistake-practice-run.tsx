@@ -23,7 +23,11 @@ import { type MomentCeremony } from "../session/moment-ceremony";
 import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
-import { type PracticeEntry, getPracticeSegments } from "./mistake-practice-state";
+import {
+  type PracticeEntry,
+  getPracticeEndNote,
+  getPracticeSegments,
+} from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
 import {
   type LessonPracticeRenderer,
@@ -145,6 +149,7 @@ function PracticeBody({
         backHref={backHref}
         buddy={buddy}
         fixed={run.state.fixedIds.length}
+        note={getPracticeEndNote(run.state)}
         reached={run.state.reached}
         renderCeremony={renderCeremony}
         summary={phase.kind === "ended" ? phase.summary : null}

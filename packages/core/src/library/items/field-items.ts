@@ -1,6 +1,7 @@
 import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { loadUsedSituations } from "./used-situations";
 
 export const FIELD_ITEMS_PER_SKILL = 4;
 
@@ -16,7 +17,7 @@ type FieldItemSkill = {
   ownerId: string | null;
 };
 
-export type FieldItemTarget = { field: string; skill: FieldItemSkill };
+export type FieldItemTarget = { field: string; skill: FieldItemSkill; usedSituations: string[] };
 
 async function findSkillsWithoutFieldItems({
   field,
@@ -50,13 +51,23 @@ async function findSkillsWithoutFieldItems({
 
   const countBySkill = new Map(fieldItemCounts.map((row) => [row.skillId, row._count.id]));
 
-  return skillIds
+  const targets = skillIds
     .flatMap((skillId) => skills.find((skill) => skill.id === skillId) ?? [])
     .filter(
       (skill) => !skill.targetLanguage && (countBySkill.get(skill.id) ?? 0) < FIELD_ITEMS_PER_SKILL,
     )
-    .slice(0, MAX_FIELD_SKILLS)
-    .map(({ targetLanguage: _targetLanguage, ...skill }) => ({ field, skill }));
+    .slice(0, MAX_FIELD_SKILLS);
+
+  const usedSituations = await loadUsedSituations({
+    field,
+    skillIds: targets.map((skill) => skill.id),
+  });
+
+  return targets.map(({ targetLanguage: _targetLanguage, ...skill }) => ({
+    field,
+    skill,
+    usedSituations: usedSituations.get(skill.id) ?? [],
+  }));
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */

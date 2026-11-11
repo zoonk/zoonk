@@ -4,6 +4,11 @@ import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type EssayRubric, gradeEssay } from "./grade-essay";
 import type * as Ai from "ai";
 
+vi.mock("../_utils/address-form.prompt.md", () => ({
+  default:
+    "{{#neutral}}Neutral address.{{/neutral}}{{#feminine}}Feminine address.{{/feminine}}{{#masculine}}Masculine address.{{/masculine}}",
+}));
+
 vi.mock("server-only", () => ({}));
 
 vi.mock("../_utils/regional-forms.prompt.md", () => ({ default: "Regional forms." }));
@@ -76,7 +81,7 @@ describe(gradeEssay, () => {
     });
 
     expect(systemPrompt).toBe(
-      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.",
+      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.\nNeutral address.",
     );
 
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(systemPrompt);
@@ -126,7 +131,10 @@ describe(gradeEssay, () => {
         rubric,
       });
 
-      expect(systemPrompt).toBe(`Grade the essay.\n${prompt}\nAnswer.\n\nRegional forms.`);
+      expect(systemPrompt).toBe(
+        `Grade the essay.\n${prompt}\nAnswer.\n\nRegional forms.\nNeutral address.`,
+      );
+
       await expect(requestedSchemaFields()).resolves.toStrictEqual(["criteria"]);
       expect(data.enemInterventionElements).toBeNull();
       expect(data.zeroReason).toBeNull();
@@ -145,7 +153,7 @@ describe(gradeEssay, () => {
     expect(data.zeroReason).toBe("tooShort");
 
     expect(systemPrompt).toBe(
-      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.",
+      "Grade the essay.\nENEM rubric.\nAnswer.\nENEM fields.\n\nRegional forms.\nNeutral address.",
     );
   });
 });

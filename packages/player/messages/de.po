@@ -3160,11 +3160,6 @@ msgid "Take a short break"
 msgstr "Mach eine kurze Pause"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Wiederholung am {date}"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "sgeE0r"
 msgid "Back to unit"
 msgstr "Zurück zur Einheit"
@@ -3304,21 +3299,10 @@ msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "In deinem Fehlerheft gespeichert"
 
-#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "L33Kca"
-msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "In deinem Fehlerheft gespeichert · kommt {when, select, today {später heute in einer Wiederholung} tomorrow {in der Wiederholung morgen} weekday {in der Wiederholung am {day}} other {in einer Wiederholung am {day}}} wieder"
-
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
 msgid "This question comes back at the end of the lesson"
 msgstr "Diese Frage kommt am Ende der Lektion wieder"
-
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "r6_UUR"
-msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Dieser Gedanke kommt {when, select, today {bei einer Wiederholung später heute} tomorrow {bei der morgigen Wiederholung} weekday {bei der Wiederholung am {day}} other {bei einer Wiederholung am {day}}} wieder"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"

@@ -209,7 +209,6 @@ val MeUser.needsProfileSetup: Boolean
 enum class AccountFailure {
     InvalidEmail,
     DisposableEmail,
-    BotDetected,
     Network,
     RateLimited,
     WrongCode,
@@ -229,7 +228,6 @@ fun accountFailure(
         error == ApiError.Network -> AccountFailure.Network
         code == "VALIDATION_ERROR" -> AccountFailure.InvalidEmail
         code == "DISPOSABLE_EMAIL_NOT_ALLOWED" -> AccountFailure.DisposableEmail
-        code == "BOT_DETECTED" -> AccountFailure.BotDetected
         code == "RATE_LIMIT_EXCEEDED" -> AccountFailure.RateLimited
         code == "EMAIL_SIGN_IN_CODE_INVALID" -> AccountFailure.WrongCode
         code == "EMAIL_SIGN_IN_CODE_EXPIRED" -> AccountFailure.CodeExpired

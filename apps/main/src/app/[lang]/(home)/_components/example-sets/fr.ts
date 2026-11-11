@@ -30,11 +30,10 @@ export const fr: ExampleSet = {
       review: ["Dérivation", "Suites"],
       scores: [{ label: "Mathématiques", range: "13–15/20" }],
     },
-    name: "Bac",
     sittings: ["2027-06-14"],
     timeZone: "Europe/Paris",
   },
-  exams: "Le bac, le brevet, un concours ou le code de la route",
+  exams: "le bac, le brevet, un concours, le code de la route ou un contrôle en classe",
   move: "london",
   topic: {
     chapters: [

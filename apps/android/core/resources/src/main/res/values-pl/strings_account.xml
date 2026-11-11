@@ -14,7 +14,6 @@
   "account_did_not_get_it": "fc2dc6ed284bf25eb39313ad18445e50554e05a82f821d9b2eaeb0f999810969",
   "account_email": "3e8157ab894cfd27ae59d15fe836067c600cf06f9f5a8cd7d6467dc2c710d482",
   "account_email_placeholder": "bc8cea9381cfaf4e5872661a956cbce3c82d78060db73779e5709a3d65b7156c",
-  "account_failure_bot_detected": "e33e077649d4855921dbfdc203e6720ea33f257365165de08a8a25284c839511",
   "account_failure_code_expired": "4fff7b4d32e3b7081b113ffc2b3cbc7acdc7ecee933eaeee93d0c49ff6b55e9e",
   "account_failure_code_locked": "8ddaec534cdeb50d04a79de3a3c017c2e4d73b98973d4a0376057a16bf9d0d9b",
   "account_failure_disposable_email": "79d8fd59d22b8f41a4886100876055d365340667c6cf5e956b667a42e6dba706",
@@ -89,7 +88,6 @@
     <string name="account_new_code_failed">Nie udało się wysłać nowego kodu. Spróbuj ponownie.</string>
     <string name="account_failure_invalid_email">Wpisz poprawny adres e-mail</string>
     <string name="account_failure_disposable_email">Nie obsługujemy tymczasowych adresów e-mail. Użyj innego adresu lub aliasu chroniącego prywatność.</string>
-    <string name="account_failure_bot_detected">Zabezpieczenia zablokowały tę próbę. Spróbuj opcji „Kontynuuj z Google” lub napisz na hello@zoonk.com.</string>
     <string name="account_failure_network">Zoonk nie może się połączyć. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="account_failure_rate_limited">Zbyt wiele prób. Poczekaj minutę i spróbuj ponownie.</string>
     <string name="account_failure_wrong_code">Kod się nie zgadza. Sprawdź wiadomość i spróbuj ponownie.</string>

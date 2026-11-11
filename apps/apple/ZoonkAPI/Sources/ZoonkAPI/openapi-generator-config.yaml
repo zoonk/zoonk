@@ -32,8 +32,6 @@ filter:
     - completePronunciationRound
     - connectLanguageConversation
     - continueGoalAtNextLevel
-    - createAppAttestChallenge
-    - createAppAttestKey
     - createAppleSession
     - createAppleSubscription
     - createAreaPractice

@@ -100,7 +100,6 @@ enum AccountSessionState: Equatable {
 }
 
 enum AccountFailure: Equatable {
-  case botDetected
   case emailCodeDelivery
   case accountDeletion
   case accountMismatch

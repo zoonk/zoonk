@@ -11,7 +11,7 @@ export function getGoalLimitReason(
   }
 
   if (limit.resource === "activeGoals") {
-    return "oneActiveGoal";
+    return "activeGoals";
   }
 
   const monthly = limit.period === "month";

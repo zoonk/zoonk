@@ -62,6 +62,8 @@ export function normalizeProfileAnswer(input: ProfileAnswerInput): ProfileAnswer
           note: input.answer.note?.trim() || null,
         },
       };
+    case "addressForm":
+      return input;
     case "activities":
     case "listen":
     case "play":
@@ -88,6 +90,8 @@ function hasProfileAnswerContent(input: ProfileAnswerInput): boolean {
         input.answer.note !== null ||
         (!input.answer.declined && input.answer.soundEffects === false)
       );
+    case "addressForm":
+      return input.answer.form !== null;
     case "activities":
     case "listen":
     case "play":
@@ -136,6 +140,7 @@ function validContent(normalized: ProfileAnswerInput): ProfileAnswerInput | null
         ? null
         : normalized;
     case "learningSupport":
+    case "addressForm":
       return normalized;
     case "activities":
     case "listen":

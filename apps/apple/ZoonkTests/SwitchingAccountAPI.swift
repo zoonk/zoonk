@@ -41,7 +41,7 @@ final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
     token: String, appleCredentials: AppleSignInCredentials?,
     emailCredentials: EmailReauthenticationCredentials?
   ) async throws -> AccountDeletionResponse { throw APIError.unavailable }
-  func sendEmailCode(email: String, token: String?) async throws {}
+  func sendEmailCode(email: String) async throws {}
   func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
     -> String
   {
