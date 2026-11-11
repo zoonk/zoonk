@@ -40,9 +40,16 @@ class MindMapViewModel(
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
+    private val all = MutableStateFlow<CreateAll?>(null)
+    val createAll: StateFlow<CreateAll?> = all.asStateFlow()
+
+    /** The read mark when Create all last failed: a list read started after it clears the failure. */
+    @Volatile private var createAllFailedSince = Long.MAX_VALUE
+
     private val stopWatching =
         store.watchReads(goalId) { chapterIds, started ->
-            locals.update { all -> all.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
+            locals.update { current -> current.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
+            if (createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
 
     private val saved = MutableStateFlow<PictureSave?>(null)
@@ -53,9 +60,6 @@ class MindMapViewModel(
     /** What the learner asked for each map whose save is on its way; the reads say the rest. */
     val saves: StateFlow<Map<MindMapTarget, Boolean>> = wanted.asStateFlow()
     private val sending = mutableSetOf<MindMapTarget>()
-
-    private val all = MutableStateFlow<CreateAll?>(null)
-    val createAll: StateFlow<CreateAll?> = all.asStateFlow()
 
     /**
      * Shows [saved] at once and sends it. Taps while one is on its way only change what's wanted,
@@ -93,7 +97,9 @@ class MindMapViewModel(
         if (all.value == CreateAll.Pending) return
         all.value = CreateAll.Pending
         viewModelScope.launch {
-            all.value = if (store.createAll(goalId) == false) CreateAll.Unreachable else null
+            val failed = store.createAll(goalId) == false
+            if (failed) createAllFailedSince = store.readMark()
+            all.value = if (failed) CreateAll.Unreachable else null
         }
     }
 
