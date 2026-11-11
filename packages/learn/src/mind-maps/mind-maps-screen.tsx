@@ -60,6 +60,8 @@ export type MindMapsHrefs = { back: string; page: string; study: string };
 
 type TabProps = { hrefs: MindMapsHrefs; library: MindMapsLibrary };
 
+type IndexTabProps = TabProps & { subject: string | null };
+
 function EmptyTab({ children }: { children: React.ReactNode }) {
   return (
     <p
@@ -99,7 +101,7 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
   );
 }
 
-function ChaptersTab({ hrefs, library, tier }: TabProps & { tier: EntitlementTier }) {
+function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: EntitlementTier }) {
   const t = useExtracted();
   const { index, notMade } = splitChapters(library.page.chapters);
 
@@ -118,7 +120,7 @@ function ChaptersTab({ hrefs, library, tier }: TabProps & { tier: EntitlementTie
       )}
 
       {index.length > 0 ? (
-        <MindMapIndex groups={groups} label={t("Chapter maps")} />
+        <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
         <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
       )}
@@ -128,7 +130,7 @@ function ChaptersTab({ hrefs, library, tier }: TabProps & { tier: EntitlementTie
   );
 }
 
-function LessonsTab({ hrefs, library }: TabProps) {
+function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
   const t = useExtracted();
   const { chapters, lessonGroups } = library.page;
 
@@ -158,7 +160,7 @@ function LessonsTab({ hrefs, library }: TabProps) {
   return (
     <>
       {rows.some((row) => row.locked > 0) && <FreeWeekOverNotice className="max-w-prose" />}
-      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} />
+      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />
     </>
   );
 }
@@ -245,12 +247,15 @@ export function MindMapsScreen({
   actions,
   hrefs,
   mindMaps,
+  subject,
   tab,
   tier,
 }: {
   actions: MindMapLibraryActions;
   hrefs: MindMapsHrefs;
   mindMaps: MindMapsPage;
+  /** The subject the page was opened from, whose maps start unfolded. */
+  subject: string | null;
   /** Null opens the tab the server picks: the first one with maps to show. */
   tab: MindMapTab | null;
   tier: EntitlementTier;
@@ -300,8 +305,10 @@ export function MindMapsScreen({
       </DetailAside>
 
       <DetailContent>
-        {current === "chapters" && <ChaptersTab hrefs={hrefs} library={library} tier={tier} />}
-        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} />}
+        {current === "chapters" && (
+          <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
+        )}
+        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} subject={subject} />}
         {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
       </DetailContent>
     </DetailLayout>

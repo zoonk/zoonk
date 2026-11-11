@@ -10,16 +10,25 @@ const HREFS = { back: "/plan", page: "/mind-maps", study: "/mind-maps/study" };
 
 export function MindMapsClient({
   mindMaps,
+  subject,
   tab,
   tier,
 }: {
   mindMaps: MindMapsPage;
+  subject: string | null;
   tab: MindMapTab | null;
   tier: EntitlementTier;
 }) {
   const actions = useMindMapActions(mindMaps.goal.id);
 
   return (
-    <MindMapsScreen actions={actions} hrefs={HREFS} mindMaps={mindMaps} tab={tab} tier={tier} />
+    <MindMapsScreen
+      actions={actions}
+      hrefs={HREFS}
+      mindMaps={mindMaps}
+      subject={subject}
+      tab={tab}
+      tier={tier}
+    />
   );
 }

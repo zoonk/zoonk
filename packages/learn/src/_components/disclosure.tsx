@@ -25,6 +25,7 @@ export function Disclosure({
   defaultOpen = false,
   description,
   icon,
+  ref,
   title,
 }: {
   aside?: React.ReactNode;
@@ -33,10 +34,11 @@ export function Disclosure({
   defaultOpen?: boolean;
   description?: React.ReactNode;
   icon: React.ReactNode;
+  ref?: React.Ref<HTMLDivElement>;
   title: string;
 }) {
   return (
-    <Collapsible className={className} data-slot="disclosure" defaultOpen={defaultOpen}>
+    <Collapsible className={className} data-slot="disclosure" defaultOpen={defaultOpen} ref={ref}>
       <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/disclosure")}>
         <ListRowLeading>{icon}</ListRowLeading>
         <ListRowBody>

@@ -2,7 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Disclosure } from "../_components/disclosure";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import {
@@ -25,11 +25,20 @@ function Rows({ label, rows }: { label?: string; rows: readonly Row[] }) {
   );
 }
 
-function SubjectSection({ group }: { group: IndexGroup<Row> & { name: string } }) {
+/** Keeps the subject the page lands on clear of the page bar. */
+const LANDING_CLASS = "scroll-mt-24";
+
+function SubjectSection({
+  group,
+  ref,
+}: {
+  group: IndexGroup<Row> & { name: string };
+  ref?: React.Ref<HTMLElement>;
+}) {
   const titleId = useId();
 
   return (
-    <PageSection aria-labelledby={titleId}>
+    <PageSection aria-labelledby={titleId} className={LANDING_CLASS} ref={ref}>
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{group.name}</PageSectionTitle>
         <PageSectionDetail>{group.rows.length}</PageSectionDetail>
@@ -68,13 +77,24 @@ function PreviewRows({ label, rows }: { label: string; rows: readonly Row[] }) {
 export function MindMapIndex({
   groups,
   label,
+  opensAt,
 }: {
   groups: readonly IndexGroup<Row>[];
   /** Names the list when the goal has no subjects to name its parts. */
   label: string;
+  /** The subject the page was opened from, which starts unfolded. */
+  opensAt: string | null;
 }) {
   const layout = getIndexLayout(groups);
   const rows = groups.flatMap((group) => group.rows);
+  const landing = useRef<HTMLDivElement>(null);
+
+  // After mount, so the router's own scroll for the navigation has already run.
+  useEffect(() => {
+    landing.current?.scrollIntoView({ block: "start" });
+  }, []);
+
+  const landingRef = (group: IndexGroup<Row>) => (group.key === opensAt ? landing : undefined);
 
   if (layout === "preview") {
     return <PreviewRows label={label} rows={rows} />;
@@ -86,8 +106,11 @@ export function MindMapIndex({
         {groups.map((group) => (
           <Disclosure
             aside={group.rows.length}
+            className={LANDING_CLASS}
+            defaultOpen={group.key === opensAt}
             icon={null}
             key={group.key}
+            ref={landingRef(group)}
             title={group.name ?? label}
           >
             <Rows rows={group.rows} />
@@ -101,7 +124,11 @@ export function MindMapIndex({
     group.name === null ? (
       <Rows key={group.key} label={label} rows={group.rows} />
     ) : (
-      <SubjectSection group={{ ...group, name: group.name }} key={group.key} />
+      <SubjectSection
+        group={{ ...group, name: group.name }}
+        key={group.key}
+        ref={landingRef(group)}
+      />
     ),
   );
 }

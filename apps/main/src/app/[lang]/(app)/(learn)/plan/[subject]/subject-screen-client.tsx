@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { buildSubjectMindMapsHref } from "@zoonk/learn/mind-maps/urls";
 import { SubjectScreen } from "@zoonk/learn/subject";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { useMemo } from "react";
@@ -68,7 +69,9 @@ export function SubjectScreenClient({
           back: "/plan",
           chapter: (chapterId) =>
             `/content/chapters/${chapterId}?from=${encodeURIComponent(subject.key)}`,
-          mindMaps: hasMindMaps ? (key) => `/mind-maps#${encodeURIComponent(key)}` : undefined,
+          mindMaps: hasMindMaps
+            ? (key) => buildSubjectMindMapsHref({ page: "/mind-maps", subject: key })
+            : undefined,
         }}
         subject={subject}
         syllabus={syllabus}

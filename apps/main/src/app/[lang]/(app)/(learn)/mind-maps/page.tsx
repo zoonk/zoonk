@@ -59,6 +59,7 @@ async function MindMapsBody({ searchParams }: Pick<Props, "searchParams">) {
   return (
     <MindMapsClient
       mindMaps={toMindMapsPage(result.mindMaps)}
+      subject={first(query.subject) ?? null}
       tab={readMindMapTab(first(query.tab))}
       tier={allowance?.tier ?? "free"}
     />

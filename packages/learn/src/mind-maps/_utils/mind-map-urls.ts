@@ -31,6 +31,17 @@ export function buildMindMapsHref({ page, tab }: { page: string; tab: MindMapTab
   return `${page}?${new URLSearchParams({ tab }).toString()}`;
 }
 
+/** Mind maps opened from a subject: the page lands on that subject's maps, unfolded. */
+export function buildSubjectMindMapsHref({
+  page,
+  subject,
+}: {
+  page: string;
+  subject: string;
+}): string {
+  return `${page}?${new URLSearchParams({ subject }).toString()}`;
+}
+
 /** The map a deck opens on: a chapter's map, or one of its lesson maps. */
 export type MindMapPlace = { chapterId: string; lessonId?: string | null };
 
