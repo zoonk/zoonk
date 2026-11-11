@@ -305,6 +305,11 @@ msgid "You've made the mind map you can try without an account. Create a free ac
 msgstr "Hesap açmadan deneyebileceğin zihin haritasını oluşturdun. Daha fazlası için ücretsiz bir hesap oluştur."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "bQmT5n"
+msgid "That's all the new mind maps for this month. You can make more next month."
+msgstr "Bu ayki yeni zihin haritası hakkını kullandın. Gelecek ay yenilerini oluşturabilirsin."
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "GLw9_5"
 msgid "That's all the new mind maps for today. You can make more tomorrow."
 msgstr "Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin."
@@ -396,6 +401,7 @@ msgstr "{done, number} / {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +460,7 @@ msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar do
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1874,6 +1880,7 @@ msgstr "Yazdır"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -7152,7 +7159,7 @@ msgid "Couldn't undo. Try again."
 msgstr "Geri alınamadı. Tekrar dene."
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7169,87 @@ msgstr "Sunucuya ulaşamadık. Bağlantını kontrol et."
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "Ünite tamamlandı"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Tam ekranda aç"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Zihin haritası"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Ana kavramları tek bir görselde"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Oluştur"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {Hazırlanacak # ders}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Metin olarak gör"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Zihin haritası hazır"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Önce dersleri, sonra zihin haritasını hazırlıyoruz…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Zihin haritasını çiziyoruz…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "Bu kez oluşturulamadı."
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7270,6 @@ msgstr "Zihin haritası: {title}. {idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Kısaca:"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, other {Hazırlanacak # ders}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, other {Önce # ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "Ana kavramları tek bir görselde"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Metin olarak gör"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "Zihin haritası hazır"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Önce dersleri, sonra zihin haritasını hazırlıyoruz…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Zihin haritasını çiziyoruz…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "Bu kez oluşturulamadı."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Zihin haritası"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Oluştur"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7934,17 +7950,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Henüz bilmiyorum"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {Hiçbir yanlış düzeltilmedi} one {Yanlış düzeltildi. Yanlış defterinden çıkarılıyor.} other {# yanlış düzeltildi. Yanlış defterinden çıkarılıyor.}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Cevap geri bildirimi"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {Hiçbir yanlış düzeltilmedi} one {Yanlış düzeltildi. Yanlış defterinden çıkarılıyor.} other {# yanlış düzeltildi. Yanlış defterinden çıkarılıyor.}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "Doğru cevap: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9790,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Bu hedef için verdiğin cevaplar silinir ve yeniden bir hedef yazarsın."
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "Seninle ilgili kalan soruları atla"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "Hepsini atla"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Seninle ilgili kalan soruları atla"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -13493,11 +13515,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "Üst üste {count} doğru"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Doğru cevap: {answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -15014,8 +15031,3 @@ msgstr "Gelecek hafta"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Haftanın günlerine göre bu beceride verilen doğru cevaplar"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Tam ekranda aç"
