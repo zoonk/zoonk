@@ -32,6 +32,14 @@ final class LessonChartGeometryTests: XCTestCase {
       LessonChartNames.fitUnderBars(["Seg", "Ter", "Qua", "Qui", "Sex"], band: 21, width: width))
   }
 
+  func testTickNumbersThinUntilNoneTouch() {
+    XCTAssertEqual(LessonChartTicks.labeled([(0, 10), (20, 30), (40, 50)]), [0, 1, 2])
+    XCTAssertEqual(
+      LessonChartTicks.labeled([(0, 30), (20, 50), (40, 70), (60, 90), (80, 110)]), [0, 2, 4])
+    XCTAssertEqual(LessonChartTicks.labeled([(0, 60), (20, 80), (40, 100)]), [0])
+    XCTAssertEqual(LessonChartTicks.labeled([]), [])
+  }
+
   func testScaleStartsBarsAtZeroOrWhereACutAxisStarts() throws {
     let regions = LessonChartScale(try chart(values: [18, 42, 64, 30, 22]))
     XCTAssertEqual(regions.domain, 0...80)

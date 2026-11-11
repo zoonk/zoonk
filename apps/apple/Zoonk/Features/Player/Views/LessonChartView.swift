@@ -254,7 +254,7 @@ private struct SidewaysBars: View {
     let left = room(values.filter { $0 < scale.origin })
     let right = room(values.filter { $0 >= scale.origin })
 
-    return left + right <= width / 3 ? (left, right) : nil
+    return max(left, right) <= width / 3 ? (left, right) : nil
   }
 
   private func x(_ value: Double) -> Double {
@@ -339,16 +339,21 @@ private struct SidewaysBars: View {
   }
 
   private var ticks: some View {
-    ZStack(alignment: .leading) {
-      ForEach(scale.ticks, id: \.self) { tick in
-        let label = format.tick(tick)
-        let labelWidth = format.width(LessonChartFormat.label, label)
+    let labels = scale.ticks.map { tick in
+      let text = format.tick(tick)
+      let labelWidth = format.width(LessonChartFormat.label, text)
+      let left = ChartsMath.clamp(x(tick) - labelWidth / 2, 0, max(width - labelWidth, 0))
 
-        Text(verbatim: label)
+      return (text: text, left: left, right: left + labelWidth)
+    }
+
+    return ZStack(alignment: .leading) {
+      ForEach(LessonChartTicks.labeled(labels.map { ($0.left, $0.right) }), id: \.self) { index in
+        Text(verbatim: labels[index].text)
           .typeStyle(LessonChartFormat.label)
           .foregroundStyle(.mutedForeground)
           .fixedSize()
-          .offset(x: ChartsMath.clamp(x(tick) - labelWidth / 2, 0, max(width - labelWidth, 0)))
+          .offset(x: labels[index].left)
       }
     }
     .frame(width: width, alignment: .leading)

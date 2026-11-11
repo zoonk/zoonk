@@ -27,6 +27,24 @@ struct LessonChartScale {
   }
 }
 
+/// Which of a value axis's numbers to print: all when none touch, else every second, third and so
+/// on from the first, as on web and Android. `frames` are each number's edges where it's drawn.
+enum LessonChartTicks {
+  static let gap = 4.0
+
+  static func labeled(_ frames: [(left: Double, right: Double)]) -> [Int] {
+    for step in 1..<max(frames.count, 1) {
+      let kept = Array(stride(from: 0, to: frames.count, by: step))
+
+      if zip(kept, kept.dropFirst()).allSatisfy({ frames[$0].right + gap <= frames[$1].left }) {
+        return kept
+      }
+    }
+
+    return frames.isEmpty ? [] : [0]
+  }
+}
+
 /// Whether a bar chart's category names fit under its bars: each wraps at spaces and after hyphens
 /// within its bar's width in at most two lines, with no word wider than that. When one doesn't,
 /// the chart lays its bars sideways with every name in full above its bars.
