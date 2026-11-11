@@ -210,7 +210,7 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
 
   if (fetched.contentHash === source.contentHash) {
     const updated = await prisma.source.update({
-      data: { fetchedAt: now },
+      data: { fetchedAt: now, readVersion: SOURCE_READ_VERSION },
       omit: { extractedText: true },
       where: { id: source.id },
     });

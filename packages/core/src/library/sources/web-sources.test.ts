@@ -290,7 +290,8 @@ describe(refreshWebSource, () => {
     await prisma.source.update({
       data: {
         contentHash: "older-reading",
-        extractedText: "Edital 2026\nA prova ter� 50 quest�es.",
+        extractedText:
+          "Edital 2026\nRedação revogada: a prova terá 40 questões.\nA prova ter\uFFFD 50 quest\uFFFDes.",
         readVersion: 0,
       },
       where: { id: law.id },
@@ -299,14 +300,41 @@ describe(refreshWebSource, () => {
     await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "changed" });
 
     await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
-      { contentHash: law.contentHash, unnoticedChanges: null },
+      { contentHash: law.contentHash, readVersion: 1, unnoticedChanges: null },
     );
+  });
 
-    servePage(noticePage({ questions: 60, token: "b" }));
+  it("still tells learners a law changed when it changed on its first read by a newer reader", async () => {
+    servePage(noticePage({ questions: 60, token: "a" }));
+
+    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+
+    await prisma.source.update({
+      data: {
+        contentHash: "older-reading",
+        extractedText: "Edital 2026\nA prova ter\uFFFD 50 quest\uFFFDes.",
+        readVersion: 0,
+      },
+      where: { id: law.id },
+    });
+
     await refreshWebSource(law.id);
 
     await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
       { unnoticedChanges: expect.stringContaining("+ A prova terá 60 questões.") },
+    );
+  });
+
+  it("records the current reader on a law whose text reads the same", async () => {
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+    await prisma.source.update({ data: { readVersion: 0 }, where: { id: law.id } });
+
+    await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "unchanged" });
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { readVersion: 1 },
     );
   });
 
