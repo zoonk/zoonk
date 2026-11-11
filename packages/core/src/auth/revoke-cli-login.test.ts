@@ -43,6 +43,22 @@ describe(revokeCliLoginForAdmin, () => {
     });
   });
 
+  it("ends the access tokens a machine had before its last refresh", async () => {
+    const admin = await userFixture({ role: "admin" });
+    const lost = await cliTokenFixture({ user: admin });
+    const refreshed = await refreshCliLogin(String(lost.refreshToken));
+
+    const login = await prisma.oauthRefreshToken.findFirstOrThrow({
+      where: { revoked: null, userId: admin.id },
+    });
+
+    mockAdminSession(admin.id);
+
+    await expect(revokeCliLoginForAdmin(login.id)).resolves.toStrictEqual({ status: "ready" });
+    await expect(isCliAccessTokenActive(lost.accessToken)).resolves.toBe(false);
+    await expect(isCliAccessTokenActive(refreshed.access_token)).resolves.toBe(false);
+  });
+
   it("says a login that refreshed since the list was read is no longer there", async () => {
     const { admin, lost, lostLogin } = await logInOnTwoMachines();
     mockAdminSession(admin.id);

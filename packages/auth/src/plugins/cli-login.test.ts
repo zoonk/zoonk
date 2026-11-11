@@ -123,8 +123,9 @@ async function approve({ cookie, userCode }: { cookie: string; userCode: string 
   expect(approval.status).toBe(200);
 }
 
-async function logIn() {
-  const learner = await signUp();
+/** Each call is another machine's login; pass `account` to log the same person in again. */
+async function logIn(account?: Awaited<ReturnType<typeof signUp>>) {
+  const learner = account ?? (await signUp());
   const { device_code: deviceCode, user_code: userCode } = await requestDeviceCode();
   await approve({ cookie: learner.cookie, userCode });
 
@@ -140,6 +141,10 @@ function refresh(refreshToken: string) {
     grant_type: "refresh_token",
     refresh_token: refreshToken,
   });
+}
+
+async function isAccessTokenActive(accessToken: string): Promise<boolean> {
+  return (await auth.api.verifyCliAccessToken({ body: { token: accessToken } })) !== null;
 }
 
 describe("CLI login", () => {
@@ -236,6 +241,29 @@ describe("CLI login", () => {
     await expect(
       auth.api.verifyCliAccessToken({ body: { token: tokens.access_token } }),
     ).resolves.toBeNull();
+  });
+
+  it("ends every access token of a refreshed login when the CLI logs out, keeping the person's other logins", async () => {
+    const machine = await logIn();
+    const otherMachine = await logIn(machine);
+
+    const rotation = await refresh(machine.tokens.refresh_token);
+    const refreshed = (await rotation.json()) as TokenResponse;
+
+    const revoked = await cliPost("/oauth2/revoke", {
+      client_id: CLI_CLIENT_ID,
+      token: refreshed.refresh_token,
+      token_type_hint: "refresh_token",
+    });
+
+    expect(revoked.status).toBe(200);
+
+    await expect(isAccessTokenActive(machine.tokens.access_token)).resolves.toBe(false);
+    await expect(isAccessTokenActive(refreshed.access_token)).resolves.toBe(false);
+    await expect(isAccessTokenActive(otherMachine.tokens.access_token)).resolves.toBe(true);
+
+    const otherRefresh = await refresh(otherMachine.tokens.refresh_token);
+    expect(otherRefresh.status).toBe(200);
   });
 
   it("keeps device authorization's session-minting token endpoint closed", async () => {
