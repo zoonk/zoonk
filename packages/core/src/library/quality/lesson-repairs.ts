@@ -7,7 +7,7 @@ import { type TextLayout } from "@zoonk/utils/text-flaws";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
 import { getQuotableTexts, holdsQuote } from "../steps/question-bases";
-import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
+import { mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
@@ -21,15 +21,6 @@ function repairText({ layout, text }: { layout: TextLayout; text: string }): str
 }
 
 export function repairScreenText(screen: WrittenScreen): WrittenScreen {
-  if (screen.kind === "activity") {
-    return {
-      ...screen,
-      content: mapActivityProse(screen.content, (text) =>
-        wrapBareLatex({ layout: "blocks", text: repairNegativeMoney({ text }) }),
-      ),
-    };
-  }
-
   return mapScreenTexts(screen, ({ layout, text }) =>
     layout ? repairText({ layout, text }) : text,
   );

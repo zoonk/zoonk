@@ -5,23 +5,7 @@ import { type MaterialPage, findMaterialPage } from "../../sources/material-page
 
 export type ScreenCitation = { page: number | null; sourceId: string };
 
-function readActivityPrompt(content: string): string {
-  try {
-    const parsed: unknown = JSON.parse(content);
-
-    return typeof parsed === "object" && parsed !== null && "prompt" in parsed
-      ? String(parsed.prompt)
-      : "";
-  } catch {
-    return "";
-  }
-}
-
 export function describeWrittenScreen(screen: WrittenScreen): string {
-  if (screen.kind === "activity") {
-    return readActivityPrompt(screen.content);
-  }
-
   return getScreenTexts(screen)
     .map((text) => text.text)
     .join(" ");
