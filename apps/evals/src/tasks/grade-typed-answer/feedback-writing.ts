@@ -1,5 +1,3 @@
-import { findLanguageFlaws } from "@zoonk/utils/language-flaws";
-
 const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
 
 /** A single quote between two letters is an apostrophe ("I've"), never where a quote opens or closes. */
@@ -14,17 +12,12 @@ function findDiaeresisWord(text: string): string | null {
   return words.find((word) => DIAERESIS.test(word)) ?? null;
 }
 
-/** The same check the task runs before returning, for outputs saved before it did. */
 export function findFeedbackWritingIssue({
   feedback,
-  input,
   language,
-  practicedLanguage,
 }: {
   feedback: string | null;
-  input: string;
-  language: string;
-  practicedLanguage?: string | null;
+  language: unknown;
 }): string | null {
   if (!feedback) {
     return null;
@@ -32,17 +25,6 @@ export function findFeedbackWritingIssue({
 
   if (HTML_ENTITY.test(feedback)) {
     return "HTML entity in the text";
-  }
-
-  const [languageFlaw] = findLanguageFlaws({
-    input,
-    language,
-    otherLanguages: practicedLanguage ? [practicedLanguage] : [],
-    value: feedback,
-  });
-
-  if (languageFlaw) {
-    return languageFlaw;
   }
 
   const diaeresis = language === "pt" ? findDiaeresisWord(feedback) : null;

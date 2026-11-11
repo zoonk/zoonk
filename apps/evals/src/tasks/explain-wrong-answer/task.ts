@@ -1,3 +1,4 @@
+import { ownLanguage } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type ExplainWrongAnswerParams,
@@ -12,6 +13,7 @@ export const explainWrongAnswerTask: Task<ExplainWrongAnswerParams, ExplainWrong
     "Explain why a typed or spoken answer is wrong, for everyone who gives the same answer (stored and reused)",
   generate: explainWrongAnswer,
   id: "explain-wrong-answer",
+  learnerLanguages: ownLanguage,
   name: "Explain Wrong Answer",
   scoreCategories: EXPLAIN_WRONG_ANSWER_SCORE_CATEGORIES,
   testCases: TEST_CASES,

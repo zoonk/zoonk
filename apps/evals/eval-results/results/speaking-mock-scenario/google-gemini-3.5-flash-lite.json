@@ -79,65 +79,22 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "examFit",
-          "reasoning": "The result explicitly identifies itself as TOEFL practice, not an official test, and uses the expected two-task format. The examiner is neutral, offers no correction or grading, and uses safe academic topics. There is no evident copying from published materials.",
-          "score": 9,
-          "label": "Follows the exam",
-          "weight": 25
-        },
-        {
-          "categoryId": "level",
-          "reasoning": "The opening appropriately greets the candidate, gives repetition directions and the campus setting, and ends with the first sentence. The hints are short and accessible at A2, but “I usually study there” is a topic-specific answer fragment, contrary to the requirement for general-purpose hints.",
-          "score": 7,
-          "label": "Opening and hints",
-          "weight": 20
-        },
-        {
-          "categoryId": "objectives",
-          "reasoning": "Both required objectives appear exactly once and in the correct order. Their Portuguese descriptions clearly explain that the candidate repeats seven sentences and answers four interview questions.",
-          "score": 10,
-          "label": "Objectives",
-          "weight": 20
-        },
-        {
-          "categoryId": "brief",
-          "reasoning": "All seven repetition sentences and four interview questions are present, with an academic setting and the required fact, experience, opinion, and prediction progression. However, the repetition sequence ends at 12 and 11 words rather than 14–20 and does not steadily increase in length. The interview introduction is narrative rather than spoken script, and the script does not establish approximately 45 seconds per answer or once-only delivery. The missing-items cap is not triggered because both tasks' sentence and question sets are present.",
-          "score": 6,
-          "label": "Examiner's script",
-          "weight": 20
-        },
-        {
-          "categoryId": "languages",
-          "reasoning": "The fields use the required languages, including the Portuguese examiner role and English task labels, opening, hints, and brief. There are no emojis or em dashes. However, Portuguese accents are consistently missing, and the situation should explicitly compare the mock's length with the real section rather than merely mentioning shorter available time.",
-          "score": 8,
-          "label": "Right language per field",
-          "weight": 15
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2001,
-          "outputTokens": 1141,
-          "reasoningTokens": 485
-        }
-      },
       "steps": [
         {
-          "conclusion": "The Listen and Repeat sequence does not reach the required difficulty: its final two sentences contain only 12 and 11 words, rather than 14–20, and sentence lengths fluctuate instead of progressively increasing. The script also omits the approximately 45-second interview answer allowance and explicit once-only delivery guidance. Its interview introduction describes a researcher in the third person rather than providing a spoken examiner introduction.",
+          "conclusion": "Production rejects this output: Writes \"Secao\" without the accents it needs. Writes \"secao\" without the accents it needs. Writes \"nao\" without the accents it needs. Writes \"disponivel\" without the accents it needs. Writes \"Voce\" without the accents it needs.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The hint “I usually study there” supplies topic-specific answer content instead of a general speaking aid. Portuguese fields systematically omit required accents. The situation implies that time is limited but does not clearly state that this mock is shorter than the real section.",
+          "conclusion": "Production rejects this output: Writes \"Secao\" without the accents it needs. Writes \"secao\" without the accents it needs. Writes \"nao\" without the accents it needs. Writes \"disponivel\" without the accents it needs. Writes \"Voce\" without the accents it needs.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Production rejects this output: Writes \"Secao\" without the accents it needs. Writes \"secao\" without the accents it needs. Writes \"nao\" without the accents it needs. Writes \"disponivel\" without the accents it needs. Writes \"Voce\" without the accents it needs.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expectations": "TOEFL iBT Speaking practice mock for a Brazilian candidate at A2. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are \"Listen and Repeat\" then \"Take an Interview\", and the brief has a campus or academic setting with seven original sentences that start at about 5 words and grow to 14 to 20 with dependent or relative clauses, then a one-sentence interview introduction and four questions going from a brief fact about the candidate to describing an experience, an opinion on a broader issue and a prediction, each said once with about 45 seconds per answer. The opening line greets, gives the Listen and Repeat directions and the setting, and ends with the first sentence. Title and situation, in Brazilian Portuguese, call it a practice mock shorter than the real section, never an official test. Hints help interview answers (a reason, an example, a prediction) at A2 and never ask the examiner to repeat.",

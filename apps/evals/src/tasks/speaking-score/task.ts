@@ -1,4 +1,5 @@
 import { type Task } from "@/lib/types";
+import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-exams";
 import { type SpeakingGrade } from "@zoonk/ai/tasks/language/speaking-bands";
 import { type ScoreSpeakingParams, scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
 import { SPEAKING_SCORE_CATEGORIES } from "./score-categories";
@@ -10,6 +11,10 @@ export const speakingScoreTask: Task<ScoreSpeakingParams, SpeakingGrade, Speakin
     "Estimate an IELTS or TOEFL iBT speaking mock, or one task of a DELE, DELF, Goethe or Cambridge speaking paper, on the exam's official criteria: bands on each exam's scale checked against labeled transcripts, then a judge for evidence, tips and accent-neutral honesty",
   generate: scoreSpeaking,
   id: "speaking-score",
+  learnerLanguages: (input) => ({
+    language: input.learnerLanguage,
+    otherLanguages: [SPEAKING_EXAM_LANGUAGES[input.exam]],
+  }),
   name: "Speaking Score",
   score: scoreSpeakingOutput,
   scoreCategories: SPEAKING_SCORE_CATEGORIES,

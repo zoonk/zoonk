@@ -1,3 +1,4 @@
+import { ownLanguage } from "@/lib/learner-languages";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import {
@@ -73,6 +74,7 @@ export const memorySessionPatternsTask: Task<
   description: "Notice lasting patterns in how a learner learns from their sessions' numbers",
   generate: findSessionPatterns,
   id: "memory-session-patterns",
+  learnerLanguages: ownLanguage,
   name: "Memory Session Patterns",
   score: scoreSessionPatterns,
   testCases: TEST_CASES,

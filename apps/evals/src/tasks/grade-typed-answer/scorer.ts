@@ -1,7 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
 import { type TypedAnswerGrade } from "@zoonk/ai/tasks/grading/grade-typed-answer";
-import { getString } from "@zoonk/utils/json";
 import { findFeedbackWritingIssue, findPraiseMismatch } from "./feedback-writing";
 import { type GradeTypedAnswerExpected } from "./test-cases";
 
@@ -74,12 +73,7 @@ export const scoreTypedAnswerGrade: TaskScorer<GradeTypedAnswerExpected> = ({
 
   const feedbackIssue =
     findPraiseMismatch({ feedback: grade.feedback, isCorrect: grade.isCorrect }) ??
-    findFeedbackWritingIssue({
-      feedback: grade.feedback,
-      input: JSON.stringify(testCase.userInput),
-      language: String(testCase.userInput.language),
-      practicedLanguage: getString(testCase.userInput, "practicedLanguage"),
-    });
+    findFeedbackWritingIssue({ feedback: grade.feedback, language: testCase.userInput.language });
 
   const verdict = `Expected ${toLabel(testCase.expected.isCorrect)} with key points ${JSON.stringify(testCase.expected.keyPoints)} and corrections ${JSON.stringify(expectedCorrections)}; got ${toLabel(grade.isCorrect)} with ${JSON.stringify(predictedKeyPoints)} and ${JSON.stringify(predictedCorrections)}.`;
   const conclusion = feedbackIssue ? `${verdict} Feedback: ${feedbackIssue}.` : verdict;

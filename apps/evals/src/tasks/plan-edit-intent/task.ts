@@ -1,4 +1,5 @@
 import { createChoiceEvaluation } from "@/lib/evaluation-routes";
+import { ownLanguage } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type PlanEditParams,
@@ -28,6 +29,7 @@ export const planEditIntentTask: Task<
       dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "plan-edit-intent",
+  learnerLanguages: ownLanguage,
   name: "Plan Edit Intent",
   score: scorePlanEditIntent,
   testCases: [

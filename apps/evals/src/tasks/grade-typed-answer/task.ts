@@ -23,6 +23,10 @@ export const gradeTypedAnswerTask: Task<
     return { ...result, usage: result.usage ?? NO_USAGE };
   },
   id: "grade-typed-answer",
+  learnerLanguages: (input) => ({
+    language: input.language,
+    otherLanguages: input.practicedLanguage ? [input.practicedLanguage] : [],
+  }),
   name: "Grade Typed Answer",
   score: scoreTypedAnswerGrade,
   testCases: TEST_CASES,

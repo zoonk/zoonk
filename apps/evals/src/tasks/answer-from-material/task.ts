@@ -1,3 +1,4 @@
+import { ownLanguage } from "@/lib/learner-languages";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import {
@@ -67,6 +68,7 @@ export const answerFromMaterialTask: Task<
   description: "Answer a question from the learner's own material, citing its pages",
   generate: answerFromMaterial,
   id: "answer-from-material",
+  learnerLanguages: ownLanguage,
   name: "Answer From Material",
   score: scoreAnswer,
   testCases: TEST_CASES,

@@ -1,4 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { ownLanguage } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type QuickExplanation,
@@ -23,6 +24,7 @@ export const quickExplanationTask: Task<QuickExplanationParams, QuickExplanation
   generate: generateQuickExplanation,
   id: "quick-explanation",
   latencyBudget: QUICK_EXPLANATION_LATENCY_BUDGET,
+  learnerLanguages: ownLanguage,
   name: "Quick Explanation",
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({

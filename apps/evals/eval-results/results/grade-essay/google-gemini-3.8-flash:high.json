@@ -568,25 +568,21 @@
       }
     },
     {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
       "steps": [
         {
-          "conclusion": "All 7 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"mediacao\" without the accents it needs. Writes \"educacao\" without the accents it needs. Writes \"contextualizacao\" without the accents it needs. Writes \"imposicao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"inadequacoes\" without the accents it needs. Writes \"Alem\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"alem\" without the accents it needs. Writes \"acentuacao\" without the accents it needs.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 7 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"mediacao\" without the accents it needs. Writes \"educacao\" without the accents it needs. Writes \"contextualizacao\" without the accents it needs. Writes \"imposicao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"inadequacoes\" without the accents it needs. Writes \"Alem\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"alem\" without the accents it needs. Writes \"acentuacao\" without the accents it needs.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 7 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"mediacao\" without the accents it needs. Writes \"educacao\" without the accents it needs. Writes \"contextualizacao\" without the accents it needs. Writes \"imposicao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"inadequacoes\" without the accents it needs. Writes \"Alem\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"alem\" without the accents it needs. Writes \"acentuacao\" without the accents it needs.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {

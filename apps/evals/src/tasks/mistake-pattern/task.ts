@@ -1,3 +1,4 @@
+import { practiceLanguages } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type FindMistakePatternParams,
@@ -17,6 +18,7 @@ export const mistakePatternTask: Task<
     "Name one repeated pattern in a learner's recent language mistakes with a rule, contrast and drill, or say they were typos or unrelated: code checks, then a judge",
   generate: findMistakePattern,
   id: "mistake-pattern",
+  learnerLanguages: practiceLanguages,
   name: "Mistake Pattern",
   score: scoreMistakePattern,
   scoreCategories: MISTAKE_PATTERN_SCORE_CATEGORIES,

@@ -208,14 +208,22 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   latencyBudget?: LatencyBudget;
   output?: "image" | "realtime" | "speech" | "transcription";
   skippedLanguages?: Partial<Record<RequiredLanguage, string>>;
+  /**
+   * For a task that checks its output with `assertLearnerLanguage`: the languages that check reads,
+   * so saved outputs from before it are scored as production would reject them.
+   */
+  learnerLanguages?: (input: TInput) => LearnerLanguages;
 };
+
+export type LearnerLanguages = { language: string; otherLanguages?: string[] };
 
 /** Only invoke generate or score with the test case paired with this type-erased task. */
 export type RegisteredTask = Omit<
   Task<never, unknown, never>,
-  "codeChecks" | "score" | "testCases"
+  "codeChecks" | "learnerLanguages" | "score" | "testCases"
 > & {
   testCases: TestCase[];
+  learnerLanguages?: (input: never) => LearnerLanguages;
   score?: (params: never) => Promise<TaskScoreResult> | TaskScoreResult;
   codeChecks?: (params: never) => Promise<CodeCheckResult> | CodeCheckResult;
 };

@@ -110,25 +110,21 @@
       }
     },
     {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
       "steps": [
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"informacao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"repeticao\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"expressoes\" without the accents it needs. Writes \"pontuacao\" without the accents it needs.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"informacao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"repeticao\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"expressoes\" without the accents it needs. Writes \"pontuacao\" without the accents it needs.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 320–600.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"argumentacao\" without the accents it needs. Writes \"informacao\" without the accents it needs. Writes \"articulacao\" without the accents it needs. Writes \"repeticao\" without the accents it needs. Writes \"intervencao\" without the accents it needs. Writes \"expressoes\" without the accents it needs. Writes \"pontuacao\" without the accents it needs.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -559,25 +555,21 @@
       }
     },
     {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
       "steps": [
         {
-          "conclusion": "All 6 checks passed. Total 6 (range 5–6), expected 4–6.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"industrializacao\" without the accents it needs.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 6 checks passed. Total 6 (range 5–6), expected 4–6.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"industrializacao\" without the accents it needs.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "All 6 checks passed. Total 6 (range 5–6), expected 4–6.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"industrializacao\" without the accents it needs.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {

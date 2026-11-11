@@ -344,25 +344,21 @@
       }
     },
     {
-      "classification": {
-        "expected": "scheduleIdea",
-        "predicted": "scheduleIdea"
-      },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {

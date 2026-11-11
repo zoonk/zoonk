@@ -1,3 +1,4 @@
+import { practiceLanguages } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type ExplainSpokenAnswerParams,
@@ -12,6 +13,7 @@ export const explainSpokenAnswerTask: Task<ExplainSpokenAnswerParams, ExplainSpo
     "Explain the words of a spoken answer that didn't match, from how the learner's own language works (stored and reused)",
   generate: explainSpokenAnswer,
   id: "explain-spoken-answer",
+  learnerLanguages: practiceLanguages,
   name: "Explain Spoken Answer",
   scoreCategories: EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES,
   testCases: TEST_CASES,

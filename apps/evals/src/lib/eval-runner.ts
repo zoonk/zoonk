@@ -1,10 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
+import { findLanguageFlaws } from "@zoonk/utils/language-flaws";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
-import { generateScore } from "./score";
+import { createFixedScore, generateScore } from "./score";
 import { getTestCaseRunIds } from "./test-case-runs";
 import {
   type ModelOutputs,
@@ -84,6 +85,65 @@ export async function removeModelResultRuns({
   );
 }
 
+const REJECTED_OUTPUT_SCORE = 6;
+
+function parseOutput(output: string): unknown {
+  try {
+    return JSON.parse(output);
+  } catch {
+    return output;
+  }
+}
+
+/** Outputs saved before a task checked its learner's language never met that check. */
+function findSavedLanguageFlaws({
+  output,
+  task,
+  testCase,
+}: {
+  output: Pick<OutputEntry, "output" | "userPrompt">;
+  task: Pick<RegisteredTask, "learnerLanguages">;
+  testCase: TestCase;
+}): string[] {
+  if (!task.learnerLanguages) {
+    return [];
+  }
+
+  return findLanguageFlaws({
+    ...task.learnerLanguages(testCase.userInput as never),
+    input: output.userPrompt,
+    value: parseOutput(output.output),
+  });
+}
+
+async function scoreTaskOutput({
+  output,
+  task,
+  testCase,
+}: {
+  output: OutputEntry;
+  task: RegisteredTask;
+  testCase: TestCase;
+}): Promise<TaskScoreResult> {
+  const languageFlaws = findSavedLanguageFlaws({ output, task, testCase });
+
+  if (languageFlaws.length > 0) {
+    return createFixedScore({
+      conclusion: `Production rejects this output: ${languageFlaws.join(" ")}`,
+      score: REJECTED_OUTPUT_SCORE,
+    });
+  }
+
+  return task.score
+    ? task.score({ output: output.output, testCase } as never)
+    : generateScore({
+        expectations: getJudgeExpectations(testCase),
+        output: output.output,
+        prompt: output.userPrompt,
+        scoreCategories: task.scoreCategories,
+      });
+}
+
 async function scoreOutput({
   output,
   task,
@@ -95,14 +155,7 @@ async function scoreOutput({
 }): Promise<ScoredResult> {
   logInfo(`Scoring output: ${output.testCaseId}`);
 
-  const scoreResult: TaskScoreResult = task.score
-    ? await task.score({ output: output.output, testCase } as never)
-    : await generateScore({
-        expectations: getJudgeExpectations(testCase),
-        output: output.output,
-        prompt: output.userPrompt,
-        scoreCategories: task.scoreCategories,
-      });
+  const scoreResult = await scoreTaskOutput({ output, task, testCase });
 
   logInfo(`Score: ${scoreResult.score}`);
 

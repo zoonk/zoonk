@@ -1,3 +1,4 @@
+import { ownLanguage } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type EssayGrade,
@@ -17,6 +18,7 @@ export const gradeEssayTask: Task<GradeEssayParams, EssayGrade, GradeEssayExpect
     return { ...result, usage: result.usage ?? NO_USAGE };
   },
   id: "grade-essay",
+  learnerLanguages: ownLanguage,
   name: "Grade Essay",
   score: scoreEssayGrade,
   testCases: TEST_CASES,

@@ -763,23 +763,19 @@
       }
     },
     {
-      "classification": {
-        "expected": "correct",
-        "predicted": "wrong"
-      },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"observacao\" without the accents it needs. Writes \"organizacao\" without the accents it needs.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"observacao\" without the accents it needs. Writes \"organizacao\" without the accents it needs.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"observacao\" without the accents it needs. Writes \"organizacao\" without the accents it needs.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -1074,23 +1070,19 @@
       }
     },
     {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"nao\" without the accents it needs.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"nao\" without the accents it needs.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"nao\" without the accents it needs.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -1496,23 +1488,19 @@
       }
     },
     {
-      "classification": {
-        "expected": "wrong",
-        "predicted": "wrong"
-      },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"educacao\" without the accents it needs.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"educacao\" without the accents it needs.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "conclusion": "Production rejects this output: Writes \"Voce\" without the accents it needs. Writes \"educacao\" without the accents it needs.",
           "kind": "potentialImprovements",
           "score": 6
         }

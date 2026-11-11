@@ -1,3 +1,4 @@
+import { ownLanguage } from "@/lib/learner-languages";
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { type MemoryInsightParams, generateMemoryInsight } from "@zoonk/ai/tasks/memory/insight";
@@ -130,6 +131,7 @@ export const memoryInsightTask: Task<
     "Turn a week of answers, mistakes and study times into at most one tip, plan change or schedule idea",
   generate: generateMemoryInsight,
   id: "memory-insight",
+  learnerLanguages: ownLanguage,
   name: "Memory Insight",
   score: scoreMemoryInsight,
   testCases: TEST_CASES,

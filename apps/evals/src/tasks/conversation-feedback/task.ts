@@ -1,3 +1,4 @@
+import { practiceLanguages } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import {
   type WriteConversationFeedbackParams,
@@ -16,6 +17,7 @@ export const conversationFeedbackTask: Task<
     "Write feedback after a live call: phrases said well, one fix, hard words for the learner's language and a kind line: code checks, then a judge",
   generate: writeConversationFeedback,
   id: "conversation-feedback",
+  learnerLanguages: practiceLanguages,
   name: "Conversation Feedback",
   score: scoreConversationFeedback,
   scoreCategories: CONVERSATION_FEEDBACK_SCORE_CATEGORIES,

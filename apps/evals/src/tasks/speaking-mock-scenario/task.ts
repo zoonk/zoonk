@@ -1,3 +1,4 @@
+import { practiceLanguages } from "@/lib/learner-languages";
 import { type Task } from "@/lib/types";
 import { type GenerateConversationScenarioSchema } from "@zoonk/ai/tasks/language/conversation-scenario";
 import {
@@ -15,6 +16,7 @@ export const speakingMockScenarioTask: Task<
     "Write one practice mock of an exam's speaking test: the examiner, their script with the exam's parts, the opening line, objectives and hints",
   generate: generateSpeakingMockScenario,
   id: "speaking-mock-scenario",
+  learnerLanguages: practiceLanguages,
   name: "Speaking Mock Scenario",
   scoreCategories: SPEAKING_MOCK_SCENARIO_SCORE_CATEGORIES,
   testCases: TEST_CASES,
