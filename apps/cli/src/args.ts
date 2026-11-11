@@ -1,5 +1,6 @@
 import { parseArgs } from "node:util";
 import { usageError } from "./errors.ts";
+import { type OutputShape } from "./output.ts";
 
 export type ApiRequest =
   | { method: "GET"; path: string }
@@ -9,14 +10,20 @@ export type Command =
   | { name: "help" }
   | { name: "login" }
   | { name: "logout" }
-  | { name: "request"; request: ApiRequest };
+  | { name: "request"; request: ApiRequest; shape?: OutputShape };
 
-type Options = { limit?: string; offset?: string; order?: string; where?: string[] };
+type Options = {
+  fields?: string;
+  limit?: string;
+  offset?: string;
+  order?: string;
+  where?: string[];
+};
 
 type OptionName = keyof Options;
 
 type CommandSpec = {
-  arguments: number | "at least one";
+  arguments: number | "any" | "at least one";
   build: (args: string[], options: Options) => Command;
   options: OptionName[];
 };
@@ -96,12 +103,26 @@ function parseWholeNumber(name: OptionName, value: string | undefined) {
   return number;
 }
 
-function get(path: string): Command {
-  return { name: "request", request: { method: "GET", path } };
+function parseFields(fields: string | undefined): OutputShape | undefined {
+  if (fields === undefined) {
+    return;
+  }
+
+  const names = splitList(fields);
+
+  if (names.length === 0) {
+    throw usageError(`--fields needs comma-separated field names, such as "id,status,createdAt".`);
+  }
+
+  return { fields: names, kind: "fields" };
 }
 
-function post(path: string, body: Record<string, unknown>): Command {
-  return { name: "request", request: { body, method: "POST", path } };
+function get(path: string, shape?: OutputShape): Command {
+  return { name: "request", request: { method: "GET", path }, shape };
+}
+
+function post(path: string, body: Record<string, unknown>, shape?: OutputShape): Command {
+  return { name: "request", request: { body, method: "POST", path }, shape };
 }
 
 const COMMANDS = new Map<string, CommandSpec>([
@@ -111,7 +132,14 @@ const COMMANDS = new Map<string, CommandSpec>([
     "whoami",
     { arguments: 0, build: () => ({ name: "request", request: WHOAMI_REQUEST }), options: [] },
   ],
-  ["staff models", { arguments: 0, build: () => get("/staff/models"), options: [] }],
+  [
+    "staff models",
+    {
+      arguments: "any",
+      build: (names) => get("/staff/models", { kind: "models", names }),
+      options: [],
+    },
+  ],
   [
     "staff users find",
     { arguments: 1, build: ([query]) => post("/staff/users/find", { query }), options: [] },
@@ -132,23 +160,28 @@ const COMMANDS = new Map<string, CommandSpec>([
     "staff get",
     {
       arguments: 2,
-      build: ([model, id]) => post("/staff/records/get", { id, model }),
-      options: [],
+      build: ([model, id], { fields }) =>
+        post("/staff/records/get", { id, model }, parseFields(fields)),
+      options: ["fields"],
     },
   ],
   [
     "staff list",
     {
       arguments: 1,
-      build: ([model], { limit, offset, order, where }) =>
-        post("/staff/records/list", {
-          limit: parseWholeNumber("limit", limit),
-          model,
-          offset: parseWholeNumber("offset", offset),
-          orderBy: parseOrder(order),
-          where: parseWhereOptions(where),
-        }),
-      options: ["where", "order", "limit", "offset"],
+      build: ([model], { fields, limit, offset, order, where }) =>
+        post(
+          "/staff/records/list",
+          {
+            limit: parseWholeNumber("limit", limit),
+            model,
+            offset: parseWholeNumber("offset", offset),
+            orderBy: parseOrder(order),
+            where: parseWhereOptions(where),
+          },
+          parseFields(fields),
+        ),
+      options: ["where", "order", "limit", "offset", "fields"],
     },
   ],
   [
@@ -179,7 +212,7 @@ function findCommand(positionals: string[]) {
   return { args: positionals.slice(name.split(" ").length), name, spec };
 }
 
-function describeArguments(count: CommandSpec["arguments"]): string {
+function describeArguments(count: number | "at least one"): string {
   if (count === "at least one") {
     return "at least one argument";
   }
@@ -188,10 +221,16 @@ function describeArguments(count: CommandSpec["arguments"]): string {
 }
 
 function checkArguments({ args, name, spec }: { args: string[]; name: string; spec: CommandSpec }) {
-  const fits = spec.arguments === "at least one" ? args.length > 0 : args.length === spec.arguments;
+  const expected = spec.arguments;
+
+  if (expected === "any") {
+    return;
+  }
+
+  const fits = expected === "at least one" ? args.length > 0 : args.length === expected;
 
   if (!fits) {
-    throw usageError(`"${name}" takes ${describeArguments(spec.arguments)}.`);
+    throw usageError(`"${name}" takes ${describeArguments(expected)}.`);
   }
 }
 
@@ -220,6 +259,7 @@ function parseCommandLine(argv: string[]) {
       args: argv,
       options: {
         api: { type: "string" },
+        fields: { type: "string" },
         help: { short: "h", type: "boolean" },
         limit: { type: "string" },
         offset: { type: "string" },
