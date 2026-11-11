@@ -115,7 +115,7 @@ export async function buildExtraPractice({
       refresh,
       skillIds: [...new Set(items.map((item) => item.skillId))],
       title,
-      ...getPracticeLabels({ items, topics: getPlanTopics(graph) }),
+      ...getPracticeLabels({ items, topics: getPlanTopics({ goal: session.goal, graph }) }),
     }),
   };
 }
