@@ -4,6 +4,11 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import {
+  type AddressForm,
+  addressFormTemplate,
+  getAddressFormPrompt,
+} from "../_utils/address-form";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext, type TutorScreenContext } from "../lessons/lesson-question-context";
@@ -54,6 +59,7 @@ const LOOKUP_TOOL = "lookUp";
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty goal tutor answer";
 
 type GoalTutorInput = {
+  addressForm?: AddressForm;
   analytics?: AiGenerationContext;
   contextSnapshot: PlanScopeContext;
   /** Only when memory is on. */
@@ -166,10 +172,11 @@ function getPageGuide({
 }
 
 function getSystemPrompt({
+  addressForm,
   contextSnapshot,
   learnerNeeds,
   links,
-}: Pick<GoalTutorInput, "contextSnapshot" | "learnerNeeds" | "links">): string {
+}: Pick<GoalTutorInput, "addressForm" | "contextSnapshot" | "learnerNeeds" | "links">): string {
   const template = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
 
   const goalPrompt = selectTutorLanguage({
@@ -192,9 +199,22 @@ function getSystemPrompt({
     withPages,
     screenPrompt,
     getLearnerNeedsPrompt({ needs: learnerNeeds, template: learnerNeedsPrompt }),
+    getAddressFormPrompt(addressForm),
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+/** Every variant's rules, so editing any of them changes the prompt version. */
+function getPromptVersionText({
+  contextSnapshot,
+  links,
+}: Pick<GoalTutorInput, "contextSnapshot" | "links">): string {
+  return [
+    getSystemPrompt({ contextSnapshot, links }),
+    learnerNeedsPrompt,
+    addressFormTemplate,
+  ].join("\n");
 }
 
 /**
@@ -274,7 +294,7 @@ export async function generateGoalTutorAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: context,
     generate: () => generateText(options),
-    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
+    systemPrompt: getPromptVersionText(input),
     task: GOAL_TUTOR_TASK,
   });
 
@@ -322,7 +342,7 @@ export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
         }),
         onError: suppressProviderError,
       }),
-    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
+    systemPrompt: getPromptVersionText(input),
     task: GOAL_TUTOR_TASK,
   });
 
