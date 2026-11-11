@@ -8,6 +8,7 @@ import {
 } from "@zoonk/utils/plot-scale";
 import {
   type CategoryLabelLayout,
+  clampLabelCenter,
   fitsUnderBars,
   getCategoryLabels,
   getLabelWidth,
@@ -157,18 +158,21 @@ function placeRows({
   );
 }
 
-function thinTicks({ ticks, x }: { ticks: Tick[]; x: LinearScale }): Tick[] {
-  const [first, second] = ticks;
+/** Keeps every Nth tick label, the fewest skipped that leaves none touching where they're drawn. */
+function thinTicks({ ticks, width, x }: { ticks: Tick[]; width: number; x: LinearScale }): Tick[] {
+  const bounds = ticks.map((tick) => {
+    const center = clampLabelCenter({ lines: [tick.label], width, x: x.toPixel(tick.value) });
+    const half = getLabelWidth(tick.label) / 2;
+    return { left: center - half, right: center + half };
+  });
 
-  if (!first || !second) {
-    return ticks;
-  }
+  const step =
+    bounds.findIndex((_, index) => {
+      const kept = bounds.filter((__, tick) => tick % (index + 1) === 0);
+      return kept.every((bound, at) => at === 0 || bound.left >= (kept[at - 1]?.right ?? 0));
+    }) + 1;
 
-  const spacing = Math.abs(x.toPixel(second.value) - x.toPixel(first.value));
-  const widest = getWidestLabel(ticks.map((tick) => tick.label));
-  const step = Math.max(Math.ceil(widest / spacing), 1);
-
-  return ticks.filter((_, index) => index % step === 0);
+  return ticks.filter((_, index) => index % Math.max(step, 1) === 0);
 }
 
 function getRowLayout({
@@ -207,7 +211,7 @@ function getRowLayout({
     showValues,
     tickY,
     x,
-    xTicks: thinTicks({ ticks: axis.ticks, x }),
+    xTicks: thinTicks({ ticks: axis.ticks, width, x }),
   };
 }
 

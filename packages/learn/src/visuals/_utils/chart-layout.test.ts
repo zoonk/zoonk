@@ -1,7 +1,7 @@
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { assert, integer, property, stringMatching, uniqueArray } from "fast-check";
 import { describe, expect, it } from "vitest";
-import { getLabelWidth } from "./category-labels";
+import { clampLabelCenter, getLabelWidth } from "./category-labels";
 import { type ColumnLayout, PADDING, type RowLayout, fitsLabel, getLayout } from "./chart-layout";
 
 const visual: ChartVisual = {
@@ -209,29 +209,41 @@ describe(getLayout, () => {
     expect(layout.rows[0]?.lines.every((line) => getLabelWidth(line) <= NARROW)).toBe(true);
   });
 
-  it("keeps every other tick under sideways bars when their labels would overlap", () => {
-    const layout = rows(
-      getLayout({
-        formatTick: (tick) => `${tick} km/h`,
-        formatValue: String,
-        visual: {
-          ...visual,
-          categories: REGIONS,
-          series: [{ name: "A", values: [180, 420, 640, 300, 220] }],
-        },
-        width: NARROW,
-      }),
-    );
+  it.each([
+    { values: [180, 420, 640, 300, 220], width: NARROW },
+    { values: [18, 42, 64, 30, 22], width: 270 },
+  ])(
+    "keeps tick labels under sideways bars apart where they're drawn ($width px)",
+    ({ values, width }) => {
+      const layout = rows(
+        getLayout({
+          formatTick: (tick) => `${tick} km/h`,
+          formatValue: String,
+          visual: { ...visual, categories: REGIONS, series: [{ name: "A", values }] },
+          width,
+        }),
+      );
 
-    const centers = layout.xTicks.map((tick) => layout.x.toPixel(tick.value));
-    const widest = Math.max(...layout.xTicks.map((tick) => getLabelWidth(tick.label)));
+      const bounds = layout.xTicks.map((tick) => {
+        const center = clampLabelCenter({
+          lines: [tick.label],
+          width,
+          x: layout.x.toPixel(tick.value),
+        });
 
-    expect(centers.length).toBeGreaterThan(1);
+        const half = getLabelWidth(tick.label) / 2;
+        return { left: center - half, right: center + half };
+      });
 
-    expect(
-      centers.every((center, index) => index === 0 || center - (centers[index - 1] ?? 0) >= widest),
-    ).toBe(true);
-  });
+      expect(bounds.length).toBeGreaterThan(1);
+
+      expect(
+        bounds.every(
+          (bound, index) => index === 0 || bound.left >= (bounds[index - 1]?.right ?? 0),
+        ),
+      ).toBe(true);
+    },
+  );
 
   it("keeps a line chart's ordered axis upright, naming every few points", () => {
     const line = {
