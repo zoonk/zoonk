@@ -1,9 +1,9 @@
-import { resolveApiOrigin } from "./api-origin.ts";
+import { loginCommand, resolveApiOrigin } from "./api-origin.ts";
 import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
 import { credentialsPath } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { HELP } from "./help.ts";
-import { type HttpResult, UNAUTHORIZED, isRecord, unexpectedResponse } from "./http.ts";
+import { FORBIDDEN, type HttpResult, UNAUTHORIZED, isRecord, unexpectedResponse } from "./http.ts";
 import { logIn, logOut } from "./login.ts";
 import { type OutputShape, shapeOutput } from "./output.ts";
 import { notLoggedIn, sendAuthorized } from "./session.ts";
@@ -11,6 +11,13 @@ import { notLoggedIn, sendAuthorized } from "./session.ts";
 function apiError({ origin, result }: { origin: string; result: HttpResult }): CliError {
   if (result.status === UNAUTHORIZED) {
     return notLoggedIn(origin);
+  }
+
+  if (result.status === FORBIDDEN) {
+    return new CliError(
+      `This login to ${origin} has no staff access. Log in with a Zoonk platform admin account: ` +
+        `\`${loginCommand(origin)}\`.`,
+    );
   }
 
   const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;

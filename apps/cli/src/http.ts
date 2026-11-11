@@ -1,6 +1,7 @@
 import { CliError } from "./errors.ts";
 
 export const UNAUTHORIZED = 401;
+export const FORBIDDEN = 403;
 
 /** Other commands wait 30 s for the credentials lock, so a token request holding it ends sooner. */
 const OAUTH_TIMEOUT_MS = 10_000;
