@@ -1312,6 +1312,273 @@
           "unitTitle": "Uma casa nova"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Italian sentences and supplied answers are grammatical, and their Portuguese translations preserve the intended meanings. The explanations correctly describe the weather expressions and the absence of a preposition before “la settimana scorsa”. No wrong-translation, ungrammatical-sentence or false-rule cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson makes useful Portuguese comparisons and directly addresses Brazilian tendencies to vocalize final “l” and insert a vowel before “s” plus consonant. However, “FRÉD-do” and “SKÓR-sa” misleadingly suggest open vowels instead of the closed vowels in standard Italian “freddo” and “scorsa”. There is no clear added-syllable respelling that triggers the score cap.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short, everyday sentences fit A2 and the goal of describing yesterday's or last week's weather. Known words are reused rather than retaught. Coverage is slightly incomplete against the specified weather expressions: “nevicava” is only a distractor, so learners are not taught to describe snowfall.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "All Italian distractors are real, whole words or forms, so the non-word cap does not apply. Both practice blanks have one correct answer, and the writing answers cover two natural word orders. However, several distractors are conspicuously unrelated rather than realistic confusions with the imperfect weather forms. Speaking prompts simply ask learners to say or translate a sentence instead of establishing a real moment.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Brazilian Portuguese is natural and concise, and target-language fields remain in Italian. Tile sentences and translations omit decorative final punctuation while retaining question marks. Each summary line communicates one expression the learner can now use.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3395,
+          "outputTokens": 1452,
+          "reasoningTokens": 738
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Several distractors, such as “sono”, “avranno” and “neve”, are less plausible than competing weather forms such as “piove” or “è piovuto”. Speaking prompts are translation instructions rather than real conversational situations. “Nevicava” appears only as a distractor, not as a taught expression. The respellings “FRÉD-do” and “SKÓR-sa” suggest open vowels to Brazilian readers, whereas the standard Italian vowels are closed.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Identify the shared imperfect pattern explicitly and connect it to Portuguese “chovia” and “fazia”. Add a short snowfall example and a speaking situation, such as telling a friend what the weather was like during last week's outing. Use more tense-based distractors while retaining exactly one correct answer in each blank.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian, A2, saying what the weather was like, with the imperfect (\"pioveva\", \"faceva freddo\", \"c'era il sole\", \"nevicava\"). Every wrong option and every distractor tile is a real Italian word or form, written whole: a form like \"grandinava\" (\"it was hailing\") is a good distractor next to \"pioveva\", but split into \"grand inava\" or misspelled it's a non-word, which scores at most 5 for practice design. Wrong forms are real forms a learner would confuse with the answer (\"è piovuto\", \"piove\"), and none is also right where it's used.",
+        "id": "pt-it-a2-past-weather-1",
+        "userInput": {
+          "knownWords": [
+            "oggi",
+            "ieri",
+            "il tempo"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer como estava o tempo ontem ou na semana passada",
+          "lessonDescription": "Conte como estava o tempo num dia que já passou: chuva, sol, frio",
+          "lessonTitle": "Como estava o tempo",
+          "level": "A2",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Falar do tempo de hoje",
+            "Contar como foi um passeio",
+            "Combinar um programa conforme o tempo"
+          ],
+          "unitTitle": "O tempo e os passeios"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The main sentences, translations, and grammatical explanations are accurate. However, “grand inava” is malformed Italian, and the respellings misrepresent the vowel quality of “freddo” and “scorsa”. These prevent a high accuracy score.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson makes useful Portuguese–Italian comparisons about question order, weather expressions with “fazer”, and omitted pronouns. Geminate-consonant tips are relevant to Brazilian learners. However, the acute accents in “FRÉD-do” and “SKÓR-sa” guide Brazilian readers toward incorrect open vowels. No clear added-syllable cap is triggered.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "Short, everyday sentences directly support describing yesterday's or last week's weather at A2. Known words are reused in context rather than retaught as vocabulary. Coverage is slightly incomplete because “nevicava”, explicitly identified in the expectations, appears only as a distractor.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The malformed distractor “grand inava” triggers the explicit maximum score of 5. The two blanks otherwise have unique correct answers, but their distractors concentrate on less useful person/number contrasts instead of plausible tense alternatives such as “piove” or “è piovuto”. Writing acceptance also omits a common correct word order.",
+          "score": 5,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Brazilian Portuguese instructions are generally natural and concise, and target-language fields remain in Italian. Sentence tiles correctly omit final periods and retain question marks. However, writing answers retain decorative final periods, contrary to the stated target-sentence convention.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3241,
+          "outputTokens": 1102,
+          "reasoningTokens": 419
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The distractor “grand inava” is a broken, non-word form of “grandinava”, directly violating the requirement that every Italian distractor be written whole. This triggers the practice-design score cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The respellings “FRÉD-do” and “SKÓR-sa” suggest open vowels where standard Italian uses closed vowels. Writing answers include decorative final periods and omit the common correct ordering “Ieri a Roma faceva freddo”. Practice distractors emphasize person/number mismatches rather than the more relevant tense confusions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Teach “nevicava” productively rather than using it only as a distractor. Name the imperfect explicitly and add a practice item for “c'era il sole”, so practice covers more of the weather descriptions introduced.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian, A2, saying what the weather was like, with the imperfect (\"pioveva\", \"faceva freddo\", \"c'era il sole\", \"nevicava\"). Every wrong option and every distractor tile is a real Italian word or form, written whole: a form like \"grandinava\" (\"it was hailing\") is a good distractor next to \"pioveva\", but split into \"grand inava\" or misspelled it's a non-word, which scores at most 5 for practice design. Wrong forms are real forms a learner would confuse with the answer (\"è piovuto\", \"piove\"), and none is also right where it's used.",
+        "id": "pt-it-a2-past-weather-2",
+        "userInput": {
+          "knownWords": [
+            "oggi",
+            "ieri",
+            "il tempo"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer como estava o tempo ontem ou na semana passada",
+          "lessonDescription": "Conte como estava o tempo num dia que já passou: chuva, sol, frio",
+          "lessonTitle": "Como estava o tempo",
+          "level": "A2",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Falar do tempo de hoje",
+            "Contar como foi um passeio",
+            "Combinar um programa conforme o tempo"
+          ],
+          "unitTitle": "O tempo e os passeios"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The taught expressions, sentences, translations, and grammatical explanations are accurate and natural. However, “grand inava” is not correctly written Italian, so not every target-language item is valid.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The warning against Brazilian Portuguese palatalization of “ti” in “settimana” is useful, and the explanations make relevant Portuguese–Italian comparisons. However, “TCHÉ-ra” suggests a closed vowel where “c'era” has an open vowel, while “SKÓR-sa” suggests an open vowel where “scorsa” has a closed one. No respelling clearly adds a syllable, so the added-syllable cap does not apply.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short everyday sentences fit A2 and directly support describing yesterday's or last week's weather. Known words are reused rather than retaught, and the vocabulary is focused. Coverage is incomplete because the expected form “nevicava” appears only as a distractor.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The explicit cap of 5 applies because “grand inava” is a split non-word distractor. Several other distractors are insufficiently plausible learner confusions, particularly “delle” and repeated uses of “siamo”. The practice blanks do have unique correct answers, the writing answers are correct, and speaking prompts are in Portuguese.",
+          "score": 5,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Brazilian Portuguese is natural and concise, target-language fields remain in Italian, and sentence and translation tiles omit decorative final punctuation while retaining question marks. Each summary line communicates one usable expression.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3102,
+          "outputTokens": 1096,
+          "reasoningTokens": 419
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The distractor “grand inava” is a split non-word rather than the real Italian form “grandinava”. This directly violates the whole-word requirement and triggers the practice-design score cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors, such as “siamo” and “delle”, are real Italian forms but weak alternatives to weather expressions. The pronunciation guides misrepresent vowel quality in “c'era” and “scorsa” for Brazilian readers. “Nevicava” appears only as a distractor rather than being taught or practiced.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use plausible tense contrasts such as “piove” and “è piovuto” in contexts that clearly require the imperfect. Briefly explain the imperfect as describing past weather conditions, and add a short snowfall example and practice item.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian, A2, saying what the weather was like, with the imperfect (\"pioveva\", \"faceva freddo\", \"c'era il sole\", \"nevicava\"). Every wrong option and every distractor tile is a real Italian word or form, written whole: a form like \"grandinava\" (\"it was hailing\") is a good distractor next to \"pioveva\", but split into \"grand inava\" or misspelled it's a non-word, which scores at most 5 for practice design. Wrong forms are real forms a learner would confuse with the answer (\"è piovuto\", \"piove\"), and none is also right where it's used.",
+        "id": "pt-it-a2-past-weather-3",
+        "userInput": {
+          "knownWords": [
+            "oggi",
+            "ieri",
+            "il tempo"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer como estava o tempo ontem ou na semana passada",
+          "lessonDescription": "Conte como estava o tempo num dia que já passou: chuva, sol, frio",
+          "lessonTitle": "Como estava o tempo",
+          "level": "A2",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Falar do tempo de hoje",
+            "Contar como foi um passeio",
+            "Combinar um programa conforme o tempo"
+          ],
+          "unitTitle": "O tempo e os passeios"
+        }
+      }
     }
   ],
   "taskId": "language-lesson"

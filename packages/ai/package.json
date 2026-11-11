@@ -86,6 +86,7 @@
     "./tasks/language/exam-speaking-exams": "./src/tasks/language/exam-speaking-exams.ts",
     "./tasks/language/exam-speaking-photo": "./src/tasks/language/exam-speaking-photo.ts",
     "./tasks/language/language-lesson": "./src/tasks/language/language-lesson.ts",
+    "./tasks/language/language-lesson-check": "./src/tasks/language/language-lesson-check.ts",
     "./tasks/language/language-lesson-rules": "./src/tasks/language/language-lesson-rules.ts",
     "./tasks/language/language-sentence-orders": "./src/tasks/language/language-sentence-orders.ts",
     "./tasks/language/alphabet-lesson": "./src/tasks/language/alphabet-lesson.ts",

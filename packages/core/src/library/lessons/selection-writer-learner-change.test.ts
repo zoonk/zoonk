@@ -177,7 +177,7 @@ async function prepareWriter(scope: Scope, writer: Writer) {
   }
 
   const publication = publicationInput(scope);
-  return () => saveLanguageLesson(publication);
+  return async () => (await saveLanguageLesson(publication)) !== null;
 }
 
 async function lessonState(scope: Scope) {

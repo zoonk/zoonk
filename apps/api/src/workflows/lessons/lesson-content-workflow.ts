@@ -14,6 +14,7 @@ import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
+import { languageReviewWorkflow } from "../quality/language-review-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
@@ -217,6 +218,32 @@ async function planAndWrite({
   }
 }
 
+async function startPublishedFollowUps({
+  input,
+  outcome,
+}: {
+  input: LessonContentInput;
+  outcome: Extract<LessonWriteOutcome, { status: "published" }>;
+}) {
+  const { analytics, forExam, lessonId } = input;
+
+  if (outcome.owesSentenceOrders) {
+    await startOnce(
+      sentenceOrdersWorkflow,
+      [{ analytics, lessonId, wait: "soon" }],
+      getSentenceOrdersToken(lessonId),
+    );
+  }
+
+  if (outcome.languageCheck) {
+    await start(languageReviewWorkflow, [{ analytics, lessonId, plan: outcome.languageCheck }]);
+  }
+
+  if (outcome.check && (outcome.check.review || outcome.check.cite)) {
+    await start(lessonCheckWorkflow, [{ analytics, forExam, lessonId, plan: outcome.check }]);
+  }
+}
+
 export async function lessonContentWorkflow(
   input: LessonContentInput,
 ): Promise<LessonContentResult> {
@@ -275,19 +302,7 @@ export async function lessonContentWorkflow(
     const completed = await completeLessonContentStep({ lessonId, workflowRunId });
     const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
 
-    if (outcome.owesSentenceOrders) {
-      await startOnce(
-        sentenceOrdersWorkflow,
-        [{ analytics: input.analytics, lessonId, wait: "soon" }],
-        getSentenceOrdersToken(lessonId),
-      );
-    }
-
-    if (outcome.check && (outcome.check.review || outcome.check.cite)) {
-      const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
-      await start(lessonCheckWorkflow, [{ ...check, plan: outcome.check }]);
-    }
-
+    await startPublishedFollowUps({ input, outcome });
     return ready;
   } catch (error) {
     await failLessonContentStep({ lessonId, workflowRunId });

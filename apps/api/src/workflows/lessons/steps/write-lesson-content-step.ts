@@ -8,7 +8,10 @@ import {
   getLessonGenerationState,
   isLessonSavedByRun,
 } from "@zoonk/core/library/generation/state";
-import { writeLanguageLessonContent } from "@zoonk/core/library/language/write-lesson-content";
+import {
+  type LanguageLessonCheckPlan,
+  writeLanguageLessonContent,
+} from "@zoonk/core/library/language/write-lesson-content";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import {
   type LessonCheckPlan,
@@ -27,6 +30,7 @@ export type LessonWriteOutcome =
   | {
       check: LessonCheckPlan | null;
       imageScope: ImageScope;
+      languageCheck: LanguageLessonCheckPlan | null;
       owesSentenceOrders: boolean;
       status: "published";
     }
@@ -99,7 +103,13 @@ async function write({
     });
 
     return result.status === "published"
-      ? { check: null, imageScope: null, owesSentenceOrders: true, status: "published" }
+      ? {
+          check: null,
+          imageScope: null,
+          languageCheck: result.check,
+          owesSentenceOrders: true,
+          status: "published",
+        }
       : toOutcome(result.status);
   }
 
@@ -114,7 +124,13 @@ async function write({
     });
 
     return challenge.status === "published"
-      ? { check: null, imageScope: null, owesSentenceOrders: false, status: "published" }
+      ? {
+          check: null,
+          imageScope: null,
+          languageCheck: null,
+          owesSentenceOrders: false,
+          status: "published",
+        }
       : toOutcome(challenge.status);
   }
 
@@ -151,6 +167,7 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
     return {
       check: null,
       imageScope: getPublishedImageScope(lesson),
+      languageCheck: null,
       owesSentenceOrders: Boolean(lesson.targetLanguage),
       status: "published",
     };
@@ -194,7 +211,13 @@ export async function checkLessonContentStep({
   "use step";
 
   if (await isLessonSavedByRun(input)) {
-    return { check: null, imageScope, owesSentenceOrders: false, status: "published" };
+    return {
+      check: null,
+      imageScope,
+      languageCheck: null,
+      owesSentenceOrders: false,
+      status: "published",
+    };
   }
 
   const checked = await checkLessonContent({ ...input, draft });
@@ -207,7 +230,13 @@ export async function checkLessonContentStep({
   await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
   if (checked.status === "published") {
-    return { check: checked.check, imageScope, owesSentenceOrders: false, status: "published" };
+    return {
+      check: checked.check,
+      imageScope,
+      languageCheck: null,
+      owesSentenceOrders: false,
+      status: "published",
+    };
   }
 
   return checked.status === "heldBack"

@@ -152,11 +152,14 @@ describe(writeLanguageLessonContent, () => {
       workflowRunId,
     });
 
-    expect(result).toStrictEqual({
-      sentenceCount: 3,
+    expect(result).toMatchObject({
+      check: {
+        inputs: { learnerLanguage: "pt", targetLanguage: "en" },
+        lesson: { sentences: { length: 3 }, words: { length: 3 } },
+        version: 1,
+        writerModel: "openai/gpt-6-sol",
+      },
       status: "published",
-      stepCount: 15,
-      wordCount: 3,
     });
 
     expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({
