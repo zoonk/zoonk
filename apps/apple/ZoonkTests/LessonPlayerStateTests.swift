@@ -193,6 +193,57 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentStep?.id, "summary")
   }
 
+  func testPreviousGoesBackFromAResultThroughEarlierAnsweredScreens() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    let atResult = state
+
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.canGoBack)
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+    XCTAssertEqual(state.results, atResult.results)
+    XCTAssertEqual(state.answers, atResult.answers)
+  }
+
+  func testARetryKeepsItsAnswerWhenTheLearnerGoesBackPastItAndReturns() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right", attemptId: "retry")
+    let retried = state
+
+    state.goBack()
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    state.continueLesson()
+    state.continueLesson()
+
+    XCTAssertEqual(state.position, retried.position)
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+    XCTAssertEqual(state.results["check"], retried.results["check"])
+    XCTAssertEqual(state.rounds, retried.rounds)
+  }
+
   /// What the learner did on a canvas lasts exactly as long as the screen's answer (its round).
   func testAScreensRoundLastsAsLongAsItsAnswer() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))

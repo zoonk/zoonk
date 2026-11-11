@@ -62,6 +62,8 @@ export type LessonPlayerState = {
   quickCheck: QuickCheck | null;
   results: Record<string, LessonStepResult>;
   retried: string[];
+  /** The questions whose retry (a later copy) the learner has reached; see `startsOver`. */
+  retriesReached: string[];
   revealed: Record<string, number>;
   /**
    * Moves on wherever a screen starts over (its answer cleared) or a fresher saved answer replaces
@@ -152,6 +154,7 @@ export function createInitialState(
     quickCheck: null,
     results: {},
     retried: [],
+    retriesReached: [],
     revealed: {},
     reviewing: false,
     rounds: {},

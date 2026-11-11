@@ -184,6 +184,42 @@ describe("lesson feedback", () => {
     await expect.element(previous).not.toBeInTheDocument();
   });
 
+  it("goes back from a result to earlier screens, an answered question read-only", async () => {
+    const lesson = buildLesson([
+      teachingStep("check"),
+      teachingStep("explanation"),
+      teachingStep("check"),
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    await answer(WRONG_OPTION, "Not quite");
+    await next();
+    await next(/^Next/u);
+    await answer(RIGHT_OPTION, "Correct!");
+
+    const previous = page.getByRole("button", { name: "Previous screen" });
+    await previous.click();
+    await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await previous.click();
+
+    await expect.element(verdict("Not quite")).toBeVisible();
+    await expect.element(previous).not.toBeInTheDocument();
+
+    const wrong = page.getByRole("radio", { name: WRONG_OPTION });
+    await expect.element(wrong).toMatchTextContent(/Your answer/u);
+    await expect.element(wrong).toBeDisabled();
+
+    await expect
+      .element(page.getByRole("radio", { name: RIGHT_OPTION }))
+      .toMatchTextContent(/Correct/u);
+
+    await next();
+    await next(/^Next/u);
+    await expect.element(verdict("Correct!")).toBeVisible();
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeDisabled();
+  });
+
   it("goes on with Enter after the screen's menu closes", async () => {
     const lesson = buildLesson([teachingStep("explanation"), teachingStep("check")]);
     renderLessonPlayer({ lesson });

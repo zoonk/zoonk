@@ -27,9 +27,14 @@ function isLaterCopy(state: LessonPlayerState, position: number): boolean {
   return state.queue.indexOf(state.queue[position] ?? "") < position;
 }
 
+function isFirstRetry(state: LessonPlayerState, position: number): boolean {
+  return isLaterCopy(state, position) && !state.retriesReached.includes(state.queue[position] ?? "");
+}
+
+/** A retry starts over once, when the learner first reaches it, so Previous and Next only revisit its answer. */
 function startsOver(state: LessonPlayerState, position: number): boolean {
   const id = state.queue[position] ?? "";
-  return id in state.results && (state.quickCheck !== null || isLaterCopy(state, position));
+  return id in state.results && (state.quickCheck !== null || isFirstRetry(state, position));
 }
 
 function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState["notice"] {
@@ -44,7 +49,7 @@ function getEntryNotice(state: LessonPlayerState, id: string): LessonPlayerState
   return id in state.firstVerdicts ? null : (state.missing[id] ?? null);
 }
 
-function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
+export function showPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
   const reviewing = id in state.results;
 
@@ -62,7 +67,12 @@ function showPosition(state: LessonPlayerState, position: number): LessonPlayerS
 
 export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
-  return showPosition(startsOver(state, position) ? startOver(state, [id]) : state, position);
+
+  const reached = isFirstRetry(state, position)
+    ? { ...state, retriesReached: [...state.retriesReached, id] }
+    : state;
+
+  return showPosition(startsOver(state, position) ? startOver(reached, [id]) : reached, position);
 }
 
 function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
@@ -215,42 +225,6 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
     progress.stage === "intro" || (progress.stage === "deciding" && progress.pendingChoiceId);
 
   return canMove ? { ...state, revealed: { ...state.revealed, [step.id]: shown + 1 } } : state;
-}
-
-export function goBack(state: LessonPlayerState): LessonPlayerState {
-  const position = state.phase === "map" ? state.position : state.position - 1;
-
-  if (!canGoBack(state) || !state.queue[position]) {
-    return state;
-  }
-
-  return showPosition(state, position);
-}
-
-/**
- * A missed question that came back holds its attempt in the later copy, so the earlier one, its
- * result cleared, would show it unanswered and let the learner answer it twice.
- */
-function isEarlierCopy(state: LessonPlayerState, position: number): boolean {
-  const id = state.queue[position] ?? "";
-  return !(id in state.results) && state.queue.includes(id, position + 1);
-}
-
-export function canGoBack(state: LessonPlayerState): boolean {
-  if (state.run.status === "refused") {
-    return false;
-  }
-
-  if (state.phase === "map") {
-    return true;
-  }
-
-  return (
-    state.phase === "playing" &&
-    state.position > 0 &&
-    !state.quickCheck &&
-    !isEarlierCopy(state, state.position - 1)
-  );
 }
 
 function offerSelfCorrection({

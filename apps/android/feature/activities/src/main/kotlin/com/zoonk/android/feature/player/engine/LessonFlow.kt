@@ -11,16 +11,21 @@ private fun LessonPlayerState.startOver(id: String): LessonPlayerState =
 
 fun LessonPlayerState.round(stepId: String): Int = rounds[stepId] ?: 0
 
-/** A screen with a result opens answered, to review; a retry, or a check in "I already know this", starts over. */
+/**
+ * A screen with a result opens answered, to review; a check in "I already know this" starts over, and so does a retry the
+ * first time the learner reaches it, so Previous and Continue only revisit its answer.
+ */
 fun LessonPlayerState.enterPosition(
     position: Int,
     now: Long,
 ): LessonPlayerState {
     val id = queue.getOrNull(position)
-    val startsOver = id != null && id in results && (quickCheck != null || queue.indexOf(id) < position)
+    val isFirstRetry = id != null && queue.indexOf(id) < position && id !in retriesReached
+    val startsOver = id != null && id in results && (quickCheck != null || isFirstRetry)
     val entered = if (startsOver) startOver(id) else this
     val answered = id in entered.results
     return entered.copy(
+        retriesReached = if (isFirstRetry) retriesReached + id else retriesReached,
         checkFailed = false,
         checkIssue = null,
         notice = if (!answered && id in selfCorrected) LessonNotice.SelfCorrect else entered.recoveryNotice(position),
@@ -147,7 +152,10 @@ fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 }
 
 val LessonPlayerState.canGoBack: Boolean
-    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused && !comesBackLater(position - 1)
+    get() =
+        (phase == LessonPhase.Playing || phase == LessonPhase.Feedback) && position > 0 && quickCheck == null &&
+            run !is LessonRun.Refused &&
+            !comesBackLater(position - 1)
 
 /** A question that comes back plays its attempt there, so its earlier copy, with no result, isn't played again. */
 private fun LessonPlayerState.comesBackLater(index: Int): Boolean {

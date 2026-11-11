@@ -87,6 +87,8 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var answerOrder: [String] = []
   /// Questions already sent to the end of the lesson once.
   private(set) var retried: Set<String> = []
+  /// Questions whose retry (a later copy) the learner has reached, so it starts over only then.
+  private var retriesReached: Set<String> = []
   /// Language answers that already had their one chance to self-correct.
   private(set) var selfCorrected: Set<String> = []
   /// How many parts of a worked example, or decisions of a challenge, are shown.
@@ -171,11 +173,13 @@ struct LessonPlayerState: Equatable, Sendable {
     return false
   }
 
-  /// Previous is on every screen after the first while it's being played, the map included, not
-  /// during "I know this". It never returns to the earlier copy of a question that came back: the
-  /// later copy holds its attempt, so the earlier one would ask for an answer again.
+  /// Previous is on every screen after the first, its result and the map included, not during
+  /// "I know this". It never returns to the earlier copy of a question that came back: the later
+  /// copy holds its attempt, so the earlier one would ask for an answer again.
   var canGoBack: Bool {
-    guard phase == .playing || phase == .map, position > 0, quickCheck == nil, !isRefused else {
+    guard phase == .playing || phase == .feedback || phase == .map, position > 0,
+      quickCheck == nil, !isRefused
+    else {
       return false
     }
 
@@ -802,14 +806,21 @@ struct LessonPlayerState: Equatable, Sendable {
     completion?.status = .failed
   }
 
-  /// An answered screen shows its result, as Previous does. It starts over only as a missed
-  /// question coming back (a later copy) or in "I know this". Any other shows what the learner
-  /// left, with why it still waits: its chance to self-correct, or a finish that came back for it.
+  /// An answered screen shows its result, as Previous does. It starts over only in "I know this"
+  /// or as a missed question coming back (a later copy) the first time the learner reaches it, so
+  /// Previous and Continue only revisit its answer. Any other shows what the learner left, with why
+  /// it still waits: its chance to self-correct, or a finish that came back for it.
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
+    let isFirstRetry =
+      (queue.firstIndex(of: id) ?? newPosition) < newPosition && !retriesReached.contains(id)
+
+    if isFirstRetry {
+      retriesReached.insert(id)
+    }
 
     if results[id] != nil {
-      if quickCheck != nil || queue.firstIndex(of: id) != newPosition {
+      if quickCheck != nil || isFirstRetry {
         clearAnswer(id)
         results[id] = nil
       }
@@ -1034,6 +1045,7 @@ struct LessonPlayerState: Equatable, Sendable {
     firstVerdictAttemptIds = [:]
     answerOrder = []
     retried = []
+    retriesReached = []
     selfCorrected = []
     revealed = [:]
     misses = []

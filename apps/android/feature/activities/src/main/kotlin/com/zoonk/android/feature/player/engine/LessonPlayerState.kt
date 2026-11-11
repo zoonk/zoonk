@@ -113,6 +113,8 @@ data class LessonPlayerState(
     /** After a finish the server found incomplete: the screens to answer again, each with why. */
     val recovery: Map<String, LessonNotice> = emptyMap(),
     val retried: List<String> = emptyList(),
+    /** The questions whose retry (a later copy) the learner has reached, so it starts over only then. */
+    val retriesReached: List<String> = emptyList(),
     val revealed: Map<String, Int> = emptyMap(),
     val run: LessonRun = LessonRun.Idle,
     val reviewing: Boolean = false,

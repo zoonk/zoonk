@@ -153,6 +153,63 @@ describe(lessonPlayerReducer, () => {
     expect(forward.firstVerdicts).toStrictEqual({ quiz: true });
   });
 
+  it("goes back from an answered question's result through earlier answered ones, read-only", () => {
+    const steps = [checkStep("q1"), explanationStep("tip"), checkStep("q2")];
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+
+    const atResult = play(steps, [
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+    ]);
+
+    expect([atResult.phase, getLessonScreen(atResult).canGoBack]).toStrictEqual([
+      "feedback",
+      true,
+    ]);
+
+    const atTip = lessonPlayerReducer(atResult, back);
+    expect([getCurrentStep(atTip)?.id, atTip.phase]).toStrictEqual(["tip", "playing"]);
+
+    const atQ1 = lessonPlayerReducer(atTip, back);
+
+    expect(atQ1).toMatchObject({ phase: "feedback", position: 0, reviewing: true });
+    expect(getLessonScreen(atQ1).primary).toMatchObject({ action: "continue" });
+
+    const again = playOn(atQ1, [{ type: "continue" }, { type: "continue" }]);
+
+    expect(again).toMatchObject({ phase: "feedback", position: 2, reviewing: true });
+    expect([again.answers, again.results]).toStrictEqual([atResult.answers, atResult.results]);
+  });
+
+  it("keeps a retried question's answer when the learner goes back past it and returns", () => {
+    const steps = [checkStep("quiz"), explanationStep("tip")];
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+
+    const retried = play(steps, [
+      ...answerCheck("quiz", false),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("quiz", true, "quiz-retry"),
+    ]);
+
+    expect([retried.queue, retried.position, retried.phase]).toStrictEqual([
+      ["quiz", "tip", "quiz"],
+      2,
+      "feedback",
+    ]);
+
+    const returned = playOn(retried, [back, back, { type: "continue" }, { type: "continue" }]);
+
+    expect(returned).toMatchObject({ phase: "feedback", position: 2, reviewing: true });
+
+    expect([returned.results.quiz, returned.rounds]).toStrictEqual([
+      retried.results.quiz,
+      retried.rounds,
+    ]);
+  });
+
   it("keeps an unchecked answer when the learner goes back, and shows it again on Next", () => {
     const picked = { kind: "check", optionId: "right" } as const;
 
