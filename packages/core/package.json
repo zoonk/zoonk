@@ -436,6 +436,7 @@
     "./library/sources/contract": "./src/library/sources/source-contract.ts",
     "./library/sources/fetch": "./src/library/sources/fetch-document.ts",
     "./library/sources/get": "./src/library/sources/get-source.ts",
+    "./library/sources/law-identity": "./src/library/sources/law-identity.ts",
     "./library/sources/laws": "./src/library/sources/law-sources.ts",
     "./library/sources/list-learner": "./src/library/sources/list-learner-sources.ts",
     "./library/sources/load-documents": "./src/library/sources/load-source-documents.ts",

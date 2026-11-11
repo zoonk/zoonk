@@ -79,6 +79,11 @@ describe(splitLawArticles, () => {
       ["§ 434", "434"],
     ]);
 
+    expect(headings("§ 107.3 Definitions.\n§ 107.51 Visual line of sight.")).toStrictEqual([
+      ["§ 107.3", "107.3"],
+      ["§ 107.51", "107.51"],
+    ]);
+
     expect(headings("第一条　この法律は\n第十二条　前条の規定")).toStrictEqual([
       ["第一条", "1"],
       ["第十二条", "12"],
@@ -197,10 +202,10 @@ describe(splitLawArticlePieces, () => {
 describe(toArticleNumber, () => {
   it("reads the article a hint names", () => {
     expect(
-      ["Art. 4º, § 2º", "art. 4", "4", "Artículo 4.", "第四条", "Art. 4º-A", "Article 4bis"].map(
-        (hint) => toArticleNumber(hint),
+      ["4", "5-A", "107.51", "Art. 4º, § 2º", "Artículo 4.", "第四条", "Article 4bis"].map((hint) =>
+        toArticleNumber(hint),
       ),
-    ).toStrictEqual(["4", "4", "4", "4", "4", "4-A", "4"]);
+    ).toStrictEqual(["4", "5-A", "107.51", "4", "4", "4", "4"]);
 
     expect(toArticleNumber("o caput")).toBeNull();
   });

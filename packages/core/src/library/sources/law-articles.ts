@@ -2,20 +2,21 @@ const LINE_START = String.raw`(?:^|[\n\f])[^\S\n\f]*`;
 const ORDINAL = String.raw`(?:\.?[º°ª]|o\b|er\b)?`;
 const SUFFIX = String.raw`(?:-[A-Z]{1,2}\b|[^\S\n]+(?:bis|ter|quater)\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
+const DIGITS = String.raw`\d+(?:\.\d+)*`;
 
 /**
  * The first family the text uses heads its articles. Brazilian laws open paragraphs with "§", which
  * heads articles only in texts with no article word, such as German statutes and the US Code.
  */
 const HEADING_FAMILIES = [
-  String.raw`(?:Art\.|Artigo|Artículo|Articulo|Article|Articolo|Artikel)[^\S\n]*(?<number>\d+)${ORDINAL}(?<suffix>${SUFFIX})\.?`,
+  String.raw`(?:Art\.|Artigo|Artículo|Articulo|Article|Articolo|Artikel)[^\S\n]*(?<number>${DIGITS})${ORDINAL}(?<suffix>${SUFFIX})\.?`,
   String.raw`第(?<number>[\d${CJK_NUMERALS}]+)条(?<suffix>[の之][${CJK_NUMERALS}]+)?`,
-  String.raw`(?:Section|SECTION|Sec\.|SEC\.)[^\S\n]*(?<number>\d+)(?<suffix>[A-Za-z]?)\.?`,
-  String.raw`§[^\S\n]*(?<number>\d+)(?<suffix>[a-z]?)\.?`,
+  String.raw`(?:Section|SECTION|Sec\.|SEC\.)[^\S\n]*(?<number>${DIGITS})(?<suffix>[A-Za-z]?)\.?`,
+  String.raw`§[^\S\n]*(?<number>${DIGITS})(?<suffix>[a-z]?)\.?`,
 ].map((heading) => new RegExp(`${LINE_START}(?<heading>${heading})`, "gu"));
 
 const ARTICLE_NUMBER = new RegExp(
-  String.raw`(?<number>\d+|[${CJK_NUMERALS}]+)${ORDINAL}(?<suffix>${SUFFIX})`,
+  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)${ORDINAL}(?<suffix>${SUFFIX})`,
   "u",
 );
 
@@ -62,13 +63,14 @@ function parseCjkNumber(numeral: string): number {
   return total + digit;
 }
 
-function toNumberValue(numeral: string): number {
-  return /^\d+$/u.test(numeral) ? Number(numeral) : parseCjkNumber(numeral);
-}
-
+/** "107.51" is section 51 of part 107, so numbering goes on within the part. */
 function toNumber(groups: Record<string, string | undefined>): { number: string; value: number } {
-  const value = toNumberValue(groups.number ?? "");
-  return { number: `${value}${(groups.suffix ?? "").replaceAll(/\s+/gu, "")}`, value };
+  const numeral = groups.number ?? "";
+  const parts = /^\d/u.test(numeral) ? numeral.split(".").map((part) => Number(part)) : null;
+  const value = parts?.[0] ?? parseCjkNumber(numeral);
+  const suffix = (groups.suffix ?? "").replaceAll(/\s+/gu, "");
+
+  return { number: `${parts?.join(".") ?? value}${suffix}`, value };
 }
 
 function toHeading(match: RegExpMatchArray): Heading {

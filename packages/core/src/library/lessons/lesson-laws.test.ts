@@ -68,7 +68,7 @@ describe(linkLessonLaws, () => {
     expect(conflictOfInterestLaw().length).toBeGreaterThan(12_000);
 
     await linkLessonLaws({
-      laws: [{ articles: ["Art. 4º"], searchTerms: ["conflito de interesses"], sourceId: law.id }],
+      laws: [{ articles: ["4"], searchTerms: ["conflito de interesses"], sourceId: law.id }],
       lessonId: lesson.id,
       prompt: PROMPT,
     });
@@ -94,6 +94,30 @@ describe(linkLessonLaws, () => {
     expect(
       sources.reduce((size, page) => size + page.text.length + page.title.length, 0),
     ).toBeLessThanOrEqual(12_000);
+  });
+
+  it("finds the article the lesson is about by its terms when no article is hinted", async () => {
+    const [lesson, law] = await Promise.all([
+      libraryLessonFixture({ language: "pt" }),
+      sourceFixture({
+        extractedText: conflictOfInterestLaw(),
+        language: "pt",
+        structure: { images: 0, pages: null, topic: "regulation" },
+        title: "Lei nº 12.813, de 16 de maio de 2013",
+      }),
+    ]);
+
+    await linkLessonLaws({
+      laws: [{ articles: [], searchTerms: ["conflito de interesses"], sourceId: law.id }],
+      lessonId: lesson.id,
+      prompt: PROMPT,
+    });
+
+    const link = await prisma.lessonSource.findUniqueOrThrow({
+      where: { lessonId_sourceId: { lessonId: lesson.id, sourceId: law.id } },
+    });
+
+    expect(link.articles).toStrictEqual(expect.arrayContaining(["Art. 3º", "Art. 4º", "Art. 5º"]));
   });
 
   it("links nothing for a law whose text is gone", async () => {

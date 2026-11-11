@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { normalizeString } from "@zoonk/utils/string";
 import { getSourceValidUntil } from "./freshness-schedule";
+import { type LawRequest, isOfficialSite, toLawKey } from "./law-identity";
 import { getMaxTextLength } from "./parse-document";
 import {
   type ResearchSourceCandidate,
@@ -10,31 +10,6 @@ import {
   loadResearchSourceCandidates,
   searchStoredResearchSources,
 } from "./stored-research-sources";
-
-/** `country` is ISO 3166-1 alpha-2 and `language` the official text's. */
-export type LawRequest = {
-  country: string;
-  language: string;
-  name: string;
-  officialDomains: readonly string[];
-  searchTerms: readonly string[];
-};
-
-function toLawKey(law: LawRequest) {
-  return {
-    country: law.country,
-    language: law.language,
-    name: normalizeString(law.name)
-      .replaceAll(/[^\p{L}\p{N}]+/gu, " ")
-      .trim(),
-  };
-}
-
-/** Lessons naming the same law at once join one run. */
-export function getLawLookupToken(law: LawRequest): string {
-  const { country, language, name } = toLawKey(law);
-  return `law-source:${country}:${language}:${name}`;
-}
 
 /** Null when the law hasn't been looked up in the last 30 days; `sourceId` is null when nothing was found. */
 export async function readLawLookup(law: LawRequest): Promise<{ sourceId: string | null } | null> {
@@ -65,23 +40,6 @@ export async function recordLawLookup({
     update: { checkedAt, sourceId },
     where: { lawKey: key },
   });
-}
-
-/** `domains` are bare, as research plans keep them: "planalto.gov.br" takes "www4.planalto.gov.br". */
-export function isOfficialSite({
-  domains,
-  url,
-}: {
-  domains: readonly string[];
-  url: string | null;
-}): boolean {
-  const host = url
-    ? URL.parse(url)
-        ?.hostname.toLowerCase()
-        .replace(/^www\./u, "")
-    : null;
-
-  return Boolean(host) && domains.some((domain) => host === domain || host?.endsWith(`.${domain}`));
 }
 
 /** A law is read from its official site's whole text: a cut text loses its last articles. */

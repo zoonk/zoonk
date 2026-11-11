@@ -3,13 +3,8 @@ import { prisma } from "@zoonk/db";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDecision, uniqueWord } from "../identity/_test-utils/identity-mocks";
-import {
-  findStoredLawSource,
-  isLawSource,
-  isOfficialSite,
-  readLawLookup,
-  recordLawLookup,
-} from "./law-sources";
+import { canLookUpLaw, getLawLookupToken, isOfficialSite } from "./law-identity";
+import { findStoredLawSource, isLawSource, readLawLookup, recordLawLookup } from "./law-sources";
 
 const DAY_MS = 86_400_000;
 
@@ -143,5 +138,35 @@ describe(isOfficialSite, () => {
         "https://fakeplanalto.gov.br/lei.htm",
       ].map((url) => isOfficialSite({ domains, url })),
     ).toStrictEqual([true, true, true, false, false]);
+  });
+});
+
+describe(canLookUpLaw, () => {
+  it("looks up only a law with a country code, the text's language and its official sites", () => {
+    const law = lawRequest(uniqueWord());
+
+    expect(
+      [
+        law,
+        { ...law, language: "pt-BR" },
+        { ...law, country: "BRA" },
+        { ...law, country: "" },
+        { ...law, language: "Portuguese" },
+        { ...law, name: " . " },
+        { ...law, officialDomains: [] },
+      ].map((request) => canLookUpLaw(request)),
+    ).toStrictEqual([true, true, false, false, false, false, false]);
+  });
+});
+
+describe(getLawLookupToken, () => {
+  it("gives a law's name written apart one run", () => {
+    const law = { country: "BR", language: "pt", name: "Lei nº 12.813/2013" };
+
+    expect(getLawLookupToken({ ...law, name: "LEI Nº 12.813 / 2013" })).toBe(
+      getLawLookupToken(law),
+    );
+
+    expect(getLawLookupToken({ ...law, country: "PT" })).not.toBe(getLawLookupToken(law));
   });
 });
