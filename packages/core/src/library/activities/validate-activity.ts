@@ -1,6 +1,5 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type z } from "zod";
-import { MAX_ANSWER_ITEMS } from "./activity-answer-schema";
 import { type ActivityExpectedAnswer } from "./activity-expected-answer";
 import { type ActivityCheck } from "./activity-schemas";
 import {
@@ -20,7 +19,7 @@ import {
 } from "./define-activity-template";
 import { sampleExpression } from "./expression/sample-expression";
 import { withinTolerance } from "./templates/_utils/pattern-checks";
-import { issue } from "./templates/_utils/template-helpers";
+import { answerCapacityIssues, issue } from "./templates/_utils/template-helpers";
 
 const CHOICE_VALUE_TOLERANCE = 0.2;
 const MIN_CHOICE_GAP = 1e-9;
@@ -144,21 +143,12 @@ function checkIssues(template: ActivityTemplate, content: ActivityStepContent): 
     ];
   }
 
-  return sentLists(expected).some((list) => list.length > MAX_ANSWER_ITEMS)
-    ? [
-        issue(
-          "invalidSchema",
-          "fields",
-          `The answer would list more than ${MAX_ANSWER_ITEMS} items`,
-        ),
-      ]
-    : [];
+  return sentLists(expected).flatMap((list) =>
+    answerCapacityIssues({ count: list.length, path: "fields", what: "items" }),
+  );
 }
 
-/**
- * The lists a learner's answer sends back. Their counts are targets, but an answer can list only
- * so many items, so an activity whose right answer lists more could never be finished.
- */
+/** The lists a learner's answer sends back. */
 function sentLists(expected: ActivityExpectedAnswer): readonly (readonly unknown[])[] {
   switch (expected.kind) {
     case "grid":

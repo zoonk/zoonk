@@ -239,7 +239,7 @@ describe(validateActivity, () => {
     expect(kept.ok ? [] : kept.issues).toStrictEqual([]);
 
     expect(unanswerable.ok ? [] : unanswerable.issues).toStrictEqual([
-      expect.objectContaining({ code: "invalidSchema", path: "fields" }),
+      expect.objectContaining({ code: "inconsistentFields", path: "fields" }),
     ]);
   });
 
@@ -259,6 +259,40 @@ describe(validateActivity, () => {
     expect(result.ok ? [] : result.issues).toStrictEqual([
       expect.objectContaining({ code: "inconsistentFields", path: "fields.sources" }),
     ]);
+  });
+
+  it("refuses a cause chain or SQL tables whose wrong answers couldn't be sent back", () => {
+    const manyNodes = structuredClone(fixtures.causeEffectChain);
+
+    manyNodes.fields.nodes = Array.from({ length: 15 }, (_, index) => ({
+      id: `n${index}`,
+      label: `Event ${index + 1}`,
+      year: 1900 + index,
+    }));
+
+    manyNodes.fields.links = manyNodes.fields.nodes
+      .slice(1)
+      .map((node, index) => ({ from: `n${index}`, to: node.id, why: "One led to the next." }));
+
+    const wideTables = structuredClone(fixtures.sqlPlayground);
+    const columns = Array.from({ length: 199 }, (_, index) => `c${index}`);
+
+    wideTables.fields.tables.push({
+      columns: columns.map((name) => ({ name, type: "text" as const })),
+      name: "wide",
+      rows: [columns],
+    });
+
+    const chain = validateActivity(manyNodes);
+    const sql = validateActivity(wideTables);
+
+    expect(chain.ok ? [] : chain.issues).toContainEqual(
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.nodes" }),
+    );
+
+    expect(sql.ok ? [] : sql.issues).toContainEqual(
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.tables" }),
+    );
   });
 
   it("keeps a list the learner never sends back, however long", () => {

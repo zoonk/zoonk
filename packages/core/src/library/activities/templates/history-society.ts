@@ -9,12 +9,11 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { MAX_ANSWER_ITEMS } from "../activity-answer-schema";
 import { aimForItems, slugSchema } from "../activity-schemas";
 import { describeBaseMaps, getActivityBaseMap, isOnBaseMap } from "../base-maps";
 import { type ActivityIssue, defineActivityTemplate } from "../define-activity-template";
 import { hasOverlappingPassages } from "../excerpt-passages";
-import { duplicateIssues, issue } from "./_utils/template-helpers";
+import { answerCapacityIssues, duplicateIssues, issue } from "./_utils/template-helpers";
 
 const ANCHORS_TARGET = 4;
 const EVENTS_TARGET = 6;
@@ -159,6 +158,11 @@ function causeEffectIssues(fields: CauseEffectFields) {
   const linked = new Set(fields.links.flatMap((link) => [link.from, link.to]));
 
   return [
+    ...answerCapacityIssues({
+      count: nodes.size * (nodes.size - 1),
+      path: "fields.nodes",
+      what: "links",
+    }),
     fields.links.some(
       (link) => !nodes.has(link.from) || !nodes.has(link.to) || link.from === link.to,
     ) && issue("inconsistentFields", "fields.links", "A link must join two different listed nodes"),
@@ -220,15 +224,7 @@ function passageIssues(fields: SourceComparisonFields) {
   const passages = fields.sources.flatMap((source) => source.passages);
 
   return [
-    ...(passages.length > MAX_ANSWER_ITEMS
-      ? [
-          issue(
-            "inconsistentFields",
-            "fields.sources",
-            `A learner may mark every passage, and an answer lists at most ${MAX_ANSWER_ITEMS}`,
-          ),
-        ]
-      : []),
+    ...answerCapacityIssues({ count: passages.length, path: "fields.sources", what: "passages" }),
     ...duplicateIssues(
       passages.map((passage) => passage.id),
       "fields.sources",

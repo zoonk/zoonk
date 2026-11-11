@@ -10,7 +10,7 @@ import {
 } from "../../steps/contract/content-schemas";
 import { aimForItems, codeSchema, identifierSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import { duplicateIssues, issue } from "./_utils/template-helpers";
+import { answerCapacityIssues, duplicateIssues, issue } from "./_utils/template-helpers";
 import { normalizeProgramOutput } from "./_utils/text-normalizers";
 
 const EDITABLE_LINES_TARGET = 10;
@@ -272,7 +272,10 @@ function cellFits(
 }
 
 function sqlIssues(fields: z.output<typeof sqlFields>) {
+  const columns = fields.tables.reduce((total, table) => total + table.columns.length, 0);
+
   return [
+    ...answerCapacityIssues({ count: columns, path: "fields.tables", what: "columns in a row" }),
     ...duplicateIssues(
       fields.tables.map((table) => table.name),
       "fields.tables",
