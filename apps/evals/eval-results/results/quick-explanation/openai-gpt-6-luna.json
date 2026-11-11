@@ -5,42 +5,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The stated facts are broadly correct and appropriately qualified: scores vary by model and bureau, payment history matters, and high card utilization can hurt. The explanation stays in the United States, uses dollars and does not substitute Serasa or give individualized financial advice. However, it omits the expected FICO range and the names of the three major bureaus. The spending-versus-reported-balance distinction could also be clearer.",
-          "score": 7,
+          "reasoning": "The definition and calculations are correct: R$ 100 becomes R$ 110 and then R$ 121 at 10% annually. The example acknowledges taxes and fees, and the debt discussion appropriately says accumulated interest can generate further interest. There is no specific investment recommendation or false simplification.",
+          "score": 9,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "There are five short screens, and the opening uses familiar situations rather than announcing the topic. However, the last screen mixes several new actions with score changes and repeats the earlier point about different models. This triggers the maximum score of 7 for multiple ideas and repetition.",
+          "reasoning": "There are five short screens, a familiar opening, and a coherent progression. However, screen 4 introduces rate and frequency alongside time, while screen 5 adds credit-evaluation advice to the debt application. The explicit cap for screens teaching multiple new ideas applies. The increasing size of successive gains could also be stated more directly.",
           "score": 7,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "Most sentences are accessible, with no mathematical formulas. However, both 'credit score' and 'bureaus' appear before the plain explanations of what they mean, contrary to the required teaching order. 'Modelos' also receives little everyday explanation. The two-term ordering trigger caps this category at 7.",
-          "score": 7,
+          "reasoning": "The explanation is predominantly accessible and introduces the plain idea before naming compound interest. There are no formulas or equations; currency and percentage notation serve the numerical example. Wording such as 'incidem' and 'frequência dos juros' is less accessible than the rest and could be replaced with everyday phrasing.",
+          "score": 8,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "Ana's US$1,000 limit with US$200 versus US$900 provides a concrete, useful example. Applying for a card, renting a home, paying on time and approaching a card limit provide concrete anchors across most screens. The example could more precisely distinguish spending from the balance reported for scoring.",
-          "score": 8,
+          "reasoning": "The numerical example is concrete, accurate, and uses Brazilian currency formatting. Nevertheless, savings and debt remain generic in the learner-facing text, and most screens do not supply a concrete everyday application. A poupança appears only in an image prompt. The cap of 7 for generic examples applies.",
+          "score": 7,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "There is one clearly correct answer, reasonably comparable options and explanatory feedback for every option. However, the question repeats essentially the same low-versus-high utilization comparison as the practical example, requiring recognition more than application in a new situation.",
+          "reasoning": "There is one clearly correct option, the options are comparable in length and tone, and each receives explanatory feedback. However, changing R$ 100 to R$ 200 while retaining the same rate, timeline, and savings setup largely reproduces the worked example rather than applying the idea in a new situation.",
           "score": 7,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The recap contains three short bullets that follow the teaching order. 'Finanças pessoais' is a suitable broad beginner course, and the three follow-up questions are natural extensions. The title is neutral and immediately recognizable as answering the user's question.",
+          "reasoning": "The title is short, neutral, and recognizable. The three concise recap bullets follow the teaching sequence. Educação financeira is a suitable broad beginner course, and the three follow-up questions are natural extensions of the explanation.",
           "score": 10,
           "label": "Recap, go further and title",
           "weight": 10
@@ -58,640 +58,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2286,
-          "outputTokens": 1082,
-          "reasoningTokens": 330
+          "inputTokens": 2330,
+          "outputTokens": 1045,
+          "reasoningTokens": 260
         }
       },
       "steps": [
         {
-          "conclusion": "The explanation omits two explicitly expected basics: the usual FICO range of approximately 300–850 and identification of the three major credit bureaus, Equifax, Experian and TransUnion. Mentioning unspecified bureaus does not adequately cover the latter.",
+          "conclusion": "The learner-facing examples use reais correctly but remain generic savings and debt scenarios. Only an image prompt mentions poupança; the explanation should actually situate an example in everyday Brazilian life. The check also repeats the worked example with a different starting amount rather than testing transfer to a new situation.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The final screen repeats model variation and combines score changes, checking reports and seeking professional help. Technical terms precede their plain-language explanations. The check largely repeats the card-limit comparison already taught rather than applying it in a meaningfully new situation.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Clarify that card utilization generally reflects balances reported to the bureaus, not simply how much someone spends during the month. Rework the final screen into a single concluding idea and give the check a fresh concrete scenario.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese of how the US credit score works: the question sets the place, so it stays in the United States (a FICO score from about 300 to 850, the three credit bureaus, paying on time and using little of the card's limit), with amounts in dollars. Penalize swapping it for Brazil's Serasa score as if it were the same system; a one-line comparison is fine. No personal financial advice.",
-        "id": "pt-credit-score-eua-lugar-da-pergunta-1",
-        "userInput": {
-          "language": "pt",
-          "question": "Como funciona o credit score nos Estados Unidos?"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly connects microwave energy, water-molecule motion, and heating. It accurately recommends stirring and standing for uneven heating and makes neither the inside-out nor the radioactivity claim. “Can happen throughout a meal” is qualified rather than asserting uniform or unlimited penetration.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens progress from familiar leftovers to waves, water movement, heat transfer, and practical consequences. Each has a distinct focus, and the final screen completes the explanation without unnecessary repetition.",
-          "score": 9,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most language is accessible, and there are no formulas. However, “electric field” and “molecules” appear without preceding plain-language explanations. Two unexplained technical terms trigger the maximum score of 7.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The story uses familiar leftovers, radio waves, a crowd comparison, and reheating soup or pasta. The stirring screen provides a concrete everyday application of uneven heating, satisfying the requested practical-example expectation.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check transfers the explanation to a casserole with a cool center. It has one clearly best next step, options of comparable length and tone, and individual feedback explaining the reasoning behind each choice.",
-          "score": 9,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The three short recap bullets accurately follow the teaching sequence. Physics is a suitable broad beginner course, all three follow-up questions are natural extensions, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2135,
-          "outputTokens": 880,
-          "reasoningTokens": 293
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Screen 3 uses both “electric field” and “molecules” without first explaining them in everyday language. This makes the central mechanism less accessible to a curious 12-year-old.",
+          "conclusion": "Screen 4 combines the effect of time with the separate effects of rate and compounding frequency. Screen 5 combines debt growth with credit-shopping guidance. The explanation demonstrates accelerating growth numerically but never explicitly points out that the annual gain rises from R$ 10 to R$ 11.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Clarify that waves reach only a limited depth into food, while heat spreads farther over time. A direct description of tiny particles nudging their neighbors would also explain heating more clearly than the crowd-ripple comparison.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Microwaves make water molecules in food jiggle, and that motion is heat. Penalize the common myth that microwaves cook \"from the inside out\" and any claim that they make food radioactive. A good practical example: why a cup of water heats but an empty plate barely warms, or why food heats unevenly.",
-        "id": "en-microwave-1",
-        "userInput": {
-          "language": "en",
-          "question": "How does a microwave heat food?"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly describes general price increases over time and reduced purchasing power. Its descriptions of IPCA, possible causes, and uneven price changes are sound. The check appropriately says inflation 'may' occur rather than assuming that counting price increases alone establishes inflation. There are no false simplifications or financial recommendations.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar opening, and a complete answer. However, the first two screens both teach that increases across many prices differ from an isolated increase. This repetition triggers the explicit maximum score of 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The Brazilian Portuguese is generally accessible, and there are no formulas. The basket-of-prices explanation precedes the introduction of IPCA. However, IBGE is an unexplained acronym that a curious 12-year-old may not recognize. The trigger involving two or more unexplained technical terms is not clearly present.",
-          "score": 8,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The feira opening and the R$ 100 supermarket example provide familiar, concrete applications. The accompanying visual descriptions reinforce everyday purchases, transport, and supply shortages across most screens. The comparisons do not mislead.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the main idea to a new situation in which rice becomes cheaper while many other prices rise. Exactly one option is defensible, the options have comparable length and tone, and every option receives explanatory feedback.",
-          "score": 10,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap contains three short bullets matching the definition, purchasing-power effect, and measurement discussion in teaching order. Economia is a sensible broad beginner course, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2206,
-          "outputTokens": 1102,
-          "reasoningTokens": 465
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Screens 1 and 2 substantially repeat the distinction between widespread price increases and an isolated increase, limiting progression. Screen 4 introduces IBGE without explaining what the organization is.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "State explicitly that inflation is a continuing general rise in prices, rather than relying on 'over time' to convey persistence. A familiar example of rising delivery costs affecting supermarket prices would also make the final screen more concrete.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese: inflation is a general, continuous rise in prices that makes money buy less. A good story uses everyday Brazilian examples (supermarket, bus fare) and can mention that a little inflation is normal. No formulas.",
-        "id": "pt-inflacao-1",
-        "userInput": {
-          "language": "pt",
-          "question": "o que é inflação?"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly identifies scattering by air molecules, stronger scattering of blue and violet than red, the roles of sunlight’s spectrum and human vision, and the longer atmospheric path at sunset. It does not invoke ocean reflection. The simplifications remain scientifically sound.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, beginning with familiar-looking sunlight and ending with the remaining blue-versus-violet question. However, the final screen introduces two distinct explanatory factors—sunlight’s color distribution and human visual sensitivity—rather than teaching exactly one new idea. The multiple-ideas-per-screen cap of 7 applies.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most wording is accessible, and “Rayleigh scattering” appropriately follows an explanation of light being redirected. However, “molecules” and “wavelengths” appear without first explaining the plain ideas they name. This triggers the cap of 7 for two unexplained technical terms. No formulas appear.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Sunset provides a concrete everyday application. The prism, looking upward at the sky, and observing sunlight supply concrete anchors across most screens. These examples support the explanation without misleading comparisons.",
-          "score": 10,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct option, the options have comparable length and tone, and every option receives explanatory feedback. However, the question essentially repeats the sunset screen, so it tests recall rather than use of the main idea in a new situation.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap contains three concise points following the teaching order. Physics is a sensible broad beginner course, and the three follow-up questions naturally extend the topic.",
-          "score": 9,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2155,
-          "outputTokens": 1171,
-          "reasoningTokens": 513
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The check repeats the sunset situation already explained rather than testing application in a new situation. Some vocabulary is introduced without a plain-language explanation, notably “molecules” and “wavelengths.” The final screen also combines two new explanatory ideas: the amount of violet in sunlight and the eye’s sensitivity to violet.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Explain why the sky is not violet immediately after explaining why scattered light looks blue, then finish with sunset as an application. Consider including the violet explanation in the recap so readers retain this important distinction.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Sunlight scatters off air molecules, and blue light scatters much more than red (Rayleigh scattering); our eyes and the sun's spectrum explain why it looks blue and not violet. Sunsets are red because light crosses more air. Penalize \"the sky reflects the ocean\".",
-        "id": "en-sky-blue-1",
-        "userInput": {
-          "language": "en",
-          "question": "why is the sky blue"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The biological explanation is accurate and appropriately qualified: vaccines can supply targets or instructions, produce immune memory, and reduce severe disease without preventing every infection. It neither claims that vaccines cause the disease nor promises complete protection, and the general vaccination guidance is not personalized medical advice. However, the requested harmless-training distinction is not explicitly explained.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar sports-training hook, and a coherent progression from recognition to memory. However, screen 3 teaches both immune activation and side effects. This triggers the explicit maximum of 7 for a screen containing multiple new ideas.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most of the Brazilian Portuguese is accessible, especially the training, target, and memory comparisons. However, “inativado” and “anticorpos” are introduced without first explaining their meanings in everyday language. This triggers the maximum of 7 for two or more unexplained terms.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The vaccination booklet and SUS visit provide a concrete real-life use. Most screens also offer an accessible comparison or concrete detail, including team training, arm soreness, and remembering a target. These comparisons support rather than distort the explanation.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check presents a plausible post-vaccination infection, has one clearly correct answer, and explains why every option is right or wrong. Its main weakness is that the correct option closely reproduces the explanation in screen 4, making the transfer to the new situation fairly shallow.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The three short recap bullets accurately follow the teaching sequence. The suggested human-body course is a sensible broad beginner course, all three follow-up questions are natural extensions, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2234,
-          "outputTokens": 1060,
-          "reasoningTokens": 357
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Screen 3 introduces both the immune response and side effects, weakening the one-idea-per-screen structure. Technical words such as “inativado” and “anticorpos” appear without prior plain-language explanations. The explanation also leaves the central distinction between safe training material and the disease-causing germ largely implicit.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Explicitly explain that the vaccine supplies a harmless target or safely prepared version rather than requiring the person to experience the disease. Define unfamiliar terms through everyday descriptions first, and keep the side-effect discussion separate from the immune-response explanation. Make the check require a prediction about the body's response rather than selecting wording closely reproduced from the story.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese of how a vaccine trains the immune system with a harmless piece or version of a germ, so the body recognizes it later. Must be accurate and must not give personal medical advice; saying to talk to a health professional about a specific case is fine. Penalize claims that vaccines give the disease or are 100% effective.",
-        "id": "pt-vacina-1",
-        "userInput": {
-          "language": "pt",
-          "question": "Como funciona uma vacina?"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The numerical example correctly shows interest earned on earlier interest. The credit-card explanation appropriately uses conditional language and notes that terms vary. No specific investment is recommended.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens progress from a familiar savings balance to reinvested interest, a numerical example, time, and debt. Each has a distinct focus, and the story answers the question without unnecessary repetition.",
-          "score": 9,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The language is accessible, interest is explained when introduced, and compounding appears after its underlying idea has been demonstrated. The numbers and percentages belong to an example, not an unsolicited formula.",
-          "score": 10,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The $100 example concretely demonstrates why the second year's interest is larger. Savings accounts and unpaid credit-card balances provide relevant real-life applications, with concrete financial situations supporting most screens.",
-          "score": 9,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct option, the options are similar in length and tone, and each receives explanatory feedback. However, the question repeats the same annual savings-account situation rather than requiring transfer to a new situation.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap contains three short bullets following the teaching order. Personal Finance is an appropriate broad beginner course, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2105,
-          "outputTokens": 886,
-          "reasoningTokens": 331
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The check largely repeats the savings-account explanation with a person's name added. It tests recognition of the explanation rather than applying compounding in a genuinely new situation.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "After the numerical example, explicitly name the process as compound interest and state that, with the same positive interest rate, the amount earned each year gets larger. This would make the central takeaway more explicit.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Compound interest means earning interest on past interest, so growth speeds up over time. The question doesn't ask for a formula, so none should appear; numbers in an example are fine. Must not recommend a specific investment.",
-        "id": "en-compound-interest-1",
-        "userInput": {
-          "language": "en",
-          "question": "I never understood how compound interest works"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The formulas, coefficient identification, worked example, discriminant cases, and check answers are mathematically correct. The restriction that a cannot be zero is included, and the solution-count statements explicitly concern real answers.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens and a familiar opening. However, the final screen introduces the meaning of a solution, the three discriminant cases, and their graphical interpretation together. This triggers the cap of 7 for packing multiple new ideas into a screen. Explaining solutions earlier would also make the worked example easier to follow.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Formulas are explicitly requested and therefore appropriate, but their parts are not adequately translated into words. Multiple technical terms appear before explanation, including “equação do 2º grau,” “termos,” and “respostas reais,” triggering the cap of 7. The explanation of ± is helpful but insufficient on its own.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Finding when a thrown ball returns to the ground is a recognizable real-life use. The coefficient example, small-number worked calculation, and graph illustration provide concrete material across most screens. The main weakness is that the everyday application is never connected to the actual calculation.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check requires applying the formula to a new equation, has exactly one correct option, and uses options of comparable length and tone. Every option has feedback, but the feedback for “2 e 6” mostly supplies the correct answer rather than explaining why that particular pair fails.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The recap has three concise bullets following the teaching sequence. “Matemática” is a sensible broad beginner course, and the three follow-up questions naturally extend the lesson.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2289,
-          "outputTokens": 1252,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The formula is shown but not fully explained in words, as required. Only ± receives a clear explanation; the meanings of x, squaring, √Δ, −b, and division by 2a are missing or delayed. Technical expressions such as “equação do 2º grau,” “termos,” and “respostas reais” also appear without plain-language introductions.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The final screen combines defining solutions, interpreting delta, and introducing a graphical interpretation. Defining what the answers represent only after the worked example also weakens the instructional sequence.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Connect the numerical example to an everyday situation rather than leaving the ball example behind. In the check, explain why 2 and 6 fail—for example, by substituting one into the equation—instead of primarily restating the correct calculation.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese. The question asks for the quadratic formula (fórmula de Bhaskara), so showing it is allowed and expected, but each part must be explained in words, with what the discriminant (delta) tells you about the number of solutions and one worked example with small numbers.",
-        "id": "pt-bhaskara-formula-pedida-1",
-        "userInput": {
-          "language": "pt",
-          "question": "me explica a fórmula de Bhaskara"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The explanation correctly describes interest being added to the balance and earning further interest. The numerical example is correct, and the debt discussion appropriately makes compounding conditional and acknowledges differing rules and costs. It gives no investment recommendation.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens progress from a familiar growing balance to the mechanism, a numerical example, the effect of time, and debt. Each has one central teaching point, and the final screen completes the explanation. The growth-over-time point could be made more immediate by explicitly comparing the annual gains.",
-          "score": 8,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The Brazilian Portuguese is accessible, and the explanation translates compounding into gains joining the balance. The amounts and percentages support a verbal example rather than introducing a formula or equation. There is no unexplained technical vocabulary cluster.",
-          "score": 10,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The R$ 1.000 savings example is concrete and uses Brazilian number formatting. The opening balance, numerical example, snowball comparison, and debt discussion provide concrete anchors across most screens. However, the worked example remains a hypothetical savings balance rather than a clearly situated everyday Brazilian financial example; the card reference is only brief.",
-          "score": 8,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one check with one clearly correct answer, comparably phrased options, and explanatory feedback for every option. Its weakness is transfer: it repeats the same savings setup, rate, and second-year reasoning as the worked example, changing mainly the amounts.",
-          "score": 7,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap contains three short bullets that follow the explanation's progression. Educação financeira is an appropriate broad beginner course, the three follow-up questions are natural, and the title is short, neutral, and directly recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2329,
-          "outputTokens": 1189,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The check closely reproduces the worked savings example with different amounts, so it provides limited evidence that the reader can transfer the idea to a genuinely new situation. The practical example uses correctly formatted reais, but its connection to everyday Brazilian financial situations could be stronger.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Explicitly contrast the first year's R$ 100 gain with the second year's R$ 110 gain to make accelerating growth unmistakable. Ground an example in a familiar Brazilian situation, clearly distinguishing any hypothetical rate from actual product conditions. Use a different context, such as a debt accumulating interest, for the check.",
+          "conclusion": "Ground the example in a recognizable Brazilian account or credit situation, clearly labeling any assumed rate as illustrative. Explain that, at the same positive rate, each period adds more reais because the balance is larger. Replace the check with a different application, such as comparing a balance whose earnings stay invested with one whose earnings are withdrawn.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -709,42 +93,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The factual claims about salary, withholding, Social Security, Medicare, and benefit deductions are generally correct and appropriately qualified. There is no personal tax advice. However, the required account of taxes is incomplete: the W-4 and refund-or-bill reconciliation are absent, and state income-tax prevalence is left vague.",
+          "reasoning": "The substantive claims are accurate and appropriately qualified: common scores range from 300 to 850, models vary, payment history and utilization matter, and carrying debt is unnecessary. The result does not substitute Brazil's system or give personalized financial recommendations. However, it omits the explicitly expected identification of the three US credit bureaus.",
           "score": 8,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "Five short screens start with a familiar offer-letter amount and progress logically toward reading a pay stub. However, the story ends without completing the required tax explanation, particularly how withholding connects to the W-4 and the eventual refund or bill. The incomplete-answer cap of 7 applies.",
+          "reasoning": "There are five short screens, and the opening uses familiar card and rental applications. However, the last screen introduces several separate ideas: score scales, lenders' additional criteria, and responses to reporting errors or refusals. This triggers the maximum score of 7 for a screen packing multiple new ideas.",
           "score": 7,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "Most sentences are short and accessible, and there are no unrequested formulas. However, multiple technical terms appear without prior plain-language explanations, notably 'premiums' and '401(k)'; 'deductions' is also introduced without a direct explanation. The cap of 7 applies.",
+          "reasoning": "Most sentences are accessible and there are no formulas. However, 'birôs de crédito' is introduced before its function is explained, and 'credores' appears without a plain-language definition. These are two technical terms used before explanation, triggering the maximum score of 7.",
           "score": 7,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "The $60,000 offer, payday schedules, insurance enrollment, and pay-stub review provide practical US contexts. However, comparing gross salary with a price before sales tax risks reversing the relationship being taught: one total grows while the other shrinks. The misleading-comparison cap of 7 applies. A worked paycheck example would be more useful.",
+          "reasoning": "Ana provides an everyday credit-card example, and other screens mention rental applications, payments and balances. Nevertheless, the main example remains generic: it gives neither a card limit nor an amount used, so readers do not concretely see what low usage means. The generic-example cap of 7 applies; dollar amounts would make it substantially more useful.",
           "score": 7,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "The single check applies the deduction idea to Jordan's changed benefits, has one clearly correct option, and explains each answer. Options are similar in length. However, the claim that salary automatically becomes a tax bill is nonsensical, and the all-at-once salary option is also readily dismissed, so the check provides limited evidence of understanding.",
-          "score": 8,
+          "reasoning": "There is one clearly correct answer, the options are reasonably similar in length and tone, and each receives explanatory feedback. However, Lucas simply repeats Ana's timely-payment and low-usage pattern, so the check tests recognition rather than application in a meaningfully new situation.",
+          "score": 7,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The recap contains three short points matching the teaching sequence. Personal Finance is a suitable broad beginner course, and all three follow-up questions are natural extensions. The title is neutral, recognizable, and directly matches the user's question.",
+          "reasoning": "The recap has three short, accurate bullets following the story's order. 'Finanças pessoais' is a sensible broad beginner course, the three follow-up questions are natural, and the title is neutral and directly recognizable.",
           "score": 10,
           "label": "Recap, go further and title",
           "weight": 10
@@ -762,24 +146,112 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2253,
-          "outputTokens": 1237,
-          "reasoningTokens": 462
+          "inputTokens": 2393,
+          "outputTokens": 1112,
+          "reasoningTokens": 366
         }
       },
       "steps": [
         {
-          "conclusion": "The required tax explanation is incomplete: it never explains that federal income-tax withholding is based on the W-4 or that a refund or bill at tax time settles the difference between payments and actual tax owed. It also says state income taxes are 'possible' without explaining that most states impose them.",
+          "conclusion": "The explanation omits the three major US credit bureaus—Equifax, Experian and TransUnion—which are explicitly expected. It otherwise stays within the US system and correctly explains the common score range, timely payments and low card-limit usage.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The sales-tax comparison can mislead because sales tax increases a purchase total, whereas paycheck deductions reduce take-home pay. Terms such as 'premiums' and '401(k)' appear without plain-language explanations. The check has one correct answer, but its incorrect options are implausible enough to make guessing easy.",
+          "conclusion": "The final screen combines score ranges, lending decisions and help with reporting problems rather than teaching one idea. The check largely repeats Ana's example with a different name instead of requiring transfer to a new situation. Some financial vocabulary needs a simpler introduction.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use a simple dollar-denominated pay-stub example showing a pay period's earnings, tax withholding, benefit deductions, and resulting deposit. Make the check's distractors plausible alternative explanations for a smaller paycheck.",
+          "conclusion": "Give Ana a concrete dollar-denominated limit and balance to illustrate low usage. Name the three bureaus when explaining credit reports, and replace the check with a distinct scenario that requires applying what affects a score versus what affects a lender's broader decision.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of how the US credit score works: the question sets the place, so it stays in the United States (a FICO score from about 300 to 850, the three credit bureaus, paying on time and using little of the card's limit), with amounts in dollars. Penalize swapping it for Brazil's Serasa score as if it were the same system; a one-line comparison is fine. No personal financial advice.",
+        "id": "pt-credit-score-eua-lugar-da-pergunta-1",
+        "userInput": {
+          "language": "pt",
+          "question": "Como funciona o credit score nos Estados Unidos?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The statements are generally accurate, appropriately qualified, and do not give personal tax advice. Federal income tax, Social Security, Medicare, and state income tax are included. However, the required explanation is incomplete: it never identifies the W-4's role or explains the refund or bill that reconciles withholding with taxes owed.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar offer-letter hook, and a logical progression. However, the tax screen combines the different payroll taxes with the separate idea of estimated withholding, while the final screen combines paystub terminology with troubleshooting. These multiple-new-idea screens trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible, gross pay and net pay are explained clearly, and no unrequested formulas appear. However, health insurance premiums and 401(k) are introduced before their plain-language meanings; the latter is never explained. This triggers the cap of 7 for multiple unexplained terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The $60,000 salary and approximately $2,307.69 biweekly gross paycheck provide a concrete US dollar example. Most screens also connect to familiar situations, including an offer, health coverage, and reviewing a paystub. The examples are useful and not misleading, though a worked deduction example would make the central paycheck reduction more tangible.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one check with one clearly correct answer, similarly sized options, and feedback for every option. However, Ava's insurance enrollment closely repeats the preceding insurance example rather than requiring meaningful transfer. The fewer-pay-periods feedback does not explain the key directional error: fewer payments would generally increase each payment.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is neutral and recognizable. The recap contains three short bullets that follow the teaching order, and Personal Finance is a suitable beginner course with three natural follow-up questions. The ending meets the stated requirements without a concrete category-specific weakness.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2244,
+          "outputTokens": 1043,
+          "reasoningTokens": 272
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The tax explanation omits two required links: federal income tax withholding depends on the W-4, and a refund or bill at tax time settles the difference between withholding and the final tax owed. Calling withholding an estimate does not complete that explanation.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Some screens introduce multiple ideas, and terms such as health insurance premiums and 401(k) appear before plain-language explanations. The check largely repeats the health-insurance example already taught. Its feedback also misses that fewer pay periods would normally make each payment larger, not smaller.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a dollar-based paycheck example to connect gross pay, tax deductions, and take-home pay. Reorganize the tax explanation to include the W-4 and year-end settlement without crowding a screen, and make the check apply the explanation to a genuinely different situation.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -797,42 +269,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The claims made are accurate: the 730 concerns the previous year's income and expenses, compares tax owed with tax withheld, and can produce either a credit or an amount payable. Refund timing is appropriately qualified by filing time and checks. It gives no personal tax advice or misleading foreign-tax information.",
+          "reasoning": "The account correctly connects microwave energy, water-molecule motion, and heating. Its explanation of uneven heating and the benefits of stirring and standing is sound at this level. It makes neither the inside-out cooking claim nor the radioactivity claim.",
           "score": 10,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar payslip opening, and a logical explanation of the summer refund. However, screen 5 introduces both additional tax payable and alternative refund arrangements without a sostituto d’imposta. These are distinct new ideas, triggering the maximum score of 7.",
+          "reasoning": "Five short screens progress from familiar leftovers to the mechanism and practical consequences, completing the answer. However, screen 3 introduces multiple new concepts together: a changing electric field, uneven molecular charge, and polarity. This triggers the maximum score of 7 for packing multiple new ideas into a screen.",
           "score": 7,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "The Italian is generally natural and addresses the reader as tu, with no formulas. However, conguaglio is introduced without an everyday explanation, sostituto d’imposta remains unexplained, and spese detraibili is named before its effect is described. At least two unexplained technical terms trigger the maximum score of 7.",
+          "reasoning": "'Electromagnetic waves' and 'electric field' appear without preceding plain-language explanations, triggering the maximum score of 7 for two unexplained technical terms. 'Polar molecules' is introduced after its plain idea, which is better handled. There are no formulas.",
           "score": 7,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "The summer payslip is relatable, but the explanation never works through an actual expense or tax comparison. 'Alcune spese detraibili' and the Giulia scenario remain generic. The image prompts do not supply a concrete worked example either. This triggers the generic-examples cap of 7; the requested Italian expense details and euro amounts are also absent.",
-          "score": 7,
+          "reasoning": "Leftovers, waves bouncing around the metal compartment, the crowd-nudge comparison, and stirring unevenly heated food provide concrete anchors across most screens. Uneven heating is a useful everyday example directly relevant to the question.",
+          "score": 9,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "There is one clearly correct answer, the options have reasonably similar lengths and tone, and each has explanatory feedback. However, Giulia's situation restates the exact comparison taught immediately beforehand, so it tests recognition more than transfer to a new situation.",
+          "reasoning": "There is one clearly intended correct answer, similarly styled options, and explanatory feedback for every option. However, the soup scenario mostly asks readers to repeat the immediately preceding instruction to stir and stand; it does little to test application of the main water-molecule mechanism in a genuinely new situation.",
           "score": 7,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The title is short, neutral and recognizable. The recap contains exactly three short bullets following the teaching order. 'Fisco e finanze personali' is a sensible broad beginner course, and the three follow-up questions naturally extend the explanation.",
+          "reasoning": "The title is short, neutral, and recognizable. The three concise recap bullets follow the teaching sequence. 'Everyday Physics' is a suitable broad beginner course, and all three follow-up questions naturally extend the explanation.",
           "score": 10,
           "label": "Recap, go further and title",
           "weight": 10
@@ -850,24 +322,552 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2570,
-          "outputTokens": 1326,
-          "reasoningTokens": 471
+          "inputTokens": 2223,
+          "outputTokens": 985,
+          "reasoningTokens": 325
         }
       },
       "steps": [
         {
-          "conclusion": "The explanation captures the basic refund mechanism but omits substantial requested content: pensioners and pension refunds, medical expenses and the scontrino parlante with codice fiscale, mortgage interest or school costs, the Agenzia delle Entrate's 730 precompilato, and a CAF or commercialista. There is no concrete euro example. It also says that additional tax may be payable without explaining the corresponding withholding from pay or pension.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "Several technical terms precede their plain-language explanations or remain unexplained, especially conguaglio, spese detraibili and sostituto d’imposta. Screen 5 combines two distinct ideas: owing additional tax and receiving a refund without a withholding agent. The check largely repeats the refund rule with a named person rather than testing its application in a genuinely new situation.",
+          "conclusion": "The explanation introduces 'electromagnetic waves' and 'electric field' before explaining them in everyday language. Screen 3 also compresses molecular motion, uneven electrical charge, and polarity into one screen. The check largely repeats the stirring-and-standing advice rather than testing transfer of the central water-molecule explanation.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use a running example comparing 2.000 € already withheld with 1.800 € actually owed, producing a 200 € refund, expressed entirely in words. Connect it to a recognizable eligible expense and explain that the employer withheld IRPEF throughout the previous year. Make the check transfer this reasoning to a pension payment or an underpayment, and keep the no-withholding-agent exception outside the screen about additional tax.",
+          "conclusion": "Replace the polarity terminology with a simple explanation of water molecules turning back and forth. A cup-of-water versus microwave-safe empty-plate comparison could make the mechanism more concrete and support a stronger application question.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Microwaves make water molecules in food jiggle, and that motion is heat. Penalize the common myth that microwaves cook \"from the inside out\" and any claim that they make food radioactive. A good practical example: why a cup of water heats but an empty plate barely warms, or why food heats unevenly.",
+        "id": "en-microwave-1",
+        "userInput": {
+          "language": "en",
+          "question": "How does a microwave heat food?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly explains inflation as a general, continuous price increase that reduces purchasing power. It accurately distinguishes an isolated price rise, allows some prices to fall, describes IPCA and IBGE appropriately, and presents causes as potentially combined rather than inevitable. No financial recommendation or factual error appears.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar market-shopping hook, and a complete answer. However, screens 1 and 3 substantially repeat the same purchasing-power lesson. The salary connection adds value but does not eliminate that repetition, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible Brazilian Portuguese, and there are no formulas. However, screen 4 introduces IPCA and IBGE without explaining their names or first establishing their roles in plain language. These unexplained technical acronyms trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The R$ 50 market-shopping example is concrete and familiar. Coffee prices, salary and monthly expenses, family purchases, and transport costs keep most screens connected to everyday life without misleading comparisons.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check has one clearly correct answer, reasonably balanced options, and feedback explaining every option. Its central weakness is that the coffee-price scenario directly repeats screen 2, so it tests recognition rather than applying the main idea in a new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short and recognizable, the three recap bullets follow the teaching order, and Economia is a sensible broad beginner course. Two follow-up questions extend the lesson, but the question about inflation versus a single price increase mostly repeats content already explicitly taught and tested.",
+          "score": 8,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2284,
+          "outputTokens": 1187,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The check repeats the coffee-price situation already explained on screen 2 rather than testing transfer to a new situation. IPCA and IBGE appear without beginner-friendly introductions. Screens 1 and 3 substantially repeat the same-money-buys-less idea, although screen 3 adds a useful salary connection.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make screen 3 focus on whether income keeps up with prices, introduce the price-tracking process before naming IPCA and IBGE, and use a different everyday situation for the check. Replace the final follow-up question with one that extends beyond the distinction already taught.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese: inflation is a general, continuous rise in prices that makes money buy less. A good story uses everyday Brazilian examples (supermarket, bus fare) and can mention that a little inflation is normal. No formulas.",
+        "id": "pt-inflacao-1",
+        "userInput": {
+          "language": "pt",
+          "question": "o que é inflação?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanations of selective scattering and why the sky appears blue rather than violet are sound at this level. There is no ocean-reflection misconception. However, the explicitly expected explanation of red sunsets is absent.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens build coherently from a familiar observation through sunlight's colors, scattering, light reaching the observer, and the violet question. Each screen has a distinct central idea, and the final screen completes the answer to the user's question.",
+          "score": 10,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The language is mostly accessible, scattering is named after its plain-language explanation, and no formulas appear. However, 'molecules' is a technical term introduced without first explaining that air consists of tiny particles.",
+          "score": 8,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The rainbow provides a concrete everyday example of sunlight's mixed colors. The opening observation and the explanation of looking away from the Sun also ground the story in familiar experiences, so most screens offer concrete observational context.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one clearly correct option, the options have comparable length and tone, and each receives relevant explanatory feedback. However, the question reproduces the situation already explained in screen 4 rather than asking the learner to apply scattering in a new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short, accurate bullets in teaching order. Physics is a sensible broad introductory course, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2148,
+          "outputTokens": 1359,
+          "reasoningTokens": 741
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The expected sunset explanation is missing. Listing sunsets as a follow-up question does not teach that sunlight crosses more air near sunset, allowing more blue light to scatter away and leaving redder light.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The check repeats screen 4's situation—looking at sky away from the Sun—instead of requiring transfer to a new situation. Also, 'molecules' appears without a plain-language introduction.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Say that air scatters blue light much more than red, rather than merely more, to communicate the strength of the effect more clearly.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Sunlight scatters off air molecules, and blue light scatters much more than red (Rayleigh scattering); our eyes and the sun's spectrum explain why it looks blue and not violet. Sunsets are red because light crosses more air. Penalize \"the sky reflects the ocean\".",
+        "id": "en-sky-blue-1",
+        "userInput": {
+          "language": "en",
+          "question": "why is the sky blue"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The account of vaccine targets, antibodies, immune memory, and variable protection is accurate. It correctly includes instructions for making a target alongside weakened and inactivated microbes. It neither promises complete protection nor claims vaccines give the disease. Checking a vaccination record and consulting a health team is general guidance, not individualized medical advice.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens progress coherently from exposure to a target through immune response, memory, and practical implications. However, the opening starts with the mechanism and a list of vaccine types; the familiar portrait hook comes only afterward. The safe-training distinction also could be clearer.",
+          "score": 8,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible Brazilian Portuguese, but 'inativado' appears without a plain explanation, and 'anticorpos' appears before the explanation of what they do. These are two technical terms introduced before their plain meanings, triggering the maximum score of 7. No formulas or code appear.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The flu-vaccine screen supplies a recognizable real-life example and correctly distinguishes possible infection from reduced risk of severe illness. The portrait and training/memory comparisons make most of the explanation concrete without materially misleading readers.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one check with one clearly correct option and reasonably similar option lengths. However, Pedro's situation reproduces the earlier later-exposure scenario, and the correct answer closely repeats its wording. Feedback on blocking 'any microbe' should explain target specificity rather than say 'not necessarily'; feedback on 'antibodies from the vaccine' should clarify that the body produces them.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and recognizable. The recap contains exactly three concise bullets in teaching order. The suggested human-body course is a sensible broad beginner course, and all three follow-up questions naturally extend the explanation.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2239,
+          "outputTokens": 1214,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The opening explains vaccines before offering its familiar comparison. Technical vocabulary is not consistently introduced through a plain explanation first. The check largely repeats the memory-screen statement rather than testing transfer, and its feedback does not fully correct the misconceptions in the distractors. The explanation also leaves the distinction between safe training and the actual disease more implicit than requested.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Lead with the portrait comparison, explicitly distinguish the vaccine's training signal from the disease, and replace the check with a situation requiring readers to explain why vaccination can help even when infection still occurs.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of how a vaccine trains the immune system with a harmless piece or version of a germ, so the body recognizes it later. Must be accurate and must not give personal medical advice; saying to talk to a health professional about a specific case is fine. Penalize claims that vaccines give the disease or are 100% effective.",
+        "id": "pt-vacina-1",
+        "userInput": {
+          "language": "pt",
+          "question": "Como funciona uma vacina?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanation correctly describes interest earning interest, and the example and check calculations are correct. The debt discussion appropriately depends on card terms. No specific investment is recommended.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens start with a familiar savings scenario and explain the mechanism coherently. However, the final screen packs growth factors, fees and taxes, and professional guidance into one screen, triggering the maximum score of 7. The accelerating-growth takeaway could also be stated more directly.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The language is accessible, and interest is explained before compound interest is introduced. Numerical examples use amounts and percentages without introducing an unrequested formula or equation.",
+          "score": 10,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The savings example concretely demonstrates two years of compounding, and the credit-card screen gives another recognizable real-life application. Most screens remain grounded in account balances or everyday financial situations.",
+          "score": 10,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies the mechanism to a new starting amount and rate. It has exactly one correct answer, similarly formatted options, and feedback explaining every option, including the misconception of earning the same dollar amount each year.",
+          "score": 10,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short points in teaching order. Personal Finance is an appropriate broad beginner course, the three follow-up questions are natural extensions, and the title is short, neutral, and recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2224,
+          "outputTokens": 861,
+          "reasoningTokens": 292
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The final screen combines several new ideas: time, rates, compounding frequency, fees and taxes, and seeking professional help. This weakens the required one-idea-per-screen progression.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explicitly connect the example’s increase from $10 to $11 in interest to the central takeaway: with the same positive rate, interest earns interest, so the amount gained grows over time.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Compound interest means earning interest on past interest, so growth speeds up over time. The question doesn't ask for a formula, so none should appear; numbers in an example are fine. Must not recommend a specific investment.",
+        "id": "en-compound-interest-1",
+        "userInput": {
+          "language": "en",
+          "question": "I never understood how compound interest works"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The quadratic formula, nonzero-a condition, discriminant rules for real solutions, rectangle dimensions, worked calculation, and check answers are mathematically correct. The feedback about the incorrect pair summing to 8 is also true, although its relevance is not explained.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar opening, and a completed worked example. However, screen 3 combines the solution formula with a second new idea, calculating the discriminant. This triggers the explicit maximum of 7 for screens packing multiple new ideas. The compressed worked arithmetic also makes the progression less accessible.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Formulas are appropriate because the user requested Bhaskara. However, 'equação quadrática' and 'discriminante' appear before their distinguishing plain-language meanings, triggering the maximum of 7 for multiple unexplained technical terms. More importantly, several formula components, including the square root and denominator, are not explained in words as required.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The rectangle is a concrete, valid practical example, and the small-number solution returns to its dimensions. However, most screens do not contain a concrete example or everyday comparison: the three middle screens remain largely symbolic or abstract.",
+          "score": 8,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies the method to a new equation and has exactly one correct option. Options are reasonably comparable in length and tone, and each has feedback. The feedback is less useful for two distractors: one relies on an untaught relationship between roots and coefficients, while another merely asserts that the values do not produce zero without showing the calculation.",
+          "score": 8,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and recognizable. The recap contains three short points following the teaching order: equation form, formula, and discriminant interpretation. Mathematics is a sensible broad beginner course, and the three follow-up questions are natural extensions.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2315,
+          "outputTokens": 1083,
+          "reasoningTokens": 262
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The formula is not fully explained in words, despite this being an explicit requirement. The response never explains the square-root sign, what −b means, or how to divide the whole numerator by 2a. Saying that ± indicates two possibilities also leaves the two calculations implicit. These omissions make the central formula difficult for a beginner to use independently.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Screen 3 introduces both the solution formula and the discriminant calculation, rather than teaching one new idea. Technical vocabulary appears before its plain-language meaning. Only the opening and worked-example screens provide concrete examples. Some check feedback is also too abbreviated: the sum-of-roots reasoning was not taught, and the rejection of 1 and 12 does not demonstrate the failed substitution.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Connect the rectangle explicitly to x(5 − x) = 6 and then to the quadratic equation. Show the small-number arithmetic for delta, including (−5)² − 4 × 1 × 6 = 1, and write out the plus and minus calculations separately. Redistribute this material across six short screens, keeping concrete references to the rectangle throughout.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese. The question asks for the quadratic formula (fórmula de Bhaskara), so showing it is allowed and expected, but each part must be explained in words, with what the discriminant (delta) tells you about the number of solutions and one worked example with small numbers.",
+        "id": "pt-bhaskara-formula-pedida-1",
+        "userInput": {
+          "language": "pt",
+          "question": "me explica a fórmula de Bhaskara"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The statements about withholding, eligible expenses, refunds and additional payments are broadly correct and appropriately qualified. There is no personal tax advice, and referral to a CAF or commercialista is appropriate. However, the explanation omits the requested definition and audience of the 730, pension refunds, and the specific dependence of refund timing on filing. No false-simplification cap is triggered.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, beginning with the familiar payslip and answering why a refund appears. However, screen four repeats the expense adjustment from screen two and the refund mechanism from screen three without substantially advancing the explanation. The explicit repetition cap applies.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Much of the Italian is accessible, and the reader is addressed naturally as tu. However, IRPEF appears before its explanation, sostituto d’imposta is never translated into everyday language, and the 730 itself is not identified as a dichiarazione dei redditi. At least two technical terms precede their explanations, triggering the cap of 7. There are no unrequested formulas.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "Payslips, medical expenses and pharmacy receipts are relevant Italian contexts, but the purported concrete example remains a generic conditional description. It includes neither an actual amount nor the requested receipt details. Italian-formatted euro amounts and the Agenzia delle Entrate’s precompilato are absent, although CAF and commercialista are included and no foreign tax references appear. The generic-example cap applies.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one clearly correct option, the options have comparable lengths and tones, and every option receives explanatory feedback. However, Leonardo’s situation essentially repeats the refund condition already stated in the story, so it tests recognition more than application in a new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral and recognizable. The recap contains three short bullets following the taught progression from comparison to eligible expenses to refund. The proposed introductory tax course is sensible, and all three follow-up questions are natural and relevant.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2542,
+          "outputTokens": 1049,
+          "reasoningTokens": 203
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The central refund mechanism is explained correctly, but several explicit requirements are missing: identifying the 730 as the income-tax declaration for employees and pensioners, refunds through pensions, Italian-formatted euro amounts, the Agenzia delle Entrate and its 730 precompilato, the scontrino parlante with codice fiscale, and mortgage-interest or school-expense examples. The explanation also does not connect summer refund timing to when the return is filed.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The medical-expense screen largely repeats the comparison and refund mechanism instead of developing a concrete example. Technical vocabulary is introduced before its plain-language meaning, particularly IRPEF and sostituto d’imposta. The check closely reproduces the explanation rather than requiring meaningful transfer to a new situation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace the repetitive example screen with a pharmacy receipt bearing the codice fiscale and a simple comparison using Italian-formatted euro amounts. Explain sostituto d’imposta as the employer handling tax payments and refunds before naming it. Use a genuinely different situation in the check, such as someone whose withholding was lower than the final tax owed.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -885,42 +885,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The central tax mechanism is correct: estimated withholding, recalculation using deduction information, and refund or additional collection. The answer appropriately qualifies whether a separate return is necessary and refers specific cases to professionals rather than giving personal tax advice. It contains no incorrect foreign-tax framing or claim that the tax office refunds the adjustment in spring.",
-          "score": 9,
+          "reasoning": "The core mechanism is correct: estimated withholding, employer recalculation using deductions, and settlement of the difference. The medical-expense and conditional side-income filing statements are sound, and there is no personal tax advice or foreign-tax contamination. However, saying an excess 'may' be returned leaves the settlement outcome unnecessarily uncertain rather than explaining that the excess is refunded.",
+          "score": 8,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "Five short screens progress coherently from a familiar December payslip to withholding, submitted information, reconciliation, and exceptions. Each screen has a clear central idea, and the explanation answers what the employer is doing. The opening preview does not amount to problematic repetition.",
+          "reasoning": "Five short screens build coherently from a familiar payslip to recalculation, paperwork, settlement, and separate filing. Each has a clear central idea, and the final screen completes the explanation. No repetition or multi-idea-screen cap is triggered.",
           "score": 9,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "The Japanese is natural, polite without stiff honorifics, and avoids あなた, romaji, and formulas. 控除 is introduced after a plain explanation. However, 扶養 and 確定申告 appear without accessible explanations of their meanings, triggering the cap of 7 for multiple unexplained terms.",
+          "reasoning": "The Japanese is natural, uses です・ます, and avoids romaji, あなた, formulas, and stiff keigo. However, 所得税 and 控除 appear before their plain meanings are established; 控除 is only explained on the following screen. This triggers the maximum score of 7 for two or more premature technical terms.",
           "score": 7,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "The payslip opening and references to family and insurance information are relevant Japanese everyday anchors. However, the screens describe the process generically rather than showing a concrete employee example with actual withholding, final tax, and a yen refund or shortfall. The generic-example cap of 7 applies.",
+          "reasoning": "Payslips, family circumstances, life-insurance payments, and December payroll provide everyday Japanese context. Nevertheless, the examples remain generic: there is no worked yen-denominated situation, named employee declaration form, 源泉徴収票, or company 総務・経理 contact. The generic-example cap of 7 applies.",
           "score": 7,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "There is one clearly correct option, the options are reasonably similar in length and tone, and each has explanatory feedback. However, the question essentially restates the condition and outcome already taught on screen four; it does not make the learner apply the idea in a meaningfully new situation.",
-          "score": 7,
+          "reasoning": "There is one check, options are broadly comparable in length and tone, and every option has explanatory feedback. But it directly repeats the preceding refund statement rather than requiring transfer to a new situation. The option about tax not changing 'at the time paperwork is submitted' also introduces avoidable timing ambiguity.",
+          "score": 6,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The recap has exactly three short bullets following the instructional sequence. The suggested course is broad and appropriate for beginners, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
+          "reasoning": "The title is short, neutral, and recognizable. The recap has exactly three short bullets following the teaching order. 日本の税金のしくみ is a sensible broad beginner course, and the three follow-up questions naturally extend the lesson.",
           "score": 10,
           "label": "Recap, go further and title",
           "weight": 10
@@ -938,24 +938,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2655,
-          "outputTokens": 1045,
-          "reasoningTokens": 325
+          "inputTokens": 2780,
+          "outputTokens": 1108,
+          "reasoningTokens": 303
         }
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The check repeats the refund rule almost verbatim instead of testing its application in a new situation. The practical example is also thin: looking at a December payslip is useful, but no concrete Japanese tax scenario demonstrates how the adjustment works.",
           "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The explanation omits useful expected specifics: the name 源泉徴収, recognizable submission forms such as 扶養控除等申告書 and 保険料控除申告書, the usual December or January payroll timing, and concrete exceptions such as 医療費控除 and the first year of 住宅ローン控除. The check closely repeats the refund rule rather than testing its application in a new situation.",
-          "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Add a worked example using Japanese yen, connect the explanation to the 源泉徴収票 and the company's 総務 or 経理, and explain unfamiliar terms in everyday language before naming them.",
+          "conclusion": "The explanation omits the name 源泉徴収 and recognizable paperwork such as 扶養控除等申告書 and 保険料控除申告書. 控除 appears before its plain-language explanation, and 所得税 is not explained. The answer mentions December but not the usual December-or-January timing, and omits the first-year housing-loan deduction example.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Connect the explanation to an actual form submitted to 総務 or 経理, introduce the 源泉徴収票, and illustrate an excess payment with a yen amount such as 3万円. Replace the recall check with a short scenario requiring the reader to decide whether money is returned or additionally collected.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -973,42 +973,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The comparison between prepaid and actual tax, numerical calculations, and conditional wording about eligible expenses are correct. However, ‘연말에는’ falsely places settlement at year-end in both the story and recap, triggering the maximum score of 6 for a false simplification. Required details about the withholding table, deduction types, documentation service, and payroll timing are missing. No personal tax advice is given.",
-          "score": 6,
+          "reasoning": "The substantive claims are correct: withholding is provisional, eligible deductions affect final tax, and the difference determines a refund or additional payment. The explanation appropriately says eligibility and amounts vary and avoids personal tax advice. However, it omits much of the explicitly required Korean process, including the withholding table, next-year timing, 간소화 service, and payroll settlement. No false-simplification cap is triggered.",
+          "score": 7,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "There are five short screens, beginning with the familiar experience of tax being deducted from pay and ending with a worked example that answers the question. However, screen 2 introduces both recalculation and eligible tax-reducing expenses, triggering the maximum score of 7 for multiple new ideas on one screen.",
+          "reasoning": "There are five short screens, and the opening uses a familiar workplace contrast. The central answer is understandable. However, the fifth screen repeats the earlier withholding comparison and adds a separate professional-help suggestion rather than completing a progressive explanation. The repetition triggers the maximum score of 7.",
           "score": 7,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "The Korean is natural 해요체, avoids 당신 and romanization, and explains 원천징수 after describing it plainly. There are no formulas. However, 상여금 and 공제 대상 가족 are used without explanation, triggering the maximum score of 7 for two or more unexplained terms.",
+          "reasoning": "The Korean is natural 해요체, without 당신, romanization, formulas, or code. However, 공제 and 세액공제 are introduced before their plain-language meanings, and the distinction between them is never explained. Two unexplained technical terms trigger the maximum score of 7.",
           "score": 7,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "The named employees and Korean-formatted won amounts provide a concrete, correctly calculated example. Paychecks, card spending, and family circumstances also ground most screens in everyday life. Practical usefulness is reduced by the absence of the requested Korean institutional workflow involving 홈택스, 국세청, and the company's payroll 담당자.",
-          "score": 8,
+          "reasoning": "Monthly pay and coworkers are relevant Korean everyday settings, and 연금저축 is a useful specific example. Nevertheless, the named-person example supplies no actual withheld tax, final tax, or refund amount; it mostly restates the general rule. The generic-example cap of 7 applies. There are no prohibited foreign currencies or number formats.",
+          "score": 7,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "The single check applies the main comparison to a new employee and new amounts. Exactly one option is correct, the options are reasonably similar in length and tone, and each has feedback explaining the relevant comparison.",
-          "score": 10,
+          "reasoning": "There is one check with similarly sized options and explanatory feedback for every option. The qualified correct option is defensible, while the other two are clearly unsupported. Its main weakness is that it reproduces screen five's identical situation with new names instead of requiring application to a new situation.",
+          "score": 7,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The recap has three short bullets matching the story's teaching order. The suggested course is a sensible broad introduction, the three follow-up questions are natural, and the title is short, neutral, and recognizable. The recap's timing error is assessed under accuracy.",
+          "reasoning": "The recap contains exactly three short bullets that follow the taught sequence: withholding, final tax calculation, and reconciliation. '경제와 세금' is a sensible broad beginner course, and the three follow-up questions are relevant. The title is short, neutral, and recognizable.",
           "score": 10,
           "label": "Recap, go further and title",
           "weight": 10
@@ -1026,24 +1026,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2633,
-          "outputTokens": 1123,
-          "reasoningTokens": 268
+          "inputTokens": 2717,
+          "outputTokens": 1142,
+          "reasoningTokens": 271
         }
       },
       "steps": [
         {
-          "conclusion": "The explanation incorrectly places recalculation at year-end, repeating this in the recap. Employees' year-end tax settlement occurs early the following year, with refunds or additional withholding usually reflected in February or March pay. It also omits substantial required Korean process details: the 간이세액표, 소득공제 and 세액공제, and 홈택스의 연말정산 간소화 서비스. The central explanation of why some people receive refunds and others owe more is correct.",
+          "conclusion": "The core refund-versus-additional-payment explanation is correct, but substantial required Korean context is missing: 원천징수, the 간이세액표, recalculation early the following year, 홈택스 연말정산 간소화 서비스, and settlement through February or March pay. It also omits the requested connection to '13월의 월급' and most of the specified deduction examples. These omissions leave the explanation materially incomplete, although it gives no personal tax advice or foreign tax misinformation.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "Screen 2 introduces both annual recalculation and tax-reducing expenses. 상여금 and 공제 대상 가족 appear without plain-language explanations. The result also omits the requested company 인사팀 or 회계팀, 국세청 context, and the familiar expression ‘13월의 월급’. In the numerical example, the text should explicitly state that Minjun's actual tax is also 160만 원 rather than leaving that assumption to the illustration.",
+          "conclusion": "공제 and 세액공제 appear before their everyday meanings are explained. The fifth screen largely repeats the comparison already taught rather than advancing the explanation. The check then repeats that same two-person scenario with different names, so it tests recognition rather than application in a new situation. The examples remain qualitative, without a concrete won-denominated calculation.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use the available sixth screen to explain the practical workflow: employees gather records through 홈택스, submit or confirm them with the company's 담당자, and see the resulting refund or additional deduction in their pay. Keep the annual recalculation and the explanation of deductions on separate screens.",
+          "conclusion": "Replace the repetitive final screen with the practical timeline: gather relevant records through 홈택스, submit or confirm them with the company's 인사팀 or 회계팀, and see the adjustment in the usual payroll period. Use a simple won-denominated example, then make the check ask about a different case, such as someone whose withheld tax falls short of their final tax.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -1061,42 +1061,42 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The stated rates and the 120 TL example are correct, and the answer correctly identifies the final consumer as bearing the tax. However, it does not explicitly explain net remittance or taxation of added value. The seller-transfer and 'not all from its own pocket' wording leaves the collection-versus-burden distinction less precise than required. Shelf-price inclusion is also inadequately established.",
+          "reasoning": "The numerical example is correct, and the answer correctly distinguishes the customer's tax burden from the seller's reporting responsibility. However, the required value-added mechanism is left incomplete and ambiguously worded: deducting purchase KDV is mentioned without explicitly explaining payment of the difference. The general %20 rate and lower-rate exceptions are also not established.",
           "score": 7,
           "label": "Accuracy",
           "weight": 25
         },
         {
           "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar receipt-based opening, and an ending that answers who bears KDV. However, screen 2 introduces both the definition and the rate structure, triggering the maximum score of 7 for multiple new ideas in one screen.",
+          "reasoning": "There are five short screens, a familiar receipt-based opening, and a final answer to who bears the tax. However, screens 1 and 4 repeat the same lesson about KDV already being included, triggering the maximum score of 7 for repetition. The available space could instead explain the missing chain mechanism.",
           "score": 7,
           "label": "Clarity & one idea per screen",
           "weight": 20
         },
         {
           "categoryId": "everydayWords",
-          "reasoning": "The Turkish is generally accessible, addresses the reader as 'sen', and uses Turkish characters correctly. There are no unsolicited formulas; the percentages and currency notation satisfy the task's explicit requirements. Administrative language such as 'vergi dairesine beyan' could be replaced with everyday wording, and deducting KDV could be explained more concretely.",
-          "score": 8,
+          "reasoning": "The answer uses Turkish characters, addresses the reader naturally, and presents its arithmetic in words rather than an unsolicited equation. However, multiple technical expressions appear before explanation, notably 'vergiye tabi', 'tahsil', and 'beyan'. This triggers the maximum score of 7 for unexplained terminology.",
+          "score": 7,
           "label": "Everyday words, no formulas unless asked",
           "weight": 20
         },
         {
           "categoryId": "practicalExample",
-          "reasoning": "The market receipt and correctly calculated 120 TL purchase provide concrete Turkish examples, with appropriate lira and percentage formatting. Several screens remain anchored in shopping. The main weakness is that the numerical example illustrates only the consumer's tax share, not the purchase-credit and net-payment mechanism central to understanding KDV.",
+          "reasoning": "The market receipt is directly relevant to the reader, and the 100 TL purchase becoming 120 TL is a concrete, correctly formatted Turkish-money example. Most screens remain tied to shopping. The main limitation is that no worked transaction makes the purchase-tax deduction and value-added mechanism tangible.",
           "score": 8,
           "label": "Practical example",
           "weight": 15
         },
         {
           "categoryId": "check",
-          "reasoning": "The single check transfers the main idea to a pastane purchase, has one clearly correct option, and uses options of comparable length and tone. Every option has explanatory feedback distinguishing the final burden from the business's collection role.",
-          "score": 9,
+          "reasoning": "There is one check with one clearly correct option, reasonably comparable options, and explanatory feedback for every answer. However, changing the setting from a market to a café leaves the question essentially a repetition of 'the customer bears the burden'; it does little to test application in a genuinely new situation.",
+          "score": 7,
           "label": "The check",
           "weight": 10
         },
         {
           "categoryId": "ending",
-          "reasoning": "The title is short, neutral, and recognizable. The three recap bullets follow the teaching sequence, and the suggested beginner course and three follow-up questions are relevant and natural.",
+          "reasoning": "The title is recognizable and neutral. The recap contains three short bullets that follow the order of the relevant teaching, and 'Ekonomi' is a sensible broad beginner course. The three follow-up questions are natural extensions of the topic.",
           "score": 9,
           "label": "Recap, go further and title",
           "weight": 10
@@ -1114,24 +1114,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2659,
-          "outputTokens": 1231,
-          "reasoningTokens": 437
+          "inputTokens": 2687,
+          "outputTokens": 1110,
+          "reasoningTokens": 297
         }
       },
       "steps": [
         {
-          "conclusion": "The central chain mechanism is incomplete: the learner-facing text mentions deducting purchase KDV but never explicitly says the business pays the difference to the state, taxing only the value it adds. That difference appears only in an image prompt. Saying the seller transfers KDV and does not pay 'all' of it from its own pocket also leaves unnecessary ambiguity about who bears the tax.",
+          "conclusion": "The central chain mechanism is incomplete: the answer mentions deducting purchase KDV but never clearly explains that each business pays the difference to the state, taxing only the value it adds. The wording about the collected amount not remaining 'on the business' obscures this distinction. It also never identifies %20 as the general rate or explains that some goods have lower rates.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Screen 2 combines defining KDV with teaching its rates, rather than introducing one idea. The answer does not clearly establish that Turkish shelf prices already include KDV; 'çoğunlukla fiyata dâhil' is weaker than the required explanation. Some administrative wording, especially 'beyan', is unexplained.",
+          "conclusion": "Screens 1 and 4 repeat the same included-in-the-price explanation. Several expressions, including 'vergiye tabi', 'tahsil', and 'beyan', appear without plain-language explanations. The check largely repeats the final screen's conclusion with a café substituted for the market rather than requiring meaningful application.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use a short Turkish shop example showing purchase KDV, sales KDV, and the difference remitted, expressed entirely in words. Explicitly connect that difference to the business's added value. State that the shelf price includes KDV and briefly contrast this with US checkout-added sales tax without replacing the Turkish example.",
+          "conclusion": "Use the repeated screen for a simple Turkish purchase-and-resale example showing purchase KDV, collected KDV, and the difference remitted, all explained in words. State plainly that Türkiye's shelf prices include KDV, and briefly distinguish this from US tax added at checkout. Make the check ask the reader to interpret a new receipt or transaction.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -1142,6 +1142,94 @@
         "userInput": {
           "language": "tr",
           "question": "kdv tam olarak ne? market fisinde yazan kdvyi aslinda kim oduyor"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The basic account of a short-lived, single-use code and bank-app confirmation is sound, and there is no financial advice. However, the description of matching a code to an already pending payment obscures the expected issuing-bank lookup. Several required factual details are absent: approximately two minutes of validity, sending the amount with the code, money moving only after confirmation, and the shop not receiving card or account numbers.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens begin with familiar online shopping and mostly progress cleanly. However, the story ends without clearly explaining how the six digits lead to the reader's particular bank app—the central question. This triggers the maximum score of 7 for ending before fully answering the question.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Polish is generally natural, addresses the reader directly, uses Polish diacritics, and contains no unsolicited formulas. However, “operator płatności” and “biometria” are introduced without first explaining their plain-language meanings, triggering the cap of 7 for two unexplained terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "Online shopping is an appropriate Polish everyday use, and the one-time-key comparison is helpful. Nevertheless, the purchase remains generic: no particular item or amount such as 49,99 zł is followed through the process. The generic-example cap of 7 applies. There are no foreign payment-service examples or inappropriate number formats.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one check with one clearly correct option and explanatory feedback for every answer. Its main weakness is that Maja's online purchase reproduces the taught situation and asks for essentially the final screen's statement, rather than applying the mechanism in a new situation. The correct option also needs grammatical revision.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The neutral, recognizable title fits the question. The recap has exactly three short bullets matching the story in order. “Finanse i płatności” is a sensible broad introductory course, and the three follow-up questions are relevant and natural.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2617,
+          "outputTokens": 1266,
+          "reasoningTokens": 444
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation leaves the central routing mechanism unclear: it says BLIK matches the code to a pending payment rather than explaining that the system knows which bank's app issued it. It also omits the approximate two-minute validity, transmission of the amount alongside the code, explicit movement of money only after confirmation, and protection of card and account numbers. The examples contain no concrete złoty amount.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Operator płatności” and “biometria” appear without plain-language explanations. The check mostly repeats the final screen rather than testing transfer to a new situation, and its correct option is grammatically awkward: “Że płatność została potwierdzona, ale nie poznać jej imienia”.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Follow one purchase, such as an order costing 49,99 zł, through all five screens to make the routing and confirmation sequence tangible. For the check, use a different situation, such as a cardless ATM withdrawal, and ask whether entering the code alone authorizes the withdrawal.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Polish, speaking to the reader as \"ty\", of BLIK: you generate a one-time 6-digit code in your bank's app, valid for about 2 minutes; the shop or ATM sends the code with the amount to the BLIK system, which knows which bank's app issued it, and that app asks you to confirm the payment (often with a PIN). Only after that does the money move, so the shop never sees your card or account number and the code can't be used again. The question was typed without Polish letters, but the answer MUST use them (ą, ć, ę, ł, ń, ó, ś, ź, ż). Examples MUST be Polish: amounts in złoty written the Polish way (49,99 zł, 12 500 zł), paying in an online shop, taking cash from an ATM without a card or a przelew na telefon to split a bill with friends. Penalize dollars, Venmo, Zelle or Brazil's Pix as the example, US-style number formats, or claims that the 6 digits are a card number or a permanent password. Must not give financial advice.",
+        "id": "pl-blik-kod-1",
+        "userInput": {
+          "language": "pl",
+          "question": "jak dziala blik? skad sklep wie ze to ja place jak podaje tylko 6 cyfr"
         }
       }
     }
