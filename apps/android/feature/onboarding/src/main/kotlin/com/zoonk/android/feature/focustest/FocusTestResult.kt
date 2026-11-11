@@ -205,14 +205,11 @@ private fun Proposal(
     val pending = plan.deciding != null
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (answer?.status != PlanChangeDecisionInput.Status.APPLIED) {
+        if (answer == null) {
             planChangeProposalEffect(proposal.effect, besideDiff = true, setsFocus = proposal.setsFocus)?.let {
                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
             PlanEffectDiff(proposal.effect)
-        }
-
-        if (answer == null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (proposal.canApply) {
                     Button(

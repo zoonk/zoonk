@@ -162,6 +162,18 @@ class FocusTestScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanProposalNotNow() =
+        shoot(
+            "focus-test-checkpoint-plan-proposal-not-now",
+            closing(focusOf(state = "proposed", proposal = PROPOSAL)),
+            host = FocusTestHost.Plan,
+        ) {
+            tap("Use my answers")
+            tap("Not now")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun checkpointOnPlanHandPicked() =
         shoot("focus-test-checkpoint-plan-hand-picked", closing(focusOf(state = "handPicked")), host = FocusTestHost.Plan) {
             tap("Use my answers")
