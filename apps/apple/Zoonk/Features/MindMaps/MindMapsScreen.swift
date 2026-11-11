@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Main's Mind maps page: Study over the Chapters, Lessons and Saved tabs, each a short index of the
 /// maps that open, then on Chapters the ones not made yet. Opened from a subject, it starts at that
-/// subject's chapter maps.
+/// subject's maps in the tab it opens, unfolded.
 struct MindMapsScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -38,7 +38,7 @@ struct MindMapsScreen: View {
   private func content(list: Resource<GoalMindMaps>, goal: LearnerGoal) -> some View {
     switch list.state {
     case .loaded(let maps):
-      let shown = tab ?? (subjectKey == nil ? maps.firstTab : .chapters)
+      let shown = tab ?? maps.firstTab
 
       ScrollViewReader { proxy in
         ZoonkList {
@@ -61,7 +61,7 @@ struct MindMapsScreen: View {
           case .chapters:
             MindMapChaptersTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
           case .lessons:
-            MindMapLessonsTab(goalId: goal.id, maps: maps)
+            MindMapLessonsTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
           case .saved:
             MindMapSavedTab(goalId: goal.id, maps: maps)
           }
@@ -374,6 +374,7 @@ private struct MindMapCreateSection: View {
 private struct MindMapLessonsTab: View {
   let goalId: String
   let maps: GoalMindMaps
+  let subjectKey: String?
 
   var body: some View {
     if maps.lessonGroups.isEmpty {
@@ -391,7 +392,7 @@ private struct MindMapLessonsTab: View {
         maps.chapter(group.chapterId).map { LessonGroupItem(group: group, chapter: $0) }
       }
 
-      MindMapIndex(items: groups, subject: \.chapter.subject) { item in
+      MindMapIndex(items: groups, subject: \.chapter.subject, opensAt: subjectKey) { item in
         LessonGroupRow(goalId: goalId, item: item)
       }
     }
