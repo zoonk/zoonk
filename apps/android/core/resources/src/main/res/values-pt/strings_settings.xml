@@ -21,6 +21,9 @@
   "settings_download_data": "c56d7663ed6636f59ea9799c324fc70a94b21da8a53a9a9570cba4a966641cf9",
   "settings_download_data_description": "6e172bc021f693733163db5764b685aadd0a3e302f8410bd2778e1f903b36da5",
   "settings_download_failed": "f249ba7b566b29e301be50d4c097b0c452bc626ac3f3c63623a69503d23fedfa",
+  "settings_home_country": "625f4beb2ffca149a760dc9785692d4157a127d9b83b55294a79c91c8bb9114b",
+  "settings_home_country_description": "801be5673c0b9b42336f0e8e3a66228ed8ddd8fbc2e07ae67c733756c99f8990",
+  "settings_home_country_none": "a6143b5fc5b513f09316b1ab80f4e53346c8b832a33420abfed4c9bb3da02ce0",
   "settings_licenses": "3f23ae170af001ac0ebc41a308407a3ea3dd762aad0d113c6869d383ca309771",
   "settings_licenses_read": "84f5cfd8cb25b136324ec19523b6bed8462da62dacc1acdff0f839753f20a63c",
   "settings_licenses_website": "86223ccf13dd4be2fc4c5c8f85321def04de2937de128691ee69deb29e4ffc43",
@@ -33,7 +36,7 @@
   "settings_preferences_change": "ff44a8afc5b03cff9f8fdcb7f11a6683eabff82d8ddb1a5705308593750d4d49",
   "settings_preferences_choose_buddy": "85b5c3f0e8461c8a85b841fd3c0718c2e2392984d6c1051e21acebb0cc530bd8",
   "settings_preferences_description": "6daf06a680b3201f80a21ad099a1ba038fe7f40ac2b9527942980bf48674f1e8",
-  "settings_preferences_language": "ef65eea774db75c7ad1b7369ba62ac86758c601390235dbb61478869ae44d42f",
+  "settings_preferences_language": "26424878c11d9db5d2ca709eddf0b2bb7479a036f4cc075898fd09ddf5fefcbe",
   "settings_preferences_lessons": "3acaf6bef42cdc6071b9fb136c2d86e3e91a9f170dc0847b35be56ec7fa1a17f",
   "settings_preferences_on_this_device": "56e11c84010876b252e726d72ac04b59a250bb952f0ac3a11a39c9097106b8f8",
   "settings_preferences_save_failed": "2133eb17c035b4a6f3b99fc91990813db74349c8b80a25d39bfeb6beb8334209",
@@ -54,6 +57,8 @@
 <resources>
     <string name="settings_preferences">Preferências</string>
     <string name="settings_memory">Memória</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">Desativados</string>
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
     <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Perfil</string>
@@ -91,7 +96,7 @@
     <string name="settings_preferences_lessons">Aulas</string>
     <string name="settings_preferences_sounds">Sons</string>
     <string name="settings_preferences_sounds_description">Quando você acerta ou termina</string>
-    <string name="settings_preferences_language">Idioma</string>
+    <string name="settings_preferences_language">Idioma e região</string>
     <string name="settings_preferences_app_language">Idioma do app</string>
     <string name="settings_preferences_on_this_device">Neste dispositivo</string>
     <string name="settings_preferences_save_failed">Não foi salvo. Tente de novo.</string>
@@ -103,6 +108,10 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Compartilhar dados de uso</string>
     <string name="settings_preferences_share_usage_data_description">Mostra como você usa o Zoonk e ajuda a gente a melhorar o app</string>
-    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
-    <string name="settings_reminders_off">Desativados</string>
+    <!-- A setting in Preferences: the country the learner lives in. -->
+    <string name="settings_home_country">Onde você mora</string>
+    <!-- Under that setting. -->
+    <string name="settings_home_country_description">Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem.</string>
+    <!-- That setting's value when the learner hasn't said where they live, and the picker's first choice, which clears it. -->
+    <string name="settings_home_country_none">Não informado</string>
 </resources>

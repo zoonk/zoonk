@@ -42,6 +42,11 @@
   "onboarding_change_date": "8a74bd1402b614b44490c7a0ed2b9c0e4101c5375b1a49b54ec9e29e1fae2133",
   "onboarding_choose_date": "e2a7806d4c299068d511654566485005167cc0faab6c70aa7b8f30bd64fd92de",
   "onboarding_continue": "3f443789982207421ca6ea62fa0c25cfe9bd7577725c53bb803ef0d94c73e80c",
+  "onboarding_country_description": "808b7b38b5756cbf36556acc367a1f081d5503c358d29db7cee89690cd0a69c8",
+  "onboarding_country_from_home": "d322019ef8c7e16575f803665a00c019d070ce6e7977e53dea6f9f7d710f0090",
+  "onboarding_country_other": "9ae7f74d244b631a2c3e70356bc25c3f08b9e91c1f6ee853b65755ed0dd33924",
+  "onboarding_country_skip_default": "5c664e780de06a80f833fbfc6d4cfd4987a1d5c8986ed237664192841d1be313",
+  "onboarding_country_title": "a996d4ffd252067f201d774df9daedfc3c53b1b5dfb27c92d700e9c1ff7c6cf6",
   "onboarding_course_build": "1bea2cd8d3b2bf1270b54905c39a48eb74aac2c0fe19c6b6bd3a93d4474a5e2a",
   "onboarding_course_chapter_description": "d83c9eaab4c2c5278e3b48cf30c972173d6fc04fd5f36b83fe81f82dbf00a215",
   "onboarding_course_chapters": "619c3526b4600d49c982c2ce4660215efefa7be19aec5b1e35ea31e441196025",
@@ -543,6 +548,12 @@
     <string name="onboarding_understood_locked_goal">Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, este objetivo espera en tu lista de objetivos.</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, estos objetivos esperan en tu lista de objetivos.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Disponible con una cuenta gratis</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, este objetivo espera en tu lista de objetivos.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, estos objetivos esperan en tu lista de objetivos.</string>
     <string name="onboarding_looks_right">Confirmar</string>
     <string name="onboarding_fix_something">Corregir algo</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -1148,12 +1159,6 @@
     </plurals>
     <string name="onboarding_reason_choices">Por qué aprendes este idioma</string>
     <string name="onboarding_aim_description">Hasta dónde llega tu curso, lo que define cuánto dura tu plan.</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">Disponible con una cuenta gratis</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, este objetivo espera en tu lista de objetivos.</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, estos objetivos esperan en tu lista de objetivos.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">País</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
@@ -1162,4 +1167,14 @@
     <string name="onboarding_variety_none">Sin preferencia</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">Tu compañero y las llamadas de práctica usan %1$s. Las lecciones y su audio usan %2$s.</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">¿Sobre qué país quieres que traten tus lecciones?</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">Lo que aprendes aquí varía según el país. Puedes cambiarlo después en tu plan.</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">Otro país</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">Si saltas este paso: %1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">donde vives</string>
 </resources>
