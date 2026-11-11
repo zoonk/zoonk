@@ -71,6 +71,16 @@ describe(matchSpokenAnswer, () => {
     }
   });
 
+  it("compares words that are also names of built-in object properties", () => {
+    const match = matchSpokenAnswer({
+      expected: "The constructor works.",
+      heard: "The constructor works.",
+      language: "en",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
+
   it("still flags another word in place of an 's contraction", () => {
     const match = matchSpokenAnswer({
       expected: "What's your name?",

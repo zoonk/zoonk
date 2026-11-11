@@ -11,10 +11,10 @@ const ENGLISH_CONTRACTIONS: readonly [RegExp, string][] = [
 ];
 
 /** Their long form depends on the sentence: "what's" is "what is" or "what has". */
-const LONG_FORMS: Readonly<Record<string, readonly string[]>> = {
-  "'d": ["would", "had"],
-  "'s": ["is", "has"],
-};
+const LONG_FORMS: ReadonlyMap<string, readonly string[]> = new Map([
+  ["'d", ["would", "had"]],
+  ["'s", ["is", "has"]],
+]);
 
 export function expandContractions({ language, text }: { language: string; text: string }): string {
   if (!language.startsWith("en")) {
@@ -28,7 +28,7 @@ export function expandContractions({ language, text }: { language: string; text:
 }
 
 function isLongFormOf(short: string, long: string): boolean {
-  return LONG_FORMS[short]?.includes(long) ?? false;
+  return LONG_FORMS.get(short)?.includes(long) ?? false;
 }
 
 export function isSameSpokenWord(expected: string, heard: string): boolean {
