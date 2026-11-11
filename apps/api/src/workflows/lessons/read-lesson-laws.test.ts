@@ -181,6 +181,7 @@ describe(readLessonLaws, () => {
     });
 
     expect(generateLessonSpec).toHaveBeenCalledOnce();
+
     expect(getStartMock().mock.calls.map(([workflow]) => workflow)).not.toContain(
       lawSourceWorkflow,
     );
