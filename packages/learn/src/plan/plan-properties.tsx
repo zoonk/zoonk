@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
+import { type LessonVariety } from "../country/use-country-lines";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -67,6 +68,53 @@ function PropertyRow({
         <PropertyRowParts label={label}>{children}</PropertyRowParts>
       </button>
     </li>
+  );
+}
+
+/** Not a control: what it says is decided elsewhere, so it reads as one label with its value. */
+function ReadOnlyRow({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <li className={cn(PROPERTY_ROW_CLASS, "hover:bg-transparent")}>
+      <PropertyRowParts label={label}>{children}</PropertyRowParts>
+    </li>
+  );
+}
+
+function LessonLanguageRow({ variety }: { variety: LessonVariety }) {
+  const t = useExtracted();
+  const varietyName = useVarietyName();
+
+  return <ReadOnlyRow label={t("Lesson language")}>{varietyName(variety)}</ReadOnlyRow>;
+}
+
+/** Content or exam country, then the lessons' language where it could surprise; one slot with Language. */
+function CountryRows({ onOpen }: { onOpen: () => void }) {
+  const t = useExtracted();
+  const { contentCountry, examplesCountry } = usePlanScreen().goal;
+
+  if (examplesCountry) {
+    return <ReadOnlyRow label={t("Lesson examples")}>{examplesCountry.name}</ReadOnlyRow>;
+  }
+
+  if (!contentCountry) {
+    return null;
+  }
+
+  return (
+    <>
+      {contentCountry.editable ? (
+        <PropertyRow label={t("Content country")} onOpen={onOpen}>
+          {contentCountry.name}
+        </PropertyRow>
+      ) : (
+        <ReadOnlyRow
+          label={contentCountry.kind === "exam" ? t("Exam country") : t("Content country")}
+        >
+          {contentCountry.name}
+        </ReadOnlyRow>
+      )}
+      {contentCountry.lessonVariety && <LessonLanguageRow variety={contentCountry.lessonVariety} />}
+    </>
   );
 }
 
@@ -209,6 +257,8 @@ export function PlanProperties({
             {varietyName(goal.country)}
           </PropertyRow>
         )}
+
+        <CountryRows onOpen={() => onOpen("country")} />
 
         {goal.kind === "language" && practiced.length > 0 && (
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>

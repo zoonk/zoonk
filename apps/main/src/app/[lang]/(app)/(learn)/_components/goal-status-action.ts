@@ -3,6 +3,7 @@
 import { goalUpdateInputSchema } from "@zoonk/core/goals/contract";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
+import { retryGenerationAction } from "../../(onboarding)/start/onboarding-actions";
 
 export async function setGoalStatusAction(
   goalId: string,
@@ -50,6 +51,11 @@ export async function setGoalContentCountryAction(
 
   const result = await updateGoal({ goalId, input: input.data });
   return result.status === "updated";
+}
+
+/** Starts a failed rebuild again; the old plan stays until the new one saves. */
+export async function retryGoalRebuildAction(goalId: string): Promise<boolean> {
+  return (await retryGenerationAction(goalId)) !== null;
 }
 
 export async function renameGoalAction(goalId: string, displayName: unknown): Promise<boolean> {

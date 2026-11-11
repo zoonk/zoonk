@@ -13,6 +13,8 @@ import { type RegionChoice } from "@zoonk/utils/language-regions";
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type CountryChoice, type SuggestedCountry } from "../country/country-choice";
+import { type LessonVariety } from "../country/use-country-lines";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
 /** `change` is null while the plan isn't built yet. */
@@ -60,8 +62,27 @@ type PlanCountry = {
   region: string | null;
 };
 
+/** The country a goal's content is about, as core decides it. */
+export type PlanContentCountry = {
+  code: string;
+  /** False for an exam's country, which the exam decides. */
+  editable: boolean;
+  kind: "content" | "exam";
+  lessonVariety: LessonVariety | null;
+  name: string;
+  /** Resolves to whether it saved; a saved country rebuilds the plan in the background. */
+  onChange: (code: string) => Promise<boolean>;
+  /** Starts the failed rebuild again; resolves to whether it started. */
+  onRetry: () => Promise<boolean>;
+  rebuild: "failed" | "none" | "preparing";
+  suggested: readonly SuggestedCountry[];
+};
+
 export type PlanGoal = {
+  contentCountry?: PlanContentCountry | null;
   country?: PlanCountry | null;
+  /** A general goal's lessons use this country's examples, which isn't where the learner lives. */
+  examplesCountry?: CountryChoice | null;
   displayName: string;
   kind: "exam" | "explain" | "language" | "learn";
 };

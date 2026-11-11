@@ -32,7 +32,7 @@ import {
 import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 function useGoalStatus({
   goalId,
@@ -74,6 +74,29 @@ export function JourneySetupClient({ goalId, goalStatus, goalTitle }: PlanlessGo
 }
 
 /** "Try again" starts the run only on the learner's tap. */
+/** A new country's plan is prepared in the background: the Plan reads itself again once it's done. */
+function PlanRebuildFollower({ goalId }: { goalId: string }) {
+  const router = useRouter();
+
+  const run = useWorkflowRun({
+    generationId: null,
+    kind: "curriculum",
+    onReady: () => router.refresh(),
+    readGenerationId: () => readGoalGenerationId(goalId),
+    restart: () => retryGenerationAction(goalId),
+  });
+
+  const failed = run.status === "failed";
+
+  useEffect(() => {
+    if (failed) {
+      router.refresh();
+    }
+  }, [failed, router]);
+
+  return null;
+}
+
 export function JourneyBuildingClient({ goalId, goalStatus, goalTitle }: PlanlessGoal) {
   const router = useRouter();
   const status = useGoalStatus({ goalId, resume: false, status: goalStatus });
@@ -238,8 +261,12 @@ export function JourneyClient({
     return started;
   };
 
+  const { contentCountry } = props.goal;
+
   return (
     <TopicOutlineProvider value={outlineActions}>
+      {contentCountry?.rebuild === "preparing" && <PlanRebuildFollower goalId={goalId} />}
+
       <JourneyScreen
         {...props}
         actions={{
@@ -263,6 +290,21 @@ export function JourneyClient({
             view: getCertificatesView(certificates.earned),
           },
           next: next && { ...next, onContinue: () => continueNextLevel(next.onContinue) },
+        }}
+        goal={{
+          ...props.goal,
+          contentCountry: contentCountry && {
+            ...contentCountry,
+            onRetry: async () => {
+              const started = await contentCountry.onRetry();
+
+              if (started) {
+                router.refresh();
+              }
+
+              return started;
+            },
+          },
         }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
