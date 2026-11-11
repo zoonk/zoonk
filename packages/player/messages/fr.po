@@ -3798,16 +3798,6 @@ msgid "Open lesson"
 msgstr "Ouvrir la leçon"
 
 #: src/mind-maps/mind-map-reader.tsx
-msgctxt "sIR8OK"
-msgid "Chapter {number, number}"
-msgstr "Chapitre {number, number}"
-
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "w0NNz1"
-msgid "Lesson {number, number}"
-msgstr "Leçon {number, number}"
-
-#: src/mind-maps/mind-map-reader.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Terminé"
@@ -3827,20 +3817,10 @@ msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "Carte mentale précédente"
 
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} sur {total, number}"
-
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
-
-#: src/mind-maps/mind-map-slides.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Plein écran"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "7FWazb"

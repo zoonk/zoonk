@@ -3798,16 +3798,6 @@ msgid "Open lesson"
 msgstr "レッスンを開く"
 
 #: src/mind-maps/mind-map-reader.tsx
-msgctxt "sIR8OK"
-msgid "Chapter {number, number}"
-msgstr "第{number, number}章"
-
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "w0NNz1"
-msgid "Lesson {number, number}"
-msgstr "レッスン{number, number}"
-
-#: src/mind-maps/mind-map-reader.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "完了"
@@ -3827,20 +3817,10 @@ msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "前のマップ"
 
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}"
-
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
-
-#: src/mind-maps/mind-map-slides.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "全画面表示"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "7FWazb"

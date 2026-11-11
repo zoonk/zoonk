@@ -20,8 +20,8 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
 
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-w-9 flex-1 basis-0 justify-end",
-  start: "flex min-w-9 flex-1 basis-0 justify-start",
+  end: "flex min-w-fit flex-1 basis-0 justify-end",
+  start: "flex min-w-fit flex-1 basis-0 justify-start",
 } as const;
 
 const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";

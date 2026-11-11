@@ -14,7 +14,6 @@ export type ChapterSlide = {
   image: MindMapImage | null;
   kind: "chapter";
   outline: MindMapOutline;
-  position: number;
   saved: boolean;
   title: string;
 };
@@ -22,7 +21,6 @@ export type ChapterSlide = {
 /** A lesson map is read with its chapter's others, so the deck names it without holding it. */
 export type LessonSlide = {
   chapterId: string;
-  chapterPosition: number;
   chapterTitle: string;
   kind: "lesson";
   lessonId: string;
@@ -41,7 +39,6 @@ function toChapterSlide(chapter: GoalMindMapView): ChapterSlide[] {
       image: chapter.image,
       kind: "chapter",
       outline: chapter.outline,
-      position: chapter.position,
       saved: chapter.saved,
       title: chapter.title,
     },
@@ -57,7 +54,6 @@ function toLessonSlide({
 }): LessonSlide {
   return {
     chapterId: chapter.chapterId,
-    chapterPosition: chapter.position,
     chapterTitle: chapter.title,
     kind: "lesson",
     lessonId,

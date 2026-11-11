@@ -5,11 +5,11 @@ import { keepMindMapPlace } from "@zoonk/learn/mind-maps/resume";
 import { type MindMapSave, MindMapSaveButton } from "@zoonk/learn/mind-maps/save";
 import { type SavedMapTarget, toSavedMapKey, useMindMapSaves } from "@zoonk/learn/mind-maps/saves";
 import { type MindMapTab, buildStudyHref } from "@zoonk/learn/mind-maps/urls";
+import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame";
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
-import { TaskActions } from "@zoonk/learn/task-layout";
+import { TASK_BACK_ACTION_CLASS, TaskActions } from "@zoonk/learn/task-layout";
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
 import { CheckIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -54,24 +54,13 @@ function useKeptPlace({
   }, [chapterId, goalId, isLast, lessonId, view]);
 }
 
-function useSlideTitle({ lesson, slide }: { lesson: LessonMindMap | null; slide: DeckSlide }) {
-  const t = useExtracted();
-
+/** A lesson slide whose chapter is loading, failed or gone has only its chapter's title to show. */
+function getSlideTitle({ lesson, slide }: { lesson: LessonMindMap | null; slide: DeckSlide }) {
   if (slide.kind === "chapter") {
-    return {
-      detail: t("Chapter {number, number}", { number: slide.position }),
-      title: slide.title,
-    };
+    return slide.title;
   }
 
-  const chapter = t("Chapter {number, number}", { number: slide.chapterPosition });
-
-  return lesson
-    ? {
-        detail: `${chapter} · ${t("Lesson {number, number}", { number: lesson.position })}`,
-        title: lesson.title,
-      }
-    : { detail: chapter, title: slide.chapterTitle };
+  return lesson?.title ?? slide.chapterTitle;
 }
 
 function EmptyDeck({ exit }: { exit: string }) {
@@ -133,7 +122,7 @@ function Reader({
   const lessonId = shown.kind === "lesson" ? shown.lessonId : null;
   const isFirst = at.index === 0;
   const isLast = at.index === deck.length - 1;
-  const heading = useSlideTitle({ lesson, slide: shown });
+  const title = getSlideTitle({ lesson, slide: shown });
 
   const target: SavedMapTarget | null =
     shown.kind === "chapter"
@@ -175,11 +164,10 @@ function Reader({
       fit="always"
       footer={
         <TaskActions data-slot="mind-map-reader-actions">
-          <div className="flex items-center gap-2.5 lg:mr-auto">
+          {!isFirst && (
             <Button
               aria-keyshortcuts="ArrowLeft"
-              className="size-11 shrink-0"
-              disabled={isFirst}
+              className={TASK_BACK_ACTION_CLASS}
               onClick={previous}
               size="icon"
               variant="outline"
@@ -187,19 +175,6 @@ function Reader({
               <ChevronLeftIcon aria-hidden="true" />
               <span className="sr-only">{t("Previous map")}</span>
             </Button>
-
-            <p className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums">
-              {t("{current, number} of {total, number}", {
-                current: at.index + 1,
-                total: deck.length,
-              })}
-            </p>
-          </div>
-
-          {save && (
-            <MindMapSaveButton aria-keyshortcuts={SAVE_KEY} {...save}>
-              <ShortcutKbd>{SAVE_KEY.toUpperCase()}</ShortcutKbd>
-            </MindMapSaveButton>
           )}
 
           {isLast ? (
@@ -214,15 +189,33 @@ function Reader({
         </TaskActions>
       }
       headerEnd={
-        <MindMapReaderMenu
-          chapterId={shown.chapterId}
-          hrefs={hrefs}
-          isFirst={isFirst}
-          lessonId={lessonId}
-          onRestart={() => turnTo(0, "back")}
-        />
+        <>
+          {save && (
+            <MindMapSaveButton
+              aria-keyshortcuts={SAVE_KEY}
+              {...save}
+              className="shrink-0"
+              labelled={false}
+              size="icon"
+              variant="ghost"
+            />
+          )}
+
+          <MindMapReaderMenu
+            chapterId={shown.chapterId}
+            hrefs={hrefs}
+            isFirst={isFirst}
+            lessonId={lessonId}
+            onRestart={() => turnTo(0, "back")}
+          />
+        </>
       }
-      headerTitle={<TaskHeaderTitle detail={heading.detail} title={heading.title} />}
+      headerTitle={
+        <>
+          <TaskHeaderTitle title={title} />
+          <StatusRegion className="sr-only">{title}</StatusRegion>
+        </>
+      }
     >
       <div
         className="min-h-0 flex-1 overflow-x-clip overflow-y-auto"
