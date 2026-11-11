@@ -18,6 +18,10 @@ export async function getStaffSessionUser(): Promise<
     return { status: "unauthorized" };
   }
 
+  if (session.session?.impersonatedBy) {
+    return { status: "forbidden" };
+  }
+
   const user = await prisma.user.findUnique({
     select: { banned: true, id: true, role: true },
     where: { id: session.user.id },

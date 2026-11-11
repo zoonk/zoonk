@@ -17,6 +17,7 @@ import {
   signApproval,
 } from "../../../../auth/src/passkeys/_test-utils/passkey-authenticator";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getSession } from "../../users/get-session";
 import {
   approveContentFix,
   getContentFixApprovalOptions,
@@ -688,7 +689,9 @@ describe(proposeContentFixRevert, () => {
       throw new Error(`Expected two reverts, got ${JSON.stringify([first, second])}`);
     }
 
-    expect(first.fix.changes).toStrictEqual([{ id: item.id, model: "Item", op: "unretire" }]);
+    expect(first.fix.changes).toStrictEqual([
+      { id: item.id, model: "Item", op: "unretire", retiredAt: expect.any(String) },
+    ]);
 
     const approver = await signInApprover();
 
@@ -737,5 +740,102 @@ describe(proposeContentFixRevertInAdmin, () => {
     await expect(
       proposeContentFixRevertInAdmin({ fixId: fix.id, reason: "Undo it." }),
     ).resolves.toStrictEqual({ status: "forbidden" });
+  });
+});
+
+describe("content fix approval regressions", () => {
+  it.each(["item", "picture"] as const)(
+    "an old %s restore cannot override a newer removal",
+    async (kind) => {
+      const skill = await skillFixture();
+      const item = await itemFixture({ format: "typed", skillId: skill.id });
+      const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+      const asset = await mediaAssetFixture();
+      const step = await libraryStepFixture({ lessonId: lesson.id, mediaAssetId: asset.id });
+
+      const changes =
+        kind === "item"
+          ? [{ id: item.id, model: "Item", retire: true }]
+          : [{ detachPicture: true, id: step.id, model: "Step" }];
+
+      await signInProposer();
+      const removal = await proposeFix({ changes, reason: "First removal" });
+      const approver = await signInApprover();
+      await approve({ fixId: removal.id, key: approver.key });
+
+      const oldRevert = await proposeContentFixRevertInAdmin({
+        fixId: removal.id,
+        reason: "Undo first removal",
+      });
+
+      const immediate = await proposeContentFixRevertInAdmin({
+        fixId: removal.id,
+        reason: "Restore now",
+      });
+
+      if (oldRevert.status !== "proposed" || immediate.status !== "proposed") {
+        throw new Error("Expected proposals");
+      }
+
+      await approve({ fixId: immediate.fix.id, key: approver.key });
+      await signInProposer();
+      const newer = await proposeFix({ changes, reason: "Newly discovered error" });
+      mockSession(approver.user.id);
+      await approve({ fixId: newer.id, key: approver.key });
+
+      const before =
+        kind === "item"
+          ? await prisma.item.findUniqueOrThrow({ where: { id: item.id } })
+          : await prisma.step.findUniqueOrThrow({ where: { id: step.id } });
+
+      await expect(approve({ fixId: oldRevert.fix.id, key: approver.key })).resolves.toMatchObject({
+        fix: { status: "stale" },
+      });
+
+      const after =
+        kind === "item"
+          ? await prisma.item.findUniqueOrThrow({ where: { id: item.id } })
+          : await prisma.step.findUniqueOrThrow({ where: { id: step.id } });
+
+      expect(after).toStrictEqual(before);
+    },
+  );
+
+  it("refuses approval options and approval from an impersonated staff session", async () => {
+    const { lesson } = await publishedLesson();
+    await signInProposer();
+    const fix = await proposeFix({ changes: [rename(lesson.id, "Fixed title")], reason: "Typo" });
+    const { user, key } = await signInApprover();
+    const options = await getContentFixApprovalOptions(fix.id);
+
+    if (options.status !== "ready") {
+      throw new Error("Expected options");
+    }
+
+    const session = await getSession();
+
+    if (!session) {
+      throw new Error("Expected session");
+    }
+
+    vi.mocked(getSession).mockResolvedValue({
+      ...session,
+      session: { ...session.session, impersonatedBy: user.id },
+    });
+
+    await expect(getContentFixApprovalOptions(fix.id)).resolves.toStrictEqual({
+      status: "forbidden",
+    });
+
+    await expect(
+      approveContentFix({
+        assertion: signApproval({ challenge: options.options.challenge, key }),
+        fixId: fix.id,
+      }),
+    ).resolves.toStrictEqual({ status: "forbidden" });
+
+    await expect(
+      prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
+    ).resolves.toMatchObject({ status: "proposed" });
   });
 });

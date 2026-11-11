@@ -151,7 +151,7 @@ export async function resolveItemRestore(
   return {
     effects: [{ itemId: id, kind: "itemRestored" }],
     ok: true,
-    stored: { id, model: "Item", op: "unretire" },
+    stored: { id, model: "Item", op: "unretire", retiredAt: item.retiredAt.toISOString() },
     unit: { id, kind: "item" },
   };
 }

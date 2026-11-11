@@ -80,9 +80,18 @@ const storedChangeSchema = z.discriminatedUnion("op", [
     op: z.literal("set"),
   }),
   z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("retire") }),
-  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("unretire") }),
+  z.object({
+    id: idSchema,
+    model: z.literal("Item"),
+    op: z.literal("unretire"),
+    retiredAt: z.iso.datetime(),
+  }),
   z.object({ ...pictureChange, op: z.literal("detachPicture") }),
-  z.object({ ...pictureChange, op: z.literal("attachPicture") }),
+  z.object({
+    ...pictureChange,
+    op: z.literal("attachPicture"),
+    pictureRemovedAt: z.iso.datetime(),
+  }),
 ]);
 
 export type StoredChange = z.infer<typeof storedChangeSchema>;

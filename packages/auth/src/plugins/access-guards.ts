@@ -9,6 +9,14 @@ import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 import { profileUpdateSchema } from "../profile-update";
 
+/** Staff authority is provisioned outside browser sessions; the apps never use these endpoints. */
+const guardStaffAuthority = createAuthMiddleware(async () => {
+  throw new APIError("FORBIDDEN", {
+    code: "STAFF_AUTHORITY_LOCKED",
+    message: "Staff accounts cannot be created or updated here.",
+  });
+});
+
 /** One Plus per learner: the answer names where the learner's Plus is managed. */
 const guardPlusPurchase = createAuthMiddleware(async (context) => {
   const session = await getSessionFromCtx(context);
@@ -112,6 +120,13 @@ export function accessGuardsPlugin() {
         },
       ],
       before: [
+        {
+          handler: guardStaffAuthority,
+          matcher: (context) =>
+            context.path === "/admin/set-role" ||
+            context.path === "/admin/create-user" ||
+            context.path === "/admin/update-user",
+        },
         {
           handler: guardPlusPurchase,
           matcher: (context) => context.path === "/subscription/upgrade",

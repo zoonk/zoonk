@@ -198,3 +198,53 @@ describe("passkey changes", () => {
     await expect(browser.passkeys()).resolves.toMatchObject([{ id: kept.id }]);
   });
 });
+
+describe("staff authority", () => {
+  it.each(["/admin/set-role", "/admin/update-user", "/admin/create-user"] as const)(
+    "blocks the unused authority-changing endpoint %s",
+    async (path) => {
+      const admin = await signUp();
+      await prisma.user.update({ data: { role: "admin" }, where: { id: admin.userId } });
+      await admin.register(makeRestoreKey());
+      const agent = await signUp();
+      await agent.register(makeRestoreKey());
+      const email = `blocked-staff-${randomUUID()}@example.test`;
+
+      const bodies = {
+        "/admin/create-user": { email, name: "Agent", role: "admin" },
+        "/admin/set-role": { role: "admin", userId: agent.userId },
+        "/admin/update-user": { data: { role: "admin" }, userId: agent.userId },
+      };
+
+      const body = bodies[path];
+
+      await expect(admin.request(path, body)).resolves.toMatchObject({ status: 403 });
+
+      await expect(
+        prisma.user.findUniqueOrThrow({ where: { id: agent.userId } }),
+      ).resolves.toMatchObject({ role: "user" });
+
+      await expect(prisma.user.findUnique({ where: { email } })).resolves.toBeNull();
+    },
+  );
+
+  it("refuses impersonation of an admin but allows impersonation of a learner", async () => {
+    const admin = await signUp();
+    const target = await signUp();
+
+    await prisma.user.updateMany({
+      data: { role: "admin" },
+      where: { id: { in: [admin.userId, target.userId] } },
+    });
+
+    await expect(
+      admin.request("/admin/impersonate-user", { userId: target.userId }),
+    ).resolves.toMatchObject({ status: 403 });
+
+    const learner = await signUp();
+
+    await expect(
+      admin.request("/admin/impersonate-user", { userId: learner.userId }),
+    ).resolves.toMatchObject({ status: 200 });
+  });
+});
