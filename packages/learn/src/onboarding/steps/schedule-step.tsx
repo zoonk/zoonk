@@ -18,6 +18,7 @@ import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { type LibraryCourseLink, PlanWait } from "./plan-wait";
 import { ScheduleAim, getAimAhead } from "./schedule-aim";
+import { ScheduleFocusLine } from "./schedule-focus-line";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -110,26 +111,29 @@ function ScheduleTime({
 
       <TimeAnswer
         action={
-          <Button
-            className="self-start"
-            disabled={pending}
-            focusableWhenDisabled
-            onClick={onChangeDate}
-            type="button"
-            variant="link"
-          >
-            {schedule.dated
-              ? t({
-                  description:
-                    "A link under the daily study time that opens the question about the goal's date, to change it.",
-                  message: "Change date",
-                })
-              : t({
-                  description:
-                    "A link under the daily study time that opens the question about the goal's date, for a goal with none yet.",
-                  message: "Choose a date",
-                })}
-          </Button>
+          <>
+            <ScheduleFocusLine advice={schedule.focusAdvice} updating={shown.updating} />
+            <Button
+              className="self-start"
+              disabled={pending}
+              focusableWhenDisabled
+              onClick={onChangeDate}
+              type="button"
+              variant="link"
+            >
+              {schedule.dated
+                ? t({
+                    description:
+                      "A link under the daily study time that opens the question about the goal's date, to change it.",
+                    message: "Change date",
+                  })
+                : t({
+                    description:
+                      "A link under the daily study time that opens the question about the goal's date, for a goal with none yet.",
+                    message: "Choose a date",
+                  })}
+            </Button>
+          </>
         }
         aim={aim}
         date={getGoalDate(schedule)}

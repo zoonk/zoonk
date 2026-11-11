@@ -228,13 +228,20 @@ function SummaryGroup({
   );
 }
 
-export function SyllabusTopicsSheet({ syllabus }: { syllabus: SyllabusView }) {
+export function SyllabusTopicsSheet({
+  label,
+  syllabus,
+}: {
+  /** "See topics" unless the place that opens it asks something more specific. */
+  label?: string;
+  syllabus: SyllabusView;
+}) {
   const t = useExtracted();
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
     <Drawer>
-      <DrawerTrigger render={<Button variant="link" />}>{t("See topics")}</DrawerTrigger>
+      <DrawerTrigger render={<Button variant="link" />}>{label ?? t("See topics")}</DrawerTrigger>
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
