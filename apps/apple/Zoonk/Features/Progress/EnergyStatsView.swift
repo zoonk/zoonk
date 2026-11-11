@@ -85,19 +85,21 @@ private struct EnergyCalendar: View {
         Color.energy.opacity(0.45), Color.energy.opacity(0.6), Color.energy.opacity(0.8),
       ],
       days: energy.days.map { day in
-        let date = formatDay(day.date)
-
-        return CalendarDay(
+        CalendarDay(
           date: day.date,
           step: CalendarSteps.energy(day.energy),
-          label: day.energy.map {
-            String(
-              localized: "\(date)\u{00A0}· \(metricPercent($0)) Energy", table: "Progress",
-              comment: "An Energy calendar day: its date and its Energy")
-          }
-            ?? String(
-              localized: "\(date)\u{00A0}· No Energy recorded", table: "Progress",
-              comment: "An Energy calendar day without Energy"),
+          detail: ChartPointDetail(
+            label: formatDay(day.date),
+            value: day.energy.map {
+              String(
+                localized: "\(metricPercent($0)) Energy", table: "Progress",
+                comment:
+                  "An Energy calendar day's value, under its date: the buddy's Energy that day")
+            }
+              ?? String(
+                localized: "No Energy recorded", table: "Progress",
+                comment: "An Energy calendar day's value, under its date, for a day without Energy")
+          ),
           value: day.energy)
       },
       chartTitle: String(

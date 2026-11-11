@@ -1,71 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %@ Energy" : {
-      "comment" : "An Energy calendar day: its date and its Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Energie"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@ Energy"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energía"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ d’Énergie"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ di Energia"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@・%2$@エネルギー"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · 에너지 %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Energii"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ de Energia"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ Enerji"
-          }
-        }
-      }
-    },
     "%@ · %lld answers" : {
       "comment" : "Under the best day or time: its share of right answers and its answers",
       "localizations" : {
@@ -329,65 +264,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%@ · No Energy recorded" : {
-      "comment" : "An Energy calendar day without Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Keine Energie erfasst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Sin Energía registrada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Aucune Énergie enregistrée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Nessuna Energia registrata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@・エネルギーの記録なし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · 에너지 기록 없음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Brak zapisanej Energii"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Sem Energia registrada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Enerji kaydı yok"
           }
         }
       }
@@ -714,6 +590,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ için %2$@ Beyin Gücü"
+          }
+        }
+      }
+    },
+    "%@ Energy" : {
+      "comment" : "An Energy calendar day's value, under its date: the buddy's Energy that day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ d’Énergie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ di Energia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エネルギー%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에너지 %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energii"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Enerji"
           }
         }
       }
@@ -1169,6 +1104,273 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld cevap"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld answers, needs %lld to count" : {
+      "comment" : "A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, such as “7 answers, needs 10 to count”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, mindestens %2$lld nötig"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Antwort"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Antworten"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@answers@, needs %2$lld to count"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg answer"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg answers"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, se necesitan %2$lld para detectar un patrón"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg respuesta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg respuestas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, il en faut %2$lld pour dégager une tendance"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg réponse"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg réponses"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, ne servono %2$lld per rilevare una tendenza"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg risposta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg risposte"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@、傾向の判定には%2$lld件必要"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg件の回答"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, 패턴 파악에 %2$lld개 필요"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "응답 %arg개"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, potrzeba %2$lld, by uwzględnić wynik"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg odpowiedź"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg odpowiedzi"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, mínimo de %2$lld para indicar um padrão"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg resposta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg respostas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@answers@, dikkate alınması için en az %2$lld gerekli"
+          },
+          "substitutions" : {
+            "answers" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg cevap"
+                    }
+                  }
                 }
               }
             }
@@ -5363,7 +5565,7 @@
       }
     },
     "Next week" : {
-      "comment" : "VoiceOver action moving a calendar's readout a week later",
+      "comment" : "VoiceOver action moving a calendar's picked day a week later",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5535,6 +5737,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevap yok"
+          }
+        }
+      }
+    },
+    "No Energy recorded" : {
+      "comment" : "An Energy calendar day's value, under its date, for a day without Energy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Energie erfasst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin registro de Energía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune Énergie enregistrée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia non registrata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エネルギーの記録なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에너지 기록 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak danych o Energii"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem registro de Energia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enerji kaydı yok"
           }
         }
       }
@@ -6189,7 +6450,7 @@
       }
     },
     "Previous week" : {
-      "comment" : "VoiceOver action moving a calendar's readout a week earlier",
+      "comment" : "VoiceOver action moving a calendar's picked day a week earlier",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7133,7 +7394,7 @@
       }
     },
     "Throughout the day" : {
-      "comment" : "Title of the rows per part of the day",
+      "comment" : "Title of the chart with a column per part of the day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7192,7 +7453,7 @@
       }
     },
     "Throughout the week" : {
-      "comment" : "Title of the rows per day of the week",
+      "comment" : "Title of the chart with a column per day of the week",
       "localizations" : {
         "de" : {
           "stringUnit" : {

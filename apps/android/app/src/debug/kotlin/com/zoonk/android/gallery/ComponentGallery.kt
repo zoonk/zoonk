@@ -73,6 +73,7 @@ import com.zoonk.android.ui.components.BeltLevel
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.ChartTooltip
 import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.EmptyState
@@ -166,6 +167,7 @@ internal val gallerySections =
         GallerySection("Navigation") { Navigation() },
         GallerySection("Label chips") { Chips() },
         GallerySection("Meters") { Meters() },
+        GallerySection("Chart tooltips") { ChartTooltips() },
         GallerySection("Status marks") { StatusMarks() },
         GallerySection("Kinds") { Kinds() },
         GallerySection("Belts") { Belts() },
@@ -481,6 +483,16 @@ private fun Chips() {
         LabelChip("1 week")
         LabelChip("Focus")
         LabelChip(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
+    }
+}
+
+@Composable
+private fun ChartTooltips() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Labeled("A calendar's day") { ChartTooltip("Oct 25", "13 activities") }
+        Labeled("A column with too few answers to count") {
+            ChartTooltip("Friday", "71%", note = "7 answers, needs 10 to count")
+        }
     }
 }
 
