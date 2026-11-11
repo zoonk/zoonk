@@ -187,7 +187,7 @@ private fun StartGoalOffer(
         locked = locked,
     ) {
         if (locked) {
-            PlusNotice(onSeePlus = routes.seePlus, inset = true, description = stringResource(R.string.tutor_offer_one_goal))
+            PlusNotice(onSeePlus = routes.seePlus, inset = true, description = stringResource(R.string.tutor_offer_goal_limit))
         } else {
             OfferButton(stringResource(R.string.tutor_offer_start)) { routes.open(AppRoute.StartGoal(goal = offer.goal)) }
         }

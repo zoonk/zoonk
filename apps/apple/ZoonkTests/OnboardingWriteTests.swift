@@ -15,7 +15,7 @@ final class OnboardingWriteTests: XCTestCase {
   func testARefusalIsThrownAsItsReasonAndKeepsTheSession() async {
     let session = SessionStore.preview(account: .onboardingTestAccount)
     let cache = AppCache(session: session)
-    let limit = OnboardingLimit(period: "day", resource: "activeGoals", tier: "free")
+    let limit = OnboardingLimit(period: "total", resource: "activeGoals", tier: "free")
 
     do {
       _ = try await cache.onboardingWrite { _ -> Int in throw OnboardingError.goalLimit(limit) }

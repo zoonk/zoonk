@@ -1001,10 +1001,11 @@ msgctxt "h6bnZW"
 msgid "Switch to this goal"
 msgstr "この目標に切り替える"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "無料プランで進められる目標は一度に1つです。この目標を再開するには、ほかの目標を一時停止するか、複数の目標を進められるPlusに登録してください。"
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1085,6 +1086,16 @@ msgstr "「{goal}」の学習計画は、あと数問に答えると完成しま
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "設定中"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "入力した内容"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "続ける"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
@@ -3321,11 +3332,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "まずは無料で始めましょう。<rest>すべて使いたくなったらPlusへ。</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "無料プランでは一度に1つの目標に取り組めます。Plusなら、すべての目標を目標の日までサポートします。"
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "無料プランでは、同時に{goals, plural, other {最大#件の目標}}に取り組めます。Plusなら、すべての目標を目標の日までずっとサポートします。"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"

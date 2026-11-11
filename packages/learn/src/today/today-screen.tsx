@@ -80,6 +80,7 @@ export function TodayScreen({
   speakingEntry = null,
   syllabus = null,
   today,
+  unfinishedGoal = null,
 }: {
   actions: TodayActions;
   /** Above the day, for what the host needs to say first, such as a reminder's other goal. */
@@ -98,6 +99,8 @@ export function TodayScreen({
   speakingEntry?: React.ReactNode;
   syllabus?: TodaySyllabus | null;
   today: TodayView;
+  /** A goal the learner typed and hasn't confirmed, offered with the day's notice. */
+  unfinishedGoal?: React.ReactNode;
 }) {
   const t = useExtracted();
   const analytics = useLearnAnalytics();
@@ -125,7 +128,9 @@ export function TodayScreen({
       <PageWithAside
         aside={
           <>
-            <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside} />
+            <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside}>
+              {unfinishedGoal}
+            </TodayNotice>
             <TodayMissions className={ASIDE_LEAD_CLASS} />
             <TodayWeek className={ASIDE_LEAD_CLASS} />
             <TodayPreparation className={ASIDE_LEAD_CLASS} level={level} syllabus={syllabus} />

@@ -170,10 +170,10 @@ function NoGoalLink({
 
 export function GoalSwitcher({
   activeGoalId,
-  canMakeRoom,
   explanationHref,
   exploreHref,
   goals,
+  hasAccount,
   newGoalHref,
   onSelect,
   onStartWaiting,
@@ -181,11 +181,11 @@ export function GoalSwitcher({
   waitingGoals,
 }: {
   activeGoalId: string | null;
-  /** Whether a locked waiting goal offers to pause a goal for it; otherwise it goes to Plus. */
-  canMakeRoom: boolean;
   explanationHref: string;
   exploreHref: string;
   goals: SwitcherGoal[];
+  /** An account's locked waiting goal offers to pause a goal for it; a guest's goes to sign-up. */
+  hasAccount: boolean;
   newGoalHref: string;
   /** Resolves to whether the goal is now the active one. */
   onSelect: (goalId: string) => Promise<boolean>;
@@ -266,7 +266,7 @@ export function GoalSwitcher({
                   goal={goal}
                   isStarting={isPending}
                   key={goal.id}
-                  onMakeRoom={canMakeRoom ? () => room.open(goal) : null}
+                  onMakeRoom={hasAccount ? () => room.open(goal) : null}
                   onStart={(waitingGoalId) =>
                     startTransition(async () => {
                       const { data: started } = await safeAsync(() =>

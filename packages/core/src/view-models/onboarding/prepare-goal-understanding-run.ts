@@ -1,5 +1,7 @@
 import "server-only";
 import { normalizeString } from "@zoonk/utils/string";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
@@ -76,6 +78,10 @@ export async function prepareGoalUnderstandingRun({
           });
         })
       : draft;
+
+  if (draft.status === "failed") {
+    revalidateCacheTags([getOnboardingDraftsCacheTag(draft.userId)]);
+  }
 
   return {
     draft: await loadDraftView(ready),

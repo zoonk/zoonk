@@ -292,10 +292,12 @@ describe(claimUsage, () => {
     ).resolves.toStrictEqual({ retryAfterSeconds: 240, status: "slowDown" });
   });
 
-  it("keeps free learners to one active goal and caps new goals a day for Plus", async () => {
+  it("keeps free learners to three active goals and caps new goals a day for Plus", async () => {
     const [free, plus] = await Promise.all([userFixture(), userFixture()]);
 
     await Promise.all([
+      goalFixture({ userId: free.id }),
+      goalFixture({ userId: free.id }),
       goalFixture({ userId: free.id }),
       prisma.subscription.create({
         data: { plan: "plus", provider: "zoonk", referenceId: plus.id, status: "active" },
@@ -306,7 +308,7 @@ describe(claimUsage, () => {
     mockSession(free.id);
 
     await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toMatchObject({
-      limit: { limit: 1, period: "total", resource: "activeGoals" },
+      limit: { limit: 3, period: "total", resource: "activeGoals" },
     });
 
     mockSession(plus.id);

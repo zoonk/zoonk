@@ -2310,61 +2310,61 @@
         }
       }
     },
-    "Starts with Plus" : {
-      "comment" : "Under a goal in the goal switcher that the free plan can't follow yet; Plus is the subscription's name, not \"more\"",
+    "Starts with a free account" : {
+      "comment" : "Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like \"Starts with Plus\" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Startet mit Plus"
+            "value" : "Startet mit einem kostenlosen Konto"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disponible con Plus"
+            "value" : "Se activa con una cuenta gratis"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disponible avec Plus"
+            "value" : "Disponible avec un compte gratuit"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puoi iniziare con Plus"
+            "value" : "Disponibile con un account gratuito"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusで始められます"
+            "value" : "無料アカウントで始められます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus로 시작 가능"
+            "value" : "무료 계정으로 시작 가능"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start w pakiecie Plus"
+            "value" : "Wymaga bezpłatnego konta"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começa com o Plus"
+            "value" : "Começa com uma conta grátis"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus ile başlanabilir"
+            "value" : "Ücretsiz hesapla başlar"
           }
         }
       }

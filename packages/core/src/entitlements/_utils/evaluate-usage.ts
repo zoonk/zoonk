@@ -25,7 +25,14 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   const rule = getUsageRule({ kind, tier });
   const activeGoalLimit = kind === "goal" ? getActiveGoalLimit(tier) : null;
 
+  // Goals followed come first: pausing one is a remedy that the day's or month's caps don't offer.
   const checks: (LimitCheck | false)[] = [
+    activeGoalLimit !== null && {
+      limit: activeGoalLimit,
+      period: "total",
+      resource: "activeGoals",
+      used: counts.activeGoals,
+    },
     rule.total !== undefined && {
       limit: rule.total,
       period: "total",
@@ -45,12 +52,6 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
       period: "month",
       resource: kind,
       used: counts.month,
-    },
-    activeGoalLimit !== null && {
-      limit: activeGoalLimit,
-      period: "total",
-      resource: "activeGoals",
-      used: counts.activeGoals,
     },
   ];
 

@@ -51,7 +51,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.LearnerSummaryWaitingGoal
 import kotlinx.coroutines.channels.Channel
@@ -115,7 +114,7 @@ fun GoalSwitcher(
                 followed,
                 learner.waitingGoals,
                 explanations,
-                canMakeRoom = learner.tier != LearnerSummary.Tier.GUEST,
+                hasAccount = !learner.identity.isAnonymous,
                 onMakeRoom = { makingRoomFor = it.id },
                 onDismiss = { expanded = false },
                 navigator = navigator,
@@ -178,7 +177,7 @@ private fun MenuItems(
     followed: List<LearnerSummaryGoal>,
     waiting: List<LearnerSummaryWaitingGoal>,
     explanations: List<LearnerSummaryGoal>,
-    canMakeRoom: Boolean,
+    hasAccount: Boolean,
     onMakeRoom: (LearnerSummaryWaitingGoal) -> Unit,
     onDismiss: () -> Unit,
     navigator: AppNavigator,
@@ -218,8 +217,8 @@ private fun MenuItems(
                                 stringResource(
                                     when {
                                         !goal.locked -> R.string.goal_switcher_ready_to_start
-                                        canMakeRoom -> R.string.goal_switcher_pause_or_plus
-                                        else -> R.string.goal_switcher_starts_with_plus
+                                        hasAccount -> R.string.goal_switcher_pause_or_plus
+                                        else -> R.string.goal_switcher_starts_with_free_account
                                     },
                                 ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -232,8 +231,8 @@ private fun MenuItems(
                     onDismiss()
                     when {
                         !goal.locked -> viewModel.start(goal) { navigator.open(AppRoute.GoalSetup(it)) }
-                        canMakeRoom -> onMakeRoom(goal)
-                        else -> navigator.open(AppRoute.Subscription)
+                        hasAccount -> onMakeRoom(goal)
+                        else -> navigator.open(AppRoute.Login)
                     }
                 },
             )

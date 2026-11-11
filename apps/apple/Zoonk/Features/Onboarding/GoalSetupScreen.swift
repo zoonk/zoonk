@@ -33,18 +33,9 @@ struct GoalSetupContent: View {
         GoalSteps(view: view, onStartOver: onStartOver) { goalID = $0 }
           .id(view.goal.id)
       case .failed:
-        ContentUnavailableView {
-          Text(
-            "We couldn't load your goal", tableName: "Onboarding",
-            comment: "A goal's onboarding failed to load")
-        } actions: {
-          Button {
-            Task { await resource.refresh() }
-          } label: {
-            Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
-          }
+        GoalLoadFailure {
+          await resource.refresh()
         }
-        .lonePage()
         .closesTask()
       case .idle, .loading, .empty:
         StepLoading()
@@ -55,6 +46,25 @@ struct GoalSetupContent: View {
     .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
     .toolbarTitleDisplayMode(.inline)
     .loads(resource, refreshable: false)
+  }
+}
+
+struct GoalLoadFailure: View {
+  let retry: () async -> Void
+
+  var body: some View {
+    ContentUnavailableView {
+      Text(
+        "We couldn't load your goal", tableName: "Onboarding",
+        comment: "A goal's onboarding failed to load")
+    } actions: {
+      Button {
+        Task { await retry() }
+      } label: {
+        Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
+      }
+    }
+    .lonePage()
   }
 }
 

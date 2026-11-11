@@ -17,7 +17,7 @@
   "goal_switcher_ready_to_start": "0305cbb31fac523e184abdd6315a77027e069c7cff125f69f2a546ea20d9adc6",
   "goal_switcher_start_failed": "2bd2493752603b94aea601198bcae4296ac928343023dc99658689972e883e4a",
   "goal_switcher_start_goal": "8c40d01eff300507504f2d7197ec80186c5ecbd16b8111bef95a339849fb88ac",
-  "goal_switcher_starts_with_plus": "47ab3d0b8bd0162e1bd71d84a09137cbe7806f3148ef583d47e5f55e0385107b",
+  "goal_switcher_starts_with_free_account": "00c6845dd917cd5a37b8b64e0ff6dd6dc4a3f7cc4d517d99730e2271c6aa7cad",
   "goal_switcher_your_goals": "8937b4edd5afed09bd1182c968c48e5847bac6385faab4b694d620f555653977"
 }
 -->
@@ -34,8 +34,8 @@
     <string name="goal_switcher_finished">完了</string>
     <string name="goal_switcher_paused">一時停止中</string>
     <string name="goal_switcher_failed">目標を切り替えられませんでした。もう一度試してください。</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_starts_with_plus">Plusで始められます</string>
+    <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
+    <string name="goal_switcher_starts_with_free_account">無料アカウントで始められます</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">すぐに始められます</string>
     <string name="goal_switcher_start_failed">この目標を始められませんでした。もう一度お試しください。</string>

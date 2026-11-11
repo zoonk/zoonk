@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "ebea24d9a41fd29cb09c75dc5bcd18f9be5cecfd17bfcf395f77740472df52ea",
   "today_connection_lost": "b60ea619073fb9a5dcb25313ffda3661d4514b650dee315341c66159d1dcfb4a",
   "today_connection_lost_detail": "b5157dbcad13a79d923e8741e31de9c505a1adec869aeb8445858846c89ef87a",
+  "today_continue_draft": "e49fb09086091a732128458ccc6961c8eddc34b8f3ca3090e5c67f3b82c11619",
   "today_continue_explanation": "c9b79aa9ac48b2c31ec3f79229b2671fbd7fbc4b0d0ef77ae4a9b4d83127e566",
   "today_continue_mock": "f7c84985aae748e364b5fd21a50e6647f662a2d800f4ca28ba8abcd5b571e61c",
   "today_continue_mock_detail": "9f3166dafd67d58664c7b5097447df33be430193016cd49ea4c4f8d170ca28c1",
@@ -124,7 +125,7 @@
   "today_rest_welcome_back": "23d4f2b3ffd701459fe627c42db3cd7e86523b08cddc0530fcb0ff7590d3bc0f",
   "today_resume_effect": "8727388af898a5097e96dadb7c3da21456b282bdf66a026f44f7f1c0e22643b2",
   "today_resume_goal": "14722ac9d99a3ed6eb3935ae614eaa2a2dca272c69c99ceed38fa778d6a14ede",
-  "today_resume_goal_limit": "c31febc61a5f00fd411c7633e06f6d2cb8d281af5c39fa6a34caa785a9599342",
+  "today_resume_goal_limit": "0874c0140c470c699179b9b9673737589122c639348bfd4ef8f9b6ee78cb2a86",
   "today_save_failed": "740763a2ae8e5f163a5da691446d97c86c21152714d7d38484a0e64738d04a31",
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
@@ -325,7 +326,8 @@
     <string name="today_resume_goal">%1$s 이어서 하기</string>
     <string name="today_new_goal">새 목표</string>
     <string name="today_resume_effect">오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요.</string>
-    <string name="today_resume_goal_limit">무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 일시 중지해 이 목표를 다시 진행하거나, Plus를 구독해 여러 목표를 함께 진행해 보세요.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="today_resume_goal_limit">무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요.</string>
     <string name="today_setting_up">준비하고 있어요</string>
     <string name="today_setting_up_goal">%1$s 계획을 세우려면 몇 가지 답변이 더 필요해요.</string>
     <string name="today_setting_up_detail">알려 주신 내용을 바탕으로 계획을 만들어요.</string>
@@ -335,6 +337,7 @@
     <string name="today_building_plan_detail">보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요.</string>
     <string name="today_quick_explanation">간단한 설명</string>
     <string name="today_continue_explanation">설명 이어서 보기</string>
+    <string name="today_continue_draft">계속하기</string>
     <string name="today_week_title">이번 주</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>

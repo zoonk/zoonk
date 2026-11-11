@@ -1001,10 +1001,11 @@ msgctxt "h6bnZW"
 msgid "Switch to this goal"
 msgstr "Passer à cet objectif"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "La formule gratuite permet de suivre un objectif à la fois. Mets ton autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Mets un autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -1085,6 +1086,16 @@ msgstr "Il manque encore quelques réponses pour ton plan {goal}."
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "Configuration en cours"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "Ce que tu as écrit"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continuer"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
@@ -3321,11 +3332,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "Commence gratuitement. <rest>Plus quand tu veux tout.</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "La formule gratuite t’accompagne vers un objectif à la fois. Plus t’accompagne vers tous tes objectifs jusqu’au grand jour."
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "La formule gratuite te permet de suivre {goals, plural, one {un objectif} other {jusqu’à # objectifs}} à la fois. Plus t’accompagne pour tous tes objectifs jusqu’au grand jour."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"

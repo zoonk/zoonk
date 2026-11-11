@@ -172,7 +172,7 @@ private fun CourseStartForm(
     val chapter = detail.chapters.find { it.id.toString() == route.chapterId && it.lessonCount > 0 }
     val planned = chapter?.let { detail.chapters.drop(detail.chapters.indexOf(it)) } ?: detail.chapters
     val limit = (vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null }
-    val blocked = limit != null && (limit.needsAccount || limit == GoalLimitReason.OneActiveGoal)
+    val blocked = limit != null && (limit.needsAccount || limit == GoalLimitReason.ActiveGoals)
     val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
     val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
     val remedy = { to: AppRoute ->
@@ -198,7 +198,7 @@ private fun CourseStartForm(
             if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, course.quickTestMinutes.toInt(), onChange = vm::pick)
         }
 
-        if (limit == GoalLimitReason.OneActiveGoal) {
+        if (limit == GoalLimitReason.ActiveGoals) {
             GoalLimitWall(limit, onSeePlus = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
             return@SetupColumn
         }

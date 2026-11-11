@@ -46,13 +46,13 @@ export type UnderstandingActions = {
 
 /** `browserBlocked`: the bot check refused to make this browser a guest. */
 export type GoalLimitReason =
+  | "activeGoals"
   | "browserBlocked"
   | "dailyExplanations"
   | "dailyGoals"
   | "guest"
   | "monthlyExplanations"
   | "monthlyGoals"
-  | "oneActiveGoal"
   | "signUpRequired"
   | "slowDown";
 
