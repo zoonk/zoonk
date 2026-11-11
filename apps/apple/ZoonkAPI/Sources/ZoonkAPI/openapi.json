@@ -46407,6 +46407,10 @@
               "exam"
             ]
           },
+          "language": {
+            "type": "string",
+            "description": "The language the goal is studied in; its country pickers request `GET /countries` in it"
+          },
           "languageFlag": {
             "nullable": true,
             "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
@@ -46463,6 +46467,7 @@
           "isActive",
           "isSettingUp",
           "kind",
+          "language",
           "languageFlag",
           "regionChoices",
           "status",

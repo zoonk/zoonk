@@ -34,6 +34,8 @@ export type LearnerSummaryGoal = GoalCountryFields & {
   /** Questions are left before its plan is set, so continuing it opens its setup instead of Today. */
   isSettingUp: boolean;
   kind: GoalKind;
+  /** The language the goal is studied in: its country pickers name countries in it. */
+  language: string;
   /** A `flag-icons` code: the goal's country's flag, else its language's; null without one. */
   languageFlag: string | null;
   /** The countries a language goal can pick, named in its language; empty for other goals. */

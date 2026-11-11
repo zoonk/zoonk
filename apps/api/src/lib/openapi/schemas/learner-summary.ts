@@ -42,6 +42,12 @@ const learnerSummaryGoalSchema = z
           "Questions are left before the goal's plan is set, so continuing it opens its setup instead of Today",
       }),
     kind: z.enum(GoalKind),
+    language: z
+      .string()
+      .meta({
+        description:
+          "The language the goal is studied in; its country pickers request `GET /countries` in it",
+      }),
     languageFlag: z
       .string()
       .nullable()

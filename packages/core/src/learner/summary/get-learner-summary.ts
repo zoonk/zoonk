@@ -83,6 +83,7 @@ function toSummaryGoals({
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),
         kind: goal.kind,
+        language: goal.language,
         languageFlag: getGoalLanguageFlag(goal),
         regionChoices: getGoalRegionChoices(goal),
         status: goal.status,
