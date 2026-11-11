@@ -1,4 +1,4 @@
-import { DaySegment, type DaySegmentState } from "@zoonk/learn/day-segments";
+import { DayMeter, type DaySegmentState } from "@zoonk/learn/day-segments";
 import { KindMark, type LearnKind } from "@zoonk/learn/kind-tile";
 import {
   ListGroup,
@@ -10,7 +10,6 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "@zoonk/learn/list";
-import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -80,22 +79,17 @@ export async function DaySegments({
   const done = steps.filter((step) => step.state === "done").length;
 
   return (
-    <div
-      aria-label={t(
+    <DayMeter
+      className={className}
+      label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
         { done, total: steps.length },
       )}
-      className={cn(METER_PARTS_CLASS, className)}
-      role="img"
-    >
-      {steps.map((step) => (
-        <DaySegment
-          key={step.id}
-          kind={step.kind}
-          minutes={step.minutes}
-          state={SEGMENT_STATE[step.state]}
-        />
-      ))}
-    </div>
+      parts={steps.map((step) => ({
+        id: step.id,
+        kind: step.kind,
+        state: SEGMENT_STATE[step.state],
+      }))}
+    />
   );
 }

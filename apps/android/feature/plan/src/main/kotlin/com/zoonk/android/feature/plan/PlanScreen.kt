@@ -54,6 +54,7 @@ import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -116,7 +117,7 @@ private fun GoalPlan(
     when {
         // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
         goal.isSettingUp -> {
-            PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
+            PlanStateColumn(padding) { PlanSetupLeft(goal, app, navigator) }
         }
 
         read != null && read.plan.ready -> {
@@ -152,7 +153,7 @@ private fun ReadyPlan(
     var pulled by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val farTopics = viewModel(key = "far-topics-${goal.id}") { FarTopicViewModel(app.plans, goal.id) }
-    val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id, app.writingWaits) }
+    val viewModel = planViewModel(app, goal.id)
 
     WhileShown(plan.isPhaseBeingWritten) {
         while (true) {
@@ -219,32 +220,85 @@ private fun PlanWithoutPlan(
     onRefresh: suspend () -> Unit,
 ) {
     when (setupLeft(app.onboarding, goal.id)) {
-        SetupLeft.Yes -> PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
-        SetupLeft.No -> PlanStateColumn(padding) { PlanBuilding(goal, app, onRefresh) }
+        SetupLeft.Yes -> PlanStateColumn(padding) { PlanSetupLeft(goal, app, navigator) }
+        SetupLeft.No -> PlanStateColumn(padding) { PlanBuilding(goal, app, navigator, onRefresh) }
         SetupLeft.Unknown -> SetupLoading(app, goal, padding)
+    }
+}
+
+@Composable
+private fun planViewModel(
+    app: AppContainer,
+    goalId: UUID,
+) = viewModel(key = "plan-$goalId") { PlanViewModel(app.plans, goalId, app.writingWaits) }
+
+/**
+ * The Plan's title before its plan shows, with the goal's menu at its end as on the ready Plan: an
+ * unwanted goal can be paused or archived without finishing its setup.
+ */
+@Composable
+private fun PlanTitleWithGoalMenu(
+    goal: LearnerSummaryGoal,
+    app: AppContainer,
+    navigator: AppNavigator,
+) {
+    val viewModel = planViewModel(app, goal.id)
+    val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
+
+    PlanEvents(viewModel, navigator)
+
+    PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
+        GoalMenu(
+            goal = goal,
+            resume = Resume.Plain,
+            isSaving = isSaving,
+            onSetStatus = viewModel::setStatus,
+            rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
+        )
     }
 }
 
 @Composable
 private fun PlanSetupLeft(
     goal: LearnerSummaryGoal,
+    app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val viewModel = planViewModel(app, goal.id)
+    val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val paused = goal.status == LearnerSummaryGoal.Status.PAUSED
+
     Text(text = goal.displayName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    PlanTitle()
+    PlanTitleWithGoalMenu(goal, app, navigator)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = stringResource(R.string.plan_setup_left_title),
+            text =
+                if (paused) {
+                    stringResource(R.string.plan_goal_paused, goal.displayName)
+                } else {
+                    stringResource(R.string.plan_setup_left_title)
+                },
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = stringResource(R.string.plan_setup_left_description),
+            text = stringResource(if (paused) R.string.plan_nothing_planned_until_resume else R.string.plan_setup_left_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Button(onClick = { navigator.open(AppRoute.GoalSetup(goal.id.toString())) }, modifier = Modifier.padding(top = 8.dp)) {
-            Text(stringResource(R.string.plan_continue))
+        if (paused) {
+            Button(
+                onClick = { viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE) },
+                modifier = Modifier.padding(top = 8.dp),
+                busy = isSaving,
+            ) {
+                Text(stringResource(R.string.plan_resume))
+            }
+        } else {
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(goal.id.toString())) }, modifier = Modifier.padding(top = 8.dp)) {
+                Text(stringResource(R.string.plan_continue))
+            }
         }
     }
 }
@@ -258,6 +312,7 @@ private fun PlanSetupLeft(
 private fun PlanBuilding(
     goal: LearnerSummaryGoal,
     app: AppContainer,
+    navigator: AppNavigator,
     onRefresh: suspend () -> Unit,
 ) {
     val session = app.sessions.current ?: return
@@ -287,7 +342,7 @@ private fun PlanBuilding(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        PlanTitle()
+        PlanTitleWithGoalMenu(goal, app, navigator)
         Text(
             text = stringResource(R.string.plan_building_description),
             style = MaterialTheme.typography.bodyMedium,

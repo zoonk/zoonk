@@ -83,11 +83,12 @@ internal fun musicianshipInput(
     timeZone = TimeZone.getDefault().id,
 )
 
-/** A goal its card left waiting starts as the card read it. */
-fun GoalCreateInputOutput.toGoalCreateInput() =
+/** A goal its card left waiting starts as the card read it; [pauseGoalId] is the goal paused to make room for it. */
+fun GoalCreateInputOutput.toGoalCreateInput(pauseGoalId: UUID? = null) =
     GoalCreateInput(
         dailyMinutes = dailyMinutes,
         goals = goals.map { it.toGoalDraft() },
+        pauseGoalId = pauseGoalId,
         sourceIds = sourceIds,
         studyDays = studyDays,
         studyTime = studyTime,

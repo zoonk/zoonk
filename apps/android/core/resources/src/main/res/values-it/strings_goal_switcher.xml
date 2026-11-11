@@ -6,14 +6,18 @@
   "goal_switcher_explore_courses": "6aaa2cfb7786aff2bef2b651bb3fc220c6dcfadeccf55d4e1528f86053170aa0",
   "goal_switcher_failed": "bb1a6b9edec385c5de6dffa72968af6417edee3527f7a38b8445314397a4fad8",
   "goal_switcher_finished": "88826e61702fe33af79d30b57b74a389832d488fbc9377d991bc662737ed887f",
+  "goal_switcher_make_room_description": "4389d3f791e688740198171954295bbd66ed3a8fe03cff387c58a8d037aae446",
+  "goal_switcher_make_room_title": "9959586e8e72a04005223d56325acfc67be5140d30e2114eb727fad54eff1e85",
   "goal_switcher_new_goal": "96f3898d14dd4868a161948ae228d817d9a48729c4a49659db4ad8748cad3405",
+  "goal_switcher_pause": "cefe22699ac963aadbce1848ae806d4665e80d852db8874fc12ab8fc8137d49a",
+  "goal_switcher_pause_goal": "c06b2595cf388abdf23ec38348e6574a126e0288cd75713fb21c838ff7a28b19",
+  "goal_switcher_pause_or_plus": "b6af9745ae2f17181a664f4d7153a82af529f2434fc3fe2d701352184f25bc40",
   "goal_switcher_paused": "a4d6fb7d5dce93d3631131d04001f8fb577f21265d6140024d5c8cb3b8ab5ec4",
   "goal_switcher_quick_explanations": "14744fd32dcec1e336bf91788faa4b9c058c3c4d5a0d54ee1a8c7435fe5f952c",
   "goal_switcher_ready_to_start": "d38e53505feeac59a9fde594190d831f467951bd15ba93e360baa55f377ebbdc",
   "goal_switcher_start_failed": "652f8585cb072116bc23b354533e75e66c9715e5b0db9410202f7d4e93add271",
   "goal_switcher_start_goal": "e048d1f9bccd368a296c8eac9fc9cb012032009d23e83f076106b277c0284294",
   "goal_switcher_starts_with_free_account": "99dd496cb795568e07b79fd6a01517c6d7a1f5aa2538219c231b3e4e2316c31e",
-  "goal_switcher_starts_with_plus": "926947007ba2aa56cd7a573e4ab2a579e483c8649ecb1fd0dd30f7f8aba1ccfb",
   "goal_switcher_your_goals": "f9593f279faa1cd19b10135a0a7e0d410f66a43be3cf7997eda9e5056790d895"
 }
 -->
@@ -30,11 +34,19 @@
     <string name="goal_switcher_finished">Completato</string>
     <string name="goal_switcher_paused">In pausa</string>
     <string name="goal_switcher_failed">Non siamo riusciti a cambiare obiettivo. Riprova.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start, because the free plan follows only so many goals at the same time (not a cap on new goals per day or month). Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="goal_switcher_starts_with_plus">Puoi iniziarlo con Plus</string>
     <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
     <string name="goal_switcher_starts_with_free_account">Disponibile con un account gratuito</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Puoi iniziarlo subito</string>
     <string name="goal_switcher_start_failed">Non siamo riusciti a iniziare questo obiettivo. Riprova.</string>
+    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_pause_or_plus">Metti in pausa un obiettivo o passa a Plus</string>
+    <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_title">Fai spazio a %1$s</string>
+    <!-- %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_description">Hai raggiunto il limite di obiettivi della formula Free. Mettine uno in pausa per iniziare %1$s. Puoi riprenderlo più avanti.</string>
+    <!-- Button beside a goal the learner follows: it pauses that goal. -->
+    <string name="goal_switcher_pause">Metti in pausa</string>
+    <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->
+    <string name="goal_switcher_pause_goal">Metti in pausa %1$s</string>
 </resources>

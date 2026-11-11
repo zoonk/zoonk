@@ -1,7 +1,7 @@
 import { type LanguageModelUsage, type ProviderMetadata } from "ai";
 import { describe, expect, it } from "vitest";
 import { combineTaskProvenance, sumLanguageModelUsage } from "./combine-task-provenance";
-import { type TaskProvenance, buildTaskProvenance } from "./task-provenance";
+import { type TaskProvenance, buildTaskProvenance, describeStep } from "./task-provenance";
 
 const usage: LanguageModelUsage = {
   inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 10 },
@@ -323,5 +323,21 @@ describe(combineTaskProvenance, () => {
 
   it("refuses to make provenance up without a run", () => {
     expect(() => combineTaskProvenance([])).toThrow("at least one run");
+  });
+});
+
+describe(describeStep, () => {
+  it("keeps the tier and speed the gateway served a call at, so it can be priced at them", () => {
+    expect(describeStep(createStep({ serviceTier: "priority" }))).toMatchObject({
+      model: "openai/gpt-6-luna",
+      serviceTier: "priority",
+    });
+
+    expect(describeStep(terra({ speed: "fast" }))).toMatchObject({
+      model: "openai/gpt-6.1-terra",
+      speed: "fast",
+    });
+
+    expect(describeStep(createStep())).toMatchObject({ serviceTier: undefined, speed: undefined });
   });
 });

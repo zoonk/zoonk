@@ -148,15 +148,20 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.contains { $0.status != .pending }
   }
 
-  var showsDayProgress: Bool { !blocks.isEmpty && meterParts.count >= 2 }
+  var showsDayProgress: Bool { !blocks.isEmpty && daySegments.count >= 2 }
 
-  /// Mirrors main's `DayProgress`: each block, then the time the day holds for lessons not
-  /// written yet.
+  /// Core's `getSessionBar`: a skipped block is neither done nor counted.
+  var sessionBar: SessionBar {
+    SessionBar(
+      completed: blocks.filter { $0.status == .completed }.count,
+      total: blocks.filter { $0.status != .skipped }.count)
+  }
+
+  /// Mirrors main's `DayProgress`: each block core counts, then one part for the time the day holds
+  /// for lessons not written yet.
   var daySegments: [DaySegment] {
-    var segments = blocks.map { block -> DaySegment in
-      if block.status == .completed { return .block(block, .done) }
-      if block.status == .skipped { return .block(block, .skipped) }
-      return .block(block, block.position == nextPosition ? .current : .ahead)
+    var segments = blocks.filter { $0.status != .skipped }.map {
+      $0.daySegment(nextPosition: nextPosition)
     }
 
     if let comingLessons {
@@ -166,35 +171,27 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
     return segments
   }
-
-  var meterParts: [MeterParts.Part] { daySegments.map(\.meterPart) }
 }
 
+/// One equal part of today's meter, and what its popover on Today says.
 enum DaySegment {
   enum State {
     case ahead
     case current
     case done
-    case skipped
   }
 
   case block(StudyBlock, State)
   case held(minutes: Double, ComingLessons)
 
-  var meterPart: MeterParts.Part {
+  /// How the part is drawn: done, next up, or waiting in its kind's color.
+  var mark: DaySegments.Segment {
     switch self {
-    case .block(let block, let state):
-      let weight = Double(max(block.estimatedMinutes, 1))
-      let kind = block.learnKind
-
-      return switch state {
-      case .done, .skipped: .init(weight: weight, fill: .color(.success))
-      case .current: .init(weight: weight, fill: .current)
-      case .ahead:
-        .init(weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
-      }
-    case .held(let minutes, _):
-      return .init(weight: minutes, fill: .track)
+    case .block(_, .done): .done
+    case .block(_, .current): .current
+    case .block(let block, .ahead):
+      block.learnKind == .lesson ? .ahead : .kind(block.learnKind.color)
+    case .held: .ahead
     }
   }
 }
@@ -308,6 +305,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     status == .completed && kind == .learn ? lessonId : nil
   }
 
+  /// Main's `getDayMeterParts` for one counted block: done, next up, or ahead.
+  func daySegment(nextPosition: Int?) -> DaySegment {
+    if status == .completed {
+      return .block(self, .done)
+    }
+
+    return .block(self, position == nextPosition ? .current : .ahead)
+  }
+
   /// Mirrors main's `getBlockKind`.
   var learnKind: LearnKind {
     if checkpoint?.mock == true {
@@ -358,18 +364,8 @@ struct StudyWeek: Decodable, Equatable, Sendable {
     }
   }
 
-  struct Time: Decodable, Equatable, Sendable {
-    let studiedMinutes: Int
-    let targetMinutes: Double
-  }
-
   let days: [Day]
   let nextStudyDate: String?
-  let time: Time
-
-  /// Main's week counts any study, and a rest day the learner studied anyway among its days.
-  var daysStudied: Int { days.filter(\.studied).count }
-  var studyDayCount: Int { days.filter { $0.kind == "study" || $0.studied }.count }
 }
 
 /// Core's `DayBlockRef`: opening the day with it resolves only to that same work.

@@ -593,6 +593,9 @@
           .init(weight: 3, fill: .track), .init(fill: .color(LearnKind.review.color)),
           .init(weight: 4, fill: .color(LearnKind.conversation.color)),
         ])
+        DaySegments(segments: [
+          .done, .done, .current, .ahead, .kind(LearnKind.review.color), .ahead,
+        ])
         TaskSegments(
           segments: [.right, .wrong, .read, .current, .ahead, .ahead],
           label: Text(verbatim: "Lesson progress"))

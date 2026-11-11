@@ -1,0 +1,208 @@
+"use client";
+
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
+import { safeAsync } from "@zoonk/utils/error";
+import { PauseIcon, XIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { type TransitionStartFunction, useId, useState } from "react";
+import {
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowLeading,
+  ListRowTitle,
+} from "../_components/list-group";
+import { useLearnRoutes } from "../learn-context";
+import { LearnLink } from "../learn-link";
+import { GoalCountryName, GoalMark } from "./goal-mark";
+import { type WaitingGoal } from "./goal-menu-row";
+
+type PausableGoal = {
+  displayName: string;
+  id: string;
+  languageFlag: string | null;
+  targetLanguage: string | null;
+  targetRegion: string | null;
+};
+
+export type WaitingStart = { pauseGoalId?: string; waitingGoalId: string };
+
+type MakeRoomState = {
+  failed: boolean;
+  open: boolean;
+  pausingId: string | null;
+  waiting: WaitingGoal;
+};
+
+/** The switcher's transition runs the start, so the page under the sheet dims as for a goal switch. */
+export function useMakeRoom({
+  isStarting,
+  onStartWaiting,
+  startTransition,
+}: {
+  isStarting: boolean;
+  onStartWaiting: (start: WaitingStart) => Promise<boolean>;
+  startTransition: TransitionStartFunction;
+}) {
+  const [state, setState] = useState<MakeRoomState | null>(null);
+
+  const pause = (pauseGoalId: string) => {
+    if (!state || isStarting) {
+      return;
+    }
+
+    const { waiting } = state;
+    setState({ failed: false, open: true, pausingId: pauseGoalId, waiting });
+
+    startTransition(async () => {
+      const { data: started } = await safeAsync(() =>
+        onStartWaiting({ pauseGoalId, waitingGoalId: waiting.id }),
+      );
+
+      setState({ failed: !started, open: !started, pausingId: pauseGoalId, waiting });
+    });
+  };
+
+  return {
+    open: (waiting: WaitingGoal) =>
+      setState({ failed: false, open: true, pausingId: null, waiting }),
+    pause,
+    setOpen: (open: boolean) => setState(state && { ...state, open }),
+    state,
+  };
+}
+
+function PausableGoalRow({
+  goal,
+  isStarting,
+  onPause,
+  pausing,
+}: {
+  goal: PausableGoal;
+  isStarting: boolean;
+  onPause: () => void;
+  pausing: boolean;
+}) {
+  const t = useExtracted("goalSwitcher");
+  const id = useId();
+  const nameId = `${id}-name`;
+  const pauseId = `${id}-pause`;
+
+  return (
+    <ListRow className="items-center" role="listitem">
+      <ListRowLeading>
+        <GoalMark goal={goal} />
+      </ListRowLeading>
+
+      <ListRowContent>
+        <ListRowTitle id={nameId}>
+          {goal.displayName}
+          <GoalCountryName goal={goal} />
+        </ListRowTitle>
+      </ListRowContent>
+
+      <Button
+        aria-labelledby={`${pauseId} ${nameId}`}
+        busy={isStarting && pausing}
+        disabled={isStarting && !pausing}
+        icon={<PauseIcon aria-hidden="true" />}
+        id={pauseId}
+        onClick={onPause}
+        size="sm"
+        variant="outline"
+      >
+        {t("Pause")}
+      </Button>
+    </ListRow>
+  );
+}
+
+/**
+ * The switcher's own namespace only: it also opens over public pages, which carry no other learn
+ * messages.
+ */
+export function MakeRoomSheet({
+  goals,
+  isStarting,
+  room,
+}: {
+  goals: PausableGoal[];
+  isStarting: boolean;
+  room: ReturnType<typeof useMakeRoom>;
+}) {
+  const t = useExtracted("goalSwitcher");
+  const routes = useLearnRoutes();
+  const { state } = room;
+
+  if (!state) {
+    return null;
+  }
+
+  const goal = state.waiting.displayName;
+
+  return (
+    <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
+      <DrawerPopup>
+        <DrawerHeader className="flex-row items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-col gap-1">
+            <DrawerTitle className="text-xl font-semibold text-balance">
+              {t("Make room for {goal}", { goal })}
+            </DrawerTitle>
+            <DrawerDescription className="text-pretty">
+              {t(
+                "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later.",
+                { goal },
+              )}
+            </DrawerDescription>
+          </div>
+
+          <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
+            <XIcon aria-hidden="true" />
+            <span className="sr-only">{t("Close")}</span>
+          </DrawerClose>
+        </DrawerHeader>
+
+        <DrawerContent className="flex flex-col gap-4 pt-2">
+          <ListGroup aria-label={t("Your goals")} role="list" variant="panel">
+            {goals.map((pausable) => (
+              <PausableGoalRow
+                goal={pausable}
+                isStarting={isStarting}
+                key={pausable.id}
+                onPause={() => room.pause(pausable.id)}
+                pausing={state.pausingId === pausable.id}
+              />
+            ))}
+          </ListGroup>
+
+          {state.failed && !isStarting && (
+            <p className="text-destructive-text text-sm" role="alert">
+              {t("We couldn't start this goal. Try again.")}
+            </p>
+          )}
+
+          <LearnLink
+            className={buttonVariants({
+              className: "sm:self-start",
+              size: "lg",
+              variant: "outline",
+            })}
+            href={routes.upgrade}
+            onClick={() => room.setOpen(false)}
+          >
+            {t("Get Plus")}
+          </LearnLink>
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
+  );
+}

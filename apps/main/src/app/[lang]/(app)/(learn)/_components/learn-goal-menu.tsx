@@ -96,7 +96,13 @@ function GoalMenu({ placement }: { placement?: Placement }) {
 
   const { waitingGoals } = learner.summary;
 
-  const startWaiting = async (waitingGoalId: string): Promise<boolean> => {
+  const startWaiting = async ({
+    pauseGoalId,
+    waitingGoalId,
+  }: {
+    pauseGoalId?: string;
+    waitingGoalId: string;
+  }): Promise<boolean> => {
     const waiting = waitingGoals.find((goal) => goal.id === waitingGoalId);
 
     if (!waiting) {
@@ -104,7 +110,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
     }
 
     const outcome = await noteAppWrite(
-      createOnboardingGoalsAction({ ...waiting.input, timeZone: getLocalTimeZone() }),
+      createOnboardingGoalsAction({ ...waiting.input, pauseGoalId, timeZone: getLocalTimeZone() }),
     );
 
     if (outcome.status !== "created") {

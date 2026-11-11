@@ -13,9 +13,9 @@ import {
 import { DropdownMenuGroup, DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArchiveIcon, PauseIcon, PlayIcon } from "lucide-react";
+import { ArchiveIcon, PauseIcon, PencilIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import {
   Suggestion,
@@ -28,9 +28,10 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { SlotContent } from "../plan/plan-suggestion-context";
+import { RenameGoalDialog } from "./rename-goal-dialog";
 import { useResumeEffectText } from "./resume-effect";
 
-export type GoalStatusChange = "active" | "archived" | "paused";
+type GoalStatusChange = "active" | "archived" | "paused";
 
 export type GoalStatusOutcome = "failed" | "limitReached" | "saved";
 
@@ -84,34 +85,76 @@ export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] |
   return { isPending, setStatus };
 }
 
-export function GoalStatusItems({
-  control,
-  onArchive,
-  onSetStatus,
-}: {
-  control: GoalStatusControl;
-  onArchive: () => void;
-  onSetStatus: (status: GoalStatusChange) => void;
-}) {
+export function useGoalMenu(control: GoalStatusControl | null) {
+  const [archiving, setArchiving] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const { isPending, setStatus } = useSetGoalStatus(control?.onSetStatus ?? null);
+
+  const onSetStatus = (status: GoalStatusChange) => {
+    if (status === "active" && control?.resume) {
+      setResuming(true);
+      return;
+    }
+
+    setStatus(status);
+  };
+
+  return {
+    archive: () => {
+      setArchiving(false);
+      setStatus("archived");
+    },
+    archiving,
+    control,
+    isPending,
+    onSetStatus,
+    renaming,
+    resume: () => {
+      setResuming(false);
+      setStatus("active");
+    },
+    resuming,
+    setArchiving,
+    setRenaming,
+    setResuming,
+  };
+}
+
+export type GoalMenu = ReturnType<typeof useGoalMenu>;
+
+export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
   const t = useExtracted();
+  const { control } = menu;
+
+  if (!control) {
+    return null;
+  }
 
   return (
     <DropdownMenuGroup>
+      {control.onRename && (
+        <DropdownMenuItem onClick={() => menu.setRenaming(true)}>
+          <PencilIcon aria-hidden="true" />
+          {t("Rename goal")}
+        </DropdownMenuItem>
+      )}
+
       {control.status === "active" && (
-        <DropdownMenuItem onClick={() => onSetStatus("paused")}>
+        <DropdownMenuItem onClick={() => menu.onSetStatus("paused")}>
           <PauseIcon aria-hidden="true" />
           {t("Pause this goal")}
         </DropdownMenuItem>
       )}
 
       {control.status === "paused" && (
-        <DropdownMenuItem onClick={() => onSetStatus("active")}>
+        <DropdownMenuItem onClick={() => menu.onSetStatus("active")}>
           <PlayIcon aria-hidden="true" />
           {t("Resume this goal")}
         </DropdownMenuItem>
       )}
 
-      <DropdownMenuItem onClick={onArchive}>
+      <DropdownMenuItem onClick={() => menu.setArchiving(true)}>
         <ArchiveIcon aria-hidden="true" />
         {t("Archive this goal")}
       </DropdownMenuItem>
@@ -119,7 +162,43 @@ export function GoalStatusItems({
   );
 }
 
-export function ResumeGoalDialog({
+export function GoalMenuDialogs({ goalTitle, menu }: { goalTitle: string; menu: GoalMenu }) {
+  const { control } = menu;
+
+  if (!control) {
+    return null;
+  }
+
+  return (
+    <>
+      {menu.renaming && control.onRename && (
+        <RenameGoalDialog
+          displayName={goalTitle}
+          onClose={() => menu.setRenaming(false)}
+          onRename={control.onRename}
+        />
+      )}
+
+      <ArchiveGoalDialog
+        goalTitle={goalTitle}
+        onArchive={menu.archive}
+        onOpenChange={menu.setArchiving}
+        open={menu.archiving}
+      />
+
+      {control.resume && (
+        <ResumeGoalDialog
+          goalTitle={goalTitle}
+          onOpenChange={menu.setResuming}
+          onResume={menu.resume}
+          open={menu.resuming}
+        />
+      )}
+    </>
+  );
+}
+
+function ResumeGoalDialog({
   goalTitle,
   onOpenChange,
   onResume,
@@ -150,7 +229,7 @@ export function ResumeGoalDialog({
   );
 }
 
-export function ArchiveGoalDialog({
+function ArchiveGoalDialog({
   goalTitle,
   onArchive,
   onOpenChange,

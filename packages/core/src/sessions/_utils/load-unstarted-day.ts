@@ -41,11 +41,7 @@ export async function loadUnstartedDayView({
 
   const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews, plusLessons] =
     await Promise.all([
-      loadStudyWeek({
-        localDate,
-        selectedPlan: { goalId: goal.id, settings: selection.state.settings },
-        userId,
-      }),
+      loadStudyWeek({ goal, localDate, planSettings: selection.state.settings }),
       loadBlockSubjects({ blocks, blueprint, goal }),
       loadOftenTestedSkillIds(goal),
       loadBlockedTestOutChapters({

@@ -56,7 +56,6 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, other {레슨 {done, number}개 완료(전체 #개)}}"
 
 #: src/_components/chapter-mark.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "건너뜀"
@@ -153,6 +152,7 @@ msgstr "하루 학습 시간"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -2394,7 +2394,6 @@ msgid "Chapter options"
 msgstr "챕터 옵션"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -4530,6 +4529,12 @@ msgid "You're following as many goals as the free plan allows. Pause another goa
 msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
 
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "목표 이름 바꾸기"
+
+#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "이 목표 일시 중지하기"
@@ -4550,6 +4555,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "이어가기"
@@ -4570,11 +4576,13 @@ msgid "Archive"
 msgstr "보관하기"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "{goal} 목표가 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4724,12 +4732,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "계획 공유하기"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "목표 이름 바꾸기"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4810,12 +4812,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "모의고사"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · 계획을 만들고 있어요"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 계획이 완성되면 여기에서 바로 열려요."
@@ -11527,6 +11539,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, other {계획보다 #일 빠름}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, other {밀린 레슨 #개}}"
@@ -13394,6 +13407,50 @@ msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "진도를 저장하고 있어요…"
 
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {오늘 <number>#</number>개 남음} other {오늘 <number>#</number>개 남음}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>개 완료} other {오늘 <number>#</number>개 완료}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>/{total}개 완료} other {오늘 <number>#</number>/{total}개 완료}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "학습을 이어 가면 더 추가돼요"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "밀린 레슨이 없어요."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
+
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
 msgid "This lesson is being written for you. It's usually ready in a few minutes."
@@ -13700,11 +13757,6 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}} · 학습하면서 더 추가돼요"
 
 #: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
-
-#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-screen.tsx
@@ -13716,11 +13768,6 @@ msgstr "오늘의 학습"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "순점수 {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -13931,9 +13978,9 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
-msgctxt "goalSwitcher.MIqzZd"
-msgid "Starts with Plus"
-msgstr "Plus로 시작 가능"
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "목표 일시 중지 또는 Plus 구독하기"
 
 #. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -13977,6 +14024,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "목표를 바꾸지 못했어요. 다시 시도해 보세요."
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "이 목표를 시작하지 못했어요. 다시 시도해 보세요."
@@ -13987,6 +14035,7 @@ msgid ", current goal. Switch goal"
 msgstr ", 현재 목표. 목표 바꾸기"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "내 목표"
@@ -14020,6 +14069,31 @@ msgstr "{done, plural, =0 {오늘 완료한 미션은 #개예요 · 총 {total}�
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "학습 탭"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "일시 정지"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "{goal} 목표를 위한 자리 만들기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. {goal} 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요."
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "닫기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus 구독하기"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
@@ -14815,6 +14889,18 @@ msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, other {#개 완료}}"
 
+#. Counts blocks of today's study session the learner skipped.
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, other {#개 건너뜀}}"
+
+#. Counts blocks of today's study session the learner finished and skipped.
+#: src/today/today-session-card.tsx
+msgctxt "DIDXQf"
+msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
+msgstr "{completed, plural, other {#개 완료}} · {skipped, plural, other {#개 건너뜀}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"
@@ -14909,16 +14995,6 @@ msgstr "{studied} 학습 / 계획 {planned}"
 msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time} 학습 예정"
-
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "이번 주 {studied} 학습 (계획: {planned})"
-
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number}일 학습 (총 {total, plural, other {#일}})"
 
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts

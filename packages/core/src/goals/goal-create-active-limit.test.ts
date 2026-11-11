@@ -1,14 +1,13 @@
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { buildPlan } from "../plans/planner/build-plan";
 import { createOnboardingGoals } from "../view-models/onboarding/create-onboarding-goals";
-import { findActiveGoalLimit } from "./_utils/goal-status";
 import { type GoalDraft } from "./goal-contract";
 
 vi.mock("../plans/planner/build-plan", { spy: true });
@@ -45,78 +44,55 @@ async function setup({ following = 0, plus = false } = {}) {
   return { followed, goal, plan, user };
 }
 
-async function holdPlan(planId: string) {
-  const ready = Promise.withResolvers<TransactionClient>();
-  const release = Promise.withResolvers<null>();
-
-  const writing = prisma.$transaction(
-    async (tx) => {
-      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${planId}::uuid FOR UPDATE`;
-      ready.resolve(tx);
-      await release.promise;
-    },
-    { timeout: 12_000 },
-  );
-
-  void writing.catch(ready.reject);
-  const held = Promise.allSettled([writing]);
-
-  return {
-    finish: async () => {
-      release.resolve(null);
-      await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
-    },
-    tx: await ready.promise,
-  };
-}
-
-async function waitForClaims(userId: string, count: number) {
-  await expect
-    .poll(() => prisma.usageRecord.count({ where: { kind: "goal", userId } }), {
-      interval: 10,
-      timeout: 4000,
-    })
-    .toBe(count);
-}
-
 async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
   const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
   return { inputVersion: saved.inputVersion };
 }
 
-describe("onboarding recounts active goals under the creation lock", () => {
+function countGoalClaims(userId: string) {
+  return prisma.usageRecord.count({ where: { kind: "goal", userId } });
+}
+
+async function full() {
+  const day = await setup({ following: 2 });
+  await prisma.goal.update({ data: { status: "active" }, where: { id: day.goal.id } });
+  return day;
+}
+
+async function statusOf(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+  return goal.status;
+}
+
+async function otherLearnersGoal() {
+  const other = await userFixture();
+  return goalFixture({ userId: other.id });
+}
+
+const FREE_LIMIT_REFUSAL = {
+  refused: [{ decision: { limit: FREE_LIMIT, status: "limitReached" }, index: 0 }],
+  status: "refused",
+};
+
+describe("onboarding counts active goals in the write that creates one", () => {
   beforeEach(() => {
     freezeClock();
     vi.mocked(buildPlan).mockClear();
   });
 
-  it("allows only one of two Free onboarding requests for the last slot whose usage claims both passed", async () => {
+  it("allows only one of two simultaneous Free starts for the last slot and charges only that one", async () => {
     const day = await setup({ following: 2 });
     const before = await versions(day);
-    const holding = await holdPlan(day.plan.id);
 
-    const opening = Promise.all([
+    const results = await Promise.all([
       createOnboardingGoals({ dailyMinutes: 15, goals: [draft()] }),
       createOnboardingGoals({ dailyMinutes: 15, goals: [draft({ title: "Learn chemistry" })] }),
     ]);
 
-    const settled = Promise.allSettled([opening]);
-
-    try {
-      await waitForClaims(day.user.id, 2);
-    } finally {
-      await holding.finish();
-      await settled;
-    }
-
-    const results = await opening;
     expect(buildPlan).not.toHaveBeenCalled();
     expect(results.map((result) => result.status).toSorted()).toStrictEqual(["created", "refused"]);
 
-    expect(results.find((result) => result.status === "refused")).toStrictEqual({
-      refused: [{ decision: { limit: FREE_LIMIT, status: "limitReached" }, index: 0 }],
-      status: "refused",
-    });
+    expect(results.find((result) => result.status === "refused")).toStrictEqual(FREE_LIMIT_REFUSAL);
 
     const created = results.flatMap((result) => (result.status === "created" ? result.goals : []));
     const active = await prisma.goal.findMany({ where: { status: "active", userId: day.user.id } });
@@ -126,6 +102,7 @@ describe("onboarding recounts active goals under the creation lock", () => {
     );
 
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(2);
+    await expect(countGoalClaims(day.user.id)).resolves.toBe(1);
 
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
@@ -134,59 +111,14 @@ describe("onboarding recounts active goals under the creation lock", () => {
     await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 2 });
   });
 
-  it("refuses creation if another goal takes the last slot after its claim but before it takes the lock", async () => {
-    const day = await setup({ following: 2 });
-    const before = await versions(day);
-    const holding = await holdPlan(day.plan.id);
-    const opening = createOnboardingGoals({ dailyMinutes: 15, goals: [draft()] });
-    const settled = Promise.allSettled([opening]);
-
-    try {
-      await waitForClaims(day.user.id, 1);
-      await markLearnerChanged(holding.tx, { planInputs: true, userId: day.user.id });
-
-      await expect(
-        findActiveGoalLimit({ db: holding.tx, goalId: day.goal.id, userId: day.user.id }),
-      ).resolves.toBeNull();
-
-      await holding.tx.goal.update({ data: { status: "active" }, where: { id: day.goal.id } });
-    } finally {
-      await holding.finish();
-      await settled;
-    }
-
-    await expect(opening).resolves.toStrictEqual({
-      refused: [{ decision: { limit: FREE_LIMIT, status: "limitReached" }, index: 0 }],
-      status: "refused",
-    });
-
-    expect(buildPlan).not.toHaveBeenCalled();
-
-    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(3);
-    await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(1);
-
-    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });
-  });
-
   it("keeps both simultaneous goals available to Plus", async () => {
     const day = await setup({ plus: true });
-    const holding = await holdPlan(day.plan.id);
 
-    const opening = Promise.all([
+    const results = await Promise.all([
       createOnboardingGoals({ dailyMinutes: 15, goals: [draft()] }),
       createOnboardingGoals({ dailyMinutes: 15, goals: [draft({ title: "Learn chemistry" })] }),
     ]);
 
-    const settled = Promise.allSettled([opening]);
-
-    try {
-      await waitForClaims(day.user.id, 2);
-    } finally {
-      await holding.finish();
-      await settled;
-    }
-
-    const results = await opening;
     expect(results.map((result) => result.status)).toStrictEqual(["created", "created"]);
 
     await expect(
@@ -205,5 +137,85 @@ describe("onboarding recounts active goals under the creation lock", () => {
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
     ).resolves.toMatchObject({ activeGoalId: day.goal.id });
+  });
+});
+
+describe("starting a goal at the active-goal limit can pause another to make room", () => {
+  beforeEach(() => {
+    freezeClock();
+  });
+
+  it("pauses the named active goal in the write that creates the new one", async () => {
+    const day = await full();
+
+    const result = await createOnboardingGoals({
+      dailyMinutes: 15,
+      goals: [draft()],
+      pauseGoalId: day.goal.id,
+    });
+
+    expect(result).toMatchObject({ goals: [{ isActive: true, status: "active" }], refused: [] });
+    await expect(statusOf(day.goal.id)).resolves.toBe("paused");
+    await expect(countGoalClaims(day.user.id)).resolves.toBe(1);
+  });
+
+  it("keeps the named goal active when a creation cap refuses the start", async () => {
+    const day = await full();
+
+    await usageRecordsFixture({
+      count: 3,
+      createdAt: new Date(),
+      kind: "goal",
+      userId: day.user.id,
+    });
+
+    await expect(
+      createOnboardingGoals({ dailyMinutes: 15, goals: [draft()], pauseGoalId: day.goal.id }),
+    ).resolves.toStrictEqual({
+      refused: [
+        {
+          decision: {
+            limit: { limit: 3, period: "day", resource: "goal", tier: "free" },
+            status: "limitReached",
+          },
+          index: 0,
+        },
+      ],
+      status: "refused",
+    });
+
+    await expect(statusOf(day.goal.id)).resolves.toBe("active");
+    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(3);
+  });
+
+  it("refuses at the limit without a goal to pause, charging nothing", async () => {
+    const day = await full();
+
+    await expect(
+      createOnboardingGoals({ dailyMinutes: 15, goals: [draft()] }),
+    ).resolves.toStrictEqual(FREE_LIMIT_REFUSAL);
+
+    await expect(statusOf(day.goal.id)).resolves.toBe("active");
+    await expect(countGoalClaims(day.user.id)).resolves.toBe(0);
+  });
+
+  it.each<{ name: string; other: (userId: string) => Promise<Goal> }>([
+    { name: "another learner's active goal", other: otherLearnersGoal },
+    {
+      name: "a goal already paused",
+      other: async (userId) => goalFixture({ status: "paused", userId }),
+    },
+    { name: "an explanation", other: async (userId) => goalFixture({ kind: "explain", userId }) },
+  ])("pauses nothing and refuses at the limit when it names $name", async ({ other }) => {
+    const day = await full();
+    const named = await other(day.user.id);
+
+    await expect(
+      createOnboardingGoals({ dailyMinutes: 15, goals: [draft()], pauseGoalId: named.id }),
+    ).resolves.toStrictEqual(FREE_LIMIT_REFUSAL);
+
+    await expect(statusOf(day.goal.id)).resolves.toBe("active");
+    await expect(statusOf(named.id)).resolves.toBe(named.status);
+    await expect(countGoalClaims(day.user.id)).resolves.toBe(0);
   });
 });

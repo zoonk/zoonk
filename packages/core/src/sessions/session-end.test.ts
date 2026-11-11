@@ -208,6 +208,7 @@ describe("ending a session", () => {
         brainPower: 40,
         contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: today.session.id },
         endedAt: new Date(),
+        goalId: goal.id,
         seconds: 170,
         userId: user.id,
       }),

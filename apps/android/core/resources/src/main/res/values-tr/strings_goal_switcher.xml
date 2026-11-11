@@ -6,14 +6,18 @@
   "goal_switcher_explore_courses": "d29cc9c1182abbed7cad355c41fa0f74f15c66256f3a4ddbd0fe48612b6f7788",
   "goal_switcher_failed": "20436d39669c11fdc938cba332351567dd99ca33f1f0fc9b9040db8bb7bc4057",
   "goal_switcher_finished": "b6819625e3455af1a73ffec87a17c51700f2bcb76addaef4ce94a316cd6da17e",
+  "goal_switcher_make_room_description": "6423c41cc177e7baa5a33a1416794efc4932395fd7913946aab8bc692577781c",
+  "goal_switcher_make_room_title": "19e2595ccd6d22d7fd1670b3763d48e342336bee1d642ec05f19c0e1b2cddfe0",
   "goal_switcher_new_goal": "fbdf292145fb8dc6d39ac8b953d81049580ae9c183981281cae161da2dd0d6d0",
+  "goal_switcher_pause": "b48ab03d40c28333eac60d8eba0db9582c1b41b17a45c7601dba04b23e06871b",
+  "goal_switcher_pause_goal": "892801efa6d1b19778ea706bf2860caa87cfafa6f46dc16522fb5406ed22d989",
+  "goal_switcher_pause_or_plus": "3754a51f4b353e5162eee378f2368f9f32f35b4b5468e234498101f0b0d5a580",
   "goal_switcher_paused": "f8c7eda102710b4d91cc8f614fdb353bc9438a50f746d2c12cbebf3686a0134e",
   "goal_switcher_quick_explanations": "b8752c7ae4d3085793773cbe2fbf89344fd93998fd789dcaa1f52b10c251b9ae",
   "goal_switcher_ready_to_start": "8db9438c16f8f2aa21862edbc6130030413508547674c030e2c09bb7c24a07e1",
   "goal_switcher_start_failed": "ee729b8b952c8e1cfcae76a8dd178e0cbe83c77f8aefbc11e71c1112fb3d88ed",
   "goal_switcher_start_goal": "c457ad26a6239d908b7d3ba114f0270209278daace9aef6175c02fdf427bb66c",
   "goal_switcher_starts_with_free_account": "db1fdc6a88c2fab71dde55695a85845fbee1b0371c53129e6791909932ccae65",
-  "goal_switcher_starts_with_plus": "9ae4e5873432b8ba0ed577217de01dd5dc5c6d1a3b01bf8de79ca7e329b0a4e6",
   "goal_switcher_your_goals": "9090922cd9f88968b1922e33499c038cbdbc5303038e34a745b2fe56e97facc1"
 }
 -->
@@ -30,11 +34,19 @@
     <string name="goal_switcher_finished">Tamamlandı</string>
     <string name="goal_switcher_paused">Duraklatıldı</string>
     <string name="goal_switcher_failed">Hedefini değiştiremedik. Tekrar dene.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start, because the free plan follows only so many goals at the same time (not a cap on new goals per day or month). Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="goal_switcher_starts_with_plus">Plus ile başlatılabilir</string>
     <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
     <string name="goal_switcher_starts_with_free_account">Ücretsiz hesapla başlar</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Başlamaya hazır</string>
     <string name="goal_switcher_start_failed">Bu hedefi başlatamadık. Tekrar dene.</string>
+    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_pause_or_plus">Bir hedefi duraklat veya Plus’a geç</string>
+    <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_title">%1$s için yer aç</string>
+    <!-- %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_description">Ücretsiz paketteki hedef sınırına ulaştın. %1$s hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin.</string>
+    <!-- Button beside a goal the learner follows: it pauses that goal. -->
+    <string name="goal_switcher_pause">Duraklat</string>
+    <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->
+    <string name="goal_switcher_pause_goal">%1$s hedefini duraklat</string>
 </resources>

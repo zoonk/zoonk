@@ -137,4 +137,43 @@
     <string name="session_next_while_waiting">While you wait: %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
     <string name="session_next_instead">Instead: %1$s</string>
+    <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
+    <plurals name="session_day_done">
+        <item quantity="one">%1$s of %2$s done today</item>
+        <item quantity="other">%1$s of %2$s done today</item>
+    </plurals>
+    <!-- A finished block's line about today's session, past its midpoint. %1$s is how many of the day's blocks are left, shown larger. -->
+    <plurals name="session_day_left">
+        <item quantity="one">%1$s left today</item>
+        <item quantity="other">%1$s left today</item>
+    </plurals>
+    <!-- Under "3 left today": %1$s of the session's %2$s blocks are done. -->
+    <plurals name="session_day_done_caption">
+        <item quantity="one">%1$s of %2$s done</item>
+        <item quantity="other">%1$s of %2$s done</item>
+    </plurals>
+    <!-- A finished block's line about today's session while the day still holds time for lessons not on the list yet, so it has no total. %1$s is how many blocks are done, shown larger. -->
+    <plurals name="session_day_open">
+        <item quantity="one">%1$s done today</item>
+        <item quantity="other">%1$s done today</item>
+    </plurals>
+    <!-- Under "3 done today": more lessons are being written and join today's session on their own. -->
+    <string name="session_day_more_coming">More as you go</string>
+    <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
+    <plurals name="session_caught_up_today">
+        <item quantity="one">%1$s caught up today</item>
+        <item quantity="other">%1$s caught up today</item>
+    </plurals>
+    <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
+    <plurals name="session_catch_up_to_go">
+        <item quantity="one">%1$s to go</item>
+        <item quantity="other">%1$s to go</item>
+    </plurals>
+    <!-- At a finished block's end, once every lesson earlier days left is done. -->
+    <string name="session_no_catch_up_left">No lessons left to catch up.</string>
+    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="session_lessons_deferred">
+        <item quantity="one">%1$s lesson moved to another day to fit your %2$s today.</item>
+        <item quantity="other">%1$s lessons moved to another day to fit your %2$s today.</item>
+    </plurals>
 </resources>

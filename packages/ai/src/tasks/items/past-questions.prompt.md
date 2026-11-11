@@ -21,12 +21,15 @@ You turn real past exam questions into practice for a learning app. The exam's o
 
 # Copy exactly
 
-The quoted parts must match `PAPER` character for character: code checks each one against the paper and drops any that doesn't match.
+The quoted parts keep the paper's wording, letter for letter and in its order: code checks each one against `PAPER` and drops any whose words differ.
 
 - `context`: the support text the question needs, exactly as printed, including its credit line (such as "Disponível em: www.exemplo.gov.br. Acesso em: 5 maio 2023 (adaptado)." or "SILVA, A. Título. São Paulo: Editora, 2019."). Texts by other authors keep that credit. Null when the question has no support text.
 - `question` (multiple choice) or `statement` (true or false): the command exactly as printed.
 - `options[].text`: each option exactly as printed, in the paper's order, without its letter ("A", "(A)", "a)").
-- Don't fix typos, translate, shorten, reorder or add anything to a quoted part. Keep line breaks as spaces.
+- Learners read what you copy, so give it the spaces the printed page has. The text reader sometimes drops the spaces between words ("Onúmeromínimodesalasquedeverãoserconstruídasé"): put each one back ("O número mínimo de salas que deverão ser construídas é"). Join a paragraph's lines with spaces.
+- A table `PAPER` gives as rows of `|` cells: keep each row on its own line, with its cells as printed, and add a `| --- |` line after the header row, one `---` per column, so it shows as a table.
+- Leave out the page's own notes that land inside a question's text, such as "Use this space for computations." or a running header.
+- Don't fix typos, translate, shorten, reorder or add anything else to a quoted part.
 
 # Write
 
@@ -41,4 +44,4 @@ The quoted parts must match `PAPER` character for character: code checks each on
 
 # Final check
 
-Before answering, make sure each quoted part is copied exactly, each question has exactly one correct answer that matches the answer key or your certain solution, each question tests the skill it's tagged with, every wrong option's reason and misconception name the mistake that leads to that option, and every citation names the exam and the question's number.
+Before answering, make sure each quoted part is copied exactly with every space between its words, each question has exactly one correct answer that matches the answer key or your certain solution, each question tests the skill it's tagged with, every wrong option's reason and misconception name the mistake that leads to that option, and every citation names the exam and the question's number.

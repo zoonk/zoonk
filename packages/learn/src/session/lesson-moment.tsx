@@ -156,13 +156,11 @@ export function LessonMomentHeader({
   exitHref: string;
   menu?: ReactNode;
 }) {
-  const moment = completion.result?.studyBlock ?? null;
-
-  if (!moment) {
+  if (!completion.result?.studyBlock) {
     return null;
   }
 
-  return <SessionHeader exitHref={exitHref} menu={menu} sessionBar={moment.sessionBar} />;
+  return <SessionHeader exitHref={exitHref} menu={menu} />;
 }
 
 export function LessonMoment({

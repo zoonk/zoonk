@@ -14,6 +14,9 @@ object ZoonkMotion {
     /** Between items of one list that celebrate together. */
     const val STAGGER_MILLIS = 100
 
+    /** Main's `--transition-duration-fill`: a number counting up and the meter beside it filling. */
+    const val FILL_MILLIS = 700
+
     val EaseOut: Easing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
     val EaseAccelerate: Easing = CubicBezierEasing(0.55f, 0f, 1f, 0.45f)
     val EaseSwing: Easing = CubicBezierEasing(0.45f, 0f, 0.55f, 1f)

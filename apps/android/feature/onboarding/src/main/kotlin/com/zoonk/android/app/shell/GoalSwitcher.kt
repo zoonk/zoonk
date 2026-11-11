@@ -85,6 +85,7 @@ fun GoalSwitcher(
     val resources = LocalResources.current
     LaunchedEffect(viewModel, resources) { viewModel.failures.collect { snackbars.showSnackbar(resources.getString(it)) } }
     var expanded by rememberSaveable { mutableStateOf(false) }
+    var makingRoomFor by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (selected == null && explanations.isEmpty()) {
         TextButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
@@ -114,11 +115,36 @@ fun GoalSwitcher(
                 learner.waitingGoals,
                 explanations,
                 hasAccount = !learner.identity.isAnonymous,
+                onMakeRoom = { makingRoomFor = it.id },
                 onDismiss = { expanded = false },
                 navigator = navigator,
                 viewModel = viewModel,
             )
         }
+    }
+
+    learner.waitingGoals.firstOrNull { it.id == makingRoomFor && it.locked }?.let { waiting ->
+        val close = {
+            makingRoomFor = null
+            viewModel.forgetMakeRoomFailure()
+        }
+        MakeRoomSheet(
+            waitingName = waiting.displayName,
+            active = followed.filter { it.status == LearnerSummaryGoal.Status.ACTIVE },
+            pausing = viewModel.pausing,
+            failed = viewModel.makeRoomFailed,
+            onPause = { goalId ->
+                viewModel.start(waiting, pauseGoalId = goalId) {
+                    close()
+                    navigator.open(AppRoute.GoalSetup(it))
+                }
+            },
+            onGetPlus = {
+                close()
+                navigator.open(AppRoute.Subscription)
+            },
+            onDismiss = close,
+        )
     }
 }
 
@@ -152,6 +178,7 @@ private fun MenuItems(
     waiting: List<LearnerSummaryWaitingGoal>,
     explanations: List<LearnerSummaryGoal>,
     hasAccount: Boolean,
+    onMakeRoom: (LearnerSummaryWaitingGoal) -> Unit,
     onDismiss: () -> Unit,
     navigator: AppNavigator,
     viewModel: GoalSwitcherViewModel,
@@ -190,7 +217,7 @@ private fun MenuItems(
                                 stringResource(
                                     when {
                                         !goal.locked -> R.string.goal_switcher_ready_to_start
-                                        hasAccount -> R.string.goal_switcher_starts_with_plus
+                                        hasAccount -> R.string.goal_switcher_pause_or_plus
                                         else -> R.string.goal_switcher_starts_with_free_account
                                     },
                                 ),
@@ -204,7 +231,7 @@ private fun MenuItems(
                     onDismiss()
                     when {
                         !goal.locked -> viewModel.start(goal) { navigator.open(AppRoute.GoalSetup(it)) }
-                        hasAccount -> navigator.open(AppRoute.Subscription)
+                        hasAccount -> onMakeRoom(goal)
                         else -> navigator.open(AppRoute.Login)
                     }
                 },
@@ -254,6 +281,17 @@ class GoalSwitcherViewModel(
 
     private var starting = false
 
+    /** The goal a start from the Make room sheet pauses, while that request runs. */
+    var pausing by mutableStateOf<UUID?>(null)
+        private set
+
+    var makeRoomFailed by mutableStateOf(false)
+        private set
+
+    fun forgetMakeRoomFailure() {
+        makeRoomFailed = false
+    }
+
     fun select(goalId: UUID) {
         val session = app.sessions.current
         viewModelScope.launch {
@@ -263,15 +301,21 @@ class GoalSwitcherViewModel(
         }
     }
 
-    /** Starts a goal its card left waiting, then asks its setup; one that didn't start stays listed. */
+    /**
+     * Starts a goal its card left waiting, then asks its setup; one that didn't start stays listed.
+     * [pauseGoalId] is the followed goal the Make room sheet pauses for it, which says a failure itself.
+     */
     fun start(
         waiting: LearnerSummaryWaitingGoal,
+        pauseGoalId: UUID? = null,
         onStarted: (String) -> Unit,
     ) {
         if (starting) return
         starting = true
+        pausing = pauseGoalId
+        makeRoomFailed = false
         viewModelScope.launch {
-            when (val outcome = app.onboarding.createGoals(waiting.input.toGoalCreateInput())) {
+            when (val outcome = app.onboarding.createGoals(waiting.input.toGoalCreateInput(pauseGoalId))) {
                 is WriteOutcome.Done -> {
                     onStarted(outcome.value)
                 }
@@ -279,9 +323,10 @@ class GoalSwitcherViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    failed.send(R.string.goal_switcher_start_failed)
+                    if (pauseGoalId == null) failed.send(R.string.goal_switcher_start_failed) else makeRoomFailed = true
                 }
             }
+            pausing = null
             starting = false
         }
     }

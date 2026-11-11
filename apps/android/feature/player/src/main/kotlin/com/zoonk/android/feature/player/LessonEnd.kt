@@ -39,7 +39,6 @@ import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
-import com.zoonk.android.feature.player.engine.LessonCompletion
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.lessonMap
@@ -49,7 +48,9 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.practice.SaveErrorText
+import com.zoonk.android.feature.session.CatchUpLine
 import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.SessionDayProgress
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -72,8 +73,6 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -81,7 +80,6 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
-import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.delay
 import java.time.ZoneId
@@ -323,10 +321,19 @@ fun LessonCompletionView(
                         onReport = onReportSaveFailure,
                     )
                 }
-                if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
+                if (completion.status == CompletionStatus.Saved) {
+                    LessonReadouts(state)
+                    CatchUpLine(
+                        completion.result
+                            ?.studyBlock
+                            ?.dayProgress
+                            ?.catchUp,
+                    )
+                }
             }
             val result = completion.result
             if (completion.status == CompletionStatus.Saved && result != null) {
+                result.studyBlock?.let { SessionDayProgress(it) }
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
                 result.finishedChapter?.let { finishedChapter?.invoke(it) }
@@ -391,21 +398,8 @@ internal fun LessonReadouts(
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
 
-    val deferred =
-        state.completion?.deferredBlock?.let {
-            pluralStringResource(
-                R.plurals.player_lessons_deferred,
-                it.deferredLessonsCount.toInt(),
-                formatNumber(it.deferredLessonsCount.toDouble(), locale),
-                formatMinutes(it.minutes.dailyGoal, locale),
-            )
-        }
-
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review, deferred))
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review))
 }
-
-internal val LessonCompletion.deferredBlock: StudyBlockCompletion?
-    get() = result?.studyBlock?.takeIf { status == CompletionStatus.Saved && it.deferredLessonsCount > 0 }
 
 /**
  * What the lesson's end does on its main button and on Enter: finish or try again, then the next

@@ -145,6 +145,7 @@
   "today_setting_up_detail": "8c2ac0ba2133dbde33b0d9959a4729cfcb522f27f0e3cd6e4ede264fb2c53701",
   "today_setting_up_goal": "39edda515fa10da33c1caf51805eedad6deb5c204687351c2640dbe0d7422995",
   "today_show_less": "eb97100655f17fb39abe2dc931af67d3c7fd8454bd157a8721134e7d379e8e60",
+  "today_skipped_count": "c3f7ffbe76e300619b7c12216ffa30b6fa89864a36c0e6b1bd63e6e9522d8b1b",
   "today_start_new_goal": "330f2275dd5b024daad251b25fb75dc495a1b89c95268ad1d989cc891df98dbd",
   "today_start_session": "46d0a183b5625f69683f6902a3be4489a896cf0953ad503a2acb8c2a70ac19e6",
   "today_step_after_lessons": "b4722553ec703686048bd955fe953c5439354d6941127e79badb502da873e684",
@@ -186,7 +187,6 @@
   "today_week_day": "47ab676dd03e8e8a6c5b654e54d2592554360c1a44ed0f44f25b9cfd580028d0",
   "today_week_day_planned": "f82b0b1766960d3cd16ff81a44153e11c1cd772008ee8f6a75b46071892a3e5c",
   "today_week_day_studied_of": "e23f0c3c3c9a0eb209be0af17abae7098f10d718f3b1e8958c88ca8e0689bee4",
-  "today_week_days": "96bf00b16de013e807cbda35a11a8a7d8589aec50b26f6ea53cd5aa36c1be381",
   "today_week_deadline": "92f00ae2eddd0c1e034d508bb3e145fe7bbed2103e9f35b1ed382a15b45b3adb",
   "today_week_exam_day": "39d7032e099c94af8614c24c2fd039353ca76ed92b7beb5b04c02064be034669",
   "today_week_full_review_detail": "6f1102d8015479447761e4d64e0e66b1137d907edb00d07683588aac0c035df9",
@@ -199,7 +199,6 @@
   "today_week_planned": "d665cafb4e9c24316c118627eb1b7e58a9f786710e693816e6a1f3ce0e6d4b66",
   "today_week_rest_day": "0a2fa544956823bd3a8e65387240742a20c6f0bd944239dd2bf7f28657447648",
   "today_week_studied": "f951d556d83618adeba8e9abd716784e35e053fc7d9cd9816a1dd5c79410ce72",
-  "today_week_time": "61b13adfa9077af0a07d4b1928b562e4e2cdf69c1bc106fac1bbbe27788fca87",
   "today_week_title": "ab3f253af7be6a571448e020fa9274d9fc290ad7454b9c88d0a5d8088663f3ad",
   "today_week_today": "77d910238a5ea6ed9a0e5c01f0f2d3353595ccd28c5d2d37eed79bef7ea63125",
   "today_welcome_back": "d4e40d2a8af6e3d91f0d3207a1362e247338153393ce786219d10f2b581cfc76"
@@ -263,6 +262,12 @@
         <item quantity="one">%d completato</item>
         <item quantity="many">%d completati</item>
         <item quantity="other">%d completati</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d saltato</item>
+        <item quantity="many">%d saltati</item>
+        <item quantity="other">%d saltati</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d altro</item>
@@ -356,14 +361,6 @@
     <string name="today_continue_explanation">Continua la spiegazione</string>
     <string name="today_continue_draft">Continua</string>
     <string name="today_week_title">Questa settimana</string>
-    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
-    <plurals name="today_week_days">
-        <item quantity="one">%1$s su %2$d giorno</item>
-        <item quantity="many">%1$s su %2$d giorni</item>
-        <item quantity="other">%1$s su %2$d giorni</item>
-    </plurals>
-    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
-    <string name="today_week_time">Hai studiato %1$s su %2$s questa settimana</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->

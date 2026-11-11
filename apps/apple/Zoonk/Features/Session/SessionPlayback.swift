@@ -32,6 +32,11 @@ final class SessionPlayback {
     moment = completion
   }
 
+  /// "See today's summary" from the moment that completed the session.
+  func seeSummary() {
+    moment = nil
+  }
+
   func stop(sessionID: String) {
     playingBlockID = nil
     shownBlockID = nil

@@ -70,26 +70,25 @@ struct DayProgressRow: View {
 
   var body: some View {
     let segments = session.daySegments
-    let meter = MeterParts(parts: segments.map(\.meterPart))
 
-    meter
+    DaySegments(segments: segments.map(\.mark))
       .overlay {
-        GeometryReader { proxy in
-          let spans = meter.spans(width: proxy.size.width)
-
-          ForEach(spans.indices, id: \.self) { index in
+        // Equal parts, so the controls line up with them the way the bar lays them out.
+        HStack(spacing: DaySegments.gap) {
+          ForEach(segments.indices, id: \.self) { index in
             DaySegmentButton(
-              segment: segments[index], writingStalled: writingStalled, barHeight: meter.height
+              segment: segments[index], writingStalled: writingStalled,
+              barHeight: DaySegments.height
             )
-            .frame(width: spans[index].width + meter.gap, height: tapHeight)
-            .position(x: spans[index].x + spans[index].width / 2, y: proxy.size.height / 2)
+            .frame(maxWidth: .infinity)
+            .frame(height: tapHeight)
           }
         }
       }
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
         Text(
-          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
+          "\(session.sessionBar.completed) of \(session.sessionBar.total) done",
           tableName: "Today", comment: "How far the day's session is"))
   }
 }
@@ -148,8 +147,6 @@ extension DaySegment {
     switch self {
     case .block(_, .done):
       return String(localized: "Done", table: "Today", comment: "A finished block")
-    case .block(_, .skipped):
-      return String(localized: "Skipped", table: "Today", comment: "A skipped block")
     case .block(let block, .ahead):
       return studyDuration(minutes: block.estimatedMinutes)
     case .block(let block, .current) where block.status == .active && block.answered > 0:

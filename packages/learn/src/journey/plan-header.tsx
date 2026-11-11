@@ -7,7 +7,7 @@ import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
-function JourneyEyebrow() {
+export function PlanEyebrow() {
   const t = useExtracted();
   const { goal, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
@@ -40,12 +40,18 @@ function JourneyEyebrow() {
   );
 }
 
-export function PlanHeader({ children }: { children: React.ReactNode }) {
+export function PlanHeader({
+  children,
+  eyebrow,
+}: {
+  children: React.ReactNode;
+  eyebrow: React.ReactNode;
+}) {
   const t = useExtracted();
 
   return (
     <PageHeaderContent>
-      <JourneyEyebrow />
+      {eyebrow}
       <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
         <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
           {t("Plan")}

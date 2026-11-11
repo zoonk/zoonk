@@ -171,4 +171,49 @@ describe("a plan change owes its lessons in the transaction that saves it", () =
 
     await expectOwedLessons({ goalId: goal.id, userId: user.id });
   });
+
+  it("owes no lessons for a change saved while the plan is still in setup", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
+      }),
+    ).resolves.toStrictEqual({ change: null, status: "applied" });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      lessonsAskedAt: null,
+    });
+  });
+
+  it("owes no lessons for a base choice that leaves the plan as it was", async () => {
+    const { goal, library, plan, user } = await setup();
+    await forgetOwedLessons({ planId: plan.id, userId: user.id });
+    const [base] = library.skills;
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: {
+          operations: [
+            { choices: [{ choice: "essential", skillId: base?.id ?? "" }], kind: "setBaseChoices" },
+          ],
+          timeZone: "UTC",
+        },
+      }),
+    ).resolves.toStrictEqual({ change: null, status: "applied" });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+  });
 });

@@ -245,9 +245,9 @@ private struct GoalSwitcher: View {
                   )
                 } else if goal.locked {
                   Text(
-                    "Starts with Plus", tableName: "Navigation",
+                    "Pause a goal or get Plus", tableName: "Navigation",
                     comment:
-                      "Under a goal in the goal switcher that the free plan can't follow yet; Plus is the subscription's name, not \"more\""
+                      "Under a goal in the goal switcher that waits for room on the free plan; Plus is the subscription's name, not \"more\""
                   )
                 } else {
                   Text(
@@ -350,7 +350,7 @@ private struct GoalSwitcher: View {
 
   private func start(_ goal: LearnerWaitingGoal) {
     guard !goal.locked else {
-      router.present(isGuest ? .signIn : .subscription)
+      router.present(isGuest ? .signIn : .makeRoom(goal))
       return
     }
 

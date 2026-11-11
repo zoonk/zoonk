@@ -209,7 +209,6 @@ msgstr "오늘"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
@@ -952,22 +951,6 @@ msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
 msgstr "목표를 이룰 때까지 매일 무엇을 공부할지, 어떤 내용을 다룰지 확인해요."
 
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "NIpBgv"
-msgid "Your plan comes after a few questions"
-msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-msgctxt "mMlLhC"
-msgid "Answer them and we'll plan every day until you reach your goal."
-msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
-
-#: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "계속하기"
-
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
@@ -1108,6 +1091,11 @@ msgstr "설정 중"
 msgctxt "YC2aql"
 msgid "What you wrote"
 msgstr "작성한 내용"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"
