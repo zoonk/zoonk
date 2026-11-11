@@ -33,6 +33,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   /// Questions are left before its plan is set, so continuing it opens its setup instead of Today.
   var isSettingUp = false
   let kind: Kind
+  /// A flag's code: the goal's country's, else its language's; nil for a goal without one.
+  var languageFlag: String? = nil
   let status: Status
   /// `YYYY-MM-DD`, a calendar day.
   let targetDate: String?
@@ -59,7 +61,7 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
 
 /// A goal typed with the learner's goals that their plan didn't start, kept so it starts without
 /// typing it again.
-struct LearnerWaitingGoal: Equatable, Identifiable, Sendable {
+struct LearnerWaitingGoal: Hashable, Identifiable, Sendable {
   let id: String
   /// POST /goals as it is, with the learner's time zone, starts it.
   let input: Components.Schemas.GoalCreateInputOutput
@@ -183,6 +185,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         id: goal.id,
         isSettingUp: goal.isSettingUp,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
+        languageFlag: goal.languageFlag,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,
         displayName: goal.displayName, title: goal.title,
