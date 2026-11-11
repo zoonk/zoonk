@@ -1,8 +1,8 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { type EntitlementTier } from "../../../entitlements/contract";
-import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { type GoalCreateInput, type GoalDraft } from "../../../goals/goal-contract";
 import { withPlannableDate } from "../../../plans/target-date-range";
 import { type UnderstoodGoalView, type UnderstoodSchedule } from "../onboarding-contract";
@@ -98,9 +98,8 @@ export async function findWaitingGoals({
     where: { id: { in: liveIds }, status: "understood", userId },
   });
 
-  const limit = getActiveGoalLimit(tier);
   const active = goals.filter((goal) => goal.status === "active" && goal.kind !== "explain");
-  const locked = limit !== null && active.length >= limit;
+  const locked = getActiveGoalsLeft({ active: active.length, tier }) === 0;
 
   return drafts.flatMap((draft) => {
     const understanding = parseStoredUnderstanding(draft.understanding);

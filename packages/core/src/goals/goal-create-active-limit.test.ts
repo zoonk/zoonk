@@ -25,7 +25,6 @@ function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
   };
 }
 
-/** `following` active goals besides the paused one the learner last opened. */
 async function setup({ following = 0, plus = false } = {}) {
   const user = await userFixture();
   const goal = await goalFixture({ status: "paused", userId: user.id });

@@ -36,7 +36,6 @@ const STATISTICS: CardGoal = { subject: "Statistics", title: "Learn statistics" 
 
 const CHEMISTRY: CardGoal = { subject: "Chemistry", title: "Learn chemistry" };
 
-/** Goals the learner already follows, from earlier cards. */
 function follow(userId: string, count: number) {
   return Promise.all(Array.from({ length: count }, () => goalFixture({ userId })));
 }
