@@ -1,0 +1,118 @@
+{
+  "cases": [
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "\\frac{1}{2} x^2"
+        }
+      ],
+      "text": "$$\\frac{1}{2} x^2$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "x^2 + 1"
+        }
+      ],
+      "text": "$$x^2 + 1$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "\\{a, b\\} \\cup \\{c\\}"
+        }
+      ],
+      "text": "$$\\{a, b\\} \\cup \\{c\\}$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "2*3*4 = 24"
+        }
+      ],
+      "text": "$$2*3*4 = 24$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": true,
+          "latex": "v = \\sqrt{2gh}"
+        }
+      ],
+      "text": "$$\nv = \\sqrt{2gh}\n$$"
+    },
+    {
+      "formulas": [
+        {
+          "display": true,
+          "latex": "v = \\sqrt{2gh}"
+        }
+      ],
+      "text": "The speed is:\n\n$$\nv = \\sqrt{2gh}\n$$\n\nso it grows with height."
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "\\frac{1}{2} x^2"
+        }
+      ],
+      "text": "The area is $$\\frac{1}{2} x^2$$ here."
+    },
+    {
+      "formulas": [],
+      "text": "It costs $5, or $10 with tax."
+    },
+    {
+      "formulas": [],
+      "text": "Let $x$ be even."
+    },
+    {
+      "formulas": [],
+      "text": "Write `$$x^2$$` to typeset it."
+    },
+    {
+      "formulas": [],
+      "text": "```\n$$x^2$$\n```"
+    },
+    {
+      "formulas": [],
+      "text": "The sum $$x + 1 never closes."
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "a^2"
+        },
+        {
+          "display": false,
+          "latex": "b^2"
+        }
+      ],
+      "text": "Compare $$a^2$$ with $$b^2$$."
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "x^2"
+        }
+      ],
+      "text": "- First, $$x^2$$\n- Then the rest"
+    },
+    {
+      "formulas": [
+        {
+          "display": false,
+          "latex": "E = mc^2"
+        }
+      ],
+      "text": "**Bold** words, a [link](https://example.com) and $$E = mc^2$$ in one answer."
+    }
+  ]
+}

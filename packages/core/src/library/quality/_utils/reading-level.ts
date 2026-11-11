@@ -1,4 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
+import { replaceMath } from "@zoonk/utils/math-spans";
 
 const MAX_SENTENCE_WORDS: Readonly<Record<CourseLevel, number>> = {
   advanced: 45,
@@ -7,7 +8,6 @@ const MAX_SENTENCE_WORDS: Readonly<Record<CourseLevel, number>> = {
   overview: 32,
 };
 
-const MATH_SPAN = /\$[^$]+\$/gu;
 const SENTENCE_END = /(?<=[.!?…])\s+/u;
 const WORD = /[\p{L}\p{N}]/u;
 
@@ -18,8 +18,7 @@ function countWords(sentence: string): number {
 export function findLongSentences({ level, text }: { level: CourseLevel; text: string }): string[] {
   const maxWords = MAX_SENTENCE_WORDS[level];
 
-  return text
-    .replaceAll(MATH_SPAN, "x")
+  return replaceMath(text, () => "x")
     .split(SENTENCE_END)
     .filter((sentence) => countWords(sentence) > maxWords);
 }

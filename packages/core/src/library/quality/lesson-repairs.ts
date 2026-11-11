@@ -28,8 +28,8 @@ export function repairScreenText(screen: WrittenScreen): WrittenScreen {
 
 /**
  * A quote must match its screen's repaired sentence character for character, and whether a power
- * there was wrapped depends on the rest of its line (a price can rule it out), so the quote follows
- * the screen it cites.
+ * there was wrapped depends on the rest of its line (a power the code can't wrap leaves the whole
+ * line as written), so the quote follows the screen it cites.
  */
 function repairBasisQuote({
   screen,

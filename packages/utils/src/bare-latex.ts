@@ -122,7 +122,7 @@ function insertMath(text: string, pieces: BareLatex[]): string {
     );
 }
 
-/** A `$` the line already has, such as a price's, can pair with a new one; then the line stays. */
+/** A `$` the line already has can pair with a new one; then the line stays. */
 function wrapLine(line: string): string {
   const hidden = hideMathAndCode(line);
   const pieces = findBareLatexIn(hidden);

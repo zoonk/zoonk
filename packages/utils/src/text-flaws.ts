@@ -1,15 +1,13 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines } from "./markdown-table";
+import { hideMath, splitAtMath } from "./math-spans";
 
 /**
  * `blocks` keeps lines, lists and tables (a screen's body); `inline` shows one line, whatever its
  * line breaks (an option, a title).
  */
 export type TextLayout = "blocks" | "inline";
-
-/** Math the renderers draw with KaTeX: its `_` and `*` are LaTeX, never emphasis. */
-const MATH = /\$\$[\s\S]*?\$\$|\$[^$\n]+\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/gu;
 
 const LIST_MARK = /^\s*(?:[-*•]|\d{1,3}[.)])\s+/u;
 
@@ -52,17 +50,19 @@ function quote(text: string): string {
   return `"${text.trim()}"`;
 }
 
-/** Spaces of the math's own length keep positions in the result pointing into the line. */
-function hideMath(line: string): string {
-  return line.replaceAll(MATH, (math) => " ".repeat(math.length));
-}
-
+/**
+ * Players pair emphasis only within the text between formulas, so a `**` opening before a formula
+ * and closing after it shows as raw marks. Positions point into the line.
+ */
 export function findStrayEmphasis(line: string): Set<number> {
   const list = LIST_MARK.exec(line)?.[0].length ?? 0;
-  const hidden = hideMath(line);
 
-  const segments = parseInlineMarkupRanges(hidden.slice(list)).flatMap(({ kind, start, text }) =>
-    kind === "text" ? [{ start: list + start, text }] : [],
+  const segments = splitAtMath(line.slice(list)).flatMap((piece) =>
+    piece.kind === "text"
+      ? parseInlineMarkupRanges(piece.text).flatMap(({ kind, start, text }) =>
+          kind === "text" ? [{ start: list + piece.start + start, text }] : [],
+        )
+      : [],
   );
 
   const at = (pattern: RegExp) =>
@@ -78,8 +78,10 @@ export function findStrayEmphasis(line: string): Set<number> {
 }
 
 function findMarks(line: string, marks: typeof INLINE_MARKS): string[] {
+  const text = hideMath(line);
+
   return marks.flatMap(({ pattern, problem }) =>
-    pattern.test(line) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
+    pattern.test(text) ? [`Shows ${problem} as text: ${quote(line)}.`] : [],
   );
 }
 

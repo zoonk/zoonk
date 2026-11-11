@@ -26,8 +26,8 @@ function isDelimiter(text: string, index: number): boolean {
 }
 
 /**
- * Pandoc's rule: a closing `$` has text right before it and no digit right after, so "$5 and $10"
- * stay text.
+ * Inline math never holds an unescaped `$`: the first one closes it only by Pandoc's rule (text
+ * right before it, no digit right after), so in "$5 and the gap is $10^{-5}$" the price stays text.
  */
 function findInlineMathClose(text: string, from: number): number | null {
   const index = text.indexOf("$", from);
@@ -36,21 +36,19 @@ function findInlineMathClose(text: string, from: number): number | null {
     return null;
   }
 
+  if (isEscaped(text, index)) {
+    return findInlineMathClose(text, index + 1);
+  }
+
   const isClose =
-    isDelimiter(text, index) &&
+    !isCurrencySign(text, index) &&
     !isWhitespace(text[index - 1]) &&
     !DIGIT.test(text[index + 1] ?? "");
 
-  return isClose ? index : findInlineMathClose(text, index + 1);
+  return isClose ? index : null;
 }
 
-function matchMathAt(text: string, start: number): MathSpan | null {
-  if (text.startsWith("$$", start)) {
-    const close = text.indexOf("$$", start + 2);
-    const content = close === -1 ? "" : text.slice(start + 2, close).trim();
-    return content ? { content, display: true, end: close + 2, start } : null;
-  }
-
+function matchInlineMathAt(text: string, start: number): MathSpan | null {
   if (isWhitespace(text[start + 1])) {
     return null;
   }
@@ -69,8 +67,22 @@ function findDollarMath(text: string, from = 0): MathSpan | null {
     return null;
   }
 
-  const span = isDelimiter(text, start) ? matchMathAt(text, start) : null;
-  return span ?? findDollarMath(text, start + 1);
+  if (!isDelimiter(text, start)) {
+    return findDollarMath(text, start + 1);
+  }
+
+  if (text.startsWith("$$", start)) {
+    const close = text.indexOf("$$", start + 2);
+    const content = close === -1 ? "" : text.slice(start + 2, close).trim();
+
+    if (content) {
+      return { content, display: true, end: close + 2, start };
+    }
+
+    return findDollarMath(text, close === -1 ? start + 1 : close + 2);
+  }
+
+  return matchInlineMathAt(text, start) ?? findDollarMath(text, start + 1);
 }
 
 /** The first math in a line, as the web player typesets it. */
@@ -123,12 +135,33 @@ export function findMathSpans(line: string): MathSpan[] {
   return [first, ...rest];
 }
 
-function hideCellMath(cell: string): string {
-  return findMathSpans(cell).reduce(
-    (hidden, { end, start }) =>
-      `${hidden.slice(0, start)}${" ".repeat(end - start)}${hidden.slice(end)}`,
-    cell,
-  );
+/** `text` is a formula's content for math, and the line exactly as written between formulas. */
+export type MathSegment = {
+  end: number;
+  kind: "displayMath" | "math" | "text";
+  start: number;
+  text: string;
+};
+
+/** A line as the players read it: its formulas and the text between them, none of it empty. */
+export function splitAtMath(line: string): MathSegment[] {
+  const spans = findMathSpans(line);
+
+  const textBetween = (start: number, end: number): MathSegment[] =>
+    end > start ? [{ end, kind: "text", start, text: line.slice(start, end) }] : [];
+
+  return [
+    ...spans.flatMap((span, index) => [
+      ...textBetween(spans[index - 1]?.end ?? 0, span.start),
+      {
+        end: span.end,
+        kind: span.display ? ("displayMath" as const) : ("math" as const),
+        start: span.start,
+        text: span.content,
+      },
+    ]),
+    ...textBetween(spans.at(-1)?.end ?? 0, line.length),
+  ];
 }
 
 /** The player shows an inline field as one line, whatever its line breaks. */
@@ -136,9 +169,22 @@ export function toOneLine(text: string): string {
   return text.replaceAll(/\s*\n\s*/gu, " ");
 }
 
+/** Each formula in text the players read line by line and cell by cell, as `replace` writes it. */
+export function replaceMath(text: string, replace: (formula: MathSegment) => string): string {
+  return splitLinesAndCells(text)
+    .map((cells) =>
+      cells
+        .map((cell) =>
+          splitAtMath(cell)
+            .map((segment) => (segment.kind === "text" ? segment.text : replace(segment)))
+            .join(""),
+        )
+        .join("|"),
+    )
+    .join("\n");
+}
+
 /** Spaces of the same length keep positions pointing into the text. */
 export function hideMath(text: string): string {
-  return splitLinesAndCells(text)
-    .map((cells) => cells.map((cell) => hideCellMath(cell)).join("|"))
-    .join("\n");
+  return replaceMath(text, ({ end, start }) => " ".repeat(end - start));
 }

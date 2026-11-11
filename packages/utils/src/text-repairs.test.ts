@@ -39,6 +39,55 @@ describe(repairMarkdown, () => {
     );
   });
 
+  it("takes out bold and italics around a formula, which every player shows as raw marks", () => {
+    const stray = [
+      ["**the $10^{3}$ rule** here", "the $10^{3}$ rule here"],
+      ["**$E = mc^2$**", "$E = mc^2$"],
+      ["*about $x^2$ squared*", "about $x^2$ squared"],
+      ["Use **$v = d / t$** to find speed.", "Use $v = d / t$ to find speed."],
+      ["- **the $n$th term** grows", "- the $n$th term grows"],
+    ] as const;
+
+    for (const [text, repaired] of stray) {
+      expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([
+        expect.stringContaining("emphasis marks"),
+      ]);
+
+      expect(repairMarkdown({ layout: "blocks", text })).toBe(repaired);
+    }
+  });
+
+  it("leaves bold beside a formula or around a price, which every player draws", () => {
+    for (const text of [
+      "It costs $5 or **about $10** now.",
+      "**$20.12**",
+      "It is **bold** and $x^2$ math",
+    ]) {
+      expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
+      expect(repairMarkdown({ layout: "inline", text })).toBe(text);
+    }
+  });
+
+  it("never reads a comparison inside math as an HTML tag", () => {
+    for (const text of [
+      String.raw`V(x)=-V_0 pour \(|x|<a\) et V(x)=0 ailleurs, avec \(a>0\).`,
+      String.raw`Pour \(0<p<1\), si \(p>0{,}5\) alors`,
+      "If $x<b$ and $y>c$, then",
+    ]) {
+      expect(findUnrenderedMarkdown({ layout: "inline", text })).toStrictEqual([]);
+      expect(repairMarkdown({ layout: "inline", text: `${text} **` })).toBe(`${text} `);
+    }
+  });
+
+  it("repairs text between formulas without touching the formulas", () => {
+    expect(
+      repairMarkdown({
+        layout: "blocks",
+        text: String.raw`<b>Se</b> \(0<a\), veja [isto](https://a.com) e $b>0$.`,
+      }),
+    ).toBe(String.raw`Se \(0<a\), veja isto e $b>0$.`);
+  });
+
   it("turns headings, quote marks, links and styling tags into plain words", () => {
     const text = [
       "## Resumo",

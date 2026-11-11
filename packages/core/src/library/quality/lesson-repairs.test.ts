@@ -118,7 +118,7 @@ describe(repairWrittenLesson, () => {
     expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get powers like $10^{-3}$.");
   });
 
-  it("keeps a quote unwrapped when a price on its screen's line kept the screen unwrapped", () => {
+  it("keeps a quote unwrapped when a power code can't wrap on its screen's line kept the screen unwrapped", () => {
     const sentence = "It contains 10^3 cells.";
 
     const explanation: WrittenScreen = {
@@ -126,7 +126,7 @@ describe(repairWrittenLesson, () => {
       explore: null,
       image: null,
       kind: "explanation",
-      text: `A kit costs $5. ${sentence}`,
+      text: `Its area is x^2. ${sentence}`,
       title: "A kit",
       visual: null,
     };
@@ -152,7 +152,7 @@ describe(repairWrittenLesson, () => {
       spec,
     }).screens;
 
-    expect(kit?.kind === "explanation" && kit.text).toBe(`A kit costs $5. ${sentence}`);
+    expect(kit?.kind === "explanation" && kit.text).toBe(`Its area is x^2. ${sentence}`);
     expect(question?.kind === "check" && question.basis?.quote).toBe(sentence);
   });
 
@@ -164,7 +164,7 @@ describe(repairWrittenLesson, () => {
     );
 
     expect(
-      quoteAfterRepair({ quote: sentence, text: `A kit costs $5. ${sentence}`, title: sentence }),
+      quoteAfterRepair({ quote: sentence, text: `Its area is x^2. ${sentence}`, title: sentence }),
     ).toBe(sentence);
 
     expect(

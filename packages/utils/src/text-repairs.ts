@@ -1,5 +1,6 @@
 import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup";
 import { findMarkdownTableLines } from "./markdown-table";
+import { splitAtMath } from "./math-spans";
 import { replaceEmDashes } from "./string";
 import {
   AUTOLINK,
@@ -37,12 +38,20 @@ function removeLineMarks(line: string): string {
   return line.replace(HEADING_MARK, "$<indent>").replace(QUOTE_MARK, "$<indent>");
 }
 
+function editOutsideMath(line: string, edit: (text: string) => string): string {
+  return splitAtMath(line)
+    .map(({ end, kind, start, text }) => (kind === "text" ? edit(text) : line.slice(start, end)))
+    .join("");
+}
+
 function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {
-  return line
-    .replaceAll(LINK, "$<text>")
-    .replaceAll(ANGLE_LINK, "$<address>")
-    .replaceAll(LINE_BREAK_TAG, breakAs)
-    .replaceAll(STYLE_TAG, "")
+  return editOutsideMath(line, (text) =>
+    text
+      .replaceAll(LINK, "$<text>")
+      .replaceAll(ANGLE_LINK, "$<address>")
+      .replaceAll(LINE_BREAK_TAG, breakAs)
+      .replaceAll(STYLE_TAG, ""),
+  )
     .split("\n")
     .map((part) => removeStrayEmphasis(part))
     .join("\n");
