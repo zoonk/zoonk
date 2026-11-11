@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
@@ -26,6 +29,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -48,6 +52,8 @@ import com.zoonk.android.feature.questions.NotToday
 import com.zoonk.android.feature.questions.PlacementNote
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.FocusTest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -79,11 +85,10 @@ class FocusTestScreenshots {
     @Test
     fun invitation() = shoot("focus-test-invitation", FakeOnboardingApi().apply { placement = NOT_STARTED })
 
+    /** The sheet draws in a dialog window these renders don't capture, so its rows render on their own. */
     @Test
-    fun invitationSubjects() =
-        shoot("focus-test-invitation-subjects", FakeOnboardingApi().apply { placement = NOT_STARTED }) {
-            tap("View subjects")
-        }
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun invitationSubjects() = subjectsSheet("focus-test-invitation-subjects", asked = 0, answered = false)
 
     @Test
     fun question() = shoot("focus-test-question", startable(focusSittingOf(answered = 3))) { tap("Start the test") }
@@ -114,11 +119,27 @@ class FocusTestScreenshots {
         shoot("focus-test-checkpoint-importance", closing(focusOf(basis = "importance"), lessonsSkipped = 0)) { tap("Use my answers") }
 
     @Test
-    fun checkpointSubjects() =
-        shoot("focus-test-checkpoint-subjects", closing(focusOf())) {
-            tap("Use my answers")
-            tap("View all subjects")
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointSubjects() = subjectsSheet("focus-test-checkpoint-subjects", asked = 6, answered = true)
+
+    private fun subjectsSheet(
+        name: String,
+        asked: Int,
+        answered: Boolean,
+    ) {
+        val test = ApiJson.decodeFromString<FocusTest>(focusTestOf(asked = asked))
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(stringResource(R.string.focustest_subjects), style = MaterialTheme.typography.titleLarge)
+                        SubjectsList(test.subjects, answered)
+                    }
+                }
+            }
         }
+        write(name)
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")

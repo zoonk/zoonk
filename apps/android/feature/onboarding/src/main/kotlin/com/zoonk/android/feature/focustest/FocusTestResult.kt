@@ -335,20 +335,29 @@ internal fun SubjectsButton(
         Column(
             Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 8.dp, bottom = 24.dp),
         ) {
-            Column(Modifier.bleed(LIST_ITEM_INSET)) {
-                subjects.forEachIndexed { index, subject ->
-                    if (index > 0) HorizontalDivider()
-                    ListRow(
-                        headline = { Text(displayName(subject.name, subject.shortName)) },
-                        meta =
-                            if (answered || subject.state == FocusTestSubject.State.NOT_CHECKED) {
-                                { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                            } else {
-                                null
-                            },
-                    )
-                }
-            }
+            SubjectsList(subjects, answered)
+        }
+    }
+}
+
+/** The subjects sheet's rows. */
+@Composable
+internal fun SubjectsList(
+    subjects: List<FocusTestSubject>,
+    answered: Boolean,
+) {
+    Column(Modifier.bleed(LIST_ITEM_INSET)) {
+        subjects.forEachIndexed { index, subject ->
+            if (index > 0) HorizontalDivider()
+            ListRow(
+                headline = { Text(displayName(subject.name, subject.shortName)) },
+                meta =
+                    if (answered || subject.state == FocusTestSubject.State.NOT_CHECKED) {
+                        { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    } else {
+                        null
+                    },
+            )
         }
     }
 }
