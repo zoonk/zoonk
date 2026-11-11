@@ -54,6 +54,43 @@ describe(cleanLanguageLesson, () => {
     expect(cleaned.words.map((word) => word.word)).toStrictEqual(["the deposit", "the utilities"]);
   });
 
+  it("keeps words that differ only by accents or tone marks apart", () => {
+    const draft = languageLessonDraft();
+    const [word] = draft.words;
+    const [sentence] = draft.sentences;
+    const [practice] = draft.practice;
+
+    const cleaned = cleanLanguageLesson({
+      content: languageLessonDraft({
+        practice: [
+          {
+            ...practice!,
+            answer: "mà",
+            distractors: ["ma", "má", "để"],
+            template: "Tôi mệt [BLANK] vẫn đi",
+          },
+        ],
+        sentences: [
+          { ...sentence!, distractors: ["ma", "má", "mạ"], sentence: "Tôi mệt mà vẫn đi" },
+        ],
+        words: [
+          { ...word!, distractors: ["má", "mả", "mã"], translation: "ghost", word: "ma" },
+          { ...word!, distractors: ["ma"], translation: "mom", word: "má" },
+          { ...word!, distractors: ["ma"], translation: "but", word: "mà" },
+          { ...word!, translation: "seedling", word: "mạ" },
+          { ...word!, translation: "but", word: "mà" },
+        ],
+      }),
+      knownWords: ["mạ"],
+      sameLanguage: false,
+    });
+
+    expect(cleaned.words.map((item) => item.word)).toStrictEqual(["ma", "má", "mà"]);
+    expect(cleaned.words[0]?.distractors).toStrictEqual(["mả", "mã"]);
+    expect(cleaned.sentences[0]?.distractors).toStrictEqual(["ma", "má", "mạ"]);
+    expect(cleaned.practice[0]?.distractors).toStrictEqual(["ma", "má", "để"]);
+  });
+
   it("drops practice without exactly one blank or whose wrong options are all the answer", () => {
     const [practice] = languageLessonDraft().practice;
 
