@@ -93,10 +93,8 @@ export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; st
   const facts = [
     t("Chapter {number, number}", { number: group.position }),
     t("{count, plural, one {# lesson map} other {# lesson maps}}", { count: group.count }),
-    isLocked && t("Plus"),
-    !isLocked &&
-      group.locked > 0 &&
-      t("{count, plural, one {# with Plus} other {# with Plus}}", { count: group.locked }),
+    group.locked > 0 &&
+      t("{count, plural, one {# locked} other {# locked}}", { count: group.locked }),
   ].filter(Boolean);
 
   return (

@@ -3778,9 +3778,9 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "<strong>{answer}</strong>を選んで「<question></question>」に答えました"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "aIl44R"
-msgid "Map options"
-msgstr "マップのメニュー"
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "その他のオプション"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
@@ -3830,7 +3830,7 @@ msgstr "前のマップ"
 #: src/mind-maps/mind-map-reader.tsx
 msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
-msgstr "{current, number}／{total, number}"
+msgstr "{current, number}/{total, number}"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
@@ -3848,9 +3848,9 @@ msgid "We couldn't reach the server. Check your connection."
 msgstr "サーバーに接続できませんでした。インターネット接続を確認してください。"
 
 #: src/mind-maps/mind-map-slides.tsx
-msgctxt "OauMXX"
-msgid "This map is no longer available."
-msgstr "このマップは利用できなくなりました。"
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
+msgstr "このマップはもう利用できません。"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

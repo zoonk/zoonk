@@ -7280,12 +7280,12 @@ msgstr "保存済み"
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "dTo20G"
 msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
-msgstr "{count, plural, other {レッスンマップ#枚}}"
+msgstr "{count, plural, other {レッスンのマップ#枚}}"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-msgctxt "YW1_3j"
-msgid "{count, plural, one {# with Plus} other {# with Plus}}"
-msgstr "{count, plural, other {#枚はPlusで利用可能}}"
+msgctxt "An8NlP"
+msgid "{count, plural, one {# locked} other {# locked}}"
+msgstr "{count, plural, other {#枚がロック中}}"
 
 #. A kind of mind map: one for a whole chapter.
 #: src/mind-maps/mind-map-index-rows.tsx
@@ -7297,7 +7297,7 @@ msgstr "章のマップ"
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "Oku1XG"
 msgid "Lesson map"
-msgstr "レッスンマップ"
+msgstr "レッスンのマップ"
 
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "G_yZLu"
@@ -7351,9 +7351,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "章のマップはまだありません。章を終えるたびに作成されます。"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Ow1Kwu"
-msgid "No lesson maps yet. Each lesson gets one when it's written."
-msgstr "レッスンマップはまだありません。レッスンが作成されるたびに追加されます。"
+msgctxt "Lw4uCO"
+msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
+msgstr "レッスンのマップはまだありません。各レッスンの最後には、ポイントをまとめた小さなマップがあります。レッスンが作成されると、ここに表示されます。"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7361,9 +7361,9 @@ msgid "Lesson maps by chapter"
 msgstr "章ごとのレッスンマップ"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "GdItxr"
-msgid "Nothing saved yet. Save a map while you study and it shows up here."
-msgstr "保存したマップはまだありません。学習中にマップを保存すると、ここに表示されます。"
+msgctxt "d5ablz"
+msgid "Nothing saved yet. Tap the bookmark on a map to keep it here."
+msgstr "保存したマップはまだありません。マップのブックマークをタップすると、ここに保存できます。"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "Agu2je"
@@ -7373,7 +7373,7 @@ msgstr "保存したマップ"
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
-msgstr "利用できなくなったマップ"
+msgstr "利用できなくなりました"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -7390,42 +7390,24 @@ msgid "Saved"
 msgstr "保存済み"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "8na5MX"
-msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
-msgstr "章のマップが{ready, number}枚完成（{total, plural, other {全#枚}}）"
+msgctxt "kd6gwg"
+msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
+msgstr "{total, plural, other {章のマップが{ready, number}枚完成（全#枚）}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "94Oca6"
-msgid "{count, plural, one {# on the way} other {# on the way}}"
-msgstr "{count, plural, other {#枚を作成しています}}"
-
-#. Under a count of mind maps being made. "They" are those maps.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "jsJunN"
-msgid "You can leave; they'll be here."
-msgstr "この画面を離れても、完成したマップはここで確認できます。"
+msgctxt "aC-1Ma"
+msgid "{count, number} on the way"
+msgstr "{count, number}枚を作成しています"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "YzX-xG"
-msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
-msgstr "{count, plural, other {ほかに#章分のレッスンを先に作成する必要があります。}}"
+msgctxt "EXfK_x"
+msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
+msgstr "{count, plural, other {残りは#枚です。作成中はこの画面を離れても大丈夫です。}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, other {#章分のレッスンを先に作成する必要があります。}}"
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "Uk-Xu0"
-msgid "Creating one writes them, so it takes a few minutes."
-msgstr "マップと一緒にレッスンも作成するため、数分かかります。"
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "qbnvSy"
-msgid "Creating one writes them, which counts toward your free lessons."
-msgstr "マップと一緒にレッスンも作成するため、無料レッスンの枠を使います。"
+msgctxt "hK9T6W"
+msgid "Starts in course order, within your current allowance."
+msgstr "現在の利用枠内で、コースの順に作成を始めます。"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "HYc-rI"
@@ -7433,14 +7415,24 @@ msgid "Create all chapter maps"
 msgstr "すべての章のマップを作成する"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "-WvGu6"
-msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
+msgctxt "f1Qds2"
+msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
 msgstr "{count, plural, other {章のマップを最大#枚作成する}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "UXIB2y"
-msgid "Starts with the earliest chapters. You can create more when your limit resets."
-msgstr "最初の章から順に作成します。上限がリセットされると、さらに作成できます。"
+msgctxt "wsjJxR"
+msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
+msgstr "{count, plural, other {先にレッスンを作成する必要がある章が#章あります。下で章ごとにマップを作成してください。}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "S9DX3H"
+msgid "Writing lessons takes a few minutes."
+msgstr "レッスンの作成には数分かかります。"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "レッスンの作成には、無料で利用できるレッスン枠を使います。"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "sCyF8_"
@@ -7450,7 +7442,7 @@ msgstr "章の一覧を隠す"
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
 msgid "Show chapters"
-msgstr "章の一覧を表示する"
+msgstr "章を表示する"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "w3kQHy"
@@ -7460,7 +7452,7 @@ msgstr "未作成"
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
 msgid "Couldn't save this map. Try again."
-msgstr "このマップを保存できませんでした。もう一度お試しください。"
+msgstr "このマップを保存できませんでした。もう一度試してください。"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"

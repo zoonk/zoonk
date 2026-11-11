@@ -138,7 +138,13 @@ function LessonsTab({ hrefs, library }: TabProps) {
   });
 
   if (rows.length === 0) {
-    return <EmptyTab>{t("No lesson maps yet. Each lesson gets one when it's written.")}</EmptyTab>;
+    return (
+      <EmptyTab>
+        {t(
+          "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written.",
+        )}
+      </EmptyTab>
+    );
   }
 
   const groups = groupBySubject(rows).map((group) => ({
@@ -172,9 +178,7 @@ function SavedTab({ hrefs, library }: TabProps) {
 
   if (shown.length === 0) {
     return (
-      <EmptyTab>
-        {t("Nothing saved yet. Save a map while you study and it shows up here.")}
-      </EmptyTab>
+      <EmptyTab>{t("Nothing saved yet. Tap the bookmark on a map to keep it here.")}</EmptyTab>
     );
   }
 

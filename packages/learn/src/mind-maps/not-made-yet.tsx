@@ -43,61 +43,15 @@ function ProgressLine({ library }: { library: MindMapsLibrary }) {
   }
 
   const made = t(
-    "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready",
+    "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}",
     { ready, total },
   );
 
-  if (onTheWay === 0) {
-    return <p className={LINE_CLASS}>{made}</p>;
-  }
-
   return (
     <p className={LINE_CLASS}>
-      {`${made} · ${t("{count, plural, one {# on the way} other {# on the way}}", { count: onTheWay })}`}
-      <br />
-      {t({
-        description: 'Under a count of mind maps being made. "They" are those maps.',
-        message: "You can leave; they'll be here.",
-      })}
+      {onTheWay === 0 ? made : `${made} · ${t("{count, number} on the way", { count: onTheWay })}`}
     </p>
   );
-}
-
-function NeedLessonsLine({
-  count,
-  more,
-  plus,
-}: {
-  count: number;
-  /** After chapters that can be made now, these are the rest. */
-  more: boolean;
-  plus: boolean;
-}) {
-  const t = useExtracted();
-
-  const need = more
-    ? t(
-        "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}",
-        { count },
-      )
-    : t(
-        "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}",
-        { count },
-      );
-
-  const how = plus
-    ? t({
-        description:
-          'After a line saying some chapters need their lessons written first. "One" is one of those chapters\' mind maps; "them" is its lessons.',
-        message: "Creating one writes them, so it takes a few minutes.",
-      })
-    : t({
-        description:
-          'After a line saying some chapters need their lessons written first. "One" is one of those chapters\' mind maps; "them" is its lessons.',
-        message: "Creating one writes them, which counts toward your free lessons.",
-      });
-
-  return <p className={LINE_CLASS}>{`${need} ${how}`}</p>;
 }
 
 function CreateAll({ library, tier }: { library: MindMapsLibrary; tier: EntitlementTier }) {
@@ -107,9 +61,21 @@ function CreateAll({ library, tier }: { library: MindMapsLibrary; tier: Entitlem
   const { bulk, page } = library;
   const { eligible, needLessons, startable, stop } = page.createOffer;
   const shownStop = bulk.stop ?? (startable === 0 ? stop : null);
+  const isAll = startable === eligible;
 
   return (
     <div className="flex flex-col items-start gap-3" data-slot="create-all-maps">
+      {startable > 0 && (
+        <p className={LINE_CLASS}>
+          {isAll
+            ? t(
+                "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}",
+                { count: eligible },
+              )
+            : t("Starts in course order, within your current allowance.")}
+        </p>
+      )}
+
       {startable > 0 && (
         <Button
           busy={bulk.status === "sending"}
@@ -118,18 +84,13 @@ function CreateAll({ library, tier }: { library: MindMapsLibrary; tier: Entitlem
           size="lg"
           variant="outline"
         >
-          {startable === eligible && startable > 1
+          {isAll
             ? t("Create all chapter maps")
-            : t("{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}", {
-                count: startable,
-              })}
+            : t(
+                "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}",
+                { count: startable },
+              )}
         </Button>
-      )}
-
-      {startable > 0 && startable < eligible && (
-        <p className={LINE_CLASS}>
-          {t("Starts with the earliest chapters. You can create more when your limit resets.")}
-        </p>
       )}
 
       <StatusRegion className="flex flex-col gap-3">
@@ -147,7 +108,15 @@ function CreateAll({ library, tier }: { library: MindMapsLibrary; tier: Entitlem
       </StatusRegion>
 
       {needLessons > 0 && (
-        <NeedLessonsLine count={needLessons} more={eligible > 0} plus={tier === "plus"} />
+        <p className={LINE_CLASS}>
+          {t(
+            "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}",
+            { count: needLessons },
+          )}{" "}
+          {tier === "plus"
+            ? t("Writing lessons takes a few minutes.")
+            : t("Writing lessons counts toward your free lessons.")}
+        </p>
       )}
     </div>
   );

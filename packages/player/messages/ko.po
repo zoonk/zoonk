@@ -3778,9 +3778,9 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "고른 답: <strong>{answer}</strong> · 문제: “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "aIl44R"
-msgid "Map options"
-msgstr "마인드맵 옵션"
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "옵션 더 보기"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
@@ -3830,7 +3830,7 @@ msgstr "이전 마인드맵"
 #: src/mind-maps/mind-map-reader.tsx
 msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}단계"
+msgstr "{current, number}/{total, number}"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
@@ -3848,8 +3848,8 @@ msgid "We couldn't reach the server. Check your connection."
 msgstr "서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요."
 
 #: src/mind-maps/mind-map-slides.tsx
-msgctxt "OauMXX"
-msgid "This map is no longer available."
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
 msgstr "이 마인드맵은 더 이상 볼 수 없어요."
 
 #: src/questions/ask-tutor.tsx

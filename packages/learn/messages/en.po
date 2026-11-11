@@ -7283,9 +7283,9 @@ msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
 msgstr "{count, plural, one {# lesson map} other {# lesson maps}}"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-msgctxt "YW1_3j"
-msgid "{count, plural, one {# with Plus} other {# with Plus}}"
-msgstr "{count, plural, one {# with Plus} other {# with Plus}}"
+msgctxt "An8NlP"
+msgid "{count, plural, one {# locked} other {# locked}}"
+msgstr "{count, plural, one {# locked} other {# locked}}"
 
 #. A kind of mind map: one for a whole chapter.
 #: src/mind-maps/mind-map-index-rows.tsx
@@ -7351,9 +7351,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "No chapter maps yet. Every chapter you finish gets one."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Ow1Kwu"
-msgid "No lesson maps yet. Each lesson gets one when it's written."
-msgstr "No lesson maps yet. Each lesson gets one when it's written."
+msgctxt "Lw4uCO"
+msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
+msgstr "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7361,9 +7361,9 @@ msgid "Lesson maps by chapter"
 msgstr "Lesson maps by chapter"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "GdItxr"
-msgid "Nothing saved yet. Save a map while you study and it shows up here."
-msgstr "Nothing saved yet. Save a map while you study and it shows up here."
+msgctxt "d5ablz"
+msgid "Nothing saved yet. Tap the bookmark on a map to keep it here."
+msgstr "Nothing saved yet. Tap the bookmark on a map to keep it here."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "Agu2je"
@@ -7390,42 +7390,24 @@ msgid "Saved"
 msgstr "Saved"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "8na5MX"
-msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
-msgstr "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
+msgctxt "kd6gwg"
+msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
+msgstr "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "94Oca6"
-msgid "{count, plural, one {# on the way} other {# on the way}}"
-msgstr "{count, plural, one {# on the way} other {# on the way}}"
-
-#. Under a count of mind maps being made. "They" are those maps.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "jsJunN"
-msgid "You can leave; they'll be here."
-msgstr "You can leave; they'll be here."
+msgctxt "aC-1Ma"
+msgid "{count, number} on the way"
+msgstr "{count, number} on the way"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "YzX-xG"
-msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
-msgstr "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
+msgctxt "EXfK_x"
+msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
+msgstr "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "Uk-Xu0"
-msgid "Creating one writes them, so it takes a few minutes."
-msgstr "Creating one writes them, so it takes a few minutes."
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "qbnvSy"
-msgid "Creating one writes them, which counts toward your free lessons."
-msgstr "Creating one writes them, which counts toward your free lessons."
+msgctxt "hK9T6W"
+msgid "Starts in course order, within your current allowance."
+msgstr "Starts in course order, within your current allowance."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "HYc-rI"
@@ -7433,14 +7415,24 @@ msgid "Create all chapter maps"
 msgstr "Create all chapter maps"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "-WvGu6"
-msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
-msgstr "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
+msgctxt "f1Qds2"
+msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
+msgstr "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "UXIB2y"
-msgid "Starts with the earliest chapters. You can create more when your limit resets."
-msgstr "Starts with the earliest chapters. You can create more when your limit resets."
+msgctxt "wsjJxR"
+msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
+msgstr "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "S9DX3H"
+msgid "Writing lessons takes a few minutes."
+msgstr "Writing lessons takes a few minutes."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Writing lessons counts toward your free lessons."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "sCyF8_"

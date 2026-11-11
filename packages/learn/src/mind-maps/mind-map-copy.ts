@@ -66,19 +66,16 @@ export function useStateLines(input: MindMapCopyInput): {
   const available = useAvailableLine(input);
   const ready = useReadyLine(input);
 
-  // The Mind maps page can have many on their way at once, so it says this once (`NotMadeYet`).
-  const isAlone = input.place !== "library";
-
   if (input.shown === "writingLessons") {
     return {
-      hint: isAlone ? t("This takes a few minutes. You can leave; it'll be here.") : null,
+      hint: t("This takes a few minutes. You can leave; it'll be here."),
       line: t("Writing the lessons, then the mind map…"),
     };
   }
 
   if (input.shown === "drawing") {
     return {
-      hint: isAlone ? t("About half a minute. You can leave; it'll be here.") : null,
+      hint: t("About half a minute. You can leave; it'll be here."),
       line: t("Drawing the mind map…"),
     };
   }

@@ -3778,9 +3778,9 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "You picked <strong>{answer}</strong> on “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "aIl44R"
-msgid "Map options"
-msgstr "Map options"
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "More options"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
@@ -3848,9 +3848,9 @@ msgid "We couldn't reach the server. Check your connection."
 msgstr "We couldn't reach the server. Check your connection."
 
 #: src/mind-maps/mind-map-slides.tsx
-msgctxt "OauMXX"
-msgid "This map is no longer available."
-msgstr "This map is no longer available."
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
+msgstr "This map isn't available anymore."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

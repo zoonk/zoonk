@@ -42,7 +42,7 @@ export function MindMapReaderMenu({
         }
       >
         <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("Map options")}</span>
+        <span className="sr-only">{t("More options")}</span>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-64">

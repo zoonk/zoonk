@@ -7280,12 +7280,12 @@ msgstr "Salvata"
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "dTo20G"
 msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
-msgstr "{count, plural, one {# mappa della lezione} many {# di mappe delle lezioni} other {# mappe delle lezioni}}"
+msgstr "{count, plural, one {# mappa della lezione} other {# mappe delle lezioni}}"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-msgctxt "YW1_3j"
-msgid "{count, plural, one {# with Plus} other {# with Plus}}"
-msgstr "{count, plural, other {# con Plus}}"
+msgctxt "An8NlP"
+msgid "{count, plural, one {# locked} other {# locked}}"
+msgstr "{count, plural, one {# bloccata} other {# bloccate}}"
 
 #. A kind of mind map: one for a whole chapter.
 #: src/mind-maps/mind-map-index-rows.tsx
@@ -7351,9 +7351,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Ancora nessuna mappa dei capitoli. Ne avrai una per ogni capitolo che completi."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Ow1Kwu"
-msgid "No lesson maps yet. Each lesson gets one when it's written."
-msgstr "Ancora nessuna mappa delle lezioni. Ne creiamo una per ogni lezione che prepariamo."
+msgctxt "Lw4uCO"
+msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
+msgstr "Ancora nessuna mappa delle lezioni. Ogni lezione si conclude con una piccola mappa delle idee principali. Le vedrai qui quando avremo preparato le lezioni."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7361,9 +7361,9 @@ msgid "Lesson maps by chapter"
 msgstr "Mappe delle lezioni per capitolo"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "GdItxr"
-msgid "Nothing saved yet. Save a map while you study and it shows up here."
-msgstr "Non hai ancora salvato nulla. Salva una mappa mentre studi e la troverai qui."
+msgctxt "d5ablz"
+msgid "Nothing saved yet. Tap the bookmark on a map to keep it here."
+msgstr "Non hai ancora salvato nulla. Tocca il segnalibro su una mappa per conservarla qui."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "Agu2je"
@@ -7373,7 +7373,7 @@ msgstr "Mappe salvate"
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
-msgstr "Non più disponibili"
+msgstr "Non più disponibile"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -7390,42 +7390,24 @@ msgid "Saved"
 msgstr "Salvate"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "8na5MX"
-msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
-msgstr "{ready, number} su {total, plural, one {# mappa del capitolo pronta} many {# di mappe dei capitoli pronte} other {# mappe dei capitoli pronte}}"
+msgctxt "kd6gwg"
+msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
+msgstr "{total, plural, one {{ready, number} capitolo su # ha la mappa pronta} other {{ready, number} capitoli su # hanno la mappa pronta}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "94Oca6"
-msgid "{count, plural, one {# on the way} other {# on the way}}"
-msgstr "{count, plural, other {# in arrivo}}"
-
-#. Under a count of mind maps being made. "They" are those maps.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "jsJunN"
-msgid "You can leave; they'll be here."
-msgstr "Puoi uscire: le troverai qui."
+msgctxt "aC-1Ma"
+msgid "{count, number} on the way"
+msgstr "{count, number} in preparazione"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "YzX-xG"
-msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
-msgstr "{count, plural, one {Per # altro capitolo dobbiamo prima preparare le lezioni.} many {Per altri # di capitoli dobbiamo prima preparare le lezioni.} other {Per altri # capitoli dobbiamo prima preparare le lezioni.}}"
+msgctxt "EXfK_x"
+msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
+msgstr "{count, plural, one {Resta # mappa da creare. Puoi uscire mentre la prepariamo.} other {Restano # mappe da creare. Puoi uscire mentre le prepariamo.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, one {Per # capitolo dobbiamo prima preparare le lezioni.} many {Per # di capitoli dobbiamo prima preparare le lezioni.} other {Per # capitoli dobbiamo prima preparare le lezioni.}}"
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "Uk-Xu0"
-msgid "Creating one writes them, so it takes a few minutes."
-msgstr "Quando creiamo una mappa, prepariamo anche le lezioni: ci vuole qualche minuto."
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "qbnvSy"
-msgid "Creating one writes them, which counts toward your free lessons."
-msgstr "Quando creiamo una mappa, prepariamo anche le lezioni, che rientrano nel conteggio delle tue lezioni gratuite."
+msgctxt "hK9T6W"
+msgid "Starts in course order, within your current allowance."
+msgstr "Seguiamo l’ordine del corso, entro il tuo limite attuale."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "HYc-rI"
@@ -7433,14 +7415,24 @@ msgid "Create all chapter maps"
 msgstr "Crea tutte le mappe dei capitoli"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "-WvGu6"
-msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
-msgstr "{count, plural, one {Crea # mappa del capitolo} many {Crea fino a # di mappe dei capitoli} other {Crea fino a # mappe dei capitoli}}"
+msgctxt "f1Qds2"
+msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
+msgstr "{count, plural, one {Crea fino a # mappa di un capitolo} other {Crea fino a # mappe dei capitoli}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "UXIB2y"
-msgid "Starts with the earliest chapters. You can create more when your limit resets."
-msgstr "Iniziamo dai primi capitoli. Potrai creare altre mappe quando la tua quota si rinnova."
+msgctxt "wsjJxR"
+msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
+msgstr "{count, plural, one {Per # capitolo dobbiamo prima preparare le lezioni. Crea ogni mappa separatamente qui sotto.} other {Per # capitoli dobbiamo prima preparare le lezioni. Crea ogni mappa separatamente qui sotto.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "S9DX3H"
+msgid "Writing lessons takes a few minutes."
+msgstr "Preparare le lezioni richiede qualche minuto."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Le lezioni preparate vengono conteggiate nel tuo limite di lezioni gratuite."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "sCyF8_"
@@ -7455,12 +7447,12 @@ msgstr "Mostra i capitoli"
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "w3kQHy"
 msgid "Not made yet"
-msgstr "Ancora da creare"
+msgstr "Non ancora create"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
 msgid "Couldn't save this map. Try again."
-msgstr "Non siamo riusciti a salvare questa mappa. Riprova."
+msgstr "Non abbiamo potuto salvare questa mappa. Riprova."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"

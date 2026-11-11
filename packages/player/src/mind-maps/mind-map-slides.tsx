@@ -162,7 +162,7 @@ export function LessonMapSlide({
   if (!lesson?.map) {
     return (
       <div className={COLUMN_CLASS} data-slot="lesson-map-slide">
-        <p className={NOTE_CLASS}>{t("This map is no longer available.")}</p>
+        <p className={NOTE_CLASS}>{t("This map isn't available anymore.")}</p>
       </div>
     );
   }

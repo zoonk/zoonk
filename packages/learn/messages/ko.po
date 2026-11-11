@@ -7283,9 +7283,9 @@ msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
 msgstr "{count, plural, other {레슨 마인드맵 #개}}"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-msgctxt "YW1_3j"
-msgid "{count, plural, one {# with Plus} other {# with Plus}}"
-msgstr "{count, plural, other {Plus 전용 #개}}"
+msgctxt "An8NlP"
+msgid "{count, plural, one {# locked} other {# locked}}"
+msgstr "{count, plural, other {잠김 #개}}"
 
 #. A kind of mind map: one for a whole chapter.
 #: src/mind-maps/mind-map-index-rows.tsx
@@ -7307,7 +7307,7 @@ msgstr "삭제"
 #: src/mind-maps/mind-map-index.tsx
 msgctxt "s0s9cE"
 msgid "Show all {count, number}"
-msgstr "전체 {count, number}개 보기"
+msgstr "{count, number}개 모두 보기"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -7351,9 +7351,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "아직 챕터 마인드맵이 없어요. 챕터를 끝낼 때마다 하나씩 생겨요."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Ow1Kwu"
-msgid "No lesson maps yet. Each lesson gets one when it's written."
-msgstr "아직 레슨 마인드맵이 없어요. 레슨이 만들어지면 마인드맵도 생겨요."
+msgctxt "Lw4uCO"
+msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
+msgstr "아직 레슨 마인드맵이 없어요. 레슨마다 마지막에 내용을 정리한 작은 마인드맵이 나와요. 레슨이 만들어지면 여기에 표시돼요."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7361,9 +7361,9 @@ msgid "Lesson maps by chapter"
 msgstr "챕터별 레슨 마인드맵"
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "GdItxr"
-msgid "Nothing saved yet. Save a map while you study and it shows up here."
-msgstr "아직 저장한 마인드맵이 없어요. 학습하면서 마인드맵을 저장하면 여기에 표시돼요."
+msgctxt "d5ablz"
+msgid "Nothing saved yet. Tap the bookmark on a map to keep it here."
+msgstr "아직 저장한 마인드맵이 없어요. 마인드맵의 북마크를 눌러 여기에 저장하세요."
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "Agu2je"
@@ -7373,7 +7373,7 @@ msgstr "저장한 마인드맵"
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
-msgstr "더 이상 이용할 수 없음"
+msgstr "더 이상 볼 수 없음"
 
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -7390,42 +7390,24 @@ msgid "Saved"
 msgstr "저장한 항목"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "8na5MX"
-msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
-msgstr "챕터 마인드맵 {ready, number}개 준비 완료 (총 {total, plural, other {#개}})"
+msgctxt "kd6gwg"
+msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
+msgstr "{total, plural, other {챕터 마인드맵 {ready, number}/#개 준비됨}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "94Oca6"
-msgid "{count, plural, one {# on the way} other {# on the way}}"
-msgstr "{count, plural, other {#개를 만들고 있어요}}"
-
-#. Under a count of mind maps being made. "They" are those maps.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "jsJunN"
-msgid "You can leave; they'll be here."
-msgstr "지금 나가도 괜찮아요. 완성되면 여기서 볼 수 있어요."
+msgctxt "aC-1Ma"
+msgid "{count, number} on the way"
+msgstr "{count, number}개 준비 중"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "YzX-xG"
-msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
-msgstr "{count, plural, other {나머지 챕터 #개는 레슨부터 만들어야 해요.}}"
+msgctxt "EXfK_x"
+msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
+msgstr "{count, plural, other {마인드맵 #개가 남았어요. 만드는 동안 이 화면에서 나가도 돼요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, other {챕터 #개는 레슨부터 만들어야 해요.}}"
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "Uk-Xu0"
-msgid "Creating one writes them, so it takes a few minutes."
-msgstr "마인드맵을 만들면 레슨도 함께 만들어져서 몇 분 정도 걸려요."
-
-#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "qbnvSy"
-msgid "Creating one writes them, which counts toward your free lessons."
-msgstr "마인드맵을 만들면 레슨도 함께 만들어지고, 이 레슨은 무료 레슨 한도에 포함돼요."
+msgctxt "hK9T6W"
+msgid "Starts in course order, within your current allowance."
+msgstr "지금 만들 수 있는 개수만큼 코스 순서대로 만들기 시작해요."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "HYc-rI"
@@ -7433,14 +7415,24 @@ msgid "Create all chapter maps"
 msgstr "모든 챕터 마인드맵 만들기"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "-WvGu6"
-msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
+msgctxt "f1Qds2"
+msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
 msgstr "{count, plural, other {챕터 마인드맵 최대 #개 만들기}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "UXIB2y"
-msgid "Starts with the earliest chapters. You can create more when your limit resets."
-msgstr "앞쪽 챕터부터 만들어요. 이용 한도가 초기화되면 더 만들 수 있어요."
+msgctxt "wsjJxR"
+msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
+msgstr "{count, plural, other {챕터 #개는 레슨을 먼저 만들어야 해요. 아래에서 마인드맵을 하나씩 따로 만드세요.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "S9DX3H"
+msgid "Writing lessons takes a few minutes."
+msgstr "레슨을 만드는 데는 몇 분 정도 걸려요."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "레슨을 만들면 무료 레슨 한도에서 차감돼요."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "sCyF8_"
