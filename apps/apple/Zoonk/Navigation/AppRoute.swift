@@ -36,7 +36,8 @@ enum AppRoute: Hashable, Identifiable {
   case essay(blockId: String)
   case mock(blockId: String, sessionId: String? = nil)
   case placementMock(goalId: String)
-  case mindMap(chapterId: String)
+  /// A chapter's map full screen, on the goal that opened it.
+  case mindMap(goalId: String, chapterId: String)
   /// The Mind maps page's reader: a goal's tab of maps one per screen, from `start` or this device's
   /// place.
   case mindMapStudy(goalId: String, tab: GoalMindMaps.Tab, start: MindMapPosition? = nil)

@@ -314,7 +314,7 @@ struct MindMapRow: View {
           start: MindMapPosition(
             chapterId: map.chapterId, key: MindMapKey(kind: .chapter, targetId: map.chapterId))))
     } else {
-      router.open(.mindMap(chapterId: map.chapterId))
+      router.open(.mindMap(goalId: goalId, chapterId: map.chapterId))
     }
   }
 }

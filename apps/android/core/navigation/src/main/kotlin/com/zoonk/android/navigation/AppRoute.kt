@@ -264,9 +264,10 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
-    /** A chapter's mind map full screen, which main opens over its mind maps page. */
+    /** A chapter's mind map full screen, which main opens over its mind maps page, on the goal that opened it. */
     @Serializable
     data class MindMap(
+        val goalId: String,
         val chapterId: String,
     ) : AppRoute
 

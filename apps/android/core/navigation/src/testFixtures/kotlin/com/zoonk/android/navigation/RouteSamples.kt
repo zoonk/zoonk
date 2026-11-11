@@ -55,7 +55,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Checkpoint("block-1"),
         AppRoute.Essay("block-1"),
         AppRoute.Mock("block-1"),
-        AppRoute.MindMap("chapter-1"),
+        AppRoute.MindMap("goal-1", "chapter-1"),
         AppRoute.MindMapStudy("goal-1", "chapters", start = "chapter-1/lesson-1"),
         AppRoute.Pronunciation(),
         AppRoute.Conversation("conversation-1"),

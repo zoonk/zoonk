@@ -1,49 +1,46 @@
 import SwiftUI
 import UIKit
 
+/// A chapter's map full screen, on the goal that opened it whatever goal is shown meanwhile.
 struct MindMapScreen: View {
   @Environment(\.dismiss) private var dismiss
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsOutline = false
 
+  let goalId: String
   let chapterId: String
 
   var body: some View {
-    NavigationStack {
-      Group {
-        if let goal = learner.summary.value?.shownGoal {
-          let map = store.map(goalId: goal.id, chapterId: chapterId)
+    let map = store.map(goalId: goalId, chapterId: chapterId)
 
-          content(map, goalId: goal.id)
-            .navigationTitle(
-              map.value.map { Text($0.title) }
-                ?? Text(
-                  "Mind map", tableName: "MindMaps",
-                  comment: "Names a chapter's mind map screen until the map loads")
-            )
-            .loads(map, refreshable: false)
-        }
-      }
-      .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          } label: {
-            Label {
-              Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
-            } icon: {
-              Image(systemName: "xmark")
+    NavigationStack {
+      content(map)
+        .navigationTitle(
+          map.value.map { Text($0.title) }
+            ?? Text(
+              "Mind map", tableName: "MindMaps",
+              comment: "Names a chapter's mind map screen until the map loads")
+        )
+        .loads(map, refreshable: false)
+        .toolbarTitleDisplayMode(.inline)
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(role: .close) {
+              dismiss()
+            } label: {
+              Label {
+                Text("Close", tableName: "MindMaps", comment: "Closes the full-screen mind map")
+              } icon: {
+                Image(systemName: "xmark")
+              }
             }
           }
         }
-      }
     }
   }
 
   @ViewBuilder
-  private func content(_ map: Resource<ChapterMindMap>, goalId: String) -> some View {
+  private func content(_ map: Resource<ChapterMindMap>) -> some View {
     switch map.state {
     case .loaded(let value):
       let url = value.image.flatMap { URL(string: $0.url) }

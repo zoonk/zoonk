@@ -90,13 +90,13 @@ internal val ChapterMindMap.facts get() = MapFacts(chapterId, title, position, s
 internal val GoalMindMap.facts get() = MapFacts(chapterId, title, position, status.shown, lessonsToWrite, image)
 
 /**
- * [navigate] opens sign-up, Plus and, unless [open] says otherwise, the viewer; [toggleSave] saves a
- * ready map from the row's long-press menu.
+ * [navigate] opens sign-up and Plus, [open] the ready map; [toggleSave] saves a ready map from the
+ * row's long-press menu.
  */
 internal data class MindMapRowActions(
     val create: () -> Unit,
     val navigate: (AppRoute) -> Unit,
-    val open: (() -> Unit)? = null,
+    val open: () -> Unit,
     val toggleSave: (() -> Unit)? = null,
 )
 
@@ -180,7 +180,12 @@ internal fun ConnectedMindMapRow(
             local = local,
             cap = if (shown == MindMapShown.Available) host.cap() else null,
             plus = host.plus(),
-            actions = MindMapRowActions({ maps.create(map.chapterId) }, navigate),
+            actions =
+                MindMapRowActions(
+                    create = { maps.create(map.chapterId) },
+                    navigate = navigate,
+                    open = { navigate(AppRoute.MindMap(goalId.toString(), map.chapterId.toString())) },
+                ),
             modifier = modifier,
         )
     }
@@ -211,13 +216,12 @@ internal fun MindMapRow(
     val refused = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
     val notice = refused ?: cap?.takeIf { place != MindMapPlace.Library }
     val library = place == MindMapPlace.Library
-    val open = actions.open ?: { actions.navigate(AppRoute.MindMap(map.chapterId.toString())) }
     val toggleSave = actions.toggleSave?.takeIf { shown == MindMapShown.Ready }
     var menu by remember { mutableStateOf(false) }
     val rowClick =
         when (shown) {
             MindMapShown.PlusRequired -> ({ actions.navigate(AppRoute.Subscription) })
-            MindMapShown.Ready -> open.takeIf { library }
+            MindMapShown.Ready -> actions.open.takeIf { library }
             else -> null
         }
 
@@ -237,7 +241,7 @@ internal fun MindMapRow(
                         saved -> ({ SavedMark() })
                         else -> null
                     },
-                trailing = rowAction(map, place, shown, local, cap, open, actions),
+                trailing = rowAction(map, place, shown, local, cap, actions),
             )
             if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
         }
@@ -344,7 +348,6 @@ private fun rowAction(
     shown: MindMapShown,
     local: MindMapLocal?,
     cap: Limit?,
-    open: () -> Unit,
     actions: MindMapRowActions,
 ): (@Composable () -> Unit)? {
     val slowedDown = shown == MindMapShown.Refused && local?.limit is Limit.SlowDown
@@ -352,7 +355,7 @@ private fun rowAction(
 
     return when {
         shown == MindMapShown.Ready && place != MindMapPlace.Library -> {
-            { RowButton(R.string.mindmaps_open, R.string.mindmaps_open_spoken, map, place, onClick = open) }
+            { RowButton(R.string.mindmaps_open, R.string.mindmaps_open_spoken, map, place, onClick = actions.open) }
         }
 
         shown == MindMapShown.Failed || shown == MindMapShown.Unreachable -> {

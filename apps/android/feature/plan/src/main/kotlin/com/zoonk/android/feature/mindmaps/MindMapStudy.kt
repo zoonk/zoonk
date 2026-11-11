@@ -62,7 +62,6 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.navigation.AppNavigator
@@ -119,80 +118,79 @@ fun MindMapStudyScreen(
 
     val goalId = remember(route.goalId) { runCatching { UUID.fromString(route.goalId) }.getOrNull() }
 
-    WithPlanGoal(app.learnerSummary.summary, navigator, frame = { TaskScaffold(onClose = close, content = it) }) { _ ->
-        val host = mindMapsHost(app)
-        val tab = StudyTab.of(route.tab)
-        if (host == null || tab == null || goalId == null) {
-            TaskNotFound(navigator)
-            return@WithPlanGoal
-        }
+    val host = mindMapsHost(app)
+    val tab = StudyTab.of(route.tab)
+    if (host == null || tab == null || goalId == null) {
+        TaskNotFound(navigator)
+        return
+    }
 
-        val store = host.store
-        val list by store.list[goalId].collectShown()
-        val handle =
-            remember(host.session, goalId, tab) { app.drafts.open(host.session, studyPlaceKey(goalId, tab), MapPlace.serializer()) }
-        var saved by rememberSaveable { mutableStateOf<String?>(null) }
-        val opening = remember(saved) { saved?.let { ApiJson.decodeFromString(StudyOpening.serializer(), it) } }
-        val maps = list.value
-        val scope = rememberCoroutineScope()
+    val store = host.store
+    val list by store.list[goalId].collectShown()
+    val handle =
+        remember(host.session, goalId, tab) { app.drafts.open(host.session, studyPlaceKey(goalId, tab), MapPlace.serializer()) }
+    var saved by rememberSaveable { mutableStateOf<String?>(null) }
+    val opening = remember(saved) { saved?.let { ApiJson.decodeFromString(StudyOpening.serializer(), it) } }
+    val maps = list.value
+    val scope = rememberCoroutineScope()
 
-        if (opening == null || maps == null) {
-            if (opening == null && maps != null) {
-                LaunchedEffect(Unit) {
-                    val place = MapPlace.of(route.start) ?: handle.value.first()
-                    val deck = maps.deck(tab)
-                    val start = place?.let { deck.indexOfPlace(it) } ?: 0
-                    saved = ApiJson.encodeToString(StudyOpening.serializer(), StudyOpening(deck, start))
-                }
+    if (opening == null || maps == null) {
+        if (opening == null && maps != null) {
+            LaunchedEffect(Unit) {
+                val place = MapPlace.of(route.start) ?: handle.value.first()
+                val deck = maps.deck(tab)
+                val start = place?.let { deck.indexOfPlace(it) } ?: 0
+                saved = ApiJson.encodeToString(StudyOpening.serializer(), StudyOpening(deck, start))
             }
-            when (val state = list) {
-                LoadState.Empty -> {
-                    TaskNotFound(navigator)
-                }
+        }
+        when (val state = list) {
+            LoadState.Empty -> {
+                TaskNotFound(navigator)
+            }
 
-                is LoadState.Failed -> {
-                    if (state.error == ApiError.NotFound) {
-                        TaskNotFound(navigator)
-                    } else {
-                        TaskScaffold(onClose = close) { padding ->
-                            LoadFailedMessage(
-                                onRetry = { scope.launch { store.list[goalId].refresh() } },
-                                modifier = Modifier.padding(padding),
-                            )
-                        }
+            is LoadState.Failed -> {
+                if (state.error == ApiError.NotFound) {
+                    TaskNotFound(navigator)
+                } else {
+                    TaskScaffold(onClose = close) { padding ->
+                        LoadFailedMessage(
+                            onRetry = { scope.launch { store.list[goalId].refresh() } },
+                            modifier = Modifier.padding(padding),
+                        )
                     }
                 }
-
-                else -> {
-                    TaskScaffold(onClose = close) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
-                }
             }
-            return@WithPlanGoal
-        }
 
-        if (opening.deck.isEmpty()) {
-            TaskNotFound(navigator)
-            return@WithPlanGoal
+            else -> {
+                TaskScaffold(onClose = close) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
+            }
         }
+        return
+    }
 
-        val viewModel = host.maps(goalId)
-        val saves by viewModel.saves.collectAsStateWithLifecycle()
+    if (opening.deck.isEmpty()) {
+        TaskNotFound(navigator)
+        return
+    }
 
-        CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
-            MindMapStudy(
-                deck = opening.deck,
-                start = opening.start,
-                slide = { slot -> slideOf(slot, maps, goalId, app) },
-                saves = saves,
-                actions =
-                    StudyActions(
-                        close = close,
-                        save = viewModel::save,
-                        navigate = navigator::open,
-                        settled = { slot -> scope.launch { handle.save(slot.place) } },
-                    ),
-            )
-        }
+    val viewModel = host.maps(goalId)
+    val saves by viewModel.saves.collectAsStateWithLifecycle()
+
+    CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
+        MindMapStudy(
+            deck = opening.deck,
+            start = opening.start,
+            slide = { slot -> slideOf(slot, maps, goalId, app) },
+            saves = saves,
+            actions =
+                StudyActions(
+                    close = close,
+                    save = viewModel::save,
+                    navigate = navigator::open,
+                    zoom = { chapterId -> navigator.open(AppRoute.MindMap(goalId.toString(), chapterId.toString())) },
+                    settled = { slot -> scope.launch { handle.save(slot.place) } },
+                ),
+        )
     }
 }
 
@@ -274,11 +272,12 @@ private val Slide.serverSaved: Boolean
             else -> false
         }
 
-/** [settled] is each map the learner stops on, to resume there. */
+/** [zoom] opens a chapter's map full screen; [settled] is each map the learner stops on, to resume there. */
 internal data class StudyActions(
     val close: () -> Unit,
     val save: (target: MindMapTarget, chapterId: UUID?, saved: Boolean) -> Unit,
     val navigate: (AppRoute) -> Unit,
+    val zoom: (chapterId: UUID) -> Unit,
     val settled: (DeckSlot) -> Unit = {},
 )
 
@@ -349,7 +348,7 @@ internal fun MindMapStudy(
                 beyondViewportPageCount = 1,
                 key = { deck[it].key },
             ) { index ->
-                SlideView(slide(deck[index]), actions.navigate)
+                SlideView(slide(deck[index]), actions.zoom)
             }
         }
     }
@@ -485,7 +484,7 @@ private fun StudyBar(
 @Composable
 private fun SlideView(
     slide: Slide,
-    navigate: (AppRoute) -> Unit,
+    zoom: (chapterId: UUID) -> Unit,
 ) {
     when (slide) {
         Slide.Loading -> {
@@ -507,7 +506,7 @@ private fun SlideView(
         }
 
         is Slide.Chapter -> {
-            ChapterSlide(slide.map) { navigate(AppRoute.MindMap(slide.chapterId.toString())) }
+            ChapterSlide(slide.map) { zoom(slide.chapterId) }
         }
 
         is Slide.Lesson -> {
