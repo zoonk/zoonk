@@ -1,0 +1,161 @@
+import "server-only";
+import { type ContentFixUnit, prisma } from "@zoonk/db";
+import { getMainPageUrl } from "@zoonk/utils/url";
+
+export type ContentFixLocation = {
+  adminHref: string | null;
+  language: string | null;
+  mainUrl: string | null;
+  /** From the course down to what the fix changes; empty once the content was deleted. */
+  trail: string[];
+};
+
+type Unit = { unit: ContentFixUnit; unitId: string };
+
+const courseSelect = {
+  id: true,
+  language: true,
+  organization: { select: { slug: true } },
+  slug: true,
+  title: true,
+} as const;
+
+const chapterSelect = {
+  homeCourse: { select: courseSelect },
+  id: true,
+  language: true,
+  slug: true,
+  title: true,
+} as const;
+
+type CourseRow = {
+  id: string;
+  language: string;
+  organization: { slug: string } | null;
+  slug: string;
+  title: string;
+};
+
+type ChapterRow = {
+  homeCourse: CourseRow | null;
+  id: string;
+  language: string;
+  slug: string;
+  title: string;
+};
+
+function coursePath(course: CourseRow | null): string | null {
+  return course?.organization ? `/b/${course.organization.slug}/c/${course.slug}` : null;
+}
+
+function mainUrl({ language, path }: { language: string; path: string | null }): string | null {
+  return path ? getMainPageUrl({ locale: language, path }) : null;
+}
+
+function courseLocation(course: CourseRow): ContentFixLocation {
+  return {
+    adminHref: `/courses/${course.id}`,
+    language: course.language,
+    mainUrl: mainUrl({ language: course.language, path: coursePath(course) }),
+    trail: [course.title],
+  };
+}
+
+function chapterLocation(chapter: ChapterRow): ContentFixLocation {
+  const course = coursePath(chapter.homeCourse);
+
+  return {
+    adminHref: chapter.homeCourse ? `/courses/${chapter.homeCourse.id}` : null,
+    language: chapter.language,
+    mainUrl: mainUrl({
+      language: chapter.language,
+      path: course ? `${course}/ch/${chapter.slug}` : null,
+    }),
+    trail: [chapter.homeCourse?.title, chapter.title].filter((title) => title !== undefined),
+  };
+}
+
+function idsOf(units: readonly Unit[], kind: ContentFixUnit): string[] {
+  return [...new Set(units.filter((unit) => unit.unit === kind).map((unit) => unit.unitId))];
+}
+
+async function loadLessons(ids: string[]) {
+  const lessons = await prisma.lesson.findMany({
+    select: {
+      homeChapter: { select: chapterSelect },
+      id: true,
+      language: true,
+      targetLanguage: true,
+      title: true,
+    },
+    where: { id: { in: ids } },
+  });
+
+  return lessons.map((lesson): [string, ContentFixLocation] => [
+    lesson.id,
+    {
+      adminHref: `/lessons/${lesson.id}`,
+      language: lesson.targetLanguage
+        ? `${lesson.language} → ${lesson.targetLanguage}`
+        : lesson.language,
+      mainUrl: mainUrl({ language: lesson.language, path: `/learn/${lesson.id}` }),
+      trail: [
+        ...(lesson.homeChapter ? chapterLocation(lesson.homeChapter).trail : []),
+        lesson.title,
+      ],
+    },
+  ]);
+}
+
+async function loadChapters(ids: string[]) {
+  const chapters = await prisma.chapter.findMany({
+    select: chapterSelect,
+    where: { id: { in: ids } },
+  });
+
+  return chapters.map((chapter): [string, ContentFixLocation] => [
+    chapter.id,
+    chapterLocation(chapter),
+  ]);
+}
+
+async function loadCourses(ids: string[]) {
+  const courses = await prisma.course.findMany({
+    select: courseSelect,
+    where: { id: { in: ids } },
+  });
+
+  return courses.map((course): [string, ContentFixLocation] => [course.id, courseLocation(course)]);
+}
+
+async function loadItems(ids: string[]) {
+  const items = await prisma.item.findMany({
+    select: { id: true, skill: { select: { language: true, name: true } } },
+    where: { id: { in: ids } },
+  });
+
+  return items.map((item): [string, ContentFixLocation] => [
+    item.id,
+    {
+      adminHref: `/items/${item.id}`,
+      language: item.skill.language,
+      mainUrl: null,
+      trail: [item.skill.name, "Practice question"],
+    },
+  ]);
+}
+
+const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
+
+/** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
+export async function loadContentFixLocations(units: readonly Unit[]) {
+  const [lessons, chapters, courses, items] = await Promise.all([
+    loadLessons(idsOf(units, "lesson")),
+    loadChapters(idsOf(units, "chapter")),
+    loadCourses(idsOf(units, "course")),
+    loadItems(idsOf(units, "item")),
+  ]);
+
+  const locations = new Map([...lessons, ...chapters, ...courses, ...items]);
+  return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;
+}
