@@ -60,6 +60,8 @@ describe(matchSpokenAnswer, () => {
       ["I'd like a coffee.", "I would like a coffee."],
       ["We'd already left.", "We had already left."],
       ["What is your name?", "What's your name?"],
+      ["She's here and she is happy.", "She is here and she is happy."],
+      ["She is here and she's happy.", "She's here and she's happy."],
     ];
 
     for (const [expected = "", heard = ""] of pairs) {
@@ -294,6 +296,12 @@ describe(needsWordByWordCheck, () => {
 
     expect(needsListening({ expected: "我有三个哥哥", heard: "我有3个哥哥", language: "zh" })).toBe(
       true,
+    );
+  });
+
+  it("leaves a mistake beside a number heard right to the transcript", () => {
+    expect(needsListening({ expected: "我有3个哥哥", heard: "我有3个姐姐", language: "zh" })).toBe(
+      false,
     );
   });
 

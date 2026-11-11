@@ -33,75 +33,34 @@ function hasPair(tokens: readonly string[], first: string, second: string): bool
   return tokens.some((token, index) => token === first && tokens[index + 1] === second);
 }
 
-function findContraction({
-  expected,
-  heard,
-  index,
-}: {
-  expected: readonly string[];
-  heard: readonly string[];
-  index: number;
-}): string | null {
-  const [stem = "", next = ""] = heard.slice(index, index + 2);
+type Texts = readonly (readonly string[])[];
 
-  if (hasPair(expected, stem, next)) {
-    return null;
-  }
-
-  const match = ENGLISH_AMBIGUOUS_CONTRACTIONS.find(
-    ([suffix, longForms]) => longForms.includes(next) && expected.includes(`${stem}${suffix}`),
-  );
-
-  return match ? `${stem}${match[0]}` : null;
-}
-
-function findLongForm({
-  expected,
-  token,
-}: {
-  expected: readonly string[];
-  token: string;
-}): string[] | null {
-  if (expected.includes(token)) {
-    return null;
-  }
-
+function toLongForm({ texts, token }: { texts: Texts; token: string }): string[] {
   const longForms = ENGLISH_AMBIGUOUS_CONTRACTIONS.flatMap(([suffix, forms]) => {
     const stem = token.endsWith(suffix) ? token.slice(0, -suffix.length) : "";
     return stem ? forms.map((form) => [stem, form]) : [];
   });
 
-  return longForms.find(([stem = "", form = ""]) => hasPair(expected, stem, form)) ?? null;
+  const said = longForms.find(([stem = "", form = ""]) =>
+    texts.some((text) => hasPair(text, stem, form)),
+  );
+
+  return said ?? [token];
 }
 
-export function spellContractionsAsExpected({
-  expected,
-  heard,
+/** An 's or 'd contraction takes the long form that the sentence or the transcript has, if any. */
+export function expandAmbiguousContractions({
   language,
+  texts,
+  tokens,
 }: {
-  expected: readonly string[];
-  heard: readonly string[];
   language: string;
+  texts: Texts;
+  tokens: readonly string[];
 }): readonly string[] {
   if (!isEnglish(language)) {
-    return heard;
+    return tokens;
   }
 
-  const spelled: string[] = [];
-  let index = 0;
-
-  while (index < heard.length) {
-    const token = heard[index] ?? "";
-    const contraction = findContraction({ expected, heard, index });
-
-    if (contraction) {
-      spelled.push(contraction);
-      index += 2;
-    } else {
-      spelled.push(...(findLongForm({ expected, token }) ?? [token]));
-      index += 1;
-    }
-  }
-
-  return spelled;
+  return tokens.flatMap((token) => toLongForm({ texts, token }));
 }

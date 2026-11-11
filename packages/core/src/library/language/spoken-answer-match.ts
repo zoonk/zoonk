@@ -1,7 +1,7 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { Converter as createChineseConverter } from "opencc-js/t2cn";
-import { expandContractions, spellContractionsAsExpected } from "./_utils/english-contractions";
+import { expandAmbiguousContractions, expandContractions } from "./_utils/english-contractions";
 import { alignWords } from "./_utils/word-alignment";
 
 type SpokenWordStatus = "correct" | "different" | "missed";
@@ -17,7 +17,7 @@ export type SpokenAnswerMatch = {
 
 const MAX_WORDS_TO_EXPLAIN = 2;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
-const DIGIT = /\p{Nd}/u;
+const DIGIT_RUN = /\p{Nd}+/gu;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
 
 /** Speech recognition may return either Chinese script; compare in simplified characters. */
@@ -77,13 +77,19 @@ function getTokenSeparator(language: string): string {
   return getUnspacedSegmenter(language) ? "" : " ";
 }
 
-type ExpectedWord = { text: string; tokens: string[] };
+type ExpectedWord = { text: string; tokens: readonly string[] };
 
-function toExpectedWords({ expected, language }: { expected: string; language: string }) {
+function toExpectedWords({
+  expected,
+  language,
+}: {
+  expected: string;
+  language: string;
+}): ExpectedWord[] {
   return expected
     .split(/\s+/u)
     .map((text) => ({ text, tokens: toTokens({ language, text }) }))
-    .filter((word): word is ExpectedWord => word.tokens.length > 0);
+    .filter((word) => word.tokens.length > 0);
 }
 
 type TokenOutcome = { heardIndex: number | null; matched: boolean };
@@ -160,16 +166,22 @@ export function matchSpokenAnswer({
   heard: string;
   language: string;
 }): SpokenAnswerMatch {
-  const expectedWords = toExpectedWords({ expected, language });
-  const expectedTokens = expectedWords.flatMap((word) => word.tokens);
+  const writtenWords = toExpectedWords({ expected, language });
+  const writtenHeard = toTokens({ language, text: heard });
 
-  const heardTokens = spellContractionsAsExpected({
-    expected: expectedTokens,
-    heard: toTokens({ language, text: heard }),
-    language,
+  const texts = [writtenWords.flatMap((word) => word.tokens), writtenHeard];
+
+  const expectedWords = writtenWords.map((word) => ({
+    ...word,
+    tokens: expandAmbiguousContractions({ language, texts, tokens: word.tokens }),
+  }));
+
+  const heardTokens = expandAmbiguousContractions({ language, texts, tokens: writtenHeard });
+
+  const outcomes = getTokenOutcomes({
+    expected: expectedWords.flatMap((word) => word.tokens),
+    heard: heardTokens,
   });
-
-  const outcomes = getTokenOutcomes({ expected: expectedTokens, heard: heardTokens });
 
   const offsets = getTokenOffsets(expectedWords);
   const separator = getTokenSeparator(language);
@@ -241,8 +253,12 @@ function hasTranscribedLetterNames({
   return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
 }
 
+function toDigitRuns(text: string): string {
+  return [...text.matchAll(DIGIT_RUN)].join(" ");
+}
+
 function isNumberWrittenOtherwise(word: SpokenWordResult): boolean {
-  return word.status !== "correct" && (DIGIT.test(word.text) || DIGIT.test(word.heard ?? ""));
+  return word.status !== "correct" && toDigitRuns(word.text) !== toDigitRuns(word.heard ?? "");
 }
 
 /**
