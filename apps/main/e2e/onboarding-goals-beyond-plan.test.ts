@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { type Browser } from "@playwright/test";
+import { type Browser, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
@@ -40,7 +41,7 @@ async function createLearnerFollowing(count: number) {
   return { followed, user };
 }
 
-async function openCard({ browser, user }: { browser: Browser; user: E2EUser }) {
+async function typeCard({ page, userId }: { page: Page; userId: string }) {
   const words = `learn english and statistics, 30 min a day ${randomUUID().slice(0, 8)}`;
 
   await goalUnderstandingFixture({
@@ -54,15 +55,20 @@ async function openCard({ browser, user }: { browser: Browser; user: E2EUser }) 
       ],
       route: "goals",
     },
-    userId: user.id,
+    userId,
   });
 
-  const page = await openAs(browser, user);
   await page.goto("/start");
   await page.getByRole("textbox", { name: "I want to" }).fill(words);
   await page.getByRole("button", { name: "Build my plan" }).click();
   await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
 
+  return words;
+}
+
+async function openCard({ browser, user }: { browser: Browser; user: E2EUser }) {
+  const page = await openAs(browser, user);
+  const words = await typeCard({ page, userId: user.id });
   return { page, words };
 }
 
@@ -184,6 +190,26 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
 
     await page.context().close();
+  });
+
+  test("a guest whose card has no room left is pointed to a free account, not to Plus", async ({
+    page,
+  }) => {
+    const guestId = await ensureGuest(page);
+    await typeCard({ page, userId: guestId });
+    const elsewhere = await goalFixture({ title: "Started in another tab", userId: guestId });
+    await planFixture({ goalId: elsewhere.id });
+
+    await page.getByRole("button", { name: "Looks right" }).click();
+
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Without an account, you can follow one goal." }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Create a free account" })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: FULL })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
   });
 
   test("the waiting goal sits in the goal switcher, locked while the free plan is full and started from there with Plus", async ({

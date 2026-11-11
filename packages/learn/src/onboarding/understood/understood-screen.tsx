@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import { PlusNotice } from "../../_components/plus-lock";
-import { GoalLimitWall, isPlusGoalLimit } from "../entry/goal-limit-notice";
+import { GoalLimitWall } from "../entry/goal-limit-notice";
 import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
@@ -23,6 +23,7 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { type UnderstandingDraft } from "./understanding-draft";
+import { useCardLimit } from "./understood-limit";
 import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
 import {
@@ -126,27 +127,6 @@ function GoalCard({
   );
 }
 
-/** The draft's own room decides whether the goals followed are full: an up-front notice can be older. */
-function findPlusLimit({
-  draft,
-  error,
-  goalLimit,
-}: {
-  draft: UnderstandingDraft;
-  error: GoalError | null;
-  goalLimit: GoalLimitReason | null;
-}): GoalLimitReason | null {
-  if (error?.limit && isPlusGoalLimit(error.limit)) {
-    return error.limit;
-  }
-
-  if (draft.goals.length === 0) {
-    return "activeGoals";
-  }
-
-  return goalLimit && goalLimit !== "activeGoals" && isPlusGoalLimit(goalLimit) ? goalLimit : null;
-}
-
 function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   const rowsFor = useUnderstoodRows();
 
@@ -247,7 +227,7 @@ export function UnderstoodScreen({
   const fixButtonRef = useRef<HTMLButtonElement>(null);
   const schedule = scheduleRow(draft.schedule, draft.minutesSaid);
   const firstGoalRows = [materialRow(material), schedule].filter((row) => row !== null);
-  const plusLimit = findPlusLimit({ draft, error, goalLimit });
+  const { cardError, plusLimit } = useCardLimit({ draft, error, goalLimit, hasAccount });
 
   const edit = (next: FieldEdit | null) => {
     setEdited(next ? null : editing);
@@ -313,7 +293,7 @@ export function UnderstoodScreen({
           <GoalLimitWall reason={plusLimit} />
         </OnboardingFooter>
       ) : (
-        <GoalFooter error={error} signUpHref={signUpHref}>
+        <GoalFooter error={cardError} signUpHref={signUpHref}>
           <OnboardingPrimaryButton
             busy={isCreating}
             disabled={rewriting}
