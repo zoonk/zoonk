@@ -15,10 +15,25 @@ function getOpening(content: unknown, fields: readonly string[]): string | null 
   return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
 }
 
-/** A chart set may have no text or title around it, so its chart's title names the case. */
+function getTranscript(content: unknown): { text: string } {
+  const script = isJsonObject(content) ? content.script : null;
+  const turns = isJsonObject(script) && Array.isArray(script.turns) ? script.turns : [];
+  const lines = turns.map((turn) => (isJsonObject(turn) ? turn.text : null));
+  return { text: lines.filter((line) => typeof line === "string").join(" ") };
+}
+
+/**
+ * A chart set may have no text or title around it, and an audio set loses a title that gives an
+ * answer away, so their chart's title or the audio's opening lines name the case.
+ */
 function getSetSituation(content: unknown): string | null {
   const visual = isJsonObject(content) ? content.visual : null;
-  return getOpening(content, ["text", "title"]) ?? getOpening(visual, ["title"]);
+
+  return (
+    getOpening(content, ["text", "title"]) ??
+    getOpening(visual, ["title"]) ??
+    getOpening(getTranscript(content), ["text"])
+  );
 }
 
 /** A set's questions share its stimulus, which is their case. */

@@ -87,6 +87,35 @@ describe(loadUsedSituations, () => {
     expect(situations.get(skill.id)).toStrictEqual(["Library visits by month"]);
   });
 
+  it("takes an untitled audio set's case from the opening of its script", async () => {
+    const skill = await skillFixture();
+
+    const set = await itemSetFixture({
+      content: {
+        plays: 2,
+        script: {
+          speakers: [{ accent: "us", gender: "female", key: "a", label: "Ana", voice: "alloy" }],
+          turns: [
+            { speaker: "a", text: "Welcome to the  Riverside clinic." },
+            { speaker: "a", text: "Please take a number." },
+          ],
+        },
+        scriptLanguage: "en",
+        task: null,
+        title: null,
+      },
+      kind: "audio",
+    });
+
+    await itemFixture({ content: choiceItemContent(), setId: set.id, skillId: skill.id });
+
+    const situations = await loadUsedSituations({ skillIds: [skill.id] });
+
+    expect(situations.get(skill.id)).toStrictEqual([
+      "Welcome to the Riverside clinic. Please take a number.",
+    ]);
+  });
+
   it("lists every case a skill's bank holds, and none for a skill without questions", async () => {
     const [skill, empty] = await Promise.all([skillFixture(), skillFixture()]);
     const cases = Array.from({ length: 12 }, (_, index) => `Case ${index}.`);
