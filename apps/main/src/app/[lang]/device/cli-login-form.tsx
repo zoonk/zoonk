@@ -3,8 +3,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Field, FieldLabel } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import {
   CheckIcon,
   CircleCheckIcon,
@@ -27,6 +25,11 @@ import {
 
 const LOGIN_COMMAND = "pnpm zoonk login";
 
+type FormState =
+  | { outcome: CliLoginOutcome }
+  | { failure: CliLoginFailure; userCode: string }
+  | null;
+
 function CodeReadout({ userCode }: { userCode: string }) {
   const t = useExtracted();
 
@@ -41,7 +44,7 @@ function CodeReadout({ userCode }: { userCode: string }) {
   );
 }
 
-function CodeField() {
+function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?: string }) {
   const t = useExtracted();
   const id = useId();
 
@@ -49,9 +52,12 @@ function CodeField() {
     <Field>
       <FieldLabel htmlFor={id}>{t("Code from your terminal")}</FieldLabel>
       <Input
+        aria-describedby={errorId}
+        aria-invalid={errorId ? true : undefined}
         autoCapitalize="characters"
         autoComplete="off"
-        className="font-mono"
+        className="font-mono uppercase"
+        defaultValue={defaultValue}
         id={id}
         name="userCode"
         required
@@ -96,27 +102,23 @@ function Grant({ email }: { email: string }) {
   );
 }
 
-function DecisionButtons({ enterApproves }: { enterApproves: boolean }) {
+function DecisionButtons() {
   const t = useExtracted();
   const { data, pending } = useFormStatus();
   const deciding = pending ? data?.get("decision") : null;
-  const approveRef = useEnterClick<HTMLButtonElement>({ enabled: enterApproves && !pending });
 
   return (
     <div className="flex flex-wrap gap-2">
       <Button
-        aria-keyshortcuts="Enter"
         busy={deciding === "approve"}
         disabled={deciding === "deny"}
         icon={<CheckIcon aria-hidden="true" />}
         name="decision"
-        ref={approveRef}
         size="lg"
         type="submit"
         value="approve"
       >
         {t("Approve")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
 
       <Button
@@ -135,14 +137,17 @@ function DecisionButtons({ enterApproves }: { enterApproves: boolean }) {
   );
 }
 
-function FailureNote({ failure }: { failure: CliLoginFailure }) {
+function FailureNote({ failure, id }: { failure: CliLoginFailure; id: string }) {
   const t = useExtracted();
   const values = { command: LOGIN_COMMAND };
 
   const messages: Record<CliLoginFailure, string> = {
     expired: t("This code has expired. Run {command} again for a new one.", values),
     failed: t("That didn't work. Try again in a moment."),
-    tooMany: t("Too many tries from this network. Wait 30 minutes, then try again."),
+    tooMany: t(
+      "Too many tries from this network. Wait 30 minutes, then run {command} again.",
+      values,
+    ),
     used: t("This code was already used. Run {command} again for a new one.", values),
     wrong: t(
       "No login is waiting for this code. Check it against your terminal, or run {command} again.",
@@ -151,7 +156,7 @@ function FailureNote({ failure }: { failure: CliLoginFailure }) {
   };
 
   return (
-    <p className="text-destructive-text text-sm" role="alert">
+    <p className="text-destructive-text text-sm" id={id} role="alert">
       {messages[failure]}
     </p>
   );
@@ -171,7 +176,10 @@ function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }
       title: t("Login denied"),
     },
     needsStaff: {
-      body: t("The CLI got no access, because {email} isn't a staff account.", { email }),
+      body: t(
+        "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again.",
+        { command: LOGIN_COMMAND, email },
+      ),
       title: t("This login needs a Zoonk staff account"),
     },
   };
@@ -184,7 +192,9 @@ function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }
         <CircleXIcon aria-hidden="true" className="text-muted-foreground mb-2 size-6" />
       )}
 
-      <h2 className="text-section">{text[outcome].title}</h2>
+      <h2 className="text-section outline-none" ref={(node) => node?.focus()} tabIndex={-1}>
+        {text[outcome].title}
+      </h2>
       <p className="text-muted-foreground text-pretty">{text[outcome].body}</p>
     </div>
   );
@@ -193,18 +203,24 @@ function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }
 export function CliLoginForm({ email, userCode }: { email: string; userCode?: string }) {
   const t = useExtracted();
 
+  const errorId = useId();
+
   const [state, formAction] = useActionState(
-    async (_previous: CliLoginState, formData: FormData): Promise<CliLoginState> => {
+    async (_previous: FormState, formData: FormData): Promise<FormState> => {
       const decision = formData.get("decision") === "deny" ? "deny" : "approve";
       const submittedCode = formData.get("userCode");
+      const typedCode = typeof submittedCode === "string" ? submittedCode.trim() : "";
 
-      return decideCliLogin({
-        decision,
-        userCode: typeof submittedCode === "string" ? submittedCode.trim() : "",
-      }).catch((): CliLoginState => ({ failure: "failed" }));
+      const result = await decideCliLogin({ decision, userCode: typedCode }).catch(
+        (): CliLoginState => ({ failure: "failed" }),
+      );
+
+      return result && "failure" in result ? { ...result, userCode: typedCode } : result;
     },
     null,
   );
+
+  const failed = state && "failure" in state ? state : null;
 
   if (state && "outcome" in state) {
     return <Outcome email={email} outcome={state.outcome} />;
@@ -212,7 +228,11 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
 
   return (
     <form action={formAction} className="flex flex-col gap-8">
-      {userCode ? <CodeReadout userCode={userCode} /> : <CodeField />}
+      {userCode ? (
+        <CodeReadout userCode={userCode} />
+      ) : (
+        <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
+      )}
 
       <Grant email={email} />
 
@@ -222,9 +242,9 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
           {t("Only approve a login you started yourself. If someone sent you this link, deny it.")}
         </p>
 
-        <DecisionButtons enterApproves={Boolean(userCode)} />
+        <DecisionButtons />
 
-        {state && "failure" in state && <FailureNote failure={state.failure} />}
+        {failed && <FailureNote failure={failed.failure} id={errorId} />}
       </div>
     </form>
   );

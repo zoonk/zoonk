@@ -2563,9 +2563,9 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Non ha funzionato. Riprova tra poco."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "DaD53k"
-msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Troppi tentativi da questa rete. Attendi 30 minuti, poi riprova."
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "Troppi tentativi da questa rete. Attendi 30 minuti, poi esegui di nuovo {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
@@ -2598,9 +2598,9 @@ msgid "Login denied"
 msgstr "Accesso negato"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "tNO8Ji"
-msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "La CLI non ha ottenuto l’accesso perché {email} non è un account del personale."
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "La CLI non ha ottenuto l’accesso perché {email} non è un account del personale. Accedi con il tuo account del personale, poi esegui di nuovo {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"

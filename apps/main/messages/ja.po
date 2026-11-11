@@ -2563,9 +2563,9 @@ msgid "That didn't work. Try again in a moment."
 msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "DaD53k"
-msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "このネットワークからの試行回数が上限に達しました。30分待ってから、もう一度試してください。"
+msgctxt "rl-7PV"
+msgid "Too many tries from this network. Wait 30 minutes, then run {command} again."
+msgstr "このネットワークからの試行回数が上限に達しました。30分待ってから、{command}をもう一度実行してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
@@ -2598,9 +2598,9 @@ msgid "Login denied"
 msgstr "ログインを拒否しました"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "tNO8Ji"
-msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "{email}はスタッフアカウントではないため、CLIからのアクセスは許可されませんでした。"
+msgctxt "5hsJWP"
+msgid "The CLI got no access, because {email} isn't a staff account. Log in with your staff account, then run {command} again."
+msgstr "{email}はスタッフ用アカウントではないため、CLIにアクセス権を付与できませんでした。スタッフ用アカウントでログインしてから、{command}をもう一度実行してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
