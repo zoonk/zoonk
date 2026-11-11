@@ -26,7 +26,7 @@ export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
 const OPERATORS = ["eq", "ne", "in", "notIn", "isNull", "notNull", "gt", "gte", "lt", "lte"];
 const OPERATORS_WITHOUT_VALUE = new Set(["isNull", "notNull"]);
 const OPERATORS_WITH_LIST = new Set(["in", "notIn"]);
-const WHERE_PATTERN = /^(?<field>\S+)\s+(?<op>\S+)(?:\s+(?<value>[\s\S]+))?$/u;
+const WHERE_PATTERN = /^(?<field>[^ ]+) (?<op>[^ ]+)(?: (?<value>[\s\S]*))?$/u;
 const ORDER_PATTERN = /^(?<field>[^:\s]+)(?::(?<direction>asc|desc))?$/u;
 const WHOLE_NUMBER_PATTERN = /^\d+$/u;
 const LONGEST_COMMAND_WORDS = 3;
@@ -39,7 +39,7 @@ function splitList(value: string): string[] {
 }
 
 function parseWhere(clause: string) {
-  const { field, op, value } = WHERE_PATTERN.exec(clause.trim())?.groups ?? {};
+  const { field, op, value } = WHERE_PATTERN.exec(clause)?.groups ?? {};
 
   if (!field || !op) {
     throw usageError(`--where "${clause}" needs the form "<field> <op> <value>".`);
@@ -57,7 +57,7 @@ function parseWhere(clause: string) {
     return { field, op };
   }
 
-  if (!value) {
+  if (value === undefined) {
     throw usageError(`--where "${clause}" needs a value after ${op}.`);
   }
 

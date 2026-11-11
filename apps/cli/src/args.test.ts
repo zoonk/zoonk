@@ -88,6 +88,12 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("keeps a value's spaces after the field and operator", () => {
+    expect(sentRequest(["staff", "count", "Goal", "--where", "title eq  Learn  "])).toMatchObject({
+      body: { where: [{ field: "title", op: "eq", value: " Learn  " }] },
+    });
+  });
+
   it("reads --api on any command", () => {
     expect(parseInvocation(["logout", "--api", "http://localhost:3001"])).toStrictEqual({
       apiUrl: "http://localhost:3001",
