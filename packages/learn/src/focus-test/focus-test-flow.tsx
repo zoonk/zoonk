@@ -6,7 +6,7 @@ import { type OnboardingActions, type PlacementAnswer } from "../onboarding/onbo
 import { PlacementQuestionScreen } from "../onboarding/steps/placement-question";
 import { PlacementUnavailable } from "../onboarding/steps/placement-screens";
 import { PlacementWaiting } from "../onboarding/steps/placement-waiting";
-import { StepLoading } from "../onboarding/steps/step-parts";
+import { StepLoadFailed, StepLoading } from "../onboarding/steps/step-parts";
 import { type FocusTestActions } from "./focus-test-actions";
 import { type QuestionPhase } from "./focus-test-phase";
 import { type FocusTestPlanActions } from "./focus-test-proposal";
@@ -101,8 +101,7 @@ export function FocusTestFlow({
     case "loading":
       return <StepLoading />;
     case "loadFailed":
-      // The route's error page says it didn't load, and its Try again opens the test again.
-      throw new Error("The Focus test couldn't be read");
+      return <StepLoadFailed onRetry={test.reopen} />;
     case "waiting":
       return (
         <PlacementWaiting

@@ -144,7 +144,7 @@ describe(toFocusTestPhase, () => {
     ).toStrictEqual({ answered: false, kind: "waiting" });
   });
 
-  it("says a read that failed didn't load, never that questions are being written", () => {
+  it("says a read that failed couldn't open the test, never that questions are being written", () => {
     expect(toFocusTestPhase({ opening: true, outcome: { status: "failed" } })).toStrictEqual({
       kind: "loadFailed",
     });

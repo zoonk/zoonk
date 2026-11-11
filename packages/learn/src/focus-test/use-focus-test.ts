@@ -40,7 +40,7 @@ function useTestState({ actions, run }: { actions: FocusTestActions; run: Genera
   // Questions that arrived while the learner waited show once the wait moves on.
   const [arrived, setArrived] = useState<PlacementOutcome | null>(null);
 
-  useReadOnOpen({
+  const reopen = useReadOnOpen({
     onRead: (outcome) => setPhase(toFocusTestPhase({ opening: true, outcome: outcome ?? FAILED })),
     read: actions.get,
   });
@@ -68,7 +68,7 @@ function useTestState({ actions, run }: { actions: FocusTestActions; run: Genera
     onPoll: async () => hear(await actions.get()),
   });
 
-  return { arrived, buildFailed, phase, poll, setArrived, setPhase };
+  return { arrived, buildFailed, phase, poll, reopen, setArrived, setPhase };
 }
 
 export function useFocusTest({
@@ -80,7 +80,7 @@ export function useFocusTest({
   onDone: () => Promise<boolean>;
   run: GenerationRun | null;
 }) {
-  const { arrived, buildFailed, phase, poll, setArrived, setPhase } = useTestState({
+  const { arrived, buildFailed, phase, poll, reopen, setArrived, setPhase } = useTestState({
     actions,
     run,
   });
@@ -185,6 +185,7 @@ export function useFocusTest({
     poll,
     pressed,
     questionsReady: arrived !== null,
+    reopen,
     resume: (question: QuestionPhase) => setPhase(question),
     stop,
   };

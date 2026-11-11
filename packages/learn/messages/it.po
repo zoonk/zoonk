@@ -405,6 +405,7 @@ msgstr "{done, number} su {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx

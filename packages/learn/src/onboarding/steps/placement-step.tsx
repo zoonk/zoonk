@@ -14,7 +14,7 @@ import {
 import { PlacementQuestionScreen } from "./placement-question";
 import { PlacementDone, PlacementIntro, PlacementUnavailable } from "./placement-screens";
 import { PlacementWaiting } from "./placement-waiting";
-import { StepLoading } from "./step-parts";
+import { StepLoadFailed, StepLoading } from "./step-parts";
 import { rememberStepStart, wasStepStarted } from "./step-started";
 import { useReadOnOpen } from "./use-read-on-open";
 import { isRunStopped } from "./wait-run";
@@ -119,7 +119,7 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     };
   };
 
-  useReadOnOpen({
+  const reopen = useReadOnOpen({
     onRead: (outcome) =>
       showPhase(
         toResumedPhase({
@@ -142,7 +142,7 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     setPhase({ kind: outcome?.status === "unavailable" ? "unavailable" : "waiting" });
   };
 
-  return { countAnswer, phase, setPhase, showReady, start };
+  return { countAnswer, phase, reopen, setPhase, showReady, start };
 }
 
 export function PlacementStep({
@@ -162,7 +162,7 @@ export function PlacementStep({
   run: GenerationRun | null;
   subject: string;
 }) {
-  const { countAnswer, phase, setPhase, showReady, start } = useResumedPlacement({
+  const { countAnswer, phase, reopen, setPhase, showReady, start } = useResumedPlacement({
     actions,
     goalId,
   });
@@ -245,8 +245,7 @@ export function PlacementStep({
     case "loading":
       return <StepLoading />;
     case "loadFailed":
-      // The route's error page says it didn't load, and its Try again opens the step again.
-      throw new Error("Placement couldn't be read");
+      return <StepLoadFailed onRetry={reopen} />;
     case "intro":
       return (
         <PlacementIntro
