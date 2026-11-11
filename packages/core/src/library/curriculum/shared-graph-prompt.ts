@@ -143,21 +143,37 @@ function toSharedGoal({ generalGoal }: Pick<CurriculumScope, "generalGoal">): st
   return generalGoal;
 }
 
+function withCountryContext({
+  context,
+  scope,
+}: {
+  context?: string;
+  scope: Pick<CurriculumScope, "country">;
+}): string | undefined {
+  return scope.country
+    ? [context, `Content country: ${scope.country}`].filter(Boolean).join("\n")
+    : context;
+}
+
 export function toScopedGraphPrompt({
   inputs,
   scope,
 }: {
   inputs: ScopedInputs;
-  scope: Pick<CurriculumScope, "generalGoal" | "ownerId">;
+  scope: Pick<CurriculumScope, "country" | "generalGoal" | "ownerId">;
 }): GraphPrompt {
   if (scope.ownerId) {
-    return { ...inputs.graphPrompt, hasMaterial: inputs.hasMaterial };
+    return {
+      ...inputs.graphPrompt,
+      context: withCountryContext({ context: inputs.graphPrompt.context, scope }),
+      hasMaterial: inputs.hasMaterial,
+    };
   }
 
   if (isSharedExamGraph({ inputs, scope })) {
     return {
       ...inputs.graphPrompt,
-      context: undefined,
+      context: withCountryContext({ scope }),
       goal: inputs.examIdentity ?? toSharedGoal(scope),
       ownLevel: undefined,
       purpose: undefined,
@@ -166,7 +182,7 @@ export function toScopedGraphPrompt({
 
   return {
     ...inputs.graphPrompt,
-    context: inputs.sharedContext,
+    context: withCountryContext({ context: inputs.sharedContext, scope }),
     goal: toSharedGoal(scope),
     // A language's level test places each learner, and rewrites their level while this graph is built.
     ...(inputs.goal.kind === "language" && { ownLevel: undefined, purpose: undefined }),

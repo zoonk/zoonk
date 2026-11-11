@@ -97,7 +97,7 @@ function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
 
 export function orderGoalCourses(
   graph: GoalSkillGraph,
-): { key: string; title: string; countrySpecific?: boolean }[] {
+): { key: string; title: string; countrySpecific: boolean }[] {
   const courses = graph.courses.flatMap((course) => {
     const position = graph.skills.findIndex((skill) => skill.course === course.key);
 
@@ -107,9 +107,9 @@ export function orderGoalCourses(
   return courses
     .toSorted((a, b) => a.position - b.position)
     .map(({ course }) => ({
+      countrySpecific: course.countrySpecific,
       key: course.key,
       title: course.title,
-      ...("countrySpecific" in course && { countrySpecific: Boolean(course.countrySpecific) }),
     }));
 }
 

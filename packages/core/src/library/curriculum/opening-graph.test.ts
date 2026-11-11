@@ -20,7 +20,7 @@ function skill(attrs: Partial<GraphSkill> & Pick<GraphSkill, "key" | "name">): G
 }
 
 const opening: GoalOpeningSkill = {
-  course: { id: "course-id", key: "immunology", title: "Immunology" },
+  course: { countrySpecific: false, id: "course-id", key: "immunology", title: "Immunology" },
   skill: {
     area: "Germs",
     description: "Tell a pathogen from a harmless microbe.",
@@ -35,7 +35,9 @@ const opening: GoalOpeningSkill = {
 describe(keepOpeningFirst, () => {
   it("holds the graph's first skill to the opening as saved", () => {
     const graph: GoalSkillGraph = {
-      courses: [{ key: "immunology", levels: ["beginner"], title: "Immunology" }],
+      courses: [
+        { countrySpecific: false, key: "immunology", levels: ["beginner"], title: "Immunology" },
+      ],
       estimatedHours: 10,
       phases: [
         { estimatedHours: 5, milestone: "", title: "First steps" },
@@ -81,7 +83,7 @@ describe(keepOpeningFirst, () => {
 
   it("adds the opening and its course when the graph left them out", () => {
     const graph: GoalSkillGraph = {
-      courses: [{ key: "biology", levels: ["beginner"], title: "Biology" }],
+      courses: [{ countrySpecific: false, key: "biology", levels: ["beginner"], title: "Biology" }],
       estimatedHours: 5,
       phases: [{ estimatedHours: 5, milestone: "", title: "First steps" }],
       skills: [skill({ course: "biology", key: "cells", name: "Describe a cell" })],

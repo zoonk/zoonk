@@ -58,13 +58,19 @@ async function readCard(userId: string, others: CardGoal[] = [STATISTICS]) {
       followUps: [],
       goals: [
         {
+          countryDependent: false,
           kind: "language",
           ownLevel: "basic",
           subject: "English",
           targetLanguage: "en",
           title: "Learn English",
         },
-        ...others.map((goal) => ({ kind: "learn" as const, ownLevel: "none" as const, ...goal })),
+        ...others.map((goal) => ({
+          countryDependent: false,
+          kind: "learn" as const,
+          ownLevel: "none" as const,
+          ...goal,
+        })),
       ],
       route: "goals",
     },

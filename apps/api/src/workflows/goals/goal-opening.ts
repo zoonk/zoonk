@@ -106,7 +106,12 @@ async function writeOpening({
 
   return {
     opening: {
-      course: { id: courseId, key: course.key, title: course.title },
+      course: {
+        countrySpecific: course.countrySpecific,
+        id: courseId,
+        key: course.key,
+        title: course.title,
+      },
       skill: {
         area: skill.area,
         description: skill.description,

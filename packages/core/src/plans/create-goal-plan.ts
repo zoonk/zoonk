@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
+import { DbNull, type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
@@ -203,7 +203,22 @@ async function planFromGraph({
       }
 
       if (primaryCourseId && primaryCourseId !== goal.primaryCourseId) {
-        await tx.goal.update({ data: { primaryCourseId }, where: { id: goalId } });
+        await tx.goal.update({
+          data: {
+            primaryCourseId,
+            ...(!isFirst && {
+              details: isJsonObject(goal.details)
+                ? Object.fromEntries(
+                    Object.entries(goal.details).filter(([key]) => key !== "courseStart"),
+                  )
+                : undefined,
+              openingLessonId: null,
+              openingSkill: DbNull,
+              warmUpId: null,
+            }),
+          },
+          where: { id: goalId },
+        });
       }
 
       if (followNotice) {

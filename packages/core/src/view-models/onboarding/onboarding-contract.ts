@@ -6,7 +6,7 @@ import {
   examChoicePickSchema,
 } from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
-import { countryCodeSchema } from "../../goals/country-contract";
+import { type GoalContentCountry, countryCodeSchema } from "../../goals/country-contract";
 import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
@@ -76,6 +76,7 @@ export type OnboardingExamDate = {
 
 /** Confirmed drafts can create goals; targets remain learner choices rather than promises. */
 export type UnderstoodGoalView = {
+  contentCountry?: GoalContentCountry | null;
   countryDependent?: boolean;
   /** Stored public cutoff only; null when prior research has not found it. */
   cutoff: TargetCutoff | null;

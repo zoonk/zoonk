@@ -5,6 +5,7 @@ import { currentFactsWhere } from "../../../memory/_utils/memory-fact-view";
 import { memorySourceSchema } from "../../../memory/memory-contract";
 
 export type ExampleLineContext = {
+  learnerHomeCountry: string | null;
   facts: { id: string; statement: string }[];
   goal: string | null;
   key: string;
@@ -38,11 +39,16 @@ async function findEligibleFacts({
   });
 }
 
-function hashContext({ facts, goal, plainWords }: Omit<ExampleLineContext, "key">): string {
+function hashContext({
+  facts,
+  goal,
+  learnerHomeCountry,
+  plainWords,
+}: Omit<ExampleLineContext, "key">): string {
   const statements = facts.map((fact) => fact.statement).toSorted();
 
   return createHash("sha256")
-    .update(JSON.stringify({ goal, plainWords, statements }))
+    .update(JSON.stringify({ goal, learnerHomeCountry, plainWords, statements }))
     .digest("hex");
 }
 
@@ -71,6 +77,7 @@ export async function loadExampleLineContext({
   const context = {
     facts,
     goal: profile?.activeGoal?.status === "active" ? profile.activeGoal.title : null,
+    learnerHomeCountry: profile?.homeCountry ?? null,
     plainWords: profile?.learningNeeds.includes("plainWords") ?? false,
   };
 

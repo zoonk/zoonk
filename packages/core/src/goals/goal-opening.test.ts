@@ -18,7 +18,7 @@ import { findOpeningLesson, readSavedGoalOpening, saveGoalOpening } from "./goal
 
 function openingFor({ course, skill }: { course: Course; skill: Skill }): GoalOpeningSkill {
   return {
-    course: { id: course.id, key: "chosen-course", title: course.title },
+    course: { countrySpecific: false, id: course.id, key: "chosen-course", title: course.title },
     skill: {
       area: "Chosen area",
       description: skill.description,
@@ -191,5 +191,32 @@ describe(readSavedGoalOpening, () => {
     await saveGoalOpening({ goalId: goal.id, lessonId: lesson.id, opening });
     const resumed = await readSavedGoalOpening(goal.id);
     expect(resumed?.skill).toStrictEqual(opening);
+  });
+
+  it("never reuses an opening from another country when rebuilding", async () => {
+    const user = await userFixture();
+
+    const [{ course, first, skill }, goal] = await Promise.all([
+      taughtCourse(),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    await saveGoalOpening({
+      goalId: goal.id,
+      lessonId: first.id,
+      opening: openingFor({ course, skill }),
+    });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toBeNull();
+
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toMatchObject({
+      lesson: { id: first.id },
+    });
+
+    await prisma.course.update({ data: { country: "PT" }, where: { id: course.id } });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toMatchObject({
+      skill: { course: { countrySpecific: true } },
+    });
   });
 });

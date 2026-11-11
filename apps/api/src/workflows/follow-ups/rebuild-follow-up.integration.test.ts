@@ -113,7 +113,7 @@ async function savedGoal() {
   await createSetUpGoalPlan({ goalId: goal.id, graph: planGraph });
 
   const graph: GoalSkillGraph = {
-    courses: [{ key: "course", levels: ["beginner"], title: course.title }],
+    courses: [{ countrySpecific: false, key: "course", levels: ["beginner"], title: course.title }],
     estimatedHours: 0.1,
     phases: [{ estimatedHours: 0.1, milestone: "Use the idea", title: "Deep foundations" }],
     skills: [

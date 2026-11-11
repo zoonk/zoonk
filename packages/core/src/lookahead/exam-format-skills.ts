@@ -131,6 +131,7 @@ export async function pickExamFormatSkills({
 
   const rows = await prisma.skill.findMany({
     select: {
+      country: true,
       description: true,
       id: true,
       isQuantitative: true,

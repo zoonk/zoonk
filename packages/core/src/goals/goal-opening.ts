@@ -71,7 +71,10 @@ export type SavedGoalOpening = { lesson: OpeningLesson; skill: GoalOpeningSkill 
  * Internal workflow bridge: the goal's run reads what an earlier run of it saved, so a retried run
  * writes the same graph start without writing the opening again.
  */
-export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpening | null> {
+export async function readSavedGoalOpening(
+  goalId: string,
+  country?: string | null,
+): Promise<SavedGoalOpening | null> {
   const goal = await prisma.goal.findUnique({
     select: { openingLesson: { select: { id: true, title: true } }, openingSkill: true },
     where: { id: goalId },
@@ -83,7 +86,29 @@ export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpe
     return null;
   }
 
-  return { lesson, skill: goalOpeningSkillSchema.parse(goal.openingSkill) };
+  const skill = goalOpeningSkillSchema.parse(goal.openingSkill);
+
+  if (country === undefined) {
+    return { lesson, skill };
+  }
+
+  const course = await prisma.course.findFirst({
+    select: { country: true },
+    where: { country, id: skill.course.id },
+  });
+
+  return course
+    ? {
+        lesson,
+        skill: {
+          ...skill,
+          course: {
+            ...skill.course,
+            countrySpecific: Boolean(course.country) || skill.course.countrySpecific,
+          },
+        },
+      }
+    : null;
 }
 
 /**

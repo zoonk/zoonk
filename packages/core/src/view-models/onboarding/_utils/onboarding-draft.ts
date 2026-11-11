@@ -147,9 +147,12 @@ export async function completeDraft({
   understanding: GoalUnderstanding;
   platform?: AnalyticsPlatform | null;
 }): Promise<OnboardingDraft> {
+  const profile = await prisma.userLearningProfile.findUnique({ where: { userId: draft.userId } });
+
   const view = await toUnderstandingView({
     context: {
       goal: draft.prompt,
+      homeCountry: profile?.homeCountry ?? null,
       language: draft.language,
       onboardingId: draft.id,
       today: getLearnerToday(draft.timeZone),

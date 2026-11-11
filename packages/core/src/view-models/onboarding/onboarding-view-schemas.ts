@@ -1,6 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
+import { goalContentCountrySchema } from "../../goals/country-contract";
 import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
@@ -37,6 +38,7 @@ const examDateSchema = z
 
 const understoodGoalSchema = z
   .object({
+    contentCountry: goalContentCountrySchema.nullable().optional(),
     countryDependent: z.boolean().optional(),
     cutoff: targetCutoffSchema
       .nullable()

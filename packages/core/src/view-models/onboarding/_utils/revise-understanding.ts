@@ -1,6 +1,7 @@
 import "server-only";
-import { isCountryCode } from "@zoonk/utils/countries";
+import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
+import { toContentCountryView } from "../../../goals/_utils/content-country-view";
 import { isGoalRegion } from "../../../goals/_utils/goal-region";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { isLanguageAim } from "../../../language/aims/language-aims";
@@ -75,7 +76,19 @@ function reviseGoal({
   switch (edit.field) {
     case "contentCountry":
       return goal.draft.kind === "learn" && (edit.value === null || isCountryCode(edit.value))
-        ? { ...goal, draft: { ...goal.draft, contentCountry: edit.value } }
+        ? {
+            ...goal,
+            contentCountry: goal.countryDependent
+              ? toContentCountryView({
+                  code: edit.value ?? getLanguageCountry(goal.draft.language),
+                  editable: true,
+                  kind: "content",
+                  language: goal.draft.language,
+                  source: "picked",
+                })
+              : null,
+            draft: { ...goal.draft, contentCountry: edit.value },
+          }
         : null;
     case "displayName":
     case "title":

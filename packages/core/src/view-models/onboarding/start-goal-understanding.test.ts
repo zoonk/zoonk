@@ -42,6 +42,7 @@ describe(startGoalUnderstanding, () => {
         followUps: ["Which part of your job uses it?"],
         goals: [
           {
+            countryDependent: false,
             kind: "learn",
             level: "I studied it in college",
             ownLevel: "intermediate",
@@ -142,6 +143,7 @@ describe(startGoalUnderstanding, () => {
             followUps: [],
             goals: [
               {
+                countryDependent: false,
                 kind: "learn",
                 ownLevel: "none",
                 purpose: "overview",
@@ -179,7 +181,16 @@ describe(startGoalUnderstanding, () => {
       goal,
       result: {
         followUps: [],
-        goals: [{ examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass it" }],
+        goals: [
+          {
+            countryDependent: false,
+            examName,
+            examYear: 2099,
+            kind: "exam",
+            subject: examName,
+            title: "Pass it",
+          },
+        ],
         route: "goals",
       },
       userId: user.id,
@@ -243,7 +254,7 @@ describe(startGoalUnderstanding, () => {
       goal: known,
       result: {
         followUps: [],
-        goals: [{ kind: "learn", subject: "Baking", title: "Bake bread" }],
+        goals: [{ countryDependent: false, kind: "learn", subject: "Baking", title: "Bake bread" }],
         route: "goals",
       },
       userId: guest.id,
@@ -287,7 +298,7 @@ describe(startGoalUnderstanding, () => {
       goal: known,
       result: {
         followUps: [],
-        goals: [{ kind: "learn", subject: "Cooking", title: "Cook rice" }],
+        goals: [{ countryDependent: false, kind: "learn", subject: "Cooking", title: "Cook rice" }],
         route: "goals",
       },
       userId: guest.id,

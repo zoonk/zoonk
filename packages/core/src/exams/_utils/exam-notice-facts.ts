@@ -99,13 +99,18 @@ function toFacts({
   };
 }
 
-export async function loadExamNoticeFacts(goal: FactsGoal): Promise<ExamFactsContext | null> {
+export async function loadExamNoticeFacts(
+  goal: FactsGoal,
+  { blueprint: knownBlueprint }: { blueprint?: ExamBlueprint | null } = {},
+): Promise<ExamFactsContext | null> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
   }
 
   const [blueprint, picks] = await Promise.all([
-    prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } }),
+    knownBlueprint === undefined
+      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : knownBlueprint,
     loadExamPicks(goal.id),
   ]);
 

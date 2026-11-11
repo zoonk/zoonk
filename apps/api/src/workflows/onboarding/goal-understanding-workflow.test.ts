@@ -20,7 +20,7 @@ import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
 const LEARN: GoalUnderstanding = {
   dailyMinutes: 20,
   followUps: [],
-  goals: [{ kind: "learn", subject: "Welding", title: "Learn to weld" }],
+  goals: [{ countryDependent: false, kind: "learn", subject: "Welding", title: "Learn to weld" }],
   route: "goals",
 };
 
@@ -135,6 +135,7 @@ describe(goalUnderstandingWorkflow, () => {
         followUps: [],
         goals: [
           {
+            countryDependent: false,
             examName: "IELTS",
             kind: "exam",
             subject: "English",
@@ -170,7 +171,16 @@ describe(goalUnderstandingWorkflow, () => {
         goal: prompt,
         result: {
           followUps: [],
-          goals: [{ examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass it" }],
+          goals: [
+            {
+              countryDependent: false,
+              examName,
+              examYear: 2099,
+              kind: "exam",
+              subject: examName,
+              title: "Pass it",
+            },
+          ],
           route: "goals",
         },
         userId: user.id,
@@ -233,6 +243,7 @@ describe(goalUnderstandingWorkflow, () => {
         followUps: [],
         goals: [
           {
+            countryDependent: false,
             examDay: "official",
             examName: `Unstored Exam ${randomUUID()}`,
             kind: "exam",
@@ -254,7 +265,9 @@ describe(goalUnderstandingWorkflow, () => {
 
     await expect(readCard(draft.id)).resolves.toMatchObject({
       status: "understood",
-      understanding: { goals: [{ draft: { title: "Pass the bar" }, examDates: [] }] },
+      understanding: {
+        goals: [{ countryDependent: false, draft: { title: "Pass the bar" }, examDates: [] }],
+      },
     });
 
     expect(getStreamedEvents().at(-1)).toStrictEqual({
@@ -269,7 +282,13 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: {
         followUps: [],
         goals: [
-          { kind: "language", subject: "Japanese", targetLanguage: "ja", title: "Speak Japanese" },
+          {
+            countryDependent: false,
+            kind: "language",
+            subject: "Japanese",
+            targetLanguage: "ja",
+            title: "Speak Japanese",
+          },
         ],
         route: "goals",
       },
@@ -299,7 +318,13 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: {
         followUps: [],
         goals: [
-          { kind: "language", subject: "Korean", targetLanguage: "ko", title: "Learn Korean" },
+          {
+            countryDependent: false,
+            kind: "language",
+            subject: "Korean",
+            targetLanguage: "ko",
+            title: "Learn Korean",
+          },
         ],
         route: "goals",
       },

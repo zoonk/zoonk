@@ -25,9 +25,9 @@ function skill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: str
 
 const graph: GoalSkillGraph = {
   courses: [
-    { key: "a", levels: ["beginner", "intermediate"], title: "Course A" },
-    { key: "b", levels: ["overview"], title: "Course B" },
-    { key: "c", levels: ["beginner"], title: "Course C" },
+    { countrySpecific: false, key: "a", levels: ["beginner", "intermediate"], title: "Course A" },
+    { countrySpecific: false, key: "b", levels: ["overview"], title: "Course B" },
+    { countrySpecific: false, key: "c", levels: ["beginner"], title: "Course C" },
   ],
   estimatedHours: 5,
   phases: [
@@ -79,9 +79,9 @@ describe(groupGoalCourseBands, () => {
 describe(orderGoalCourses, () => {
   it("lists the graph's courses with skills in the order the learner reaches them", () => {
     expect(orderGoalCourses(graph)).toStrictEqual([
-      { key: "b", title: "Course B" },
-      { key: "a", title: "Course A" },
-      { key: "c", title: "Course C" },
+      { countrySpecific: false, key: "b", title: "Course B" },
+      { countrySpecific: false, key: "a", title: "Course A" },
+      { countrySpecific: false, key: "c", title: "Course C" },
     ]);
   });
 
@@ -99,8 +99,8 @@ describe(orderGoalCourses, () => {
     ];
 
     expect(orderGoalCourses({ ...graph, courses, skills })).toStrictEqual([
-      { key: "b", title: "Course B" },
-      { key: "a", title: "Course A" },
+      { countrySpecific: false, key: "b", title: "Course B" },
+      { countrySpecific: false, key: "a", title: "Course A" },
     ]);
   });
 });

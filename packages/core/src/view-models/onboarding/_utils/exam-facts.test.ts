@@ -40,7 +40,15 @@ function lookupFor(
     today: TODAY,
     understanding: {
       followUps: [],
-      goals: [{ kind: "exam", subject: goal.examName, title: goal.examName, ...goal }],
+      goals: [
+        {
+          countryDependent: false,
+          kind: "exam",
+          subject: goal.examName,
+          title: goal.examName,
+          ...goal,
+        },
+      ],
       route: "goals",
     },
     words: `pass the ${goal.examName}`,
@@ -147,8 +155,14 @@ describe(listExamLookups, () => {
         understanding: {
           followUps: [],
           goals: [
-            { kind: "learn", subject: "Welding", title: "Weld" },
-            { examName: "IELTS", kind: "exam", subject: "English", title: "Pass the IELTS" },
+            { countryDependent: false, kind: "learn", subject: "Welding", title: "Weld" },
+            {
+              countryDependent: false,
+              examName: "IELTS",
+              kind: "exam",
+              subject: "English",
+              title: "Pass the IELTS",
+            },
           ],
           route: "goals",
         },

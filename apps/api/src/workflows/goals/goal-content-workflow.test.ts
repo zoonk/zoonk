@@ -1628,7 +1628,12 @@ describe(goalContentWorkflow, () => {
         ...graph,
         courses: [
           ...graph.courses,
-          { key: "electronics", levels: ["overview"], title: `Electronics ${token}` },
+          {
+            countrySpecific: false,
+            key: "electronics",
+            levels: ["overview"],
+            title: `Electronics ${token}`,
+          },
         ],
         skills: graph.skills.map((skill, index) =>
           index % 2 === 0 ? skill : { ...skill, course: "electronics" },
@@ -2241,7 +2246,7 @@ describe(goalContentWorkflow, () => {
     await goalContentWorkflow({ goalId: earlier.goal.id });
 
     expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
-      context: undefined,
+      context: "Content country: BR",
       goal: "Immunology board exam",
       ownLevel: undefined,
     });

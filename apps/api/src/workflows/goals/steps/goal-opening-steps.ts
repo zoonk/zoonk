@@ -30,10 +30,13 @@ export type WrittenOpening = Awaited<ReturnType<typeof writeGoalOpening>>;
 
 export type OpeningLesson = SavedGoalOpening["lesson"];
 
-export async function readSavedGoalOpeningStep(goalId: string): Promise<SavedGoalOpening | null> {
+export async function readSavedGoalOpeningStep(
+  goalId: string,
+  country?: string | null,
+): Promise<SavedGoalOpening | null> {
   "use step";
 
-  return readSavedGoalOpening(goalId);
+  return readSavedGoalOpening(goalId, country);
 }
 
 export async function writeGoalOpeningStep({

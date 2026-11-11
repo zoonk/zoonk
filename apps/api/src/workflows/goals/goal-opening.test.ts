@@ -441,7 +441,7 @@ describe("a learn goal's opening", () => {
       goalId: goal.id,
       lessonId: picked.id,
       opening: {
-        course: { id: course.id, key: "immunology", title: course.title },
+        course: { countrySpecific: false, id: course.id, key: "immunology", title: course.title },
         skill: {
           area: "Immunology",
           description: skill.description,

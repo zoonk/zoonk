@@ -1,4 +1,4 @@
-import { getLanguageCountry } from "@zoonk/utils/countries";
+import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
 
 export function getContentCountryScope({
   country,
@@ -7,7 +7,9 @@ export function getContentCountryScope({
   country?: string | null;
   language: string;
 }): string | null {
-  return !country || country === getLanguageCountry(language) ? null : country;
+  return !country || !isCountryCode(country) || country === getLanguageCountry(language)
+    ? null
+    : country;
 }
 
 export function countryIdentityKey({
@@ -18,4 +20,14 @@ export function countryIdentityKey({
   key: string;
 }): string {
   return country ? `${country}:${key}` : key;
+}
+
+export function getLessonCountry({
+  course,
+  skill,
+}: {
+  course?: { country: string | null } | null;
+  skill?: { country: string | null } | null;
+}): string | null {
+  return course ? course.country : (skill?.country ?? null);
 }

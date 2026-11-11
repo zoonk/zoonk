@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type UserLearningProfile, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
@@ -172,11 +172,17 @@ export async function loadGoalViews({
   );
 }
 
-export async function findActiveGoalId(userId: string): Promise<string | null> {
-  const profile = await prisma.userLearningProfile.findUnique({
-    select: { activeGoalId: true },
-    where: { userId },
-  });
+export async function findActiveGoalId(
+  userId: string,
+  knownProfile?: Pick<UserLearningProfile, "activeGoalId"> | null,
+): Promise<string | null> {
+  const profile =
+    knownProfile === undefined
+      ? await prisma.userLearningProfile.findUnique({
+          select: { activeGoalId: true },
+          where: { userId },
+        })
+      : knownProfile;
 
   if (profile?.activeGoalId) {
     return profile.activeGoalId;
