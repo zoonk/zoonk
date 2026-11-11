@@ -4174,11 +4174,12 @@ msgctxt "ay-crl"
 msgid "Subjects"
 msgstr "Matérias"
 
+#. A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.
 #: src/focus-test/use-focus-test-texts.ts
 #: src/questions/test-out-run.tsx
 msgctxt "sgSz4r"
 msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
-msgstr "{correct, plural, =0 {# de {total, number} corretas} other {# de {total, number} corretas}}"
+msgstr "{correct, plural, =0 {Acertou # de {total, number}} other {Acertou # de {total, number}}}"
 
 #. A subject the Focus test hasn't asked a question about yet.
 #: src/focus-test/use-focus-test-texts.ts

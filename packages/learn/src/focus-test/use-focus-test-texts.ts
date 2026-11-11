@@ -18,10 +18,13 @@ export function useSubjectStateText() {
 
   return (subject: Pick<FocusTestSubject, "asked" | "part" | "right" | "state">): string => {
     if (subject.state === "answered") {
-      return t(
-        "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}",
-        { correct: subject.right, total: subject.asked },
-      );
+      return t({
+        description:
+          "A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.",
+        message:
+          "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}",
+        values: { correct: subject.right, total: subject.asked },
+      });
     }
 
     if (subject.state === "notAsked") {

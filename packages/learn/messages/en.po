@@ -4174,6 +4174,7 @@ msgctxt "ay-crl"
 msgid "Subjects"
 msgstr "Subjects"
 
+#. A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.
 #: src/focus-test/use-focus-test-texts.ts
 #: src/questions/test-out-run.tsx
 msgctxt "sgSz4r"

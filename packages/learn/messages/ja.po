@@ -4174,11 +4174,12 @@ msgctxt "ay-crl"
 msgid "Subjects"
 msgstr "科目"
 
+#. A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.
 #: src/focus-test/use-focus-test-texts.ts
 #: src/questions/test-out-run.tsx
 msgctxt "sgSz4r"
 msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
-msgstr "{correct, plural, =0 {正解は#問（全{total, number}問）} other {#問正解（全{total, number}問）}}"
+msgstr "{correct, plural, =0 {#問正解（全{total, number}問）} other {#問正解（全{total, number}問）}}"
 
 #. A subject the Focus test hasn't asked a question about yet.
 #: src/focus-test/use-focus-test-texts.ts
