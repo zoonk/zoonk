@@ -32,8 +32,13 @@ export async function answerLanguageLevelTest({
 
   const step = getNextLevelTestStep({ bank, progress, start: progress.start });
 
+  // A second tap, another device or a bank check that removed the question leaves the screen behind:
+  // it gets where the test is now instead of an error it would retry forever.
   if (step.kind !== "question" || step.question.id !== input.questionId) {
-    return { status: "invalid" };
+    return {
+      status: "ready",
+      test: await toLevelTestView({ bank, bankWrittenAt, goal: owned.goal, progress }),
+    };
   }
 
   if (input.skipped && step.question.skill !== "listening") {
