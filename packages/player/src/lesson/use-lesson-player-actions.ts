@@ -17,6 +17,7 @@ import {
   type PlayableLibraryStep,
 } from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
+import { usePageLifecycle } from "./use-page-lifecycle";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 
@@ -59,26 +60,18 @@ function revealWithoutGuess({
   return true;
 }
 
-export function useLessonPlayerActions({
+function useCompletionSave({
   adapters,
+  closeClock,
   dispatch,
-  lesson,
+  ensureRun,
+  flushUnsaved,
+  startRun,
   state,
-  track,
-  writeExampleLines,
-}: ActionsInput) {
-  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
-  const { ensureRun, flushChecks, resendHeld } = lessonRun;
-
-  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
-    ...lessonRun,
-    adapters,
-    dispatch,
-    state,
-  });
-
+}: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
+  Pick<ReturnType<typeof useLessonRun>, "closeClock" | "ensureRun" | "flushUnsaved" | "startRun">) {
   const saveCompletion = useEffectEvent(async () => {
-    const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
+    const [allSaved, run] = await Promise.all([flushUnsaved(), ensureRun()]);
 
     const outcome =
       allSaved && run
@@ -93,6 +86,7 @@ export function useLessonPlayerActions({
         : null;
 
     if (outcome?.status === "completed") {
+      closeClock();
       dispatch({ result: outcome.completion, type: "completionSaved" });
       return;
     }
@@ -100,7 +94,7 @@ export function useLessonPlayerActions({
     const [restarted, pictures] =
       outcome?.status === "incomplete"
         ? await Promise.all([
-            adapters.startLesson(run ? { runId: run.runId } : undefined).catch(() => null),
+            startRun(run ? { runId: run.runId } : undefined).catch(() => null),
             adapters.getLessonPictures?.().catch(() => []) ?? Promise.resolve([]),
           ])
         : [null, []];
@@ -127,6 +121,35 @@ export function useLessonPlayerActions({
       void saveCompletion();
     }
   }, [isSaving]);
+
+  usePageLifecycle({
+    onBack: () => {
+      if (state.phase === "completed" && state.completion?.status === "failed") {
+        dispatch({ type: "completionRetried" });
+      }
+    },
+  });
+}
+
+export function useLessonPlayerActions({
+  adapters,
+  dispatch,
+  lesson,
+  state,
+  track,
+  writeExampleLines,
+}: ActionsInput) {
+  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
+  const { ensureRun, resendUnsaved } = lessonRun;
+
+  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
+    ...lessonRun,
+    adapters,
+    dispatch,
+    state,
+  });
+
+  useCompletionSave({ ...lessonRun, adapters, dispatch, state });
 
   const check = useCallback(() => {
     const step = getCurrentStep(state);
@@ -193,7 +216,7 @@ export function useLessonPlayerActions({
       check,
       continue: () => {
         void ensureRun();
-        void resendHeld();
+        void resendUnsaved();
         writeExampleLines();
         dispatch({ type: "continue" });
       },
@@ -229,7 +252,7 @@ export function useLessonPlayerActions({
       startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],
+    [check, dispatch, ensureRun, resendUnsaved, state.steps, submitSpokenAnswer, writeExampleLines],
   );
 
   return { actions, reopen: lessonRun.reopen };

@@ -52,7 +52,7 @@ export const languageCheckpointCallSchema = z
       .object({ reason: z.enum(["challenge", "lessons"]), status: z.literal("earlierFirst") })
       .meta({
         description:
-          "Earlier lessons or an earlier phase challenge of the session come first: go back to Today",
+          "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned",
         id: "LanguageCheckpointCallEarlierFirst",
       }),
     z

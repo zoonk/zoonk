@@ -96,7 +96,9 @@
   "player_lesson_complete": "4b10cdcd36bcdac8adc3c1768f57b2988580986c75d56e4f8b71b011b6cf5c35",
   "player_lesson_map": "c6a52ad0d2855c486b4c118ee57b372398ba8c938286f7e397d3866b326a5180",
   "player_lesson_map_nested": "68aa00c9aae7eecd4009d87cff29772d9541e4598abfb6dda2e447f025d71b81",
+  "player_lesson_not_saved": "4df6c7eac3dc9a6abd6bf9da447fbcdd6b2a3cdd7313db5207c167e89516e927",
   "player_lesson_of": "11ec22b4b2f97a81333d67a2357f416b7f98020bf3861ef216da20eb084b6794",
+  "player_lessons_deferred": "7f4ba59be7fa1d135008eff0c534f5b007d8e8e4026498c8bc2cf87cd8ca5827",
   "player_listen": "344ce00cfaa6d2bfcd3c5585266a33583e4fa5b133f9b7ba8223cdb06e9e0de5",
   "player_microphone_blocked": "1ecd110fae0b3ec5c773354777c5d58a5238d765d6990ce5e449038bb8185106",
   "player_next_lesson": "8e219129fcc6c3abcaf36cc94eab9f574ec949d29ce3912ccd22c1da52b8f07a",
@@ -169,6 +171,7 @@
   "player_stop_for_today": "76cc27f5b5f997d093c954dde1edb734235049b1b5bf6e654bca2a87d0f9af30",
   "player_summary": "c19889e42e7b2bb93a74ebd4138a7b21f36e5e7e698bd55beb6a807c2a294c6d",
   "player_summary_ideas": "5c954731b1a7d4d8f964c312e71f99eecb0d20fd636b67ec66c3352500a14d25",
+  "player_time_studied": "ea7da704b84baf2800504204c7535edbee45d2d030103e56d090e06106f30467",
   "player_try_again": "d290eb67e5cd1ca8d613178aa2e3cb9e6c1413c1439adaee9cf943a616a5667a",
   "player_unchecked_compare": "7051be783b6355f7de23c3b92eabf826966ed022e7983d6e47f594871deb86ee",
   "player_verdict_almost": "4e32ff3ce698ca330886142f6a6b537abf4546c2815e5606ab25d5787a0ba034",
@@ -414,8 +417,17 @@
     <string name="player_already_knew">Esto ya lo sabías</string>
     <string name="player_saving_progress">Guardando tu progreso…</string>
     <string name="player_save_failed">No se pudo guardar. Conservamos tus respuestas.</string>
+    <string name="player_lesson_not_saved">Tu lección aún no se guardó</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s de estudio</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Repaso el %1$s</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="one">Se pasó %1$s lección a otro día para ajustar tu estudio de hoy a %2$s.</item>
+        <item quantity="many">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
+        <item quantity="other">Se pasaron %1$s lecciones a otro día para ajustar tu estudio de hoy a %2$s.</item>
+    </plurals>
     <string name="player_next_lesson">Siguiente lección</string>
     <string name="player_stop_for_today">Dejarlo por hoy</string>
     <string name="player_see_todays_summary">Ver el resumen de hoy</string>

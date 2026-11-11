@@ -1,6 +1,7 @@
-import { CourseLevel, GoalKind, MasteryState } from "@zoonk/db";
+import { CourseLevel, MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { goalReferenceSchema } from "../../goals/goal-reference-schema";
 import { skillStateCountsSchema } from "../../learner/contract";
 import { planCourseSchema } from "../../plans/plan-course-contract";
 
@@ -127,7 +128,7 @@ export const fieldMapViewSchema = z
     courses: z
       .array(z.object({ courseId: uuidSchema(), title: z.string() }))
       .meta({ description: "The courses the chapters come from, for the map's course view" }),
-    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: goalReferenceSchema,
     next: studyNextSchema
       .nullable()
       .meta({

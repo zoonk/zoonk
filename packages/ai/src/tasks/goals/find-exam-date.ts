@@ -12,10 +12,11 @@ import systemPrompt from "./find-exam-date.prompt.md";
 export type { ExamDateFinding } from "./exam-date-finding";
 
 /**
- * With Parallel, it scored 10.0 on the `find-exam-date` eval (6 Oct 2026); low reasoning halved
- * the time at the same score.
+ * With Parallel at low reasoning on 6 cases (8 Nov 2026), Haiku 5.5 and Luna each scored 10.00 (EN
+ * and PT) at $6.14/1k and $6.45/1k, inside the 20/30 s wait; Flash scored 10.00 at $11.86/1k.
  */
-const defaultModel = "google/gemini-3.8-flash";
+const defaultModel = "anthropic/claude-haiku-5.5";
+const fallbackModels = ["openai/gpt-6-luna"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -78,6 +79,7 @@ export async function findExamDate({
   const { isSearched, output, provenance, usage } = await runSearchTask({
     abortSignal,
     analytics,
+    fallbackModels,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

@@ -2,6 +2,7 @@ import { lowercaseUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
+import { LANGUAGE_AIMS } from "../language/aims/language-aims";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "./daily-minutes";
 import {
@@ -34,8 +35,9 @@ const focusPartInputSchema = z
       .string()
       .trim()
       .min(1)
-      .max(MAX_PART_NAME_LENGTH)
-      .meta({ description: "The part as the learner says it, such as biology and chemistry" }),
+      .meta({
+        description: `The part as the learner says it, such as biology and chemistry. A request's name is at most ${MAX_PART_NAME_LENGTH} characters`,
+      }),
     skillIds: z
       .array(z.string().trim().min(1).overwrite(lowercaseUuid))
       .min(1)
@@ -195,6 +197,13 @@ const planOperationSchema = z
           "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons",
       }),
     z
+      .object({ aim: z.enum(LANGUAGE_AIMS), kind: z.literal("setAim") })
+      .strict()
+      .meta({
+        description:
+          "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals",
+      }),
+    z
       .object({
         areas: areasSchema.min(1),
         kind: z.literal("setAreaStart"),
@@ -259,12 +268,27 @@ export const anyPlanOperationSchema = z.union([
 export type PlanOperation = z.infer<typeof anyPlanOperationSchema>;
 export type AddedSkill = z.infer<typeof addSkillsOperationSchema>["skills"][number];
 
+/**
+ * Only a request caps a part's name: stored plan changes share the operation schema, and a model's
+ * name joining an area's parts runs as long as it needs.
+ */
+function hasShortPartNames({ operations }: { operations: LearnerPlanOperation[] }): boolean {
+  return operations.every(
+    (operation) =>
+      operation.kind !== "focusAreas" ||
+      (operation.parts ?? []).every((part) => part.name.length <= MAX_PART_NAME_LENGTH),
+  );
+}
+
 export const planChangeInputSchema = z
   .object({
     operations: z.array(planOperationSchema).min(1).max(MAX_OPERATIONS),
     timeZone: answerTimeZoneSchema,
   })
   .strict()
+  .refine(hasShortPartNames, {
+    message: `A part's name is at most ${MAX_PART_NAME_LENGTH} characters`,
+  })
   .meta({ id: "PlanChangeInput" });
 
 export type PlanChangeInput = z.infer<typeof planChangeInputSchema>;

@@ -30,7 +30,7 @@ type ContentGroup = {
 export type ContentView = {
   capsules: { dueToday: number };
   counts: SkillStateCounts;
-  goal: Pick<Goal, "id" | "kind" | "title">;
+  goal: Pick<Goal, "id" | "kind" | "title"> & { displayName: string };
   groups: ContentGroup[];
 };
 
@@ -67,7 +67,7 @@ export async function getContentView(input: { goalId?: string } = {}): Promise<C
     content: {
       capsules: { dueToday: dueToday.size },
       counts: skills.counts,
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       groups: groupSkillsBySection(skills.skills).map(
         ({ areaId, counts, section, skills: cards, title }) => ({
           areaId,

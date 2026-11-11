@@ -693,6 +693,9 @@ importers:
 
   apps/evals:
     dependencies:
+      '@ai-sdk/gateway':
+        specifier: 4.0.137
+        version: 4.0.137(zod@4.6.7)
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../../packages/ai
@@ -1355,6 +1358,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
       tsx:
         specifier: 'catalog:'
         version: 4.23.15

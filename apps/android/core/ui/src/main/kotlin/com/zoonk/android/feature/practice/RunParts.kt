@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -24,6 +26,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,13 +40,16 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.leadingIconInset
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -128,9 +134,10 @@ private fun timeMachineText(
 }
 
 /**
- * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
- * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
+ * A run's result in place of its questions: "Saving your progress" holds the title's place while
+ * [saving], since only the server says it's done, then the title and [content], the numbers and the
+ * day's moment. Where the screen splits ([ResultPages]) all of it takes the page before the split,
+ * and the way on the page after.
  */
 @Composable
 private fun RunDone(
@@ -145,27 +152,18 @@ private fun RunDone(
         withMoment = !saving,
         columnModifier = Modifier.taskColumn(),
         done = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                detail?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = if (saving) stringResource(R.string.player_saving_progress) else title,
+                    modifier = Modifier.semantics { heading() },
+                    color = if (saving) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                detail?.takeUnless { saving }?.let {
+                    Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            if (saving) {
-                Text(
-                    text = stringResource(R.string.player_saving_progress),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            } else {
-                content()
-            }
+            if (!saving) content()
         },
         next = {},
     )
@@ -292,15 +290,34 @@ fun ListeningSet(set: ItemSet) {
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
 @Composable
-fun SaveErrorText(onRetry: (() -> Unit)? = null) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(R.string.practice_save_error),
-            modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+fun SaveErrorText(
+    failures: Int,
+    onRetry: (() -> Unit)? = null,
+    onReport: () -> Unit,
+    firstFailureMessage: String = stringResource(R.string.practice_save_error),
+    retryLabel: String = stringResource(R.string.practice_try_again),
+    liveRegion: LiveRegionMode = LiveRegionMode.Polite,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = if (failures > 1) stringResource(R.string.practice_save_error_repeat) else firstFailureMessage,
+                modifier = Modifier.weight(1f, fill = false).semantics { this.liveRegion = liveRegion },
+                color = MaterialTheme.colorScheme.error,
+                style = textStyle,
+            )
+            onRetry?.let { TextButton(onClick = it) { Text(retryLabel) } }
+        }
+        if (failures > 1) {
+            TextButton(
+                onClick = onReport,
+                modifier = Modifier.offset(x = -LocalButtonSize.current.leadingIconInset),
+                leadingIcon = { ButtonIcon(R.drawable.ic_flag) },
+            ) {
+                Text(stringResource(R.string.feedback_report_problem))
+            }
+        }
     }
 }
 

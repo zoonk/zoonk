@@ -20,6 +20,7 @@ import {
   loadPlanPhaseFacts,
 } from "../../goals/_utils/plan-phase-facts";
 import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
+import { hasMindMapsPage } from "../../mind-maps/mind-map-contract";
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
@@ -74,6 +75,7 @@ function toSummaryGoals({
         courseId: followsCourse(goal) ? goal.primaryCourseId : null,
         courseLevel: next?.nextLevel ?? null,
         dailyMinutes: goal.dailyMinutes,
+        displayName: goal.displayName,
         id: goal.id,
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),
@@ -140,7 +142,7 @@ function getPlaces({
     certificates: facts.hasCertificates,
     completedLessons: facts.completedLessonGoalIds.includes(goal.id),
     exam: goal.kind === "exam",
-    mindMaps: facts.mindMapGoalIds.includes(goal.id),
+    mindMaps: hasMindMapsPage(goal.kind),
     readyMistakes,
     speaking: hasSpeakingPaper({
       blueprintName: facts.blueprintNames[activeGoal.id] ?? null,

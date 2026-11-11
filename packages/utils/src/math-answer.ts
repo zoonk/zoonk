@@ -26,12 +26,25 @@ const ATTACHED_UNITS: ReadonlySet<string> = new Set(["%", "°", "‰"]);
 
 const NO_BREAK_SPACE = " ";
 
-export function currencyFor(unit?: string | null): string | null {
+function currencyFor(unit?: string | null): string | null {
   if (!unit) {
     return null;
   }
 
   return CURRENCY_SYMBOLS.get(unit) ?? (ISO_CODE.test(unit) ? unit : null);
+}
+
+export function splitMoneyUnit(unit?: string | null): { currency: string; rest: string } | null {
+  const whole = currencyFor(unit);
+
+  if (whole || !unit) {
+    return whole ? { currency: whole, rest: "" } : null;
+  }
+
+  const [head, ...rest] = unit.split(" ");
+  const currency = currencyFor(head);
+
+  return currency && rest.length > 0 ? { currency, rest: rest.join(" ") } : null;
 }
 
 function isWhole(value: number, digits: number): boolean {

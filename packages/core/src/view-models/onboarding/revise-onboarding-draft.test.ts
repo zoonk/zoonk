@@ -110,6 +110,24 @@ function readCard(result: Awaited<ReturnType<typeof reviseOnboardingDraft>>): Go
 }
 
 describe(reviseOnboardingDraft, () => {
+  it("reads an older card and edits only its display name", async () => {
+    const { draft } = await setup();
+
+    const card = readCard(
+      await reviseOnboardingDraft({
+        draftId: draft.id,
+        edit: { field: "displayName", goal: 1, value: "English for travel" },
+      }),
+    );
+
+    expect(card.goals[0]?.draft.displayName).toBeTruthy();
+
+    expect(card.goals[1]?.draft).toMatchObject({
+      displayName: "English for travel",
+      title: "Learn English",
+    });
+  });
+
   it("renames one goal and leaves the rest of the card as it was", async () => {
     const { draft } = await setup();
 

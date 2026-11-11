@@ -45,18 +45,23 @@ class QuestionRunTest {
 
         val run = QuestionRun.begin(questions)
         assertEquals(DrillStage.Ideas, run.stage)
-        assertEquals(DrillStage.Open, run.start(questions).stage)
+        assertEquals(DrillStage.Open, run.start().stage)
 
-        val second = run.start(questions).answered(Answer.Choice(0), AnswerFeedback(isCorrect = true)).next(questions)
+        val second = run.start().answered(Answer.Choice(0), AnswerFeedback(isCorrect = true)).next(questions)
         assertEquals(DrillStage.Open, second.stage)
     }
 
     @Test
-    fun aReadCarefullyDrillShowsTheQuestionBeforeItsAnswers() {
-        val questions = listOf(question("1", drill = Drill(Drill.Kind.ReadCarefully)))
+    fun aReadCarefullyDrillOpensEveryQuestionWithItsAnswers() {
+        val misread = Drill(Drill.Kind.ReadCarefully)
+        val questions = listOf(question("1", drill = misread, mistakeId = "m"), question("2", drill = misread, mistakeId = "m"))
         val run = QuestionRun.begin(questions)
-        assertEquals(DrillStage.Reading, run.stage)
-        assertEquals(DrillStage.Open, run.reveal().stage)
+        assertEquals(DrillStage.Open, run.stage)
+        assertEquals(true, run.canAnswer)
+
+        val second = run.answered(Answer.Choice(0), AnswerFeedback(isCorrect = true)).next(questions)
+        assertEquals(DrillStage.Open, second.stage)
+        assertEquals(true, second.canAnswer)
     }
 
     @Test

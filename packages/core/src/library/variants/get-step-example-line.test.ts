@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
+import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -27,8 +29,8 @@ const interestContent = {
 const discountScreen = { idea: slotContent.exampleLineSlot.idea, text: slotContent.text };
 const interestScreen = { idea: interestContent.exampleLineSlot.idea, text: interestContent.text };
 
-function mockLines(lines: (string | null)[]) {
-  vi.mocked(generateExampleLines).mockResolvedValueOnce({
+function lineResult(lines: (string | null)[]) {
+  return {
     data: { lines },
     provenance: {
       generatedAt: new Date().toISOString(),
@@ -43,7 +45,11 @@ function mockLines(lines: (string | null)[]) {
     systemPrompt: "",
     usage: {} as never,
     userPrompt: "",
-  });
+  };
+}
+
+function mockLines(lines: (string | null)[]) {
+  vi.mocked(generateExampleLines).mockResolvedValueOnce(lineResult(lines));
 }
 
 async function createExplanation(content: object = slotContent) {
@@ -75,6 +81,214 @@ function shareFact(userId: string, statement = "Works at a pharmacy") {
 }
 
 describe(getStepExampleLine, () => {
+  it("excludes support notes on GET and POST while keeping ordinary learning facts", async () => {
+    const learner = await createLearner();
+    const step = await createExplanation();
+
+    const note = await memoryFactFixture({
+      category: "learning",
+      sensitive: false,
+      sourceRef: { id: "learningSupport", kind: "profile" },
+      statement: "I need a quiet room",
+      userId: learner.id,
+    });
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: false,
+    });
+
+    await expect(requestStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: false,
+    });
+
+    expect(generateExampleLines).not.toHaveBeenCalled();
+
+    await memoryFactFixture({
+      category: "learning",
+      statement: "Likes concrete numbers",
+      userId: learner.id,
+    });
+
+    mockLines(["A personal line."]);
+    await requestStepExampleLine({ stepId: step.id });
+
+    expect(generateExampleLines).toHaveBeenCalledWith(
+      expect.objectContaining({ facts: ["Likes concrete numbers"] }),
+    );
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: note.id } }),
+    ).resolves.toMatchObject({ lastUsedAt: null });
+  });
+
+  it("keeps relevance within the eligible snapshot and marks only the selected facts", async () => {
+    const learner = await createLearner();
+    const step = await createExplanation();
+
+    const ordinary = await memoryFactFixture({
+      category: "learning",
+      statement: "Uses round numbers for discounts",
+      userId: learner.id,
+    });
+
+    const others = await Promise.all(
+      Array.from({ length: 11 }, (_, index) => shareFact(learner.id, `Pharmacy detail ${index}`)),
+    );
+
+    const note = await memoryFactFixture({
+      category: "learning",
+      sensitive: false,
+      sourceRef: { id: "learningSupport", kind: "profile" },
+      statement: "Uses round numbers in a quiet room",
+      userId: learner.id,
+    });
+
+    vi.mocked(generateMemorySearchTerms).mockResolvedValueOnce({
+      data: { terms: ["numbers", "discounts"] },
+    } as Awaited<ReturnType<typeof generateMemorySearchTerms>>);
+
+    vi.mocked(selectRelevantMemoryFacts).mockImplementationOnce(async ({ facts }) =>
+      facts.filter((fact) => fact.statement === ordinary.statement),
+    );
+
+    await getStepExampleLine({ stepId: step.id });
+    expect(generateMemorySearchTerms).not.toHaveBeenCalled();
+    expect(selectRelevantMemoryFacts).not.toHaveBeenCalled();
+
+    vi.mocked(generateExampleLines).mockImplementationOnce(async () => {
+      await expect(
+        prisma.memoryFact.count({ where: { lastUsedAt: { not: null }, userId: learner.id } }),
+      ).resolves.toBe(0);
+
+      return lineResult(["A personal line."]);
+    });
+
+    await requestStepExampleLine({ stepId: step.id });
+
+    expect(generateMemorySearchTerms).toHaveBeenCalledWith(
+      expect.objectContaining({ analytics: { contentScope: "personal", distinctId: learner.id } }),
+    );
+
+    const candidates = vi.mocked(selectRelevantMemoryFacts).mock.calls[0]?.[0].facts;
+
+    expect(candidates).toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ id: ordinary.id })]),
+    );
+
+    expect(candidates).not.toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ id: note.id })]),
+    );
+
+    expect(generateExampleLines).toHaveBeenCalledWith(
+      expect.objectContaining({ facts: [ordinary.statement] }),
+    );
+
+    const marked = await prisma.memoryFact.findMany({
+      where: { lastUsedAt: { not: null }, userId: learner.id },
+    });
+
+    expect(marked.map((fact) => fact.id)).toStrictEqual([ordinary.id]);
+
+    await prisma.memoryFact.update({
+      data: { statement: "Changed unselected fact" },
+      where: { id: others.at(0)?.id },
+    });
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: true,
+      line: null,
+    });
+  });
+
+  it("invalidates a stored line when plain words changes", async () => {
+    const learner = await createLearner();
+    const step = await createExplanation();
+    await shareFact(learner.id);
+    mockLines(["A personal line."]);
+    await requestStepExampleLine({ stepId: step.id });
+    await learningProfileFixture({ learningNeeds: ["plainWords"], userId: learner.id });
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: true,
+      line: null,
+    });
+
+    mockLines(["A literal line."]);
+    await requestStepExampleLine({ stepId: step.id });
+
+    expect(generateExampleLines).toHaveBeenLastCalledWith(
+      expect.objectContaining({ plainWords: true }),
+    );
+  });
+
+  it.each(["delete", "memoryOff", "reword", "plainWords"] as const)(
+    "discards generated lines and usage marks after %s during generation",
+    async (change) => {
+      const learner = await createLearner();
+      const step = await createExplanation();
+      const fact = await shareFact(learner.id);
+      const started = Promise.withResolvers<boolean>();
+      const release = Promise.withResolvers<boolean>();
+
+      vi.mocked(generateExampleLines).mockImplementationOnce(async () => {
+        started.resolve(true);
+        await release.promise;
+        return lineResult(["A stale line."]);
+      });
+
+      const pending = requestStepExampleLine({ stepId: step.id });
+      await started.promise;
+
+      try {
+        await expect(
+          prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+        ).resolves.toMatchObject({ lastUsedAt: null });
+
+        if (change === "delete") {
+          await prisma.memoryFact.update({ data: { status: "deleted" }, where: { id: fact.id } });
+        } else if (change === "reword") {
+          await prisma.memoryFact.update({
+            data: { statement: "Works as a teacher" },
+            where: { id: fact.id },
+          });
+        } else if (change === "plainWords") {
+          await learningProfileFixture({ learningNeeds: ["plainWords"], userId: learner.id });
+        } else {
+          await learningProfileFixture({ memoryEnabled: false, userId: learner.id });
+        }
+      } finally {
+        release.resolve(true);
+      }
+
+      await expect(pending).resolves.toStrictEqual({
+        canRequest: change === "reword" || change === "plainWords",
+        line: null,
+        status: "ready",
+      });
+
+      await expect(prisma.stepExampleLine.count({ where: { userId: learner.id } })).resolves.toBe(
+        0,
+      );
+
+      await expect(
+        prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+      ).resolves.toMatchObject({ lastUsedAt: null });
+    },
+  );
+
+  it("rolls lines and usage marks back together when a line cannot be stored", async () => {
+    const learner = await createLearner();
+    const { discount } = await createTwoSlotLesson();
+    const fact = await shareFact(learner.id);
+    mockLines(["A valid line.", "Invalid\0text"]);
+    await expect(requestStepExampleLine({ stepId: discount.id })).rejects.toThrow();
+    await expect(prisma.stepExampleLine.count({ where: { userId: learner.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+    ).resolves.toMatchObject({ lastUsedAt: null });
+  });
+
   it("reads a missing example without generating, spending help, or marking facts used", async () => {
     const learner = await createLearner();
     const step = await createExplanation();

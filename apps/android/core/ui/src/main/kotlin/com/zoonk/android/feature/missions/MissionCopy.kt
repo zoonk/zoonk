@@ -192,15 +192,7 @@ private fun missionStep(
 
     return when {
         wait != null -> {
-            stringResource(
-                if (wait ==
-                    com.zoonk.api.models.StudyMission.WaitReason.LESSONS
-                ) {
-                    R.string.missions_after_lessons
-                } else {
-                    R.string.missions_after_challenge
-                },
-            )
+            stringResource(R.string.missions_after_lessons)
         }
 
         mission.kind == Kind.FIX_MISTAKE -> {

@@ -15,8 +15,8 @@ function step(
 }
 
 describe(getSessionQueue, () => {
-  it("marks the finished blocks done, the next one, and counts the minutes left", () => {
-    const queue = getSessionQueue({
+  it("marks the finished blocks done and the next one", () => {
+    const rows = getSessionQueue({
       blocks: [
         block("review", "completed", 8),
         block("lesson", "pending", 12),
@@ -25,53 +25,47 @@ describe(getSessionQueue, () => {
       nextId: "lesson",
     });
 
-    expect(queue.rows.map((row) => ["id" in row.block && row.block.id, row.state])).toStrictEqual([
+    expect(rows.map((row) => ["id" in row.block && row.block.id, row.state])).toStrictEqual([
       ["review", "done"],
       ["lesson", "next"],
       ["practice", "ahead"],
     ]);
-
-    expect(queue.minutesLeft).toBe(22);
   });
 
   it("counts a block that just ended as done, even while the session still has it running", () => {
-    const queue = getSessionQueue({
+    const rows = getSessionQueue({
       blocks: [block("review", "active", 8), block("lesson", "pending", 12)],
       finishedId: "review",
       nextId: "lesson",
     });
 
-    expect(queue.rows.map((row) => row.state)).toStrictEqual(["done", "next"]);
-    expect(queue.minutesLeft).toBe(12);
+    expect(rows.map((row) => row.state)).toStrictEqual(["done", "next"]);
   });
 
   it("leaves skipped blocks out of the day", () => {
-    const queue = getSessionQueue({
+    const rows = getSessionQueue({
       blocks: [block("review", "skipped", 8), block("lesson", "active", 12)],
       nextId: "lesson",
     });
 
-    expect(queue.rows.map((row) => "id" in row.block && row.block.id)).toStrictEqual(["lesson"]);
-    expect(queue.minutesLeft).toBe(12);
+    expect(rows.map((row) => "id" in row.block && row.block.id)).toStrictEqual(["lesson"]);
   });
 
   it("names the next step by its place in a day not opened yet", () => {
-    const queue = getSessionQueue({
+    const rows = getSessionQueue({
       blocks: [step(0, 8), step(1, 12), step(2, 10)],
       nextPosition: 1,
     });
 
-    expect(queue.rows.map((row) => row.state)).toStrictEqual(["ahead", "next", "ahead"]);
-    expect(queue.minutesLeft).toBe(30);
+    expect(rows.map((row) => row.state)).toStrictEqual(["ahead", "next", "ahead"]);
   });
 
   it("keeps the work done earlier as done in a day still to open", () => {
-    const queue = getSessionQueue({
+    const rows = getSessionQueue({
       blocks: [step(0, 8, "completed"), step(1, 12), step(2, 10)],
       nextPosition: 1,
     });
 
-    expect(queue.rows.map((row) => row.state)).toStrictEqual(["done", "next", "ahead"]);
-    expect(queue.minutesLeft).toBe(22);
+    expect(rows.map((row) => row.state)).toStrictEqual(["done", "next", "ahead"]);
   });
 });

@@ -27,7 +27,7 @@ fun plan(extra: String = ""): Plan {
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
                   "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
                  "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
-                 "tools":[],"week":{"days":[],"endDate":"2026-11-01","startDate":"2026-10-26"},
+                 "tools":[],"languageAim":null,"week":{"days":[],"endDate":"2026-11-01","startDate":"2026-10-26"},
                  "weekTime":{"studiedMinutes":0,"targetMinutes":100}}
                 """.trimIndent(),
             ).jsonObject
@@ -38,7 +38,7 @@ fun plan(extra: String = ""): Plan {
 internal fun progress(): GoalProgress =
     ApiJson.decodeFromString(
         """
-        {"goal":{"id":"$GOAL","kind":"learn","targetDate":null,"title":"Learn Python"},"mistakes":{"open":0},
+        {"goal":{"id":"$GOAL","kind":"learn","targetDate":null,"title":"Learn Python","displayName":"Learn Python"},"mistakes":{"open":0},
          "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"solid"},
          "preparation":{"areas":[],"goalId":"$GOAL","sections":[],"stage":"building","value":0.42,"weekGain":0.03,
           "skills":{"fading":2,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
@@ -52,7 +52,7 @@ internal fun progress(): GoalProgress =
 internal fun syllabus(): Syllabus =
     ApiJson.decodeFromString(
         """
-        {"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python"},
+        {"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python","displayName":"Learn Python"},
          "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"sharedExams":[],"subjects":[],
          "topicCount":0,"topicsMapped":true}
         """.trimIndent(),
@@ -141,7 +141,7 @@ internal fun learnPlan(): Plan =
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
           "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":true,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":30,"weekendDays":[0,6]},"weekdayMinutes":[30,20,20,20,20,20,30]},
         "status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null},
-        "week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
+        "languageAim":null,"week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
           {"date":"2026-10-26","items":[],"minutes":20,"state":"done"},
           {"date":"2026-10-27","items":[],"minutes":20,"state":"missed"},
           {"date":"2026-10-28","items":[],"minutes":20,"state":"today"},
@@ -163,7 +163,7 @@ fun learnerSummary(
          "analytics":{"disabled":false,"goal":null,"plan":"free","usageDataSharing":null,"shareUsageData":null,"username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
          "day":null,"goals":[{"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"isSettingUp":false,"kind":"$kind","status":"active",
-          "targetDate":"2027-01-31","targetLanguage":null,"title":"$title"}],
+          "targetDate":"2027-01-31","targetLanguage":null,"title":"$title","displayName":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
          "level":null,"missions":null,"nextChangeAt":1793186000000,
          "places":{"certificates":false,"completedLessons":false,"exam":false,"mindMaps":true,"readyMistakes":0,"speaking":false},

@@ -1,6 +1,7 @@
 "use client";
 
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -76,10 +77,10 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   const level = levelText(goal.details);
 
   const facts: (ReceiptFact | null | false)[] = [
-    { id: "title", label: t("Goal"), value: goal.title },
+    { id: "title", label: t("Goal"), value: goal.displayName },
     dateFact(goal),
     ...languageRows(goal),
-    ...detailRows(goal, null),
+    ...detailRows(goal, null, goal.kind === "language" ? toLanguageAimView(goal.details) : null),
     level !== null && { id: "level", label: t("Your level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
@@ -139,7 +140,10 @@ const CHIP_FACTS = new Set([
 
 export function PlanReceiptChips({ className, goal }: { className?: string; goal: GoalView }) {
   const t = useExtracted();
-  const facts = useReceiptFacts(goal).filter((fact) => CHIP_FACTS.has(fact.id));
+  // The time question shows a language goal's aim on its own row, with Change.
+  const facts = useReceiptFacts(goal).filter(
+    (fact) => CHIP_FACTS.has(fact.id) && !(goal.kind === "language" && fact.id === "targetScore"),
+  );
 
   return (
     <FactChips aria-label={t("Your plan so far")} className={className}>

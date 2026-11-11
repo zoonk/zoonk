@@ -1,0 +1,38 @@
+{
+  "cause": "misread",
+  "drill": { "kind": "readCarefully", "lesson": null, "timeLimitSeconds": null },
+  "mistakeId": "7b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "questions": [],
+  "snapshot": { "answer": "Original wrong", "question": "Which original answer?" },
+  "tutorAvailable": true,
+  "lesson": {
+    "language": "en",
+    "lessonId": "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+    "level": "beginner",
+    "targetLanguage": null,
+    "step": {
+      "id": "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+      "kind": "check",
+      "position": 2,
+      "skillId": "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+      "citation": null,
+      "image": null,
+      "imagePending": false,
+      "marks": null,
+      "content": {
+        "basis": null,
+        "context": "The original passage",
+        "question": "Which original answer?",
+        "options": [
+          {
+            "id": "right",
+            "isCorrect": true,
+            "reason": "Original reason",
+            "text": "Original right"
+          },
+          { "id": "wrong", "isCorrect": false, "reason": "Try again", "text": "Original wrong" }
+        ]
+      }
+    }
+  }
+}

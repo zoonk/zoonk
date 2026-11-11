@@ -151,7 +151,7 @@ describe(getCheckpoint, () => {
 
   it("keeps other learners' checkpoints and other blocks out of reach", async () => {
     const [{ block, sessionId, user }, other] = await Promise.all([reachedBoss(), userFixture()]);
-    const lesson = await studySessionBlockFixture({ kind: "learn", position: 1, sessionId });
+    const lesson = await studySessionBlockFixture({ kind: "learn", position: 100, sessionId });
 
     mockSession(other.id);
     await expect(getCheckpoint(block.id)).resolves.toStrictEqual({ status: "notFound" });

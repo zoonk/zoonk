@@ -10,9 +10,12 @@ import { failFilteredAnswer, failUnfinishedAnswer } from "../_utils/filtered-ans
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import promptTemplate from "./compare-release-lessons.prompt.md";
 
-/** Terra and Flash both scored 10 on the compare-release-lessons eval (6 Nov 2026); Terra cost less and answered faster. */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+/**
+ * On 5 cases (8 Nov 2026), Luna, Haiku 5.5 and Flash Lite flagged exactly the lessons each release
+ * changes (10.00), Luna at $0.49/1k and Haiku at $0.76/1k against Terra's $3.32/1k.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 /** A major release's notes fit; the rest of a long changelog page is older releases. */
 const MAX_NOTES_CHARACTERS = 60_000;

@@ -4,8 +4,6 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import taskPrompt from "./generate-items.prompt.md";
@@ -17,11 +15,13 @@ import {
   type NumericEntry,
   type OptionSelect,
 } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
 
 /**
- * Terra matched Sol on the generate-items eval at 40% of the cost (30 Oct 2026); Flash wrote wrong
- * keys and a medical error, so it isn't a fallback (Sep 2026).
+ * On 28 cases (8 Nov 2026), Terra scored 9.09 (EN 9.22, PT 8.92) at $10.00/1k; Luna (8.71),
+ * Haiku 5.5 (8.46) and Flash Lite (7.66) cost less but wrote wrong keys or facts, and Flash Lite
+ * reversed a missed-dose instruction. Opus hasn't run the current prompt.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
@@ -57,6 +57,8 @@ export type GenerateItemsParams = {
   format: ItemFormat;
   level: CourseLevel;
   language: string;
+  /** A language exam's questions practice it. */
+  targetLanguage?: string | null;
   count?: number;
   /** Null for general items. */
   field?: string | null;
@@ -91,8 +93,7 @@ function buildUserPrompt(params: GenerateItemsParams): string {
     COUNT: ${count}${optionCount}${select}${entryLine}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatLocalContext(params.language)}
-    ${formatCast({ language: params.language, seed: `${skill.name}:${format}` })}
+${formatItemSetting({ language: params.language, seed: `${skill.name}:${format}`, targetLanguage: params.targetLanguage })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}
@@ -114,11 +115,10 @@ export async function generateItems(params: GenerateItemsParams) {
 
   const userPrompt = buildUserPrompt(params);
 
-  // No caller writes a language goal's questions with this task: placement-items writes those.
   const systemPrompt = withItemRules(taskPrompt, {
     field: Boolean(params.field),
     formats: [format],
-    languageGoal: false,
+    languageGoal: Boolean(params.targetLanguage),
     numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
     severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
   });

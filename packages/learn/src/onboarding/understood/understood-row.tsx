@@ -11,6 +11,7 @@ import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
 import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { UseDateButton } from "../../plan/notice-day";
+import { AimRowPicker } from "./understood-aim-picker";
 import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
@@ -297,7 +298,9 @@ export function UnderstoodRowItem({
         </div>
       </div>
 
-      {row.editable && !editing && (
+      {row.editable?.kind === "aim" && <AimRowPicker onSave={onSave} row={row} />}
+
+      {row.editable && row.editable.kind !== "aim" && !editing && (
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
           autoFocus={focusEdit}

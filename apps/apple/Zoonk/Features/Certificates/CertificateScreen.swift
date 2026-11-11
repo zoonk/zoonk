@@ -404,14 +404,6 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         }
       }
 
-      if facts.kind == .languageLevel {
-        ForEach(facts.skillLevels ?? [], id: \.skill) { level in
-          CertificateDetailRow(label: Text(languageSkillName(level.skill)), isData: true) {
-            Text(verbatim: level.label)
-          }
-        }
-      }
-
       CertificateDetailRow(
         label: Text(
           "Completed", tableName: "Certificates", comment: "When a certificate was earned"),
@@ -500,9 +492,6 @@ private struct CertificateDetailRow<Value: View>: View {
 /// Main's `CertificateMeaning`: how Zoonk decided to issue this kind of certificate, and what it
 /// isn't.
 private struct CertificateMeaning: View {
-  /// Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it.
-  private static let bandAbove = ["A1": "A2", "A2": "B1", "B1": "B2", "B2": "C1", "C1": "C2"]
-
   /// Main's `leading-relaxed` paragraphs at 15pt.
   private static let paragraphStyle = TypeStyle(
     size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.625)
@@ -519,15 +508,11 @@ private struct CertificateMeaning: View {
       comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
 
     if facts.kind == .languageLevel {
-      let band = facts.level.flatMap { Self.bandAbove[$0] } ?? ""
-
       return [
         String(
           localized:
-            "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached \(band).",
-          table: "Certificates",
-          comment:
-            "How a language level certificate is earned; the argument is a CEFR band, such as B2"),
+            "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
+          table: "Certificates", comment: "How a language level certificate is earned"),
         String(
           localized:
             "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",

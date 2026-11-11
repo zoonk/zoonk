@@ -96,7 +96,9 @@
   "player_lesson_complete": "b3841051b33296d31928204cce9254bdb8e022d81f591591b759378f7e07cd27",
   "player_lesson_map": "30dad99ca1fdbc0fe9330310d8bf063cadf00f610ed3548763dcf7ea6b336b8a",
   "player_lesson_map_nested": "3e789594c52802639bc04affd6bcf494d4db65a6184a9229ff76d6de8099b591",
+  "player_lesson_not_saved": "f21dc1a4c4c71bc082ed16f72edc4ff79b9f9ba1eb709c0ea011bfc16a01681d",
   "player_lesson_of": "fe70475c2e119fa632dc56cad8fb9c65b09af2e3a5b969e9ac08dc41916015af",
+  "player_lessons_deferred": "3e2a671b3a5aa2bb2e005de9f3d0ade205466e9b5165943c4724788494136e1a",
   "player_listen": "7a797408f10f7db925cf55836a89b1844f9663758f6a04d19378c20112163cb1",
   "player_microphone_blocked": "1d4b5eefec38d47cde390b32a9a0df73973b11f0f8a3968c9feaefe502e2cafe",
   "player_next_lesson": "a686aba05df320bb7261ba0442876fb13bfc67e3135c6866dbc7ad540ec5318f",
@@ -169,6 +171,7 @@
   "player_stop_for_today": "043063d23dd9b7dc637f9ef660b3b0b44c26380ef10adfc1a74417ec6ea05142",
   "player_summary": "c9948aea0fc2f66f20c56d44f9f820d3eedf155673b2cf098077f293e08cad9c",
   "player_summary_ideas": "107b97c9f1cb79aefb3f136599e3fafa88dea703f9844cfcabaed4c2ee610a3b",
+  "player_time_studied": "a0bb81d4cc87e2b700ed5685920aad21ef29b5469765e79e2238139cc8ae56c4",
   "player_try_again": "e398898ca3f1e201967a7472ef2d7608b41664dff48d5da275cc910f6b39c62c",
   "player_unchecked_compare": "7c13938a88c91acde9ff098101a5a53b53c4d5b943c8c5d9d3bbaee45b573830",
   "player_verdict_almost": "998ad7e176ee97c8f2ce2ee289800811bed33b34c66b1f8921633a99c148a2ea",
@@ -410,8 +413,16 @@
     <string name="player_already_knew">Das wusstest du schon</string>
     <string name="player_saving_progress">Wir speichern deinen Fortschritt…</string>
     <string name="player_save_failed">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
+    <string name="player_lesson_not_saved">Deine Lektion ist noch nicht gespeichert</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s gelernt</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Wiederholung am %1$s</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="one">%1$s Lektion wurde auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
+        <item quantity="other">%1$s Lektionen wurden auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
+    </plurals>
     <string name="player_next_lesson">Nächste Lektion</string>
     <string name="player_stop_for_today">Für heute aufhören</string>
     <string name="player_see_todays_summary">Heutige Zusammenfassung ansehen</string>

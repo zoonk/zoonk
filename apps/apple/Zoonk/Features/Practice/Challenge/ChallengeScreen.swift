@@ -277,7 +277,7 @@ struct ChallengeScreen: View {
             ? .mock(blockId: blockId, sessionId: sessionId)
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
-    } else if challenge.status == .ready || challenge.status == .started {
+    } else if canStart(challenge) {
       if let writeLimit {
         HelpLimitNotice(limit: writeLimit)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -304,20 +304,38 @@ struct ChallengeScreen: View {
           ) { run { await start(afterWriting: false) } }
         }
       }
-    } else if challenge.canMove, moved == nil {
-      PracticeSecondaryButton(
-        title: LocalizedStringResource(
-          "Move to Monday", table: "Practice", comment: "Moves the weekly challenge to next Monday."
-        ),
-        icon: .setDate, isBusy: isMoving
-      ) { run { await move() } }
-    } else if challenge.waitReason != nil {
-      Text(
-        "Opens after this phase's lessons", tableName: "Practice",
-        comment: "A phase challenge waiting for earlier lessons."
-      )
-      .typeStyle(.note).foregroundStyle(.mutedForeground)
+    } else {
+      if let wait = waitLine(challenge) {
+        Text(wait).typeStyle(.note).foregroundStyle(.mutedForeground)
+      }
+
+      if challenge.canMove, moved == nil {
+        PracticeSecondaryButton(
+          title: LocalizedStringResource(
+            "Move to Monday", table: "Practice",
+            comment: "Moves the weekly challenge to next Monday."),
+          icon: .setDate, isBusy: isMoving
+        ) { run { await move() } }
+      }
     }
+  }
+
+  private func canStart(_ challenge: Components.Schemas.Challenge) -> Bool {
+    [.ready, .started].contains(challenge.status) && challenge.waitReason == nil
+  }
+
+  /// Main's footer line for a challenge with nothing to start yet. A dated one already says its day
+  /// above.
+  private func waitLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
+    let waits = [.ready, .started].contains(challenge.status) && challenge.waitReason != nil
+
+    guard waits || (challenge.status == .upcoming && challenge.date == nil) else {
+      return nil
+    }
+
+    return LocalizedStringResource(
+      "Opens after this phase's lessons", table: "Practice",
+      comment: "A phase challenge waiting for earlier lessons.")
   }
 
   private func isLocked(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -334,7 +352,7 @@ struct ChallengeScreen: View {
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
     isLocked(challenge)
       || challenge.canMove
-      || challenge.waitReason != nil
+      || waitLine(challenge) != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
   }

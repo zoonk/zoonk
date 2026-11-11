@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
+import { useRef } from "react";
 import { type FeedbackFormRequest } from "./feedback-contract";
 import { FeedbackForm } from "./feedback-form";
 
@@ -42,6 +43,7 @@ export function FeedbackFormDialog({
   request: FeedbackFormRequest | null;
 }) {
   const t = useExtracted("feedback");
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   return (
     <Dialog
@@ -52,7 +54,11 @@ export function FeedbackFormDialog({
       }}
       open={request !== null}
     >
-      <DialogContent closeLabel={t("Close")}>
+      <DialogContent
+        closeLabel={t("Close")}
+        initialFocus={request?.context.reportType === "saveFailure" ? dialogRef : undefined}
+        ref={dialogRef}
+      >
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
         <DialogFooter>

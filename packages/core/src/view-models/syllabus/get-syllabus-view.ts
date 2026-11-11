@@ -91,7 +91,7 @@ export async function getSyllabusView(
     status: "ready",
     syllabus: {
       examDocument: getExamDocument(goal),
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       knownTopicsReturn: await getKnownTopicsReturn({ goal, timeZone, today }),
       sharedExams: shared.exams,
       ...buildSyllabus({

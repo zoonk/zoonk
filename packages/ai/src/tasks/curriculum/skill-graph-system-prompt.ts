@@ -23,6 +23,7 @@ export function startsWithSubject({
 
 /** Every call of one exam's graph reads the same text, so they share a cached prefix. */
 export function buildSkillGraphSystemPrompt({
+  firstSkill,
   goalKind,
   hasMaterial = false,
   lessonBudget,
@@ -32,13 +33,21 @@ export function buildSkillGraphSystemPrompt({
   purpose,
 }: Pick<
   SkillGraphParams,
-  "goalKind" | "hasMaterial" | "lessonBudget" | "librarySkills" | "ownLevel" | "product" | "purpose"
+  | "firstSkill"
+  | "goalKind"
+  | "hasMaterial"
+  | "lessonBudget"
+  | "librarySkills"
+  | "ownLevel"
+  | "product"
+  | "purpose"
 >): string {
   return selectPromptVariants({
     template,
     variants: {
       budget: Boolean(lessonBudget),
       exam: goalKind === "exam",
+      firstSkill: goalKind === "learn" && Boolean(firstSkill),
       language: goalKind === "language",
       learn: goalKind === "learn",
       librarySkills: goalKind === "exam" && librarySkills,

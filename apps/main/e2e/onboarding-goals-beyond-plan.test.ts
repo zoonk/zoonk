@@ -116,7 +116,10 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     const { user } = await createLearnerFollowing(2);
     const { page, words } = await openCard({ browser, user });
 
-    await expect(page.getByText(STATISTICS.title, { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
+    ).toBeVisible();
+
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
     await expect(page.getByText(/These goals share your daily time/u)).toHaveCount(0);
 
@@ -139,7 +142,10 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     const { user } = await createLearnerFollowing(3);
     const { page } = await openCard({ browser, user });
 
-    await expect(page.getByText(STATISTICS.title, { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
+    ).toBeVisible();
+
     await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
     await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeVisible();
@@ -193,7 +199,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await switcher.click();
 
     await expect(
-      page.getByRole("menuitem", { name: `${STATISTICS.title} Starts with Plus` }),
+      page.getByRole("menuitem", { name: `${STATISTICS.subject} Starts with Plus` }),
     ).toHaveAttribute("href", /\/subscription$/u);
 
     await prisma.subscription.create({
@@ -203,7 +209,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.reload();
     await expectHydrated(switcher);
     await switcher.click();
-    await page.getByRole("menuitem", { name: `${STATISTICS.title} Ready to start` }).click();
+    await page.getByRole("menuitem", { name: `${STATISTICS.subject} Ready to start` }).click();
 
     await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 

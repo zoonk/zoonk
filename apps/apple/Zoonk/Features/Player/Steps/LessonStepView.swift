@@ -30,32 +30,18 @@ struct LessonStepView: View {
     case .workedExample(let content):
       WorkedExampleStepView(
         step: step, content: content, shown: state.revealed[step.id] ?? 1, part: part)
-    case .check(let content):
-      CheckStepView(step: step, content: content, context: context, part: part)
-
-      if part == .turn {
+    case .check, .typedAnswer, .spokenAnswer, .activity, .challenge, .language:
+      LessonQuestionStepView(
+        step: step, state: state, context: context, part: part,
+        cantTalk: Binding(get: { store.cantTalkToday }, set: { store.cantTalkToday = $0 }),
+        micBlocked: Binding(get: { store.isMicBlocked }, set: { store.isMicBlocked = $0 }),
+        team: store.challengeTeam, waitForRun: { await store.ensureRun() },
+        studySessionId: { store.studySessionId })
+      if part == .turn, step.kind == .check || step.kind == .typedAnswer {
         LessonWaysOut(state: state, store: store, step: step)
       }
-    case .typedAnswer(let content):
-      TypedAnswerStepView(content: content, context: context, part: part)
-
-      if part == .turn {
-        LessonWaysOut(state: state, store: store, step: step)
-      }
-    case .spokenAnswer(let content, let listening):
-      SpokenAnswerStepView(
-        step: step, content: content, listening: listening, context: context, store: store,
-        part: part)
-    case .activity(let content):
-      ActivityStepView(step: step, content: content, context: context, part: part)
     case .summary(let content):
-      if part == .screen {
-        SummaryStepView(content: content)
-      }
-    case .challenge(let content):
-      ChallengeStepView(step: step, content: content, state: state, store: store, part: part)
-    case .language(let exercise, let wordHints):
-      LanguageStepView(exercise: exercise, wordHints: wordHints, context: context, part: part)
+      if part == .screen { SummaryStepView(content: content) }
     }
   }
 
@@ -77,6 +63,44 @@ struct LessonStepView: View {
   }
 }
 
+struct LessonQuestionStepView: View {
+  let step: LessonStep
+  let state: LessonPlayerState
+  let context: LessonStepContext
+  let part: LessonStepPart
+  @Binding var cantTalk: Bool
+  @Binding var micBlocked: Bool
+  var team: [String] = []
+  var waitForRun: @MainActor () async -> Bool = { true }
+  var studySessionId: @MainActor () -> String? = { nil }
+  var mistake: SpokenMistakeTarget? = nil
+  var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
+  var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
+
+  var body: some View {
+    switch step.content {
+    case .check(let content):
+      CheckStepView(step: step, content: content, context: context, part: part)
+    case .typedAnswer(let content):
+      TypedAnswerStepView(content: content, context: context, part: part)
+    case .spokenAnswer(let content, let listening):
+      SpokenAnswerStepView(
+        step: step, content: content, listening: listening, context: context,
+        cantTalk: $cantTalk, micBlocked: $micBlocked, waitForRun: waitForRun,
+        studySessionId: studySessionId, part: part, mistake: mistake,
+        onPracticeGraded: onPracticeGraded, onCheckingChanged: onCheckingChanged)
+    case .activity(let content):
+      ActivityStepView(step: step, content: content, context: context, part: part)
+    case .language(let exercise, let hints):
+      LanguageStepView(exercise: exercise, wordHints: hints, context: context, part: part)
+    case .challenge(let content):
+      ChallengeStepView(
+        step: step, content: content, state: state, select: context.select, team: team, part: part)
+    default: EmptyView()
+    }
+  }
+}
+
 struct LessonStepContext {
   let lessonId: String
   let answer: LessonAnswer?
@@ -92,6 +116,7 @@ struct LessonStepContext {
 
 private struct HookStepView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let step: LessonStep
   let content: HookContent
@@ -142,7 +167,9 @@ private struct HookStepView: View {
         .typeStyle(.lessonText)
 
       if showsOpeningMap, let openingMap {
+        // A large screen centers it in the room under the scene; a phone keeps it under the text.
         LessonOpeningMap(summary: openingMap)
+          .frame(maxHeight: horizontalSizeClass == .regular ? .infinity : nil)
       }
     }
   }
@@ -436,18 +463,21 @@ private struct SpokenAnswerStepView: View {
   let content: SpokenAnswerContent
   let listening: LanguageExercise?
   let context: LessonStepContext
-  let store: LessonPlayerStore
+  @Binding var cantTalk: Bool
+  @Binding var micBlocked: Bool
+  let waitForRun: @MainActor () async -> Bool
+  let studySessionId: @MainActor () -> String?
   let part: LessonStepPart
-
-  /// "I can't talk now" holds for every spoken screen for the rest of the day, as on main.
-  private var cantTalk: Bool {
-    store.cantTalkToday
-  }
+  var mistake: SpokenMistakeTarget? = nil
+  var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
+  var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 
   private var mode: SpokenAnswerMode {
     context.isLocked
       ? SpokenAnswerMode(answered: context.answer)
-      : store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
+      : SpokenAnswerMode(
+        canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
+        micBlocked: micBlocked)
   }
 
   var body: some View {
@@ -493,15 +523,16 @@ private struct SpokenAnswerStepView: View {
         SpokenAnswerContext(
           lessonId: context.lessonId, stepId: step.id, content: content,
           isLocked: context.isLocked,
-          waitForRun: { await store.ensureRun() },
-          studySessionId: { store.studySessionId },
+          waitForRun: waitForRun,
+          studySessionId: studySessionId,
           onGraded: context.resolveSpoken,
           onBlocked: {
-            store.isMicBlocked = true
+            micBlocked = true
             announcePolitely(Self.micBlockedLine)
-          }))
+          }, mistake: mistake, onPracticeGraded: onPracticeGraded,
+          onCheckingChanged: onCheckingChanged))
     } else {
-      if store.isMicBlocked, !context.isLocked {
+      if micBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
           Text(Self.micBlockedLine)
             .foregroundStyle(.mutedForeground)
@@ -541,8 +572,8 @@ private struct SpokenAnswerStepView: View {
     if !context.isLocked, recording.input != nil {
       Button {
         context.select(nil)
-        store.cantTalkToday = mode == .speak
-        store.isMicBlocked = false
+        cantTalk = mode == .speak
+        micBlocked = false
       } label: {
         if mode == .speak {
           Label {

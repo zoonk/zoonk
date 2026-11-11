@@ -16,7 +16,8 @@ import { finishStudyBlock } from "./finish-study-block";
 describe("checkpoint stored correction evidence", () => {
   it("keeps a corrected old mistake's answer and explanation in the completion review", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
-    const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
+    const content = choiceItemContent();
+    const item = await itemFixture({ content, skillId: skill.id });
 
     const [session, mistake] = await Promise.all([
       studySessionFixture({ startedAt: new Date(), status: "active", userId: user.id }),
@@ -24,6 +25,7 @@ describe("checkpoint stored correction evidence", () => {
         createdAt: new Date(Date.now() - 86_400_000),
         itemId: item.id,
         skillId: skill.id,
+        snapshot: { answer: "Wrong answer", question: content.question },
         userId: user.id,
       }),
     ]);

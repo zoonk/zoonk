@@ -122,7 +122,7 @@ function readLesson(lessonId: string) {
 }
 
 describe("held-back lessons", () => {
-  it("drafts a held-back lesson again with its findings, then with another family's writer, then sets it aside so plans move on", async () => {
+  it("drafts a held-back lesson again with its findings, with its chosen writer, then sets it aside so plans move on", async () => {
     const { lesson, workflowRunId } = await claimedLesson();
     const planned = await plannedLesson(lesson.id);
 
@@ -135,7 +135,7 @@ describe("held-back lessons", () => {
     const first = await readLesson(lesson.id);
 
     expect(first).toMatchObject({
-      contentStatus: "failed",
+      contentStatus: "pending",
       heldBackDrafts: [
         {
           model: SOL,
@@ -155,7 +155,7 @@ describe("held-back lessons", () => {
     });
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
-      contentStatus: "failed",
+      contentStatus: "pending",
       setAsideAt: null,
     });
 

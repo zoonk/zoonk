@@ -1,6 +1,7 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { getRun } from "workflow/api";
 import { getWorld } from "workflow/runtime";
+import { finishStalledGoalRebuild } from "../goals/cancel-stalled-rebuild";
 
 /**
  * Every step attempt records its start and end, and none outlasts a function's longest run (under
@@ -25,6 +26,11 @@ function getDevServerStart(): number | null {
 type LastSign = { recordedAt: number; resumeAt: number };
 
 export type RunState = { stalled: boolean; status: string | null };
+
+/** Completed, failed or cancelled: the run writes nothing more. */
+export function hasRunEnded(status: string): boolean {
+  return !ACTIVE_STATUSES.has(status);
+}
 
 async function readLastSign(runId: string): Promise<LastSign | null> {
   const world = await getWorld();
@@ -97,6 +103,8 @@ export async function stopStalledRun(runId: string): Promise<RunState> {
   const state = await readRunState(runId);
 
   if (state.stalled) {
+    await finishStalledGoalRebuild(runId);
+
     await getRun(runId).cancel({
       cancelReason:
         "Stalled: no progress for 30 minutes, or since the development server restarted.",

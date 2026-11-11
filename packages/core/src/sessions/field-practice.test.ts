@@ -21,6 +21,7 @@ async function fieldDay({ details, due }: { details: Details; due: Date }) {
   const user = await userFixture();
 
   const { goal, plan, planItems, skills } = await sessionGoalFixture({
+    challengesDone: true,
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,

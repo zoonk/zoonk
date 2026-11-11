@@ -23,6 +23,9 @@ protocol SettingsAPIClient: Sendable {
   func keepWebPlus(token: String) async throws
   func exportMemory(token: String) async throws -> Data
   func exportAccountData(token: String) async throws -> Data
+  func getProfileQuestions(token: String) async throws -> ProfileQuestions
+  func answerProfileQuestion(token: String, _ input: Components.Schemas.ProfileAnswerInput)
+    async throws -> ProfileQuestionView
 }
 
 struct SettingsAPI: SettingsAPIClient {
@@ -48,6 +51,34 @@ struct SettingsAPI: SettingsAPIClient {
       switch try await client.updateCurrentUserLearningProfile(body: .json(update.body)) {
       case .ok(let response):
         return LearningPreferences(try response.body.json.profile)
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func getProfileQuestions(token: String) async throws -> ProfileQuestions {
+    try await clients.perform(token: token) { client in
+      switch try await client.getCurrentUserProfileQuestions(.init()) {
+      case .ok(let response):
+        return try response.body.json
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func answerProfileQuestion(token: String, _ input: Components.Schemas.ProfileAnswerInput)
+    async throws -> ProfileQuestionView
+  {
+    try await clients.perform(token: token) { client in
+      switch try await client.answerCurrentUserProfileQuestion(body: .json(input)) {
+      case .ok(let response):
+        return try response.body.json.question
       case .unauthorized:
         throw APIError.unauthorized
       default:

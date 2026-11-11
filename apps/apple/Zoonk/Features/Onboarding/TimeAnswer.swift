@@ -24,6 +24,8 @@ struct TimeAnswer: View {
   var split: DaySplit?
   /// The last answer, still in place while the new one is worked out.
   var updating = false
+  /// A language goal's aim above the learner's level, which its finish is when they reach.
+  var aim: String?
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void
 
@@ -276,6 +278,14 @@ struct TimeAnswer: View {
             table: "Onboarding",
             comment: "The goal's date has passed; the argument is a date like 'May 5, 2027'")
       }
+    case .finish(let endDate) where aim != nil && minutes != nil:
+      return String(
+        localized:
+          "At \(planDurationText(minutes: Double(minutes ?? 0))) a day, you reach \(aim ?? "") around \(PlanDate.longText(endDate, month: true)).",
+        table: "Onboarding",
+        comment:
+          "When a language goal reaches its aim at the time picked; the arguments are a duration like '30 min', a level like 'B1' and a month like 'May 2027'"
+      )
     case .finish(let endDate):
       return String(
         localized: "You finish around \(PlanDate.longText(endDate, month: true)).",

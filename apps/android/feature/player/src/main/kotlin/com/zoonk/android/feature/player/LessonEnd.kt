@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +39,7 @@ import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
+import com.zoonk.android.feature.player.engine.LessonCompletion
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.lessonMap
@@ -46,6 +48,7 @@ import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
@@ -69,6 +72,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -77,6 +81,7 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyBlockCompletion
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import kotlin.math.roundToLong
@@ -256,15 +261,15 @@ internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName
         it.naming
     }
 
-/** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the day's moment once saved. */
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,
     ending: LessonEnding,
     buddy: LearnerSummaryBuddy? = null,
+    finishedChapter: FinishedChapterSlot? = null,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val completion = state.completion ?: return
-    val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
 
     if (completion.status == CompletionStatus.Ready) {
         ResultPages(
@@ -287,18 +292,34 @@ fun LessonCompletionView(
         return
     }
 
+    val saving = completion.status == CompletionStatus.Saving
+    val title =
+        when {
+            saving -> R.string.player_saving_progress
+            completion.status == CompletionStatus.Failed -> R.string.player_lesson_not_saved
+            completion.testedOut -> R.string.player_already_knew
+            else -> R.string.player_lesson_complete
+        }
+
     ResultPages(
         withMoment = completion.status == CompletionStatus.Saved,
         columnModifier = Modifier.taskColumn(),
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    stringResource(title),
+                    Modifier.semantics { heading() },
+                    color = if (saving) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
 
-                if (completion.status == CompletionStatus.Saving) {
-                    Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
                 if (completion.status == CompletionStatus.Failed) {
-                    Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
+                    SaveErrorText(
+                        failures = completion.saveFailures,
+                        firstFailureMessage = stringResource(R.string.player_save_failed),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        onReport = onReportSaveFailure,
+                    )
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
@@ -306,12 +327,25 @@ fun LessonCompletionView(
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
+                result.finishedChapter?.let { finishedChapter?.invoke(it) }
             }
         },
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.
         doneWhenSplit = { state.lessonMap?.let { LessonEndMap(it) } },
         next = {
-            if (completion.status == CompletionStatus.Saved && ending.guest) {
+            completion.result?.planReveal?.let { reveal ->
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.onboarding_whats_next), style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        stringResource(
+                            if (reveal.planReady) R.string.onboarding_your_plan_ready else R.string.onboarding_reveal_building_title,
+                        ),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(reveal.goalTitle, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            if (completion.result?.planReveal == null && completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
                 Text(
                     stringResource(R.string.player_guest_save_note),
@@ -330,11 +364,10 @@ private fun LessonEndMap(map: StepContent.Map) {
     LessonMapView(map)
 }
 
-/** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */
 @Composable
 internal fun LessonReadouts(
     state: LessonPlayerState,
-    withReview: Boolean = true,
+    withFacts: Boolean = true,
 ) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
@@ -344,14 +377,32 @@ internal fun LessonReadouts(
     val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
 
+    val studied =
+        result.seconds.takeIf { withFacts && it > 0 }?.let { seconds ->
+            stringResource(R.string.player_time_studied, formatDuration(seconds, locale))
+        }
+
     val review =
-        result.nextReviewAt?.takeIf { withReview }?.let { reviewAt ->
+        result.nextReviewAt?.takeIf { withFacts }?.let { reviewAt ->
             val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
 
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review))
+    val deferred =
+        state.completion?.deferredBlock?.let {
+            pluralStringResource(
+                R.plurals.player_lessons_deferred,
+                it.deferredLessonsCount.toInt(),
+                formatNumber(it.deferredLessonsCount.toDouble(), locale),
+                formatMinutes(it.minutes.dailyGoal, locale),
+            )
+        }
+
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review, deferred))
 }
+
+internal val LessonCompletion.deferredBlock: StudyBlockCompletion?
+    get() = result?.studyBlock?.takeIf { status == CompletionStatus.Saved && it.deferredLessonsCount > 0 }
 
 /**
  * What the lesson's end does on its main button and on Enter: finish or try again, then the next
@@ -371,6 +422,16 @@ internal fun completionMainAction(
 
         CompletionStatus.Saved -> {
             when {
+                state.completion?.result?.planReveal != null -> {
+                    {
+                        state.completion?.result?.planReveal?.let {
+                            exits.replace(
+                                AppRoute.GoalSetup(it.goalId.toString(), revealMoment = true),
+                            )
+                        }
+                    }
+                }
+
                 ending.inSession -> {
                     viewModel::continueSession
                 }
@@ -417,18 +478,19 @@ fun CompletionActions(
         when {
             status == CompletionStatus.Ready -> R.string.player_finish
             status == CompletionStatus.Failed -> R.string.player_try_again
+            state.completion?.result?.planReveal != null -> R.string.onboarding_see_plan
             ending.guest -> R.string.player_build_my_plan
             ending.nextLessonId != null -> R.string.player_next_lesson
             else -> R.string.player_action_continue
         }
     val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
-    if (status == CompletionStatus.Saved && ending.inSession) {
+    if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.inSession) {
         LessonSessionEnd(state, viewModel, exits)
         return
     }
 
-    if (status == CompletionStatus.Saved && ending.guest) {
+    if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.guest) {
         TaskActions { width ->
             OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_create_account_to_save))
@@ -439,7 +501,7 @@ fun CompletionActions(
     }
 
     TaskActions { width ->
-        if (status == CompletionStatus.Saved && ending.nextLessonId != null) {
+        if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.nextLessonId != null) {
             OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }

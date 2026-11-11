@@ -13,7 +13,7 @@
   "lessonsComing": false,
   "lessonsToPrepare": false,
   "localDate": "2026-10-28",
-  "minutes": { "dailyGoal": 0, "done": 0, "planned": 0 },
+  "minutes": { "dailyGoal": 0, "done": 0, "left": 0, "planned": 0 },
   "nextPosition": null,
   "pauseSuggested": false,
   "plusLessons": [],

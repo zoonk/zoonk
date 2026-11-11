@@ -168,7 +168,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
 
   const content = (
     <span className={HEADER_BODY_CLASS}>
-      <span className="text-sm font-medium">{goal.title}</span>
+      <span className="text-sm font-medium">{goal.displayName}</span>
       {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
       {date && (
         <span className="text-muted-foreground basis-full font-mono text-xs tabular-nums">

@@ -1,0 +1,948 @@
+[
+  {
+    "context": {
+      "activityTemplates": [],
+      "chapterLessons": [
+        {
+          "canDo": "Aplicar interesse público e probidade a decisões funcionais",
+          "order": "before",
+          "title": "Interesse público e probidade",
+          "examples": [
+            "Nayara fecha um relatório de auditoria com três falhas comprovadas. A chefia manda apagá-las para preservar a imagem do órgão. Proteger a instituição justifica esconder o que aconteceu?",
+            "Um órgão federal cobrou de uma empresa uma taxa que nenhuma lei previa. Devolver o valor vai reduzir a receita do órgão. O que atende ao interesse público?",
+            "Renan analisa uma restituição prevista em lei. A chefia pede que ele a negue para economizar.",
+            "Jussara analisa um pedido de indenização que a lei garante a um particular. A chefia propõe negá-lo para economizar. Julgue o item: _a economia autoriza negar a indenização em nome do interesse público_.",
+            "Kauã recebe ordem de registrar como concluída uma inspeção ainda pendente.",
+            "Tainá recebe ordem de declarar corrigida uma falha que ainda existe. A mudança no registro não gera nenhum efeito financeiro. Julgue o item: _Tainá pode alterar o registro, pois não haverá prejuízo financeiro_."
+          ],
+          "ideas": [
+            "Atender ao interesse público é perseguir o fim de interesse geral previsto no direito, como achar irregularidades numa fiscalização.",
+            "Devolver uma cobrança ilegal realiza o interesse público, mesmo com menos receita, porque caixa apertado não afasta direito.",
+            "A probidade é o dever de agir com honestidade na função, e a falta de prejuízo financeiro não torna honesto um registro falso.",
+            "O servidor não pode omitir nem falsear a verdade, ainda que ela contrarie a Administração ou manche a imagem do órgão."
+          ]
+        },
+        {
+          "canDo": "Aplicar deveres de conduta ética da CGU",
+          "order": "after",
+          "title": "Deveres de conduta ética na CGU",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Avaliar presentes e vantagens oferecidos a agentes públicos",
+          "order": "after",
+          "title": "Presentes, vantagens e hospitalidades",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Distinguir responsabilidades ética, disciplinar e por improbidade",
+          "order": "after",
+          "title": "Responsabilidade ética e outras responsabilidades",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Tomar decisões com as habilidades deste capítulo",
+          "order": "after",
+          "title": "Desafio: Ética pública e conduta profissional na CGU",
+          "examples": [],
+          "ideas": []
+        }
+      ],
+      "chapterTitle": "Ética pública e conduta profissional na CGU",
+      "courseTitle": "Direito Administrativo",
+      "exams": [
+        {
+          "name": "Concurso CGU",
+          "style": "trueFalse: Itens para julgamento individual como Certo ou Errado. essay: Questão discursiva relacionada a conhecimentos complementares a ser respondida em até 30 linhas. essay: Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos a ser respondida em até 60 linhas."
+        }
+      ],
+      "language": "pt",
+      "level": "intermediate",
+      "setup": false,
+      "shortAnswers": false,
+      "spec": {
+        "canDo": "Identificar conflitos de interesses e preservar a imparcialidade funcional",
+        "description": "Como reconhecer interesses privados que ameaçam a atuação imparcial e aplicar as regras de impedimento e suspeição.",
+        "estimatedMinutes": 5,
+        "screens": [
+          {
+            "activityTemplate": null,
+            "brief": "Raimundo recebe para análise um pedido de uma empresa da qual é sócio e pensa: “Vou seguir todos os critérios técnicos”. Isso basta para que ele possa conduzir a análise?",
+            "kind": "hook",
+            "skills": [0, 1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Conflito de interesses é o confronto entre interesses públicos e privados capaz de comprometer o interesse coletivo ou influenciar impropriamente a função pública: analisar um pedido da própria empresa cria esse risco (Lei nº 12.813/2013, art. 3º, I).",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Um servidor presta consultoria a uma empresa interessada em decisão sua; se dispensar os honorários, o que acontece com o conflito? Opções: “Desaparece”; “Permanece”; “Depende de prejuízo ao erário”; resposta: “Permanece”, com justificativa imediata.",
+            "kind": "guess",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "O conflito independe de lesão ao patrimônio público ou de vantagem recebida: dispensar os honorários não elimina, por si só, o conflito da consultoria (Lei nº 12.813/2013, art. 4º, § 1º).",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Resolver em etapas: Thaís presta consultoria à empresa interessada em decisão que ela tomará — identificar o serviço privado → ligar a empresa à decisão → reconhecer o conflito, mesmo sem favorecimento consumado (Lei nº 12.813/2013, art. 5º, II).",
+            "kind": "workedExample",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar Certo ou Errado: “Murilo presta consultoria gratuita a uma empresa interessada em decisão sua; sem remuneração nem prejuízo ao erário, inexiste conflito”. Gabarito: Errado; explorar a confusão entre conflito e dano efetivo (arts. 4º, § 1º, e 5º, II).",
+            "kind": "check",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Ter interesse direto ou indireto na matéria impede a atuação no processo: Sabrina não pode analisar pedido que afeta o lucro da empresa de que é sócia, mesmo prometendo neutralidade (Lei nº 9.784/1999, art. 18, I).",
+            "kind": "explanation",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Cauê analisaria recurso que afeta sua própria empresa: reconhecer o interesse direto → comunicar o impedimento à autoridade competente → abster-se de atuar, sem aguardar autorização para parar (Lei nº 9.784/1999, arts. 18, I, e 19).",
+            "kind": "workedExample",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar Certo ou Errado: “Rosana tem interesse financeiro no resultado do processo e comunica o impedimento, mas pode continuar instruindo-o até receber substituto”. Gabarito: Errado; comunicar não dispensa a abstenção de atuar (Lei nº 9.784/1999, art. 19).",
+            "kind": "check",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Amizade íntima com um interessado permite arguir suspeição, fundamento distinto do impedimento: a relação próxima de Leandro com o requerente importa, mas ser mero conhecido não basta para esse enquadramento (Lei nº 9.784/1999, art. 20).",
+            "kind": "explanation",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar Certo ou Errado: “Valéria encontra a requerente ocasionalmente em eventos profissionais; isso basta para caracterizar suspeição por amizade íntima”. Gabarito: Errado; o contato descrito não demonstra a proximidade exigida pelo art. 20 da Lei nº 9.784/1999.",
+            "kind": "check",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Uma servidora presta consultoria gratuita à empresa da qual é sócia e recebe processo sobre pedido dessa empresa: identificar o conflito e indicar como agir. Esperado: reconhecer o vínculo privado, comunicar o impedimento e abster-se; rejeitar apenas prometer uma análise técnica.",
+            "kind": "application",
+            "skills": [0, 1],
+            "visual": null,
+            "visualKind": "none"
+          }
+        ],
+        "skills": [
+          {
+            "description": "Reconhecer quando um interesse privado pode comprometer a função pública, mesmo sem dano ou vantagem recebida.",
+            "example": "Prestar consultoria gratuita a uma empresa interessada em decisão do próprio servidor configura conflito de interesses.",
+            "hard": true,
+            "name": "Identificar conflitos de interesses",
+            "topic": "Conflito de interesses",
+            "useCase": "Avaliar vínculos privados antes de participar de decisões, análises e outras atividades funcionais."
+          },
+          {
+            "description": "Aplicar as regras de impedimento e suspeição sem confundir interesse pessoal, amizade íntima e mero conhecimento.",
+            "example": "Um servidor com interesse financeiro no resultado comunica o impedimento e se abstém de atuar no processo.",
+            "hard": true,
+            "name": "Preservar a imparcialidade funcional",
+            "topic": "Impedimento e suspeição",
+            "useCase": "Decidir como proceder quando vínculos pessoais ou financeiros afetam a atuação em um processo administrativo."
+          }
+        ],
+        "title": "Imparcialidade e conflito de interesses"
+      }
+    },
+    "lesson": {
+      "screens": [
+        {
+          "text": "Raimundo é servidor e recebe para análise um pedido da Construtora Vale Alto, da qual ele é sócio. Ele pensa: _vou seguir todos os critérios técnicos_. Isso basta para ele conduzir a análise?",
+          "kind": "hookText",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Se Raimundo analisa o pedido da própria empresa, o lucro dele pode influenciar indevidamente a decisão, mesmo com rigor técnico. Esse confronto se chama **conflito de interesses** (Lei nº 12.813/2013, art. 3º, I).",
+          "title": "Público contra privado",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "reveal": "O conflito permanece, mesmo sem honorários e sem prejuízo ao erário.",
+          "options": [
+            { "text": "O conflito permanece", "isCorrect": true },
+            { "text": "O conflito desaparece", "isCorrect": false },
+            { "text": "Só existe se houver prejuízo ao erário", "isCorrect": false }
+          ],
+          "question": "Um auditor dá consultoria a uma empresa que aguarda uma decisão dele. Para evitar problemas, ele deixa de cobrar honorários. O que acontece com o conflito de interesses?",
+          "kind": "hookGuess",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Sem honorários, o auditor não ganha nada. Mas o vínculo com a empresa ainda pode influenciar a decisão dele. Por isso o conflito independe de lesão ao erário ou de vantagem recebida (Lei nº 12.813/2013, art. 4º, § 2º).",
+          "title": "Sem ganho, há conflito",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": "um favor sem cobrança que o aprendiz faria a alguém que depende de uma decisão dele no trabalho",
+          "explore": null
+        },
+        {
+          "steps": [
+            { "text": "Ela presta serviço privado à empresa.", "math": null },
+            { "text": "A empresa tem interesse na decisão.", "math": null },
+            { "text": "Não é preciso haver favorecimento.", "math": null }
+          ],
+          "title": "Consultoria e decisão",
+          "result": "Há conflito (Lei nº 12.813/2013, art. 5º, II).",
+          "problem": "Thaís presta consultoria à empresa que aguarda uma decisão dela. Há conflito?",
+          "kind": "workedExample",
+          "image": null,
+          "visual": null
+        },
+        {
+          "basis": {
+            "quote": "Por isso o conflito independe de lesão ao erário ou de vantagem recebida (Lei nº 12.813/2013, art. 4º, § 2º).",
+            "screen": 4
+          },
+          "context": "Murilo deu consultoria gratuita à Transportadora Rio Claro e depois decidiu um pedido dela, seguindo o parecer técnico. Não houve prejuízo ao erário.",
+          "options": [
+            {
+              "text": "Certo",
+              "reason": "A falta de pagamento e de dano parece apagar o problema, mas não apaga. O conflito independe de lesão ao erário ou de vantagem recebida.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Errado",
+              "reason": "Murilo prestou serviço a uma empresa interessada em decisão dele. Isso basta para o conflito, que independe de dano ao erário ou de remuneração.",
+              "isCorrect": true,
+              "picture": null
+            }
+          ],
+          "question": "Julgue o item: _sem remuneração nem dano ao erário, não houve conflito de interesses_.",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Sabrina é sócia de uma empresa e recebe um pedido que mexe no lucro dela. Mesmo prometendo neutralidade, ela não pode atuar. Interesse direto ou indireto na matéria gera **impedimento** (Lei nº 9.784/1999, art. 18, I).",
+          "title": "Interesse que impede",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "steps": [
+            { "text": "Ele tem interesse direto na matéria.", "math": null },
+            { "text": "Comunica o impedimento à autoridade competente.", "math": null },
+            { "text": "Abstém-se de atuar sem esperar autorização.", "math": null }
+          ],
+          "title": "Como agir no impedimento",
+          "result": "É o procedimento dos arts. 18, I, e 19 da Lei nº 9.784/1999.",
+          "problem": "Cauê analisaria recurso que afeta a empresa dele. O que faz?",
+          "kind": "workedExample",
+          "image": null,
+          "visual": null
+        },
+        {
+          "basis": null,
+          "context": "Rosana tem interesse financeiro no resultado de um processo que ela instrui. Ela comunica o impedimento à chefia.",
+          "options": [
+            {
+              "text": "Certo",
+              "reason": "Parece razoável não deixar o processo parado, mas a lei não abre essa janela. Quem está impedido comunica o fato e se abstém de atuar desde já.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Errado",
+              "reason": "Comunicar o impedimento não basta. O art. 19 da Lei nº 9.784/1999 exige que Rosana também se abstenha de atuar, sem esperar substituto.",
+              "isCorrect": true,
+              "picture": null
+            }
+          ],
+          "question": "Julgue o item: _Rosana pode continuar instruindo o processo até receber um substituto_.",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Leandro é amigo íntimo do requerente e passa férias com ele. Por isso, um interessado pode alegar que ele não é isento. Isso é arguir **suspeição** (Lei nº 9.784/1999, art. 20). Ser só conhecido não basta.",
+          "title": "Amizade íntima é outra base",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "basis": { "quote": "Ser só conhecido não basta.", "screen": 10 },
+          "context": "Valéria vai decidir o pedido de uma advogada que ela encontra de vez em quando em eventos profissionais.",
+          "options": [
+            {
+              "text": "Certo",
+              "reason": "Encontros repetidos parecem proximidade, mas não são amizade íntima. Contato ocasional em eventos faz delas apenas conhecidas.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Errado",
+              "reason": "A suspeição do art. 20 exige amizade íntima. Encontrar alguém de vez em quando em eventos mostra só que se conhecem, e isso não basta.",
+              "isCorrect": true,
+              "picture": null
+            }
+          ],
+          "question": "Julgue o item: _esse contato basta para arguir a suspeição de Valéria por amizade íntima_.",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        },
+        {
+          "basis": null,
+          "context": "Juliana, servidora federal em Maringá, dá consultoria gratuita à Solaris Energia, empresa da qual é sócia. Agora ela recebe o processo de um pedido de licença da Solaris.",
+          "options": [
+            {
+              "text": "Arguir a própria suspeição e seguir até decidirem",
+              "reason": "Suspeição trata de amizade íntima ou inimizade notória, não de sociedade na empresa. Aqui o caso é de impedimento, e ela deve parar de atuar já.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Analisar o pedido com rigor técnico e registrar tudo",
+              "reason": "Prometer uma análise técnica não afasta o conflito nem o impedimento. O interesse dela no resultado continua, por mais cuidadosa que seja.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Comunicar o impedimento e deixar de atuar no processo",
+              "reason": "A consultoria a empresa interessada em sua decisão já gera conflito, e ser sócia dá a ela interesse direto. Por isso comunica o impedimento e se abstém.",
+              "isCorrect": true,
+              "picture": null
+            },
+            {
+              "text": "Encerrar a consultoria e então analisar o pedido",
+              "reason": "Parar a consultoria parece resolver, mas Juliana segue sócia da Solaris. Esse interesse direto na matéria ainda a impede de atuar.",
+              "isCorrect": false,
+              "picture": null
+            }
+          ],
+          "question": "Como Juliana deve agir?",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        }
+      ],
+      "summary": {
+        "ideas": [
+          {
+            "text": "Conflito de interesses é o confronto entre interesse privado e função pública capaz de influenciar indevidamente a decisão, mesmo com rigor técnico (Lei nº 12.813/2013, art. 3º, I).",
+            "about": "Interesses privados e decisões públicas",
+            "label": "Conflito de interesses",
+            "iconId": "01a1bc09-196e-78b7-a9e1-f194c6e0f101",
+            "iconNeed": {
+              "name": "balance scale",
+              "description": "A traditional balance scale with two hanging pans.",
+              "searchWords": ["scales", "justice", "law"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "O conflito de interesses independe de lesão ao erário ou de vantagem recebida, então consultoria gratuita a empresa interessada em decisão do servidor ainda o configura.",
+            "about": "Consultoria sem honorários",
+            "label": "Sem ganho, há conflito",
+            "iconId": "01a1bc0f-7464-78c8-80bf-6e5644464eef",
+            "iconNeed": {
+              "name": "wallet",
+              "description": "A simple closed leather wallet.",
+              "searchWords": ["purse", "money", "billfold"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Quem tem interesse direto ou indireto na matéria está impedido, deve comunicar o fato à autoridade competente e deixar de atuar já (Lei nº 9.784/1999, arts. 18, I, e 19).",
+            "about": "Interesse pessoal no processo",
+            "label": "Impedimento: comunicar e abster-se",
+            "iconId": "01a1bc09-196e-78e4-9311-91f33bce57f6",
+            "iconNeed": {
+              "name": "road barrier",
+              "description": "A striped barrier lowered across a road.",
+              "searchWords": ["barricade", "gate", "obstacle"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Amizade íntima com um interessado permite arguir suspeição, mas ser só conhecido não basta (Lei nº 9.784/1999, art. 20).",
+            "about": "Relações pessoais com interessados",
+            "label": "Suspeição por amizade íntima",
+            "iconId": "01a1bc0f-7464-79fb-abd4-3948556e3951",
+            "iconNeed": {
+              "name": "friendship bracelet",
+              "description": "A colorful woven bracelet made from thin threads.",
+              "searchWords": ["woven bracelet", "cord bracelet", "friendship band"]
+            },
+            "iconPending": false
+          }
+        ],
+        "shape": "hub"
+      }
+    }
+  },
+  {
+    "context": {
+      "activityTemplates": [
+        {
+          "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs. Check kinds this template supports: interaction.",
+          "id": "categorize",
+          "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"groups\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"rule\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"id\",\"label\",\"rule\"],\"additionalProperties\":false}},\"items\":{\"minItems\":3,\"maxItems\":10,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"groupId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"why\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"groupId\",\"id\",\"text\",\"why\"],\"additionalProperties\":false}}},\"required\":[\"groups\",\"items\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"categorize\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+        }
+      ],
+      "chapterLessons": [
+        {
+          "canDo": "Identificar os fundamentos da República em situações concretas",
+          "order": "before",
+          "title": "Fundamentos da República",
+          "examples": [
+            "O Brasil assina um acordo com outros países e promete diminuir a poluição das suas fábricas. Isso quer dizer que, a partir de agora, outro país passou a mandar aqui?",
+            "Depois, o Brasil assina outro acordo e se compromete a limitar a pesca em parte do seu mar. O que acontece com a soberania do Brasil?",
+            "O governo de outro país anuncia que suas ordens devem valer automaticamente no Brasil, sem nenhum acordo assinado. Qual fundamento essa exigência contraria?",
+            "Jussara está presa numa cela superlotada, sem água limpa. A direção do presídio diz que a condenação permite esse tratamento. Qual fundamento sustenta a reclamação de Jussara?",
+            "A prefeitura de Cuiabá propõe uma lei que facilita abrir oficinas. Mas a lei dispensa a proteção dos trabalhadores e proíbe associações que critiquem a prefeitura. Qual revisão respeita os fundamentos da República?"
+          ],
+          "ideas": [
+            "A soberania significa que o Brasil não obedece a outro país, e assinar acordos por escolha própria é exercê-la.",
+            "A cidadania é participar da vida pública, como propor ideias à prefeitura, e não apenas votar.",
+            "A dignidade da pessoa humana exige respeitar o valor de toda pessoa, mesmo de quem foi condenado por um crime.",
+            "Os valores sociais do trabalho e da livre iniciativa formam um único fundamento: a liberdade de abrir um negócio vem junto com a proteção de quem trabalha.",
+            "O pluralismo político protege a convivência de ideias políticas diferentes, não só de partidos."
+          ]
+        },
+        {
+          "canDo": "Reconhecer a origem e o exercício do poder",
+          "order": "after",
+          "title": "Soberania popular",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Identificar os objetivos fundamentais da República",
+          "order": "after",
+          "title": "Objetivos fundamentais da República",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Reconhecer princípios das relações internacionais do Brasil",
+          "order": "after",
+          "title": "Princípios das relações internacionais",
+          "examples": [],
+          "ideas": []
+        },
+        {
+          "canDo": "Tomar decisões com as habilidades deste capítulo",
+          "order": "after",
+          "title": "Desafio: Princípios fundamentais da República",
+          "examples": [],
+          "ideas": []
+        }
+      ],
+      "chapterTitle": "Princípios fundamentais da República",
+      "courseTitle": "Direito Constitucional",
+      "exams": [
+        {
+          "name": "Concurso CGU",
+          "style": "trueFalse: Itens para julgamento individual como Certo ou Errado. essay: Questão discursiva relacionada a conhecimentos complementares a ser respondida em até 30 linhas. essay: Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos a ser respondida em até 60 linhas."
+        }
+      ],
+      "language": "pt",
+      "level": "beginner",
+      "setup": false,
+      "shortAnswers": false,
+      "spec": {
+        "canDo": "Distinguir forma de Estado, forma de governo e sistema de governo",
+        "description": "Federação, República e presidencialismo descrevem aspectos diferentes da organização brasileira e permitem avaliar afirmações sobre o exercício do poder.",
+        "estimatedMinutes": 5,
+        "screens": [
+          {
+            "activityTemplate": null,
+            "brief": "O Congresso rejeita uma proposta importante do presidente, mas ele continua no cargo. Por que perder essa votação não encerra seu mandato?",
+            "kind": "hook",
+            "skills": [],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Forma de Estado é a maneira de distribuir o poder político pelo território: no Brasil, um município decide assuntos locais sem ser outro país.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Se toda a população de um estado votar pela separação do Brasil, o que acontecerá juridicamente? Opções: “A separação terá efeito”; “A votação não criará outro país”; correta: a segunda.",
+            "kind": "guess",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "A federação brasileira reúne entes com poder político próprio numa união indissolúvel: nem uma votação unânime permite a um estado separar-se do país (CF, art. 1º, caput).",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Autonomia é governar-se dentro da Constituição: União, estados, Distrito Federal e municípios a possuem, sem serem países soberanos; um estado pode ter sua própria Constituição (CF, arts. 18 e 25).",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar: “Ao aprovar sua própria Constituição, um estado passa a ter soberania, como o Brasil”. Gabarito: Errado; a armadilha é confundir autonomia estadual com soberania.",
+            "kind": "check",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Forma de governo trata do acesso ao poder e da responsabilidade de quem o exerce: ocupar um cargo por mandato é diferente de herdá-lo por toda a vida.",
+            "kind": "explanation",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Na república, o poder não pertence a uma família: os governantes têm mandatos temporários, são escolhidos por eleição e respondem por seus atos; o presidente brasileiro exemplifica isso (CF, arts. 1º, 77, 82 e 85).",
+            "kind": "explanation",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Na monarquia, a chefia do Estado é, em regra, hereditária e vitalícia: no Reino Unido, a Coroa passa pela linha de sucessão, não por eleição periódica.",
+            "kind": "explanation",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar: “Um país mantém a forma republicana se eleger um presidente para ocupar o cargo vitaliciamente”. Gabarito: Errado; a armadilha é considerar a eleição suficiente, ignorando a temporariedade.",
+            "kind": "check",
+            "skills": [1],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Sistema de governo descreve a relação entre Executivo e Legislativo: uma questão é saber se o governante precisa conservar o apoio do Parlamento para permanecer no cargo.",
+            "kind": "explanation",
+            "skills": [2],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "No presidencialismo, o presidente representa o Estado e dirige o governo com mandato próprio: no Brasil, perder uma votação no Congresso não encerra esse mandato (CF, arts. 76, 82 e 84).",
+            "kind": "explanation",
+            "skills": [2],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "No parlamentarismo, quem dirige o governo depende da confiança do Parlamento: no Reino Unido, a perda formal desse apoio pode levar à substituição do primeiro-ministro.",
+            "kind": "explanation",
+            "skills": [2],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Impeachment é um processo de responsabilização por crime de responsabilidade: pode retirar o presidente antes do fim do mandato, mas não equivale a perder apoio político (CF, arts. 85 e 86).",
+            "kind": "explanation",
+            "skills": [2],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": "categorize",
+            "brief": "Separar três casos entre forma de Estado, forma de governo e sistema de governo: município com poder próprio; cargo máximo hereditário e vitalício; governo substituído por perda de confiança parlamentar. Gabarito: Estado, governo, sistema; explorar a troca entre os dois últimos.",
+            "kind": "activity",
+            "skills": [0, 1, 2],
+            "visual": null,
+            "visualKind": "template"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Uma nota diz: I — município autônomo é soberano; II — mandato temporário e responsabilização são republicanos; III — derrota parlamentar encerra o mandato presidencial. Selecionar as corretas e corrigir as demais: apenas II; a armadilha é aceitar III como impeachment.",
+            "kind": "application",
+            "skills": [0, 1, 2],
+            "visual": null,
+            "visualKind": "none"
+          }
+        ],
+        "skills": [
+          {
+            "description": "Distinguir a autonomia dos entes da federação da soberania do país e do direito de separação.",
+            "example": "Um estado pode ter Constituição própria, mas não pode separar-se do Brasil.",
+            "hard": false,
+            "name": "Reconhecer a federação como forma de Estado",
+            "topic": "Forma de Estado",
+            "useCase": "Avaliar afirmações sobre os poderes de estados e municípios na organização brasileira."
+          },
+          {
+            "description": "Reconhecer a república pela eletividade, temporariedade e responsabilidade dos governantes, em contraste com a monarquia.",
+            "example": "Eleger alguém para um cargo vitalício não atende à temporariedade republicana.",
+            "hard": false,
+            "name": "Distinguir república e monarquia",
+            "topic": "Forma de governo",
+            "useCase": "Identificar se uma regra de acesso ou permanência no poder é compatível com a República."
+          },
+          {
+            "description": "Distinguir o mandato próprio do presidente da dependência de confiança parlamentar de quem dirige o governo.",
+            "example": "A rejeição de um projeto pelo Congresso não encerra o mandato presidencial brasileiro.",
+            "hard": false,
+            "name": "Distinguir presidencialismo e parlamentarismo",
+            "topic": "Sistema de governo",
+            "useCase": "Avaliar notícias e afirmações sobre perda de apoio parlamentar e permanência no governo."
+          }
+        ],
+        "title": "Federação, República e presidencialismo"
+      }
+    },
+    "lesson": {
+      "screens": [
+        {
+          "text": "O Congresso rejeita um projeto importante do presidente. Na manhã seguinte, ele segue no cargo, trabalhando normalmente. Por que perder essa votação não encerra o mandato dele?",
+          "kind": "hookText",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "A prefeitura de Caxias do Sul decide o horário das feiras da cidade. Ela resolve um assunto local, mas Caxias do Sul não é um país à parte. O jeito de repartir o poder pelo território se chama **forma de Estado**.",
+          "title": "Poder repartido pelo território",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "reveal": "O estado continua parte do Brasil. Nenhuma votação permite que um estado saia do país.",
+          "options": [
+            { "text": "O estado sai, se o Congresso aprovar", "isCorrect": false },
+            { "text": "O estado vira um país independente", "isCorrect": false },
+            { "text": "O estado continua parte do Brasil", "isCorrect": true }
+          ],
+          "question": "Numa votação, 100% dos moradores de um estado escolhem sair do Brasil. Pela Constituição, o que acontece?",
+          "kind": "hookGuess",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "O Brasil reúne União, estados, Distrito Federal e municípios, cada um com poder próprio. Essa união não se desfaz: nem uma votação unânime tira um estado do país (CF, art. 1º, caput). Isso se chama **federação**.",
+          "title": "Uma união que não se desfaz",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "text": "Minas Gerais tem Constituição própria, e Uberlândia faz suas próprias leis. Mas ambas obedecem à Constituição do Brasil e não são países. Governar-se assim, dentro da Constituição, se chama **autonomia** (CF, arts. 18 e 25).",
+          "title": "Governar-se sem ser país",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "basis": {
+            "quote": "Mas ambas obedecem à Constituição do Brasil e não são países.",
+            "screen": 5
+          },
+          "context": "A Assembleia Legislativa do Piauí aprova a Constituição do estado. Um deputado comemora: _agora o Piauí é soberano, como o Brasil._",
+          "options": [
+            {
+              "text": "Certo, a Constituição própria torna o estado soberano",
+              "reason": "A Constituição estadual precisa seguir a Constituição do Brasil. Quem deve obediência a outra norma tem autonomia, não soberania.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Certo, desde que o Congresso aprove essa Constituição",
+              "reason": "Nenhuma aprovação do Congresso transforma um estado em soberano. O estado segue parte do Brasil, apenas com autonomia.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Errado, o Piauí tem autonomia, não soberania",
+              "reason": "Ter Constituição própria é governar-se dentro da Constituição do Brasil. Soberania é não obedecer a nenhum poder acima, e o Piauí continua obedecendo.",
+              "isCorrect": true,
+              "picture": null
+            }
+          ],
+          "question": "Julgue a afirmação do deputado.",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Em Joinville, a prefeita ganha a eleição, fica quatro anos e responde pelo que fez. Já um rei herda o trono e fica nele a vida toda. O modo de chegar ao poder e de responder por ele se chama **forma de governo**.",
+          "title": "Como se chega ao poder",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "text": "No Brasil, ninguém herda a Presidência. O presidente é eleito, governa por um prazo de quatro anos e responde pelos seus atos (CF, arts. 1º, 77, 82 e 85). Essa forma de governo se chama **república**.",
+          "title": "Cargo com prazo e contas",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "text": "No Reino Unido, quando Elizabeth II morreu, em 2022, o filho Charles virou rei sem eleição. Ele fica no trono pela vida toda. Quando o cargo mais alto, em regra, passa na família e dura a vida toda, é **monarquia**.",
+          "title": "A coroa passa na família",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "basis": {
+            "quote": "O presidente é eleito, governa por um prazo de quatro anos e responde pelos seus atos (CF, arts. 1º, 77, 82 e 85).",
+            "screen": 8
+          },
+          "context": "A Constituição de um país diz: o presidente será eleito pelo voto popular, ficará no cargo até morrer e responderá por seus atos.",
+          "options": [
+            {
+              "text": "Não, porque o cargo passa a ser herdado",
+              "reason": "Ninguém herda o cargo nessa regra: o presidente é eleito. O problema é outro: ele fica até morrer, sem prazo.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Sim, porque o presidente é eleito pelo povo",
+              "reason": "A eleição é só uma das marcas da república. Sem prazo para sair, o cargo fica vitalício, como numa monarquia.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Não, porque o cargo deixa de ter prazo",
+              "reason": "Na república, o governante fica por um prazo e depois sai. Um cargo até a morte quebra essa regra, mesmo com eleição.",
+              "isCorrect": true,
+              "picture": null
+            },
+            {
+              "text": "Sim, porque o presidente responde por seus atos",
+              "reason": "Responder pelos atos não basta. A república também exige mandato com prazo, e aqui o cargo dura a vida toda.",
+              "isCorrect": false,
+              "picture": null
+            }
+          ],
+          "question": "Essa regra mantém a forma republicana?",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        },
+        {
+          "text": "Imagine que o Parlamento vote contra quem chefia o governo. Ele cai ou fica? Depende de como quem governa (Executivo) e quem faz as leis (Legislativo) se relacionam. Essa relação se chama **sistema de governo**.",
+          "title": "Governo e Parlamento",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "text": "No Brasil, o presidente representa o país e comanda o governo. Seu mandato tem prazo próprio: perder uma votação no Congresso não o tira do cargo (CF, arts. 76, 82 e 84). Esse sistema se chama **presidencialismo**.",
+          "title": "Um mandato com prazo próprio",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": "uma notícia sobre o governo perdendo uma votação no Congresso",
+          "explore": null
+        },
+        {
+          "text": "No Reino Unido, o primeiro-ministro comanda o governo enquanto tiver a confiança do Parlamento. Se o Parlamento retira formalmente esse apoio, ele pode ser substituído. Isso se chama **parlamentarismo**.",
+          "title": "Governo que depende do Parlamento",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "text": "O presidente só sai antes do prazo se cometer um ato grave contra a Constituição, como desrespeitar a lei do orçamento. Esse processo de punição é o **impeachment** (CF, arts. 85 e 86). Só perder apoio não basta.",
+          "title": "Sair antes do prazo",
+          "kind": "explanation",
+          "image": null,
+          "visual": null,
+          "exampleLineIdea": null,
+          "explore": null
+        },
+        {
+          "kind": "activity",
+          "template": "categorize",
+          "content": "{\"check\": {\"kind\": \"interaction\", \"explanation\": \"Divisão do poder pelo território indica a forma de Estado. Herança ou prazo do cargo indicam a forma de governo. Depender ou não do apoio do Parlamento indica o sistema de governo.\"}, \"fields\": {\"items\": [{\"id\": \"m1\", \"why\": \"Mostra como o poder se reparte pelo território: é a autonomia dentro da federação.\", \"text\": \"Um município decide sozinho seus assuntos locais\", \"groupId\": \"estado\"}, {\"id\": \"g1\", \"why\": \"Mostra como se chega ao poder e por quanto tempo se fica nele: é monarquia, uma forma de governo.\", \"text\": \"O cargo mais alto do país passa de pai para filho e dura a vida toda\", \"groupId\": \"governo\"}, {\"id\": \"s1\", \"why\": \"Mostra a relação entre governo e Parlamento: é parlamentarismo. A troca não vem de herança nem do fim de um prazo.\", \"text\": \"O chefe do governo é trocado porque perdeu a confiança do Parlamento\", \"groupId\": \"sistema\"}, {\"id\": \"e2\", \"why\": \"Mostra o poder próprio de uma parte do território, sem virar país: é autonomia na federação.\", \"text\": \"Um estado aprova sua própria Constituição\", \"groupId\": \"estado\"}, {\"id\": \"g2\", \"why\": \"Mostra o acesso ao cargo por eleição e com prazo: é república, uma forma de governo.\", \"text\": \"O presidente é eleito para um prazo de quatro anos\", \"groupId\": \"governo\"}, {\"id\": \"s2\", \"why\": \"Mostra que o mandato não depende do apoio do Congresso: é presidencialismo, um sistema de governo.\", \"text\": \"O presidente segue no cargo depois de perder uma votação no Congresso\", \"groupId\": \"sistema\"}], \"groups\": [{\"id\": \"estado\", \"rule\": \"Como o poder se reparte pelo território: União, estados, Distrito Federal e municípios.\", \"label\": \"Forma de Estado\"}, {\"id\": \"governo\", \"rule\": \"Como se chega ao poder e se responde por ele: cargo com prazo ou cargo herdado e vitalício.\", \"label\": \"Forma de governo\"}, {\"id\": \"sistema\", \"rule\": \"Se quem chefia o governo precisa do apoio do Parlamento para continuar no cargo.\", \"label\": \"Sistema de governo\"}]}, \"prompt\": \"Separe cada caso pelo aspecto da organização do poder que ele mostra.\"}"
+        },
+        {
+          "basis": null,
+          "context": "Considere: I. Município autônomo é soberano. II. Mandato temporário e responsabilização são marcas republicanas. III. Derrota no Congresso encerra o mandato presidencial.",
+          "options": [
+            {
+              "text": "Apenas a II está correta",
+              "reason": "Prazo e responsabilização marcam a república. Teresina tem autonomia, não soberania, e uma derrota no Congresso não encerra o mandato do presidente.",
+              "isCorrect": true,
+              "picture": null
+            },
+            {
+              "text": "Apenas a I e a II estão corretas",
+              "reason": "A I está errada: Teresina governa a si mesma dentro da Constituição do Brasil. Isso é autonomia; soberano é só o país.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "As três frases estão corretas",
+              "reason": "Só a II está certa. A I troca autonomia por soberania, e a III trata a derrota no Congresso como se fosse impeachment.",
+              "isCorrect": false,
+              "picture": null
+            },
+            {
+              "text": "Apenas a II e a III estão corretas",
+              "reason": "A III confunde derrota com impeachment. Perder uma votação não tira o presidente; só um ato grave contra a Constituição, julgado em impeachment, faz isso.",
+              "isCorrect": false,
+              "picture": null
+            }
+          ],
+          "question": "Quais frases estão corretas?",
+          "kind": "check",
+          "image": null,
+          "visual": null
+        }
+      ],
+      "summary": {
+        "ideas": [
+          {
+            "text": "A federação brasileira reúne União, estados, Distrito Federal e municípios numa união que não se desfaz, nem por votação unânime.",
+            "about": "Como o território brasileiro se organiza?",
+            "label": "Federação indissolúvel",
+            "iconId": "01a1bbff-84ef-7855-9a2c-6850f6e725a8",
+            "iconNeed": {
+              "name": "puzzle piece",
+              "description": "A single interlocking puzzle piece with rounded tabs.",
+              "searchWords": ["jigsaw", "piece", "puzzle"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Estados e municípios têm autonomia, governando-se dentro da Constituição do Brasil, mas não são países soberanos.",
+            "about": "O que podem decidir estados e municípios?",
+            "label": "Autonomia sem soberania",
+            "iconId": "01a1bc02-865d-7c1d-aae1-4bf9fcc04f9a",
+            "iconNeed": {
+              "name": "house",
+              "description": "A simple small house with a pitched roof.",
+              "searchWords": ["home", "residence", "building"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Na república, o governante é eleito, tem prazo e responde pelos seus atos; na monarquia, o cargo mais alto, em regra, passa na família e dura a vida toda.",
+            "about": "Como se chega ao cargo mais alto do governo?",
+            "label": "República e monarquia",
+            "iconId": "01a1bc00-532d-7729-b04a-76e83b25d6b9",
+            "iconNeed": {
+              "name": "ballot box",
+              "description": "A ballot box with a slot in its top.",
+              "searchWords": ["election", "voting", "poll"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "No presidencialismo brasileiro, perder uma votação no Congresso não encerra o mandato; só o impeachment, por ato grave contra a Constituição, tira o presidente antes do prazo.",
+            "about": "O que pode interromper um mandato presidencial?",
+            "label": "Presidencialismo e mandato próprio",
+            "iconId": "01a1ba8d-7694-7c7e-ac72-bfb94eda2e3e",
+            "iconNeed": {
+              "name": "hourglass",
+              "description": "A classic hourglass with sand falling between its chambers.",
+              "searchWords": ["timer", "sand clock", "time"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "No parlamentarismo, o primeiro-ministro governa enquanto tiver a confiança do Parlamento e pode ser substituído se a perder.",
+            "about": "Como o Parlamento influencia quem governa?",
+            "label": "Parlamentarismo e confiança",
+            "iconId": "01a1bc08-56b5-71e0-ba91-cfa83dc9f39d",
+            "iconNeed": {
+              "name": "parliament building",
+              "description": "A neoclassical building with columns and a broad central facade.",
+              "searchWords": ["assembly", "legislature", "capitol"]
+            },
+            "iconPending": false
+          }
+        ],
+        "shape": "hub"
+      }
+    }
+  }
+]

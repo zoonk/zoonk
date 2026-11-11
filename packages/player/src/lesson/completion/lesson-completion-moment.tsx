@@ -4,7 +4,11 @@ import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { FailedMoment } from "@zoonk/learn/session/failed-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
-import { MomentHeader, MomentSaving, PendingMainAction } from "@zoonk/learn/session/moment-header";
+import {
+  MomentHeader,
+  MomentSavingTitle,
+  PendingMainAction,
+} from "@zoonk/learn/session/moment-header";
 import {
   TASK_MAIN_ACTION_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
@@ -13,6 +17,7 @@ import {
   TaskActions,
   TaskBody,
 } from "@zoonk/learn/task-layout";
+import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
@@ -23,25 +28,30 @@ import {
   useLessonPlayer,
   useLessonPlayerConfig,
 } from "../lesson-player-context";
+import { LessonCompletionPlan, SeePlanAction } from "./lesson-completion-plan";
 
 function CompletionReadouts({
   answered,
   brainPower,
   correct,
   reviewAt,
+  seconds,
 }: {
   answered: number;
   brainPower: number;
   correct: number;
   reviewAt: string | null;
+  seconds: number;
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const studied = useStudyTimeFact(seconds);
 
   return (
     <MomentReadouts
       brainPower={brainPower}
       facts={[
+        studied,
         reviewAt &&
           t("Review on {date}", {
             date: format.dateTime(new Date(reviewAt), { day: "numeric", month: "short" }),
@@ -110,33 +120,40 @@ function CompletionLinks({ pending }: { pending: boolean }) {
   );
 }
 
+function SavedReadouts({ completion, correctCount, incorrectCount }: LessonCompletionSlotProps) {
+  const { result } = completion;
+  const celebration = result ? getLessonCelebration(result) : null;
+
+  return (
+    <CompletionReadouts
+      answered={correctCount + incorrectCount}
+      brainPower={celebration?.brainPower ?? 0}
+      correct={correctCount}
+      reviewAt={result?.nextReviewAt ?? null}
+      seconds={result?.seconds ?? 0}
+    />
+  );
+}
+
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
-  const { completion, correctCount, incorrectCount, onRetry } = props;
+  const { completion, onRetry } = props;
   const t = useExtracted();
   const { buddy, slots } = useLessonPlayerConfig();
   const { result } = completion;
   const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
+  const planReveal = isSaved ? (result?.planReveal ?? null) : null;
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} title={title} />;
+    return <FailedMoment failures={completion.failures} onRetry={onRetry} />;
   }
 
   return (
     <>
       <TaskBody data-slot="lesson-completion">
-        <MomentHeader title={title}>
-          {completion.status === "saving" && <MomentSaving />}
-
-          {isSaved && (
-            <CompletionReadouts
-              answered={correctCount + incorrectCount}
-              brainPower={celebration?.brainPower ?? 0}
-              correct={correctCount}
-              reviewAt={result?.nextReviewAt ?? null}
-            />
-          )}
+        <MomentHeader title={isSaved ? title : <MomentSavingTitle />}>
+          {isSaved && <SavedReadouts {...props} />}
         </MomentHeader>
 
         {isSaved && celebration && (
@@ -148,10 +165,16 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           />
         )}
 
+        {isSaved && result?.finishedChapter && slots.finishedChapter?.(result.finishedChapter)}
+        {planReveal && <LessonCompletionPlan reveal={planReveal} />}
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 
-      {!slots.completionActions && <CompletionLinks pending={!isSaved} />}
+      {planReveal ? (
+        <SeePlanAction reveal={planReveal} />
+      ) : (
+        !slots.completionActions && <CompletionLinks pending={!isSaved} />
+      )}
     </>
   );
 }

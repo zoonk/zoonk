@@ -7,6 +7,7 @@ import { describeActivityTemplates } from "@zoonk/core/library/activities/writer
 import { toAlphabetLessonCheck } from "@zoonk/core/library/language/alphabet-lesson-check";
 import { checkWrittenLesson, toReviewedLesson } from "@zoonk/core/library/quality/code-checks";
 import { type AlphabetCheckInput } from "./alphabet-lessons";
+import { REAL_REVIEW_CASES, type RealReviewInput } from "./real-cases";
 import { scoreLessonQualityCheck } from "./scorer";
 import {
   type LessonQualityCheckExpected,
@@ -30,7 +31,6 @@ function reviewAlphabetLesson({
   return checkLessonQuality({
     ...toAlphabetLessonCheck({ learnerLanguage, lesson: alphabet, targetLanguage }),
     ...options,
-    reuse: "bounded",
     writerModel: ALPHABET_WRITER_MODEL,
   });
 }
@@ -58,26 +58,38 @@ function reviewWrittenLesson({
     lesson: toReviewedLesson({ lesson, screens }),
     model,
     reasoning,
-    reuse: "bounded",
     useFallback,
     writerModel: WRITER_MODEL,
   });
 }
 
-function reviewLesson(input: (AlphabetCheckInput | LessonQualityCheckInput) & ModelOptions) {
+function reviewLesson(
+  input: (AlphabetCheckInput | LessonQualityCheckInput | RealReviewInput) & ModelOptions,
+) {
+  if ("recorded" in input) {
+    const { recorded, ...options } = input;
+
+    return checkLessonQuality({
+      ...recorded.context,
+      lesson: recorded.lesson,
+      ...options,
+      writerModel: "anthropic/claude-opus-5.5",
+    });
+  }
+
   return "alphabet" in input ? reviewAlphabetLesson(input) : reviewWrittenLesson(input);
 }
 
 export const lessonQualityCheckTask: Task<
-  AlphabetCheckInput | LessonQualityCheckInput,
+  AlphabetCheckInput | LessonQualityCheckInput | RealReviewInput,
   LessonQualityCheckOutput,
   LessonQualityCheckExpected
 > = {
   description:
-    "Review a written or alphabet lesson as an expert from another model family: block wrong facts and sound cues, wrong answer keys, jargon before it's explained, filler, level misfits and decorative activities, and pass clean lessons",
+    "Review a written or alphabet lesson as an expert from another model family: find factual errors, wrong answer keys and contradictions, and pass lessons with style flaws",
   generate: reviewLesson,
   id: "lesson-quality-check",
   name: "Lesson Quality Check",
   score: scoreLessonQualityCheck,
-  testCases: TEST_CASES,
+  testCases: [...TEST_CASES, ...REAL_REVIEW_CASES],
 };

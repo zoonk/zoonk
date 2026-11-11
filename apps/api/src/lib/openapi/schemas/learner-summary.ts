@@ -30,6 +30,7 @@ const learnerSummaryGoalSchema = z
           "The level of the goal's next lesson in `courseId`'s course, so that course's page opens its outline there instead of at its first level; null when `courseId` is null or the goal has no lesson left",
       }),
     dailyMinutes: z.int(),
+    displayName: z.string(),
     id: uuidSchema(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),
     isSettingUp: z
@@ -138,7 +139,12 @@ const learnerSummarySchema = z
               "The active goal has a completed lesson to list (`GET /me/completed-lessons`)",
           }),
         exam: z.boolean(),
-        mindMaps: z.boolean(),
+        mindMaps: z
+          .boolean()
+          .meta({
+            description:
+              "The active goal has a Mind maps page (`GET /goals/{goalId}/mind-maps`): a learn or exam goal, from its first day; never a language's or a quick explanation",
+          }),
         readyMistakes: z
           .int()
           .min(0)
@@ -167,6 +173,7 @@ const learnerSummarySchema = z
       .array(
         z
           .object({
+            displayName: z.string(),
             id: z.string(),
             input: goalCreateInputSchema.meta({
               description:

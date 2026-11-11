@@ -70,6 +70,7 @@ export function getLessonQuestionRequestFingerprint(
     input.question,
     getContextFingerprint(input.context),
     ...(input.suggestion ? [input.suggestion] : []),
+    ...("mistakeId" in input.context && input.context.mistakeId ? [input.context.mistakeId] : []),
   ];
 
   return createHash("sha256").update(JSON.stringify(normalizedRequest)).digest("hex");

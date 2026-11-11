@@ -19,9 +19,9 @@ import systemPrompt from "./plan-edit-intent.prompt.md";
 import { formatMemory, formatToday, formatWeek } from "./plan-prompt-format";
 
 /**
- * Flash Lite got 47 of 49 plan-edit-intent cases at 1.4s p50 (7 Oct 2026). Luna applied an
- * adversarial "skip every area" request, and Haiku matched Flash Lite with a looser tail while
- * learners wait.
+ * An edit must match the request, not just its kind: on 58 cases (8 Nov 2026), Flash Lite passed
+ * every check on 55 at $1.02/1k, Haiku 5.5 on 52 and Luna on 51 (both without reasoning, at
+ * $0.22/1k and $0.12/1k), dropping focused parts and merging weekday and Saturday minutes.
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;

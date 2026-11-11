@@ -2,7 +2,7 @@ import { defineScoreCategories } from "@/lib/score-categories";
 
 export const LESSON_MARKS_SCORE_CATEGORIES = defineScoreCategories([
   {
-    expectations: `Audit each "about" line, which the learner reads BEFORE the lesson. It names the topic or the question its idea answers, in the lesson's language, in at most 60 characters. It never states or paraphrases the idea's conclusion: no rule, definition, cause, number, outcome or verdict a learner could answer the idea's question from. Score at most 5 when any line gives its idea's answer away, and at most 7 when one hints at it strongly.`,
+    expectations: `Audit each "about" line, which the learner reads BEFORE the lesson. It names the topic or the question its idea answers, in the lesson's language, aiming for 60 characters or fewer. It never states or paraphrases the idea's conclusion: no rule, definition, cause, number, outcome or verdict a learner could answer the idea's question from. Score at most 5 when any line gives its idea's answer away, and at most 7 when one hints at it strongly.`,
     id: "about",
     label: "About lines that don't give the answer away",
     weight: 30,

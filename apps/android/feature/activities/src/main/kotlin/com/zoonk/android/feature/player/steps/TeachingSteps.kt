@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
@@ -104,6 +106,7 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.richtext.rememberMathWords
 import com.zoonk.android.ui.richtext.typesetMath
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
@@ -159,7 +162,10 @@ private fun BodyText(text: String) {
     RichText(text = text, style = MaterialTheme.zoonkType.lessonText)
 }
 
-/** The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's words. */
+/**
+ * The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's words:
+ * right under them in a compact window, and in the middle of the room the screen leaves under them in a wider one.
+ */
 @Composable
 internal fun FactHookView(
     step: LessonStep,
@@ -168,13 +174,14 @@ internal fun FactHookView(
     marking: LessonMarking?,
 ) {
     val map = marking?.map?.takeIf { part.showsScreen && it.opensLesson }
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     ReadScene {
         if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
         if (part.showsScreen) BodyText(content.content.text)
         if (part.showsTurn) LessonStepVisual(content.content.visual)
-        if (map != null) OpeningMap(map)
     }
+    if (map != null) OpeningMap(map, if (wide) Modifier.layoutId(FillsView).wrapContentHeight() else Modifier)
 }
 
 @Composable
@@ -537,6 +544,7 @@ internal fun TypedAnswerView(
     actions: StepActions,
     part: StepPart,
     marking: LessonMarking?,
+    writingOptions: Boolean,
 ) {
     val typed = content.content
     val isNumber = isNumberAnswer(typed.acceptedAnswers)
@@ -557,7 +565,7 @@ internal fun TypedAnswerView(
 
         if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (part.showsTurn && !locked) {
+        if (part.showsTurn && !locked && writingOptions) {
             Column {
                 ExplainFirstButton(screen, actions)
                 if (!isNumber) {

@@ -1,8 +1,7 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
-import { isFocusLost } from "../_utils/is-focus-lost";
+import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
@@ -31,11 +30,12 @@ import {
 import { OnboardingFrame } from "./onboarding-frame";
 import { useOnboardingSection } from "./onboarding-host";
 import { OnboardingRailProvider } from "./onboarding-rail";
+import { useFocusTitleOnNewScreen } from "./use-focus-title";
 
 type StartState =
   | { error: GoalError | null; kind: "entry"; words: string }
   | { kind: "questions" }
-  | { goal: string; kind: "sending"; sentAt: number }
+  | { attemptId?: string; goal: string; kind: "sending"; sentAt: number }
   | { draft: OnboardingDraftView; kind: "draft"; sentAt?: number };
 
 function getInitialState({
@@ -54,7 +54,12 @@ function getInitialState({
   const handedOff = takesHandedOffGoal ? getHandedOffGoal() : null;
 
   return handedOff
-    ? { goal: handedOff.goal, kind: "sending", sentAt: handedOff.sentAt }
+    ? {
+        attemptId: handedOff.attemptId,
+        goal: handedOff.goal,
+        kind: "sending",
+        sentAt: handedOff.sentAt,
+      }
     : { error: null, kind: "entry", words: defaultGoal };
 }
 
@@ -141,28 +146,6 @@ function useFollowHandedOffGoal({
     void followHandedOff(controller.signal);
     return () => controller.abort();
   }, []);
-}
-
-function useFocusTitleOnNewScreen(screen: string) {
-  const lastFocusedScreen = useRef(screen);
-
-  useLayoutEffect(() => {
-    if (lastFocusedScreen.current === screen) {
-      return;
-    }
-
-    lastFocusedScreen.current = screen;
-
-    if (!isFocusLost(document.activeElement)) {
-      return;
-    }
-
-    const title = [
-      ...document.querySelectorAll<HTMLElement>('[data-slot="onboarding-title"]'),
-    ].find((heading) => heading.checkVisibility());
-
-    title?.focus({ preventScroll: true });
-  }, [screen]);
 }
 
 type GoalStartFlowProps = {
@@ -253,9 +236,9 @@ function GoalStartFlow({
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
-    onSending: ({ goal, sentAt }) => {
+    onSending: ({ attemptId, goal, sentAt }) => {
       draftActions.cancel();
-      setState({ goal, kind: "sending", sentAt });
+      setState({ attemptId, goal, kind: "sending", sentAt });
     },
     understanding: actions.understanding,
   });
@@ -314,7 +297,9 @@ function GoalStartFlow({
           <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
         )}
 
-        {state.kind === "sending" && <SendingGoal goal={state.goal} since={state.sentAt} />}
+        {state.kind === "sending" && (
+          <SendingGoal attemptId={state.attemptId} goal={state.goal} since={state.sentAt} />
+        )}
 
         {state.kind === "draft" && (
           <DraftScreen

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
@@ -64,22 +64,28 @@ function claimedFirst<TSkill extends { id: string }>({
 /** At most limit unseen quick questions, one per unsettled skill; never selects listening-only skills. */
 export async function pickSessionPlacementItems({
   areaShares,
+  blueprint: knownBlueprint,
   excludeItemIds,
   focusAreas,
   goal,
   limit,
+  listeningSkillIds,
   quickFormat,
   skills: planSkills,
   userId,
 }: AreaPriority & {
+  /** The goal's exam blueprint when the day's build already read it; without it, it's read fresh. */
+  blueprint?: Pick<ExamBlueprint, "ownerId"> | null;
   excludeItemIds: ReadonlySet<string>;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   limit: number;
+  /** The day plan's listening-only skills; without them, they're read fresh. */
+  listeningSkillIds?: ReadonlySet<string>;
   quickFormat: PlacementQuickFormat;
   skills: GoalPlan["skills"];
   userId: string;
 }): Promise<string[]> {
-  const listening = await loadListeningSkillIds(goal.id);
+  const listening = listeningSkillIds ?? (await loadListeningSkillIds(goal.id));
   const skills = planSkills.filter((skill) => !listening.has(skill.id));
   const skillIds = skills.map((skill) => skill.id);
 
@@ -87,12 +93,12 @@ export async function pickSessionPlacementItems({
     loadEvidence({ skillIds, userId }),
     // Sessions grade immediately; typed confirmation stays in placement.
     loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds, typed: false }),
-    goal.examBlueprintId
+    knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({
           select: { ownerId: true },
           where: { id: goal.examBlueprintId },
         })
-      : null,
+      : (knownBlueprint ?? null),
   ]);
 
   const answeredOnly = isOwnMaterialTest(blueprint);

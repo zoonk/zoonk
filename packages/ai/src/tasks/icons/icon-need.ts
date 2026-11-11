@@ -4,7 +4,6 @@ export type IconNeed = { description: string; name: string; searchWords: string[
 
 const MAX_NAME_WORDS = 4;
 const MAX_SEARCH_WORDS = 5;
-const MAX_DESCRIPTION_LENGTH = 200;
 const ENGLISH_WORDS = /^[a-z]+(?:['-][a-z]+)*(?: [a-z]+(?:['-][a-z]+)*)*$/u;
 const LEADING_ARTICLE = /^(?:an?|the) /u;
 
@@ -39,7 +38,7 @@ export function toIconNeed(
     ...new Set(need.searchWords.flatMap((word) => normalizeIconName(word) ?? [])),
   ].filter((word) => word !== name);
 
-  const description = replaceEmDashes(need.description.trim()).slice(0, MAX_DESCRIPTION_LENGTH);
+  const description = replaceEmDashes(need.description.trim());
 
   return {
     description: description || name,

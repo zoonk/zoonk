@@ -13,9 +13,17 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.profile.ProfileDraft
+import com.zoonk.android.feature.profile.profileQuestion
+import com.zoonk.android.feature.profile.profileSkipAll
+import com.zoonk.android.feature.profile.suggestedSupports
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingStep
+import com.zoonk.api.models.ProfileQuestion
+import com.zoonk.api.models.ProfileQuestionView
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
@@ -55,11 +63,12 @@ internal fun setupProgress(
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
     val ahead = steps.filter(::countsAsQuestion)
     val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }
-    val order = (behind + current + ahead).distinct()
-    return SetupProgress(order.indexOf(current), order.size)
+    val order = (behind + current + ahead).map { if (it.profileQuestion != null) OnboardingStep.WORK else it }.distinct()
+    return SetupProgress(order.indexOf(if (current.profileQuestion != null) OnboardingStep.WORK else current), order.size)
 }
 
-private fun countsAsQuestion(step: OnboardingStep) = step in QUESTION_SCREENS && step != OnboardingStep.PLACEMENT
+private fun countsAsQuestion(step: OnboardingStep) =
+    (step in QUESTION_SCREENS || step.profileQuestion != null) && step != OnboardingStep.PLACEMENT
 
 @Serializable
 data class SetupFlow(
@@ -67,6 +76,11 @@ data class SetupFlow(
     val current: OnboardingStep? = null,
     val history: List<OnboardingStep> = emptyList(),
 )
+
+internal fun SetupFlow.goingBack(): SetupFlow? {
+    val index = history.lastIndex
+    return if (index < 0) null else copy(current = history[index], history = history.take(index))
+}
 
 /** [step] opens from the screen shown, which its Back returns to. */
 internal fun SetupFlow.opening(step: OnboardingStep): SetupFlow = current?.let { copy(current = step, history = history + it) } ?: this
@@ -80,6 +94,7 @@ internal fun SetupFlow.arriving(
     answered: OnboardingStep,
     next: OnboardingStep,
 ): SetupFlow {
+    if (goalId != this.goalId) return SetupFlow(goalId, next)
     val trail = history + answered
     val seen = trail.indexOf(next)
     return SetupFlow(goalId, next, if (seen < 0) trail else trail.take(seen))
@@ -89,10 +104,86 @@ internal fun SetupFlow.arriving(
 internal class GoalSetupViewModel(
     private val store: OnboardingStore,
     private val drafts: SetupDrafts?,
-    handle: SavedStateHandle,
+    private val handle: SavedStateHandle,
     goalId: String,
+    revealMoment: Boolean = false,
 ) : ViewModel() {
     private var saved by handle.saved { SetupFlow(goalId) }
+    private var savedProfiles by handle.saved { emptyMap<ProfileQuestion, ProfileDraft>() }
+    private var profileDrafts by mutableStateOf(savedProfiles)
+    var supportsSuggested by mutableStateOf(false)
+        private set
+
+    fun profileDraft(
+        question: ProfileQuestionView,
+        role: String?,
+    ): ProfileDraft = profileDrafts[question.id] ?: ProfileDraft.from(question, role)
+
+    fun changeProfile(
+        question: ProfileQuestion,
+        draft: ProfileDraft,
+    ) {
+        profileDrafts = profileDrafts + (question to draft)
+        savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+    }
+
+    init {
+        if (!handle.contains("revealMoment")) handle["revealMoment"] = revealMoment
+    }
+
+    fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
+
+    fun changeAim(
+        plans: com.zoonk.android.feature.plan.PlanStore,
+        aim: String,
+        onSaved: () -> Unit,
+    ) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        viewModelScope.launch {
+            when (
+                val result =
+                    plans.change(
+                        java.util.UUID.fromString(goalId),
+                        listOf(
+                            com.zoonk.android.feature.plan.PlanOp
+                                .Aim(aim),
+                        ),
+                    )
+            ) {
+                is com.zoonk.android.data.MutationResult.Done -> {
+                    if (result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED) {
+                        store.onboardings[goalId].refresh()
+                        onSaved()
+                    } else {
+                        saveFailed = true
+                    }
+                }
+
+                com.zoonk.android.data.MutationResult.Obsolete -> {}
+
+                else -> {
+                    saveFailed = true
+                }
+            }
+            isSaving = false
+        }
+    }
+
+    fun reveal(onSaved: () -> Unit) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        viewModelScope.launch {
+            when (store.markPlanRevealed(goalId)) {
+                is WriteOutcome.Done -> onSaved()
+                WriteOutcome.Obsolete -> Unit
+                else -> saveFailed = true
+            }
+            isSaving = false
+        }
+    }
 
     var flow by mutableStateOf(saved)
         private set
@@ -146,16 +237,40 @@ internal class GoalSetupViewModel(
     fun answer(
         input: OnboardingAnswerInput,
         from: OnboardingStep? = flow.current,
-    ) {
-        val step = from ?: return
-        if (isSaving) return
+        showFailure: Boolean = true,
+        profileAnswer: ProfileDraft? = null,
+    ): Deferred<WriteOutcome<Onboarding>>? {
+        val step = from ?: return null
+        if (isSaving) return null
         isSaving = true
         clearFailure()
         val answeredGoal = goalId
-        viewModelScope.launch {
-            when (val outcome = store.answer(goalId, input)) {
+        return viewModelScope.async {
+            val outcome = store.answer(answeredGoal, input)
+            when (outcome) {
                 is WriteOutcome.Done -> {
                     drafts?.words(answeredGoal, step.value)?.remove()
+                    step.profileQuestion?.takeIf { profileAnswer == null }?.let {
+                        profileDrafts = profileDrafts - it
+                        savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+                    }
+                    if (step == OnboardingStep.CONDITIONS && profileAnswer != null && flow.current == step &&
+                        outcome.value.steps.firstOrNull() == OnboardingStep.LEARNING_SUPPORT
+                    ) {
+                        val picks = profileAnswer.picks
+                        val suggestions = suggestedSupports(picks)
+                        val support =
+                            outcome.value.profile.questions
+                                .first { it.id == ProfileQuestion.LEARNING_SUPPORT }
+                        val previous = profileDrafts[ProfileQuestion.LEARNING_SUPPORT] ?: ProfileDraft.from(support)
+                        if (suggestions.isNotEmpty() && ProfileQuestion.LEARNING_SUPPORT !in profileDrafts) {
+                            changeProfile(
+                                ProfileQuestion.LEARNING_SUPPORT,
+                                previous.copy(picks = (previous.picks + suggestions).distinct(), declined = false),
+                            )
+                            supportsSuggested = true
+                        }
+                    }
                     applyAnswer(step, outcome.value)
                 }
 
@@ -163,20 +278,32 @@ internal class GoalSetupViewModel(
 
                 else -> {
                     // Only the screen that saved shows its failure: the learner may have gone Back while it saved.
-                    if (flow.current == step) {
+                    if (showFailure && flow.current == step) {
                         saveFailed = true
                         dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
                     }
                 }
             }
             isSaving = false
+            outcome
         }
     }
 
     fun back() {
-        val previous = flow.history.lastOrNull() ?: return
+        val previous = flow.goingBack() ?: return
         clearFailure()
-        update(flow.copy(current = previous, history = flow.history.dropLast(1)))
+        update(previous)
+    }
+
+    fun skipProfiles(forever: Boolean) {
+        val saving = answer(profileSkipAll(forever)) ?: return
+        viewModelScope.launch {
+            if (saving.await() is WriteOutcome.Done) {
+                profileDrafts = emptyMap()
+                savedProfiles = emptyMap()
+                supportsSuggested = false
+            }
+        }
     }
 
     /** The time question's link to the date question: its Back returns to the time unchanged. */
@@ -205,6 +332,7 @@ internal class GoalSetupViewModel(
     ) {
         val goalId = view.goal.id.toString()
         val movedGoal = goalId != flow.goalId
+        if (step == OnboardingStep.SCHEDULE && flow.current == step) handle["revealMoment"] = true
         update(
             if (flow.current == step) {
                 flow.arriving(goalId, step, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN)
@@ -238,4 +366,4 @@ internal fun answeredScreens(view: Onboarding): List<OnboardingStep> =
     (view.goal.details["answered"] as? JsonArray)
         .orEmpty()
         .mapNotNull { answer -> OnboardingStep.entries.find { it.value == (answer as? JsonPrimitive)?.contentOrNull } }
-        .filter { it in QUESTION_SCREENS }
+        .filter { it in QUESTION_SCREENS || it.profileQuestion != null }

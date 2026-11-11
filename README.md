@@ -61,13 +61,17 @@ Codex, T3 Code, and Claude Code run `pnpm worktree:setup` when they create a wor
 
 See [worktree database setup](./packages/db/README.md#worktree-databases) for prerequisites, cleanup, and recovery.
 
+## Contributing
+
+We're not accepting pull requests from external contributors right now. See [contributing](./CONTRIBUTING.md) for how to report bugs and share ideas instead.
+
 ## Reporting bugs
 
 See [reporting bugs](./CONTRIBUTING.md#reporting-bugs). AI agents filing a report for someone: follow the [bug report guide](./.agents/skills/zoonk-bug-report/SKILL.md).
 
-## Suggesting features
+## Suggesting features and sharing feedback
 
-See [suggesting features](./CONTRIBUTING.md#suggesting-features). AI agents posting an idea for someone: follow the [feature request guide](./.agents/skills/zoonk-feature-request/SKILL.md).
+See [suggesting features and sharing feedback](./CONTRIBUTING.md#suggesting-features-and-sharing-feedback). AI agents posting an idea for someone: follow the [feature request guide](./.agents/skills/zoonk-feature-request/SKILL.md).
 
 ## Supporters
 

@@ -5,9 +5,12 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
-import { MAX_GOAL_DETAILS_LENGTH, MAX_GOAL_PROMPT_LENGTH } from "./goal-input-limits";
+import {
+  MAX_GOAL_DETAILS_LENGTH,
+  MAX_GOAL_PROMPT_LENGTH,
+  MAX_GOAL_TITLE_LENGTH,
+} from "./goal-input-limits";
 
-const MAX_TITLE_LENGTH = 120;
 const MAX_GOALS_AT_ONCE = 3;
 const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
@@ -85,6 +88,7 @@ export const goalDraftSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
+    displayName: z.string().trim().min(1).optional(),
     examBlueprintId: uuidSchema().optional(),
     kind: z.enum(GoalKind),
     language: languageSchema.meta({ description: "The language the learner studies in" }),
@@ -103,7 +107,7 @@ export const goalDraftSchema = z
           "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
       }),
     targetLanguage: languageSchema.optional().meta({ description: "The language being learned" }),
-    title: z.string().trim().min(1).max(MAX_TITLE_LENGTH),
+    title: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH),
   })
   .strict()
   .refine((goal) => goal.kind !== "language" || goal.targetLanguage !== undefined, {
@@ -140,6 +144,7 @@ export const goalUpdateInputSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
+    displayName: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH).optional(),
     status: z
       .enum(["active", "paused", "archived", "completed"])
       .optional()
@@ -155,7 +160,7 @@ export const goalUpdateInputSchema = z
           "The goal's new deadline, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE). The goal's current date, even a passed one, can be sent again",
       }),
     timeZone: timeZoneSchema.optional(),
-    title: z.string().trim().min(1).max(MAX_TITLE_LENGTH).optional(),
+    title: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH).optional(),
     weekendMinutes: dailyMinutesSchema
       .optional()
       .meta({
@@ -172,6 +177,7 @@ export const goalUpdateInputSchema = z
 export type GoalUpdateInput = z.infer<typeof goalUpdateInputSchema>;
 
 export type GoalView = {
+  displayName: string;
   createdAt: string;
   dailyMinutes: number;
   details: Record<string, unknown>;

@@ -2,11 +2,11 @@ import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { pullLessonStep } from "../quality/steps/later-review-steps";
+import { pullLessonStep } from "../review-flags/steps/pull-lesson-step";
 import {
   prepareFlaggedContentStep,
   recordFailedDrillRewriteStep,
-  rewriteFlaggedDrillsStep,
+  rewriteFlaggedDrills,
 } from "./steps/flagged-content-steps";
 
 export type FlaggedContentResult = { drillsRewritten: number; lessonsPulled: string[] };
@@ -36,16 +36,10 @@ export async function flaggedContentWorkflow({
   const [, rewritten] = await Promise.all([
     Promise.all(
       lessonsPulled.map((lessonId) =>
-        startOnce(
-          lessonContentWorkflow,
-          [{ forceReview: true, lessonId }],
-          getLessonContentHookToken(lessonId),
-        ),
+        startOnce(lessonContentWorkflow, [{ lessonId }], getLessonContentHookToken(lessonId)),
       ),
     ),
-    Promise.allSettled(
-      drillGroups.map((group) => rewriteFlaggedDrillsStep({ group, workflowRunId })),
-    ),
+    Promise.allSettled(drillGroups.map((group) => rewriteFlaggedDrills({ group, workflowRunId }))),
   ]);
 
   await Promise.all(

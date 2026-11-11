@@ -2,83 +2,39 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useExtracted } from "next-intl";
-import { useMemo } from "react";
 import {
   FeedbackExplanation,
   FeedbackNote,
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
-import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemSupport, ItemText } from "../questions/item-text";
+import { ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { useSpokenText } from "../rich-text/use-spoken-text";
-import { ChoiceQuestion, type ChoiceResult } from "../session/question-block/choice-question";
 import { QuestionMainButton } from "../session/question-block/question-actions";
-import { useVerdict } from "../session/question-block/question-feedback";
-import { QuestionTitle } from "../session/question-block/question-title";
 import {
-  TrueFalseQuestion,
-  type TrueFalseResult,
-} from "../session/question-block/true-false-question";
+  WorkedSteps,
+  useAnswerText,
+  useVerdict,
+} from "../session/question-block/question-feedback";
+import { BankPracticeQuestion } from "./bank-practice-question";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
-import { NotSureButton, useFocusAnswersOnReveal } from "./drill/drill-controls";
+import { NotSureButton } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
-import { type LessonHref, isIdeaFirst, isReadFirst, pressesCheck } from "./drill/drill-types";
+import { type LessonHref, isIdeaFirst, pressesCheck } from "./drill/drill-types";
 import {
   type MistakePracticeFeedback,
+  type PracticeAnswer,
   type PracticeStep as Step,
+  getPracticeAnswer,
   isMistakeQuestion,
 } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-function getPicks(answer: ChoiceAnswer | null): number[] {
-  if (!answer) {
-    return [];
-  }
-
-  if ("selectedIndex" in answer) {
-    return [answer.selectedIndex];
-  }
-
-  return "selectedIndexes" in answer ? answer.selectedIndexes : [];
-}
-
-function getChoiceResult({
-  answer,
-  feedback,
-}: {
-  answer: ChoiceAnswer;
-  feedback: ChoiceFeedback;
-}): ChoiceResult {
-  return { correct: getPicks(feedback.correctAnswer), picked: getPicks(answer) };
-}
-
-function getTrueFalseResult({
-  answer,
-  feedback,
-}: {
-  answer: ChoiceAnswer;
-  feedback: ChoiceFeedback;
-}): TrueFalseResult {
-  const correct = feedback.correctAnswer;
-
-  return {
-    answer: "isTrue" in answer ? { isTrue: answer.isTrue } : { dontKnow: true },
-    correct: "isTrue" in correct ? correct.isTrue : null,
-  };
-}
-
 function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton> {
   const { phase } = run.state;
-
-  if (phase.kind === "reading") {
-    return { action: "reveal", onPress: run.reveal };
-  }
 
   if (phase.kind === "feedback") {
     return { action: "continue", onPress: run.next };
@@ -91,14 +47,37 @@ function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton
     action: "check",
     busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: !answer,
-    onPress: () => (answer ? run.check(answer) : undefined),
+    onPress: () => {
+      if (phase.kind === "answerFailed") {
+        run.retry();
+        return;
+      }
+
+      if (answer) {
+        run.check(answer);
+      }
+    },
   };
 }
+
+export type LessonPracticeRenderer = (props: {
+  answer: PracticeAnswer | null;
+  disabled: boolean;
+  lesson: NonNullable<Step["lesson"]>;
+  onAnswer: (answer: PracticeAnswer | null) => void;
+  onDontKnow: () => void;
+  onCheck: (answer: PracticeAnswer) => void;
+  onContinue: () => void;
+  result: NonNullable<MistakePracticeFeedback>["lessonResult"];
+  spoken: Extract<Run["state"]["phase"], { kind: "feedback" }>["spoken"];
+  onRecord: Run["record"];
+  recordIssue: Run["recordIssue"];
+}) => React.ReactNode;
 
 export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
-  const answering = phase.kind !== "reading" && phase.kind !== "feedback";
+  const answering = phase.kind !== "feedback";
   const sender = phase.kind === "checking" ? phase.sender : null;
   const checking = sender !== null;
 
@@ -113,8 +92,29 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
         />
       )}
 
-      <QuestionMainButton {...getMainAction(run)} />
+      {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
+        <QuestionMainButton {...getMainAction(run)} />
+      )}
     </>
+  );
+}
+
+function FixedMistakesNote({ count }: { count: number }) {
+  const t = useExtracted();
+
+  if (count === 0) {
+    return null;
+  }
+
+  return (
+    <FeedbackNote>
+      {t({
+        description: '"Your notebook" is the learner\'s Mistakes notebook.',
+        message:
+          "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
+        values: { count },
+      })}
+    </FeedbackNote>
   );
 }
 
@@ -122,7 +122,11 @@ function PracticeFeedback({
   feedback,
   notSure,
   notes,
+  question,
+  trueFalseLabels,
 }: {
+  question: NonNullable<Step["question"]>;
+  trueFalseLabels: TrueFalseLabels;
   feedback: NonNullable<MistakePracticeFeedback>;
   notSure: boolean;
   notes: React.ReactNode;
@@ -130,10 +134,23 @@ function PracticeFeedback({
   const t = useExtracted();
   const verdict = useVerdict({ ...feedback, notSure });
   const fixed = feedback.fixedMistakeIds.length;
+  const answerText = useAnswerText(trueFalseLabels);
+
+  const correct =
+    !feedback.isCorrect && question.format !== "multipleChoice" && question.format !== "trueFalse"
+      ? answerText({ answer: feedback.correctAnswer, question })
+      : null;
 
   return (
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
       <FeedbackVerdict tone={verdict.tone}>{verdict.label}</FeedbackVerdict>
+
+      {correct && (
+        <FeedbackExplanation>
+          {t("Right answer: {answer}", { answer: correct })}
+        </FeedbackExplanation>
+      )}
+      <WorkedSteps steps={feedback.workedSteps} />
 
       {feedback.explanation && (
         <FeedbackExplanation>
@@ -143,35 +160,40 @@ function PracticeFeedback({
 
       {notes}
 
-      {fixed > 0 && (
-        <FeedbackNote>
-          {t({
-            description: '"Your notebook" is the learner\'s Mistakes notebook.',
-            message:
-              "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
-            values: { count: fixed },
-          })}
-        </FeedbackNote>
-      )}
+      <FixedMistakesNote count={fixed} />
     </FeedbackPanel>
   );
 }
 
-function QuestionLead({
-  graded,
-  question,
-  withTitle,
+function ReplayQuestion({
+  run,
+  step,
+  renderLesson,
 }: {
-  graded: boolean;
-  question: Step["question"];
-  withTitle: boolean;
+  run: Run;
+  step: Step;
+  renderLesson: LessonPracticeRenderer;
 }) {
-  return (
-    <>
-      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      {withTitle && <QuestionTitle muted={graded} text={question.question} />}
-    </>
-  );
+  if (!step.lesson) {
+    return null;
+  }
+
+  const { phase } = run.state;
+  const graded = phase.kind === "feedback" ? phase : null;
+
+  return renderLesson({
+    answer: getPracticeAnswer(run.state),
+    disabled: phase.kind === "checking",
+    lesson: step.lesson,
+    onAnswer: run.select,
+    onCheck: run.check,
+    onContinue: run.next,
+    onDontKnow: run.notSure,
+    onRecord: run.record,
+    recordIssue: run.recordIssue,
+    result: graded?.feedback.lessonResult ?? null,
+    spoken: graded?.spoken,
+  });
 }
 
 export function PracticeStepView({
@@ -179,19 +201,18 @@ export function PracticeStepView({
   run,
   step,
   trueFalseLabels,
+  renderLesson,
 }: {
   lessonHref: LessonHref | null;
   run: Run;
   step: Step;
   trueFalseLabels: TrueFalseLabels;
+  renderLesson: LessonPracticeRenderer;
 }) {
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
-  const spoken = useSpokenText();
   const { phase } = run.state;
   const { drill } = step.entry;
   const { question } = step;
-  const runId = useMemo(() => crypto.randomUUID(), []);
-  const answers = useFocusAnswersOnReveal(phase.kind === "reading");
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
   const lastAnswer = isMistakeQuestion(step) ? answerText(step.entry.snapshot.answer) : null;
@@ -208,10 +229,9 @@ export function PracticeStepView({
   }
 
   const graded = phase.kind === "feedback" ? phase : null;
-  const disabled = phase.kind === "checking";
   const ideaFirst = isIdeaFirst(drill);
 
-  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry || isReadFirst(drill);
+  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry;
 
   return (
     <>
@@ -219,64 +239,51 @@ export function PracticeStepView({
         <DrillIntro
           answered={graded !== null || ideaFirst}
           drill={drill}
-          lastAnswer={step.firstOfEntry || ideaFirst ? lastAnswer : null}
+          lastAnswer={lastAnswer}
           lessonHref={lessonHref}
         />
       )}
 
       {drill.timeLimitSeconds !== null && phase.kind === "answering" && (
         <DrillCountdown
-          key={question.itemId}
+          key={step.lesson?.step.id ?? question?.itemId}
           onTimeUp={run.timeUp}
           seconds={drill.timeLimitSeconds}
         />
       )}
 
-      {question.set && (
-        <ItemSetStimulus askedIn={runId} key={question.itemId} practice set={question.set} />
+      <ReplayQuestion
+        key={step.entry.mistakeId}
+        run={run}
+        step={step}
+        renderLesson={renderLesson}
+      />
+
+      {question && (
+        <BankPracticeQuestion
+          key={question.itemId}
+          question={question}
+          run={run}
+          trueFalseLabels={trueFalseLabels}
+        />
       )}
 
-      <section
-        aria-label={spoken.blocks(question.question)}
-        className="flex flex-col gap-4"
-        key={question.itemId}
-      >
-        {phase.kind === "reading" ? (
-          <QuestionLead graded={false} question={question} withTitle />
-        ) : (
-          <>
-            <QuestionLead
-              graded={graded !== null}
-              question={question}
-              withTitle={question.format !== "trueFalse"}
-            />
+      {graded && step.lesson && (
+        <>
+          <DrillAnswerNotes
+            drill={drill}
+            notSure={"dontKnow" in graded.answer}
+            timedOut={graded.sender === "timer"}
+            trap={graded.feedback.trap}
+          />
+          <FixedMistakesNote count={graded.feedback.fixedMistakeIds.length} />
+        </>
+      )}
 
-            <div ref={answers}>
-              {question.format === "trueFalse" ? (
-                <TrueFalseQuestion
-                  allowBlank={false}
-                  disabled={disabled}
-                  onChange={run.select}
-                  result={graded ? getTrueFalseResult(graded) : null}
-                  statement={question.question}
-                  trueFalseLabels={trueFalseLabels}
-                />
-              ) : (
-                <ChoiceQuestion
-                  disabled={disabled}
-                  onChange={run.select}
-                  options={question.options ?? []}
-                  result={graded ? getChoiceResult(graded) : null}
-                  select={question.select}
-                />
-              )}
-            </div>
-          </>
-        )}
-      </section>
-
-      {graded && (
+      {graded && question && (
         <PracticeFeedback
+          question={question}
+          trueFalseLabels={trueFalseLabels}
           feedback={graded.feedback}
           notSure={graded.sender !== "timer" && "dontKnow" in graded.answer}
           notes={

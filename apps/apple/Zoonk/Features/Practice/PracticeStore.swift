@@ -91,8 +91,9 @@ extension PracticeChange {
   /// Mirrors what core revalidates for each practice write.
   var domains: Set<DataDomain> {
     switch self {
-    case .answered, .patternDone: [.learnerModel, .userProgress]
-    case .finished: [.goals, .learnerModel, .userProgress]
+    case .answered: [.learnerModel, .userProgress, .userSession]
+    case .patternDone: [.learnerModel, .userProgress]
+    case .finished: [.goals, .learnerModel, .userProgress, .userSession]
     case .planChanged: [.goals, .learnerModel]
     }
   }

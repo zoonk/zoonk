@@ -38,6 +38,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     var status: Status
+    var saveFailures = 0
     var summary: LessonCompletionSummary?
     /// "I already know this" passed every check and skipped the rest.
     var testedOut = false
@@ -360,6 +361,13 @@ struct LessonPlayerState: Equatable, Sendable {
 
     let before = explanations.last { $0.0 < questionIndex }
     return (before ?? explanations.first { $0.0 > questionIndex })?.1
+  }
+
+  mutating func startReplayChecking() { phase = .checking }
+
+  mutating func showReplayResult(_ stepId: String, result: LessonStepResult) {
+    results[stepId] = result
+    phase = .feedback
   }
 
   mutating func select(_ answer: LessonAnswer?, for stepId: String) {
@@ -719,7 +727,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     guard let first = missing.first, let position = recovered.queue.firstIndex(of: first) else {
-      completion?.status = .failed
+      completionFailed()
       return
     }
 
@@ -790,6 +798,7 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   mutating func completionFailed() {
+    completion?.saveFailures += 1
     completion?.status = .failed
   }
 

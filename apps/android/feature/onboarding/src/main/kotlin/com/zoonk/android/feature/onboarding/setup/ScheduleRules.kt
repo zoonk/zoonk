@@ -89,19 +89,16 @@ internal fun findWeek(
     weekend: Int?,
 ) = StudyWeek(days, weekend)
 
-/**
- * Null while the first time is still being worked out: no other time is shown in its place. The time
- * follows the suggestion as the days change only when the screen started on one; [settled] says none
- * is coming (no date, or asking failed), so the screen's own time shows.
- */
 internal fun shownMinutes(
     fallback: Int,
     first: PlanTimeToCover?,
     found: PlanTimeToCover?,
     picked: Int?,
     settled: Boolean,
+    startsOnRecommended: Boolean = false,
 ): Int? {
     if (picked != null) return picked
+    if (startsOnRecommended) return fallback
     if (first == null) return fallback.takeIf { settled }
     val firstSuggested = suggestedMinutes(first) ?: return fallback
     return suggestedMinutes(found) ?: firstSuggested
@@ -115,12 +112,12 @@ internal fun waitsForSuggestion(
     picked: Int?,
 ): Boolean = picked == null && found == null && !failed && suggestedMinutes(first) != null
 
-/** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
 internal fun pickedMinutes(
     first: PlanTimeToCover?,
     found: PlanTimeToCover?,
     minutes: Int,
-): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
+    startsOnRecommended: Boolean = false,
+): Int? = minutes.takeUnless { !startsOnRecommended && suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
 
 /** Continue saves only a time the learner picked, or one the screen has said what it covers. */
 internal fun waitsToSave(

@@ -22,6 +22,7 @@ import { getGoalPlan } from "@zoonk/core/plans/get";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   type AnswerOutcome,
   type CreateGoalsOutcome,
@@ -30,6 +31,7 @@ import {
   type PlanOutcome,
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 
@@ -76,11 +78,14 @@ export async function createOnboardingGoalsAction(input: unknown): Promise<Creat
   return { generationId: generation?.generationId ?? null, goalId: main.id, status: "created" };
 }
 
+/** `language` is the page's: what's saved about the learner and the answers' labels are in it. */
 export async function answerOnboardingAction(
   goalId: string,
   input: unknown,
+  language: string,
 ): Promise<AnswerOutcome> {
   const parsed = onboardingAnswerInputSchema.safeParse(input);
+  const locale = getSupportedLocaleFromLanguage(language);
 
   if (!parsed.success || !isUuid(goalId)) {
     return { status: "failed" };
@@ -88,6 +93,7 @@ export async function answerOnboardingAction(
 
   const response = await postAsLearner({
     body: parsed.data,
+    locale,
     path: `/v1/goals/${encodeURIComponent(goalId)}/onboarding/answers`,
   });
 
@@ -103,7 +109,7 @@ export async function answerOnboardingAction(
     return { status: "failed" };
   }
 
-  const onboarding = await getOnboarding({ goalId: answered.goal.id });
+  const onboarding = await getOnboarding({ goalId: answered.goal.id, locale });
 
   return onboarding.status === "ready"
     ? { onboarding: onboarding.onboarding, status: "saved" }
@@ -214,7 +220,11 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     return { status: "failed" };
   }
 
-  const [result, syllabus] = await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })]);
+  const [result, syllabus, today] = await Promise.all([
+    getGoalPlan(goalId),
+    getSyllabusView({ goalId }),
+    getPlanRevealToday(goalId),
+  ]);
 
   if (result.status !== "ready") {
     return { status: "failed" };
@@ -222,6 +232,7 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
 
   return {
     plan: result.plan,
+    reveal: today.status === "ready" ? today.reveal : null,
     status: "ready",
     syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
   };

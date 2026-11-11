@@ -63,6 +63,7 @@ model Goal {
   kind                  GoalKind
   status                GoalStatus             @default(active)
   prompt                String
+  displayName           String                 @map("display_name")
   title                 String
   details               Json                   @default("{}")
   language              String                 @db.VarChar(10)
@@ -78,6 +79,16 @@ model Goal {
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   warmUpId              String?                @map("warm_up_id") @db.Uuid
   warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
+  /// The goal's run saves its exact opening and lesson once. Retries keep the same skill and
+  /// course even when the lesson's chapter teaches other skills.
+  openingSkill          Json?                  @map("opening_skill")
+  openingLessonId       String?                @map("opening_lesson_id") @db.Uuid
+  openingLesson         Lesson?                @relation(fields: [openingLessonId], references: [id], onDelete: SetNull)
+  /// The running curriculum's gate records which answers it reads, so later edits owe a rebuild.
+  curriculumQuestions   String[]               @default([]) @map("curriculum_questions")
+  /// When the learner first pressed the plan reveal's action. Until then, resume brings the reveal
+  /// back. Learners can't write it, unlike `details`.
+  planRevealedAt        DateTime?              @map("plan_revealed_at")
   /// Written only by research, never from `details`, so a brand can rely on it.
   productId             String?                @map("product_id") @db.Uuid
   product               Product?               @relation(fields: [productId], references: [id], onDelete: SetNull)
@@ -118,56 +129,57 @@ model Goal {
   @@index([examBlueprintId])
   @@index([primaryCourseId])
   @@index([warmUpId])
+  @@index([openingLessonId])
   @@index([productId])
   @@index([productReleaseId])
   @@map("goals")
 }
 
 model Plan {
-  id                  String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  goalId              String                 @unique @map("goal_id") @db.Uuid
-  goal                Goal                   @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  phases              Json                   @default("[]")
-  graph               Json                   @default("{}")
-  settings            Json                   @default("{}")
-  estimateHours       Float?                 @map("estimate_hours")
-  version             Int                    @default(1)
-  inputVersion        Int                    @default(0) @map("input_version")
+  id                  String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  goalId              String          @unique @map("goal_id") @db.Uuid
+  goal                Goal            @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  phases              Json            @default("[]")
+  graph               Json            @default("{}")
+  settings            Json            @default("{}")
+  estimateHours       Float?          @map("estimate_hours")
+  version             Int             @default(1)
+  inputVersion        Int             @default(0) @map("input_version")
   /// Marks a layout stale; never rejects plan writes.
-  sourceVersion       Int                    @default(0) @map("source_version")
+  sourceVersion       Int             @default(0) @map("source_version")
   /// Valid for the plan version it was posted with (see `readPlanSummary`); a legacy value reads as
   /// pending, never as a plan with no work.
   summary             Json?
   /// Full pre-cut skill dependencies, including aliases, for content-writer invalidation.
-  sourceSkillIds      String[]               @default([]) @map("source_skill_ids") @db.Uuid
+  sourceSkillIds      String[]        @default([]) @map("source_skill_ids") @db.Uuid
   model               String?
-  promptVersion       String?                @map("prompt_version")
-  runId               String?                @map("run_id")
-  generatedAt         DateTime?              @map("generated_at")
+  promptVersion       String?         @map("prompt_version")
+  runId               String?         @map("run_id")
+  generatedAt         DateTime?       @map("generated_at")
   /// Set when the last build gave up before it had skills, so placement and the plan offer to try
   /// again; cleared when a new run starts.
-  buildFailedAt       DateTime?              @map("build_failed_at")
+  buildFailedAt       DateTime?       @map("build_failed_at")
   /// Until then, a skill's missing placement questions are still coming.
-  placementPreparedAt DateTime?              @map("placement_prepared_at")
+  placementPreparedAt DateTime?       @map("placement_prepared_at")
   /// When the learner asked for the plan's lessons. The day reads as getting them until its
   /// preparation finds none of them to outline or the ask goes stale.
-  lessonsAskedAt      DateTime?              @map("lessons_asked_at")
+  lessonsAskedAt      DateTime?       @map("lessons_asked_at")
   /// A plan built before research read the exam's notice waits for that reading until then; past
   /// it, the reading arrives as a change the learner applies. Null when nothing is waited for.
-  noticeWaitUntil     DateTime?              @map("notice_wait_until")
+  noticeWaitUntil     DateTime?       @map("notice_wait_until")
   /// A notice recorded before then is the plan's own, so Today never shows it as news.
-  noticeWaitEndedAt   DateTime?              @map("notice_wait_ended_at")
+  noticeWaitEndedAt   DateTime?       @map("notice_wait_ended_at")
   /// 0 to 1, as of the last planning, so a new day can tell when falling behind puts the date at
   /// risk. Null for plans without a date.
-  coveredShare        Float?                 @map("covered_share")
+  coveredShare        Float?          @map("covered_share")
   /// A system refresh that would plan from the same inputs writes nothing, so opening the app with
   /// nothing new never moves the plan.
-  inputsKey           String?                @map("inputs_key")
+  inputsKey           String?         @map("inputs_key")
   /// A task leaves the list in the same transaction as its effect, so a retry or a later request
   /// finishes what's left and never repeats one.
-  setupTasks          PlanSetupTask[]        @default([]) @map("setup_tasks")
-  createdAt           DateTime               @default(now()) @map("created_at")
-  updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at")
+  setupTasks          PlanSetupTask[] @default([]) @map("setup_tasks")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at")
   items               PlanItem[]
   changes             PlanChange[]
 

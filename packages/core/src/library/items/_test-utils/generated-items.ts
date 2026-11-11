@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { type KeyCheckedItem } from "../check-item-keys";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 
+/** As `checkItemKeys` keeps them, for tests about what happens after the key check. */
+export function keyChecked<Item extends GeneratedItem>(item: Item): KeyCheckedItem<Item> {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Tests skip the solve the brand stands for.
+  return item as KeyCheckedItem<Item>;
+}
+
 export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">>) {
-  return {
+  return keyChecked({
     context: null,
     difficulty: "medium",
     fixedOrder: false,
@@ -23,7 +30,7 @@ export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">
     question: `What is half of 10? ${randomUUID()}`,
     visual: null,
     ...attrs,
-  } satisfies ItemOf<"multipleChoice">;
+  } satisfies ItemOf<"multipleChoice">);
 }
 
 export function generatedTypedItem(attrs?: Partial<ItemOf<"typed">>) {

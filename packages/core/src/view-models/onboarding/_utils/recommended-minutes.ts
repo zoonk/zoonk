@@ -1,4 +1,4 @@
-import { type GoalKind } from "@zoonk/db";
+import { type GoalKind, type LearningNeed } from "@zoonk/db/enums";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { fromIsoDate } from "../../../plans/planner/plan-calendar";
 
@@ -92,4 +92,22 @@ export function getRecommendedMinutes({
   return (
     BY_DAYS_LEFT[size].find((step) => daysLeft <= step.maxDays)?.minutes ?? WITHOUT_DEADLINE[size]
   );
+}
+
+export function getTimeQuestionDefaults({
+  courseMinutes,
+  learningNeeds,
+  ...input
+}: Parameters<typeof getRecommendedMinutes>[0] & {
+  courseMinutes?: number;
+  learningNeeds: readonly LearningNeed[];
+}): { recommendedMinutes: number; startsOnRecommended: boolean } {
+  const startsOnRecommended = courseMinutes === undefined && learningNeeds.includes("shorterDays");
+  const recommended = getRecommendedMinutes(input);
+
+  return {
+    recommendedMinutes:
+      courseMinutes ?? (startsOnRecommended ? Math.min(recommended, 10) : recommended),
+    startsOnRecommended,
+  };
 }

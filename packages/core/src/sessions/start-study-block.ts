@@ -261,6 +261,7 @@ export async function startStudyBlock({
             timing: {
               ...readBlockPayload(filledBlock).timing,
               activeAt: now.toISOString(),
+              clock: null,
               elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
             },
           },

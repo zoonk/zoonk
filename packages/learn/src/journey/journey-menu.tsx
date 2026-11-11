@@ -14,15 +14,18 @@ import {
   GraduationCapIcon,
   LibraryIcon,
   MessageCircleQuestionIcon,
+  PencilIcon,
   Share2Icon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { useContentFeedback } from "../feedback/feedback-context";
 import { LearnLink } from "../learn-link";
 import { type PlanTutor, usePlanScreen } from "../plan/plan-context";
 import { useSharePlan } from "../plan/use-share-plan";
 import { type GoalStatusChange, type GoalStatusControl, GoalStatusItems } from "./goal-actions";
+import { RenameGoalDialog } from "./rename-goal-dialog";
 
 function ReportItem() {
   const t = useExtracted("feedback");
@@ -90,54 +93,70 @@ export function JourneyMenu({
 }) {
   const t = useExtracted();
   const share = useSharePlan();
-  const { tutor } = usePlanScreen();
+  const { tutor, goal: planGoal } = usePlanScreen();
+  const [renaming, setRenaming] = useState(false);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className="size-7.5" size="icon-sm" variant="outline" />}
-      >
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("Plan options")}</span>
-      </DropdownMenuTrigger>
+    <>
+      {renaming && goal?.control.onRename && (
+        <RenameGoalDialog
+          displayName={planGoal.displayName}
+          onRename={goal.control.onRename}
+          onClose={() => setRenaming(false)}
+        />
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<Button className="size-7.5" size="icon-sm" variant="outline" />}
+        >
+          <EllipsisIcon aria-hidden="true" />
+          <span className="sr-only">{t("Plan options")}</span>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-60">
-        {examHref && (
-          <DropdownMenuItem render={<LearnLink href={examHref} />}>
-            <GraduationCapIcon aria-hidden="true" />
-            {t("About the exam")}
+        <DropdownMenuContent align="end" className="w-60">
+          {examHref && (
+            <DropdownMenuItem render={<LearnLink href={examHref} />}>
+              <GraduationCapIcon aria-hidden="true" />
+              {t("About the exam")}
+            </DropdownMenuItem>
+          )}
+
+          {courseHref && (
+            <DropdownMenuItem render={<LearnLink href={courseHref} />}>
+              <LibraryIcon aria-hidden="true" />
+              {t("See the full course")}
+            </DropdownMenuItem>
+          )}
+
+          {(examHref || courseHref) && <DropdownMenuSeparator />}
+
+          <DropdownMenuItem onClick={() => void share()}>
+            <Share2Icon aria-hidden="true" />
+            {t("Share the plan")}
           </DropdownMenuItem>
-        )}
 
-        {courseHref && (
-          <DropdownMenuItem render={<LearnLink href={courseHref} />}>
-            <LibraryIcon aria-hidden="true" />
-            {t("See the full course")}
-          </DropdownMenuItem>
-        )}
+          {tutor && <AskTutorItem tutor={tutor} />}
 
-        {(examHref || courseHref) && <DropdownMenuSeparator />}
+          <ReportItem />
 
-        <DropdownMenuItem onClick={() => void share()}>
-          <Share2Icon aria-hidden="true" />
-          {t("Share the plan")}
-        </DropdownMenuItem>
-
-        {tutor && <AskTutorItem tutor={tutor} />}
-
-        <ReportItem />
-
-        {goal && (
-          <>
-            <DropdownMenuSeparator />
-            <GoalStatusItems
-              control={goal.control}
-              onArchive={goal.onArchive}
-              onSetStatus={goal.onSetStatus}
-            />
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {goal && (
+            <>
+              <DropdownMenuSeparator />
+              {goal.control.onRename && planGoal.kind !== "explain" && (
+                <DropdownMenuItem onClick={() => setRenaming(true)}>
+                  <PencilIcon aria-hidden="true" />
+                  {t("Rename goal")}
+                </DropdownMenuItem>
+              )}
+              <GoalStatusItems
+                control={goal.control}
+                onArchive={goal.onArchive}
+                onSetStatus={goal.onSetStatus}
+              />
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

@@ -64,10 +64,12 @@ struct LevelMeter: View {
 struct HelpLimitNotice: View {
   @Environment(AppRouter.self) private var router
   let limit: HelpLimit
+  /// What ran out, where it isn't help, such as a mind map.
+  var message: String?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(limit.message)
+      Text(message ?? limit.message)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 

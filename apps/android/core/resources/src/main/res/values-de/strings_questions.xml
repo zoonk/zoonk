@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "78f8f8d4e3f126bfb114f4ccff54fc5de1990ec50fa138dbf5e82c2d9820b9c1",
   "questions_drill_open_lesson": "6bb6957d5fd122c6a30802eacc461471a9a8ac2eaf0db060a64b157aa772d037",
   "questions_drill_read_carefully": "aa7116c49fe959f5a59950d4dd8628c5005727636f509582308829729b099e52",
-  "questions_drill_reteach": "72e7e9281c7afea044bd20be75f6a11e3ee32ce3fa53bc17f7dd990fc19f1118",
-  "questions_drill_reteach_ideas": "e899e05d3726dee4c3ea3f06dfcfbe28c24e1853cda6c405e56b3b85c117aa5f",
+  "questions_drill_reteach": "36fac50cf3bb4e84963d76bb04a2b1be93533e1b39b9e4958852548ae6073144",
+  "questions_drill_reteach_ideas": "7824b3a340203b617f90df41265643603f274458d55ec9a5698fa97d487d2112",
   "questions_drill_retry": "b85920e51f2a2ccb4a3d1aa1d9d6a3f6ad5ae8633265891ef3dadc72ceb893d2",
   "questions_drill_seconds_left": "c4268a05126d2a9a8d310cff45f424a306bb6c8c25d64b8c1847dab383a2c40e",
-  "questions_drill_show_answers": "05b7f45b54d62649ec337fa2140b47a1523470e9d0ad432a056e6abf32ea11b0",
   "questions_drill_spot_the_trap": "6e91ebaff6f6938c838d9522d3f5fcd0b876db911099b394f44d9d8bebc88d3d",
   "questions_drill_start": "7c565608d2ac13fe4360f2d20b21d0368d4ffba91671fab56a83d3f58f205419",
   "questions_drill_time_left": "80b8a3ddd482cc56e2da5f723fe0809d5bfdcfc3df2e008bb52426fe52474394",
@@ -127,8 +126,8 @@
     <string name="questions_placement_note">Wir stimmen deinen Plan genauer ab. Eine falsche Antwort wird hier nicht als Fehler gespeichert.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
-    <string name="questions_drill_reteach_ideas">Erst die Erklärung, dann ein paar Fragen dazu.</string>
-    <string name="questions_drill_reteach">Ein paar Fragen zu einem Thema, bei dem du einen Fehler gemacht hast.</string>
+    <string name="questions_drill_reteach_ideas">Erst verstehen, dann anwenden.</string>
+    <string name="questions_drill_reteach">Zurück zu einem Konzept, das du noch nicht verstanden hast.</string>
     <string name="questions_drill_read_carefully">Lies jedes Wort, bevor du antwortest.</string>
     <string name="questions_drill_spot_the_trap">Hier versteckt sich eine Falle. Finde sie, bevor du antwortest.</string>
     <plurals name="questions_drill_timed">
@@ -149,7 +148,6 @@
         <item quantity="one">Noch %d Sekunde</item>
         <item quantity="other">Noch %d Sekunden</item>
     </plurals>
-    <string name="questions_drill_show_answers">Ich habe alles gelesen. Antworten anzeigen</string>
     <string name="questions_drill_not_sure">Ich bin mir nicht sicher</string>
     <string name="questions_drill_open_lesson">Lektion noch einmal ansehen</string>
 </resources>

@@ -29,6 +29,7 @@ protocol PlanAPIClient: Sendable {
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
+  func rename(token: String, goalId: String, displayName: String) async throws -> Bool
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome
   /// Nil when the plan can't take the change.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
@@ -198,6 +199,18 @@ struct PlanAPI: PlanAPIClient {
       case .unauthorized: throw APIError.unauthorized
       case .tooManyRequests: return .limitReached
       default: return .failed
+      }
+    }
+  }
+
+  func rename(token: String, goalId: String, displayName: String) async throws -> Bool {
+    try await clients.perform(token: token) { client in
+      switch try await client.updateGoal(
+        path: .init(goalId: goalId), body: .json(.init(displayName: displayName)))
+      {
+      case .ok: return true
+      case .unauthorized: throw APIError.unauthorized
+      default: return false
       }
     }
   }

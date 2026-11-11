@@ -1,0 +1,278 @@
+{
+  "date": "2026-11-08",
+  "budgetUsd": 3,
+  "spentUsd": 1.5739360000000002,
+  "promptChanged": false,
+  "expectationsChanged": false,
+  "runs": [
+    {
+      "model": "anthropic/claude-sonnet-5.5",
+      "costUsd": 0.050496,
+      "cases": [
+        {
+          "id": "pt-ru-alphabet-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.015742,
+          "latencyMs": 6662.512125
+        },
+        {
+          "id": "pt-ru-alphabet-silent-h-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.018052,
+          "latencyMs": 8011.948125000001
+        },
+        {
+          "id": "en-ko-alphabet-book-vowel-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.016702,
+          "latencyMs": 7405.1460830000005
+        }
+      ]
+    },
+    {
+      "model": "openai/gpt-6-astra",
+      "costUsd": 1.5234400000000001,
+      "cases": [
+        {
+          "id": "en-tax-deadlines-sourced-clean-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.042550000000000004,
+          "latencyMs": 8528.769333
+        },
+        {
+          "id": "pt-finalidades-oab-exam-prep-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.056310000000000006,
+          "latencyMs": 6003.246875
+        },
+        {
+          "id": "pt-finalidades-oab-exam-prep-absurd-option-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.08241000000000001,
+          "latencyMs": 21242.10175
+        },
+        {
+          "id": "pt-estabilidade-sourced-clean-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.05951000000000001,
+          "latencyMs": 15572.149500000001
+        },
+        {
+          "id": "en-tax-deadlines-contradicts-source-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.04199,
+          "latencyMs": 5931.558958
+        },
+        {
+          "id": "pt-estabilidade-contradicts-source-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.05885,
+          "latencyMs": 15938.925625000002
+        },
+        {
+          "id": "en-temperature-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.04682,
+          "latencyMs": 3040.646917
+        },
+        {
+          "id": "en-doorways-picture-options-clean-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.042690000000000006,
+          "latencyMs": 10614.996707999999
+        },
+        {
+          "id": "en-temperature-numbered-picture-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.04762,
+          "latencyMs": 3546.3662500000028
+        },
+        {
+          "id": "pt-regra-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.05548000000000001,
+          "latencyMs": 4044.9476250000007
+        },
+        {
+          "id": "en-temperature-wrong-math-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.04963000000000001,
+          "latencyMs": 4005.5274999999997
+        },
+        {
+          "id": "en-temperature-filler-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.053130000000000004,
+          "latencyMs": 7780.17025
+        },
+        {
+          "id": "en-temperature-decorative-activity-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.046790000000000005,
+          "latencyMs": 3449.619458
+        },
+        {
+          "id": "pt-regra-jargon-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.05344,
+          "latencyMs": 3987.7147919999998
+        },
+        {
+          "id": "pt-regra-framed-around-one-exam-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.06667000000000001,
+          "latencyMs": 10998.262625
+        },
+        {
+          "id": "pt-regra-case-before-shown-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.05867000000000001,
+          "latencyMs": 6290.215833
+        },
+        {
+          "id": "pt-regra-real-brand-failure-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.058440000000000006,
+          "latencyMs": 5737.844209
+        },
+        {
+          "id": "pt-regra-wrong-answer-key-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.060640000000000006,
+          "latencyMs": 6147.620041
+        },
+        {
+          "id": "pt-eletron-formula-in-overview-1",
+          "expected": "pass",
+          "predicted": "fail",
+          "costUsd": 0.06205000000000001,
+          "latencyMs": 12830.775292
+        },
+        {
+          "id": "pt-regra-worked-example-trap-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.06228,
+          "latencyMs": 7179.217625000001
+        },
+        {
+          "id": "en-temperature-mismatched-reason-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.049370000000000004,
+          "latencyMs": 3432.3352920000007
+        },
+        {
+          "id": "en-temperature-data-disagrees-with-options-1",
+          "expected": "fail",
+          "predicted": "pass",
+          "costUsd": 0.04828,
+          "latencyMs": 3795.631042
+        },
+        {
+          "id": "pt-regra-wrong-summary-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.059390000000000005,
+          "latencyMs": 5747.806208
+        },
+        {
+          "id": "pt-regra-over-broad-summary-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.061380000000000004,
+          "latencyMs": 5743.901083
+        },
+        {
+          "id": "en-temperature-two-right-options-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.052680000000000005,
+          "latencyMs": 5510.716916
+        },
+        {
+          "id": "pt-eletron-wrong-reason-on-right-option-1",
+          "expected": "fail",
+          "predicted": "fail",
+          "costUsd": 0.05069,
+          "latencyMs": 4582.133207999999
+        },
+        {
+          "id": "en-temperature-chapter-siblings-clean-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.04743000000000001,
+          "latencyMs": 2625.6017919999995
+        },
+        {
+          "id": "en-temperature-repeats-earlier-lesson-1",
+          "expected": "pass",
+          "predicted": "pass",
+          "costUsd": 0.04825,
+          "latencyMs": 3141.029292
+        }
+      ]
+    }
+  ],
+  "assessments": [
+    {
+      "caseId": "en-tax-deadlines-sourced-clean",
+      "cause": "case",
+      "finding": "The feedback says paying when filing necessarily means paying late, although Mia could file before April 15. The pass control contains an overbroad reason."
+    },
+    {
+      "caseId": "pt-finalidades-oab-exam-prep-absurd-option",
+      "cause": "prompt",
+      "finding": "The reviewer objects to second-person feedback about an interpretation attributed to Murilo. The feedback addresses the learner who selected that interpretation; this does not make it contradictory. The flag is on an unchanged screen, not the planted absurd distractor."
+    },
+    {
+      "caseId": "pt-estabilidade-sourced-clean",
+      "cause": "case",
+      "finding": "The control says every concurso appointment qualifies and starts the clock at posse rather than effective service. Its source requires a permanent post and effective service.",
+      "source": "https://portal.stf.jus.br/constituicao-supremo/artigo.asp?abrirArtigo=41&abrirBase=CF"
+    },
+    {
+      "caseId": "en-doorways-picture-options-clean",
+      "cause": "case",
+      "finding": "The hook attributes the whole building structure to doorway arches and treats arch shape as a reliable construction date. These are factual overstatements in a pass control.",
+      "source": "https://www.metmuseum.org/fr/essays/gothic-art"
+    },
+    {
+      "caseId": "pt-regra-framed-around-one-exam",
+      "cause": "case",
+      "finding": "The supposed scope-only control also invents an official-sounding appeal instruction, a notice subsection and an email submission route. This is not a clean control for exam-specific wording; the exact real-world notice was not independently located."
+    },
+    {
+      "caseId": "pt-eletron-formula-in-overview",
+      "cause": "case",
+      "finding": "The difficulty-only control presents a hydrogen-specific one-electron energy expression without limiting it to hydrogen; the reviewer flags that factual generalization, not the difficulty.",
+      "source": "https://openstax.org/books/chemistry-atoms-first/pages/3-2-the-bohr-model"
+    },
+    {
+      "caseId": "en-temperature-data-disagrees-with-options",
+      "cause": "case",
+      "finding": "Expected fail, but the fifth station E ends below zero. A is still the sole correct answer, so omitting E as an option does not make the question unanswerable. An empty review is appropriate."
+    }
+  ]
+}

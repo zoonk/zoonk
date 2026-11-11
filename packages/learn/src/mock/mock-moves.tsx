@@ -42,7 +42,7 @@ export function MovesNote() {
   const Icon = reviewing ? RotateCcwIcon : StepForwardIcon;
 
   return (
-    <p className="text-balance">
+    <p className="text-pretty">
       <Icon aria-hidden="true" className="mr-1.5 inline size-3.5 align-[-0.1875rem]" />
       {line}
     </p>

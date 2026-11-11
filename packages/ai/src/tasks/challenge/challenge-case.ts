@@ -3,18 +3,24 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import {
+  type Reasoning,
+  type ServedSpeed,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import systemPrompt from "./challenge-case.prompt.md";
 
 /**
- * Terra scored a little above Sol on the challenge-case eval at under half the cost (30 Oct 2026).
- * A challenge is written once per chapter and shared, so quality outweighs cost.
+ * A challenge is written once per chapter and shared, so quality outweighs cost: on 6 cases (8 Nov
+ * 2026), Sol scored 8.83 (EN 8.97, PT 8.68) at $55.13/1k against Terra's 8.38 at $23.87/1k. Sonnet
+ * and Opus reject this schema as too large, so Argon (7.66) is only a below-floor outage route.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const defaultModel = "openai/gpt-6.1-sol";
+const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-4-argon"] as const;
 
 /** A work case feels like a real job; a "What if" is a light scenario for overview courses. */
 type ChallengeCaseVariant = "whatIf" | "work";
@@ -98,6 +104,7 @@ export type ChallengeCaseParams = {
   useFallback?: boolean;
   reasoning?: Reasoning;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   analytics?: AiGenerationContext;
 };
 
@@ -126,9 +133,24 @@ ${formatLocalContext(params.language)}
 
 /** Code checks the decision graph afterwards; `problems` sends failures back for one more try. */
 export async function generateChallengeCase(params: ChallengeCaseParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning,
+    serviceTier,
+    speed,
+    useFallback = true,
+  } = params;
+
   const userPrompt = buildUserPrompt(params);
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    serviceTier,
+    speed,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

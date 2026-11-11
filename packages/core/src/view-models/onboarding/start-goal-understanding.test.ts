@@ -7,6 +7,7 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
@@ -55,6 +56,8 @@ describe(startGoalUnderstanding, () => {
       userId: user.id,
     });
 
+    const flush = runDeferredWork();
+
     const result = await startGoalUnderstanding({
       goal,
       language: "en",
@@ -65,10 +68,17 @@ describe(startGoalUnderstanding, () => {
     await expect(countAssists(user.id)).resolves.toBe(0);
     expect(result.status).toBe("understood");
 
+    await flush();
+
     expect(analytics.trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "Goal Classified",
-        properties: { duration_ms: expect.any(Number), result: "learn" },
+        properties: {
+          at: expect.any(Number),
+          duration_ms: expect.any(Number),
+          onboarding_id: expect.any(String),
+          result: "learn",
+        },
       }),
     );
 

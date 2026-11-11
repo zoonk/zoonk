@@ -49,7 +49,7 @@ sealed interface TodayRead {
     /** The plan is still being built after onboarding. */
     data class Preparing(
         val goalId: UUID,
-        val title: String,
+        val displayName: String,
     ) : TodayRead
 
     /** Paused, finished or archived. */
@@ -270,7 +270,7 @@ suspend fun read(
                 e.details
                     .decode<PreparingDetails>()
                     ?.goal
-                    ?.let { TodayRead.Preparing(it.id, it.title) } ?: throw e
+                    ?.let { TodayRead.Preparing(it.id, it.displayName) } ?: throw e
             }
 
             else -> {
@@ -301,5 +301,5 @@ private data class PreparingDetails(
 @Serializable
 private data class PreparingGoal(
     @Contextual val id: UUID,
-    val title: String,
+    val displayName: String,
 )

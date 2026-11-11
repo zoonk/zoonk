@@ -29,7 +29,8 @@ struct TestOutScreen: View {
   @State private var isWriting = false
   @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
-  @State private var submitFailed = false
+  @State private var submitFailures = 0
+  @State private var showsSaveReport = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
   @State private var undo: UndoState = .idle
 
@@ -74,8 +75,9 @@ struct TestOutScreen: View {
           case .loaded(.test(let test)):
             GradedAtEndRun(
               questions: test.questions, labels: test.trueFalseLabels, draftKey: draftKey,
-              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failed: submitFailed
-            ) { answers in Task { await submit(answers) } }
+              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failures: submitFailures,
+              onReport: { showsSaveReport = true },
+              onFinish: { answers in Task { await submit(answers) } })
           }
         }
       }
@@ -93,6 +95,9 @@ struct TestOutScreen: View {
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
     .clearsRefusal { writeFailure = nil }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "test-out", reportType: .saveFailure), isReport: true)
   }
 
   private func preparing(failure: (any Error)?) -> some View {
@@ -134,6 +139,11 @@ struct TestOutScreen: View {
             comment: "A test-out's right answers out of its questions.")
         ],
         day: DayResult(result))
+
+      // Undo puts the chapter's lessons back, so it isn't finished anymore.
+      if let chapter = result.finishedChapter?.value1, undo != .done {
+        FinishedChapterSection(chapter: chapter)
+      }
     } response: {
       if undo == .failed {
         FailureLine(
@@ -205,7 +215,8 @@ struct TestOutScreen: View {
         result = .init(
           ceremony: nil, certificates: [], reached: .init(energy: nil, level: nil),
           changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
-          lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
+          finishedChapter: nil, lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed,
+          total: recorded.total)
         undo = recorded.undone ? .done : .idle
         openResult = Self.address(chapterId: chapterId, resultId: resultId)
         return
@@ -265,7 +276,6 @@ struct TestOutScreen: View {
     guard let goalId else { return }
 
     isSubmitting = true
-    submitFailed = false
     defer { isSubmitting = false }
 
     let chapterId = chapterId
@@ -281,12 +291,13 @@ struct TestOutScreen: View {
       })
     {
     case .done(let graded):
+      submitFailures = 0
       PracticeAnswerDraft.clear(key: draftKey)
       if let graded { result = graded } else { load = .loaded(.nothingToSkip) }
     case .refused(.plusRequired):
       load = .loaded(.plusRequired)
     case .refused, .failed:
-      submitFailed = true
+      submitFailures += 1
     case .obsolete:
       break
     }

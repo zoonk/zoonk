@@ -3,21 +3,18 @@ import { defineScoreCategories } from "@/lib/score-categories";
 import { type TaskScorer } from "@/lib/types";
 import {
   type CourseDetails,
-  PAGE_LISTS,
+  PAGE_LIST_ITEMS,
   SUBJECT_CATEGORIES,
 } from "@zoonk/ai/tasks/courses/details";
 
 export type CourseDetailsExpected = { categories?: string[] };
 
 const MAX_DESCRIPTION_SENTENCES = 3;
-const MAX_DESCRIPTION_LENGTH = 420;
-const MAX_PROMISE_LENGTH = 160;
 const MAX_CATEGORIES = 2;
 
-type ListField = keyof typeof PAGE_LISTS;
+type ListField = keyof typeof PAGE_LIST_ITEMS;
 
 const SENTENCE_END = /[.!?](?:\s|$)/gu;
-const WORD_GAP = /\s+/u;
 
 function parseDetails(output: string): CourseDetails | null {
   try {
@@ -32,14 +29,10 @@ function countSentences(text: string): number {
 }
 
 function checkList({ details, field }: { details: CourseDetails; field: ListField }): string[] {
-  const { items, words } = PAGE_LISTS[field];
+  const items = PAGE_LIST_ITEMS[field];
   const list = details.landingPage[field];
-  const long = list.filter((item) => item.split(WORD_GAP).length > words);
 
-  return [
-    list.length !== items && `${field} has ${list.length} items; it needs ${items}.`,
-    long.length > 0 && `${field} items over ${words} words: ${long.join(" | ")}.`,
-  ].filter((problem) => typeof problem === "string");
+  return list.length === items ? [] : [`${field} has ${list.length} items; it needs ${items}.`];
 }
 
 function checkCategories({
@@ -73,10 +66,8 @@ function checkText(details: CourseDetails): string[] {
   return [
     (sentences === 0 || sentences > MAX_DESCRIPTION_SENTENCES) &&
       `The description has ${sentences} sentences; it needs 1 to 3.`,
-    description.length > MAX_DESCRIPTION_LENGTH &&
-      `The description is ${description.length} characters; keep it under ${MAX_DESCRIPTION_LENGTH}.`,
-    (!promise || promise.length > MAX_PROMISE_LENGTH || countSentences(promise) > 1) &&
-      `The promise (valueProposition) is missing or longer than one short sentence of ${MAX_PROMISE_LENGTH} characters.`,
+    (!promise || countSentences(promise) > 1) &&
+      "The promise (valueProposition) is missing or longer than one sentence.",
     allText.includes("—") && "The copy uses an em dash.",
   ].filter((problem) => typeof problem === "string");
 }

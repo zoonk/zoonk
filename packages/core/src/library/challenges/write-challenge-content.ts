@@ -50,12 +50,14 @@ export async function writeChallengeLessonContent({
   lessonId,
   model,
   serviceTier,
+  speed,
   workflowRunId,
 }: {
   analytics?: ChallengeCaseParams["analytics"];
   lessonId: string;
   model?: string;
   serviceTier?: ChallengeCaseParams["serviceTier"];
+  speed?: ChallengeCaseParams["speed"];
   workflowRunId: string;
 }): Promise<WriteChallengeResult> {
   const state = await loadChallengeInputs({ lessonId, workflowRunId });
@@ -69,6 +71,7 @@ export async function writeChallengeLessonContent({
     inputs: state.inputs,
     model,
     serviceTier,
+    speed,
   });
 
   if (!result.content) {

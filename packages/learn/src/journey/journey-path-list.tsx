@@ -201,7 +201,7 @@ function FinishItem() {
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
         <span className={PATH_ROW_BODY_CLASS}>
-          <span className="font-medium">{goal.title}</span>
+          <span className="font-medium">{goal.displayName}</span>
           {finish && (
             <PlanDateText
               className="text-muted-foreground text-xs"

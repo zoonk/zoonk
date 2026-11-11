@@ -8,9 +8,9 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
-  private var goalTitle: String? {
+  private var goalName: String? {
     summary.summary.value.flatMap { learner in
-      learner.goals.first { $0.id == learner.activeGoalID }?.title
+      learner.goals.first { $0.id == learner.activeGoalID }?.displayName
     }
   }
 
@@ -35,13 +35,16 @@ struct MistakesScreen: View {
       let showsFixedHere = showsFixed && !isBeside
       let shown = showsFixedHere ? fixed : open
 
-      ZoonkList {
+      ZoonkList(
+        readableWidth: isBeside ? nil : PracticeLayout.readableWidth,
+        alignment: isBeside ? .center : .leading
+      ) {
         if isBeside {
           listTitle(fixed: false, counts: open.value?.counts)
         }
 
         Section {
-          PageHeader(title, eyebrow: goalTitle.map { Text(verbatim: $0) })
+          PageHeader(title, eyebrow: goalName.map { Text(verbatim: $0) })
           header(shown.value)
         }
 
@@ -55,7 +58,6 @@ struct MistakesScreen: View {
 
         MistakeListSections(resource: shown, goalId: goalId, fixed: showsFixedHere)
       }
-      .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
       .loads(shown)
     }
 

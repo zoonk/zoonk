@@ -10,6 +10,7 @@ import {
   getSkillPrerequisiteRows,
   toIdKey,
 } from "../../library/_utils/shared-rows";
+import { readSkillSurvivors } from "../facts/skill-survivors";
 import { type ItemSkillRows } from "./goal-plan-projection";
 import { loadSkillSurvivors } from "./update-learner-skill";
 
@@ -117,12 +118,16 @@ export function readItemSkillRows(
     : loadItemSkillRows({ ...input, tx: from });
 }
 
-/** Resolve merges fresh: another app's invalidation cannot expire retained mappings here. */
 export async function readSurvivorOf(
   skillIds: readonly string[],
   from: LibrarySource,
 ): Promise<(skillId: string) => string> {
-  return loadSkillSurvivors(skillIds, from === "shared" ? prisma : from);
+  if (from !== "shared") {
+    return loadSkillSurvivors(skillIds, from);
+  }
+
+  const survivors = new Map(await readSkillSurvivors(toIdKey(skillIds)));
+  return (skillId) => survivors.get(skillId) ?? skillId;
 }
 
 export function readChapterTitles(chapterIds: readonly string[], from: LibrarySource) {
@@ -147,7 +152,7 @@ export function readSkillLevels(skillIds: readonly string[], from: LibrarySource
   return from === "shared"
     ? getSkillLevelRows(toIdKey(skillIds))
     : from.skill.findMany({
-        select: { id: true, level: true },
+        select: { cefrLevel: true, id: true, level: true },
         where: { id: { in: [...skillIds] } },
       });
 }

@@ -24,23 +24,38 @@ extension SpokenAnswerRecording {
 
 private struct SpokenStepRecorder: View {
   let context: SpokenAnswerContext
+  @State private var held: (audio: Data, target: SpokenMistakeTarget)?
 
   var body: some View {
     if !context.isLocked {
-      VoiceAnswerRecorder(
+      VoiceAnswerRecorder<Components.Schemas.SpokenAnswerGrade>(
         grade: { voice, recording in
           guard await context.waitForRun() else { return .failed }
+          if let target = context.mistake, held?.audio != recording.audio {
+            held = (
+              recording.audio,
+              SpokenMistakeTarget(
+                mistakeId: target.mistakeId,
+                attemptId: UUID().uuidString.lowercased(), goalId: target.goalId,
+                answerIds: target.answerIds,
+                questionStartedAt: target.questionStartedAt,
+                practiceDurationMs: Int(Date.now.timeIntervalSince(target.questionStartedAt) * 1000)
+              )
+            )
+          }
           return await voice.gradeSpokenStep(
-            stepId: context.stepId, studySessionId: context.studySessionId(), recording: recording)
+            stepId: context.stepId, studySessionId: context.studySessionId(), recording: recording,
+            mistake: held?.target)
         },
         onGraded: { grade in
+          if let practice = grade.practice { context.onPracticeGraded?(practice.value1) }
           context.onGraded(
             SpokenAnswerVerdict(
               isCorrect: grade.isCorrect, score: grade.score, transcript: grade.transcript,
               feedback: grade.explanation, heard: SpokenHeard(grade)))
         },
         asksToSpeak: false,
-        onBlocked: context.onBlocked)
+        onBlocked: context.onBlocked, onCheckingChanged: context.onCheckingChanged)
     }
   }
 }

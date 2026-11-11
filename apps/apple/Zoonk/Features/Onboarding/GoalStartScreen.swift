@@ -111,6 +111,8 @@ private struct GoalStartFlow: View {
   @State private var draft: DraftState?
   @State private var goalID: String?
   @State private var sending: Task<Void, Never>?
+  /// Each sending of the goal's words, which joins its events before the goal exists.
+  @State private var attemptID: String?
   @State private var material: [AttachedSource] = []
   @State private var intent: MaterialIntent?
   @State private var materialDraft = MaterialDraft()
@@ -233,7 +235,7 @@ private struct GoalStartFlow: View {
         await open(id)
       }
     case .sending(let goal):
-      UnderstandingWaitView(goal: goal, generationID: nil) { true }
+      UnderstandingWaitView(goal: goal, generationID: nil, attemptID: attemptID) { true }
     case .draft(let value, let sentHere):
       DraftView(
         draft: value,
@@ -277,7 +279,10 @@ private struct GoalStartFlow: View {
   }
 
   private func send(_ goal: String) {
-    UsageAnalytics.track(.goalTyped(hasAttachment: !material.isEmpty))
+    let attempt = UUID().uuidString.lowercased()
+    attemptID = attempt
+    UsageAnalytics.track(
+      .goalTyped(hasAttachment: !material.isEmpty, attemptID: attempt, submittedAt: .now))
     sending?.cancel()
     words = goal
     error = nil
@@ -290,6 +295,10 @@ private struct GoalStartFlow: View {
     sending = Task {
       do {
         let value = try await onboarding.understand(goal: goal)
+        // A late reply still links an attempt the learner left.
+        UsageAnalytics.track(
+          .onboardingProgressed(
+            .attemptLinked(attemptID: attempt, onboardingID: value.id), at: .now))
 
         guard !Task.isCancelled else {
           return
@@ -330,7 +339,8 @@ private struct DraftView: View {
     switch draft.status {
     case .understanding:
       UnderstandingWaitView(
-        goal: draft.prompt, generationID: draft.generationId, readResult: reload)
+        goal: draft.prompt, generationID: draft.generationId, onboardingID: draft.id,
+        readResult: reload)
     case .failed:
       failed
     case .understood:
@@ -415,6 +425,8 @@ private struct UnderstandingWaitView: View {
   let goal: String
   /// The run reading them; nil right after sending, before the draft exists.
   let generationID: String?
+  var attemptID: String?
+  var onboardingID: String?
   let readResult: () async -> Bool
 
   var body: some View {
@@ -430,7 +442,11 @@ private struct UnderstandingWaitView: View {
       readResult: readResult,
       leading: {
         TypedGoalSection(goal: goal)
-      })
+      }
+    )
+    .measuresWait(
+      surface: "understanding", contentKind: "curriculum", attemptID: attemptID,
+      onboardingID: onboardingID)
   }
 }
 

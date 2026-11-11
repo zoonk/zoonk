@@ -35,7 +35,7 @@ export function useStepGrading({
   ensureRun,
   hold,
   keepGrade,
-  resendHeld,
+  resendUnsaved,
   state,
 }: {
   adapters: LessonPlayerAdapters;
@@ -43,7 +43,7 @@ export function useStepGrading({
   ensureRun: () => Promise<{ runId: string } | null>;
   hold: (check: Omit<UnsentAnswer, "runId">) => void;
   keepGrade: <T>(grade: { request: Promise<T>; stepId: string }) => Promise<T>;
-  resendHeld: () => Promise<boolean>;
+  resendUnsaved: () => Promise<boolean>;
   state: LessonPlayerState;
 }) {
   const pendingRef = useRef(new Map<string, PendingAttempt>());
@@ -107,13 +107,13 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
       dispatch({ stepId: step.id, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.helped, state.stepStartedAt],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
   const submitSpokenAnswer = useCallback(
@@ -152,7 +152,7 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
@@ -166,7 +166,7 @@ export function useStepGrading({
 
       dispatch({ issue, stepId, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.phase, state.steps],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.phase, state.steps],
   );
 
   return { gradeOnServer, recordInBackground, submitSpokenAnswer };

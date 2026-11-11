@@ -163,9 +163,12 @@ function useAnswerMode({
   result,
   step,
 }: Pick<LessonStepViewProps<StepOf<"spokenAnswer">>, "answer" | "onAnswer" | "result" | "step">) {
-  const { adapters } = useLessonPlayerConfig();
+  const { adapters, canRecordSpokenAnswer } = useLessonPlayerConfig();
   const canRecord = useCanRecord();
-  const canSpeak = Boolean(adapters.gradeSpokenAnswer) && canRecord;
+
+  const canSpeak =
+    (Boolean(adapters.gradeSpokenAnswer) || Boolean(canRecordSpokenAnswer)) && canRecord;
+
   const canListen = step.listening !== null;
   const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
   const [micBlocked, setMicBlocked] = useState(false);

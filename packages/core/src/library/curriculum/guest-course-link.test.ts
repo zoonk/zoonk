@@ -98,6 +98,7 @@ async function waitForBlocked({ count = 1, pid }: { count?: number; pid: number 
 function goalData(userId: string) {
   return {
     dailyMinutes: 20,
+    displayName: "Approvals",
     kind: "learn" as const,
     language: "en",
     prompt: "Learn internal approvals",

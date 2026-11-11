@@ -12,7 +12,7 @@ import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { fixMistakesAnsweredRight } from "../mistakes/fix-mistakes";
-import { type MistakeSnapshot } from "../mistakes/mistake-snapshot";
+import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { recordMistake } from "../mistakes/record-mistake";
 import { createLearnerAttempt } from "./_utils/create-learner-attempt";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
@@ -40,6 +40,7 @@ export type LearnerAnswer = {
   mockExamId?: string | null;
   /** The notebook entry a practice drill targets; a right answer on a later day fixes it. */
   practicedMistakeId?: string | null;
+  practiceQuestion?: { kind: "item" | "lesson"; id: string };
   purpose: LearnerAnswerPurpose;
   skillId?: string | null;
   stepId?: string | null;
@@ -133,7 +134,10 @@ function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }:
     {
       answeredAt,
       itemId,
+      practiceQuestion: input.practiceQuestion,
       practicedMistakeId: input.practicedMistakeId,
+      questionText: input.mistake?.snapshot.question,
+      replay: input.mistake?.snapshot.replay,
       stepId,
       timeZone: input.timeZone,
       userId: input.userId,

@@ -82,15 +82,15 @@ function IdeaScreen({
         <section className="flex flex-col items-start gap-5">
           <div className="flex flex-col gap-1.5">
             <h2 className="text-title">{lesson.title}</h2>
-            <p className="text-muted-foreground text-balance">{drillLine(drill)}</p>
+            <p className="text-muted-foreground text-pretty">{drillLine(drill)}</p>
           </div>
 
           <ol className="flex w-full flex-col leading-relaxed [&>li+li]:border-t">
             {lesson.ideas.map((idea, index) => (
-              <li className="flex gap-3 py-2.75" key={idea}>
+              <li className="flex items-baseline gap-3 py-2.75" key={idea}>
                 <span
                   aria-hidden="true"
-                  className="text-faint w-4 shrink-0 font-mono text-sm leading-relaxed tabular-nums"
+                  className="text-faint w-4 shrink-0 font-mono text-sm tabular-nums"
                 >
                   {index + 1}
                 </span>

@@ -252,7 +252,6 @@ msgstr "Examen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Expression orale"
@@ -314,6 +313,14 @@ msgstr "Paramètres"
 msgctxt "itPgxd"
 msgid "Profile"
 msgstr "Profil"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "À propos de toi"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
@@ -1008,9 +1015,9 @@ msgid "Start a new goal, or pick another one above."
 msgstr "Commence un nouvel objectif ou choisis-en un autre ci-dessus."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
-msgstr "Tu as terminé {goal}."
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
+msgstr "Tu as atteint ton objectif {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
@@ -1023,9 +1030,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "Rien n’est prévu tant que tu ne reprends pas cet objectif."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "{goal} est en pause."
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "Ton objectif {goal} est en pause."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1038,6 +1045,26 @@ msgid "Paused"
 msgstr "En pause"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Voir ton plan"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "Jette-y un œil avant de commencer."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "Ton plan {goal} est prêt."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "Plan prêt"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "Continuer la configuration"
@@ -1048,9 +1075,9 @@ msgid "It's built from what you tell us."
 msgstr "Il est construit à partir de tes réponses."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "Il manque quelques réponses pour préparer ton plan pour {goal}."
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "Il manque encore quelques réponses pour ton plan {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"
@@ -1284,6 +1311,11 @@ msgstr "Enregistrer"
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Enregistré."
+
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton compagnon. Tout est facultatif."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx
@@ -3479,21 +3511,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "et {count} de plus"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Écoute"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Lecture"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "Expression écrite"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3554,11 +3571,11 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "Vérifier ce certificat"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#. The fine print on a language level certificate, such as B1.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Délivré lorsque les réponses montrent que le niveau {level} est atteint dans toutes les compétences travaillées sur Zoonk. Ce n’est pas un résultat d’examen officiel."
+msgctxt "0ytAdy"
+msgid "Awarded for finishing this level on Zoonk. This is not an official exam result."
+msgstr "Décerné pour avoir terminé ce niveau sur Zoonk. Il ne s’agit pas d’un résultat officiel d’examen."
 
 #. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
 #: src/lib/certificates/certificate-view.ts

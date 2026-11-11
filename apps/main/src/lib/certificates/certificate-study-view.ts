@@ -1,6 +1,5 @@
 import "server-only";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { type LanguageSkill } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 import {
   formatCertificateDate,
@@ -15,26 +14,6 @@ export type Readout = { label: string; value: string };
 export type CertificateStat = { label: string; unit: string; value: string };
 
 export type KindInput = { facts: CertificateFacts; locale: string };
-
-export async function getSkillReadouts({ facts, locale }: KindInput): Promise<Readout[]> {
-  const t = await getExtracted({ locale });
-
-  const skillNames: Record<LanguageSkill, string> = {
-    listening: t("Listening"),
-    reading: t("Reading"),
-    speaking: t("Speaking"),
-    writing: t("Writing"),
-  };
-
-  return facts.skillLevels.map((skillLevel) => ({
-    label: skillNames[skillLevel.skill],
-    value: skillLevel.label,
-  }));
-}
-
-export function getSkillStats(readouts: readonly Readout[]): CertificateStat[] {
-  return readouts.map((readout) => ({ label: readout.label, unit: "", value: readout.value }));
-}
 
 export async function getStudyFacts({ facts, locale }: KindInput): Promise<Readout[]> {
   const t = await getExtracted({ locale });

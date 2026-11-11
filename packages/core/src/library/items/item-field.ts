@@ -50,7 +50,7 @@ type ItemAudience = {
 };
 
 /** New picks skip a retired question, even a kept one, such as a mistake's original. */
-export const IN_BANK = { retiredAt: null } as const;
+const IN_BANK = { retiredAt: null } as const;
 
 /** For a question already asked, which stays answerable once retired from the bank. */
 export function getAskedItemFilter({

@@ -53,6 +53,7 @@ enum LessonStartOutcome: Sendable {
 struct LessonRunStart: Hashable, Sendable {
   let runId: String
   var sessionId: String? = nil
+  var clockId: String? = nil
   /// When this sitting's run started: earlier answers came from sittings before it.
   let startedAt: Date
   let answers: [LessonRunAnswer]
@@ -184,7 +185,7 @@ struct LessonPlayerAPI: Sendable {
 
       return .success(
         LessonRunStart(
-          runId: run.runId, sessionId: run.sessionId,
+          runId: run.runId, sessionId: run.sessionId, clockId: run.clockId,
           startedAt: run.startedAt,
           answers: run.answers.map {
             LessonRunAnswer(
@@ -206,6 +207,21 @@ struct LessonPlayerAPI: Sendable {
       return .failure(Self.refusal(try? response.body.json, status: 429))
     case .badRequest, .internalServerError, .undocumented:
       return .failure(.failed)
+    }
+  }
+
+  func updateClock(id: String, input: Components.Schemas.LessonClockInput, token: String)
+    async throws -> Components.Schemas.LessonClockResult
+  {
+    let output = try await clients.perform(token: token) {
+      try await $0.updateLibraryLessonClock(path: .init(lessonId: id), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response): return try response.body.json
+    case .unauthorized: throw APIError.unauthorized
+    case .notFound: throw APIError.notFound
+    case .badRequest, .internalServerError, .undocumented: throw APIError.network
     }
   }
 
@@ -278,7 +294,11 @@ struct LessonPlayerAPI: Sendable {
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
-          day: block?.day ?? DayResult(completion), block: block))
+          day: block?.day ?? DayResult(completion), block: block,
+          finishedChapter: completion.finishedChapter?.value1,
+          planReveal: completion.planReveal.map {
+            PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
+          }))
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:
@@ -513,7 +533,7 @@ struct LessonPlayerAPI: Sendable {
 
 /// A live check's result and a saved answer's restored one share these fields, so both read into
 /// the player's result the same way.
-private protocol CheckResultPayload {
+protocol CheckResultPayload {
   var checked: Bool { get }
   var correctAnswer: String? { get }
   var feedback: String? { get }
@@ -527,27 +547,27 @@ private protocol CheckResultPayload {
 }
 
 extension Components.Schemas.LessonStepCheckResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension Components.Schemas.LessonRunAnswerResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension LessonStepResult {
-  fileprivate init(_ payload: some CheckResultPayload, answerText: String? = nil) {
+  init(_ payload: some CheckResultPayload, answerText: String? = nil) {
     self.init(
       isCorrect: payload.isCorrect, answerText: answerText, correctAnswer: payload.correctAnswer,
       feedback: payload.feedback)

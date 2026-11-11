@@ -20,6 +20,8 @@ export type OwnedChallenge = {
   item: PlanItem;
   /** Requires plan order. */
   items: PlanItem[];
+  /** The instant `today` was read at. */
+  now: Date;
   plan: Plan;
   timeZone: string;
   /** The learner-local date, as a UTC-midnight label. */
@@ -69,15 +71,17 @@ export async function findOwnedChallenge({
   const { plan, ...planItem } = item;
   const { goal, items, ...planRow } = plan;
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
+  const now = new Date();
 
   return {
     challenge: {
       goal,
       item: planItem,
       items,
+      now,
       plan: planRow,
       timeZone,
-      today: getDateInTimeZone({ date: new Date(), timeZone }),
+      today: getDateInTimeZone({ date: now, timeZone }),
       userId,
     },
     status: "ready",

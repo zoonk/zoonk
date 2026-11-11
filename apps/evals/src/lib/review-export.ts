@@ -1,10 +1,15 @@
 import { calculateScore } from "./score-calculation";
 import { getBaseTestCaseId } from "./test-case-runs";
-import { type EvalResult, type TestCase, type TestCaseOutput } from "./types";
+import { type EvalResult, type KeyFlaw, type TestCase, type TestCaseOutput } from "./types";
 
 const UNKNOWN_LANGUAGE = "other";
 
-export type ReviewExportEntry = { language: string; output: string; testCaseId: string };
+export type ReviewExportEntry = {
+  language: string;
+  output: string;
+  testCaseId: string;
+  keyFlaws?: KeyFlaw[];
+};
 
 function normalizeLanguage(language: string): string {
   return language.trim().replaceAll("_", "-").toLowerCase();
@@ -55,7 +60,7 @@ function getReviewOutput({
   outputs: TestCaseOutput[];
   results: EvalResult[];
   testCaseId: string;
-}): Pick<TestCaseOutput, "output" | "testCase"> | null {
+}): (Pick<TestCaseOutput, "output" | "testCase"> & { keyFlaws?: KeyFlaw[] }) | null {
   const scoredOutput = findLowestScoringResult({ results, testCaseId });
 
   if (scoredOutput) {
@@ -79,6 +84,7 @@ function createReviewEntry({
   return reviewOutput
     ? [
         {
+          keyFlaws: reviewOutput.keyFlaws,
           language: getOutputLanguage(reviewOutput.testCase),
           output: reviewOutput.output,
           testCaseId,

@@ -2,20 +2,22 @@
 
 import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { type LanguageAim, type LanguageAimView } from "@zoonk/core/language/aims";
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
+import { OnboardingQuestionShown } from "../onboarding-clock";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
-import { PlanWait } from "./plan-wait";
+import { type LibraryCourseLink, PlanWait } from "./plan-wait";
+import { ScheduleAim, getAimAhead } from "./schedule-aim";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -70,11 +72,13 @@ function getScheduleAnswer({
 }
 
 function ScheduleTime({
+  aim,
   exam,
   onChangeDate,
   pending,
   schedule,
 }: {
+  aim: string | null;
   exam: boolean;
   onChangeDate: () => void;
   pending: boolean;
@@ -127,6 +131,7 @@ function ScheduleTime({
                 })}
           </Button>
         }
+        aim={aim}
         date={getGoalDate(schedule)}
         exam={exam}
         line={shown.line}
@@ -178,23 +183,16 @@ function ExamFullCourse({ schedule }: { schedule: Schedule }) {
   );
 }
 
-function ScheduleWeek({
-  recommendedMinutes,
-  schedule,
-}: {
-  recommendedMinutes: number;
-  schedule: Schedule;
-}) {
-  const { minutes, week } = schedule;
-
+function ScheduleWeek({ minutes, week }: { minutes: number; week: Schedule["week"] }) {
   return (
     <div className="flex flex-col gap-3">
+      <OnboardingQuestionShown step="schedule" />
       <WeekdayToggles days={week.days} onChange={week.setDays} />
 
       {week.studiesOnWeekends && (
         <WeekendMinutes
           checked={week.weekendOn}
-          minutes={week.weekendPicked ?? minutes ?? recommendedMinutes}
+          minutes={week.weekendPicked ?? minutes}
           onChange={week.setWeekendPicked}
           onCheckedChange={week.setWeekendOn}
         />
@@ -208,36 +206,49 @@ export function ScheduleStep({
   draft,
   exam = false,
   findTimeToCover,
+  firstLesson,
   getTimeAdvice,
   goal,
+  languageAim,
+  lessonHref,
+  library,
   onAnswer,
+  onChangeAim,
   onChangeDate,
-  onPlanReadyChange,
   pending,
   planReadiness,
   readWarmUp,
   recommendedMinutes,
   run,
+  startsOnRecommended,
   together,
 }: ScheduleActions & {
   dated: boolean;
   draft: ScheduleDraft | null;
   exam?: boolean;
+  firstLesson: GenerationFirstLesson | null;
   goal: GoalView;
+  languageAim: LanguageAimView | null;
+  lessonHref: (lessonId: string) => string;
+  library: LibraryCourseLink | null;
   onAnswer: (input: OnboardingAnswerInput) => void;
+  onChangeAim: (aim: LanguageAim) => Promise<boolean>;
   onChangeDate: (draft: ScheduleDraft) => void;
-  onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
   readWarmUp: OnboardingActions["readWarmUp"];
   recommendedMinutes: number;
   run: GenerationRun | null;
+  startsOnRecommended: boolean;
   together: GoalsTogether;
 }) {
   const t = useExtracted();
 
+  const aim = getAimAhead(languageAim);
+
   const schedule = useSchedule({
     actions: { findTimeToCover, getTimeAdvice },
+    aim: languageAim?.aim ?? null,
     dated,
     draft,
     exam,
@@ -245,17 +256,17 @@ export function ScheduleStep({
     paused: isRunStopped(run),
     planMade: isPlanMade(run),
     recommendedMinutes,
+    startsOnRecommended,
     together,
   });
 
   const wait = getPlanWait({ gate: schedule.gate, opened: planReadiness, run });
 
-  useEffect(() => {
-    onPlanReadyChange(wait === null);
-  }, [onPlanReadyChange, wait]);
-
   return (
     <PlanWait
+      firstLesson={firstLesson}
+      lessonHref={lessonHref}
+      library={library}
       next="timeQuestion"
       notice={{
         document: getExamDocument(goal),
@@ -268,6 +279,7 @@ export function ScheduleStep({
     >
       <StepForm
         canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
+        continueLabel={t("See your plan")}
         onContinue={() => {
           const answer = getScheduleAnswer({ exam, schedule });
 
@@ -280,9 +292,18 @@ export function ScheduleStep({
         title={t("How much time can you study each day?")}
       >
         <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
+        <ScheduleAim
+          endDate={schedule.shown.line.kind === "finish" ? schedule.shown.line.endDate : null}
+          languageAim={languageAim}
+          level={goal.details.level}
+          minutes={schedule.minutes}
+          onChangeAim={onChangeAim}
+          readEnd={schedule.readAimEnd}
+        />
         {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
-        <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
+        <ScheduleWeek minutes={schedule.minutes ?? recommendedMinutes} week={schedule.week} />
         <ScheduleTime
+          aim={aim}
           exam={exam}
           onChangeDate={() => onChangeDate(schedule.draft)}
           pending={pending}

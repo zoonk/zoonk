@@ -1,5 +1,5 @@
 import "server-only";
-import { type LearningEvent } from "@zoonk/db";
+import { type LearningEvent, type TransactionClient } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -9,9 +9,12 @@ import {
 } from "../../cache/tags";
 import { finishExplanations } from "../../goals/_utils/finish-explanations";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { clampEnergy } from "../../progress/energy";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
+import { refitSessionLessons } from "../../sessions/_utils/refit-session-lessons";
 import { trackBlockCompleted } from "../../sessions/_utils/session-events";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
 import { finishLearningEvent } from "../../stats/record-learning-event";
@@ -23,6 +26,26 @@ import { hasFinishedLessonBefore } from "./lesson-runs";
 import { completeRunBlock, lockRunBlock } from "./lesson-study-block";
 import { reviewFinishedLesson } from "./plan-skill-review";
 import { getLessonCompletionSeconds } from "./session-lesson-duration";
+
+type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
+
+/** A finished block refits the session's lessons left, unless it was an extra or a reinforcement. */
+async function refitAfterMainBlock(
+  tx: TransactionClient,
+  { block, timeZone }: { block: RunBlock; timeZone: string },
+): Promise<void> {
+  const payload = readBlockPayload(block);
+
+  if (payload.extra || payload.reinforcement) {
+    return;
+  }
+
+  await refitSessionLessons(tx, {
+    completedBlockId: block.id,
+    sessionId: block.sessionId,
+    timeZone,
+  });
+}
 
 /** Replays are reviews in the ledger and must not increment lessons completed. */
 export async function finishLessonRun({
@@ -153,7 +176,22 @@ export async function finishLessonRun({
         userId,
       }));
 
-    const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
+    const { languageGoals, planItemIds } = await completeLessonPlanItems(tx, {
+      lessonId,
+      now: completedAt,
+      userId,
+    });
+
+    await finishLessonChapters(tx, {
+      eventId: run.id,
+      goalId: block?.session.goalId ?? null,
+      planItemIds,
+      userId,
+    });
+
+    if (blockDone && block) {
+      await refitAfterMainBlock(tx, { block, timeZone });
+    }
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
 

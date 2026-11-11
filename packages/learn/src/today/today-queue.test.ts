@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
+import { getFoldedBlocks, getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
 
 describe(splitTodayQueue, () => {
   it("keeps pending lessons before a later active block out of the done fold", () => {
@@ -34,6 +34,22 @@ describe(splitTodayQueue, () => {
   });
 });
 
+describe("a day without a next block", () => {
+  it("folds its finished blocks and leaves the rest after them", () => {
+    const blocks = [
+      { position: 0, status: "completed" },
+      { position: 1, status: "pending" },
+      { position: 2, status: "skipped" },
+    ] as const;
+
+    expect(splitTodayQueue({ blocks, nextPosition: null })).toStrictEqual({
+      after: [blocks[1]],
+      before: [],
+      done: [blocks[0], blocks[2]],
+    });
+  });
+});
+
 describe(isFinished, () => {
   it.each(["completed", "skipped"] as const)("counts %s as finished", (status) => {
     expect(isFinished({ status })).toBe(true);
@@ -62,5 +78,23 @@ describe(getLessonAgainId, () => {
     { kind: "checkpoint", lessonId: null, status: "completed" },
   ] as const)("keeps $kind ($status) closed", (block) => {
     expect(getLessonAgainId(block)).toBeNull();
+  });
+});
+
+describe(getFoldedBlocks, () => {
+  it("folds the unfinished blocks after the next one and the four that follow it", () => {
+    const blocks = [
+      { position: 0, status: "completed" },
+      { position: 1, status: "active" },
+      ...[2, 3, 4, 5, 6, 7].map((position) => ({ position, status: "pending" as const })),
+    ] as const;
+
+    expect(getFoldedBlocks({ blocks, nextPosition: 1 })).toStrictEqual([blocks[6], blocks[7]]);
+  });
+
+  it("folds nothing once the day has no next block", () => {
+    expect(
+      getFoldedBlocks({ blocks: [{ position: 0, status: "completed" }], nextPosition: null }),
+    ).toStrictEqual([]);
   });
 });

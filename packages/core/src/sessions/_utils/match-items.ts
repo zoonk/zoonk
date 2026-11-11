@@ -78,6 +78,7 @@ export function gradeMatch({ answer, item }: { answer: QuestionAnswer; item: Mat
       format: item.format,
       misconception: null,
       question: item.content.question,
+      replay: { item, kind: "item" as const },
     },
     workedSteps: [] as string[],
   };

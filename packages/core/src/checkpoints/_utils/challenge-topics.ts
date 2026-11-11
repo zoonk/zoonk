@@ -1,10 +1,10 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 import { loadSkillSubjects } from "../../view-models/syllabus/_utils/load-syllabus";
 import { type ChallengeTopic } from "../challenge-contract";
 import { getOfferSkillIds } from "./challenge-offer";
-import { type ChallengeBlock, type OwnedChallenge, isLanguageCall } from "./owned-challenge";
+import { type OwnedChallenge, isLanguageCall } from "./owned-challenge";
 
 async function loadPayloadSkillIds(payload: BlockPayload): Promise<string[]> {
   const itemIds = getBlockItemIds(payload);
@@ -26,7 +26,7 @@ async function loadAskedSkillIds({
   block,
   challenge,
 }: {
-  block: ChallengeBlock | null;
+  block: Pick<StudySessionBlock, "payload"> | null;
   challenge: OwnedChallenge;
 }): Promise<string[]> {
   if (block) {
@@ -49,7 +49,7 @@ export async function loadChallengeTopics({
   block,
   challenge,
 }: {
-  block: ChallengeBlock | null;
+  block: Pick<StudySessionBlock, "payload"> | null;
   challenge: OwnedChallenge;
 }): Promise<ChallengeTopic[]> {
   if (challenge.item.kind === "mock" || isLanguageCall(challenge)) {

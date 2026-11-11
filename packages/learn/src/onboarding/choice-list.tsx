@@ -7,7 +7,7 @@ import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -20,8 +20,12 @@ import { CHOICE_CONTROL_CLASS, CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
 import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
+  /** Shown under the row, such as a field the choice asks for. */
+  after?: React.ReactNode;
   description?: string;
   label: React.ReactNode;
+  /** A short value at the row's end, such as what the choice comes to. */
+  trailing?: React.ReactNode;
   value: Value;
 };
 
@@ -59,12 +63,15 @@ export function ChoiceList<Value extends string>({
   numberKeys = true,
   onChange,
   onPick,
+  pickOnEnter = false,
   readOnly = false,
   value,
 }: {
   choices: Choice<Value>[];
   label: string;
   numberKeys?: boolean;
+  /** Enter picks the highlighted choice, where no form's button answers it. */
+  pickOnEnter?: boolean;
   onChange: (value: Value) => void;
   onPick?: (value: Value) => void;
   readOnly?: boolean;
@@ -120,36 +127,46 @@ export function ChoiceList<Value extends string>({
     <RadioGroup
       aria-label={label}
       className={LIST_GROUP_CLASS}
-      onKeyDown={() => {
+      onKeyDown={(event) => {
         pointerPick.current = null;
+        const highlighted = choices.find((choice) => choice.value === value);
+
+        if (pickOnEnter && event.key === "Enter" && highlighted) {
+          event.preventDefault();
+          pickDeliberately(highlighted);
+        }
       }}
       onValueChange={pick}
       readOnly={readOnly}
       value={value}
     >
       {choices.map((choice, index) => (
-        <RadioGroupOption
-          className={CHOICE_ROW_CLASS}
-          data-highlighted={choice.value === value || undefined}
-          key={choice.value}
-          onClick={() => pickByPointer(choice)}
-          onPointerDown={() => {
-            pointerPick.current = choice.value;
-          }}
-        >
-          {numberKeys && index < NUMBER_KEY_COUNT && (
-            <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
-              <ShortcutKbd>{index + 1}</ShortcutKbd>
-            </ListRowLeading>
-          )}
+        <Fragment key={choice.value}>
+          <RadioGroupOption
+            className={CHOICE_ROW_CLASS}
+            data-highlighted={choice.value === value || undefined}
+            onClick={() => pickByPointer(choice)}
+            onPointerDown={() => {
+              pointerPick.current = choice.value;
+            }}
+          >
+            {numberKeys && index < NUMBER_KEY_COUNT && (
+              <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
+                <ShortcutKbd>{index + 1}</ShortcutKbd>
+              </ListRowLeading>
+            )}
 
-          <ListRowContent>
-            <ListRowTitle>{choice.label}</ListRowTitle>
-            {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
-          </ListRowContent>
+            <ListRowContent>
+              <ListRowTitle>{choice.label}</ListRowTitle>
+              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+            </ListRowContent>
 
-          <ChoiceRadio value={choice.value} />
-        </RadioGroupOption>
+            {choice.trailing}
+            <ChoiceRadio value={choice.value} />
+          </RadioGroupOption>
+
+          {choice.after}
+        </Fragment>
       ))}
     </RadioGroup>
   );

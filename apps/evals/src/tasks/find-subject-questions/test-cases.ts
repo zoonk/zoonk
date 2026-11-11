@@ -121,4 +121,31 @@ export const TEST_CASES: FindSubjectQuestionsCase[] = [
       total: 180,
     },
   },
+  {
+    expected: { counts: { 1: 54, 2: 44 }, status: "found" },
+    id: "en-sat",
+    userInput: {
+      board: "College Board",
+      exam: "SAT",
+      subjects: ["Reading and Writing", "Math"],
+      today: TODAY,
+      total: 98,
+    },
+  },
+  {
+    expected: { counts: { 1: 45, 2: 45, 3: 45, 4: 45 }, status: "found" },
+    id: "pt-enem",
+    userInput: {
+      board: "Inep",
+      exam: "Enem",
+      subjects: [
+        "Linguagens, Códigos e suas Tecnologias",
+        "Ciências Humanas e suas Tecnologias",
+        "Ciências da Natureza e suas Tecnologias",
+        "Matemática e suas Tecnologias",
+      ],
+      today: TODAY,
+      total: 180,
+    },
+  },
 ];

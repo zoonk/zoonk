@@ -13,6 +13,7 @@ class PlanOpTest {
     fun eachOperationEncodesAsTheContractTakesItAndReadsBack() {
         val sent =
             mapOf(
+                PlanOp.Aim("B2") to """{"kind":"setAim","aim":"B2"}""",
                 PlanOp.DailyMinutes(40) to """{"kind":"setDailyMinutes","minutes":40}""",
                 PlanOp.WeekdayMinutes(listOf(0, 6), 30) to """{"kind":"setWeekdayMinutes","weekdays":[0,6],"minutes":30}""",
                 PlanOp.LightWeek(LocalDate.of(2027, 1, 4)) to """{"kind":"addLightWeek","startDate":"2027-01-04"}""",

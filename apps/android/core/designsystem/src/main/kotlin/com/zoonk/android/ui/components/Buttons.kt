@@ -289,14 +289,22 @@ private fun ButtonSize.contentPadding(
     leadingIcon: Boolean,
     trailingIcon: Boolean,
 ): PaddingValues {
-    val (side, iconSide, vertical) = if (this == ButtonSize.Small) Triple(10.dp, 8.dp, 4.dp) else Triple(16.dp, 12.dp, 8.dp)
+    val vertical = if (this == ButtonSize.Small) 4.dp else 8.dp
     return PaddingValues(
-        start = if (leadingIcon) iconSide else side,
+        start = sidePadding(leadingIcon),
         top = vertical,
-        end = if (trailingIcon) iconSide else side,
+        end = sidePadding(trailingIcon),
         bottom = vertical,
     )
 }
+
+private fun ButtonSize.sidePadding(icon: Boolean): Dp =
+    when {
+        this == ButtonSize.Small -> if (icon) 8.dp else 10.dp
+        else -> if (icon) 12.dp else 16.dp
+    }
+
+val ButtonSize.leadingIconInset: Dp get() = sidePadding(icon = true)
 
 private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 

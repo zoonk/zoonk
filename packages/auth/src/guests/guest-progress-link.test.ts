@@ -51,6 +51,7 @@ async function seed({ table, userId, value }: { table: Table; userId: string; va
       const goal = await prisma.goal.create({
         data: {
           dailyMinutes: value,
+          displayName: "Chemistry",
           kind: "learn",
           language: "en",
           prompt: "Learn chemistry",
@@ -66,10 +67,7 @@ async function seed({ table, userId, value }: { table: Table; userId: string; va
           buddyKind: "zu",
           buddyName: `Buddy ${value}`,
           createdAt: DAY,
-          instructions: `Instructions ${value}`,
-          interests: { value },
           memoryEnabled: value > 5,
-          preferences: { value },
           shareUsageData: value > 5,
           soundsEnabled: value > 5,
           updatedAt: DAY,

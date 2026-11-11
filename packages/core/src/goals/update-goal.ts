@@ -64,6 +64,7 @@ function mergeDetails({
 function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInput }) {
   return {
     details: mergeDetails({ current, details: input.details }),
+    displayName: input.displayName,
     status: input.status,
     studyTime: input.studyTime,
     timezone: input.timeZone,

@@ -9,6 +9,9 @@ struct PlanToolbar: ViewModifier {
   @State private var confirming: Confirmation?
   @State private var failure: GoalStatusOutcome?
   @State private var isSaving = false
+  @State private var isRenaming = false
+  @State private var name = ""
+  @State private var renameFailed = false
 
   let context: PlanContext
 
@@ -66,6 +69,37 @@ struct PlanToolbar: ViewModifier {
           Text(
             "Your plan picks up from today, starting with the lessons planned for the days you paused.",
             tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+        }
+      }
+      .alert(
+        Text(
+          "Rename goal", tableName: "Plan", comment: "Title of the dialog that renames the goal"),
+        isPresented: $isRenaming
+      ) {
+        TextField(text: $name) {
+          Text("Name", tableName: "Plan", comment: "Field holding the goal's name")
+        }
+        .onChange(of: name) { _, value in
+          name = String(value.prefix(goalNameLimit))
+        }
+
+        Button(role: .cancel) {}
+
+        Button(role: .confirm) {
+          rename()
+        } label: {
+          Text("Save", tableName: "Plan", comment: "Saves the goal's new name")
+        }
+        .disabled(trimmedName.isEmpty)
+      } message: {
+        if renameFailed {
+          Text(
+            "Check your connection and try again.", tableName: "Plan",
+            comment: "Explains a failed save")
+        } else {
+          Text(
+            "Choose a name you recognize. Your study plan stays the same.", tableName: "Plan",
+            comment: "Explains that renaming a goal changes only its name")
         }
       }
       .alert(
@@ -158,6 +192,20 @@ struct PlanToolbar: ViewModifier {
 
   @ViewBuilder
   private var statusItems: some View {
+    if context.goal.kind != .explain {
+      Button {
+        name = context.goal.displayName
+        renameFailed = false
+        isRenaming = true
+      } label: {
+        Label {
+          Text("Rename goal", tableName: "Plan", comment: "Opens the dialog that renames the goal")
+        } icon: {
+          Image(systemName: "pencil")
+        }
+      }
+    }
+
     switch context.goal.status {
     case .active:
       Button {
@@ -202,13 +250,17 @@ struct PlanToolbar: ViewModifier {
     switch confirming {
     case .resume:
       Text(
-        "Resume \(context.goal.title)?", tableName: "Plan",
+        "Resume your \(context.goal.displayName) goal?", tableName: "Plan",
         comment: "Asks before resuming the paused goal named here")
     default:
       Text(
-        "Archive \(context.goal.title)?", tableName: "Plan",
+        "Archive your \(context.goal.displayName) goal?", tableName: "Plan",
         comment: "Asks before archiving the goal named here")
     }
+  }
+
+  private var trimmedName: String {
+    name.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
   private var isConfirming: Binding<Bool> {
@@ -235,6 +287,28 @@ struct PlanToolbar: ViewModifier {
     }
   }
 
+  private func rename() {
+    let displayName = trimmedName
+
+    guard !displayName.isEmpty else {
+      return
+    }
+
+    Task {
+      isSaving = true
+      let result = await store.rename(goalId: context.goal.id, displayName: displayName)
+      isSaving = false
+
+      switch result {
+      case .done(true), .obsolete:
+        break
+      case .done(false), .failed:
+        renameFailed = true
+        isRenaming = true
+      }
+    }
+  }
+
   private func set(_ status: GoalStatusChange) {
     Task {
       isSaving = true
@@ -256,3 +330,6 @@ struct PlanToolbar: ViewModifier {
     }
   }
 }
+
+/// Core's `MAX_TITLE_LENGTH`, which bounds a goal's name.
+private let goalNameLimit = 120

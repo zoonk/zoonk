@@ -3,6 +3,7 @@
 import { LESSON_FEEDBACK_SLOTS } from "@/components/feedback/lesson-feedback-slots";
 import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
@@ -10,6 +11,7 @@ import { useLessonSessionSlots } from "@/components/session/use-lesson-session-s
 import { redirect, useRouter } from "@/i18n/navigation";
 import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
+import { sendLessonClock } from "@/lib/lessons/lesson-clock-request";
 import {
   getExampleLine,
   requestAnswerExplanation,
@@ -23,6 +25,7 @@ import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contrac
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { useAppLocale } from "@zoonk/learn/locale";
+import { FinishedChapterMoment } from "@zoonk/learn/mind-maps/finished-chapter";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
 import {
@@ -51,6 +54,16 @@ function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots
     ),
   };
 }
+
+const FINISHED_CHAPTER_SLOT: Pick<LessonPlayerSlots, "finishedChapter"> = {
+  finishedChapter: (chapter) => (
+    <MainLearnProvider>
+      <MainFinishedChapterMaps>
+        <FinishedChapterMoment chapter={chapter} />
+      </MainFinishedChapterMaps>
+    </MainLearnProvider>
+  ),
+};
 
 function createAdapters({
   learnerId,
@@ -88,6 +101,7 @@ function createAdapters({
         runId: input?.runId,
         studySessionId: visit.sessionId,
       }),
+    updateLessonClock: (input) => sendLessonClock({ input, lessonId }),
   };
 }
 
@@ -98,6 +112,7 @@ type LessonPlayerClientProps = {
     "completion" | "completionActions"
   >;
   firstAnswer: string | null;
+  goalId?: string | null;
   learnerId: string | null;
   lesson: PlayableLibraryLesson;
   outline?: boolean;
@@ -112,6 +127,7 @@ type LessonPlayerClientProps = {
 };
 
 function LessonPlayerVisit({
+  goalId: lessonGoalId = null,
   challengeTeam = null,
   endingSlots,
   firstAnswer,
@@ -185,6 +201,7 @@ function LessonPlayerVisit({
   const slots = useMemo(
     () => ({
       ...LESSON_FEEDBACK_SLOTS,
+      ...FINISHED_CHAPTER_SLOT,
       ...createCeremonySlot(buddy),
       ...sessionSlots,
       ...endingSlots,
@@ -195,7 +212,12 @@ function LessonPlayerVisit({
   const signUp = useSignUpHref();
 
   const routes = useMemo(
-    () => ({ ...routing, signUp, upgrade: "/subscription" }),
+    () => ({
+      ...routing,
+      seePlan: (planGoalId: string) => `/start/${planGoalId}`,
+      signUp,
+      upgrade: "/subscription",
+    }),
     [routing, signUp],
   );
 
@@ -208,6 +230,7 @@ function LessonPlayerVisit({
       adapters={adapters}
       challengeTeam={challengeTeam}
       firstAnswer={firstAnswer}
+      goalId={lessonGoalId}
       lesson={lesson}
       linkComponent={LearningLink}
       onExit={() => router.push(routes.exit)}

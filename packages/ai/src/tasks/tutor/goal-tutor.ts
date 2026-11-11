@@ -7,6 +7,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext, type TutorScreenContext } from "../lessons/lesson-question-context";
+import screenRulesPrompt from "../lessons/lesson-screen-rules.prompt.md";
 import { getLessonScreenVariants } from "../lessons/lesson-screen-variants";
 import {
   type OfferGoalAppTool,
@@ -16,7 +17,7 @@ import {
 import chapterScreenPrompt from "./goal-tutor-chapter.prompt.md";
 import examGoalPrompt from "./goal-tutor-exam.prompt.md";
 import itemScreenPrompt from "./goal-tutor-item.prompt.md";
-import { selectAppLanguageNames } from "./goal-tutor-language";
+import { selectTutorLanguage } from "./goal-tutor-language";
 import lessonScreenPrompt from "./goal-tutor-lesson.prompt.md";
 import { LOOKUP_DEADLINE_MS, type LookUpGoalData, createLookUpTool } from "./goal-tutor-lookup";
 import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
@@ -26,6 +27,8 @@ import { shouldSearchFirst } from "./goal-tutor-search";
 import subjectScreenPrompt from "./goal-tutor-subject.prompt.md";
 import { SEARCH_DEADLINE_MS, createSearchWebTool } from "./goal-tutor-web-search";
 import systemPrompt from "./goal-tutor.prompt.md";
+import { type LearnerNeeds, getLearnerNeedsPrompt } from "./learner-needs";
+import learnerNeedsPrompt from "./learner-needs.prompt.md";
 
 /**
  * Luna matched Gemini 3.8 Flash on the goal-tutor eval at a twentieth of the cost (7 Oct 2026),
@@ -55,6 +58,7 @@ type GoalTutorInput = {
   contextSnapshot: PlanScopeContext;
   /** Only when memory is on. */
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   /** Never sent to a web search, and never in the model's context. */
   learnerNames?: readonly string[];
   /** The buddy links only what it's given, copied as it reads it. */
@@ -136,14 +140,16 @@ function createPrepareStep({
 /** A goal's kind stays the same for a whole conversation, so its messages share a cached prompt. */
 const examSystemPrompt = `${systemPrompt}\n${examGoalPrompt}`;
 
+const lessonPrompt = `${lessonScreenPrompt}\n${screenRulesPrompt}`;
+
 /** A thread stays on one screen, so its messages share a cached prompt. */
 const SCREEN_PROMPTS = {
-  answer: lessonScreenPrompt,
+  answer: lessonPrompt,
   chapter: chapterScreenPrompt,
   item: itemScreenPrompt,
-  lesson: lessonScreenPrompt,
+  lesson: lessonPrompt,
   mock: mockScreenPrompt,
-  step: lessonScreenPrompt,
+  step: lessonPrompt,
   subject: subjectScreenPrompt,
 } satisfies Record<TutorScreenContext["scope"]["kind"], string>;
 
@@ -161,23 +167,28 @@ function getPageGuide({
 
 function getSystemPrompt({
   contextSnapshot,
+  learnerNeeds,
   links,
-}: Pick<GoalTutorInput, "contextSnapshot" | "links">): string {
+}: Pick<GoalTutorInput, "contextSnapshot" | "learnerNeeds" | "links">): string {
   const template = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
-  const goalPrompt = selectAppLanguageNames({ language: contextSnapshot.language, template });
+  const goalPrompt = selectTutorLanguage({ language: contextSnapshot.language, template });
   const withPages = `${goalPrompt}\n${getPageGuide({ contextSnapshot, links })}`;
   const { screen } = contextSnapshot;
 
-  if (!screen) {
-    return withPages;
-  }
+  const screenPrompt = screen
+    ? selectPromptVariants({
+        template: SCREEN_PROMPTS[screen.scope.kind],
+        variants: getLessonScreenVariants(screen),
+      })
+    : "";
 
-  const screenPrompt = selectPromptVariants({
-    template: SCREEN_PROMPTS[screen.scope.kind],
-    variants: getLessonScreenVariants(screen),
-  });
-
-  return `${withPages}\n${screenPrompt}`;
+  return [
+    withPages,
+    screenPrompt,
+    getLearnerNeedsPrompt({ needs: learnerNeeds, template: learnerNeedsPrompt }),
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /**
@@ -257,7 +268,7 @@ export async function generateGoalTutorAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: context,
     generate: () => generateText(options),
-    systemPrompt: options.instructions,
+    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
     task: GOAL_TUTOR_TASK,
   });
 
@@ -305,7 +316,7 @@ export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
         }),
         onError: suppressProviderError,
       }),
-    systemPrompt: getSystemPrompt(input),
+    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
     task: GOAL_TUTOR_TASK,
   });
 

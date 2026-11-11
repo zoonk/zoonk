@@ -31,6 +31,7 @@ function HeldStep({ entry }: { entry: DayEntry }) {
 
   return (
     <NextStop
+      goalId={shown.goalId}
       actions={{
         refresh,
         start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),
@@ -43,6 +44,7 @@ function HeldStep({ entry }: { entry: DayEntry }) {
       generationId={null}
       lesson="ready"
       lessonsComing={shown.day.lessonsComing}
+      minutesLeft={shown.day.minutes.left}
       notWritten={null}
       sessionBar={shown.day.sessionBar}
       tap={held.tap}

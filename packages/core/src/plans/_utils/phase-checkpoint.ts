@@ -1,4 +1,4 @@
-import { type BossTiming } from "../../checkpoints/_utils/boss-reached";
+import { type ChallengeTiming } from "../../checkpoints/_utils/challenge-timing";
 import { type PlanPhaseCheckpointView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
@@ -11,7 +11,7 @@ export function buildCheckpoint({
 }: {
   locked?: boolean;
   items: readonly PlanReadItem[];
-  timings: ReadonlyMap<string, BossTiming>;
+  timings: ReadonlyMap<string, ChallengeTiming>;
 }): PlanPhaseCheckpointView | null {
   const boss = items.find((item) => item.kind === "boss");
 
@@ -19,14 +19,13 @@ export function buildCheckpoint({
     return null;
   }
 
+  const timing = timings.get(boss.id ?? "") ?? timings.get(getPlanReadItemKey(boss));
+
   return {
-    date: boss.scheduledFor ? toIsoDate(boss.scheduledFor) : null,
+    date: timing?.date ?? (boss.scheduledFor ? toIsoDate(boss.scheduledFor) : null),
     locked: locked && boss.status === "todo",
     planItemId: boss.id,
     state: isWorkFinished(boss.status) ? "done" : "upcoming",
-    when:
-      (boss.id ? timings.get(boss.id) : undefined) ??
-      timings.get(getPlanReadItemKey(boss)) ??
-      "date",
+    when: locked || boss.status !== "todo" ? "date" : (timing?.when ?? "date"),
   };
 }

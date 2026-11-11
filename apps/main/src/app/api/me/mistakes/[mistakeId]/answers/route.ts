@@ -21,18 +21,6 @@ export const POST = appPostRoute<{ mistakeId: string }>(
       return null;
     }
 
-    const { feedback } = result;
-
-    return {
-      answerId: feedback.answerId,
-      correctAnswer: feedback.correctAnswer,
-      explanation: feedback.explanation,
-      fixed: feedback.fixed,
-      fixedMistakeIds: feedback.fixedMistakeIds,
-      isCorrect: feedback.isCorrect,
-      mistakeStatus: feedback.mistakeStatus,
-      reached: feedback.reached,
-      trap: feedback.trap,
-    };
+    return result.feedback;
   },
 );

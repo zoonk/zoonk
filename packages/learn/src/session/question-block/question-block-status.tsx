@@ -5,10 +5,12 @@ import { AnswersSaveError } from "../../_components/save-error";
 import { type QuestionBlockPhase } from "./question-block-state";
 
 export function QuestionBlockStatus({
+  failures,
   onRetryAnswer,
   onRetryFinish,
   phase,
 }: {
+  failures: number;
   onRetryAnswer: () => void;
   onRetryFinish: () => void;
   phase: QuestionBlockPhase;
@@ -24,11 +26,11 @@ export function QuestionBlockStatus({
   }
 
   if (phase.kind === "answerFailed") {
-    return <AnswersSaveError onRetry={onRetryAnswer} />;
+    return <AnswersSaveError failures={failures} onRetry={onRetryAnswer} />;
   }
 
   if (phase.kind === "finishFailed") {
-    return <AnswersSaveError onRetry={onRetryFinish} />;
+    return <AnswersSaveError failures={failures} onRetry={onRetryFinish} />;
   }
 
   return null;

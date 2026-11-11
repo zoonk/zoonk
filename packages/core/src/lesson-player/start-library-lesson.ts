@@ -12,6 +12,7 @@ import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { type StudyBlockOpening } from "../sessions/open-block-contract";
 import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
+import { startLessonClock } from "./_utils/lesson-clock";
 import { trackLessonStarted } from "./_utils/lesson-events";
 import { findLessonStudySessionId, getRunHyperdrive } from "./_utils/lesson-hyperdrive";
 import {
@@ -68,7 +69,11 @@ async function openLessonRun({
   ]);
 
   if (existing && (!bindSession || getRunStudySessionId(existing) === studySessionId)) {
-    return { isNew: false, run: existing };
+    const reopened = await reopenRunClock({ lessonId: lesson.id, run: existing, userId });
+
+    if (!reopened.run.endedAt) {
+      return { ...reopened, isNew: false };
+    }
   }
 
   return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
@@ -86,10 +91,16 @@ async function openLessonRun({
           where: { id: resumable.id },
         });
 
-        return { isNew: false, run };
+        return {
+          clockId: await startLessonClock({ lessonId: lesson.id, run, tx, userId }),
+          isNew: false,
+          run,
+        };
       }
 
-      return unchanged({ isNew: false, run: resumable });
+      const clockId = await startLessonClock({ lessonId: lesson.id, run: resumable, tx, userId });
+      const result = { clockId, isNew: false, run: resumable };
+      return clockId ? result : unchanged(result);
     }
 
     const run = await startLearningEvent(tx, {
@@ -107,7 +118,11 @@ async function openLessonRun({
       userId,
     });
 
-    return { isNew: true, run };
+    return {
+      clockId: await startLessonClock({ lessonId: lesson.id, run, tx, userId }),
+      isNew: true,
+      run,
+    };
   });
 }
 
@@ -148,6 +163,7 @@ async function loadRunProgress({
 }
 
 async function readRun({
+  clockId,
   lessonId,
   run,
   userId,
@@ -155,6 +171,7 @@ async function readRun({
   lessonId: string;
   run: LearningEvent;
   userId: string;
+  clockId: string | null;
 }): Promise<LibraryLessonRun | null> {
   const [progress, hyperdrive, replay] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
@@ -165,6 +182,7 @@ async function readRun({
   return progress
     ? {
         ...progress,
+        clockId,
         hyperdrive,
         replay,
         runId: run.id,
@@ -247,7 +265,7 @@ export async function startLibraryLesson({
         userId,
       });
 
-  const { isNew, run } = await openLessonRun({
+  const { clockId, isNew, run } = await openLessonRun({
     bindSession: opening !== null,
     lesson,
     now,
@@ -265,7 +283,7 @@ export async function startLibraryLesson({
     });
   }
 
-  const started = await readRun({ lessonId: lesson.id, run, userId });
+  const started = await readRun({ clockId, lessonId: lesson.id, run, userId });
   return started ? { run: started, status: "started" } : { status: "notFound" };
 }
 
@@ -280,10 +298,34 @@ async function resumeLessonRun({
 }): Promise<LibraryLessonStartOutcome> {
   const requested = await findLessonRun({ lessonId, runId, userId });
 
-  const run =
-    requested && requested.endedAt === null
-      ? await readRun({ lessonId, run: requested, userId })
+  const reopened =
+    requested && !requested.endedAt
+      ? await reopenRunClock({ lessonId, run: requested, userId })
       : null;
 
+  const run =
+    reopened && !reopened.run.endedAt ? await readRun({ ...reopened, lessonId, userId }) : null;
+
   return run ? { run, status: "started" } : { status: "notFound" };
+}
+
+async function reopenRunClock({
+  lessonId,
+  run,
+  userId,
+}: {
+  lessonId: string;
+  run: LearningEvent;
+  userId: string;
+}) {
+  if (!getRunStudySessionId(run)) {
+    return { clockId: null, run };
+  }
+
+  return writeLearnerChange({ userId }, async (tx) => {
+    const current = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
+    const clockId = await startLessonClock({ lessonId, run: current, tx, userId });
+    const result = { clockId, run: current };
+    return clockId ? result : unchanged(result);
+  });
 }

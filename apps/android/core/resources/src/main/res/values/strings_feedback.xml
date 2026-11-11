@@ -14,4 +14,6 @@
     <string name="feedback_send_feedback_description">Found a problem or have an idea? Tell us below or email hello@zoonk.com.</string>
     <string name="feedback_thanks">Thanks! We got your message.</string>
     <string name="feedback_more">More options</string>
+    <string name="feedback_save_failure_message">I couldn\'t save my answers.</string>
+    <string name="feedback_email_optional">Your email, if you\'d like a reply</string>
 </resources>

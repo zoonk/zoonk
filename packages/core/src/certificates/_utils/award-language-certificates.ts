@@ -1,143 +1,227 @@
 import "server-only";
 import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
-import { type Goal, type LanguageSkill, type TransactionClient } from "@zoonk/db";
-import { formatCefrScore } from "@zoonk/utils/cefr";
-import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
+import { type PlanItem, type TransactionClient } from "@zoonk/db";
+import { type CefrLevel } from "@zoonk/utils/cefr";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
-import { getEarnedLanguageLevel, getFinishedBands } from "../../language/levels/skill-level-rules";
-import { loadDoneUnitIds } from "../../language/units/can-do-events";
-import { loadLanguageUnits } from "../../language/units/language-units";
+import { type PlanLevel, getUnitLevels, listPlanLevels } from "../../language/levels/plan-levels";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadPlanScope } from "../../plans/_utils/plan-scope";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
-import { type CertifiedLevel, type LanguageLevelCertificateDetails } from "../certificate-contract";
+import { type LanguageLevelCertificateDetails } from "../certificate-contract";
+import { getLastFinishedAt, sumStudiedMinutes } from "./award-course-certificate";
 import { createCertificateCode } from "./certificate-code";
 
-type SkillScore = { score: number; skill: LanguageSkill };
+/**
+ * Goals built from a learner's own material have a private course and earn no language levels.
+ * Each read is its own query, so none overlaps another on the transaction's connection.
+ */
+async function loadLanguagePlans(tx: TransactionClient, planIds: readonly string[]) {
+  const plans = await tx.plan.findMany({
+    select: {
+      goal: {
+        select: {
+          examBlueprintId: true,
+          id: true,
+          kind: true,
+          language: true,
+          primaryCourseId: true,
+          targetLanguage: true,
+          timezone: true,
+          userId: true,
+        },
+      },
+      graph: true,
+      id: true,
+      settings: true,
+    },
+    where: {
+      goal: { kind: "language", primaryCourse: { visibility: "public" } },
+      id: { in: [...planIds] },
+    },
+  });
 
-function getLevelKey({ language, level }: { language: string; level: CertifiedLevel }): string {
+  if (plans.length === 0) {
+    return [];
+  }
+
+  const items = await tx.planItem.findMany({
+    orderBy: { position: "asc" },
+    select: {
+      chapterId: true,
+      completedAt: true,
+      kind: true,
+      lessonId: true,
+      lessons: true,
+      minutes: true,
+      planId: true,
+      skillId: true,
+      status: true,
+    },
+    where: { kind: "lesson", planId: { in: plans.map((plan) => plan.id) } },
+  });
+
+  const byPlan = Map.groupBy(items, (item) => item.planId);
+  return plans.map((plan) => ({ ...plan, items: byPlan.get(plan.id) ?? [] }));
+}
+
+type LanguagePlan = Awaited<ReturnType<typeof loadLanguagePlans>>[number];
+
+function getLevelKey({ language, level }: { language: string; level: CefrLevel }): string {
   return `${language}:${level}`;
 }
 
-function toSkillLabels(skills: readonly SkillScore[]) {
-  return skills.map(({ score, skill }) => ({ label: formatCefrScore(score), skill }));
-}
+async function loadPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promise<PlanLevel[]> {
+  const scope = await loadPlanScope({ goal: plan.goal, plan });
 
-function getCompletedOn({ goal, now }: { goal: Pick<Goal, "timezone"> | null; now: Date }) {
-  return getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
-}
-
-async function loadGoalStudy(tx: TransactionClient, goal: Goal) {
-  const [units, studied] = await Promise.all([
-    loadLanguageUnits(goal, tx),
-    tx.planItem.findMany({
-      select: {
-        chapterId: true,
-        kind: true,
-        lessonId: true,
-        lessons: true,
-        minutes: true,
-        skillId: true,
-      },
-      where: { kind: "lesson", plan: { goalId: goal.id }, status: "done" },
-    }),
+  const skillIds = new Set([
+    ...scope.graphSkillIds,
+    ...plan.items.flatMap((item) => item.skillId ?? []),
   ]);
 
-  const doneIds = await loadDoneUnitIds({ db: tx, units, userId: goal.userId });
-  const minutes = studied.map((item) => item.minutes);
-
-  return {
-    canDo: units.filter((unit) => doneIds.has(unit.chapterId)).flatMap((unit) => unit.objectives),
-    lessonsStudied: countLessons(studied),
-    minutes: minutes.includes(null)
-      ? null
-      : Math.round(minutes.reduce((sum: number, value) => sum + (value ?? 0), 0)),
-  };
-}
-
-async function buildLevelDetails({
-  goal,
-  skills,
-  tx,
-}: {
-  goal: Goal | null;
-  skills: readonly SkillScore[];
-  tx: TransactionClient;
-}): Promise<LanguageLevelCertificateDetails> {
-  const study = goal
-    ? await loadGoalStudy(tx, goal)
-    : { canDo: [], lessonsStudied: 0, minutes: null };
-
-  return { ...study, skillLevels: toSkillLabels(skills) };
-}
-
-/**
- * Called after evidence raised a skill: awards each band the learner's earned level just crossed,
- * once per language and band. "Before" counts the raised skill at its previous score, which covers
- * its first raise.
- */
-export async function awardLanguageLevelCertificates(
-  tx: TransactionClient,
-  {
-    language,
-    now,
-    previous,
-    userId,
-  }: { language: string; now: Date; previous: SkillScore; userId: string },
-): Promise<void> {
-  const rows = await tx.languageSkillLevel.findMany({ where: { language, userId } });
-  const after = getEarnedLanguageLevel(rows);
-
-  const before = getEarnedLanguageLevel(
-    rows.map((row) =>
-      row.skill === previous.skill ? { raisedAt: now, score: previous.score } : row,
-    ),
+  const skippedLessonIds = plan.items.flatMap((item) =>
+    item.status === "skipped" && item.lessonId ? item.lessonId : [],
   );
 
-  if (after === null || before === null) {
+  const skills = await tx.skill.findMany({
+    select: { cefrLevel: true, id: true, level: true },
+    where: { id: { in: [...skillIds] } },
+  });
+
+  const heldBack =
+    skippedLessonIds.length > 0
+      ? await tx.lesson.findMany({
+          select: { id: true },
+          where: { id: { in: skippedLessonIds }, setAsideAt: { not: null } },
+        })
+      : [];
+
+  return listPlanLevels({
+    heldBackLessonIds: new Set(heldBack.map((lesson) => lesson.id)),
+    items: plan.items,
+    scope,
+    skills: new Map(skills.map((skill) => [skill.id, skill])),
+  });
+}
+
+async function loadCanDos(
+  tx: TransactionClient,
+  {
+    due,
+    levels,
+    plan,
+  }: { due: readonly PlanLevel[]; levels: readonly PlanLevel[]; plan: LanguagePlan },
+): Promise<Map<CefrLevel, string[]>> {
+  const unitLevels = getUnitLevels(levels);
+  const dueLevels = new Set(due.map((entry) => entry.level));
+  const unitIds = [...unitLevels].flatMap(([id, level]) => (dueLevels.has(level) ? id : []));
+
+  const chapters = await tx.chapter.findMany({
+    select: { id: true, objectives: true },
+    where: { id: { in: unitIds } },
+  });
+
+  const objectives = new Map(chapters.map((chapter) => [chapter.id, chapter.objectives]));
+  const ordered = [...new Set(plan.items.flatMap((item) => item.chapterId ?? []))];
+
+  return new Map(
+    due.map((entry) => [
+      entry.level,
+      ordered.flatMap((id) =>
+        unitLevels.get(id) === entry.level ? (objectives.get(id) ?? []) : [],
+      ),
+    ]),
+  );
+}
+
+function buildDetails({
+  canDo,
+  entry,
+}: {
+  canDo: string[];
+  entry: PlanLevel;
+}): LanguageLevelCertificateDetails {
+  const studied = entry.items.filter((item) => item.status === "done");
+  return { canDo, lessonsStudied: countLessons(studied), minutes: sumStudiedMinutes(studied) };
+}
+
+async function awardPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promise<void> {
+  const { goal } = plan;
+
+  if (!goal.targetLanguage) {
     return;
   }
 
-  const bands = getFinishedBands({ after, before });
+  const language = goal.targetLanguage;
+  const levels = await loadPlanLevels(tx, plan);
+  const earned = levels.filter((entry) => entry.earned);
 
-  if (bands.length === 0) {
+  if (earned.length === 0) {
     return;
   }
 
   const held = await tx.certificate.findMany({
     select: { key: true },
     where: {
-      key: { in: bands.map((level) => getLevelKey({ language, level })) },
+      key: { in: earned.map(({ level }) => getLevelKey({ language, level })) },
       kind: "languageLevel",
-      userId,
+      userId: goal.userId,
     },
   });
 
-  const keys = new Set(held.map((row) => row.key));
-  const due = bands.filter((level) => !keys.has(getLevelKey({ language, level })));
+  const heldKeys = new Set(held.map((row) => row.key));
+  const due = earned.filter(({ level }) => !heldKeys.has(getLevelKey({ language, level })));
 
   if (due.length === 0) {
     return;
   }
 
-  const goal = await findLearnerLanguageGoal({ db: tx, targetLanguage: language, userId });
-  const counted = rows.filter((row) => row.raisedAt !== null);
-  const details = await buildLevelDetails({ goal, skills: counted, tx });
+  const canDos = await loadCanDos(tx, { due, levels, plan });
+  const timeZone = getAnswerTimeZone({ goal });
 
   await tx.certificate.createMany({
-    data: due.map((level) => ({
+    data: due.map((entry) => ({
       code: createCertificateCode(),
-      completedOn: getCompletedOn({ goal, now }),
-      details,
-      goalId: goal?.id ?? null,
-      key: getLevelKey({ language, level }),
+      completedOn: getDateInTimeZone({
+        date: getLastFinishedAt(
+          levels.slice(0, levels.indexOf(entry) + 1).flatMap((below) => below.items),
+        ),
+        timeZone,
+      }),
+      details: buildDetails({ canDo: canDos.get(entry.level) ?? [], entry }),
+      goalId: goal.id,
+      key: getLevelKey({ language, level: entry.level }),
       kind: "languageLevel" as const,
-      language: goal?.language ?? DEFAULT_LOCALE,
-      level,
+      language: goal.language,
+      level: entry.level,
       targetLanguage: language,
-      userId,
+      userId: goal.userId,
     })),
   });
 
-  await issueEarnedCertificates(tx, { now, plus: "check", userId });
+  await issueEarnedCertificates(tx, { now: new Date(), plus: "check", userId: goal.userId });
+}
+
+/**
+ * Awards each CEFR level a language plan with just-finished lessons has earned, once per language
+ * and level, never revoked. It reads the whole plan rather than what just finished, so a level
+ * finished before is awarded with the next lesson. Callers hold the learner's lock.
+ */
+export async function awardLanguageLevelCertificates(
+  tx: TransactionClient,
+  { finished }: { finished: readonly Pick<PlanItem, "kind" | "planId">[] },
+): Promise<void> {
+  const planIds = [
+    ...new Set(finished.flatMap((item) => (item.kind === "lesson" ? item.planId : []))),
+  ];
+
+  if (planIds.length === 0) {
+    return;
+  }
+
+  const plans = await loadLanguagePlans(tx, planIds);
+
+  for (const plan of plans) {
+    // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.
+    await awardPlanLevels(tx, plan);
+  }
 }

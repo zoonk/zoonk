@@ -133,7 +133,7 @@ function fillSlots({
 
 /** Deterministic daily picks prioritize reviews and new learning before distinctive work and rotation. */
 export function pickMissions(facts: DayMissionFacts): MissionPick[] {
-  if (!facts.available || facts.plannedMinutes <= 0) {
+  if (!facts.available || (facts.plannedMinutes <= 0 && facts.readyMistakeCount === 0)) {
     return [];
   }
 

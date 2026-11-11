@@ -1,5 +1,6 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { type GoalCreateInput } from "@zoonk/core/goals/contract";
+import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
@@ -18,6 +19,7 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
 import { type ItemPictureData } from "../questions/item-picture";
 
@@ -132,13 +134,22 @@ export type PlacementMockOutcome = {
   offer: { access: "open" | "plusRequired"; minutes: { longest: number; shortest: number } } | null;
 };
 
-export type RevealedPlan = { plan: PlanView; syllabus: SyllabusView | null };
+/** `today` is the day Today will show, null until it can be read. */
+export type RevealedPlan = {
+  plan: PlanView;
+  /** The reveal's Today and first week; null while Today can't be read. */
+  reveal: PlanRevealDays | null;
+  syllabus: SyllabusView | null;
+};
 
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };
 
 export type OnboardingActions = {
+  readFirstLesson: (goalId: string) => Promise<OnboardingView["firstLesson"]>;
   answer: (input: { goalId: string; input: OnboardingAnswerInput }) => Promise<AnswerOutcome>;
   attach: GoalAttachActions;
+  /** The onboarding as it is after the aim moved; null when it couldn't be changed. */
+  changeAim: (input: { aim: LanguageAim; goalId: string }) => Promise<OnboardingView | null>;
   createGoals: (input: GoalCreateInput) => Promise<CreateGoalsOutcome>;
   finishPlacement: (input: { fromScratch: boolean; goalId: string }) => Promise<boolean>;
   getPlacement: (goalId: string) => Promise<PlacementOutcome>;
@@ -167,7 +178,8 @@ export type OnboardingActions = {
   }) => Promise<MaterialQuestionOutcome>;
   /** Null when the deck can't be shown. */
   readWarmUp: (warmUpId: string) => Promise<WarmUpDeck | null>;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
+  /** Ends onboarding: until it's saved, Today and resume bring the learner back to the reveal. */
+  markPlanRevealed: (goalId: string) => Promise<boolean>;
   startOver: (goalIds: string[]) => Promise<void>;
   stopPlacementMock: (mockId: string) => Promise<boolean>;
   understanding: UnderstandingActions;
@@ -176,6 +188,7 @@ export type OnboardingActions = {
 export type OnboardingRoutes = {
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: (goalId: string) => string;
+  lesson: (lessonId: string) => string;
   mock: (mockId: string) => string;
   planLink: (planId: string) => string;
   placementMock: (goalId: string) => string;
@@ -199,4 +212,5 @@ export type OnboardingNavigation = {
   toExplanation: (goalId: string) => void;
   toStart: () => void;
   toSteps: (goalId: string) => void;
+  toToday: () => void;
 };

@@ -22,7 +22,7 @@ export async function writeWarmUp({
   const written = await generateWarmUpCards({
     ...input,
     analytics,
-    serviceTier: chooseServiceTier({ wait: "soon" }),
+    serviceTier: chooseServiceTier({ wait: "learner" }),
   });
 
   return { cards: toWarmUpCards(written.data.cards), provenance: written.provenance };

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionContextInput } from "./lesson-question-request";
+import { getLessonQuestionScope, getLessonQuestionScopeQuery } from "./lesson-question-scope";
 
 const STEP_ID = "0198ca70-9c50-7000-8000-000000000010";
 
@@ -58,5 +59,28 @@ describe("lesson question requests", () => {
         lessonStepIds,
       }),
     ).toStrictEqual({ kind: "step", stepId: currentStepId, stepNumber: 11 });
+  });
+});
+
+describe("notebook tutor identity", () => {
+  const mistakeId = "0198ca70-9c50-7000-8000-000000000012";
+
+  it.each<LessonQuestionContext>([
+    { kind: "step", mistakeId, step: { id: STEP_ID }, stepIndex: 0 },
+    {
+      kind: "answer",
+      mistakeId,
+      selectedAnswer: { kind: "check", optionId: "original" },
+      step: { id: STEP_ID },
+      stepIndex: 0,
+    },
+    { answered: false, blockId: null, itemId: STEP_ID, kind: "item", mistakeId },
+  ])("preserves the original mistake in create and history requests for $kind", (context) => {
+    expect(getLessonQuestionContextInput({ context, lessonStepIds: [STEP_ID] })).toMatchObject({
+      mistakeId,
+    });
+
+    expect(getLessonQuestionScopeQuery(context)).toMatchObject({ mistakeId });
+    expect(getLessonQuestionScope(context)).toBe(`mistake:${mistakeId}`);
   });
 });

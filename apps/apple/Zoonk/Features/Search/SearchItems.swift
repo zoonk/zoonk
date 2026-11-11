@@ -179,7 +179,7 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
   }
 
   if places.mindMaps {
-    items.append(place(.mindMaps, route: .mindMaps))
+    items.append(place(.mindMaps, route: .mindMaps()))
   }
 
   items += [
@@ -215,9 +215,10 @@ private func otherGoals(_ summary: LearnerSummary) -> SearchGroup {
       SearchItem(
         id: "goal-\(goal.id)",
         title: String(
-          localized: "Switch to \(goal.title)", table: "Search",
-          comment: "Search row that switches to another goal; the value is its title"),
+          localized: "Switch to \(goal.displayName)", table: "Search",
+          comment: "Search row that switches to another goal; the value is its name"),
         systemImage: "arrow.left.arrow.right",
+        keywords: goal.title,
         action: .switchGoal(goal.id))
     })
 }
@@ -230,7 +231,7 @@ private func explanations(_ summary: LearnerSummary) -> SearchGroup {
       comment: "Search group of unfinished quick explanations"),
     items: summary.openExplanations.map { goal in
       SearchItem(
-        id: "explanation-\(goal.id)", title: goal.title, systemImage: "lightbulb",
+        id: "explanation-\(goal.id)", title: goal.displayName, systemImage: "lightbulb",
         action: .open(.explain(goalId: goal.id)))
     },
     isShownWithoutQuery: false)

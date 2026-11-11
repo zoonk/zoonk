@@ -108,6 +108,8 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let category: Category
   let source: Source
   let createdAt: Date
+  /// The About you question this fact answers, which is where it's changed.
+  var profileQuestion: ProfileQuestion?
 }
 
 /// What a free account can do; nil means no cap.
@@ -167,7 +169,7 @@ extension MemoryFact {
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding
       case (_, .session): .session
-      case (_, nil): .told
+      case (_, .profile), (_, nil): .told
       }
 
     self.init(
@@ -175,7 +177,9 @@ extension MemoryFact {
       statement: fact.statement,
       category: Category(rawValue: fact.category.rawValue) ?? .context,
       source: source,
-      createdAt: fact.createdAt)
+      createdAt: fact.createdAt,
+      profileQuestion: fact.source?.value1.kind == .profile
+        ? fact.source?.value1.id.flatMap(ProfileQuestion.init(rawValue:)) : nil)
   }
 }
 

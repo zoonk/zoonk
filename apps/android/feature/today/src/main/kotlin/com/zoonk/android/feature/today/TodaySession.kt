@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -87,25 +87,15 @@ import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
 import kotlinx.datetime.toJavaLocalDate
 
-/** Which of the queue's folds are open, kept with the screen's saved state. */
-@Immutable
-internal data class TodayFolds(
-    val doneOpen: Boolean,
-    val moreOpen: Boolean,
-    val toggleDone: () -> Unit,
-    val toggleMore: () -> Unit,
-)
-
 internal fun LazyListScope.todaySession(
     model: TodayDayModel,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
-    folds: TodayFolds,
+    list: LazyListState,
     wide: Boolean,
     buddyName: String,
 ) {
     val day = model.day
-    val next = day.nextStep
 
     if (model.today.earlierWork.isNotEmpty()) {
         item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
@@ -113,35 +103,18 @@ internal fun LazyListScope.todaySession(
 
     freshStartItem(model)
 
-    if (day.steps.size >= 2) {
+    if (day.steps.isNotEmpty() && (day.steps.size >= 2 || day.heldMinutes > 0)) {
         item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
-    if (wide && day.steps.isNotEmpty()) {
+    if (wide && (day.steps.isNotEmpty() || model.state == StudySession.State.WAITING)) {
         item(
             key = "meta",
             contentType = "meta",
         ) { DayMeta(model, rememberActionStatus(model, viewModel), Modifier.pageItem().padding(top = 8.dp)) }
     }
 
-    if (next != null) {
-        sessionQueue(model, next, viewModel, actions, folds, wide)
-    } else {
-        itemsIndexed(day.steps, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
-            val replay = step.lessonToReplay
-            StepRow(
-                model,
-                step,
-                isNext = false,
-                opens = replay != null,
-                busy = false,
-                onOpen = { replay?.let { actions.navigate(AppRoute.Lesson(it.toString())) } },
-                Modifier.pageRow(),
-                divider = index != day.steps.lastIndex || day.plusLessons.isNotEmpty(),
-            )
-        }
-        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size, endsList = true)
-    }
+    sessionQueue(model, day.nextStep, viewModel, actions, list)
 
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
 
@@ -163,7 +136,7 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     }
 
     item(key = "fresh-start", contentType = "note") {
-        val time = formatMinutes(day.steps.sumOf { it.estimatedMinutes }.toInt(), currentLocale())
+        val time = formatMinutes(day.minutes.left, currentLocale())
         val text =
             when (freshStart) {
                 FreshStart.WelcomeBack -> {
@@ -196,32 +169,28 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     }
 }
 
-/**
- * The fold never hides a block a mission opens: where the missions card leaves its rows to the
- * queue, that block is the mission's one place.
- */
 private fun LazyListScope.sessionQueue(
     model: TodayDayModel,
-    next: DayStep,
+    next: DayStep?,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
-    folds: TodayFolds,
-    wide: Boolean,
+    list: LazyListState,
 ) {
-    val queue = model.day.queue(next.position)
-    val foldsDone = !wide && queue.done.size > PHONE_DONE_ROWS
-    val marked = queue.after.indexOfLast { model.countsTowardMission(it) } + 1
-    val rows = (if (wide) WIDE_UPCOMING_ROWS else PHONE_UPCOMING_ROWS).coerceAtLeast(marked)
-    val coming = if (model.day.lessonsComing || model.day.lessonsToPrepare) 1 else 0
+    if (model.day.steps.isEmpty() && model.day.plusLessons.isEmpty()) return
+
+    val queue = model.day.queue
+    val foldsDone = queue.done.size > DONE_ROWS
+    val moreOpen = viewModel.moreOpen
+    val coming = if (next != null && (model.day.lessonsComing || model.day.lessonsToPrepare)) 1 else 0
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
-    val more = (upcoming - rows).coerceAtLeast(0)
-    val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
-    val showsComing = coming > 0 && (folds.moreOpen || queue.after.size < rows)
+    val more = (upcoming - UPCOMING_ROWS).coerceAtLeast(0)
+    val shownAfter = if (moreOpen) queue.after else queue.after.take(UPCOMING_ROWS)
+    val showsComing = coming > 0 && (moreOpen || queue.after.size < UPCOMING_ROWS)
     val plusShown =
-        (if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0))
+        (if (moreOpen) model.day.plusLessons.size else (UPCOMING_ROWS - queue.after.size - coming).coerceAtLeast(0))
             .coerceAtMost(model.day.plusLessons.size)
     // The list's last row has no hairline under it, as main's `last:border-b-0`; above "+N more" it keeps one.
-    val endsList = more == 0 || folds.moreOpen
+    val endsList = more == 0 || moreOpen
 
     item(key = "queue-top", contentType = "spacer") { Box(Modifier.padding(top = 12.dp)) }
 
@@ -230,27 +199,27 @@ private fun LazyListScope.sessionQueue(
             FoldRow(
                 label = pluralStringResource(R.plurals.today_done_count, queue.done.size, queue.done.size),
                 done = true,
-                open = folds.doneOpen,
+                open = viewModel.doneOpen,
                 minutes = null,
-                onToggle = folds.toggleDone,
+                onToggle = { viewModel.doneOpen = !viewModel.doneOpen },
                 modifier = Modifier.pageItem(),
             )
         }
     }
 
-    val rowsShown = (if (!foldsDone || folds.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
+    val rowsShown = (if (!foldsDone || viewModel.doneOpen) queue.done else emptyList()) + queue.before + listOfNotNull(next) + shownAfter
 
-    val beforeNext = rowsShown.indexOf(next) - 1
+    val beforeNext = next?.let { rowsShown.indexOf(it) - 1 }
     val stepsEnd = endsList && !showsComing && plusShown == 0
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
-        val isNext = step.position == next.position
+        val isNext = step.position == next?.position
         val replay = step.lessonToReplay
         StepRow(
             model = model,
             step = step,
             isNext = isNext,
-            opens = replay != null || (!step.isFinished && step.waitReason == null),
+            opens = replay != null || (next != null && !step.isFinished && step.waitReason == null),
             busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
             openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
@@ -269,17 +238,41 @@ private fun LazyListScope.sessionQueue(
     plusLessons(model.day.plusLessons, actions, visible = plusShown, endsList = endsList)
 
     if (more > 0) {
-        item(key = "fold-more", contentType = "fold") {
+        item(key = FOLD_MORE, contentType = "fold") {
             FoldRow(
-                label = pluralStringResource(R.plurals.today_more_count, more, more),
+                label =
+                    if (moreOpen) {
+                        stringResource(
+                            R.string.today_show_less,
+                        )
+                    } else {
+                        pluralStringResource(R.plurals.today_more_count, more, more)
+                    },
                 done = false,
-                open = folds.moreOpen,
-                minutes = queue.after.drop(rows).sumOf { it.estimatedMinutes },
-                onToggle = folds.toggleMore,
+                open = moreOpen,
+                minutes =
+                    model.day
+                        .minutesAfter(queue.before + listOfNotNull(next) + queue.after.take(UPCOMING_ROWS))
+                        .takeIf { !moreOpen && queue.after.size + coming > UPCOMING_ROWS },
+                onToggle = {
+                    if (moreOpen) list.keepFoldInView(hidden = more)
+                    viewModel.moreOpen = !moreOpen
+                },
                 modifier = Modifier.pageItem(),
             )
         }
     }
+}
+
+/**
+ * The list holds its place by the first row it shows, so folding away the rows on screen would
+ * leave it past the list. The fold row stays where the learner tapped it instead.
+ */
+private fun LazyListState.keepFoldInView(hidden: Int) {
+    val fold = layoutInfo.visibleItemsInfo.firstOrNull { it.key == FOLD_MORE } ?: return
+    val foldedIndex = fold.index - hidden
+
+    if (firstVisibleItemIndex >= foldedIndex) requestScrollToItem(foldedIndex, -fold.offset)
 }
 
 /** Not part of the session: never the next block, no mission mark, and the day's time leaves them out. */
@@ -291,7 +284,7 @@ private fun LazyListScope.plusLessons(
 ) {
     val shown = titles.take(visible)
     items(shown.withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (index, title) ->
-        QueueRow(
+        DayQueueRow(
             onClick = { actions.navigate(AppRoute.Subscription) },
             modifier = Modifier.pageRow(),
             divider = !endsList || index != shown.lastIndex,
@@ -315,7 +308,7 @@ private fun ComingLessonsRow(
     modifier: Modifier,
     divider: Boolean,
 ) {
-    QueueRow(
+    DayQueueRow(
         onClick = null,
         modifier = modifier,
         divider = divider,
@@ -370,7 +363,7 @@ private fun LazyListScope.upNext(
 
     items(lessons.withIndex().toList(), key = { "up-next-${it.index}" }, contentType = { "up-next" }) { (index, lesson) ->
         val first = index == 0
-        QueueRow(
+        DayQueueRow(
             isNext = first,
             busy = first && pending == TodayTap.UpNext,
             waiting = pending != null && pending != TodayTap.UpNext,
@@ -378,24 +371,13 @@ private fun LazyListScope.upNext(
             modifier = Modifier.pageRow(),
             leading = { KindMark(LearnKind.Lesson) },
             supporting = if (first && failed) ({ StepOpenFailed() }) else null,
-            meta = { Minutes(lesson.minutes) },
+            meta = { DayMinutes(lesson.minutes) },
         ) {
             Text(text = lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
 
-internal fun TodayDayModel.countsTowardMission(step: DayStep): Boolean =
-    !day.fullMeal.earned && day.missions.any { mission -> !mission.done && mission.waitReason == null && mission.opens.opensStep(step) }
-
-private fun MissionOpens?.opensStep(step: DayStep): Boolean =
-    when {
-        this !is MissionOpens.Block -> false
-        blockId != null -> blockId == step.id
-        else -> position == step.position
-    }
-
-/** A finished row shows no minutes: they were the plan's estimate, not the time it took. */
 @Composable
 private fun StepRow(
     model: TodayDayModel,
@@ -409,95 +391,24 @@ private fun StepRow(
     onNavigate: (AppRoute) -> Unit = {},
     divider: Boolean = true,
 ) {
-    val finished = step.isFinished
-    val mission = model.countsTowardMission(step)
-    val state =
-        when (step.status) {
-            StudyBlock.Status.COMPLETED -> stringResource(R.string.today_step_done)
-            StudyBlock.Status.SKIPPED -> stringResource(R.string.today_step_skipped)
-            else -> if (isNext) stringResource(R.string.today_step_next) else null
-        }
-
-    QueueRow(
-        isNext = isNext,
+    DayStepRow(
+        model.day,
+        step,
+        isNext,
+        modifier,
+        model.today.lessonStatus,
+        model.writingStalled,
+        onOpen = onOpen.takeIf { opens },
         busy = busy,
-        onClick = if (opens) onOpen else null,
-        modifier = modifier,
+        openFailed = openFailed,
         divider = divider,
-        stateDescription = state,
-        leading = { BlockMark(step) },
-        supporting =
-            if (finished && !openFailed) {
-                null
+        testOut =
+            if (isNext && step.canTestOut && step.chapterId != null) {
+                { TestOutLink(model, requireNotNull(step.chapterId), onNavigate) }
             } else {
-                {
-                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        if (openFailed) StepOpenFailed()
-                        if (!finished) {
-                            StepLines(model, step)
-                            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
-                        }
-                    }
-                }
-            },
-        meta =
-            if (finished) {
                 null
-            } else {
-                {
-                    if (mission) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_target),
-                            contentDescription = stringResource(R.string.today_step_counts_toward_mission),
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.zoonk.brain,
-                        )
-                    }
-                    Minutes(step.estimatedMinutes)
-                }
             },
-    ) {
-        Text(
-            text = blockTitle(step),
-            // Two lines, so a large font still shows what the step is.
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = if (finished) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@Composable
-private fun StepLines(
-    model: TodayDayModel,
-    step: DayStep,
-) {
-    val wait = step.waitReason
-    val phase = step.challengePhase
-    val line =
-        when {
-            wait == StudyBlock.WaitReason.LESSONS -> {
-                phase?.let { stringResource(R.string.today_step_after_lessons_phase, it) }
-                    ?: stringResource(R.string.today_step_after_lessons)
-            }
-
-            wait == StudyBlock.WaitReason.CHALLENGE -> {
-                phase?.let { stringResource(R.string.today_step_after_challenge_phase, it) }
-                    ?: stringResource(R.string.today_step_after_challenge)
-            }
-
-            !model.writingStalled && step.isBeingWritten(model.today.lessonStatus) -> {
-                stringResource(R.string.today_step_being_written)
-            }
-
-            else -> {
-                rowLabel(model, step)
-            }
-        }
-    val reviewDetail = if (step.weakest || step.fullReview) blockDetail(step) else null
-
-    if (line != null) SubLine(line)
-    if (reviewDetail != null) SubLine(reviewDetail)
+    )
 }
 
 /** Earlier unfinished lessons, which the session fits into today's time once it starts; a long list starts folded. */
@@ -566,87 +477,10 @@ private fun TestOutLink(
     )
 }
 
-@Composable
-private fun rowLabel(
-    model: TodayDayModel,
-    step: DayStep,
-): String? {
-    val catchingUp =
-        model.day.catchUp
-            ?.positions
-            ?.contains(step.position) == true
-    val subject = step.subject
-    val label =
-        when {
-            step.practisesTopics -> shortTopicList(step.topics, named = 1)
-            !catchingUp && step.checkpoint != null -> listOfNotNull(subject, blockDetail(step)).factsLine()
-            !catchingUp -> subject
-            subject != null -> stringResource(R.string.today_step_catching_up_subject, subject)
-            else -> stringResource(R.string.today_step_catching_up)
-        }
-
-    return when {
-        !step.oftenTested -> label
-        label != null -> stringResource(R.string.today_step_often_tested_label, label)
-        else -> stringResource(R.string.today_step_often_tested)
-    }
-}
-
-@Composable
-private fun SubLine(text: String) {
-    Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
-}
-
 /** A fold's mark slot, so its words start where the rows' do. */
 @Composable
 private fun RowMark(content: @Composable () -> Unit) {
     Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
-}
-
-/**
- * A row of the day on main's `ListRow`: the next block on `muted`, its mark on the title's first line
- * (main's `items-start`), the others over a hairline, except right above the next block.
- */
-@Composable
-private fun QueueRow(
-    onClick: (() -> Unit)?,
-    modifier: Modifier,
-    leading: @Composable () -> Unit,
-    isNext: Boolean = false,
-    busy: Boolean = false,
-    waiting: Boolean = false,
-    divider: Boolean = true,
-    stateDescription: String? = null,
-    supporting: (@Composable () -> Unit)? = null,
-    meta: (@Composable () -> Unit)? = null,
-    headline: @Composable () -> Unit,
-) {
-    Column(modifier) {
-        ListRow(
-            headline = headline,
-            onClick = onClick,
-            enabled = !waiting,
-            focusableWhenDisabled = waiting,
-            busy = busy,
-            highlighted = isNext,
-            stateDescription = stateDescription,
-            leading = leading,
-            supporting = supporting,
-            meta = meta,
-            verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
-            chevron = false,
-        )
-        if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
-    }
-}
-
-@Composable
-private fun Minutes(minutes: Long) {
-    Text(
-        text = formatMinutes(minutes.toInt(), currentLocale()),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.zoonkType.data,
-    )
 }
 
 /** Only time still ahead says its minutes: a done row's are the plan's estimate. */
@@ -655,7 +489,7 @@ private fun FoldRow(
     label: String,
     done: Boolean,
     open: Boolean,
-    minutes: Long?,
+    minutes: Double?,
     onToggle: () -> Unit,
     modifier: Modifier,
 ) {
@@ -684,7 +518,7 @@ private fun FoldRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (minutes != null && minutes > 0) Minutes(minutes)
+        if (minutes != null && minutes > 0) DayMinutes(minutes)
     }
 }
 
@@ -710,7 +544,7 @@ private fun DayProgress(
                     else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
                 }
             MeterPart(fill, weight = step.estimatedMinutes.coerceAtLeast(1).toFloat())
-        }
+        } + listOfNotNull(day.heldMinutes.takeIf { it > 0 }?.let { MeterPart(MeterPart.Fill.Track, weight = it.toFloat()) })
 
     MeterParts(parts, modifier, contentDescription = stepsDone(done, day.steps.size))
 }
@@ -740,12 +574,16 @@ private fun DayMeta(
         if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
-            Text(
-                text = stepsDone(done, model.day.steps.size),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.data,
-            )
+            if (model.day.steps.isNotEmpty()) {
+                Text(
+                    text = stepsDone(done, model.day.steps.size),
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.zoonkType.data,
+                )
+            } else {
+                Box(Modifier.weight(1f))
+            }
             DayTime(model, MaterialTheme.typography.titleLarge)
         }
     }
@@ -847,9 +685,8 @@ private fun TodayDayStatus(
     }
 }
 
-private const val PHONE_DONE_ROWS = 2
+private const val DONE_ROWS = 1
+private const val FOLD_MORE = "fold-more"
 private const val OPEN_BACKLOG_LIMIT = 5
-private const val PHONE_UPCOMING_ROWS = 6
-private const val WIDE_UPCOMING_ROWS = 12
 private const val SKIPPED_ALPHA = 0.25f
 private const val AHEAD_ALPHA = 0.5f

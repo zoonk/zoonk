@@ -51,6 +51,7 @@ describe("guest private course linking", () => {
     const goal = await prisma.goal.create({
       data: {
         dailyMinutes: 20,
+        displayName: "Internal approvals",
         kind: "learn",
         language: "en",
         primaryCourseId: guestCourse.id,

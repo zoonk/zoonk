@@ -3188,6 +3188,26 @@ msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Aula concluída"
 
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "U_fdgH"
+msgid "What's next"
+msgstr "O que vem a seguir"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "Seu plano está pronto"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "PBFmO0"
+msgid "Building your plan"
+msgstr "Criando seu plano"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Ver seu plano"
+
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
 msgid "Finish"
@@ -3361,6 +3381,7 @@ msgid "Check"
 msgstr "Conferir"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Confirmar"
@@ -3387,11 +3408,13 @@ msgid "See the answer"
 msgstr "Ver a resposta"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "zDR51u"
 msgid "See how it went"
 msgstr "Ver como foi"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Começar"

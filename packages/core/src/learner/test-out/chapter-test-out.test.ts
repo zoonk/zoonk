@@ -260,6 +260,48 @@ describe(submitChapterTestOut, () => {
     );
   });
 
+  it("reports the chapter a pass finishes and owes its map once its lessons are written", async () => {
+    const { chapters, goal, items, user } = await setup();
+    const chapterId = chapters[0]?.id ?? "";
+    const requestId = randomUUID();
+
+    await prisma.lesson.updateMany({
+      data: { contentStatus: "completed" },
+      where: { chapters: { some: { chapterId } } },
+    });
+
+    const submit = () =>
+      submitChapterTestOut({
+        chapterId,
+        goalId: goal.id,
+        input: {
+          answers: items
+            .slice(0, 4)
+            .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+          requestId,
+        },
+      });
+
+    const finishedChapter = { chapterId, goalId: goal.id, title: chapters[0]?.title };
+
+    await expect(submit()).resolves.toMatchObject({
+      outcome: { finishedChapter },
+      status: "ready",
+    });
+
+    await expect(submit()).resolves.toMatchObject({
+      outcome: { finishedChapter },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.followUp.findMany({
+        select: { key: true },
+        where: { kind: "makeChapterMindMap", userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ key: chapterId }]);
+  });
+
   it("marks the whole chapter known and skips its plan items on a pass", async () => {
     const { chapters, goal, items, planItems, skills, user } = await setup();
 

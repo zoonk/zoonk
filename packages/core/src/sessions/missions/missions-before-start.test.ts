@@ -188,7 +188,13 @@ describe("an activity done from Today before the learner starts the day", () => 
 
   it("saves the day at a notebook practice's first answer, before it fixes anything", async () => {
     const user = await userFixture();
-    const { goal, items, skills } = await sessionGoalFixture({ userId: user.id });
+
+    const { goal, items, skills } = await sessionGoalFixture({
+      challengesDone: true,
+      lessons: 4,
+      userId: user.id,
+    });
+
     mockSession(user.id);
 
     const mistake = await mistakeFixture({
@@ -478,7 +484,11 @@ describe("an activity on a day that offers no missions", () => {
 
   it("saves nothing and never runs the planner on a rest day", async () => {
     const user = await userFixture();
-    const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
+
+    const { goal, plan, skills } = await sessionGoalFixture({
+      challengesDone: true,
+      userId: user.id,
+    });
 
     const weekdayMinutes = [45, 45, 45, 0, 45, 45, 45];
 

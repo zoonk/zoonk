@@ -14,12 +14,12 @@ import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
-import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
-import { isBossReached } from "./_utils/boss-reached";
 import { needsPlus } from "./_utils/challenge-plus";
+import { isChallengeReached } from "./_utils/challenge-reach";
 import { loadCheckpointCandidates } from "./_utils/checkpoint-candidates";
 import { findNextWeeklyItem, loadWeekSkillIds } from "./_utils/load-weekly-challenge";
 import { findOwnedChallenge } from "./_utils/owned-challenge";
@@ -94,7 +94,6 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     listeningSkillIds,
-    movedEvents: parsePlanSettings(plan?.settings).movedEvents,
     phases: parsePlanPhases(plan?.phases),
     quickFormat: getPlacementQuickFormat(structure),
     skills: goalPlan.skills.filter((skill) => !skipped.has(skill.id)),
@@ -112,7 +111,7 @@ async function loadAskedSkillIds({
   now: Date;
   userId: string;
 }): Promise<string[]> {
-  const { goal, graphSkills, itemSkillIds, items, listeningSkillIds, skills } = context;
+  const { goal, graphSkills, itemSkillIds, items, listeningSkillIds, phases, skills } = context;
 
   if (item.kind === "checkpoint") {
     const textSkillIds = skills.flatMap((skill) =>
@@ -127,6 +126,7 @@ async function loadAskedSkillIds({
     graphSkills,
     itemSkillIds,
     items,
+    phases,
     skills,
     targetDate: goal.targetDate,
   }).filter((skillId) => !listeningSkillIds.has(skillId));
@@ -277,7 +277,7 @@ function isLater({
   today: Date;
 }): boolean {
   return item.kind === "boss"
-    ? !isBossReached({ boss: item, plan: context, today })
+    ? !isChallengeReached({ boss: item, items: context.items })
     : !isDueBy({ days: 0, item, today });
 }
 

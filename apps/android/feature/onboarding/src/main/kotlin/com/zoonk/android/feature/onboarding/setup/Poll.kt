@@ -123,13 +123,16 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
     querySerializer: KSerializer<Q>,
     serializer: KSerializer<T>,
     ready: (T) -> Boolean,
+    scope: (Q) -> String = { "" },
 ): PlanAnswer<T> {
     var first by rememberSaveable(stateSaver = jsonSaver(serializer.nullable)) { mutableStateOf<T?>(null) }
     var last by rememberSaveable(stateSaver = jsonSaver(serializer.nullable)) { mutableStateOf<T?>(null) }
+    var lastScope by rememberSaveable { mutableStateOf(scope(query)) }
     var settled by rememberSaveable(stateSaver = jsonSaver(querySerializer)) { mutableStateOf(query) }
     var missed by rememberSaveable(query) { mutableStateOf(false) }
-    val came = { value: T ->
+    val came = { value: T, answered: Q ->
         last = value
+        lastScope = scope(answered)
         if (first == null && ready(value)) first = value
     }
     val asking = enabled && settled == query
@@ -139,12 +142,12 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
         val out = resources[settled]
         combine(out.state, out.isRefreshing) { state, refreshing -> state == LoadState.Loading || refreshing }.first { !it }
         out.state.value.value
-            ?.let(came)
+            ?.let { came(it, settled) }
         settled = query
     }
     val state = if (asking) resources[query].collectShown().value else null
     val answer = (state as? LoadState.Loaded)?.value
-    LaunchedEffect(answer) { answer?.let(came) }
+    LaunchedEffect(answer) { answer?.let { came(it, query) } }
     val active = asking && answer?.let(ready) != true && !(paused && answer != null)
     val poll = rememberPoll(active, key = query, timeout = Duration.INFINITE) { resources[query].refreshed() }
     LaunchedEffect(planMade) { if (planMade && active) poll.restart() }
@@ -158,7 +161,7 @@ internal fun <Q : Any, T : Any> rememberPlanAnswer(
         missed = false
         poll.restart()
     }
-    return PlanAnswer(answer, first, answer ?: last, status, restart)
+    return PlanAnswer(answer, first, answer ?: last.takeIf { lastScope == scope(query) }, status, restart)
 }
 
 internal fun <T> jsonSaver(serializer: KSerializer<T>) =

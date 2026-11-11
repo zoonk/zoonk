@@ -62,6 +62,7 @@ const CANDIDATE_LOADERS: Record<
 };
 
 type IdentityAnalytics = SearchTermsParams["analytics"];
+type IdentityTier = SearchTermsParams["serviceTier"];
 
 async function findCandidateIds({
   search,
@@ -143,10 +144,12 @@ async function getSearchTerms({
   analytics,
   searchTerms,
   searching,
+  serviceTier,
 }: {
   analytics?: IdentityAnalytics;
   searchTerms?: readonly (readonly string[])[];
   searching: readonly IdentityEntry[];
+  serviceTier?: IdentityTier;
 }): Promise<Map<IdentityEntry, readonly string[]>> {
   if (searchTerms) {
     return new Map(searching.map((entry) => [entry, searchTerms[entry.index] ?? []]));
@@ -154,6 +157,7 @@ async function getSearchTerms({
 
   const written = await writeSearchTerms({
     analytics,
+    serviceTier,
     subjects: searching.map((entry) => entry.search.aiSubject),
   });
 
@@ -180,10 +184,12 @@ export async function resolveLibraryIdentities({
   analytics,
   requests,
   searchTerms,
+  serviceTier,
 }: {
   analytics?: IdentityAnalytics;
   requests: readonly LibraryIdentityRequest[];
   searchTerms?: readonly (readonly string[])[];
+  serviceTier?: IdentityTier;
 }): Promise<LibraryIdentityResolution[]> {
   const entries = await Promise.all(
     requests.map(async (request, index): Promise<IdentityEntry> => {
@@ -193,7 +199,7 @@ export async function resolveLibraryIdentities({
   );
 
   const searching = entries.filter((entry) => isSearched(entry));
-  const terms = await getSearchTerms({ analytics, searchTerms, searching });
+  const terms = await getSearchTerms({ analytics, searchTerms, searching, serviceTier });
 
   const searches = await Promise.all(
     searching.map(async (entry) => ({
@@ -230,14 +236,17 @@ export async function resolveLibraryIdentity({
   analytics,
   request,
   searchTerms,
+  serviceTier,
 }: {
   analytics?: IdentityAnalytics;
   request: LibraryIdentityRequest;
   searchTerms?: readonly string[];
+  serviceTier?: IdentityTier;
 }): Promise<LibraryIdentityResolution> {
   const [resolution] = await resolveLibraryIdentities({
     analytics,
     requests: [request],
+    serviceTier,
     ...(searchTerms && { searchTerms: [searchTerms] }),
   });
 

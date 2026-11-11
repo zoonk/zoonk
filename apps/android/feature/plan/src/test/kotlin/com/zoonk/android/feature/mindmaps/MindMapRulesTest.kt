@@ -2,6 +2,9 @@ package com.zoonk.android.feature.mindmaps
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -35,22 +38,26 @@ class MindMapRulesTest {
     }
 
     @Test
-    fun theServersReadyWinsOverWhatThisScreenSaw() {
-        val stuck = MindMapLocal(stuck = true)
-
-        assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, stuck))
-        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Generating, stuck))
+    fun aRefusalOrALostConnectionShowsUntilANewerReadReplacesIt() {
+        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Drawing, MindMapLocal(unreachable = true)))
+        assertEquals(
+            MindMapShown.Refused,
+            shownMindMap(MindMapShown.Available, MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day))),
+        )
     }
 
     @Test
-    fun aMapThisScreenSawFinishStaysDrawingUntilTheServersReadSaysSo() {
-        assertEquals(MindMapShown.Generating, shownMindMap(MindMapShown.Available, MindMapLocal(shown = MindMapShown.Ready)))
+    fun aDrawnMapOrAPlusLockLeavesNothingForAFailureToBeAbout() {
+        val refused = MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day))
+
+        assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, MindMapLocal(unreachable = true)))
+        assertEquals(MindMapShown.PlusRequired, shownMindMap(MindMapShown.PlusRequired, refused))
     }
 
     @Test
-    fun withoutARequestTheServerSaysWhereItStands() {
+    fun otherwiseTheReadsSayWhereTheMapStands() {
         assertEquals(MindMapShown.Failed, shownMindMap(MindMapShown.Failed, null))
-        assertEquals(MindMapShown.Refused, shownMindMap(MindMapShown.Available, MindMapLocal(shown = MindMapShown.Refused)))
+        assertEquals(MindMapShown.Available, shownMindMap(MindMapShown.Available, MindMapLocal(pending = true)))
     }
 
     @Test

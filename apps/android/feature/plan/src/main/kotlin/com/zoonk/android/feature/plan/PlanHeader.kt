@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,6 +25,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.feedback.FeedbackSheet
@@ -36,6 +40,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -52,6 +57,7 @@ internal fun PlanHeader(
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     modifier: Modifier = Modifier,
+    rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: (() -> Unit)? = null,
 ) {
@@ -65,7 +71,7 @@ internal fun PlanHeader(
                     size = ButtonSize.Small,
                 ) { Text(stringResource(R.string.plan_adjust_plan)) }
             }
-            PlanMenu(page, links, resume, isSaving, onSetStatus, report)
+            PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report)
         }
     }
 }
@@ -95,8 +101,8 @@ private fun PlanEyebrow(page: PlanPageState) {
                 pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
             }
         }
-    val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.text) } ?: page.goal.title
-    val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.title, it.spoken) } ?: page.goal.title
+    val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.text) } ?: page.goal.displayName
+    val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.spoken) } ?: page.goal.displayName
 
     Eyebrow(text, Modifier.semantics { contentDescription = spoken })
 }
@@ -108,6 +114,7 @@ private fun PlanMenu(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    rename: GoalRename?,
     report: FeedbackSheet?,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -126,6 +133,7 @@ private fun PlanMenu(
             resume,
             isSaving,
             onSetStatus,
+            rename?.takeIf { page.goal.kind != LearnerSummaryGoal.Kind.EXPLAIN }?.onOpen,
             report,
             onDismiss = { expanded = false },
             onDialog = { dialog = it },
@@ -133,7 +141,56 @@ private fun PlanMenu(
     }
 
     dialog?.let { GoalStatusDialog(it, page, onSetStatus, onDismiss = { dialog = null }) }
+    rename?.dialog?.let { RenameGoalDialog(page.goal.displayName, it, rename) }
 }
+
+internal class GoalRename(
+    val dialog: RenameDialog?,
+    val onOpen: () -> Unit,
+    val onClose: () -> Unit,
+    val onSave: (String) -> Unit,
+)
+
+@Composable
+private fun RenameGoalDialog(
+    displayName: String,
+    dialog: RenameDialog,
+    rename: GoalRename,
+) {
+    var name by rememberSaveable { mutableStateOf(displayName) }
+    val trimmed = name.trim()
+    val save = { if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed) }
+
+    AlertDialog(
+        onDismissRequest = rename.onClose,
+        title = { Text(stringResource(R.string.plan_rename_goal)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(stringResource(R.string.plan_rename_description))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it.take(MAX_GOAL_NAME_LENGTH) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = stringResource(R.string.plan_rename_label),
+                    supportingText = if (dialog.failed) ({ Text(stringResource(R.string.plan_save_failed)) }) else null,
+                    isError = dialog.failed,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { save() }),
+                    singleLine = true,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = save, enabled = trimmed.isNotEmpty() && !dialog.saving) {
+                Text(stringResource(R.string.plan_save))
+            }
+        },
+        dismissButton = { TextButton(onClick = rename.onClose, enabled = !dialog.saving) { Text(stringResource(R.string.plan_cancel)) } },
+    )
+}
+
+/** Core's `MAX_TITLE_LENGTH`, which bounds a goal's name. */
+private const val MAX_GOAL_NAME_LENGTH = 120
 
 @Composable
 private fun MenuItems(
@@ -143,6 +200,7 @@ private fun MenuItems(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onRename: (() -> Unit)?,
     report: FeedbackSheet?,
     onDismiss: () -> Unit,
     onDialog: (GoalDialog) -> Unit,
@@ -177,7 +235,7 @@ private fun MenuItems(
                 val send =
                     Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TITLE, page.goal.title)
+                        putExtra(Intent.EXTRA_TITLE, page.goal.displayName)
                         putExtra(Intent.EXTRA_TEXT, shareUrl)
                     }
                 context.startActivity(Intent.createChooser(send, shareTitle))
@@ -190,8 +248,9 @@ private fun MenuItems(
         )
         report?.let { ReportProblemItem(it, onClick = onDismiss) }
 
+        HorizontalDivider()
+        onRename?.let { MenuItem(R.drawable.ic_edit, stringResource(R.string.plan_rename_goal), close(it)) }
         if (page.goal.status != LearnerSummaryGoal.Status.COMPLETED) {
-            HorizontalDivider()
             if (page.isPaused) {
                 MenuItem(
                     R.drawable.ic_play_arrow,
@@ -207,8 +266,6 @@ private fun MenuItems(
                     enabled = !isSaving,
                 )
             }
-        } else {
-            HorizontalDivider()
         }
         MenuItem(
             R.drawable.ic_archive,
@@ -231,7 +288,7 @@ private fun GoalStatusDialog(
     val archive = dialog == GoalDialog.Archive
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, page.goal.title)) },
+        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, page.goal.displayName)) },
         text = { Text(stringResource(if (archive) R.string.plan_archive_description else R.string.plan_resume_effect)) },
         confirmButton = {
             TextButton(

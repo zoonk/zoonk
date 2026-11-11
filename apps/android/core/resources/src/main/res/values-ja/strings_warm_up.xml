@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_deck_end": "e0138c291a6d4d9ae197627c3335fd0f6f10d1b3e839164871f7f383280e6ed4",
-  "warm_up_guess_hint": "f19c210469e1dd995c2292aa2903c1ab18ea7c3ae102f74fbcdd7246607c271b",
+  "warm_up_back_to_quiz": "ff1dc2299ec2bf243b3083a84a291432127349ae559cfa312ee0dcf708d60e2f",
+  "warm_up_first_lesson": "7416f486ed6f2d8a31841f48e3c7322cb03c625f5e0dc6c0d19b4973d89138bb",
+  "warm_up_first_lesson_ready": "dd5a531fdbc5026de0bd151ec79845785db24d91131f70494949f57c3f19819c",
+  "warm_up_first_lesson_screens": "9ba0149fa3a2c80398909316ab28b45d07a24768b5137c9b80a345b3ab5cbfc9",
+  "warm_up_first_lesson_writing": "f931fb2c9ca296f00e76c58ca124ca22eac26f7deb4f5f835c5c26f1d1f19804",
+  "warm_up_guess_hint": "74ea0b6203bc14531e9ad82a286e93eed6cf962975d7db2c6d26a77cddf53789",
   "warm_up_lesson_ready": "02c629a763050a84279e07b12999cda9cc56a1041860803694df0b1889a03e51",
   "warm_up_next": "8035b4031aed63ddb042195ffbf9612d2ee2f81677354f871ded3fda369dc16b",
   "warm_up_plan_ready": "0087789b7978eb2ae8560aae375b754f65fe949e7059dde32abb8a996e1abff4",
   "warm_up_plan_ready_one_question": "34fd26b6c23697b5fd845a37056214382cd0fa961cfadbf53688bd9da18b0445",
   "warm_up_plan_ready_whenever": "897677cf56baa4a28bb5eb0868315bd5aaad416adf2fc6e9ff77f84d23ebbdd5",
+  "warm_up_plan_waiting": "26d19ad5722cf08421adf9e228a406cd5df7cea4dc9b8b25e38275d85b8439e2",
+  "warm_up_play_quiz": "6e7b084c9956300a69574ec0add3ff8ffe8d91c9877fb0705ed6ebe370c43027",
   "warm_up_questions_ready": "2c5b21d79d858aae9f041eab7bec1fad1384ea7ed0ff2a0f9700c842a5154abe",
   "warm_up_questions_ready_description": "cd8e656e5097b126d05e39d8b04f91ee4348b07be652294cd1177266a2340a04",
-  "warm_up_title": "b9bcbaf7e624ab25726ff60b65303de8e7012d6ab43c9637aae9e00ac775bc5f"
+  "warm_up_ready_to_start": "9f300ce72f61a3894867d49d030181712456bdc852736feba7a6d61d25830065",
+  "warm_up_start_first_lesson": "302eef9be7657e3d58afddc53e541ef4c68f658d5ccd3ce96e89f74f6bed5dff",
+  "warm_up_title": "ac07ef177f6e33d66c301ca54139982c534d66f83e0487ebe89447305bac29ad"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
-    <string name="warm_up_title">待ち時間に予想クイズ</string>
+    <string name="warm_up_title">待ち時間にクイズ</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">次の問題へ</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
-    <string name="warm_up_deck_end">今はここまでです。</string>
     <!-- Under a warm-up question: a guess never counts -->
-    <string name="warm_up_guess_hint">ここで間違えると、あとで覚えやすくなります。</string>
+    <string name="warm_up_guess_hint">気軽にどうぞ。答えは成績に影響しません。</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">学習計画ができました</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
@@ -34,4 +41,13 @@
     <string name="warm_up_questions_ready_description">準備ができたら、いつでも始められます。</string>
     <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">レッスンができました。好きなときに始められます。</string>
+    <string name="warm_up_back_to_quiz">クイズに戻る</string>
+    <string name="warm_up_play_quiz">待ち時間にクイズをする</string>
+    <string name="warm_up_first_lesson_writing">最初のレッスンを作成しています：%1$s</string>
+    <string name="warm_up_first_lesson_ready">最初のレッスンができました</string>
+    <string name="warm_up_plan_waiting">レッスンが終わる頃には、学習計画ができています。</string>
+    <string name="warm_up_start_first_lesson">レッスン1を始める</string>
+    <string name="warm_up_first_lesson">最初のレッスン</string>
+    <string name="warm_up_ready_to_start">すぐに始められます</string>
+    <string name="warm_up_first_lesson_screens">短い解説を5ページほど作成しています</string>
 </resources>

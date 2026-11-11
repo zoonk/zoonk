@@ -55,7 +55,7 @@ internal fun TodayAside(
             opening = { mission -> model.missionTap(mission)?.equals(aside.pending()) == true },
             openFailed = { mission -> model.missionTap(mission)?.equals(aside.failed()) == true },
             // Where the queue sits right above, it marks each mission's block and the card keeps only its status.
-            rowsInQueue = !beside && model.day.missions.onlyOpenBlocks(),
+            rowsInQueue = !beside && model.leavesRowsToQueue(),
             collapseWhenDone = true,
         )
         TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate)
@@ -87,8 +87,12 @@ internal fun TodayDayModel.blockOf(mission: DayMission): DayStep? {
 
 private fun TodayDayModel.missionTap(mission: DayMission): TodayTap? = blockOf(mission)?.let { TodayTap.Mission(it.position) }
 
-private fun List<DayMission>.onlyOpenBlocks(): Boolean =
-    all {
+/** The card keeps its rows while a mission's block is folded out of the queue. */
+private fun TodayDayModel.leavesRowsToQueue(): Boolean {
+    val folded = day.foldedSteps
+
+    return day.missions.all {
         it.done ||
-            (it.opens is MissionOpens.Block && it.waitReason == null && it.total <= 1)
+            (it.opens is MissionOpens.Block && it.waitReason == null && it.total <= 1 && blockOf(it) !in folded)
     }
+}

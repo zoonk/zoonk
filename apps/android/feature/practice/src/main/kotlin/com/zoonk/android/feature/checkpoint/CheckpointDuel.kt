@@ -58,6 +58,7 @@ data class DuelState(
     val feedback: DuelFeedback? = null,
     val pending: Boolean = false,
     val error: DuelError? = null,
+    val saveFailures: Int = 0,
     val completion: StudyBlockCompletion? = null,
     val given: Map<String, Answer> = emptyMap(),
     val transcripts: Map<String, List<TranscriptLine>> = emptyMap(),
@@ -73,13 +74,15 @@ data class DuelState(
         selected = null,
         pending = false,
         error = null,
+        saveFailures = 0,
         verdicts = verdicts + (itemId to isCorrect),
         given = given + (itemId to answer),
         reinforcementLessons = reinforcementLessons ?: this.reinforcementLessons,
         transcripts = transcript?.let { transcripts + it } ?: transcripts,
     )
 
-    fun finished(completion: StudyBlockCompletion) = copy(completion = completion, feedback = null, pending = false, showsResult = true)
+    fun finished(completion: StudyBlockCompletion) =
+        copy(completion = completion, feedback = null, pending = false, showsResult = true, saveFailures = 0)
 
     companion object {
         fun of(checkpoint: Checkpoint) =

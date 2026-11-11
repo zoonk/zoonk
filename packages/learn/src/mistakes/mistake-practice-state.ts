@@ -1,40 +1,34 @@
+import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
+import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type MistakePracticeResult } from "@zoonk/core/mistakes/practice";
+import { type MistakePracticeAnswerResult } from "@zoonk/core/mistakes/practice-answer";
 import { type FinishMistakePracticeResult } from "@zoonk/core/mistakes/practice-finish";
+import { type QuestionAnswer } from "@zoonk/core/sessions/contract";
 import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
-import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import {
-  type AnswerSender,
-  isIdeaFirst,
-  isReadFirst,
-  isUnchangedAnswer,
-} from "./drill/drill-types";
+import { type AnswerSender, isIdeaFirst, isUnchangedAnswer } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
+
+export type PracticeAnswer = QuestionAnswer | LessonStepAnswer;
 
 /**
  * `attemptId` stays the same when an answer is sent again, so the server records one answer per
  * question.
  */
 export type MistakePracticeAnswer = {
-  answer: ChoiceAnswer;
+  answer: PracticeAnswer;
   attemptId: string;
   durationMs: number;
-  itemId: string;
+  itemId?: string;
+  stepId?: string;
   mistakeId: string;
   runAnswerIds: string[];
 };
 
 export type MistakePracticeFeedback =
-  | (ChoiceFeedback & {
-      answerId: string;
-      fixed: boolean;
-      fixedMistakeIds: string[];
-      mistakeStatus: "open" | "fixed";
-      reached: Reached;
-      trap: string | null;
-    })
+  | Extract<MistakePracticeAnswerResult, { status: "ready" }>["feedback"]
   | null;
 
 export type MistakePracticeSummary = Extract<
@@ -45,20 +39,24 @@ export type MistakePracticeSummary = Extract<
 export type PracticeStep = {
   entry: PracticeEntry;
   firstOfEntry: boolean;
-  question: PracticeEntry["questions"][number];
+  question: PracticeEntry["questions"][number] | null;
+  lesson: PracticeEntry["lesson"];
 };
 
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";
-export type SentPracticeAnswer = { answer: ChoiceAnswer; durationMs: number; sender: AnswerSender };
+export type SentPracticeAnswer = {
+  answer: PracticeAnswer;
+  durationMs: number;
+  sender: AnswerSender;
+};
 
 type PracticePhase =
   | { kind: "idea" }
-  | { kind: "reading" }
-  | { kind: "answering"; selected: ChoiceAnswer | null }
+  | { kind: "answering"; selected: PracticeAnswer | null }
   | ({ kind: "checking" } & SentPracticeAnswer)
   | ({ kind: "answerFailed" } & SentPracticeAnswer)
-  | ({ feedback: Graded; kind: "feedback" } & SentPracticeAnswer)
+  | ({ feedback: Graded; kind: "feedback"; spoken?: SpokenAnswerGrade } & SentPracticeAnswer)
   | { kind: "ending" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
@@ -68,6 +66,7 @@ type PracticePhase =
  */
 type PracticeState = {
   answerIds: string[];
+  failures: number;
   fixedIds: string[];
   index: number;
   phase: PracticePhase;
@@ -76,12 +75,11 @@ type PracticeState = {
   verdicts: PracticeVerdict[];
 };
 
-type PracticeAction =
+export type PracticeAction =
   | { type: "start" }
-  | { type: "reveal" }
-  | { answer: ChoiceAnswer | null; type: "select" }
+  | { answer: PracticeAnswer | null; type: "select" }
   | ({ type: "check" } & SentPracticeAnswer)
-  | { feedback: Graded; mistakeId: string; type: "answered" }
+  | { feedback: Graded; mistakeId: string; spoken?: SpokenAnswerGrade; type: "answered" }
   | { type: "answerFailed" }
   | { type: "retry" }
   | { type: "next" }
@@ -89,9 +87,18 @@ type PracticeAction =
   | { summary: MistakePracticeSummary | null; type: "ended" };
 
 function toPracticeSteps(practice: readonly PracticeEntry[]): PracticeStep[] {
-  return practice.flatMap((entry) =>
-    entry.questions.map((question, index) => ({ entry, firstOfEntry: index === 0, question })),
-  );
+  return practice.flatMap<PracticeStep>((entry) => {
+    if (entry.lesson) {
+      return [{ entry, firstOfEntry: true, lesson: entry.lesson, question: null }];
+    }
+
+    return entry.questions.map((question, index) => ({
+      entry,
+      firstOfEntry: index === 0,
+      lesson: null,
+      question,
+    }));
+  });
 }
 
 function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
@@ -99,12 +106,8 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
     return { kind: "ending" };
   }
 
-  if (step.firstOfEntry && isIdeaFirst(step.entry.drill)) {
-    return { kind: "idea" };
-  }
-
-  return isReadFirst(step.entry.drill)
-    ? { kind: "reading" }
+  return step.firstOfEntry && isIdeaFirst(step.entry.drill)
+    ? { kind: "idea" }
     : { kind: "answering", selected: null };
 }
 
@@ -113,6 +116,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
 
   return {
     answerIds: [],
+    failures: 0,
     fixedIds: [],
     index: 0,
     phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
@@ -120,12 +124,6 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     steps,
     verdicts: [],
   };
-}
-
-function afterIdea(step: PracticeStep | undefined): PracticePhase {
-  return isReadFirst(step?.entry.drill ?? null)
-    ? { kind: "reading" }
-    : { kind: "answering", selected: null };
 }
 
 function getFixedIds(state: PracticeState, action: Extract<PracticeAction, { type: "answered" }>) {
@@ -146,7 +144,7 @@ function getPracticeVerdict({
   isCorrect,
   sender,
 }: {
-  answer: ChoiceAnswer;
+  answer: PracticeAnswer;
   isCorrect: boolean;
   sender: AnswerSender;
 }): PracticeVerdict {
@@ -166,13 +164,26 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
 
   return {
     ...state,
-    answerIds: [...state.answerIds, action.feedback.answerId],
+    answerIds: action.feedback.answerId
+      ? [...state.answerIds, action.feedback.answerId]
+      : state.answerIds,
+    failures: 0,
     fixedIds: getFixedIds(state, action),
-    phase: { ...phase, feedback: action.feedback, kind: "feedback" as const },
+    phase: {
+      ...phase,
+      answer: action.spoken
+        ? { kind: "spokenAnswer" as const, text: action.spoken.transcript }
+        : phase.answer,
+      feedback: action.feedback,
+      kind: "feedback" as const,
+      spoken: action.spoken,
+    },
     reached: mergeReached(state.reached, action.feedback.reached),
     verdicts: [
       ...state.verdicts,
-      getPracticeVerdict({ ...phase, isCorrect: action.feedback.isCorrect }),
+      action.feedback.lessonResult?.checked === false
+        ? "read"
+        : getPracticeVerdict({ ...phase, isCorrect: action.feedback.isCorrect }),
     ],
   };
 }
@@ -180,8 +191,6 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
 export function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case "start":
-      return { ...state, phase: afterIdea(state.steps[state.index]) };
-    case "reveal":
       return { ...state, phase: { kind: "answering", selected: null } };
     case "select":
       return state.phase.kind === "answerFailed" &&
@@ -202,7 +211,11 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
       return answered(state, action);
     case "answerFailed":
       return state.phase.kind === "checking"
-        ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+        ? {
+            ...state,
+            failures: state.failures + 1,
+            phase: { ...state.phase, kind: "answerFailed" },
+          }
         : state;
     case "retry":
       return state.phase.kind === "answerFailed"
@@ -250,6 +263,14 @@ function squashSpaces(text: string): string {
  * asked.
  */
 export function isMistakeQuestion(step: PracticeStep): boolean {
+  if (step.lesson) {
+    return true;
+  }
+
+  if (!step.question) {
+    return false;
+  }
+
   const saved = squashSpaces(step.entry.snapshot.question);
   const { context, question } = step.question;
 
@@ -257,4 +278,12 @@ export function isMistakeQuestion(step: PracticeStep): boolean {
     saved === squashSpaces(question) ||
     (Boolean(context) && saved === squashSpaces(`${context} ${question}`))
   );
+}
+
+export function getPracticeAnswer(state: PracticeState): PracticeAnswer | null {
+  if (state.phase.kind === "answering") {
+    return state.phase.selected;
+  }
+
+  return "answer" in state.phase ? state.phase.answer : null;
 }

@@ -17,8 +17,7 @@ function describe(issues: readonly LessonQualityIssue[]): string {
     ? "No blocking issues."
     : issues
         .map(
-          (issue) =>
-            `[screen ${issue.screen === null ? "-" : issue.screen + 1}, ${issue.kind}] ${issue.problem}`,
+          (issue) => `[screen ${issue.screen === null ? "-" : issue.screen + 1}] ${issue.problem}`,
         )
         .join(" ");
 }
@@ -28,7 +27,7 @@ function scoreClean(blocking: readonly LessonQualityIssue[]): number {
     return 10;
   }
 
-  return blocking.some((issue) => issue.kind === "incorrect") ? 6 : 7;
+  return 6;
 }
 
 function scorePlanted({
@@ -41,12 +40,8 @@ function scorePlanted({
   const plantedScreen = expected.screen === null ? null : expected.screen - 1;
   const onScreen = blocking.filter((issue) => issue.screen === plantedScreen);
 
-  if (onScreen.some((issue) => expected.kinds.includes(issue.kind))) {
-    return 10;
-  }
-
   if (onScreen.length > 0) {
-    return 9;
+    return 10;
   }
 
   return blocking.length > 0 ? 7 : 6;
@@ -63,13 +58,15 @@ export const scoreLessonQualityCheck: TaskScorer<LessonQualityCheckExpected> = (
   }
 
   const issues = parseIssues(output);
-  // An alphabet lesson is already published, so its review acts only on what's incorrect.
-  const actsOnlyOnIncorrect = "alphabet" in testCase.userInput;
 
-  const blocking = (issues ?? []).filter(
-    (issue) =>
-      issue.severity === "blocking" && (!actsOnlyOnIncorrect || issue.kind === "incorrect"),
-  );
+  if (issues === null) {
+    return {
+      ...createFixedScore({ conclusion: "Invalid review output.", score: 6 }),
+      classification: { expected: expected.verdict, predicted: null },
+    };
+  }
+
+  const blocking = issues;
 
   const verdict = blocking.length > 0 ? "fail" : "pass";
   const predicted = issues === null ? null : verdict;

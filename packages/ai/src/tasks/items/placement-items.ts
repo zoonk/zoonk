@@ -4,22 +4,21 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { type ItemExamFormat } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem, type ItemFormat } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import trueFalseBalance from "./placement-items-true-false.prompt.md";
 import typedAnswers from "./placement-items-typed-answers.prompt.md";
 import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
 
 /**
- * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: at
- * high reasoning Terra wrote every key right at about half Sol's cost, and at its default reasoning
- * it slipped on two of six sets (30 Oct 2026).
+ * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: on
+ * 10 cases (8 Nov 2026), Terra at high reasoning scored 8.86 (EN 9.38, PT 8.73) at $25.52/1k
+ * against Luna's 8.34, but still keyed one energy bill wrong. Opus hasn't run the current prompt.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const defaultReasoning: Reasoning = "high";
@@ -109,16 +108,11 @@ function buildUserPrompt(params: PlacementItemsParams): string {
       ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
       : "";
 
-  const targetLanguageLine = targetLanguage
-    ? `\n    TARGET_LANGUAGE: ${getPromptLanguageName({ language: targetLanguage, userLanguage: language })}`
-    : "";
-
   return `
     QUICK_FORMAT: ${quickFormat}
     QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
-    LANGUAGE: ${getPromptLanguageName({ language })}${targetLanguageLine}
-${formatLocalContext(language)}
-    ${formatCast({ language, seed: params.skills.map((skill) => skill.name).join(":") })}
+    LANGUAGE: ${getPromptLanguageName({ language })}
+${formatItemSetting({ language, seed: params.skills.map((skill) => skill.name).join(":"), targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:

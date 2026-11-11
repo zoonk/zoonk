@@ -1258,6 +1258,24 @@ describe(checkLessonStep, () => {
     ).resolves.toMatchObject({ snapshot: { answer: "o Quanto é aluguel?", format: "listening" } });
   });
 
+  it("counts a spoken screen answered by typing as writing, not speaking", async () => {
+    const [user, { lesson, steps }] = await Promise.all([userFixture(), languageLessonFixture()]);
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      check({
+        answer: { kind: "spokenAnswer", text: "Quanto é o aluguel?" },
+        runId: run.id,
+        stepId: stepOfKind(steps, "spokenAnswer").id,
+      }),
+    ).resolves.toMatchObject({ status: "checked" });
+
+    await expect(
+      prisma.languageSkillLevel.findMany({ select: { skill: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ skill: "writing" }]);
+  });
+
   it.each([
     {
       answer: { arrangedWords: ["much", "How", "is", "the", "rent?"], kind: "reading" },

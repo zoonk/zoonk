@@ -6,6 +6,7 @@ import { useAppLocale } from "../../_utils/locale";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+import { startOnboardingAttempt } from "./attempt-clock";
 import { forgetSentGoal, holdSentGoal, sendGoal, takeSentGoal } from "./understanding-start";
 
 export function useSubmitUnderstanding({
@@ -22,7 +23,7 @@ export function useSubmitUnderstanding({
   onDraft: (draft: OnboardingDraftView) => void;
   onError: (input: { error: GoalError; words: string }) => void;
   onExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
-  onSending: (sent: { goal: string; sentAt: number }) => void;
+  onSending: (sent: { attemptId?: string; goal: string; sentAt: number }) => void;
   understanding: UnderstandingActions;
 }) {
   const locale = useAppLocale();
@@ -67,26 +68,28 @@ export function useSubmitUnderstanding({
   }
 
   async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
-    analytics.track({ name: "Goal Typed", properties: { has_attachment: hasAttachment } });
-    const sentAt = Date.now();
-    const outcome = sendGoal({ goal, language: locale, signal, understanding });
-    await follow({ goal, outcome, sentAt, signal });
+    const attempt = startOnboardingAttempt({ hasAttachment, track: analytics.track });
+    const sentAt = attempt.submittedAt;
+    const outcome = sendGoal({ attempt, goal, language: locale, signal, understanding });
+    await follow({ attemptId: attempt.id, goal, outcome, sentAt, signal });
   }
 
   /** Shows the goal on its way, then what was understood or what went wrong, unless `signal` aborted. */
   async function follow({
+    attemptId,
     goal,
     outcome,
     sentAt,
     signal,
   }: {
     goal: string;
+    attemptId?: string;
     outcome: Promise<StartUnderstandingOutcome>;
     sentAt: number;
     signal: AbortSignal;
   }) {
     setIsSubmitting(true);
-    onSending({ goal, sentAt });
+    onSending({ attemptId, goal, sentAt });
 
     const result = await outcome;
 

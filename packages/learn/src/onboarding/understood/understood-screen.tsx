@@ -41,8 +41,8 @@ function readEditValue({ draft, row }: { draft: GoalDraft; row: UnderstoodRow })
     return row.editDefault ?? row.value;
   }
 
-  if (field.key === "title") {
-    return draft.title;
+  if (field.key === "displayName") {
+    return draft.displayName ?? "";
   }
 
   if (field.key === "targetDate") {
@@ -98,7 +98,12 @@ function GoalCard({
   const rowsFor = useUnderstoodRows();
 
   const rows = [
-    ...rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates }),
+    ...rowsFor({
+      cutoff: goal.cutoff,
+      draft: goal.draft,
+      examDates: goal.examDates,
+      languageAim: goal.languageAim,
+    }),
     ...extraRows,
   ];
 
@@ -143,7 +148,13 @@ function findPlusLimit({
 
 function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   const rowsFor = useUnderstoodRows();
-  const rows = rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates });
+
+  const rows = rowsFor({
+    cutoff: goal.cutoff,
+    draft: goal.draft,
+    examDates: goal.examDates,
+    languageAim: goal.languageAim,
+  });
 
   return (
     <ul className="flex flex-col [&>li+li]:border-t">

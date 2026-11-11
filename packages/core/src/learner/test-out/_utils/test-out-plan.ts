@@ -1,6 +1,9 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
-import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
+import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import {
+  loadGoalListeningSkillIds,
+  loadListeningSkillIds,
+} from "../../../exams/listening/listening-skills";
 import { unique } from "../../_utils/goal-plan-projection";
 import {
   type GoalPlanItem,
@@ -16,6 +19,14 @@ export type TestOutPlan = {
 };
 
 type SavedSource = GoalPlanSource | null | Promise<GoalPlanSource | null>;
+
+type KnownFacts = {
+  /** The goal's exam blueprint when the request already read it; without it, it's read fresh. */
+  blueprint?: ExamBlueprint | null;
+  goal?: Pick<Goal, "examBlueprintId" | "kind" | "targetLanguage"> | null;
+  plan?: TestOutPlan;
+  source?: SavedSource;
+};
 
 async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<TestOutPlan> {
   const source = await known;
@@ -50,14 +61,27 @@ async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<Te
   };
 }
 
-/** GETs pass the request's saved source; writes omit it to read after their own changes. */
+/** With the goal and its saved plan known, the plan's graph says which skills are listening-only. */
+async function loadTestOutListening(
+  goalId: string,
+  { blueprint, goal, source }: KnownFacts,
+): Promise<Set<string>> {
+  if (!goal || source === undefined) {
+    return goal && goal.kind !== "exam" ? new Set() : loadListeningSkillIds(goalId);
+  }
+
+  const saved = await source;
+  return loadGoalListeningSkillIds({ blueprint, goal, graph: saved?.graph });
+}
+
+/** GETs pass the request's goal and saved source; writes omit them to read after their own changes. */
 export async function loadTestOutPlan(
   goalId: string,
-  known: { goal?: Pick<Goal, "kind">; plan?: TestOutPlan; source?: SavedSource } = {},
+  known: KnownFacts = {},
 ): Promise<TestOutPlan> {
   const [plan, listening] = await Promise.all([
     known.plan ?? loadTestOutItems(goalId, known.source),
-    known.goal && known.goal.kind !== "exam" ? new Set<string>() : loadListeningSkillIds(goalId),
+    loadTestOutListening(goalId, known),
   ]);
 
   return { items: plan.items, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };

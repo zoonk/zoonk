@@ -157,6 +157,14 @@ export function withNewNumbers({
   return fillMathVersion({ ...text, answer: found.result.value, values: found.values });
 }
 
+export function withRecordedNumbers({
+  values,
+  ...text
+}: MathText & { values: MathValues }): MathVersion | null {
+  const solution = evaluateFormula(text.math.solution, values);
+  return solution.ok ? fillMathVersion({ ...text, answer: solution.value, values }) : null;
+}
+
 export function checkMathAnswer({
   answer,
   entry = ANY_NUMBER,

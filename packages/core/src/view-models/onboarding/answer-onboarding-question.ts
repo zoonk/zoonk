@@ -1,6 +1,8 @@
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import "server-only";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -20,12 +22,13 @@ import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
+import { answerProfileOnboardingQuestion } from "./_utils/answer-profile-onboarding-question";
 import { saveAnswerInputs } from "./_utils/save-onboarding-answer";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 
 /**
  * A saved answer says which goal onboarding goes on with: `movedTo` is the exam goal a language
- * goal moved to ("Pass an exam" naming a certificate), null when the goal stays. `created` is true
+ * goal moved to ("Pass a certificate" naming one it knows), null when the goal stays. `created` is true
  * only for the request that created it, whose caller starts its research and curriculum. A schedule
  * whose day or weekend is shorter than `minutes`, the least the `goals` typed together need, isn't
  * saved.
@@ -34,6 +37,8 @@ export type OnboardingAnswerResult =
   | { movedTo: { created: boolean; goal: GoalView } | null; status: "saved" }
   | { goals: number; minutes: number; status: "dayTooShort" }
   | { status: "invalid" }
+  | { status: "memoryOff" }
+  | { status: "consentRequired" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -42,6 +47,10 @@ function toMovedGoal(moved: MoveLanguageGoalResult) {
   return moved.status === "moved" || moved.status === "alreadyMoved"
     ? { created: moved.status === "moved", goal: moved.goal }
     : null;
+}
+
+function isCertificateAnswer(input: OnboardingAnswerInput): boolean {
+  return input.question === "reason" && input.reason === "certificate";
 }
 
 /** The buddy belongs to the learner, not the goal, so it's saved on the profile. */
@@ -64,11 +73,49 @@ async function followSavedPlan(goalId: string): Promise<void> {
   });
 }
 
-/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason names a certificate moves to an exam goal for it. */
+function trackAnswer({
+  goal,
+  input,
+  changed,
+}: {
+  goal: { id: string; userId: string };
+  input: OnboardingAnswerInput;
+  changed: boolean;
+}): void {
+  if (changed) {
+    trackOnboardingProgress({
+      at: Date.now(),
+      goalId: goal.id,
+      question: input.question,
+      stage: "question_answered",
+    });
+  }
+
+  if (input.question === "buddy" && input.buddy) {
+    const buddy = input.buddy;
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Buddy Chosen",
+            properties: { buddy: buddy.kind, renamed: Boolean(buddy.name?.trim()) },
+          },
+        ],
+        goalId: goal.id,
+        userId: goal.userId,
+      }),
+    );
+  }
+}
+
+/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason is a certificate it knows moves to an exam goal for it. */
 export async function answerOnboardingQuestion({
   goalId,
   input,
+  locale = "en",
 }: {
+  locale?: SupportedLocale;
   goalId: string;
   input: OnboardingAnswerInput;
 }): Promise<OnboardingAnswerResult> {
@@ -80,8 +127,12 @@ export async function answerOnboardingQuestion({
 
   const { goal } = owned;
 
-  // A reason answer sent again after its goal moved (its response was lost) goes on with the
-  // exam goal, without writing to the archived one.
+  if (input.question === "skipProfile" || "answer" in input) {
+    return answerProfileOnboardingQuestion({ goalId, input, locale });
+  }
+
+  // A stale tab's reason answer follows the exam goal without writing to the archived one,
+  // even when the learner picked a different reason after the move.
   if (input.question === "reason" && goal.kind === "language" && goal.status !== "active") {
     const movedTo = toMovedGoal(await moveLanguageGoalToExam(goalId));
 
@@ -104,22 +155,7 @@ export async function answerOnboardingQuestion({
     return { status: saved.status };
   }
 
-  if (input.question === "buddy" && input.buddy) {
-    const buddy = input.buddy;
-
-    after(() =>
-      trackLearnerEvents({
-        events: [
-          {
-            name: "Buddy Chosen",
-            properties: { buddy: buddy.kind, renamed: Boolean(buddy.name?.trim()) },
-          },
-        ],
-        goalId,
-        userId: goal.userId,
-      }),
-    );
-  }
+  trackAnswer({ changed: saved.goalIds.includes(goalId), goal, input });
 
   revalidateCacheTags([
     getGoalsCacheTag(goal.userId),
@@ -127,7 +163,7 @@ export async function answerOnboardingQuestion({
     getLearnerModelCacheTag(goal.userId),
   ]);
 
-  // Schedule is last: personalization can read all answers and the age-based memory choice before first lessons.
+  // Schedule is last: personalization can read every answer before the first lessons.
   if (input.question === "schedule") {
     await settleNewPlan({ goalId });
 
@@ -160,8 +196,8 @@ export async function answerOnboardingQuestion({
     });
   }
 
-  // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
-  if (input.question === "reason" && goal.kind === "language") {
+  // "Pass a certificate" inside a language goal moves it to an exam goal for that certificate.
+  if (isCertificateAnswer(input) && goal.kind === "language") {
     return { movedTo: toMovedGoal(await moveLanguageGoalToExam(goalId)), status: "saved" };
   }
 

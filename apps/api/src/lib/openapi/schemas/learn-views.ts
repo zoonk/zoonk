@@ -47,6 +47,7 @@ const stillNeededSchema = z
 export const goalProgressResponseSchema = z
   .object({
     goal: z.object({
+      displayName: z.string(),
       id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
@@ -92,7 +93,12 @@ export const goalContentResponseSchema = z
         .meta({ description: "Skills due for review today (time capsules)" }),
     }),
     counts: skillStateCountsSchema.meta({ description: "The goal's skills by state" }),
-    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: z.object({
+      displayName: z.string(),
+      id: uuidSchema(),
+      kind: z.enum(GoalKind),
+      title: z.string(),
+    }),
     groups: z
       .array(
         z.object({

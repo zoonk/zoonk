@@ -107,10 +107,10 @@ private func daysLeft(_ plan: GoalPlan?) -> String? {
 /// Main's eyebrow: the goal, then the days left until its date.
 private func planEyebrow(goal: LearnerGoal, plan: GoalPlan) -> Text {
   guard let left = daysLeft(plan) else {
-    return Text(goal.title)
+    return Text(goal.displayName)
   }
 
-  return Text(verbatim: "\(goal.title)\u{00A0}· \(left)")
+  return Text(verbatim: "\(goal.displayName)\u{00A0}· \(left)")
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen

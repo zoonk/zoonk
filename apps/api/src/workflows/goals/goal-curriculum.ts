@@ -1,4 +1,4 @@
-import { needsCoverageCheck } from "@zoonk/core/library/curriculum/add-coverage-skills";
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import {
   pinGraphToCourse,
   toStartedCourseIds,
@@ -10,19 +10,21 @@ import {
   toGoalCourses,
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
+import { startOnce } from "../_shared/run-token";
+import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
-import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
+import { isBuiltBeforeResearch } from "./goal-content-inputs";
 import { findGoalCourses } from "./goal-courses";
+import { type BuiltGraph, buildGraph } from "./goal-graph";
 import { startOutlines } from "./goal-outlines";
-import { prepareGraphPlacement } from "./goal-placement-items";
+import { preparePlanPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
-import { buildGoalSkillGraph } from "./goal-skill-graph";
 import { setUpPlan } from "./plan-setup";
 import { setGoalPrimaryCourseStep } from "./steps/goal-course-steps";
 import {
-  checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
   saveExamSkillGraphStep,
   saveGoalSkillsStep,
@@ -34,7 +36,6 @@ import {
 } from "./steps/goal-lookahead-steps";
 import { createGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
-import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
 /** Skills go to the Library in slices, so every step stays short and retries alone. */
@@ -45,35 +46,6 @@ export function toSlices<T>(items: readonly T[]): T[][] {
     items.slice(index * SKILL_SLICE, (index + 1) * SKILL_SLICE),
   );
 }
-
-async function buildGraph({
-  context,
-  inputs,
-  researchId,
-  scope,
-}: {
-  context: GoalRunContext;
-  inputs: GoalCurriculumInputs;
-  researchId?: string | null;
-  scope: CurriculumScope;
-}) {
-  const [built, references] = await Promise.all([
-    buildGoalSkillGraph({ ...context, inputs, scope }),
-    loadGoalReferences({ inputs, researchId }),
-  ]);
-
-  const outline = inputs.graphPrompt.examBlueprint;
-
-  const covered = needsCoverageCheck({ graph: built.graph, outline, references })
-    ? await checkGraphCoverageStep({ ...context, graph: built.graph, inputs, references, scope })
-    : built;
-
-  const graph = await mergeSkillTwinsStep({ ...context, graph: covered.graph, scope });
-
-  return { ...built, graph };
-}
-
-type BuiltGraph = Awaited<ReturnType<typeof buildGraph>>;
 
 export type BuiltCurriculum = BuiltGraph & {
   courseIdsByKey: Record<string, string>;
@@ -122,6 +94,7 @@ async function saveCurriculum({
 async function createPlanAndOutlines({
   built,
   context,
+  followUp,
   inputs,
   reused,
   saved,
@@ -130,6 +103,7 @@ async function createPlanAndOutlines({
 }: {
   built: BuiltGraph;
   context: GoalRunContext;
+  followUp?: GoalRebuildFollowUp;
   inputs: GoalCurriculumInputs;
   reused: boolean;
   saved: Promise<SavedCurriculum>;
@@ -142,6 +116,7 @@ async function createPlanAndOutlines({
 
   const setupTasks = await retryPlanConflicts(createGoalPlanStep, {
     courseIdsByKey,
+    followUp,
     goalId,
     graph,
     idsByKey,
@@ -187,10 +162,7 @@ async function createPlanAndOutlines({
   return { courseIdsByKey, idsByKey };
 }
 
-type SavingCurriculum = {
-  saved: Promise<SavedCurriculum>;
-  skillIds: Promise<Record<string, string>>;
-};
+type SavingCurriculum = { saved: Promise<SavedCurriculum> };
 
 function saveBuiltGraph({
   built,
@@ -204,15 +176,15 @@ function saveBuiltGraph({
   scope: CurriculumScope;
 }): SavingCurriculum {
   const { goal, startedCourse } = inputs;
-  const { graph, provenance } = built;
+  const { graph, provenance, savedSkillIds = {} } = built;
+  const toSave = graph.skills.filter((skill) => !savedSkillIds[skill.key]);
 
-  const slices = toSlices(graph.skills).map((skills) =>
-    saveGoalSkillsStep({ ...context, provenance, scope, skills }),
-  );
-
-  const skillIds = Promise.all(slices).then((saved) =>
-    Object.fromEntries(saved.flatMap((slice) => Object.entries(slice))),
-  );
+  const slices = [
+    ...toSlices(toSave).map((skills) =>
+      saveGoalSkillsStep({ ...context, provenance, scope, skills }),
+    ),
+    Promise.resolve(savedSkillIds),
+  ];
 
   const courseIds = startedCourse
     ? Promise.resolve(toStartedCourseIds({ course: startedCourse, graph }))
@@ -226,29 +198,26 @@ function saveBuiltGraph({
         scope,
       });
 
-  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }), skillIds };
+  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }) };
 }
 
 type PreparedCurriculum = SavingCurriculum & { built: BuiltGraph; reused: boolean };
 
 function toReused(curriculum: BuiltCurriculum): PreparedCurriculum {
-  return {
-    built: curriculum,
-    reused: true,
-    saved: Promise.resolve(curriculum),
-    skillIds: Promise.resolve(curriculum.idsByKey),
-  };
+  return { built: curriculum, reused: true, saved: Promise.resolve(curriculum) };
 }
 
 async function prepareCurriculum({
   context,
   inputs,
+  opening,
   rebuild,
   researchId,
   scope,
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
+  opening: Promise<GoalOpeningSkill | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -261,7 +230,7 @@ async function prepareCurriculum({
   }
 
   const built = pinStartedCourse({
-    built: await buildGraph({ context, inputs, researchId, scope }),
+    built: await buildGraph({ context, inputs, opening, researchId, scope }),
     startedCourse: inputs.startedCourse,
   });
 
@@ -289,32 +258,52 @@ async function prepareCurriculum({
  */
 export async function buildCurriculum({
   context,
+  followUp,
   inputs,
+  opening,
   rebuild,
   researchId,
   scope,
 }: {
   context: GoalRunContext;
+  followUp?: GoalRebuildFollowUp;
   inputs: GoalCurriculumInputs;
+  /** The learner's first skill, which the graph reads and starts with. */
+  opening?: Promise<GoalOpeningSkill | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
 }): Promise<BuiltCurriculum> {
   const goalId = inputs.goal.id;
 
-  const { built, reused, saved, skillIds } = await prepareCurriculum({
+  const { built, reused, saved } = await prepareCurriculum({
     context,
     inputs,
+    opening: opening ?? Promise.resolve(null),
     rebuild,
     researchId,
     scope,
   });
+
+  // A language graph's new skills get their levels; a failed start leaves them to the daily sweep.
+  if (!reused && inputs.goal.kind === "language") {
+    const { idsByKey } = await saved;
+
+    await Promise.allSettled([
+      startOnce(
+        skillLevelsWorkflow,
+        [{ analytics: context.analytics, skillIds: Object.values(idsByKey), wait: "soon" }],
+        getSkillLevelsToken(context.workflowRunId),
+      ),
+    ]);
+  }
 
   const waitsForNotice = !rebuild && isBuiltBeforeResearch({ inputs, researchId });
 
   const written = await createPlanAndOutlines({
     built,
     context,
+    followUp,
     inputs,
     reused,
     saved,
@@ -324,19 +313,13 @@ export async function buildCurriculum({
 
   await updateCoursesBehind([...new Set(Object.values(written.courseIdsByKey))]);
 
-  // Placement invalidates plan inputs, so it starts only after the initial plan commits.
-  if (!rebuild) {
-    await prepareGraphPlacement({
-      context,
-      everySkill: inputs.ownMaterialTest,
-      goalId,
-      graph: built.graph,
-      knownAreas: inputs.knownSubjects,
-      ownLevel: inputs.graphPrompt.ownLevel ?? null,
-      skillIds,
-      waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
-    });
-  }
+  // Placement invalidates plan inputs, so it starts only after the plan commits.
+  await preparePlanPlacement({
+    context,
+    goalId,
+    rebuild,
+    waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
+  });
 
   return { ...built, ...written };
 }

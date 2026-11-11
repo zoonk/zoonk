@@ -5,7 +5,10 @@ import { type PlanView } from "../../plans/plan-view-contract";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { isGoalSetupLeft } from "../onboarding/onboarding-steps";
 
-type PlanTabView = { goal: { id: string; kind: GoalKind; title: string }; plan: PlanView };
+type PlanTabView = {
+  goal: { displayName: string; id: string; kind: GoalKind; title: string };
+  plan: PlanView;
+};
 
 export type PlanTabViewResult =
   | { status: "noGoal" | "notFound" | "preparing" | "unauthorized" }
@@ -35,6 +38,9 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
 
   return {
     status: "ready",
-    view: { goal: { id: goal.id, kind: goal.kind, title: goal.title }, plan: result.plan },
+    view: {
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
+      plan: result.plan,
+    },
   };
 }

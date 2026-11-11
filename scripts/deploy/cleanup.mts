@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { github } from "./api.mts";
 import { requiredEnv } from "./config.mts";
-import { cancelBuilds } from "./deployment.mts";
+import { cancelBuilds, removePreviewAliases } from "./deployment.mts";
 import { findBranch, neon } from "./neon.mts";
 
 const prNumber = requiredEnv("PR_NUMBER");
@@ -16,11 +16,15 @@ if (await isClosed()) {
   const branch = await findBranch(`preview/pr-${prNumber}`);
 
   // A reopen can arrive while the remote builds are being canceled.
-  if (branch && (await isClosed())) {
-    await neon({ method: "DELETE", path: `/branches/${branch.id}` });
-    process.stdout.write("Deleted the closed PR's database branch\n");
+  if (await isClosed()) {
+    if (branch) {
+      await neon({ method: "DELETE", path: `/branches/${branch.id}` });
+      process.stdout.write("Deleted the closed PR's database branch\n");
+    }
+
+    await removePreviewAliases();
   } else {
-    process.stdout.write("No closed PR database branch to clean up\n");
+    process.stdout.write("PR was reopened; keeping its preview\n");
   }
 } else {
   process.stdout.write("PR was reopened; keeping its database branch\n");

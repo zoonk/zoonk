@@ -53,7 +53,6 @@ type IdeaMarks = { about: string | null; icon: IconNeed | null };
 
 export type LessonMarks = { ideas: IdeaMarks[]; screens: ScreenMarks[] };
 
-const MAX_ABOUT_LENGTH = 80;
 const BOLD_WRAP = /^\*\*(?<inner>[^*]+)\*\*$/u;
 
 export function canScreenGetIcon(screen: MarksScreen): boolean {
@@ -146,8 +145,7 @@ function keepIdeasInOrder(
 }
 
 function toAbout(about: string | undefined): string | null {
-  const line = about ? replaceEmDashes(about.replaceAll("*", "").trim()) : "";
-  return line && line.length <= MAX_ABOUT_LENGTH ? line : null;
+  return about ? replaceEmDashes(about.replaceAll("*", "").trim()) || null : null;
 }
 
 /** The map shows the ideas side by side to tell them apart, so an icon an earlier idea has goes. */

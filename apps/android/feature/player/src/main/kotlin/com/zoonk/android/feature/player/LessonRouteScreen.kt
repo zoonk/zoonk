@@ -61,6 +61,8 @@ import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
+import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -229,6 +231,7 @@ internal fun PlayingLesson(
             LocalCodeSandbox provides app.codeSandbox,
             LocalChallengeTeam provides team,
         ) {
+            val saveReport = rememberSaveFailureReport(app, "lesson-end")
             LessonPlayer(
                 load.lesson,
                 state,
@@ -238,11 +241,13 @@ internal fun PlayingLesson(
                 navigator,
                 endSlot,
                 buddy = summary.value?.buddy,
+                onReportSaveFailure = saveReport::open,
                 ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
                 tutor = tutor,
                 certificatesMoment = { awarded, onClose ->
                     CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
                 },
+                finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
             )
             LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
         }
@@ -407,7 +412,6 @@ private fun WaitingLesson(
             LessonWritingViewModel(
                 lessonId = route.lessonId,
                 store = app.lessonPlayer,
-                writingApi = LiveLessonWritingApi(app.api),
                 generations = { LiveGenerationSource(app.api, it) },
                 cache = app.cache,
                 sessions = app.sessions,
@@ -415,7 +419,16 @@ private fun WaitingLesson(
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
 
+    val summary by app.learnerSummary.summary.collectShown()
+
     LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
 
-    LessonWaitingScreen(outline, viewModel, app.warmUps, exits, readLesson = resource::refresh)
+    LessonWaitingScreen(
+        outline,
+        viewModel,
+        app.warmUps,
+        exits,
+        readLesson = resource::refresh,
+        goalId = summary.value?.activeGoalId?.toString(),
+    )
 }

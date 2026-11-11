@@ -227,8 +227,8 @@ private fun Empty(
 private fun UpNextRow(item: CertificateUpNext) {
     val progress = item.progress
     ListRow(
-        headline = { Text(item.goal.title) },
-        leading = { GoalMark(item.goal.title, item.goal.languageFlag) },
+        headline = { Text(item.goal.displayName) },
+        leading = { GoalMark(item.goal.displayName, item.goal.languageFlag) },
         supporting = {
             Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))
         },

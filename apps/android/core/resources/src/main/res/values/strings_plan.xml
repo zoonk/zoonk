@@ -32,13 +32,17 @@
     <string name="plan_full_course">See the full course</string>
     <string name="plan_share">Share the plan</string>
     <string name="plan_talk_to">Talk to %1$s</string>
+    <string name="plan_rename_goal">Rename goal</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Name</string>
+    <string name="plan_rename_description">Choose a name you recognize. Your study plan stays the same.</string>
     <string name="plan_pause_goal">Pause this goal</string>
     <string name="plan_resume_goal">Resume this goal</string>
     <string name="plan_archive_goal">Archive this goal</string>
-    <string name="plan_archive_title">Archive %1$s?</string>
+    <string name="plan_archive_title">Archive your %1$s goal?</string>
     <string name="plan_archive_description">It leaves your goals and its plan stops. What you learned stays in your progress.</string>
     <string name="plan_archive">Archive</string>
-    <string name="plan_resume_title">Resume %1$s?</string>
+    <string name="plan_resume_title">Resume your %1$s goal?</string>
     <string name="plan_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
     <string name="plan_resume">Resume</string>
     <string name="plan_cancel">Cancel</string>
@@ -94,8 +98,14 @@
         <item quantity="other">%1$d of %2$d lessons done</item>
     </plurals>
     <string name="plan_until">until %1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate">until ~%1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate_spoken">until about %1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month">until ~%1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month_spoken">until about %1$s</string>
     <string name="plan_not_in_your_plan">Not in your plan</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d lesson was left out</item>
@@ -157,7 +167,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Won</string>
     <string name="plan_challenge_next_session">In your next session</string>
-    <string name="plan_challenge_after_previous">After the challenge before it</string>
     <string name="plan_challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="plan_challenge_questions">Questions on this phase, with no hints</string>
     <string name="plan_challenge_live_call">A live call where you get your point across</string>
@@ -298,10 +307,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Level</string>
     <string name="plan_your_level">Your level</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Even across skills</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s leads</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">No lessons studied yet</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
@@ -932,7 +937,7 @@
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
-    <string name="plan_goal_paused">%1$s is paused</string>
+    <string name="plan_goal_paused">Your %1$s goal is paused</string>
     <string name="plan_no_longer_fits">Your plan no longer fits</string>
     <string name="plan_catch_up">A little to catch up</string>
     <string name="plan_adjust">Adjust</string>

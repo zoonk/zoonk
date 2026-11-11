@@ -54,6 +54,30 @@ describe(updateGoal, () => {
     vi.useRealTimers();
   });
 
+  it("renames only the label without rebuilding the plan or owing generation", async () => {
+    const { goal, plan } = await setup();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const renew = vi.spyOn(refresh, "refreshGoalPlan");
+    const result = await updateGoal({ goalId: goal.id, input: { displayName: "Night school" } });
+
+    expect(result).toMatchObject({
+      change: null,
+      goal: { displayName: "Night school", title: goal.title },
+      status: "updated",
+    });
+
+    expect(renew).not.toHaveBeenCalled();
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      displayName: "Night school",
+      title: goal.title,
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+  });
+
   it("saves combined goal metadata and schedule with one planning commit", async () => {
     const { goal, plan } = await setup();
     const renew = vi.spyOn(refresh, "refreshGoalPlan");

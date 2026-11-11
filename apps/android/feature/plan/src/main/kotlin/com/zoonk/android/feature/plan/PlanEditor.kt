@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -27,8 +26,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -89,6 +87,8 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTool
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.datetime.toJavaLocalDate
 import java.io.Serializable
 import java.util.UUID
@@ -225,6 +225,26 @@ internal fun ColumnScope.PlanEditorBody(
     onClose: (() -> Unit)? = null,
     drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
+    val aimDates by produceState<Map<String, java.time.LocalDate?>>(emptyMap(), page.plan) {
+        value = emptyMap()
+        val aim = page.plan.languageAim
+        value =
+            aim
+                ?.choices
+                .orEmpty()
+                .map { choice ->
+                    async {
+                        val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
+                        choice.aim.value to
+                            preview
+                                ?.takeIf { it.ready }
+                                ?.finishDate
+                                ?.toJavaLocalDate()
+                    }
+                }.awaitAll()
+                .toMap()
+    }
+
     val requesters = remember { PlanSection.entries.associateWith { BringIntoViewRequester() } }
 
     fun Modifier.section(section: PlanSection) = bringIntoViewRequester(requesters.getValue(section))
@@ -260,6 +280,28 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        page.plan.languageAim?.let { languageAim ->
+            languageAim.aim?.let { aim ->
+                LanguageAimRow(
+                    aim.value,
+                    languageAim.choices,
+                    onPick = { next, done ->
+                        edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
+                            if (it?.status ==
+                                PlanChangeResult.Status.APPLIED
+                            ) {
+                                done()
+                            }
+                        }
+                    },
+                    pending = edits.isPending(PlanPart.Aim),
+                    failed = edits.hasFailed(PlanPart.Aim),
+                    note = stringResource(R.string.onboarding_aim_description),
+                    dates = { aimDates },
+                    endDate = aimDates[aim.value],
+                )
+            }
+        }
         PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(
             page,
@@ -392,50 +434,6 @@ private fun PlanEditRequest(
         supporting = {
             Text(stringResource(if (hasModules) R.string.plan_tell_buddy_description_modules else R.string.plan_tell_buddy_description))
         },
-    )
-}
-
-/**
- * A choice in the editor, picked as an answer is: a check and an ink line on the picked tint. [role]
- * says what a tap does for TalkBack when it isn't a checkbox's.
- */
-@Composable
-internal fun PlanChip(
-    text: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    role: Role? = null,
-    enabled: Boolean = true,
-) {
-    val colors = MaterialTheme.colorScheme
-
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        enabled = enabled,
-        label = { Text(text) },
-        modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
-        leadingIcon =
-            if (selected) {
-                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize)) }
-            } else {
-                null
-            },
-        colors =
-            FilterChipDefaults.filterChipColors(
-                selectedContainerColor = MaterialTheme.zoonk.selectedTint,
-                selectedLabelColor = colors.onSurface,
-                selectedLeadingIconColor = colors.onSurface,
-            ),
-        border =
-            FilterChipDefaults.filterChipBorder(
-                enabled = enabled,
-                selected = selected,
-                borderColor = colors.outline,
-                selectedBorderColor = colors.primary,
-                selectedBorderWidth = 2.dp,
-            ),
     )
 }
 

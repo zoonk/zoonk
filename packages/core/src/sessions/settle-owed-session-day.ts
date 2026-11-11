@@ -2,10 +2,12 @@ import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { type FollowUp } from "../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { awardMilestones } from "../milestones/award-milestones";
 import { getBlockMilestoneAwards } from "./_utils/block-completion";
 import { isCurrentSession } from "./_utils/current-session";
+import { refitSessionLessons } from "./_utils/refit-session-lessons";
 import { readFullMealReward } from "./_utils/session-snapshot";
 import { settleSessionDay } from "./_utils/settle-session-day";
 import { readBlockPayload } from "./block-payload";
@@ -58,7 +60,9 @@ type OwedSession = NonNullable<Awaited<ReturnType<typeof findOwedSession>>>;
 function findOwedSession({ sessionId, userId }: { sessionId: string; userId: string }) {
   return prisma.studySession.findFirst({
     select: {
-      blocks: { select: { completedAt: true, id: true, payload: true, startedAt: true } },
+      blocks: {
+        select: { completedAt: true, id: true, payload: true, startedAt: true, status: true },
+      },
       endedAt: true,
       goal: { select: { timezone: true } },
       localDate: true,
@@ -97,6 +101,20 @@ export async function settleOwedSessionDay(owed: OwedDay & { userId: string }): 
 
   if (!session) {
     return;
+  }
+
+  if (
+    session.status !== "completed" &&
+    session.blocks.some((block) => block.status === "skipped")
+  ) {
+    await prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { userId: owed.userId });
+
+      await refitSessionLessons(tx, {
+        sessionId: owed.sessionId,
+        timeZone: getAnswerTimeZone({ goal: session.goal, timeZone: owed.timeZone }),
+      });
+    });
   }
 
   // Completion settles the day's missions first, so a completed day owes only its milestones.

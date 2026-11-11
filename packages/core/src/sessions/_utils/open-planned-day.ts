@@ -46,6 +46,7 @@ export async function openPlannedDay(
 
   if (
     planned.blocks.length === 0 &&
+    planned.missions.picks.length === 0 &&
     !context.keepEmpty &&
     !selection.computed &&
     !selection.inputKeyUpdate

@@ -3,13 +3,19 @@ import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { type EntitlementTier } from "../../../entitlements/contract";
+import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
 import { type GoalCreateInput, type GoalDraft } from "../../../goals/goal-contract";
 import { withPlannableDate } from "../../../plans/target-date-range";
 import { type UnderstoodGoalView, type UnderstoodSchedule } from "../onboarding-contract";
 import { parseStoredUnderstanding } from "./onboarding-draft";
 import { readDetail } from "./onboarding-goals";
 
-export type WaitingGoal = { id: string; input: GoalCreateInput; locked: boolean };
+export type WaitingGoal = {
+  displayName: string;
+  id: string;
+  input: GoalCreateInput;
+  locked: boolean;
+};
 
 type StartedCard = { firstGoals: number; live: boolean; places: Set<number> };
 
@@ -114,6 +120,7 @@ export async function findWaitingGoals({
         ? []
         : [
             {
+              displayName: goal.draft.displayName ?? defaultDisplayName(goal.draft),
               id: `${draft.id}:${place}`,
               input: toWaitingInput({ goal, place, schedule: understanding.schedule, today }),
               locked,

@@ -53,9 +53,14 @@ export type LessonStepCheckOutcome =
   | { status: "runEnded" }
   | { status: "unauthorized" };
 
-/** The typed/listening fallback trains the modality actually used, not the original spoken screen. */
+/** A spoken screen's fallbacks train what the learner did: typing is writing, listening is listening. */
+const SPOKEN_FALLBACK_KINDS: Partial<Record<LessonStepAnswer["kind"], StepKind>> = {
+  listening: "listening",
+  spokenAnswer: "typedAnswer",
+};
+
 function getAnsweredKind({ answer, kind }: { answer: LessonStepAnswer; kind: StepKind }): StepKind {
-  return kind === "spokenAnswer" && answer.kind === "listening" ? "listening" : kind;
+  return kind === "spokenAnswer" ? (SPOKEN_FALLBACK_KINDS[answer.kind] ?? kind) : kind;
 }
 
 /** Model grading is allowed only for answers that can still be recorded and remain under the daily cap. */
@@ -135,6 +140,16 @@ async function recordCheck({
               explanation: verdict.feedback,
               format: answeredKind,
               question: questionText,
+              replay: {
+                kind: "lesson",
+                lesson: {
+                  language: row.lesson.language,
+                  lessonId: row.lessonId,
+                  level: row.lesson.level,
+                  step,
+                  targetLanguage: row.lesson.targetLanguage,
+                },
+              },
             },
           }
         : null,

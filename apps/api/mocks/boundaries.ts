@@ -1,4 +1,7 @@
 import { vi } from "vitest";
+import { solveLikeTheKeys } from "../src/workflows/_test-utils/solved-items";
+
+export const nextServer = { after: vi.fn() };
 
 /**
  * Test files share workers, so these are mocked once per worker and reset for each file. A new
@@ -17,6 +20,7 @@ export const boundaries = {
     streamCourseOutline: vi.fn(),
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
+  "@zoonk/ai/tasks/curriculum/goal-opening": { generateGoalOpening: vi.fn() },
   "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
     generateSkillGraphFrame: vi.fn(),
     generateSkillGraphSection: vi.fn(),
@@ -38,6 +42,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/items/generate": { generateItems: vi.fn() },
   "@zoonk/ai/tasks/items/past-questions": { extractPastQuestions: vi.fn() },
   "@zoonk/ai/tasks/items/placement-items": { generatePlacementItems: vi.fn() },
+  "@zoonk/ai/tasks/items/solve": { solveItems: vi.fn(solveLikeTheKeys) },
   "@zoonk/ai/tasks/items/statute-drills": { generateStatuteDrills: vi.fn() },
   "@zoonk/ai/tasks/items/work-field": { classifyWorkField: vi.fn() },
   "@zoonk/ai/tasks/items/write-set": { writeItemSet: vi.fn() },
@@ -50,6 +55,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
+  "@zoonk/ai/tasks/language/skill-levels": { classifySkillLevels: vi.fn() },
   "@zoonk/ai/tasks/lesson-marks": { tagLesson: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec/picture-need": { judgePicture: vi.fn() },
@@ -93,9 +99,10 @@ export const boundaries = {
 };
 
 export function resetBoundaries(): void {
-  Object.values(boundaries)
-    .flatMap((mocks) => Object.values(mocks))
-    .forEach((mock) => {
-      mock.mockReset();
-    });
+  [
+    ...Object.values(nextServer),
+    ...Object.values(boundaries).flatMap((mocks) => Object.values(mocks)),
+  ].forEach((mock) => {
+    mock.mockReset();
+  });
 }

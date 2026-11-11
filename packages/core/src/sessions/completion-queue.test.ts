@@ -24,6 +24,7 @@ const RESULT = {
   checkpoint: null,
   comesBackOn: null,
   correct: 0,
+  finishedChapter: null,
   netScore: null,
   testOutOffer: null,
   topHyperdrive: 0,

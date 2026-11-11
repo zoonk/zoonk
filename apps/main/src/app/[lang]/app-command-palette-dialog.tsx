@@ -23,7 +23,7 @@ function toLearnerPalette(summary: LearnerSummary): LearnerPalette {
       .map(({ id, title }) => ({ id, title })),
     goals: summary.goals
       .filter((goal) => goal.kind !== "explain")
-      .map(({ id, kind, title }) => ({ id, kind, title })),
+      .map(({ id, kind, title, displayName }) => ({ displayName, id, kind, title })),
     onSwitchGoal: switchGoal,
     places: summary.places,
     today: summary.today,

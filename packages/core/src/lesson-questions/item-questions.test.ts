@@ -24,7 +24,13 @@ vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivi
 
 async function practiceQuestion() {
   const user = await userFixture();
-  const { skills } = await learnerGoalFixture({ itemsPerSkill: 0, phases: [1], userId: user.id });
+
+  const { skills } = await learnerGoalFixture({
+    challengesDone: true,
+    itemsPerSkill: 0,
+    phases: [1],
+    userId: user.id,
+  });
 
   const item = await itemFixture({
     content: choiceItemContent("Which number is even?"),

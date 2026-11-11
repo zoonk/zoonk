@@ -1,19 +1,18 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { mistakeAvailabilitySchema, mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
-import { MISTAKE_DRILL_KINDS } from "@zoonk/core/mistakes/drills";
 import { mistakeSnapshotSchema } from "@zoonk/core/mistakes/snapshot";
 import {
   activityBrainPowerSchema,
   missionMomentSchema,
 } from "@zoonk/core/sessions/completion-contract";
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
-import { reachedSchema } from "@zoonk/core/sessions/reached";
-import { MistakeCause, MistakeStatus } from "@zoonk/db";
+import { CourseLevel, MistakeCause, MistakeStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { bankQuestionWith } from "./bank-question-with";
 import { paginationSchema } from "./common";
-import { itemSetSchema } from "./item-set";
+import { playableStepSchema } from "./library-lessons";
+import { mistakeDrillSchema } from "./mistake-drill";
+import { studyBlockQuestionSchema } from "./study-block-question";
 
 const mistakeCauseSchema = z
   .enum(MistakeCause)
@@ -95,43 +94,21 @@ export const mistakeListResponseSchema = z
   })
   .meta({ id: "MistakeList" });
 
-export const mistakeDrillSchema = z
-  .object({
-    kind: z
-      .enum(MISTAKE_DRILL_KINDS)
-      .meta({
-        description:
-          "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: read the whole question before the answers), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)",
-      }),
-    lesson: z
-      .object({
-        id: uuidSchema(),
-        ideas: z
-          .array(z.string())
-          .meta({ description: "The lesson's summary card, one idea each" }),
-        title: z.string(),
-      })
-      .nullable()
-      .meta({ description: "The lesson to go over before the questions, for a content gap" }),
-    timeLimitSeconds: z
-      .number()
-      .int()
-      .min(1)
-      .nullable()
-      .meta({
-        description:
-          "Seconds per question in a timed drill. An answer that takes them all counts as wrong; send dontKnow when time runs out",
-      }),
-  })
-  .meta({ id: "MistakeDrill" });
-
-const mistakeQuestionSchema = bankQuestionWith({
-  set: itemSetSchema
-    .nullable()
-    .meta({
-      description:
-        "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
-    }),
+const mistakeQuestionSchema = studyBlockQuestionSchema.pick({
+  context: true,
+  entry: true,
+  format: true,
+  image: true,
+  itemId: true,
+  left: true,
+  options: true,
+  question: true,
+  right: true,
+  select: true,
+  set: true,
+  skillId: true,
+  unit: true,
+  visual: true,
 });
 
 export const mistakePracticeResponseSchema = z
@@ -140,11 +117,21 @@ export const mistakePracticeResponseSchema = z
       z.object({
         cause: mistakeCauseSchema.nullable(),
         drill: mistakeDrillSchema,
+        lesson: z
+          .object({
+            language: z.string(),
+            lessonId: uuidSchema(),
+            level: z.enum(CourseLevel),
+            step: playableStepSchema,
+            targetLanguage: z.string().nullable(),
+          })
+          .nullable(),
         mistakeId: uuidSchema(),
         questions: z
           .array(mistakeQuestionSchema)
-          .meta({ description: "The original question first" }),
+          .meta({ description: "The question to answer: the mistake's own while it can be asked" }),
         snapshot: mistakeSnapshotSchema,
+        tutorAvailable: z.boolean(),
       }),
     ),
     trueFalseLabels: trueFalseLabelsSchema.meta({
@@ -154,41 +141,7 @@ export const mistakePracticeResponseSchema = z
   })
   .meta({ id: "MistakePractice" });
 
-export const mistakePracticeFeedbackSchema = z
-  .object({
-    answerId: uuidSchema().meta({
-      description: "The answer's id: send the run's answer ids when it finishes",
-    }),
-    correctAnswer: z.union([
-      z.object({ selectedIndex: z.number().int().min(0) }),
-      z.object({ selectedIndexes: z.array(z.number().int().min(0)) }),
-      z.object({ isTrue: z.boolean() }),
-    ]),
-    explanation: z.string().nullable(),
-    fixed: z.boolean().meta({ description: "This answer fixed the practiced notebook entry" }),
-    fixedMistakeIds: z
-      .array(uuidSchema())
-      .meta({
-        description:
-          "Every notebook entry fixed by this answer; deduplicate these for the run correction count",
-      }),
-    isCorrect: z.boolean(),
-    mistakeStatus: mistakeStatusSchema.meta({
-      description: "Fixed once answered right on a later day",
-    }),
-    reached: reachedSchema.meta({
-      description:
-        "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own",
-    }),
-    trap: z
-      .string()
-      .nullable()
-      .meta({
-        description:
-          "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
-      }),
-  })
-  .meta({ id: "MistakePracticeFeedback" });
+export { mistakePracticeFeedbackSchema } from "@zoonk/core/mistakes/practice-feedback";
 
 export const mistakePracticeCompletionSchema = z
   .object({

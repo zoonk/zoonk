@@ -20,7 +20,7 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
   }
 
   return (
-    <p className="text-destructive-text text-sm text-balance" role="alert">
+    <p className="text-destructive-text text-sm text-pretty" role="alert">
       {t({
         description:
           "Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",

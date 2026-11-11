@@ -836,11 +836,8 @@ describe("exam plans", () => {
 
     expect(plan.items.find((item) => item.key === "review:2026-11-07")?.minutes).toBe(15);
 
-    expect(datesOf({ kind: "boss", plan })).toStrictEqual([
-      "2026-10-05",
-      "2026-10-21",
-      "2026-11-02",
-    ]);
+    expect(datesOf({ kind: "boss", plan })).toStrictEqual(["2026-10-21", "2026-11-02"]);
+    expect(plan.phases[0]?.challengeLeftOut).not.toBe(true);
   });
 
   it("gives an exam without a date weekly mocks from its second week, in place of checkpoints", () => {
@@ -1506,7 +1503,7 @@ describe("a phase its time covers in part", () => {
     lessons: [...lessonsFor("k", 2), ...lessonsFor("m", 20), ...lessonsFor("c", 20)],
   });
 
-  it("leaves its challenge out, so finishing the lessons it holds finishes neither it nor the plan", () => {
+  it("omits an unfinished-core challenge without calling it left out for time", () => {
     const plan = buildPlan(input);
 
     const studied = plan.items.map((item) =>
@@ -1528,7 +1525,7 @@ describe("a phase its time covers in part", () => {
 
     expect(plan.phases.map((phase) => phase.challengeLeftOut ?? false)).toStrictEqual([
       false,
-      true,
+      false,
       false,
     ]);
 
@@ -1537,16 +1534,16 @@ describe("a phase its time covers in part", () => {
         ...end,
         currentPhase: findCurrentPhase({ items: studied, phaseCount: plan.phases.length }),
       }),
-    ).toStrictEqual(["done", "unfinished", "leftOut"]);
+    ).toStrictEqual(["done", "done", "leftOut"]);
 
-    expect(isPlanFinished(end)).toBe(false);
+    expect(isPlanFinished(end)).toBe(true);
   });
 
   it("gets its challenge back once the learner gives the plan the time", () => {
     const tight = buildPlan(input);
     const roomy = buildPlan({ ...input, goal: { ...input.goal, dailyMinutes: 60 } });
 
-    expect(tight.phases[1]?.challengeLeftOut).toBe(true);
+    expect(tight.phases[1]?.challengeLeftOut).toBe(false);
     expect(roomy.phases[1]?.challengeLeftOut).toBeUndefined();
     expect(roomy.items.some((item) => item.kind === "boss" && item.phase === 1)).toBe(true);
   });
@@ -1562,23 +1559,12 @@ describe("phase challenges on a day the learner's time fills", () => {
     lessons: ["a", "b", "c"].flatMap((skillId) => lessonsFor(skillId, 3)),
   });
 
-  it("run the day past that time by one challenge at most, and leave the rest out", () => {
+  it("keeps a whole challenge only where its preceding core fits", () => {
     const plan = buildPlan(input);
     const bosses = plan.items.filter((item) => item.kind === "boss");
 
-    const taught = (phase: number) =>
-      plan.items.some((item) => item.kind === "lesson" && item.phase === phase);
-
-    const byDay = Map.groupBy(bosses, (boss) => toIsoDate(boss.scheduledFor ?? TODAY));
-
-    expect([...byDay.values()].map((onDay) => onDay.length)).toStrictEqual([1]);
-
-    expect(
-      plan.phases.map(
-        (phase, index) =>
-          phase.challengeLeftOut === true || bosses.some((boss) => boss.phase === index),
-      ),
-    ).toStrictEqual([0, 1, 2].map((phase) => taught(phase)));
+    expect(bosses.map((boss) => boss.phase)).toStrictEqual([0]);
+    expect(plan.phases.every((phase) => !phase.challengeLeftOut)).toBe(true);
   });
 });
 

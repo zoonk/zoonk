@@ -1,11 +1,14 @@
 import SwiftUI
 
-/// Main's `PlanReceipt`.
-struct PlanSoFar: View {
+/// Main's `PlanReceipt`, after `lead`, such as a wait's progress.
+struct PlanSoFar<Lead: View>: View {
   let facts: [PlanFact]
+  @ViewBuilder let lead: () -> Lead
 
   var body: some View {
     ZoonkList {
+      lead()
+
       Section {
         ForEach(facts) { fact in
           VStack(alignment: .leading, spacing: 2) {
@@ -62,7 +65,7 @@ struct PlanFact: Identifiable, Equatable {
         id: "title",
         label: LocalizedStringResource(
           "Goal", table: "Onboarding", comment: "Row naming an understood goal"),
-        value: goal.title),
+        value: goal.displayName),
       date(of: goal, answered: details?.answered ?? [], today: today),
     ].compactMap { $0 }
       + (understood ?? []).map {

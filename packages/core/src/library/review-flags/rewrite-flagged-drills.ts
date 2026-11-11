@@ -2,6 +2,7 @@ import "server-only";
 import { type StatuteDrill } from "@zoonk/ai/tasks/items/statute-drills";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { type KeyCheckedItem } from "../items/check-item-keys";
 import { checkItem } from "../items/item-checks";
 import { toStoredItem } from "../items/item-content";
 import { repairItem } from "../items/item-repairs";
@@ -15,7 +16,7 @@ export async function replaceFlaggedDrills({
   optionCount,
   provenance,
 }: {
-  drills: readonly StatuteDrill[];
+  drills: readonly KeyCheckedItem<StatuteDrill>[];
   group: FlaggedDrillGroup;
   optionCount: number;
   provenance: LibraryProvenance;

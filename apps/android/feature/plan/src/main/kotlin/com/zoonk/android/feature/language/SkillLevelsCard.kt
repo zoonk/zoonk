@@ -54,8 +54,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 
 /**
- * Main's `SkillLevelsCard`: each skill's level on the CEFR bands, the goal's mark on them, and what
- * rose since the level test. Before the first level only the line saying levels move shows.
+ * Main's `SkillLevelsCard`: each skill's estimated level on the CEFR bands, the goal's mark on them,
+ * what rose since the level test, and that the estimates set practice, not certificates. Before the
+ * first estimate only the line saying levels move shows.
  */
 @Composable
 fun SkillLevelsCard(
@@ -72,12 +73,19 @@ fun SkillLevelsCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                SectionHeader(stringResource(R.string.language_level_by_skill))
+                SectionHeader(stringResource(R.string.language_practice_estimates))
                 if (target != null) TargetLabel(target.label, progress.goal.targetDate)
             }
             LevelGrid(progress.levels, target?.let { levelShare(it.score) })
         }
         RiseLine(progress.levels)
+        if (progress.levels.isNotEmpty()) {
+            Text(
+                stringResource(R.string.language_estimates_note),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 
@@ -90,6 +98,30 @@ fun skillName(skill: LanguageSkillLevel.Skill): String =
             LanguageSkillLevel.Skill.SPEAKING -> R.string.language_skill_speaking
             LanguageSkillLevel.Skill.WRITING -> R.string.language_skill_writing
         },
+    )
+
+@Composable
+private fun estimatedLevel(level: LanguageSkillLevel): String =
+    stringResource(
+        when (level.skill) {
+            LanguageSkillLevel.Skill.READING -> R.string.language_estimate_reading
+            LanguageSkillLevel.Skill.LISTENING -> R.string.language_estimate_listening
+            LanguageSkillLevel.Skill.SPEAKING -> R.string.language_estimate_speaking
+            LanguageSkillLevel.Skill.WRITING -> R.string.language_estimate_writing
+        },
+        level.label,
+    )
+
+@Composable
+private fun estimateRose(level: LanguageSkillLevel): String =
+    stringResource(
+        when (level.skill) {
+            LanguageSkillLevel.Skill.READING -> R.string.language_estimate_rose_reading
+            LanguageSkillLevel.Skill.LISTENING -> R.string.language_estimate_rose_listening
+            LanguageSkillLevel.Skill.SPEAKING -> R.string.language_estimate_rose_speaking
+            LanguageSkillLevel.Skill.WRITING -> R.string.language_estimate_rose_writing
+        },
+        level.label,
     )
 
 /** Skills that rose since the level test, the biggest rise first. */
@@ -218,12 +250,8 @@ private fun LevelRow(
             LanguageSkillLevel.Trend.DOWN -> stringResource(R.string.language_level_down)
             LanguageSkillLevel.Trend.SAME -> null
         }
-    val spoken =
-        if (trend == null) {
-            stringResource(R.string.language_skill_level, name, level.label)
-        } else {
-            stringResource(R.string.language_skill_level_trend, name, level.label, trend)
-        }
+    val estimate = estimatedLevel(level)
+    val spoken = if (trend == null) estimate else stringResource(R.string.language_estimate_trend, estimate, trend)
     val bars =
         @Composable { barsModifier: Modifier ->
             Row(barsModifier, horizontalArrangement = Arrangement.spacedBy(COLUMN_GAP), verticalAlignment = Alignment.CenterVertically) {
@@ -312,15 +340,21 @@ private fun RiseLine(levels: List<LanguageSkillLevel>) {
     val style = MaterialTheme.typography.bodyMedium
 
     if (only == null) {
-        Text(stringResource(R.string.language_levels_move), color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
+        if (levels.isEmpty()) {
+            Text(stringResource(R.string.language_levels_move), color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
+        }
         return
     }
 
     val text =
         if (rises.size == 1) {
-            stringResource(R.string.language_level_rose, skillName(only.skill), only.label)
+            estimateRose(only)
         } else {
-            pluralStringResource(R.plurals.language_levels_rose, rises.size, formatList(rises.map { skillName(it.skill) }, currentLocale()))
+            pluralStringResource(
+                R.plurals.language_estimates_rose,
+                rises.size,
+                formatList(rises.map { skillName(it.skill) }, currentLocale()),
+            )
         }
     MarkedLine(
         style,

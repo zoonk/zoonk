@@ -15,6 +15,7 @@ struct CheckpointScreen: View {
   @State private var draft: PracticeAnswer?
   @State private var shownAt = Date.now
   @State private var showsReview = false
+  @State private var showsSaveReport = false
 
   private enum CallRead {
     case none
@@ -43,6 +44,9 @@ struct CheckpointScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "checkpoint", reportType: .saveFailure), isReport: true)
   }
 
   private var checkpoint: some View {
@@ -174,7 +178,9 @@ struct CheckpointScreen: View {
       }
     } actions: {
       if state.failure != nil {
-        PracticeSaveError { Task { await retry() } }
+        PracticeSaveError(
+          failures: state.saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await retry() } })
       }
 
       if feedback != nil {

@@ -226,7 +226,7 @@ private struct GoalSwitcher: View {
           Section {
             ForEach(followed, id: \.id) { goal in
               Toggle(isOn: isShown(goal)) {
-                Text(goal.title)
+                Text(goal.displayName)
                 Text(goalLine(goal))
               }
             }
@@ -235,7 +235,7 @@ private struct GoalSwitcher: View {
               Button {
                 start(goal)
               } label: {
-                Text(goal.title)
+                Text(goal.displayName)
 
                 if goal.locked {
                   Text(
@@ -265,7 +265,7 @@ private struct GoalSwitcher: View {
               Button {
                 router.open(.explain(goalId: goal.id))
               } label: {
-                Label(goal.title, systemImage: "lightbulb")
+                Label(goal.displayName, systemImage: "lightbulb")
               }
             }
           } header: {
@@ -306,7 +306,7 @@ private struct GoalSwitcher: View {
         } else {
           HStack(spacing: 4) {
             if let goal = shownGoal {
-              Text(goal.title)
+              Text(goal.displayName)
                 .lineLimit(1)
                 .frame(maxWidth: maxTitleWidth)
             } else {
@@ -321,7 +321,7 @@ private struct GoalSwitcher: View {
           .typeWeight(.semibold)
         }
       }
-      .accessibilityLabel(shownGoal.map { Text($0.title) } ?? startGoalTitle)
+      .accessibilityLabel(shownGoal.map { Text($0.displayName) } ?? startGoalTitle)
       .accessibilityHint(
         Text(
           "Current goal. Switch goal", tableName: "Navigation",

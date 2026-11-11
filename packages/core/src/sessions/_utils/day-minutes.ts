@@ -19,7 +19,6 @@ export function getGoalDayMinutes({
     calendar: getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings }),
     date,
     exam: getExamDayRules({ isExam: goal.kind === "exam", settings }),
-    overflow: settings.checkpointOverflow,
     targetDate: goal.targetDate,
   });
 }

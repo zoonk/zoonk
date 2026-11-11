@@ -1,0 +1,241 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "openai/gpt-6.1-terra:high": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "A bank of German passages and sentences as written and spoken in Germany (correct capitalization of nouns, \"Sie\" and \"du\" used as German speakers would) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-08T16:11:49.869Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 asks single stated facts and A2 simple stated facts. B1 targets the main point and reasons, B2 attitude and implication, and C1 subtle tone and implication. Speaking sentences grow from 5 to 20 words with increasingly complex structures; the A2 'how has X changed' sequencing questions are slightly demanding but still level-appropriate.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All answer indexes are correct: Sunday for the bus, the small-to-large room swap, the bank-haircut-café order, and so on. Distractors reuse passage words plausibly. On the B2 square question, option A ('attractive meeting place') is a surface reading that a few learners might defend, but D is clearly better supported.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "German is correct with proper noun capitalization and natural du/Sie use, and the US English questions and translations are natural. A1 and A2 listening passages read as contrived lists rather than natural speech. 'Ich wohne mit meiner Schwester' would be more natural with 'zusammen', and the A2 question assumes the speaker is female.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "This is a well-built bank: levels clearly progress from single-fact menu lookups to tone and implication in nuanced C1 texts, and every keyed answer checks out against its passage. The weaknesses are minor: some A1/A2 listening passages are artificially padded with distractor facts, and a few phrasings are slightly unnatural.\n\nIn the reverse order: This is a complete, well-built bank. Every marked answer checks out against its passage, and difficulty rises clearly from A1 lookup questions to C1 tone and implication questions. Small flaws: a few question premises go beyond the text (Anna joining the trip, the speaker's gender), and some phrasing is slightly unnatural.",
+          "score": 8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 2894,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19762,
+        "outputTokens": 2527,
+        "reasoningTokens": 1454
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The progression from A1 to C1 is textbook-perfect in both passage complexity and question type, moving smoothly from simple stated facts to nuanced C1 implication and tone. All passage and speaking word counts sit right in the target ranges.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one unambiguous, well-supported answer with plausible distractors that target careless reading or partial comprehension. Options are balanced in length and structure throughout.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The German is idiomatic and authentic to Germany, with clear register differences between written notices/columns and spoken voicemails/interviews. All English questions, options, and translations are natural US English.",
+              "score": 9.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A delivers an exceptional bank of passages, questions, and speaking sentences that meet every CEFR level expectation and word count constraint. Its progression from A1 to C1 is sharply calibrated, and the German texts sound completely authentic to both written and spoken contexts in Germany.\n\nIn the reverse order: Model A is very strong, offering natural German passages, well-calibrated difficulty progression, and unambiguous answer choices. Its only minor weaknesses are slight repetition in the A1/A2 speaking sentences (both using 'in Berlin') and using Austrian settings (Vienna) when Germany was specified.",
+          "score": 9.875
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages and speaking sentences scale cleanly from A1 to C1 and respect all word count targets. However, C1 Reading 1 and Listening 1 are somewhat too direct compared to B2, with options that summarize explicit points rather than testing subtle C1 tone or implication.",
+              "score": 9.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All 20 questions have a single, clearly supported correct answer and well-crafted distractors of similar length. Answer indices are all accurate.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The German passages are natural, culturally grounded in Germany, and appropriately differentiated between written and spoken registers. Questions and translations are in natural US English.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model C is very strong across all categories, featuring engaging, authentic German passages and well-constructed questions. It trails Model A slightly only because a couple of C1 items lean closer to B2 in explicitness and option simplicity, and its speaking sentences are slightly less varied.\n\nIn the reverse order: Model C delivers an exceptional, natural, and finely calibrated assessment bank across all CEFR levels. The German passages sound completely authentic—especially the spoken texts and nuanced C1 items—and every question has an indisputable single correct answer with smart distractors.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Reading and listening comprehension calibrate well from A1 to C1, with especially strong C1 inference questions. However, the speaking progression flattens at the top: B2 is 16 words and C1 is only 17 words (target: about 20).",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one clearly right answer supported by the text, and options are parallel in length and structure.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "While B1–C1 passages are natural, the A1 passages (Reading 2, Listening 1, Listening 2) are robotic, contrived lists of four parallel items created solely to feed the four multiple-choice options rather than sounding like real notes or speech.",
+              "score": 7.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "Model B has solid B1–C1 comprehension items and accurate answers, but its A1 passages read like artificial textbook drills packed with four parallel distractors. Additionally, its C1 speaking sentence falls noticeably short of the ~20-word target.\n\nIn the reverse order: Model B hits the word count targets and crafts remarkably sophisticated C1 items, but its A1 passages feel like artificial distractor lists rather than natural messages. Additionally, the B2 voice assistant question has a distractor about phone dependence that is too close to the passage's point about relying on technology.",
+          "score": 8.425
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 28994,
+        "outputTokens": 1752,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The bank progresses from A1 fact retrieval through B1 reasons and main points to B2 inference and C1 qualified judgments and understated implications. Speaking grows appropriately in length and complexity, although the A2 weekend listening passage exceeds its 40-word maximum.",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers are supported, and the alternatives consistently distinguish relevant facts, reasons, and attitudes without creating a second defensible answer. Even the nuanced C1 items provide sufficient textual evidence, with generally balanced option lengths.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "German capitalization and forms of address are correct, while questions, options, and translations use appropriate English. Situations and genres vary effectively, but “Die Haltestelle ist Nummer zwei” sounds unnatural for ordinary directions and would benefit from a clearer stop or boarding-platform reference.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A ranks narrowly first because its answer choices are consistently well supported and its advanced questions generally distinguish nuanced attitudes effectively. The progression is strong, with minor weaknesses in passage length compliance and occasional unnatural German phrasing.\n\nIn the reverse order: The stronger bank overall, with clearer progression toward nuanced interpretation at C1 and consistently well-supported answer keys. It closely follows the requested situations and lengths, with only minor naturalness issues.",
+          "score": 8.55
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The overall progression and speaking structures are appropriate, and the C1 passages introduce idiom, irony, and rhetorical framing. Some C1 questions emphasize broad overall opinion rather than the finer nuances available in the text, and the A2 weekend listening passage exceeds its specified maximum.",
+              "score": 6.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Answer indexes identify the intended, best-supported options, and distractors generally exploit plausible misunderstandings. However, the bench-removal answer says it “ended the night noise,” whereas the passage establishes that nights became quieter; this makes the correct paraphrase unnecessarily absolute.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The German is natural across notices, personal messages, commentary, and conversational audio, with correct capitalization and appropriate Sie/du usage. English questions and translations are idiomatic, and the varied situations avoid brands, identifiable real people, and stereotypes.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model C is a close second, with particularly natural German and engaging advanced passages. Its main disadvantages are a slightly overstated correct option and somewhat less consistent separation between B2 attitude questions and C1 interpretation.\n\nIn the reverse order: A useful, linguistically strong bank with accurate answer indexes and good coverage of the requested situations. Its main weakness is insufficient separation between some B2 and C1 comprehension demands.",
+          "score": 7.65
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 18800,
+        "outputTokens": 3387,
+        "reasoningTokens": 2206
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "1f9dca22af6815aa",
+    "anthropic/claude-sonnet-5.5": "6464a24ae3b7dec1",
+    "openai/gpt-6.1-terra:high": "1d3a78186ac306a7"
+  },
+  "swapped": true,
+  "taskId": "level-test-bank",
+  "testCaseId": "en-de-1"
+}

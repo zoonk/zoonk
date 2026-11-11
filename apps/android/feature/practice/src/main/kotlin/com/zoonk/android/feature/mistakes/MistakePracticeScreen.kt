@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -22,6 +23,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.RunAskButton
@@ -65,7 +67,10 @@ fun MistakePracticeScreen(
         return
     }
     val key = PracticeKey(learner.activeGoalId, route.skillId?.let { runCatching { UUID.fromString(it) }.getOrNull() })
-    val viewModel = viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") { MistakePracticeViewModel(key, app.mistakes) }
+    val viewModel =
+        viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") {
+            MistakePracticeViewModel(key, app.mistakes, saved = createSavedStateHandle())
+        }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
 
@@ -120,6 +125,7 @@ internal fun PracticeRun(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "mistake-practice")
     val run = state.run
     val ending = run.phase == RunPhase.Finishing
     val endsRun = state.answerIds.isNotEmpty() && !ending
@@ -131,7 +137,14 @@ internal fun PracticeRun(
     }
 
     val questions = state.read.questions
-    val question = questions.getOrNull(run.index)
+    val task = state.read.tasks.getOrNull(run.index)
+    val question = (task as? MistakePracticeTask.Bank)?.question
+    if (task is MistakePracticeTask.Lesson) {
+        key(run.index) {
+            MistakeLessonQuestion(state, task, viewModel, app, navigator)
+        }
+        return
+    }
     var saved by rememberDraft()
     val draft = saved.answerFor(run.index, question)
 
@@ -143,7 +156,7 @@ internal fun PracticeRun(
         onClose = viewModel::leave,
         mainAction = answerAction(questions, question, run, draft, viewModel),
         report = runReportTarget("mistake-practice", question, run),
-        progress = { RunSegments(questions, run) },
+        progress = { MistakeSegments(state) },
         actions = {
             question?.let {
                 AnswerActions(
@@ -153,6 +166,7 @@ internal fun PracticeRun(
                     draft,
                     viewModel,
                     ask = { RunAskButton(it, run, blockId = null, app, navigator) },
+                    onReportSaveFailure = saveReport::open,
                     notSureOnEvery = true,
                 )
             }
@@ -163,7 +177,13 @@ internal fun PracticeRun(
             key(run.index) {
                 RunQuestion(
                     questions = questions,
-                    run = run,
+                    run =
+                        run.copy(
+                            index =
+                                state.read.tasks
+                                    .take(run.index)
+                                    .count { task -> task is MistakePracticeTask.Bank },
+                        ),
                     question = it,
                     controls = viewModel,
                     words = state.read.words,

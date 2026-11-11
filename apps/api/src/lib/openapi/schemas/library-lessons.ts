@@ -160,7 +160,7 @@ const spokenAnswerStepSchema = teachingStepSchema("spokenAnswer").extend({
     }),
 });
 
-const playableStepSchema = z
+export const playableStepSchema = z
   .union([
     activityStepSchema,
     teachingStepSchema("challenge"),

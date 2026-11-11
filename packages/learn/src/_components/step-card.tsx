@@ -68,7 +68,7 @@ export function StepTitleLabel({ children, className, ...props }: React.Componen
 export function StepDetail({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-balance", className)}
+      className={cn("text-muted-foreground text-pretty", className)}
       data-slot="step-detail"
       {...props}
     />

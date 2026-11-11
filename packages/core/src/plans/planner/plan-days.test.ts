@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fromIsoDate } from "./plan-calendar";
-import { createExamDays, getPlannedMinutes } from "./plan-days";
+import { createExamDays, createLearnDays, getPlannedMinutes } from "./plan-days";
 import { getExamWindows } from "./plan-phases";
 
 const calendar = {
@@ -71,5 +71,71 @@ describe(createExamDays, () => {
     });
 
     expect(dayShape(fromIsoDate("2026-09-30")).events).toStrictEqual([]);
+  });
+});
+
+describe("a plan's original first day", () => {
+  const start = fromIsoDate("2026-09-30");
+  const fullDay = { dailyMinutes: 240, firstDay: start, lightWeeks: [], weekdayMinutes: null };
+
+  it.each([null, 150])("gives all 240 minutes to lessons with mock time %s", (mockMinutes) => {
+    const describeDay = createLearnDays({
+      calendar: fullDay,
+      eventWeekday: 0,
+      mockMinutes,
+      practiceBias: "balanced",
+      start,
+      targetDate: null,
+    });
+
+    expect(describeDay(start)).toMatchObject({ minutes: 240, open: true, share: 1 });
+    expect(describeDay(fromIsoDate("2026-10-01")).share).toBe(0.5);
+  });
+
+  it("gives a dated exam's first open day all 240 minutes", () => {
+    const targetDate = fromIsoDate("2026-12-30");
+
+    const describeDay = createExamDays({
+      calendar: fullDay,
+      eventWeekday: 0,
+      fullMockMinutes: 180,
+      mockMinutes: 90,
+      practiceBias: "balanced",
+      rules: { planStart: start, shortMockMinutes: null },
+      targetDate,
+      windows: getExamWindows({ planStart: start, targetDate }),
+    });
+
+    expect(describeDay(start)).toMatchObject({ minutes: 240, open: true, share: 1 });
+    expect(describeDay(fromIsoDate("2026-10-01")).share).toBe(0.6);
+  });
+
+  it("does not reopen a final-stretch day or give a continuation another first day", () => {
+    const targetDate = fromIsoDate("2026-10-01");
+
+    const describeDay = createExamDays({
+      calendar: fullDay,
+      eventWeekday: 0,
+      fullMockMinutes: 180,
+      mockMinutes: 90,
+      practiceBias: "balanced",
+      rules: { planStart: start, shortMockMinutes: 30 },
+      targetDate,
+      windows: [{ endDate: start, kind: "finalStretch", startDate: start }],
+    });
+
+    expect(describeDay(start)).toMatchObject({ open: false, share: 0 });
+    const continuationStart = fromIsoDate("2026-10-02");
+
+    const continuation = createLearnDays({
+      calendar: fullDay,
+      eventWeekday: 0,
+      planStart: start,
+      practiceBias: "balanced",
+      start: continuationStart,
+      targetDate: null,
+    });
+
+    expect(continuation(continuationStart).share).toBe(0.5);
   });
 });

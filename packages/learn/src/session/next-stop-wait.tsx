@@ -1,6 +1,7 @@
 "use client";
 
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
@@ -11,10 +12,12 @@ import {
 } from "../_components/lesson-not-written-notice";
 import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
-import { toHeldRun } from "../generation/generation-run";
+import { type GenerationRun, toHeldRun } from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { LessonWaitStatus } from "../wait/lesson-wait-status";
+import { WaitContent } from "../wait/wait-screen";
 import { type NextStopActions, type NextStopLesson } from "./next-stop";
 import { type DayStep } from "./session-types";
 import { useBlockTitle } from "./use-block-copy";
@@ -25,6 +28,7 @@ const WAITING_CHECK_MS = 5000;
 // A lesson opens at most five minutes after its text is written, so writing ends well inside this.
 const STUCK_AFTER_MS = { notStarted: 20_000, writing: 600_000 } as const;
 
+/** The wait never shows a set-aside lesson: the session read shows its notice instead. */
 function hasLessonChanged({
   generationId,
   lesson,
@@ -32,16 +36,18 @@ function hasLessonChanged({
 }: {
   generationId: string | null;
   lesson: NextStopLesson;
-  read: { generationId: string | null; lesson: NextStopLesson };
+  read: { generationId: string | null; lesson: NextStopLesson; setAside: boolean };
 }): boolean {
   return (
-    read.lesson !== lesson || (read.lesson === "writing" && read.generationId !== generationId)
+    read.setAside ||
+    read.lesson !== lesson ||
+    (read.lesson === "writing" && read.generationId !== generationId)
   );
 }
 
 /**
- * Reads the whole session only when the lesson changed; a failed wait always does, since the
- * session read is what shows a set-aside lesson's notice.
+ * Reads the whole session only when the lesson changed. A failed lesson is still checked: after Try
+ * again, it stays failed until the new run takes it.
  */
 function useWaitingCheck({
   actions,
@@ -61,7 +67,7 @@ function useWaitingCheck({
     intervalMs: WAITING_CHECK_MS,
     key: `${lessonId ?? block.position}:${lesson}:${generationId ?? ""}`,
     onPoll: async (signal) => {
-      if (lesson === "failed" || !lessonId || !actions.readLesson) {
+      if (!lessonId || !actions.readLesson) {
         actions.refresh();
         return;
       }
@@ -103,39 +109,28 @@ function useHeldRunId({ generationId, held }: { generationId: string | null; hel
 }
 
 function WritingProgress({
-  actions,
-  block,
-  generationId,
   held,
+  run,
+  since,
 }: {
-  actions: NextStopActions;
-  block: DayStep;
-  generationId: string | null;
   held: boolean;
+  run: GenerationRun;
+  since: number;
 }) {
   const t = useExtracted();
 
   return (
-    <FollowedRun
-      generationId={generationId}
-      key={generationId ?? "notStarted"}
-      kind="lesson"
-      onReady={actions.refresh}
-      restart={async () => ((await actions.start(block)) ? undefined : null)}
-    >
-      {(run) => (
-        <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run}>
-          {!held && (
-            <GenerationTimelineDescription className="text-sm">
-              {t("This lesson is being written for you. It's usually ready in a few minutes.")}
-            </GenerationTimelineDescription>
-          )}
-        </GenerationWait>
+    <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run} since={since}>
+      {!held && (
+        <GenerationTimelineDescription className="text-sm">
+          {t("This lesson is being written for you. It's usually ready in a few minutes.")}
+        </GenerationTimelineDescription>
       )}
-    </FollowedRun>
+    </GenerationWait>
   );
 }
 
+/** The lesson's writing as the wait screen shows it: a strip over the quiz, or its progress. */
 export function Waiting({
   actions,
   block,
@@ -150,23 +145,45 @@ export function Waiting({
   const held = lesson === "ready";
   const stuck = useLooksStuck(lesson);
   const runId = useHeldRunId({ generationId, held });
+  const since = useMountTime().getTime();
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
+  if (lesson === "failed" || stuck) {
+    const failure = (
+      <GenerationFailureNotice
+        failure={lesson === "notStarted" ? "notStarted" : "generation"}
+        retry={() => {
+          poll.restart();
+          void actions.start(block);
+        }}
+      />
+    );
+
+    return <WaitContent progress={failure} status={failure} />;
+  }
+
   return (
-    <div className="flex flex-col gap-5">
-      {lesson === "failed" || stuck ? (
-        <GenerationFailureNotice
-          failure={lesson === "notStarted" ? "notStarted" : "generation"}
-          retry={() => {
-            poll.restart();
-            void actions.start(block);
-          }}
+    <FollowedRun
+      generationId={runId}
+      key={runId ?? "notStarted"}
+      kind="lesson"
+      onReady={actions.refresh}
+      restart={async () => ((await actions.start(block)) ? undefined : null)}
+    >
+      {(run) => (
+        <WaitContent
+          progress={<WritingProgress held={held} run={run} since={since} />}
+          status={
+            run.status === "failed" ? (
+              <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
+            ) : (
+              <LessonWaitStatus holding={held} run={run} since={since} />
+            )
+          }
         />
-      ) : (
-        <WritingProgress actions={actions} block={block} generationId={runId} held={held} />
       )}
-    </div>
+    </FollowedRun>
   );
 }
 

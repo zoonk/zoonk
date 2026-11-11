@@ -1,6 +1,7 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
 import { io } from "next/cache";
+import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { getMindMapStatus } from "./_utils/mind-map-view";
@@ -28,7 +29,11 @@ export async function getChapterMindMapStatus({
     return { status: "notFound" };
   }
 
-  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal: owned.goal });
+  const [facts] = await loadMindMapChapters({
+    chapterIds: [chapterId],
+    goal: owned.goal,
+    readViewer: readEntitlementViewer,
+  });
 
   if (!facts) {
     return { status: "notFound" };

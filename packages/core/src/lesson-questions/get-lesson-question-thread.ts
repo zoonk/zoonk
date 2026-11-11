@@ -1,7 +1,8 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
+import { mistakeQuestionWhere } from "./_utils/mistake-scope";
 import {
   lessonQuestionResourceOmit,
   lessonQuestionResourceQuery,
@@ -20,11 +21,17 @@ type ThreadWhere = ReturnType<typeof getSubjectThreadColumn> & { userId: string 
 type QuestionScope = {
   contextKind: GetLessonQuestionThreadInput["contextKind"];
   stepId: string | undefined;
+  mistakeId: string | undefined;
   thread: ThreadWhere;
 };
 
-function getScopeWhere({ contextKind, stepId, thread }: QuestionScope) {
-  return { contextKind, libraryStepId: stepId, thread };
+function getScopeWhere({ contextKind, mistakeId, stepId, thread }: QuestionScope) {
+  return {
+    contextKind,
+    thread,
+    ...mistakeQuestionWhere(mistakeId),
+    ...(mistakeId ? {} : { libraryStepId: stepId }),
+  };
 }
 
 async function getCursorQuestion({ cursor, ...scope }: QuestionScope & { cursor: string }) {
@@ -79,6 +86,7 @@ async function getQuestionPage({
 export async function getLessonQuestionThread({
   contextKind,
   cursor,
+  mistakeId,
   stepId,
   target,
 }: GetLessonQuestionThreadInput & { target: TutorTarget }) {
@@ -104,7 +112,7 @@ export async function getLessonQuestionThread({
 
   const [found, page] = await Promise.all([
     prisma.lessonQuestionThread.findFirst({ where: thread }),
-    getQuestionPage({ contextKind, cursor, stepId, thread }),
+    getQuestionPage({ contextKind, cursor, mistakeId, stepId, thread }),
   ]);
 
   if (page.status !== "ready") {

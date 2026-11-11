@@ -41,10 +41,13 @@ const GOAL_PHASES = [
 
 const GOAL_STEPS = {
   buildSkillGraph: "skills",
+  firstLessonReady: "aside",
   joinRunningGoal: "join",
   readExamNotice: "notice",
   understandGoal: "goal",
+  warmUpFailed: "aside",
   warmUpReady: "aside",
+  writeFirstLesson: "aside",
 } as const;
 
 const understanding = {
@@ -119,6 +122,7 @@ const courseOutline = {
   steps: {
     buildSkillGraph: "skills",
     createPlan: "plan",
+    firstLessonReady: "aside",
     goalReady: "done",
     joinRunningGoal: "join",
     outlineCourses: "outline",
@@ -127,7 +131,9 @@ const courseOutline = {
     readExamNotice: "skills",
     saveSkills: "plan",
     understandGoal: "skills",
+    warmUpFailed: "aside",
     warmUpReady: "aside",
+    writeFirstLesson: "aside",
   },
 } as const satisfies GenerationKindDefinition<GoalContentStepName, "outline" | "plan" | "skills">;
 

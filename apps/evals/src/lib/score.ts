@@ -1,13 +1,18 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
+import z from "zod";
+import keyFlawsPrompt from "./key-flaws-prompt.md";
 import { calculateScore } from "./score-calculation";
 import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
 import systemPrompt from "./system-prompt.md";
 import {
   type JudgeRun,
+  type KeyFlaw,
   type ScoreCategory,
   type ScoreStep,
+  type TaskScoreResult,
   categorizedScoreSchema,
+  keyFlawSchema,
   scoreSchema,
   toTokenUsage,
 } from "./types";
@@ -34,8 +39,10 @@ export async function generateScore(params: {
   prompt: string;
   output: string;
   scoreCategories?: ScoreCategory[];
-}) {
-  const { expectations, prompt, output, scoreCategories } = params;
+  keyFlawLocators?: string[];
+}): Promise<TaskScoreResult> {
+  const { expectations, prompt, output, scoreCategories, keyFlawLocators } = params;
+  const instructions = keyFlawLocators ? `${systemPrompt}\n\n${keyFlawsPrompt}` : systemPrompt;
 
   const categoriesSection = scoreCategories
     ? `
@@ -60,10 +67,18 @@ export async function generateScore(params: {
   `;
 
   if (scoreCategories) {
+    const keyFlawsSchema = keyFlawLocators?.length
+      ? z.array(keyFlawSchema.extend({ itemLocator: z.enum(keyFlawLocators) }))
+      : z.array(keyFlawSchema).length(0);
+
     const { output: result, usage } = await generateText({
-      instructions: systemPrompt,
+      instructions,
       model: SCORING_JUDGE_MODEL_ID,
-      output: Output.object({ schema: categorizedScoreSchema }),
+      output: Output.object({
+        schema: keyFlawLocators
+          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsSchema })
+          : categorizedScoreSchema,
+      }),
       prompt: evalPrompt,
     });
 
@@ -75,6 +90,7 @@ export async function generateScore(params: {
     return {
       categoryScores,
       judge: getJudgeRun(usage),
+      ...resolveKeyFlaws({ locators: keyFlawLocators, result }),
       score: calculateScore({ categoryScores, steps: result.steps }),
       steps: result.steps,
     };
@@ -92,6 +108,27 @@ export async function generateScore(params: {
     score: calculateScore({ steps: result.steps }),
     steps: result.steps,
   };
+}
+
+function resolveKeyFlaws({
+  locators,
+  result,
+}: {
+  locators?: string[];
+  result: { steps: ScoreStep[]; keyFlaws?: KeyFlaw[] };
+}): { keyFlaws?: KeyFlaw[]; itemsScored?: number } {
+  if (!locators) {
+    return {};
+  }
+
+  const flaws = z.array(keyFlawSchema).parse(result.keyFlaws);
+  const flagged = new Set(flaws.map((flaw) => flaw.itemLocator));
+
+  if (flagged.size !== flaws.length) {
+    throw new Error("Judge returned duplicate key-flaw item locators.");
+  }
+
+  return { itemsScored: locators.length, keyFlaws: flaws };
 }
 
 function getJudgeRun(usage: Parameters<typeof toTokenUsage>[0]): JudgeRun {

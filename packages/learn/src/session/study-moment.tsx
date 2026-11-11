@@ -11,10 +11,11 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { useFormatDuration } from "../_utils/time-format";
+import { useFormatDuration, useStudyTimeFact } from "../_utils/time-format";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
+import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
@@ -34,12 +35,21 @@ import { useSessionAction } from "./use-session-action";
  * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
  * next.
  */
-function MomentEarned({ moment }: { moment: StudyMomentView }) {
+function MomentEarned({
+  lessonSeconds = 0,
+  moment,
+}: {
+  lessonSeconds?: number;
+  moment: StudyMomentView;
+}) {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
+  const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
+    studied,
     moment.comesBackOn &&
       t("Review on {date}", {
         date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
@@ -49,6 +59,11 @@ function MomentEarned({ moment }: { moment: StudyMomentView }) {
         }),
       }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
+    moment.deferredLessonsCount > 0 &&
+      t(
+        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
+        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
+      ),
   ];
 
   return <MomentReadouts brainPower={brainPower} facts={facts} />;
@@ -144,11 +159,11 @@ function MomentActions({
 
 export function StudyMoment({
   continueHref,
-  blocks,
   buddy,
   exitHref,
   inLessonPlayer = false,
   kind,
+  lessonSeconds,
   moment,
   next,
   finishedChapterId = null,
@@ -159,12 +174,12 @@ export function StudyMoment({
   testedOut = false,
 }: {
   continueHref?: string | null;
-  blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   exitHref?: string;
   finishedChapterId?: string | null;
   inLessonPlayer?: boolean;
   kind: MomentKind;
+  lessonSeconds?: number;
   moment: StudyMomentView;
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
@@ -178,11 +193,14 @@ export function StudyMoment({
   const offer = onStartTestOut ? moment.testOutOffer : null;
   const hasHeader = !inLessonPlayer && exitHref !== undefined;
 
-  const queue = getSessionQueue({
-    blocks,
-    finishedId: moment.blockId,
-    nextId: nextBlock?.id ?? null,
-  });
+  const queue = {
+    left: moment.minutes.left,
+    rows: getSessionQueue({
+      blocks: moment.blocks,
+      finishedId: moment.blockId,
+      nextId: nextBlock?.id ?? null,
+    }),
+  };
 
   const aside = useSessionQueueAside(queue);
 
@@ -195,7 +213,7 @@ export function StudyMoment({
     <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
-          <MomentEarned moment={moment} />
+          <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
         <DayMoment
@@ -208,6 +226,8 @@ export function StudyMoment({
           }}
           reached={moment.reached}
         />
+
+        <FinishedChapterMoment chapter={moment.finishedChapter} />
 
         {nextBlock && (
           <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />

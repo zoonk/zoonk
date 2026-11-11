@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { trackOnboardingProgress } from "../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
 import { claimUsage } from "../entitlements/claim-usage";
@@ -198,6 +199,14 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
 
   const rows = await prisma.goal.findMany({ where: { id: { in: results.ids } } });
   const goals = results.ids.flatMap((id) => rows.find((goal) => goal.id === id) ?? []);
+
+  goals.forEach((goal) =>
+    trackOnboardingProgress({
+      at: goal.createdAt.getTime(),
+      goalId: goal.id,
+      stage: "goal_created",
+    }),
+  );
 
   return {
     goals: await loadGoalViews({ activeGoalId, goals }),

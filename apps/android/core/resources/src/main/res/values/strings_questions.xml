@@ -64,8 +64,8 @@
     <string name="questions_placement_note">Fine-tuning your plan. A miss here is never saved as a mistake.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Past exam question · %1$s</string>
-    <string name="questions_drill_reteach_ideas">The idea first, then a few questions on it.</string>
-    <string name="questions_drill_reteach">A few questions on an idea you missed.</string>
+    <string name="questions_drill_reteach_ideas">The idea first, then put it to use.</string>
+    <string name="questions_drill_reteach">Back to an idea you missed.</string>
     <string name="questions_drill_read_carefully">Read every word before you answer.</string>
     <string name="questions_drill_spot_the_trap">There\'s a trap in here. Find it before you answer.</string>
     <plurals name="questions_drill_timed">
@@ -86,7 +86,6 @@
         <item quantity="one">%d second left</item>
         <item quantity="other">%d seconds left</item>
     </plurals>
-    <string name="questions_drill_show_answers">I\'ve read it. Show the answers</string>
     <string name="questions_drill_not_sure">I\'m not sure</string>
     <string name="questions_drill_open_lesson">Go over the lesson</string>
 </resources>

@@ -308,9 +308,9 @@ describe("notices for changes within an estimate", () => {
     expect(after.filter((item) => item.lessonId !== null)).toHaveLength(40);
     expect(after.filter((item) => item.lessonId === null)).toHaveLength(0);
     expect(countLessons(after) - countLessons(before)).toBe(8);
-    expect(byDate(after)).toBe(byDate(before));
+    expect(byDate(after)).toBe(byDate(before) + 1);
     expect(change?.effect?.lessonsAdded).toBe(8);
-    expect(change?.effect?.endDateAfter).toBe("2020-11-01");
+    expect(change?.effect?.endDateAfter).toBe("2020-10-31");
   });
 
   it.each([4, 5])(

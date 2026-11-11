@@ -252,7 +252,6 @@ msgstr "試験"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "スピーキング"
@@ -314,6 +313,14 @@ msgstr "設定"
 msgctxt "itPgxd"
 msgid "Profile"
 msgstr "プロフィール"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "自分について"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
@@ -1008,9 +1015,9 @@ msgid "Start a new goal, or pick another one above."
 msgstr "新しい目標を始めるか、上でほかの目標を選んでください。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
-msgstr "「{goal}」を完了しました。"
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
+msgstr "目標「{goal}」を達成しました。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
@@ -1023,9 +1030,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "再開するまで、学習の予定は入りません。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "「{goal}」は一時停止中です。"
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "目標「{goal}」は一時停止中です。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1038,6 +1045,26 @@ msgid "Paused"
 msgstr "一時停止中"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "学習計画を見る"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "始める前に目を通してください。"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "「{goal}」の学習計画ができました。"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "学習計画の準備完了"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "設定を続ける"
@@ -1048,9 +1075,9 @@ msgid "It's built from what you tell us."
 msgstr "回答をもとに学習計画を作成します。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "「{goal}」の学習計画を作成するには、あといくつか回答が必要です。"
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "「{goal}」の学習計画は、あと数問に答えると完成します。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"
@@ -1284,6 +1311,11 @@ msgstr "保存する"
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "保存しました。"
+
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "ここで教えてくれたことを、学習で使う例や相棒に反映します。回答はすべて任意です。"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx
@@ -3479,21 +3511,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "ほか{count}トピック"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "リスニング"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "リーディング"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "ライティング"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3554,11 +3571,11 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "この証明書を確認する"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#. The fine print on a language level certificate, such as B1.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Zoonkで練習したすべてのスキルが、回答に基づく判定で{level}に達した場合に授与されます。公式の試験結果ではありません。"
+msgctxt "0ytAdy"
+msgid "Awarded for finishing this level on Zoonk. This is not an official exam result."
+msgstr "Zoonkでこのレベルを修了した方に授与される証明書です。公式の試験結果ではありません。"
 
 #. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
 #: src/lib/certificates/certificate-view.ts

@@ -105,7 +105,7 @@ function FinishRow({ examHref }: { examHref: string | null }) {
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{goal.title}</span>
+        <span className="truncate font-medium">{goal.displayName}</span>
         {finish && (
           <PlanDateText
             className="text-muted-foreground text-xs"
@@ -180,6 +180,24 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
   const afterExam = plan.phases.filter((phase) => phase.kind === "afterExam");
   const hasNext = Boolean(mockDate || chapter?.chapterId || checkpoint) || afterExam.length > 0;
 
+  // A challenge in the next session comes before the next phase's lessons, as on Today.
+  const challengeFirst =
+    checkpoint?.when === "nextSession" &&
+    plan.phases.findIndex((phase) => phase.checkpoint === checkpoint) <
+      plan.phases.findIndex((phase) => chapter !== null && phase.chapters.includes(chapter));
+
+  const chapterRow = chapter?.chapterId && (
+    <li>
+      <NextChapterRow chapter={{ ...chapter, chapterId: chapter.chapterId }} links={links} />
+    </li>
+  );
+
+  const checkpointRow = checkpoint && (
+    <li>
+      <CheckpointRow checkpoint={checkpoint} links={links} />
+    </li>
+  );
+
   if (!hasNext && goal.kind !== "exam") {
     return null;
   }
@@ -202,17 +220,8 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
           </li>
         )}
 
-        {chapter?.chapterId && (
-          <li>
-            <NextChapterRow chapter={{ ...chapter, chapterId: chapter.chapterId }} links={links} />
-          </li>
-        )}
-
-        {checkpoint && (
-          <li>
-            <CheckpointRow checkpoint={checkpoint} links={links} />
-          </li>
-        )}
+        {challengeFirst ? checkpointRow : chapterRow}
+        {challengeFirst ? chapterRow : checkpointRow}
 
         <li>
           <FinishRow examHref={links.exam} />

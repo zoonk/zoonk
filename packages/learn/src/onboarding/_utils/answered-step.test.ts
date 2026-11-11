@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { type FlowState, applyAnswer, openStep } from "./answered-step";
 
 function viewWith(steps: OnboardingStep[]): OnboardingView {
-  return { steps } as unknown as OnboardingView;
+  return { goal: { id: "goal" }, steps } as unknown as OnboardingView;
 }
 
 const onPurpose: FlowState = {
@@ -77,5 +77,22 @@ describe("changing an earlier answer from a later screen", () => {
 
     expect(back.current).toBe("schedule");
     expect(back.history).toStrictEqual(["purpose", "targetDate", "level"]);
+  });
+});
+
+describe("moving to an exam", () => {
+  it("starts a moved goal with its own saved history", () => {
+    const saved = {
+      goal: { details: { answered: [] }, id: "exam" },
+      steps: ["target", "level", "plan"],
+    } as unknown as OnboardingView;
+
+    const state: FlowState = { current: "reason", history: [], view: viewWith(["reason"]) };
+
+    expect(applyAnswer({ state, step: "reason", view: saved })).toStrictEqual({
+      current: "target",
+      history: [],
+      view: saved,
+    });
   });
 });

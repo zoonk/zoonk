@@ -86,7 +86,7 @@ describe("a phase challenge with no room before the plan's date", () => {
     expect(kinds.filter((kind) => kind === "checkpoint").length).toBeLessThanOrEqual(1);
   });
 
-  it("is said on its phase in the Plan", async () => {
+  it("does not call an untestable challenge left out for time", async () => {
     const { goal } = await tightLearner({ dailyMinutes: 15, targetDate: "2020-09-29" });
     const result = await getGoalPlan(goal.id);
 
@@ -98,8 +98,8 @@ describe("a phase challenge with no room before the plan's date", () => {
       result.plan.phases.map(({ challengeLeftOut, state }) => ({ challengeLeftOut, state })),
     ).toStrictEqual([
       { challengeLeftOut: false, state: "current" },
-      { challengeLeftOut: true, state: "upcoming" },
-      { challengeLeftOut: true, state: "upcoming" },
+      { challengeLeftOut: false, state: "upcoming" },
+      { challengeLeftOut: false, state: "upcoming" },
     ]);
   });
 
@@ -132,7 +132,7 @@ describe("a phase challenge with no room before the plan's date", () => {
       input: { operations: [{ kind: "setTargetDate", targetDate: "2020-10-09" }], timeZone: "UTC" },
     });
 
-    expect(before).toStrictEqual({ leftOut: [1, 2], planned: [0] });
+    expect(before).toStrictEqual({ leftOut: [], planned: [0] });
 
     await expect(readChallenges(plan.id)).resolves.toStrictEqual({
       leftOut: [],

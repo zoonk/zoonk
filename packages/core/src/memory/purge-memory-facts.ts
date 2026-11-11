@@ -11,7 +11,10 @@ export async function purgeMemoryFacts({ now = new Date() }: { now?: Date } = {}
 
   const { count } = await prisma.memoryFact.deleteMany({
     where: {
-      OR: [{ deletedAt: { lt: cutoff }, status: "deleted" }, { expiresAt: { lt: cutoff } }],
+      OR: [
+        { deletedAt: { lt: cutoff }, status: { in: ["deleted", "superseded"] } },
+        { expiresAt: { lt: cutoff } },
+      ],
     },
   });
 

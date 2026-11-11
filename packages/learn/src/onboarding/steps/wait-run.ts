@@ -1,7 +1,12 @@
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type OnboardingFirstLesson } from "@zoonk/core/view-models/onboarding/contract";
 import { type PollStatus } from "../../_utils/use-poll";
-import { type GenerationFailure, type GenerationRun } from "../../generation/generation-run";
+import {
+  type GenerationFailure,
+  type GenerationFirstLesson,
+  type GenerationRun,
+} from "../../generation/generation-run";
 
 export const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
@@ -30,6 +35,46 @@ export function isPlanMade(run: GenerationRun | null): boolean {
 }
 
 export type WaitStop = { failure: GenerationFailure; retry?: () => void };
+
+/**
+ * The run says what changed since the page read the goal, and the read is what a reconnect starts
+ * from, so a lesson either calls ready is ready, and one the read calls done stays done when the
+ * stream replays its `firstLessonReady`.
+ */
+export function getFirstLesson({
+  read,
+  readGenerationId,
+  run,
+}: {
+  read: OnboardingFirstLesson | null;
+  readGenerationId?: string | null;
+  run: GenerationRun | null;
+}): GenerationFirstLesson | null {
+  const saved: OnboardingFirstLesson | null =
+    read?.status === "stopped" && run?.id && run.id !== readGenerationId
+      ? { ...read, status: "writing" }
+      : read;
+
+  const live = run?.firstLesson;
+
+  if (!live) {
+    return saved;
+  }
+
+  if (!saved || saved.id !== live.id) {
+    return live;
+  }
+
+  if (saved.status === "done" || saved.status === "ready") {
+    return saved;
+  }
+
+  if (live.status === "done" || live.status === "ready") {
+    return live;
+  }
+
+  return saved;
+}
 
 /**
  * The notice is read apart from the run, so its wait stops when its own answers stop coming or the

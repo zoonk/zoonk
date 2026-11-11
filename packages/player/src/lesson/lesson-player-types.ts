@@ -1,3 +1,5 @@
+import { type LessonClockOutcome } from "@zoonk/core/lesson-player/clock";
+import { type LessonClockInput } from "@zoonk/core/lesson-player/clock-contract";
 import {
   type LessonStepAnswer,
   type LessonStepCheckResult,
@@ -50,6 +52,8 @@ export type LessonStartOutcome =
   | LessonRunRefusal
   | {
       answers: LessonRunAnswers;
+      /** Null for a lesson outside a study block: there's no clock to pause. */
+      clockId: string | null;
       hyperdrive: LessonRunHyperdrive;
       /** Whose run it is: answers not saved yet are kept on the device under this learner. */
       learnerId: string;
@@ -124,6 +128,11 @@ export type LessonPlayerAdapters = {
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
   startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;
+  /**
+   * Must outlive the page, since a pause goes out as it hides. Resolves `null` when the
+   * transition didn't get through, so it's sent again under the same sequence.
+   */
+  updateLessonClock?: (input: LessonClockInput) => Promise<LessonClockOutcome | null>;
 };
 
 export type LessonPlayerRoutes = {
@@ -131,11 +140,15 @@ export type LessonPlayerRoutes = {
   /** Set when `exit` points to the lesson's chapter or language unit. */
   exitTo: "chapter" | "unit" | null;
   nextLesson: string | null;
+  /** The goal's setup, ending on its plan's reveal. */
+  seePlan: (goalId: string) => string;
   signUp: string;
   upgrade: string;
 };
 
 export type LessonPlayerCompletionState = {
+  /** Saves that failed in a row. */
+  failures: number;
   result: LibraryLessonCompletion | null;
   status: "failed" | "saved" | "saving";
   /** True when I know this passed every check and skipped the rest. */

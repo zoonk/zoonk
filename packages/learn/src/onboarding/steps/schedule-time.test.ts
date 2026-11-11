@@ -38,6 +38,11 @@ describe(getShownMinutes, () => {
     expect(getShownMinutes({ ...SHOWN, picked: 90 })).toBe(90);
   });
 
+  it("opens on the recommended time when the screen starts on it, whatever the plan suggests", () => {
+    expect(getShownMinutes({ ...SHOWN, first: null, settled: true })).toBe(60);
+    expect(getShownMinutes({ ...SHOWN, first: null, picked: 35, settled: true })).toBe(35);
+  });
+
   it("keeps the screen's own time when it started without a suggestion, whatever the days find later", () => {
     const tooClose = foundTime(TOO_CLOSE);
 
@@ -78,6 +83,10 @@ describe(waitsForSuggestion, () => {
 describe(toPickedMinutes, () => {
   it("follows the suggestion again when the learner picks it back", () => {
     expect(toPickedMinutes({ first: foundTime(), found: foundTime(), minutes: 35 })).toBeNull();
+  });
+
+  it("keeps the suggestion as the learner's own on a screen that started on the recommended time", () => {
+    expect(toPickedMinutes({ first: null, found: foundTime(), minutes: 35 })).toBe(35);
   });
 
   it("keeps any other time as the learner's own", () => {

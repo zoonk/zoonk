@@ -1,6 +1,7 @@
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext } from "../lessons/lesson-question-context";
 import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
+import { type LearnerNeeds, getLearnerNeedsLines } from "./learner-needs";
 
 /**
  * Memory follows the learner's message, so OpenAI's cache would stop before it: marking the message
@@ -89,12 +90,14 @@ function createMemoryMessages(learnerMemory: readonly string[] | undefined) {
 export function createGoalTutorMessages({
   contextSnapshot,
   learnerMemory,
+  learnerNeeds,
   links,
   priorTurns,
   question,
 }: {
   contextSnapshot: PlanScopeContext;
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   links: GoalTutorLinks;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -104,6 +107,9 @@ export function createGoalTutorMessages({
     ...toHistoryMessages(priorTurns),
     learnerMessage({ breakpoint: true, question }),
     ...createMemoryMessages(learnerMemory),
+    ...(learnerNeeds?.note
+      ? [textMessage({ role: "user", text: getLearnerNeedsLines(learnerNeeds).join("\n") })]
+      : []),
   ];
 }
 

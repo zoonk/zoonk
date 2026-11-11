@@ -4,9 +4,11 @@ import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
+import { type FinishedChapter } from "../../sessions/completion-contract";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -33,6 +35,7 @@ const PERCENT = 100;
 type ChapterTestOutOutcome = ProgressCelebration & {
   changeId: string | null;
   correct: number;
+  finishedChapter: FinishedChapter | null;
   lessonsSkipped: number;
   passed: boolean;
   total: number;
@@ -46,7 +49,9 @@ export type SubmitChapterTestOutResult =
   | { status: "plusRequired" }
   | { status: "unauthorized" };
 
-type GradedAnswer = { answer: ItemAnswerInput; isCorrect: boolean; item: ChoiceItem };
+type GradedAnswer = { answer: ItemAnswerInput; item: ChoiceItem } & ReturnType<
+  typeof gradeChoiceAnswer
+>;
 
 function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInput[] {
   return answers.filter(
@@ -62,6 +67,7 @@ async function gradeAnswers({
   chapterSkillIds: readonly string[];
 }): Promise<GradedAnswer[] | null> {
   const rows = await prisma.item.findMany({
+    include: ITEM_IMAGE_INCLUDE,
     where: { id: { in: answers.map((answer) => answer.itemId) } },
   });
 
@@ -69,9 +75,7 @@ async function gradeAnswers({
     const row = rows.find((candidate) => candidate.id === answer.itemId);
     const item = row && chapterSkillIds.includes(row.skillId) ? parseChoiceItem(row) : null;
 
-    return item
-      ? { answer, isCorrect: gradeChoiceAnswer({ answer: answer.answer, item }).isCorrect, item }
-      : null;
+    return item ? { answer, ...gradeChoiceAnswer({ answer: answer.answer, item }), item } : null;
   });
 
   return graded.every((entry) => entry !== null) ? graded : null;
@@ -89,13 +93,14 @@ async function recordAnswers({
   timeZone: string;
   userId: string;
 }): Promise<void> {
-  const record = ({ answer, isCorrect, item }: GradedAnswer) =>
+  const record = ({ answer, isCorrect, item, snapshot }: GradedAnswer) =>
     recordLearnerAnswer({
       answer: answer.answer,
       answeredAt,
       graded: { durationMs: answer.durationMs, isCorrect },
       itemId: item.id,
       language: item.language,
+      mistake: { questionText: snapshot.question, snapshot },
       purpose: "diagnostic",
       skillId: item.skillId,
       timeZone,
@@ -159,6 +164,7 @@ function toReadyResult({
       ...celebration,
       changeId: said.changeId,
       correct: said.correct,
+      finishedChapter: said.finishedChapter,
       lessonsSkipped: said.lessonsSkipped,
       passed: said.passed,
       total: said.total,
@@ -248,6 +254,7 @@ async function submitOwnedTestOut({
 
   const testedOut = score.passed
     ? await markPlanItemsTestedOut({
+        finishesChapters: true,
         goalId,
         items: plan.items,
         knownSkillIds: new Set(score.knownSkillIds),
@@ -256,6 +263,7 @@ async function submitOwnedTestOut({
       })
     : await refreshGoalPlan({ goalId }).then(() => ({
         changeId: null,
+        finishedChapters: [],
         lessonsSkipped: 0,
         planVersion: null,
       }));
@@ -263,6 +271,10 @@ async function submitOwnedTestOut({
   const said = {
     changeId: testedOut.changeId,
     correct: score.correct,
+    finishedChapter:
+      testedOut.finishedChapters.find(
+        (chapter) => chapter.chapterId === chapterId && chapter.goalId === goalId,
+      ) ?? null,
     lessonsSkipped: testedOut.lessonsSkipped,
     passed: score.passed,
     planVersion: testedOut.planVersion,

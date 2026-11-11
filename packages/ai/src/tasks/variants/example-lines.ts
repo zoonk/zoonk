@@ -7,7 +7,8 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import systemPrompt from "./example-lines.prompt.md";
+import { selectPromptVariants } from "../_utils/prompt-variants";
+import promptTemplate from "./example-lines.prompt.md";
 
 /**
  * Luna scored 9.68 on the example-lines eval at 4.2s p50, ahead of Claude Haiku 5.5 (7 Oct 2026).
@@ -23,6 +24,7 @@ type ExampleLineScreen = { text: string; idea: string };
 
 export type GenerateExampleLinesParams = {
   language: string;
+  plainWords?: boolean;
   /** In lesson order. */
   screens: readonly ExampleLineScreen[];
   /** Already limited to the categories this task may read. */
@@ -76,6 +78,12 @@ function toScreenLines({
 export async function generateExampleLines(params: GenerateExampleLinesParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);
+
+  const systemPrompt = selectPromptVariants({
+    template: promptTemplate,
+    variants: { plainWords: params.plainWords ?? false },
+  });
+
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -89,7 +97,7 @@ export async function generateExampleLines(params: GenerateExampleLinesParams) {
         providerOptions,
         reasoning,
       }),
-    systemPrompt,
+    systemPrompt: promptTemplate,
     task: "example-lines",
   });
 

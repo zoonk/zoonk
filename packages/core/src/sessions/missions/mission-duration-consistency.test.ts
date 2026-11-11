@@ -19,7 +19,7 @@ vi.mock("@zoonk/auth", () => import("../../../../auth/src/testing"));
 
 describe("lesson minutes across saved missions and session display", () => {
   it.each(["somethingNew", "finishChapter"] as const)(
-    "refreshes a %s mission after lesson writing without rewriting the planned budget",
+    "keeps a %s mission and its queue at the persisted estimate after lesson writing",
     async (kind) => {
       const [user, lesson] = await Promise.all([
         userFixture(),
@@ -66,9 +66,9 @@ describe("lesson minutes across saved missions and session display", () => {
 
       expect(refreshed).toMatchObject({
         session: {
-          blocks: [{ estimatedMinutes: 8, id: block.id }],
+          blocks: [{ estimatedMinutes: 3, id: block.id }],
           minutes: { done: 0, planned: 3 },
-          missions: [{ minutes: 8 }],
+          missions: [{ minutes: 3 }],
         },
         status: "ready",
       });
@@ -82,7 +82,7 @@ describe("lesson minutes across saved missions and session display", () => {
       expect(stored.blocks[0]?.estimatedMinutes).toBe(3);
 
       await expect(getDayMissions({ session: stored, timeZone: "UTC" })).resolves.toMatchObject([
-        { minutes: 8 },
+        { minutes: 3 },
       ]);
 
       await prisma.studySessionBlock.update({
@@ -94,7 +94,7 @@ describe("lesson minutes across saved missions and session display", () => {
 
       expect(finished).toMatchObject({
         session: {
-          blocks: [{ estimatedMinutes: 8 }],
+          blocks: [{ estimatedMinutes: 3 }],
           minutes: { done: 3, planned: 3 },
           missions: [{ done: 1, status: "done" }],
         },

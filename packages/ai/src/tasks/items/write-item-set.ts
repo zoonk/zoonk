@@ -4,17 +4,21 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 import { type ItemExamFormat } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
 import taskPrompt from "./write-item-set.prompt.md";
 
+/**
+ * On 4 cases (8 Nov 2026), Terra scored 8.94 at $12.25/1k and Opus 9.19 at $121.32/1k, too small a
+ * gain for ten times the cost; Luna, Haiku 5.5 and Flash Lite keyed answers the passage doesn't
+ * support.
+ */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
@@ -34,6 +38,8 @@ export type WriteItemSetParams = {
   format: ItemSetFormat;
   questionCount: number;
   language: string;
+  /** A language exam's sets are written in it. */
+  targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
   usedTitles?: readonly string[];
   model?: string;
@@ -110,8 +116,7 @@ function buildUserPrompt(params: WriteItemSetParams): string {
     FORMAT: ${format}
     QUESTION_COUNT: ${questionCount}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatLocalContext(language)}
-    ${formatCast({ language, seed: skills.map((skill) => skill.name).join(":") })}
+${formatItemSetting({ language, seed: skills.map((skill) => skill.name).join(":"), targetLanguage: params.targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}${usedTitles}
     SKILLS:
@@ -137,7 +142,7 @@ export async function writeItemSet(params: WriteItemSetParams) {
   const systemPrompt = withItemRules(taskPrompt, {
     field: false,
     formats: [format],
-    languageGoal: false,
+    languageGoal: Boolean(params.targetLanguage),
     pictures: false,
   });
 

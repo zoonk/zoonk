@@ -12,6 +12,7 @@ export const goalSchema = z
     createdAt: z.iso.datetime(),
     dailyMinutes: z.int(),
     details: z.record(z.string(), z.unknown()).meta({ description: "What onboarding understood" }),
+    displayName: z.string(),
     examBlueprintId: uuidSchema().nullable(),
     id: uuidSchema(),
     isActive: z

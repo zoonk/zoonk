@@ -110,7 +110,7 @@ function plannedSkills(plan: ReturnType<typeof buildPlan>): Set<string> {
 
 describe("a class test whose days don't fit every topic", () => {
   it("keeps the topics the learner got wrong before the ones they showed they know", () => {
-    const plan = buildPlan(classTest({ dailyMinutes: 30 }));
+    const plan = buildPlan(classTest({ dailyMinutes: 20 }));
     const planned = plannedSkills(plan);
 
     expect(planned.has("membrane") && planned.has("virus")).toBe(true);
@@ -133,7 +133,7 @@ describe("a class test whose days don't fit every topic", () => {
     expect(short.has("membrane") && short.has("organelles")).toBe(true);
     expect(short.has("theory") && !short.has("virus")).toBe(false);
 
-    const plan = buildPlan(classTest({ dailyMinutes: 30, levels: LEVELS }));
+    const plan = buildPlan(classTest({ dailyMinutes: 20, levels: LEVELS }));
     const planned = plannedSkills(plan);
 
     expect(planned.has("membrane") && planned.has("organelles")).toBe(true);
@@ -309,7 +309,7 @@ describe("Pedro's notes at 30 minutes a day", () => {
   }
 
   it("says every topic is in while each keeps a lesson, as the topics sheet does", () => {
-    const input = pedroInput(35);
+    const input = pedroInput(20);
     const plan = buildPlan(input);
 
     const taught = new Set(
@@ -342,7 +342,7 @@ describe("Pedro's notes at 30 minutes a day", () => {
   });
 
   it("says a topic waits only when none of its skills keeps a lesson and he hasn't shown he knows it", () => {
-    const input = pedroInput(30);
+    const input = pedroInput(10);
     const plan = buildPlan(input);
 
     expect(plan.items.some((item) => item.skillId === "nucleus")).toBe(false);

@@ -23,8 +23,6 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   let topics: [String]
   /// A language level's: what the learner can do.
   let canDo: [String]
-  /// A language level's: each skill the learner's answers raised, at its level when earned.
-  var skillLevels: [SkillLevel]?
   let lessonsStudied: Int?
   let lessonsTestedOut: Int?
   /// About how long the studied lessons take; nil when unknown.
@@ -33,14 +31,6 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   let locked: Bool
 
   var id: String { code }
-}
-
-extension CertificateFacts {
-  struct SkillLevel: Decodable, Hashable, Sendable {
-    /// Such as "B1" or "B2+".
-    let label: String
-    let skill: String
-  }
 }
 
 /// One of the learner's certificates. The public read refuses a locked one, so screens read the
@@ -112,7 +102,7 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 /// A goal that can still earn a certificate.
 struct CertificateUpNext: Equatable, Identifiable, Sendable {
   let id: String
-  let title: String
+  let displayName: String
   /// A language goal's flag, as the API names it (`us`, `es-ct`); nil for other goals.
   var languageFlag: String?
   /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.

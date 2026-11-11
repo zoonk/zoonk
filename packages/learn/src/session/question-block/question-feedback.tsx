@@ -31,7 +31,7 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
     question,
   }: {
     answer: StudyQuestionAnswer | null;
-    question: StudyQuestion;
+    question: Pick<StudyQuestion, "options" | "left" | "right" | "unit">;
   }): string | null {
     if (!answer) {
       return null;

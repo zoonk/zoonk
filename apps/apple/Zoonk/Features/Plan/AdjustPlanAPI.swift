@@ -1,6 +1,8 @@
 import Foundation
 
 enum PlanEdit: Encodable, Equatable, Sendable {
+  /// A language course's level to go up to, such as B1.
+  case aim(String)
   case dailyMinutes(Int)
   /// The subjects to focus on: they come first and get more depth.
   case focusAreas([String])
@@ -33,6 +35,7 @@ enum PlanEdit: Encodable, Equatable, Sendable {
 
   private enum CodingKeys: String, CodingKey {
     case activities
+    case aim
     case areas
     case bias
     case cadence
@@ -58,6 +61,9 @@ enum PlanEdit: Encodable, Equatable, Sendable {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
+    case .aim(let aim):
+      try container.encode("setAim", forKey: .kind)
+      try container.encode(aim, forKey: .aim)
     case .dailyMinutes(let minutes):
       try container.encode("setDailyMinutes", forKey: .kind)
       try container.encode(minutes, forKey: .minutes)
@@ -168,6 +174,9 @@ struct PlanChangePreview: Decodable, Equatable, Sendable {
 
   let effect: PlanEffect?
   let feasibility: Feasibility?
+  /// When the whole course would finish after the change; nil for a plan with a date, or past the
+  /// days a plan lays out.
+  let finishDate: String?
   let ready: Bool
   let unchanged: Bool
 }

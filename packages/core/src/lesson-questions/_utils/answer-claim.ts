@@ -1,12 +1,14 @@
-import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
+import "server-only";
 import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
 import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
+import { getQuestionMistakeId, mistakeQuestionWhere } from "./mistake-scope";
 import { lessonQuestionResourceOmit } from "./question-resource";
 import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
 import { getTutorModel } from "./tutor-model";
+import { getTutorNeeds } from "./tutor-needs";
 
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
@@ -39,8 +41,11 @@ function toPriorTurns(
     );
 }
 
-function sameStepWhere(question: { libraryStepId: string | null }) {
-  return { libraryStepId: question.libraryStepId };
+function sameStepWhere(question: { contextSnapshot: unknown; libraryStepId: string | null }) {
+  return {
+    ...mistakeQuestionWhere(getQuestionMistakeId(question.contextSnapshot)),
+    libraryStepId: question.libraryStepId,
+  };
 }
 
 /** Exclude earlier checked-answer turns while giving hints; restore them only after the question is checked again. */
@@ -48,7 +53,13 @@ async function getPriorTurns({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
+  question: {
+    contextSnapshot: unknown;
+    createdAt: Date;
+    id: string;
+    libraryStepId: string | null;
+    threadId: string;
+  };
   transaction: TransactionClient;
 }) {
   const { createdAt } = question;
@@ -79,7 +90,13 @@ async function hasBlockingQuestion({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
+  question: {
+    contextSnapshot: unknown;
+    createdAt: Date;
+    id: string;
+    libraryStepId: string | null;
+    threadId: string;
+  };
   transaction: TransactionClient;
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([
@@ -200,7 +217,18 @@ export async function claimAnswerInTransaction({
 
   const priorTurns = await getPriorTurns({ question, transaction });
 
-  const sharedKey = getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
+
+  const { needs: learnerNeeds, personal } = await getTutorNeeds({
+    client: transaction,
+    task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
+    userId,
+  });
+
+  const sharedKey = personal
+    ? null
+    : getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+
   const claimWhere = getClaimWhere({ now, question, userId });
 
   const shared = sharedKey
@@ -211,7 +239,6 @@ export async function claimAnswerInTransaction({
     return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
   }
 
-  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
   const shareAnswer = sharedKey !== null;
 
   const claimed = await transaction.lessonQuestion.updateMany({
@@ -238,6 +265,7 @@ export async function claimAnswerInTransaction({
     claim: {
       contextSnapshot,
       goalId: question.goalId,
+      learnerNeeds,
       priorTurns,
       question: question.question,
       questionId: question.id,

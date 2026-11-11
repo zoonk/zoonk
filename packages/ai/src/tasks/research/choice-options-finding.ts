@@ -1,8 +1,5 @@
 import { isFromCurrentBoard } from "@zoonk/utils/exam-boards";
 
-const MAX_TITLE_LENGTH = 200;
-const MAX_EDITION_LENGTH = 80;
-
 /** Fewer than two options isn't a choice; more than this isn't a printed exam's question. */
 const MIN_OPTIONS = 2;
 const MAX_OPTIONS = 10;
@@ -69,9 +66,9 @@ export function toChoiceOptionsFinding({
 
   return {
     board: countedBoard,
-    edition: raw.edition?.trim().slice(0, MAX_EDITION_LENGTH) || null,
+    edition: raw.edition?.trim() || null,
     options: raw.options,
-    source: { title: raw.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },
+    source: { title: raw.sourceTitle?.trim() || null, url },
     status: "found",
   };
 }

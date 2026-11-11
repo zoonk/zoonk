@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
+  @State private var showsSaveReport = false
   let completion: LessonPlayerState.Completion
   let correct: Int
   let answered: Int
@@ -17,6 +18,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(title: lesson.title, summary: summary)
@@ -24,6 +26,7 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
+        planRevealRow
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }
@@ -31,11 +34,17 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
+        planRevealRow
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .completionMoments(day)
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
+    )
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
       if status == .saved, soundsEnabled {
@@ -60,17 +69,9 @@ struct LessonCompletionView: View {
     if completion.status == .ready {
       finishReady
     } else {
-      Group {
-        if completion.testedOut {
-          Text(
-            "You already knew this", tableName: "Player",
-            comment: "Title after \"I already know this\" passed every check")
-        } else {
-          Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
-        }
-      }
-      .typeStyle(.heroTitle)
-      .accessibilityAddTraits(.isHeader)
+      title
+        .typeStyle(.heroTitle)
+        .accessibilityAddTraits(.isHeader)
     }
 
     switch completion.status {
@@ -79,16 +80,42 @@ struct LessonCompletionView: View {
     case .saving:
       ProgressView()
     case .failed:
-      Text(
-        "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
-        tableName: "Player",
-        comment: "Saving a finished lesson failed"
-      )
-      .foregroundStyle(.mutedForeground)
+      SaveFailureNotice(
+        failures: completion.saveFailures,
+        firstMessage: LocalizedStringResource(
+          "That didn't go through. Your answers are kept.", table: "Player",
+          comment: "Under the title of a finished lesson whose save failed, above Try again"),
+        onReport: { showsSaveReport = true })
     case .saved:
       if let summary = completion.summary {
         readouts(summary)
           .celebratesOnce(id: summary)
+      }
+    }
+  }
+
+  /// Only a saved lesson says it's complete: until then the server can still send the learner back
+  /// to a question.
+  @ViewBuilder
+  private var title: some View {
+    switch completion.status {
+    case .saving:
+      Text(
+        "Saving your progress…", tableName: "Player",
+        comment: "In place of a lesson's end title until the lesson is saved"
+      )
+      .foregroundStyle(.mutedForeground)
+    case .failed:
+      Text(
+        "Your lesson isn't saved yet", tableName: "Player",
+        comment: "Title at a lesson's end when saving it failed")
+    case .ready, .saved:
+      if completion.testedOut {
+        Text(
+          "You already knew this", tableName: "Player",
+          comment: "Title after \"I already know this\" passed every check")
+      } else {
+        Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
       }
     }
   }
@@ -123,6 +150,72 @@ struct LessonCompletionView: View {
     }
   }
 
+  private var planReveal: PlanRevealLead? {
+    completion.status == .saved ? completion.summary?.planReveal : nil
+  }
+
+  /// Main's `LessonCompletionPlan`: what the goal's first lesson leads to before its plan was seen.
+  @ViewBuilder
+  private var planRevealRow: some View {
+    if let planReveal {
+      VStack(alignment: .leading, spacing: 8) {
+        Text("What's next", tableName: "Player", comment: "Header over where a lesson leads")
+          .sectionTitleStyle()
+
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+          if planReveal.planReady {
+            StatusMark(status: .done)
+          } else {
+            Image(systemName: "map")
+              .foregroundStyle(.mutedForeground)
+              .frame(width: 20)
+              .accessibilityHidden(true)
+          }
+
+          VStack(alignment: .leading, spacing: 2) {
+            if planReveal.planReady {
+              Text(
+                "Your plan is ready", tableName: "Player",
+                comment: "At a first lesson's end: the goal's plan was built meanwhile")
+            } else {
+              Text(
+                "Building your plan", tableName: "Player",
+                comment: "At a first lesson's end: the goal's plan is still being built")
+            }
+
+            Text(planReveal.goalTitle)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+          }
+          .typeStyle(.rowTitle)
+        }
+        .accessibilityElement(children: .combine)
+      }
+    }
+  }
+
+  /// The plan's setup takes it from here: its wait while the plan is built, daily time when it's
+  /// unanswered, then the reveal. A setup already under the lesson is gone back to.
+  private func seePlan(_ lead: PlanRevealLead) {
+    router.dismissTask()
+
+    switch router.tasks.last {
+    case .goalSetup(let goalID)? where goalID == lead.goalID:
+      break
+    case .startGoal?:
+      break
+    default:
+      router.open(.goalSetup(goalId: lead.goalID))
+    }
+  }
+
+  @ViewBuilder
+  private var finishedChapter: some View {
+    if completion.status == .saved, let chapter = completion.summary?.finishedChapter {
+      FinishedChapterSection(chapter: chapter)
+    }
+  }
+
   @ViewBuilder
   private var guestEndingView: some View {
     if completion.status == .saved, let guestEnding {
@@ -147,6 +240,17 @@ struct LessonCompletionView: View {
           Button(action: finish) {
             Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
               maxWidth: .infinity)
+          }
+        case .saved where planReveal != nil:
+          Button {
+            if let planReveal {
+              seePlan(planReveal)
+            }
+          } label: {
+            Text(
+              "See your plan", tableName: "Player",
+              comment: "Ends a goal's first lesson for the plan the learner hasn't seen yet"
+            ).frame(maxWidth: .infinity)
           }
         case .saving, .saved:
           Button {
@@ -203,15 +307,42 @@ struct LessonCompletionView: View {
         }
       }
 
-      if let reviewAt = summary.nextReviewAt {
+      let facts = [studied(summary.seconds), review(summary.nextReviewAt)].compactMap { $0 }
+
+      if !facts.isEmpty {
+        Text(facts.joinedFacts())
+          .typeStyle(.note.monospacedDigit())
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if let block = summary.block, block.deferredLessonsCount > 0 {
         Text(
-          "Review on \(reviewAt.formatted(.dateTime.day().month(.abbreviated)))",
+          "\(block.deferredLessonsCount) lessons moved to another day to fit your \(studyDuration(minutes: block.minutes.dailyGoal)) today.",
           tableName: "Player",
-          comment: "When the lesson's idea comes back for review"
+          comment:
+            "After a lesson is saved: lessons moved to another day so today's work fits the learner's daily time. The second argument is a duration like '4 hr'."
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
+    }
+  }
+
+  private func studied(_ seconds: Int) -> String? {
+    guard seconds > 0 else { return nil }
+
+    return String(
+      localized: "\(progressLearningTime(seconds)) studied",
+      table: "Player",
+      comment: "The study time this lesson counted; the argument is a duration like '4 min'")
+  }
+
+  private func review(_ reviewAt: Date?) -> String? {
+    reviewAt.map {
+      String(
+        localized: "Review on \($0.formatted(.dateTime.day().month(.abbreviated)))",
+        table: "Player",
+        comment: "When the lesson's idea comes back for review")
     }
   }
 }
@@ -550,7 +681,9 @@ struct LessonWaitingView: View {
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
   var warmUpID: String?
-  var holding: WarmUpHolding?
+  /// The learner's active goal, whose clock the wait and its quiz join.
+  var goalID: String?
+  var holding: WaitHolding?
   let write: () -> Void
 
   @State private var isLate = false
@@ -558,14 +691,35 @@ struct LessonWaitingView: View {
   var body: some View {
     Group {
       if let warmUpID {
-        ZoonkList {
+        let title =
+          holding == nil
+          ? Text(
+            "Writing your lesson", tableName: "Player",
+            comment: "The lesson's status over the quiz while it's written")
+          : Text(
+            "Your lesson is ready", tableName: "Player",
+            comment: "The lesson's status over the quiz once it's written")
+        let shown = holding == nil && writing == .writing ? progress : progress.finished
+
+        WaitScreen(
+          deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
+          ready: holding.map { holding in
+            WaitReady(
+              label: Text(
+                "Start this lesson", tableName: "Player",
+                comment: "Opens a goal's first lesson, written while the learner played on its wait"
+              ),
+              icon: .play, action: holding.moveOn)
+          }
+        ) {
+          WaitStatusStrip(
+            label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
+        } progress: {
           Section {
             page
           }
           .listRowBackground(Color.clear)
           .listRowSeparator(.hidden)
-
-          WarmUpSection(deckID: warmUpID)
 
           if let shownAlternative {
             Section {
@@ -575,12 +729,6 @@ struct LessonWaitingView: View {
             .listRowSeparator(.hidden)
           }
         }
-        .warmUpDeck(warmUpID)
-        .warmUpHoldBar(
-          holding,
-          label: Text(
-            "Start this lesson", tableName: "Player",
-            comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
       } else {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
@@ -611,6 +759,10 @@ struct LessonWaitingView: View {
       }
     }
     .announcesStatus(notWrittenLine)
+    .measuresWait(
+      surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
+      goalID: goalID
+    )
     .task(id: writing) {
       isLate = false
 

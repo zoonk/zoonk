@@ -1,6 +1,7 @@
 import "server-only";
 import { WARM_UP_DECK_SIZE } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { prisma } from "@zoonk/db";
+import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { type checkWarmUp } from "./check-warm-up";
 import { readWarmUpStatus } from "./claim-warm-up";
 import { type writeWarmUp } from "./write-warm-up";
@@ -26,7 +27,7 @@ export async function saveWarmUp({
     .slice(0, WARM_UP_DECK_SIZE.max)
     .map((card) => ({ ...card, id: `${id}:${card.id}` }));
 
-  await prisma.warmUp.updateMany({
+  const saved = await prisma.warmUp.updateMany({
     data: {
       cards,
       checkerModel: checked.provenance.model,
@@ -38,5 +39,16 @@ export async function saveWarmUp({
   });
 
   const result = await readWarmUpStatus({ goalId, id });
+
+  if (saved.count > 0 && result.status === "ready") {
+    trackOnboardingProgress({
+      at: Date.now(),
+      deck_id: id,
+      goalId,
+      platform: null,
+      stage: "deck_saved",
+    });
+  }
+
   return result.status === "ready" ? id : null;
 }

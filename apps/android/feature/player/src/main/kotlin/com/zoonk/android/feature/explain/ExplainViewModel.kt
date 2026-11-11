@@ -25,11 +25,9 @@ class ExplainViewModel(
     private val cache: AppCache,
     private val sessions: SessionSource,
     private val generations: (AuthenticatedSession?) -> GenerationSource,
-    private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private var owner: AuthenticatedSession? = null
     private var followed: String? = null
-    private var startedAt: Long? = null
 
     private val follower =
         GenerationFollower(
@@ -54,12 +52,10 @@ class ExplainViewModel(
             follower.stop()
             owner = session
             followed = null
-            startedAt = null
         }
 
         if (explanation.lesson != null) return
 
-        startedAt = startedAt ?: now()
         val generationId = explanation.generationId
         if (generationId != null && generationId != followed) {
             followed = generationId
@@ -83,16 +79,6 @@ class ExplainViewModel(
         followed = generationId
         follower.follow(generationId)
         return true
-    }
-
-    /** Once, when the written explanation shows after a wait. */
-    fun recordWait() {
-        val began = startedAt ?: return
-        val session = owner
-        startedAt = null
-        viewModelScope.launch {
-            cache.mutate { current -> if (current == session) store.api.recordWait(current, now() - began) }
-        }
     }
 
     private suspend fun writeAgain(): String {

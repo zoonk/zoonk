@@ -18,6 +18,7 @@ import {
   fixLessonContent,
   writeLessonContent,
 } from "@zoonk/core/library/lessons/write-content";
+import { getLessonWriterSpeed } from "@zoonk/core/library/lessons/writer-speed";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type LessonStreamStep } from "./lesson-progress-step";
@@ -43,7 +44,6 @@ export type LessonWriteStage = LessonWriteOutcome | Extract<WriteResult, { statu
 export type WriteInput = {
   analytics?: ContentAnalytics;
   forExam?: boolean;
-  forceReview?: boolean;
   lessonId: string;
   wait?: CallWait;
   workflowRunId: string;
@@ -84,11 +84,17 @@ async function write({
   const analytics = toContentAnalytics({ ...input, scope: lesson });
   const serviceTier = chooseServiceTier({ wait: input.wait ?? "soon" });
 
+  const speed = await getLessonWriterSpeed({
+    goalId: input.analytics?.goalId,
+    lessonId: input.lessonId,
+  });
+
   if (lesson.targetLanguage) {
     const result = await writeLanguageLessonContent({
       analytics,
       lessonId: input.lessonId,
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
@@ -103,6 +109,7 @@ async function write({
       lessonId: input.lessonId,
       model: getScopeModel(lesson),
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
@@ -112,7 +119,7 @@ async function write({
   }
 
   const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
-  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
+  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier, speed });
 
   if (result.status === "drafted") {
     return { ...result, imageScope: getImageScope(lesson) };

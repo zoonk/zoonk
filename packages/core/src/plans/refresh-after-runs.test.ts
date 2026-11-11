@@ -214,13 +214,14 @@ describe("a session whose slower pace no longer fits this week", () => {
 
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
 
+    const saved = await readSaved(plan.id);
+    expect(saved.settings).toMatchObject({ pace: { factor: 2.5, family: "subject" } });
+
     await expect(countWeekLessons(plan.id)).resolves.toStrictEqual({
       "2020-09-29": 1,
-      "2020-09-30": 1,
       "2020-10-01": 1,
       "2020-10-02": 1,
       "2020-10-03": 1,
-      "2020-10-04": 1,
     });
   });
 });

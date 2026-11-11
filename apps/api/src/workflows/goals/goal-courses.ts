@@ -1,3 +1,4 @@
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type GoalProduct } from "@zoonk/core/library/products/goal-product";
 import { type GoalKind } from "@zoonk/db";
@@ -16,6 +17,7 @@ export async function findGoalCourses({
   provenance,
   resolved = {},
   scope,
+  serviceTier,
   workflowRunId,
 }: {
   analytics?: ContentAnalytics;
@@ -26,6 +28,8 @@ export async function findGoalCourses({
   provenance: Parameters<typeof findGoalCourseStep>[0]["provenance"];
   resolved?: Readonly<Record<string, string>>;
   scope: CurriculumScope;
+  /** For the search a learner waits on. */
+  serviceTier?: ServiceTier;
   workflowRunId: string;
 }): Promise<Record<string, string>> {
   const context = toContentAnalytics({ analytics, scope, workflowRunId });
@@ -48,7 +52,7 @@ export async function findGoalCourses({
         return [key, productCourseId] as const;
       }
 
-      const searchTerms = await writeGoalCourseSearchTermsStep(input);
+      const searchTerms = await writeGoalCourseSearchTermsStep({ ...input, serviceTier });
 
       const id = await findGoalCourseStep({
         ...input,

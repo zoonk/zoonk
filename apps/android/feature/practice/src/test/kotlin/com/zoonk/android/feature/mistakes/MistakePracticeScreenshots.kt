@@ -17,6 +17,7 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
@@ -28,6 +29,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -93,24 +95,18 @@ class MistakePracticeScreenshots {
     private fun planet(vararg fields: Pair<String, Any?>) =
         practiceQuestion("3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b", "question" to "Which is a planet?", *fields)
 
-    private val similar =
-        practiceQuestion(
-            "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
-            "question" to "Which of these orbits the Sun directly?",
-            "options" to JsonArray(listOf("Venus", "Titan").map(::JsonPrimitive)),
-        )
-
     private fun show(
         name: String,
         drill: JsonObject = drill("retry"),
         dark: Boolean = false,
-        vararg questions: JsonObject = arrayOf(planet(), similar),
+        vararg questions: JsonObject = arrayOf(planet()),
         play: () -> Unit = {},
         fold: Boolean = false,
+        entry: JsonObject? = null,
     ) {
         val api =
             FakeMistakesApi(
-                practice(practiceEntry(FIRST_MISTAKE, *questions, drill = drill)),
+                practice(entry ?: practiceEntry(FIRST_MISTAKE, *questions, drill = drill)),
                 answer = { practiceFeedback(isCorrect = true, fixed = true, fixedMistakeIds = listOf(FIRST_MISTAKE)) },
                 finish = { completion(correct = 1, total = 2) },
             )
@@ -144,6 +140,12 @@ class MistakePracticeScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phone() {
         show("phone-answering")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMisread() {
+        show("phone-misread", drill = drill("readCarefully"))
     }
 
     @Test
@@ -195,6 +197,78 @@ class MistakePracticeScreenshots {
         show("mistakes-book-done-font200", fold = true, play = ::finish)
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonPhone() = show("original-lesson-phone", entry = fixture("mistake-practice-lesson-entry"))
+
+    @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun originalLessonMedium() = show("original-lesson-medium", entry = fixture("mistake-practice-lesson-entry"))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-xhdpi")
+    fun originalLessonExpanded() = show("original-lesson-expanded", entry = fixture("mistake-practice-lesson-entry"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun originalLessonDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("original-lesson-dark-font200", dark = true, entry = fixture("mistake-practice-lesson-entry"))
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun originalLessonFold() = show("original-lesson-fold", fold = true, entry = fixture("mistake-practice-lesson-entry"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonTyped() =
+        show(
+            "original-lesson-typed",
+            entry =
+                replay(
+                    "typedAnswer",
+                    JsonObject(
+                        mapOf(
+                            "basis" to JsonNull,
+                            "keyPoints" to JsonArray(listOf(JsonPrimitive("An original idea"))),
+                            "question" to JsonPrimitive("Explain the original idea"),
+                            "sampleAnswer" to JsonPrimitive("Original sample answer"),
+                        ),
+                    ),
+                ),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun originalLessonSpoken() =
+        show(
+            "original-lesson-spoken",
+            entry =
+                replay(
+                    "spokenAnswer",
+                    JsonObject(
+                        mapOf(
+                            "language" to JsonPrimitive("en"),
+                            "prompt" to JsonPrimitive("Ask about the rent."),
+                            "targetText" to JsonPrimitive("How much is the rent?"),
+                            "translation" to JsonPrimitive("Quanto é o aluguel?"),
+                        ),
+                    ),
+                ),
+        )
+
+    private fun replay(
+        kind: String,
+        content: JsonObject,
+    ): JsonObject {
+        val entry = fixture("mistake-practice-lesson-entry")
+        val lesson = entry.getValue("lesson").jsonObject
+        val step = lesson.getValue("step").jsonObject
+        val original = JsonObject(step + mapOf("kind" to JsonPrimitive(kind), "content" to content))
+        return JsonObject(entry + ("lesson" to JsonObject(lesson + ("step" to original))))
+    }
+
     private fun finish() {
         check()
         rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
@@ -210,7 +284,7 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletPassageBeside() {
-        show("tablet-passage", questions = arrayOf(planet("set" to passage), similar))
+        show("tablet-passage", questions = arrayOf(planet("set" to passage)))
     }
 
     @Test

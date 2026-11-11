@@ -11,17 +11,45 @@ async function webPdf(text: string) {
   return sourceFixture({ extractedText: text, mimeType: PDF_CONTENT_TYPE });
 }
 
+async function publishedPdf(text: string) {
+  return sourceFixture({
+    extractedText: text,
+    mimeType: PDF_CONTENT_TYPE,
+    url: `https://www.example.com/${randomUUID()}/edital.pdf`,
+  });
+}
+
 describe(loadSourceDocuments, () => {
-  it("passes a web PDF by its address, with its text for the citation checks", async () => {
-    const source = await webPdf("Edital nº 1: 120 itens de certo ou errado.");
+  it("passes a web PDF's bytes, since many model providers can't download the publisher's address", async () => {
+    const bytes = new TextEncoder().encode(`%PDF-1.7 ${randomUUID()}`);
+
+    vi.mocked(fetch).mockResolvedValue(
+      new PageResponse(bytes, { headers: { "content-type": PDF_CONTENT_TYPE } }),
+    );
+
+    const source = await publishedPdf("Edital nº 1: 120 itens de certo ou errado.");
     const [document] = await loadSourceDocuments([source.id]);
 
-    expect(document?.file).toStrictEqual({
-      data: new URL(source.url ?? ""),
-      mediaType: PDF_CONTENT_TYPE,
-    });
-
+    expect(document?.file).toStrictEqual({ data: bytes, mediaType: PDF_CONTENT_TYPE });
     expect(document?.text).toBe(source.extractedText);
+  });
+
+  it("passes a web PDF the publisher no longer serves as its stored text", async () => {
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("Not found", { status: 404 }));
+
+    const source = await publishedPdf("Edital nº 1: 120 itens de certo ou errado.");
+    const [document] = await loadSourceDocuments([source.id]);
+
+    expect(document?.file).toBeNull();
+    expect(document?.text).toBe(source.extractedText);
+  });
+
+  it("lets a failed download of a web PDF fail, so the step tries again", async () => {
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("Busy", { status: 503 }));
+
+    const source = await publishedPdf("Edital");
+
+    await expect(loadSourceDocuments([source.id])).rejects.toThrow(/status 503/u);
   });
 
   it("passes a PDF whose stored text was cut as that text, so every quote can be checked", async () => {

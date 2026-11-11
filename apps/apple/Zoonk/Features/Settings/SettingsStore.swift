@@ -6,6 +6,8 @@ import Observation
 final class SettingsStore {
   let preferences: Resource<LearningPreferences>
   let memory: Resource<LearnerMemory>
+  /// About you: what the learner answered, with each question's options in their language.
+  let profileQuestions: Resource<ProfileQuestions>
   let allowance: Resource<PlanAllowance>
   let freePlan: Resource<FreePlan>
   /// `.notFound` without Plus bought on the website, and for a guest.
@@ -62,6 +64,9 @@ final class SettingsStore {
     }
     self.preferences = preferences
     self.memory = memory
+    profileQuestions = signedIn([.memory, .learningProfile]) {
+      try await api.getProfileQuestions(token: $0)
+    }
     allowance = signedIn([.allowance, .goals, .userSubscription]) {
       try await api.getAllowance(token: $0)
     }
@@ -176,6 +181,37 @@ final class SettingsStore {
       setNotice { $0.undoStatus = .failed }
     case .obsolete, nil:
       setNotice { $0.undoStatus = nil }
+    }
+  }
+
+  /// Replaces one About you answer. False when it didn't save.
+  func answerProfileQuestion(_ draft: ProfileDraft) async -> Bool {
+    guard
+      let input = try? JSONDecoder().decode(
+        Components.Schemas.ProfileAnswerInput.self,
+        from: JSONSerialization.data(withJSONObject: draft.input))
+    else {
+      return false
+    }
+
+    let result = await cache.mutate(
+      invalidating: [.goals, .learnerModel, .learningProfile, .memory]
+    ) { [api] in
+      try await api.answerProfileQuestion(token: $0.bearerToken, input)
+    }
+
+    switch result {
+    case .done(let saved):
+      profileQuestions.update { questions in
+        var questions = questions
+        questions.questions = questions.questions.map { $0.id == saved.id ? saved : $0 }
+        return questions
+      }
+      return true
+    case .failed:
+      return false
+    case .obsolete:
+      return true
     }
   }
 

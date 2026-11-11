@@ -2,21 +2,9 @@
 
 import { type DayState } from "@zoonk/core/sessions/day-state";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
-
-export function useTodayDate(): string {
-  const format = useFormatter();
-  const { today } = useTodayScreen();
-
-  return format.dateTime(today.session.localDate, {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    weekday: "short",
-  });
-}
 
 const NO_BREAK_SPACE = "\u00A0";
 
@@ -32,12 +20,10 @@ export function useFreshStartText(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { today } = useTodayScreen();
-  const { blocks, freshStart } = today.session;
+  const { freshStart, minutes } = today.session;
 
   // The time stays on one line: "about 55" ending a line and "min" starting the next.
-  const time = formatDuration(
-    blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-  ).replaceAll(" ", NO_BREAK_SPACE);
+  const time = formatDuration(minutes.planned).replaceAll(" ", NO_BREAK_SPACE);
 
   switch (freshStart) {
     case "welcomeBack":

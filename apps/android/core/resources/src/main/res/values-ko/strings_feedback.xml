@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "feedback_email": "737f320ae99fd0dac8ab1a690c6282baaf497d3558fca94a6d883652667ca5fe",
+  "feedback_email_optional": "62dc211e24fbae3bba6e1aca4d25191746a80f0b52ca4551971ce51a4d80c5bf",
   "feedback_failed": "502bd80720b5bddd2af09ae6b757e0cc924a2d3403ff6555f15112b2795aa533",
   "feedback_follow_us": "3c691fff9ebb15c22564fafbcb1d4cdce2589e4810e257c401436e31e1364722",
   "feedback_help_description": "db60809d681f30d411fae95c169a6ac4bd74ef13e5ca795929acb5cdedff4524",
@@ -9,6 +10,7 @@
   "feedback_message_placeholder": "a4cd5551f1321a14b26a29a419632d8838637d803d14cdcaf1c269f1186f18c5",
   "feedback_more": "e8252bf917e4b8152acae35bc64f3fe2ad90c592f0ade114809ae686f63e4b7f",
   "feedback_report_problem": "fc3b56f509f71619442405c125a002975834423f722658400b60b5ed867c8c76",
+  "feedback_save_failure_message": "28a49abe1044d0ee3d1615de190079eff413b2b6fe905af76cd0e28520fecc41",
   "feedback_screen_attached": "94e05ad103b52059393253f48cb8914b6f1969b686cab2cba8416afa4ddd79f2",
   "feedback_send": "55bae4fe15c2253595668fc1b210b98060210c38f0b13f3809fe71a6c8d624cd",
   "feedback_send_feedback": "9d8897bd41fc62f84ab76fc57cd829bcbf7ddddb82941f39e3df10f4d19f5d71",
@@ -32,4 +34,6 @@
     <string name="feedback_send_feedback_description">문제를 발견했거나 아이디어가 있나요? 아래에 남기거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>
     <string name="feedback_thanks">고마워요! 메시지를 받았어요.</string>
     <string name="feedback_more">옵션 더 보기</string>
+    <string name="feedback_save_failure_message">답을 저장하지 못했어요.</string>
+    <string name="feedback_email_optional">이메일 주소(답변을 원하는 경우)</string>
 </resources>

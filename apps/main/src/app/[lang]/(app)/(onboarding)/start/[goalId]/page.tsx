@@ -9,10 +9,12 @@ import { AuthGate } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
+import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -22,6 +24,8 @@ import {
   OnboardingTitle,
 } from "@zoonk/learn/onboarding/frame";
 import { StepsSkeleton } from "@zoonk/learn/onboarding/skeletons";
+import { safeAsync } from "@zoonk/utils/error";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -71,7 +75,10 @@ async function StepsContent({ params }: Props) {
     );
   }
 
-  const [result, session] = await Promise.all([getOnboarding({ goalId }), getSession()]);
+  const [result, session] = await Promise.all([
+    getOnboarding({ goalId, locale: getSupportedLocaleFromLanguage(lang) }),
+    getSession(),
+  ]);
 
   if (result.status === "unauthorized") {
     return <StepsGate goalId={goalId} />;
@@ -89,20 +96,30 @@ async function StepsContent({ params }: Props) {
     redirect({ href: `/explain/${goalId}`, locale: lang });
   }
 
-  // A planner failure must not block the earlier answers.
-  const [plan, syllabus] =
-    (result.onboarding.steps[0] ?? "plan") === "plan"
-      ? await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })])
-      : [null, null];
+  const { warmUp } = result.onboarding;
+
+  // A planner failure must not block the earlier answers, and a deck that can't be read leaves the
+  // wait without its card until the run names it.
+  const [plan, syllabus, today, deck] = await Promise.all([
+    ...((result.onboarding.steps[0] ?? "plan") === "plan"
+      ? ([getGoalPlan(goalId), getSyllabusView({ goalId }), getPlanRevealToday(goalId)] as const)
+      : ([null, null, null] as const)),
+    warmUp?.status === "ready" ? safeAsync(() => getWarmUp(warmUp.id)) : null,
+  ]);
 
   return (
     <OnboardingPage backHref="/today">
       <StepsClient
         initialPlan={
           plan?.status === "ready"
-            ? { plan: plan.plan, syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null }
+            ? {
+                plan: plan.plan,
+                reveal: today?.status === "ready" ? today.reveal : null,
+                syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null,
+              }
             : null
         }
+        deck={deck?.data?.status === "ready" ? deck.data.deck : null}
         isGuest={Boolean(session?.user.isAnonymous)}
         onboarding={result.onboarding}
         planActions={{

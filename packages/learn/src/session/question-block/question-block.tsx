@@ -57,7 +57,7 @@ function getQuestionSegments({
   });
 }
 
-type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id">;
+type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "minutes">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -83,7 +83,6 @@ function FinishedBlock({
 }) {
   return (
     <StudyMoment
-      blocks={session.blocks}
       buddy={buddy}
       renderCeremony={renderCeremony}
       exitHref={exitHref}
@@ -206,7 +205,7 @@ export function QuestionBlock({
         total={run.total}
       />
 
-      <BlockBody kind={detail.block.kind} phase={phase}>
+      <BlockBody phase={phase}>
         <FinishReadyBody phase={phase} />
         {isNetScoredQuestion({ detail, question }) && (
           <SwipeScore detail={detail} answers={run.state.answers} />
@@ -259,6 +258,7 @@ export function QuestionBlock({
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus
+            failures={run.state.failures}
             onRetryAnswer={run.retry}
             onRetryFinish={run.retryFinish}
             phase={phase}

@@ -8,12 +8,9 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -544,20 +541,7 @@ describe(getLearnerSummary, () => {
   });
 
   it("finds the active goal's places", async () => {
-    const { goal } = await learnerWithGoal({ kind: "exam" });
-
-    const [plan, finished, started, lesson] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      libraryChapterFixture(),
-      libraryChapterFixture(),
-      libraryLessonFixture({ contentStatus: "completed" }),
-    ]);
-
-    await Promise.all([
-      chapterLessonFixture({ chapterId: finished.id, lessonId: lesson.id }),
-      planItemFixture({ chapterId: finished.id, planId: plan.id, position: 0, status: "done" }),
-      planItemFixture({ chapterId: started.id, planId: plan.id, position: 1, status: "todo" }),
-    ]);
+    await learnerWithGoal({ kind: "exam" });
 
     const summary = await getLearnerSummary();
 
@@ -597,22 +581,17 @@ describe(getLearnerSummary, () => {
     ]);
   });
 
-  it("lists mind maps only once a chapter is finished", async () => {
-    const { goal } = await learnerWithGoal();
+  it("lists mind maps from the first day of a goal with chapters, never a language's or an explanation's", async () => {
+    const kinds = ["learn", "exam", "language", "explain"] as const;
 
-    const [plan, chapter] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      libraryChapterFixture(),
-    ]);
+    const places = await kinds.reduce<Promise<(boolean | undefined)[]>>(async (previous, kind) => {
+      const listed = await previous;
+      await learnerWithGoal({ kind });
+      const summary = await getLearnerSummary();
+      return [...listed, summary?.places.mindMaps];
+    }, Promise.resolve([]));
 
-    await Promise.all([
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 0, status: "done" }),
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 1, status: "todo" }),
-    ]);
-
-    const summary = await getLearnerSummary();
-
-    expect(summary?.places.mindMaps).toBe(false);
+    expect(places).toStrictEqual([true, true, false, false]);
   });
 
   it("reads a language day with outside-session picks and its speaking paper without writing", async () => {
@@ -758,25 +737,49 @@ describe("the summary's ready mistakes", () => {
   });
 
   it("counts the mistakes the notebook counts as ready, without writing", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const { goal, items, skills, user } = await learnerWithPlannedGoal();
     const [elsewhere, other] = await Promise.all([skillFixture(), userFixture()]);
+    const outsideItem = await itemFixture({ content: choiceItemContent(), skillId: elsewhere.id });
 
     await Promise.all([
       mistakeFixture({
         createdAt: new Date(LOCAL_MIDNIGHT.getTime() - 1000),
+        itemId: items[0]?.id,
         skillId: skills[0]?.id,
         userId: user.id,
       }),
-      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[1]?.id, userId: user.id }),
-      mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id }),
       mistakeFixture({
         createdAt: YESTERDAY,
+        itemId: items[2]?.id,
+        skillId: skills[1]?.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        createdAt: LOCAL_MIDNIGHT,
+        itemId: items[0]?.id,
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        createdAt: YESTERDAY,
+        itemId: items[0]?.id,
         skillId: skills[0]?.id,
         status: "fixed",
         userId: user.id,
       }),
-      mistakeFixture({ createdAt: YESTERDAY, skillId: elsewhere.id, userId: user.id }),
-      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: other.id }),
+      mistakeFixture({
+        createdAt: YESTERDAY,
+        itemId: outsideItem.id,
+        skillId: elsewhere.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        createdAt: YESTERDAY,
+        itemId: items[0]?.id,
+        skillId: skills[0]?.id,
+        userId: other.id,
+      }),
+      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: user.id }),
     ]);
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
@@ -787,9 +790,14 @@ describe("the summary's ready mistakes", () => {
   });
 
   it("counts no ready mistakes before any is ready, without writing", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const { goal, items, skills, user } = await learnerWithPlannedGoal();
 
-    await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
+    await mistakeFixture({
+      createdAt: LOCAL_MIDNIGHT,
+      itemId: items[0]?.id,
+      skillId: skills[0]?.id,
+      userId: user.id,
+    });
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
@@ -799,9 +807,14 @@ describe("the summary's ready mistakes", () => {
   });
 
   it("is read again at the next local midnight, when today's mistakes become ready", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const { goal, items, skills, user } = await learnerWithPlannedGoal();
 
-    await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
+    await mistakeFixture({
+      createdAt: LOCAL_MIDNIGHT,
+      itemId: items[0]?.id,
+      skillId: skills[0]?.id,
+      userId: user.id,
+    });
 
     const today = await getLearnerSummary();
     const allowanceResets = new Date("2026-03-11T00:00:00.000Z");

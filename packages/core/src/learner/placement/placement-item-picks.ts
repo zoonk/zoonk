@@ -1,5 +1,3 @@
-import { toGoalPlanGraph } from "../../library/curriculum/goal-plan-graph";
-import { type GoalSkillGraph } from "../../library/curriculum/save-goal-skills";
 import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
 import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
 import { DEFAULT_START_POSITION, type OwnLevel } from "./placement-steps";
@@ -133,33 +131,4 @@ export function pickPlacementItemSkillIds({
     .slice(0, Math.max(MAX_SKILLS, areas.length))
     .map((pick) => pick.skill.skillId)
     .toSorted((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0));
-}
-
-/** idsByKey must match the mapping used to save the plan, including deduplicated Library skills. */
-export function pickPlacementGraphSkillIds({
-  everySkill,
-  graph,
-  idsByKey,
-  knownAreas,
-  ownLevel,
-}: {
-  everySkill: boolean;
-  graph: GoalSkillGraph;
-  idsByKey: Readonly<Record<string, string>>;
-  knownAreas?: readonly string[];
-  ownLevel?: OwnLevel | null;
-}): string[] {
-  const toIds = (keys: readonly string[]) => keys.flatMap((key) => idsByKey[key] ?? []);
-
-  return pickPlacementItemSkillIds({
-    everySkill,
-    graph: toGoalPlanGraph({ courseIdsByKey: {}, graph, idsByKey }),
-    knownAreas,
-    ownLevel,
-    prerequisites: new Map(
-      graph.skills.flatMap((skill) =>
-        toIds([skill.key]).map((skillId) => [skillId, toIds(skill.prerequisites)] as const),
-      ),
-    ),
-  });
 }

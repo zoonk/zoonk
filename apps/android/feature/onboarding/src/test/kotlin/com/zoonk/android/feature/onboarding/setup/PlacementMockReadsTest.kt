@@ -20,6 +20,7 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.LiveOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.mockOptionsOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -68,7 +69,18 @@ class PlacementMockReadsTest {
                     if (chooser) {
                         mockStore.options[goal].collectShown()
                     } else {
-                        PlacementStep(GOAL_ID, "bar exam", 3, GenerationRun(), null, store, mockStore, rememberAppNavigator(), {}, {})
+                        PlacementStep(
+                            GOAL_ID,
+                            "bar exam",
+                            3,
+                            GenerationRun(),
+                            null,
+                            store,
+                            mockStore,
+                            rememberAppNavigator(),
+                            {},
+                            { WriteOutcome.Done(Unit) },
+                        )
                     }
                 }
             }

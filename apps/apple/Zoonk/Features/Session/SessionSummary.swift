@@ -80,6 +80,8 @@ struct BlockMoment: Decodable, Hashable, Sendable {
     let opensInPlayer: Bool
   }
   let blocks: [StudyBlock]
+  let deferredLessonsCount: Int
+  let minutes: StudyDay.Minutes
   let sessionId: String
   let goalId: String?
   let finishedChapterId: String?
@@ -98,6 +100,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let comesBackOn: String?
   let completedMissions: [StudyMission.Kind]
   let correct: Int
+  let finishedChapter: Components.Schemas.FinishedChapter?
   let fullMeal: FullMeal
   let missions: [StudyMission]
   /// The block the session goes on to; nil once it's done.

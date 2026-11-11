@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { loadLearnerListeningSkillIds } from "../exams/listening/listening-skills";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { readPracticeMistakes } from "../learner/facts/practice-mistakes";
 import { type MistakeAvailability } from "./contract";
@@ -48,21 +47,21 @@ async function loadPracticeEligibleMistakes({
     return skillId ? mistakes.filter((mistake) => mistake.skillId === skillId) : mistakes;
   }
 
-  const [mistakes, listeningSkillIds] = await Promise.all([
-    prisma.mistake.findMany({
-      select: { createdAt: true, id: true, itemId: true, skillId: true },
-      where: { skillId, status: "open", userId },
-    }),
-    loadLearnerListeningSkillIds(userId),
-  ]);
-
-  return filterMistakesWithPracticeMaterial({
-    examBlueprintId: null,
-    field: null,
-    listeningSkillIds,
-    mistakes,
-    ownerOf: new Map(),
+  const mistakes = await prisma.mistake.findMany({
+    select: {
+      attemptId: true,
+      createdAt: true,
+      id: true,
+      itemId: true,
+      skillId: true,
+      snapshot: true,
+      stepId: true,
+      userId: true,
+    },
+    where: { skillId, status: "open", userId },
   });
+
+  return filterMistakesWithPracticeMaterial({ mistakes });
 }
 
 /** Caller must authorize the learner and scoped goal first. */

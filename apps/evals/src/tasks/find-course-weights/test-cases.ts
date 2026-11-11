@@ -14,11 +14,10 @@ const ENEM_PARTS = [
   "Redação",
 ];
 
-const MEDICINE_ORDER = [{ part: 3, than: 2 }];
-
 export const TEST_CASES: FindCourseWeightsCase[] = [
   {
-    expected: { atLeast: MEDICINE_ORDER, status: "found" },
+    // UFMG weighs every part 1 for Medicina in its SISU 2026 adhesion term.
+    expected: { status: "found", weights: [1, 1, 1, 1, 1] },
     id: "pt-enem-medicina-ufmg",
     userInput: {
       course: "Medicina",
@@ -29,7 +28,9 @@ export const TEST_CASES: FindCourseWeightsCase[] = [
     },
   },
   {
-    expected: { atLeast: MEDICINE_ORDER, status: "found" },
+    // UFRJ's 2026 SISU notice, Annex IV, Rio de Janeiro row: essay 4, natural sciences 4,
+    // humanities 1, languages 2, mathematics 2.
+    expected: { status: "found", weights: [2, 1, 4, 2, 4] },
     id: "en-enem-medicine-ufrj",
     language: "en",
     userInput: {
@@ -41,12 +42,39 @@ export const TEST_CASES: FindCourseWeightsCase[] = [
     },
   },
   {
-    expected: { atLeast: [], status: "unknown" },
+    expected: { status: "unknown" },
     id: "pt-enem-instituicao-inexistente",
     userInput: {
       course: "Direito",
       exam: "ENEM",
       institution: "Faculdade Imaginária de Estudos Avançados de Pirapora do Norte",
+      subjects: ENEM_PARTS,
+      today: TODAY,
+    },
+  },
+  {
+    // UFPE Resolution 12/2025, annex, Campus Recife: essay 2, natural sciences 3, humanities 1,
+    // languages 2, mathematics 2. Caruaru's Medicina weighs differently, so the campus is named.
+    expected: { status: "found", weights: [2, 1, 3, 2, 2] },
+    id: "en-enem-medicine-ufpe-recife",
+    language: "en",
+    userInput: {
+      course: "Medicine",
+      exam: "ENEM",
+      institution: "UFPE, Recife campus",
+      subjects: ENEM_PARTS,
+      today: TODAY,
+    },
+  },
+  {
+    // UFPE Resolution 12/2025, annex, Campus Recife: essay 3, natural sciences 1, humanities 2,
+    // languages 3, mathematics 1.
+    expected: { status: "found", weights: [3, 2, 1, 1, 3] },
+    id: "pt-enem-direito-ufpe-recife",
+    userInput: {
+      course: "Direito",
+      exam: "ENEM",
+      institution: "UFPE, campus Recife",
       subjects: ENEM_PARTS,
       today: TODAY,
     },

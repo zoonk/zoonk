@@ -11,13 +11,7 @@ import { DaySegment, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
-import { useSessionState } from "./use-today-copy";
-
-function getMinutesLeft(blocks: readonly DayStep[]): number {
-  return blocks
-    .filter((block) => !isFinished(block))
-    .reduce((total, block) => total + block.estimatedMinutes, 0);
-}
+import { getDaySegmentCount, getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
   if (block.status !== "active" || block.questions === 0) {
@@ -44,8 +38,9 @@ export function DayProgress({ className }: { className?: string }) {
   const { today } = useTodayScreen();
   const { blocks, nextPosition } = today.session;
   const done = blocks.filter((block) => isFinished(block)).length;
+  const held = getHeldMinutes(today.session);
 
-  if (blocks.length < 2) {
+  if (getDaySegmentCount(today.session) < 2) {
     return null;
   }
 
@@ -68,6 +63,7 @@ export function DayProgress({ className }: { className?: string }) {
           state={getSegmentState(block, block.position === nextPosition)}
         />
       ))}
+      {held > 0 && <DaySegment kind="lesson" minutes={held} state="ahead" />}
     </div>
   );
 }
@@ -82,29 +78,17 @@ export function DayTime({ className }: { className?: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { today } = useTodayScreen();
-  const { done, waiting } = useSessionState();
-  const studied = useStudiedToday();
-  const left = getMinutesLeft(today.session.blocks);
+  const time = getDayTime({ day: today.session, studied: useStudiedToday() });
 
-  if (waiting) {
-    return null;
-  }
-
-  if (done) {
-    return studied > 0 ? (
-      <BigQuantity className={className}>
-        {t("{time} studied", { time: formatDuration(studied) })}
-      </BigQuantity>
-    ) : null;
-  }
-
-  if (left === 0) {
+  if (!time) {
     return null;
   }
 
   return (
     <BigQuantity className={className}>
-      {t("{time} left", { time: formatDuration(left) })}
+      {time.kind === "studied"
+        ? t("{time} studied", { time: formatDuration(time.minutes) })
+        : t("{time} left", { time: formatDuration(time.minutes) })}
     </BigQuantity>
   );
 }
@@ -113,10 +97,10 @@ export function DayMeta({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const speaking = useTodayContinueSpeaking();
-  const { blocks } = today.session;
+  const { blocks, minutes } = today.session;
   const done = blocks.filter((block) => isFinished(block)).length;
 
-  if (blocks.length === 0) {
+  if (blocks.length === 0 && minutes.left === 0) {
     return null;
   }
 
@@ -128,7 +112,7 @@ export function DayMeta({ className }: { className?: string }) {
       )}
       data-slot="today-day-meta"
     >
-      {!speaking && (
+      {!speaking && blocks.length > 0 && (
         <span>
           {t(
             "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",

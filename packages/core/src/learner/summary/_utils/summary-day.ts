@@ -9,6 +9,7 @@ import { getSessionBar } from "../../../sessions/_utils/session-view";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { countMissions } from "../../../sessions/missions";
 import { getDayMissions } from "../../../sessions/missions/get-day-missions";
+import { readDayMissionProgress } from "../../facts/day-mission-progress";
 import { readActiveSubscription } from "../../facts/subscription";
 import { type LearnerSummaryToday } from "../learner-summary-contract";
 
@@ -95,6 +96,7 @@ async function countDayMissions({
 
   const missions = await getDayMissions({
     displayBlocks: day.blocks,
+    readProgress: readDayMissionProgress,
     session: { ...day, goal },
     through: now,
     timeZone,

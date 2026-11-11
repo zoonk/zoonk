@@ -12,11 +12,12 @@ import { getVerbForm } from "../_utils/verb-form";
 import promptTemplate from "./course-details.prompt.md";
 
 /**
- * Luna, the cheapest candidate, scored 9.1 to 9.4 on the course-details eval (14 and 25 Oct 2026);
- * fallbacks come from other families.
+ * On 15 cases (8 Nov 2026, rescored 9 Nov without length caps), Luna scored 9.12 (EN 9.29, PT 9.15)
+ * at $0.87/1k pages and Haiku 5.5 8.88 at $1.38/1k; Flash Lite (8.39) promised a passing score and
+ * said contract disputes need no professional advice.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 /** Set by what a course is, never by a model. */
 const FORMAT_CATEGORIES: ReadonlySet<CourseCategory> = new Set(["exams", "languages"]);
@@ -27,10 +28,7 @@ export const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter(
 
 const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
 
-export const PAGE_LISTS = {
-  audience: { items: 3, words: 6 },
-  outcomes: { items: 4, words: 8 },
-} as const;
+export const PAGE_LIST_ITEMS = { audience: 3, outcomes: 4 } as const;
 
 const MAX_CATEGORIES = 2;
 
@@ -103,8 +101,8 @@ function normalizeCourseDetails(raw: RawCourseDetails): CourseDetails {
     categories: [...new Set(raw.categories)].slice(0, MAX_CATEGORIES),
     description: raw.description.trim(),
     landingPage: {
-      audience: cleanList({ items: raw.audience, max: PAGE_LISTS.audience.items }),
-      outcomes: cleanList({ items: raw.outcomes, max: PAGE_LISTS.outcomes.items }),
+      audience: cleanList({ items: raw.audience, max: PAGE_LIST_ITEMS.audience }),
+      outcomes: cleanList({ items: raw.outcomes, max: PAGE_LIST_ITEMS.outcomes }),
       valueProposition: raw.valueProposition.trim(),
     },
   };

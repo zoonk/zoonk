@@ -14,11 +14,6 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
-import {
-  getPhaseDatesMoveMode,
-  isPhaseDatesMoveWorth,
-  mayCostToKeepPhaseDates,
-} from "../planner/phase-dates-move";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
@@ -36,6 +31,7 @@ import { choosePlanSettings } from "./choose-plan-pace";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
+import { layOutUnmetPhaseDates } from "./phase-end-layout";
 import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
@@ -43,7 +39,6 @@ import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
-import { hasTakenChallenge } from "./taken-challenge";
 
 export type ComputedPlan = {
   bases: PlanBases;
@@ -91,7 +86,7 @@ function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
   );
 }
 
-type ComputePlanRequest = {
+export type ComputePlanRequest = {
   carrySnapshot?: PlanCarrySnapshot;
   bringBackSetAside?: boolean;
   context: PlanContext;
@@ -109,40 +104,18 @@ type ComputePlanRequest = {
   studyScheduleAt?: StudyScheduleAt;
 };
 
-/**
- * Asking to move a challenge the learner has never met is noise: until they take one, a plan that
- * would pay for keeping its phase dates lays its phases out again instead of proposing the move.
- */
-async function layOutUnmetPhaseDates({
-  built,
-  graph,
-  kept,
-  request,
-}: {
-  built: BuiltPlan;
-  graph: PlanState["graph"];
-  kept: ReadonlyMap<number, Date> | undefined;
-  request: ComputePlanRequest;
-}): Promise<ComputedPlan | null> {
-  const { goal } = request.context;
-
-  if (
-    !kept?.size ||
-    !mayCostToKeepPhaseDates(built) ||
-    (await hasTakenChallenge({ goalId: goal.id, userId: goal.userId }))
-  ) {
-    return null;
-  }
-
-  const mode = getPhaseDatesMoveMode({
-    kept: built,
-    mode: request.mode,
-    shown: kept,
-    today: request.context.today,
-  });
-
-  const laidOut = await computePlan({ ...request, keepPhaseDates: false, mode });
-  return isPhaseDatesMoveWorth({ graph, kept: built, moved: laidOut.built }) ? laidOut : null;
+function withPastBasicsLessons<
+  Loaded extends Pick<Awaited<ReturnType<typeof loadPlannerInputs>>, "lessons" | "missedSkillIds">,
+>({ graph, loaded, state }: { graph: PlanState["graph"]; loaded: Loaded; state: PlanState }) {
+  return {
+    ...loaded,
+    lessons: keepPastBasicsBands({
+      graph,
+      keepSkillIds: loaded.missedSkillIds,
+      lessons: loaded.lessons,
+      pastBasicsAreas: state.settings.pastBasicsAreas,
+    }),
+  };
 }
 
 /** Plans a goal from a state without saving anything. */
@@ -198,22 +171,15 @@ export async function computePlan({
       loadQuickBaseLessons(state.settings),
     ]);
 
-  const graph = sizeLanguageGraph({
-    details: context.goal.details,
+  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
+    bands: loaded.bands,
+    goal: context.goal,
     graph: resolved,
-    kind: context.goal.kind,
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    state,
   });
 
-  const inputs = {
-    ...loaded,
-    lessons: keepPastBasicsBands({
-      graph,
-      keepSkillIds: loaded.missedSkillIds,
-      lessons: loaded.lessons,
-      pastBasicsAreas: state.settings.pastBasicsAreas,
-    }),
-  };
+  const inputs = withPastBasicsLessons({ graph, loaded, state });
 
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
@@ -265,7 +231,14 @@ export async function computePlan({
   const builtInput = { ...input, ...readLanding({ input, savedKey: context.plan.inputsKey }) };
 
   const built = buildPlan(builtInput);
-  const laidOut = await layOutUnmetPhaseDates({ built, graph, kept: input.phaseEnds, request });
+
+  const laidOut = await layOutUnmetPhaseDates({
+    built,
+    compute: computePlan,
+    graph,
+    kept: input.phaseEnds,
+    request,
+  });
 
   if (laidOut) {
     return laidOut;
@@ -287,7 +260,7 @@ export async function computePlan({
 
   const standInLessons = getChosenStandInLessons(builtInput);
 
-  const saved = withPlannedLessons({ graph, skillLessons: built.skillLessons });
+  const saved = withPlannedLessons({ graph: fullGraph, skillLessons: built.skillLessons });
 
   const savedSettings = withBuiltSettings({ built, settings });
 

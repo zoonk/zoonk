@@ -559,6 +559,16 @@ private actor SettingsAPIStub: SettingsAPIClient {
 
   nonisolated func exportMemory(token: String) async throws -> Data { Data() }
 
+  nonisolated func getProfileQuestions(token: String) async throws -> ProfileQuestions {
+    throw APIError.unavailable
+  }
+
+  nonisolated func answerProfileQuestion(
+    token: String, _ input: Components.Schemas.ProfileAnswerInput
+  ) async throws -> ProfileQuestionView {
+    throw APIError.unavailable
+  }
+
   func exportAccountData(token: String) async throws -> Data {
     if let exportError {
       throw exportError

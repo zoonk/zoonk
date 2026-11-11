@@ -4,6 +4,48 @@ import XCTest
 
 @MainActor
 final class TodayStoreTests: XCTestCase {
+  func testReservedLessonTimeUsesTheServersRemainingMinutes() throws {
+    let session = try timedDay(left: 240, coming: true, estimates: [61])
+
+    XCTAssertEqual(session.minutes.left, 240)
+    XCTAssertEqual(session.blocks.map(\.estimatedMinutes), [61])
+    XCTAssertEqual(session.meterParts.map(\.weight), [61, 179])
+    guard case .track = session.meterParts.last?.fill else {
+      return XCTFail("Reserved lessons use the existing ahead track")
+    }
+  }
+
+  func testOnlyLessonsBeingWrittenOrAwaitingPreparationGetAReservedSegment() throws {
+    for (coming, preparing) in [(false, false), (true, false), (false, true), (true, true)] {
+      let session = try timedDay(
+        left: 61.5, coming: coming, preparing: preparing, estimates: [61])
+      XCTAssertEqual(session.meterParts.count, coming || preparing ? 2 : 1)
+      XCTAssertEqual(session.showsDayProgress, coming || preparing)
+    }
+
+    let fullyListed = try timedDay(left: 61, coming: true, estimates: [61])
+    XCTAssertFalse(fullyListed.showsDayProgress)
+    let overListed = try timedDay(left: 60, coming: true, estimates: [61])
+    XCTAssertFalse(overListed.showsDayProgress)
+  }
+
+  func testAWaitingDayHasNoMeterBeforeAnyLessonIsListed() throws {
+    let session = try timedDay(left: 240, coming: true, estimates: [], state: "waiting")
+
+    XCTAssertEqual(session.minutes.left, 240)
+    XCTAssertFalse(session.showsDayProgress)
+  }
+
+  func testFoldedTimeIncludesReservedMinutesAndOnlySubtractsUnfinishedShownRows() throws {
+    var session = try timedDay(left: 240.5, coming: true, estimates: [8, 8, 8, 8, 8, 8, 13])
+    session.blocks[0].status = .completed
+
+    XCTAssertEqual(session.foldedMinutes(showing: Array(session.blocks.prefix(3))), 224.5)
+    XCTAssertEqual(session.foldedMinutes(showing: []), 240.5)
+    session.minutes = .init(dailyGoal: 240, done: 8, left: 1, planned: 240)
+    XCTAssertEqual(session.foldedMinutes(showing: Array(session.blocks.prefix(3))), 0)
+  }
+
   func testWrittenLessonNavigatesWithoutOpeningRequest() async throws {
     let json = blockJSON(
       position: 0, kind: "learn", status: "pending", id: "b1", lessonID: "l1", planItemID: nil,
@@ -671,10 +713,13 @@ final class TodayStoreTests: XCTestCase {
     let shownSession = sessions.session(id: "s1").value
     XCTAssertEqual(shownSession?.nextBlock?.id, "b1")
     XCTAssertEqual(shownSession?.blocks.first?.isFinished, true)
+    XCTAssertEqual(shownSession?.minutes.left, 20)
+    XCTAssertEqual(shownSession?.minutes.dailyGoal, 30)
     guard case .day(let view)? = todayStore.today.value else {
       return XCTFail("Expected Today's day")
     }
     XCTAssertEqual(view.session.nextBlock?.id, "b1")
+    XCTAssertEqual(view.session.minutes, shownSession?.minutes)
     let reads = await api.todayReads
     XCTAssertEqual(reads, 1, "the completion shows without reading Today again")
   }
@@ -695,6 +740,24 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertTrue(checkpoint?["phase"] is NSNull)
     XCTAssertNil(checkpoint?["mockIdentity"], "only a mock carries its identity")
   }
+}
+
+private func timedDay(
+  left: Double, coming: Bool, preparing: Bool = false, estimates: [Int], state: String = "underway"
+) throws -> StudyDay {
+  let blocks = try estimates.indices.map { try block(position: $0, kind: "learn") }
+  let json = dayJSON(
+    blocks: blocks, nextPosition: blocks.isEmpty ? nil : 0, id: "s1", emptyDay: nil,
+    localDate: "2026-11-08", goalID: "g1", state: state)
+  var object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
+  var rows = try XCTUnwrap(object["blocks"] as? [[String: Any]])
+  for index in rows.indices { rows[index]["estimatedMinutes"] = estimates[index] }
+  object["blocks"] = rows
+  object["lessonsComing"] = coming
+  object["lessonsToPrepare"] = preparing
+  object["minutes"] = ["dailyGoal": 240, "done": 0, "left": left, "planned": 240]
+  return try JSONDecoder().decode(
+    StudyDay.self, from: JSONSerialization.data(withJSONObject: object))
 }
 
 @MainActor
@@ -761,7 +824,7 @@ private func dayJSON(
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
-    "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"planned":15},
+    "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null,
@@ -808,7 +871,7 @@ private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment
     """
     {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
     "blocks":[\(blockJSON(position: 0, kind: "learn", status: "completed", id: blockID, lessonID: "l0", planItemID: nil, checkpoint: nil)),\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil))],
-    "sessionId":"s1","goalId":null,"finishedChapterId":null,
+    "sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},
     "next":{"block":\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil)),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
     "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),

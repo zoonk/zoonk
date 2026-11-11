@@ -6,9 +6,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { parsePlanGraph } from "../plans/planner/plan-state";
-import { getTodayStudySession } from "../sessions/_test-utils/open-today";
-import { readBlockPayload } from "../sessions/block-payload";
+import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
 import { loadSessionBosses } from "./_utils/load-boss";
 import { requestChallengeQuestions } from "./challenge-questions";
 
@@ -89,7 +87,6 @@ describe("a challenge before a skill's core is in", () => {
         where: { planId: plan.id },
       }),
       listeningSkillIds: new Set(),
-      movedEvents: [],
       phases: [],
       skills: saved.skills,
       today: new Date("2020-09-28T00:00:00Z"),
@@ -106,7 +103,7 @@ describe("a challenge before a skill's core is in", () => {
     ).toStrictEqual([first!.id, second!.id]);
   });
 
-  it("leaves out a skill whose core, as the plan counts it, comes after its day", async () => {
+  it("keeps finished-core selection stable when only the challenge estimate moves", async () => {
     const user = await userFixture();
 
     const library = await planLibraryFixture({
@@ -148,18 +145,39 @@ describe("a challenge before a skill's core is in", () => {
 
     await prisma.planItem.update({ data: { scheduledFor: today }, where: { id: boss?.id } });
 
-    const day = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
-    const blocks = day.status === "ready" ? day.session.blocks : [];
-    const duel = blocks.find((block) => block.checkpoint?.phase === 0);
-    const row = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: duel?.id } });
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: "lesson", planId: plan.id, position: { lt: boss!.position } },
+    });
 
-    expect(readBlockPayload(row).skillIds).toStrictEqual([finished]);
+    const goalPlan = await loadGoalPlan(goal.id);
+
+    const day = await loadSessionBosses({
+      examBlueprintId: null,
+      goal,
+      graphSkills: parsePlanGraph(saved.graph).skills,
+      itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
+      items: await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { planId: plan.id },
+      }),
+      listeningSkillIds: new Set(),
+      phases: parsePlanPhases(saved.phases),
+      skills: goalPlan.skills,
+      today: today!,
+      userId: user.id,
+    });
+
+    expect(day.checkpoints.find((checkpoint) => checkpoint.phase === 0)?.skillIds).toStrictEqual([
+      finished,
+      begun,
+    ]);
 
     const writing = await requestChallengeQuestions({ planItemId: boss?.id ?? "" });
 
     const written =
       writing.status === "start" ? writing.writes.flatMap((write) => write.skillIds) : [];
 
-    expect(written).toStrictEqual([finished]);
+    expect(written).toStrictEqual([finished, begun]);
   });
 });

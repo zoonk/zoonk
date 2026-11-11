@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type LanguageAim } from "../language/aims/language-aims";
 import { planNumbersSchema } from "./numbers-contract";
 
 const isoDateSchema = z.iso.date();
@@ -174,6 +175,8 @@ export type PlanSuggestedTime = NonNullable<PlanTimeToCover["suggested"]>;
 export type PlanTimeToCoverInput = { studyDays?: readonly number[]; weekendMinutes?: number };
 
 export type PlanTimeAdviceInput = PlanTimeToCoverInput & {
+  /** A language goal's aim to answer for, as picking it would set it; the goal's own when absent. */
+  aim?: LanguageAim;
   dailyMinutes?: number;
   fullCourse?: boolean;
 };

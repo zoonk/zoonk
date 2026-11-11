@@ -57,7 +57,11 @@ import { recordSubjectQuestions } from "./exams/record-subject-questions";
 import { recordTopicFrequency } from "./exams/record-topic-frequency";
 import { holdBackLessonDraft } from "./generation/hold-back-lesson";
 import { mockDecision, mockSearchTerms, uniqueWord } from "./identity/_test-utils/identity-mocks";
-import { generatedMultipleChoice, generatedProvenance } from "./items/_test-utils/generated-items";
+import {
+  generatedMultipleChoice,
+  generatedProvenance,
+  keyChecked,
+} from "./items/_test-utils/generated-items";
 import { createItems } from "./items/create-items";
 import { savePastQuestions } from "./items/past-questions";
 import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
@@ -74,7 +78,7 @@ import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
-import { setAsidePublishedLesson } from "./quality/published-lesson-check";
+import { setAsidePublishedLesson } from "./quality/set-aside-published-lesson";
 import { replaceFlaggedDrills } from "./review-flags/rewrite-flagged-drills";
 import { toStepContent } from "./steps/written-screens";
 
@@ -392,7 +396,7 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
-  "library/quality/later-reviews.ts": [
+  "library/quality/pull-lesson-for-fix.ts": [
     {
       fields: ["contentStatus"],
       verdict: "excluded",
@@ -400,7 +404,7 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
-  "library/quality/published-lesson-check.ts": [
+  "library/quality/set-aside-published-lesson.ts": [
     { verdict: "marks", why: "a set-aside lesson leaves plans", writes: ["lesson.update"] },
   ],
   "library/review-flags/rewrite-flagged-drills.ts": [
@@ -427,6 +431,14 @@ const REGISTRY: Record<string, Registration[]> = {
         "skillPrerequisite.createMany",
         "skillPrerequisite.deleteMany",
       ],
+    },
+  ],
+  "library/skills/tag-skill-levels.ts": [
+    {
+      fields: ["cefrAttempts", "cefrLevel"],
+      verdict: "excluded",
+      why: "a skill's level within its band, read by views and certificates, not the planner",
+      writes: ["raw:skills", "skill.updateMany"],
     },
   ],
   "library/tools/find-or-create-setup-lesson.ts": [
@@ -849,7 +861,7 @@ async function holdBackCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "failed" }),
+      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "pending" }),
     plan,
     root: lessonRoot(lesson.id),
     write: () =>
@@ -1253,7 +1265,7 @@ async function drillsCase(): Promise<WriterCase> {
     write: () =>
       replaceFlaggedDrills({
         drills: [
-          {
+          keyChecked({
             context: null,
             difficulty: "medium",
             format: "trueFalse",
@@ -1264,7 +1276,7 @@ async function drillsCase(): Promise<WriterCase> {
             reference: "Art. 13",
             statement: "A posse ocorrerá no prazo de trinta dias contados da publicação do ato.",
             visual: null,
-          },
+          }),
         ],
         group: {
           article: {
@@ -1648,7 +1660,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
-  "library/quality/published-lesson-check.ts": { setAsidePublishedLesson: setAsideCase },
+  "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
 };
 

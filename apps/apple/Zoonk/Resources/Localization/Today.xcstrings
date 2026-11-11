@@ -398,120 +398,61 @@
         }
       }
     },
-    "%@ · after the challenge before it" : {
-      "comment" : "A phase challenge waiting for the one before it",
+    "%@ · after this phase's lessons" : {
+      "comment" : "A phase challenge waiting for its phase's lessons, after the phase's name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · nach der vorherigen Herausforderung"
+            "value" : "%@ · nach den Lektionen dieser Phase"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · después del desafío anterior"
+            "value" : "%@ · después de las lecciones de esta fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · après le défi précédent"
+            "value" : "%@ · après les leçons de cette phase"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · dopo la sfida precedente"
+            "value" : "%@ · dopo le lezioni di questa fase"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@・前のチャレンジが終わったら"
+            "value" : "%@・このフェーズのレッスン終了後"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 이전 챌린지 완료 후"
+            "value" : "%@ · 이 단계의 레슨을 마친 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · po poprzednim wyzwaniu"
+            "value" : "%@ · po lekcjach tego etapu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · depois do desafio anterior"
+            "value" : "%@ · depois das aulas desta fase"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · önceki meydan okumadan sonra"
-          }
-        }
-      }
-    },
-    "%@ · after today's lessons" : {
-      "comment" : "A phase challenge waiting for the day's lessons",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · nach den heutigen Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · después de las lecciones de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · après les leçons du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · dopo le lezioni di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@・今日のレッスンが終わったら"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · 오늘 레슨 완료 후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · po dzisiejszych lekcjach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · depois das aulas de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · bugünkü derslerden sonra"
+            "value" : "%@ · bu aşamanın derslerinden sonra"
           }
         }
       }
@@ -1156,65 +1097,6 @@
         }
       }
     },
-    "%@ is paused." : {
-      "comment" : "Today for a paused goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Ziel %@ ist pausiert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ está en pausa."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objectif en pause : %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: in pausa."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は一時停止中です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@의 학습이 일시 중지됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cel wstrzymany: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objetivo em pausa: %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ duraklatıldı."
-          }
-        }
-      }
-    },
     "%@ left" : {
       "comment" : "The time still to go in today's session",
       "localizations" : {
@@ -1335,6 +1217,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hafta %1$@ çalışıldı, planlanan süre %2$@"
+          }
+        }
+      }
+    },
+    "%@ studied" : {
+      "comment" : "The time studied today, once the day's session is done; the argument is a duration like '23 min'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ gelernt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ di studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@学習済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 학습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ çalıştın"
           }
         }
       }
@@ -4789,10 +4730,16 @@
         "it" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+%lld altro"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld in più"
+                  "value" : "+%lld altri"
                 }
               }
             }
@@ -5558,120 +5505,61 @@
         }
       }
     },
-    "After the challenge before it" : {
-      "comment" : "A challenge waiting for the one before it\nMission waits",
+    "After this phase's lessons" : {
+      "comment" : "A phase challenge waiting for its phase's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach der vorherigen Herausforderung"
+            "value" : "Nach den Lektionen dieser Phase"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después del desafío anterior"
+            "value" : "Después de las lecciones de esta fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Après le défi précédent"
+            "value" : "Après les leçons de cette phase"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dopo la sfida precedente"
+            "value" : "Dopo le lezioni di questa fase"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前のチャレンジを終えた後"
+            "value" : "このフェーズのレッスン終了後"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이전 챌린지 완료 후"
+            "value" : "이 단계의 레슨을 마친 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Po poprzednim wyzwaniu"
+            "value" : "Po lekcjach tego etapu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depois do desafio anterior"
+            "value" : "Depois das aulas desta fase"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Önceki meydan okumadan sonra"
-          }
-        }
-      }
-    },
-    "After today's lessons" : {
-      "comment" : "A challenge waiting for the day's lessons\nMission waits",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach den heutigen Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después de las lecciones de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Après les leçons du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopo le lezioni di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のレッスンを終えた後"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 레슨 완료 후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po dzisiejszych lekcjach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois das aulas de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü derslerden sonra"
+            "value" : "Bu aşamanın derslerinden sonra"
           }
         }
       }
@@ -6638,6 +6526,65 @@
         }
       }
     },
+    "Building your %@ plan" : {
+      "comment" : "A plan is being built for the goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deinen Plan für „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu plan de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ton plan %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo creando il tuo piano per %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の学習計画を作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy twój plan: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando seu plano de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planını hazırlıyoruz"
+          }
+        }
+      }
+    },
     "Building your plan" : {
       "comment" : "A plan is being built",
       "localizations" : {
@@ -6693,65 +6640,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planını hazırlıyoruz"
-          }
-        }
-      }
-    },
-    "Building your plan for %@" : {
-      "comment" : "A plan is being built for the goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen deinen Plan für %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creando tu plan para %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Création de ton plan pour %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo creando il tuo piano per %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画を作成しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 맞춰 계획을 만들고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Układamy twój plan: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando seu plano para %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için planını hazırlıyoruz"
           }
         }
       }
@@ -9945,6 +9833,65 @@
         }
       }
     },
+    "Look it over before you start." : {
+      "comment" : "Why Today waits for the learner to see their new plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau ihn dir an, bevor du loslegst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revísalo antes de empezar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jette-y un œil avant de commencer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dagli un’occhiata prima di iniziare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める前に目を通してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기 전에 계획을 살펴보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejrzyj go, zanim zaczniesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dê uma olhada antes de começar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlamadan önce gözden geçir."
+          }
+        }
+      }
+    },
     "Missions done" : {
       "comment" : "Today's missions are done",
       "localizations" : {
@@ -13112,13 +13059,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を再開する"
+            "value" : "「%@」を再開する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 재개하기"
+            "value" : "%@ 이어서 하기"
           }
         },
         "pl" : {
@@ -18377,37 +18324,37 @@
         }
       }
     },
-    "You finished %@." : {
+    "You finished your %@ goal." : {
       "comment" : "Today for a finished goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast %@ abgeschlossen."
+            "value" : "Du hast dein Ziel %@ erreicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completaste %@."
+            "value" : "Completaste tu objetivo de %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as terminé %@."
+            "value" : "Tu as atteint ton objectif %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai completato %@."
+            "value" : "Hai completato il tuo obiettivo %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を完了しました。"
+            "value" : "目標「%@」を達成しました。"
           }
         },
         "ko" : {
@@ -18419,13 +18366,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cel ukończony: %@."
+            "value" : "Udało ci się zrealizować cel: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você concluiu %@."
+            "value" : "Você concluiu seu objetivo de %@."
           }
         },
         "tr" : {
@@ -18609,6 +18556,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planındaki tüm dersleri tamamladın ya da konularını zaten biliyordun."
+          }
+        }
+      }
+    },
+    "Your %@ goal is paused." : {
+      "comment" : "Today for a paused goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ziel %@ ist pausiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu objetivo de %@ está en pausa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton objectif %@ est en pause."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo obiettivo %@ è in pausa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標「%@」は一時停止中です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 목표가 일시 중지되어 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój cel jest wstrzymany: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu objetivo de %@ está pausado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hedefin duraklatıldı."
+          }
+        }
+      }
+    },
+    "Your %@ plan is ready." : {
+      "comment" : "A goal whose plan the learner hasn't looked at yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein %@-Plan ist bereit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan de %@ está listo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan %@ est prêt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano per %@ è pronto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の学習計画ができました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획이 준비됐어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan jest gotowy: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano de %@ está pronto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planın hazır."
+          }
+        }
+      }
+    },
+    "Your %@ plan needs a few more answers." : {
+      "comment" : "A goal left halfway through its questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für deinen %@-Plan fehlen noch ein paar Antworten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltan algunas respuestas para completar tu plan de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il manque encore quelques réponses pour ton plan %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano per %@ richiede ancora qualche risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の学習計画は、あと数問に答えると完成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획을 세우려면 몇 가지 답변이 더 필요해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan czeka na jeszcze kilka odpowiedzi: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano de %@ precisa de mais algumas respostas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planın için birkaç cevap daha gerekiyor."
           }
         }
       }
@@ -18910,65 +19034,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın artık buna göre ilerliyor."
-          }
-        }
-      }
-    },
-    "Your plan for %@ needs a few more answers." : {
-      "comment" : "A goal left halfway through its questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für deinen Plan für %@ fehlen noch ein paar Antworten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan para %@ necesita algunas respuestas más."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan pour %@ a besoin de quelques réponses supplémentaires."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al tuo piano per %@ manca ancora qualche risposta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画を作るには、あといくつかの質問に答える必要があります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 계획을 완성하려면 몇 가지 답변이 더 필요해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do ułożenia twojego planu brakuje jeszcze kilku odpowiedzi. Cel: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano para %@ precisa de mais algumas respostas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için planını tamamlamak için birkaç soruyu daha cevaplaman gerekiyor."
           }
         }
       }
@@ -19335,65 +19400,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Öğretmeninin sınavı hiçbir yerde yayımlanmış değil. Planının sınıfta işlediklerinle uyumlu olması için slaytları, notları veya konu listesini yükle."
-          }
-        }
-      }
-    },
-    "%@ studied" : {
-      "comment" : "The time studied today, once the day's session is done; the argument is a duration like '23 min'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ gelernt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ de estudio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ d’étude"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ di studio"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@学習済み"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 학습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ de estudo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ çalıştın"
           }
         }
       }
