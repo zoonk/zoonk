@@ -26,6 +26,7 @@ import { TodayGoalPaused } from "./today-goal-paused";
 import { TodayOnboardingLeft, readOnboardingLeft } from "./today-onboarding-left";
 import { TodayPreparingClient } from "./today-preparing-client";
 import { loadTodayScreen } from "./today-view";
+import { type UnfinishedGoal, UnfinishedGoalNotice } from "./unfinished-goal-notice";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -80,23 +81,28 @@ async function loadOpenExplanation(): Promise<Explanation | null> {
   return explanation ? { id: explanation.id, title: explanation.title } : null;
 }
 
-/** The complete no-goal display can prefetch; starting a goal still claims its fresh limit. */
-async function loadFirstGoalView() {
+/** A goal card typed after the learner's newest goal and not confirmed yet, which Today offers back. */
+async function loadUnfinishedGoal(): Promise<UnfinishedGoal | null> {
   "use cache: private";
 
-  const resume = await getOnboardingResume();
+  const result = await getOnboardingResume();
+  const resume = result.status === "ready" ? result.resume : null;
 
-  const draftId =
-    resume.status === "ready" && resume.resume?.kind === "draft" ? resume.resume.draftId : null;
+  return resume?.kind === "draft" ? { draftId: resume.draftId, prompt: resume.prompt } : null;
+}
+
+/** The complete no-goal display can prefetch; starting a goal still claims its fresh limit. */
+async function loadFirstGoalView(draftId: string | null) {
+  "use cache: private";
 
   const [start, explanation] = await Promise.all([loadStartView(draftId), loadOpenExplanation()]);
 
   return { explanation, start };
 }
 
-async function TodayFirstGoal() {
+async function TodayFirstGoal({ draftId }: { draftId: string | null }) {
   const t = await getExtracted();
-  const { start, explanation } = await loadFirstGoalView();
+  const { start, explanation } = await loadFirstGoalView(draftId);
   const { canAttach, draft, goalLimit, needsAccount } = start;
 
   return (
@@ -153,14 +159,29 @@ async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null
 
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
   const { goal } = await searchParams;
-  const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
-  const banner = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;
+
+  const [result, reminderGoal, unfinishedGoal] = await Promise.all([
+    loadTodayScreen(),
+    findReminderGoal(goal),
+    loadUnfinishedGoal(),
+  ]);
+
+  const reminder = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;
+  const unfinished = unfinishedGoal && <UnfinishedGoalNotice goal={unfinishedGoal} />;
+
+  // With no day to show, the card leads the page.
+  const banner = (reminder || unfinished) && (
+    <>
+      {reminder}
+      {unfinished}
+    </>
+  );
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (
       <WelcomeBack suggestion={result.suggestedGoal} />
     ) : (
-      <TodayFirstGoal />
+      <TodayFirstGoal draftId={unfinishedGoal?.draftId ?? null} />
     );
   }
 
@@ -170,7 +191,7 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
   }
 
   if (result.status === "unauthorized") {
-    return <TodayFirstGoal />;
+    return <TodayFirstGoal draftId={null} />;
   }
 
   if (result.status === "goalNotActive") {
@@ -193,8 +214,9 @@ async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "
     <TodayClient
       data={result.data}
       key={result.day}
-      banner={banner}
+      banner={reminder}
       readAt={result.readAt}
+      unfinishedGoal={unfinished}
       userId={result.userId}
     />
   );

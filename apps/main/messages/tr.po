@@ -962,6 +962,7 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Soruları cevapla, hedefine ulaşana kadar günlük planını hazırlayacağız."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Devam et"
@@ -1101,6 +1102,11 @@ msgstr "{goal} planın için birkaç cevap daha gerekiyor."
 msgctxt "dMgVfu"
 msgid "Setting up"
 msgstr "Hazırlık aşamasında"
+
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "YC2aql"
+msgid "What you wrote"
+msgstr "Yazdıkların"
 
 #: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "irPOsS"

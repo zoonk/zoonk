@@ -60,9 +60,11 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
  * `fallbackFocus`.
  */
 export function TodayNotice({
+  children,
   className,
   fallbackFocus,
 }: {
+  children?: React.ReactNode;
   className?: string;
   fallbackFocus: React.RefObject<HTMLElement | null>;
 }) {
@@ -79,6 +81,7 @@ export function TodayNotice({
       ref={slot}
     >
       <NoticeOfKind kind={kind} />
+      {children ? <div className="not-first:mt-3">{children}</div> : null}
     </div>
   );
 }

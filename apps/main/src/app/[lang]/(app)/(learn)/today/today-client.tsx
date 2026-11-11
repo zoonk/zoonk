@@ -116,11 +116,13 @@ export function TodayClient({
   banner,
   data,
   readAt,
+  unfinishedGoal,
   userId,
 }: {
   banner: React.ReactNode;
   data: TodayScreenData;
   readAt: number;
+  unfinishedGoal: React.ReactNode;
   userId: string;
 }) {
   const router = useRouter();
@@ -253,6 +255,7 @@ export function TodayClient({
       }
       syllabus={data.syllabus}
       today={today}
+      unfinishedGoal={unfinishedGoal}
     />
   );
 }

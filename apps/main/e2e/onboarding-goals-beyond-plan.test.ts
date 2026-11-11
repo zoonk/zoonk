@@ -142,11 +142,11 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.context().close();
   });
 
-  test("following as many goals as the free plan allows, the card shows the plan's limit instead of confirming", async ({
+  test("following as many goals as the free plan allows, the card shows the plan's limit, and Today brings it back once a goal is paused", async ({
     browser,
   }) => {
     const { user } = await createLearnerFollowing(3);
-    const { page } = await openCard({ browser, user });
+    const { page, words } = await openCard({ browser, user });
 
     await expect(
       page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
@@ -154,9 +154,30 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
     await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
+
+    await page.getByRole("link", { name: "Go to your Plan" }).click();
+    await page.getByRole("button", { name: "Plan options" }).click();
+    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+
+    await expect(
+      page.getByText("Nothing is planned until you resume it.").filter({ visible: true }),
+    ).toBeVisible();
+
+    await page.goto("/today");
+
+    const offer = page.getByRole("region", { name: "What you wrote" });
+    await expect(offer.getByText(words)).toBeVisible();
+    await offer.getByRole("link", { name: "Continue" }).click();
+
+    await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
+    await page.getByRole("button", { name: "Looks right" }).click();
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+
+    await expect(
+      prisma.goal.findMany({ select: { title: true }, where: { prompt: words } }),
+    ).resolves.toStrictEqual([{ title: ENGLISH.title }]);
 
     await page.context().close();
   });
