@@ -359,6 +359,20 @@ class TodayScreenshots {
                                     ),
                             ),
                     ),
+                "notice-focus-test" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "focusTest",
+                                "focusTest" to
+                                    buildJsonObject {
+                                        put("minutes", 15)
+                                        put("questions", 15)
+                                    },
+                            ),
+                    ),
                 "notice-access" to
                     day(
                         blocks = lessons(3),

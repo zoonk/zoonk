@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -352,6 +353,7 @@ class PlanScreenshots {
         val shots =
             mapOf(
                 "plan-slot-coverage-ask" to Shot(goalPlan),
+                "plan-slot-coverage-focus-test" to Shot(goalPlan.withFocusTest(NOT_STARTED), summary = exam),
                 "plan-slot-coverage-found" to Shot(goalPlan, edits = PlanEdits(timeToCover = found)),
                 "plan-slot-coverage-preview" to
                     Shot(
@@ -444,6 +446,13 @@ class PlanScreenshots {
         val goal = PlanPageState(learn.goals.first(), goalPlan, learn)
         val examPlan = coveragePlan(kind = "exam", fullCourse = true)
         val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
+        val examAreas = "[${area("Administrative law")},${area("Constitutional law")},${area("Portuguese")},${area("Logical reasoning")}]"
+        val examFocusPage = PlanPageState(exam.goals.first(), coveragePlan(kind = "exam", areas = examAreas).withFocusTest(CHECKED), exam)
+        val focusTestModel =
+            PlanFocusTestModel(
+                unusedFocusTests(AppCache(FakeSession(null), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))),
+                java.util.UUID.fromString(GOAL),
+            )
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
 
         fun preview(
@@ -505,6 +514,10 @@ class PlanScreenshots {
                 "plan-preview-result" to {
                     PlanPreviewResult(fasterTime, onApply = {}, onRetry = {}, onDismiss = {})
                 },
+                "plan-focus-test-row-not-started" to { PlanFocusTestRow(focusTest(NOT_STARTED), onOpen = {}, model = null) },
+                "plan-focus-test-row-continue" to { PlanFocusTestRow(focusTest(SITTING), onOpen = {}, model = null) },
+                "plan-focus-test-row-result" to { PlanFocusTestRow(focusTest(CHECKED), onOpen = {}, model = focusTestModel) },
+                "plan-sheet-focus-test" to { ChooseFocusBody(examFocusPage, PlanEdits(), onFocusTest = {}, onDone = {}) },
             )
         var shown by mutableStateOf(parts.keys.first())
         compose.setContent {
@@ -752,3 +765,11 @@ class PlanScreenshots {
             """.trimIndent()
     }
 }
+
+private const val NOT_STARTED = """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
+private const val SITTING = """{"state":"sitting","offer":{"questions":9,"minutes":9},"subjects":{"asked":6,"total":19},"sessionQuestions":"off","setsFocus":false}"""
+private const val CHECKED = """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
+
+private fun focusTest(json: String) = ApiJson.decodeFromString<com.zoonk.api.models.FocusTestSummary>(json)
+
+private fun com.zoonk.api.models.Plan.withFocusTest(json: String) = copy(focusTest = focusTest(json))

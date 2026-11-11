@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.focustest
 
+import com.zoonk.android.feature.questions.PlacementNote
+import com.zoonk.android.feature.questions.NotToday
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
@@ -30,7 +33,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.data.WriteOutcome
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -131,6 +134,23 @@ class FocusTestScreenshots {
             tap("Use my answers")
         }
 
+    /** Over an exam's test question inside a session; the second one after "Not today" didn't save. */
+    @Test
+    fun sessionNote() {
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(48.dp)) {
+                        PlacementNote(notToday = NotToday(busy = false, failed = false) {})
+                        PlacementNote(notToday = NotToday(busy = false, failed = true) {})
+                        PlacementNote()
+                    }
+                }
+            }
+        }
+        write("focus-test-session-note")
+    }
+
     private fun tap(text: String) {
         compose.onNodeWithText(text).performScrollTo().performClick()
         compose.waitForIdle()
@@ -167,14 +187,20 @@ class FocusTestScreenshots {
         }
         compose.waitForIdle()
         steps()
-        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
+        write(name)
+    }
+
+    private fun write(name: String) {
+        compose.waitForIdle()
+        // An open sheet draws in its own window over the page's.
+        val bitmap =
             compose
-                .onRoot()
+                .onAllNodes(isRoot())
+                .onLast()
                 .captureRender()
                 .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         println("Screenshot ${file.path}")
     }
 

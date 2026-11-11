@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.onboarding
 
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ExamChoiceOptionsInner
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -150,6 +152,33 @@ class OnboardingScreenshots {
         run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
         compose.waitForIdle()
         write("placement-waiting-failed-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** A time shorter than the suggested one names the subjects the learner's Focus test says it should favor. */
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun scheduleFocus() {
+        val api =
+            FakeOnboardingApi().apply {
+                setup = { setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08") }
+                cover = { coverOf(recommended = 805, focus = 240) }
+                advice = {
+                    adviceOf(0.6).copy(
+                        focusSubjects =
+                            listOf(
+                                ExamChoiceOptionsInner(name = "Administrative law", shortName = null),
+                                ExamChoiceOptionsInner(name = "Constitutional law", shortName = null),
+                                ExamChoiceOptionsInner(name = "Portuguese", shortName = null),
+                            ),
+                    )
+                }
+            }
+        compose.setContent { ZoonkTheme { Surface { Setup(api) } } }
+        compose.waitForIdle()
+        compose.onNodeWithText("4 hr").performClick()
+        compose.onNodeWithText("2 hr").performClick()
+        compose.waitForIdle()
+        write("setup-schedule-focus-phone", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** The questions of a new language pair wait for the learner's Start, so it's tapped first. */
@@ -353,6 +382,12 @@ class OnboardingScreenshots {
                                 )
                         },
                     )
+                },
+                "reveal-focus-trade-off" to {
+                    Reveal(setupPlanApi().apply { shownPlan = focusedPlan(FOCUS_CHECKED, focused = true) })
+                },
+                "reveal-focus-test-offer" to {
+                    Reveal(setupPlanApi().apply { shownPlan = focusedPlan(FOCUS_NOT_STARTED, focused = false) })
                 },
                 "reveal-exam-choice" to {
                     Reveal(
@@ -738,3 +773,23 @@ private const val ENEM_DETAILS =
 private const val EXPLAIN = """{"status":"explain","question":"How does inflation work?"}"""
 private const val INSTRUMENT = """{"status":"instrument","instrument":"guitar"}"""
 private const val UNSAFE = """{"status":"unsafe"}"""
+
+private const val FOCUS_NOT_STARTED =
+    """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
+private const val FOCUS_CHECKED =
+    """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
+
+/** A short exam plan whose first three subjects get more time when [focused]. */
+private fun focusedPlan(
+    focusTest: String,
+    focused: Boolean,
+): com.zoonk.api.models.Plan {
+    val areas =
+        listOf("Administrative law", "Constitutional law", "Portuguese", "Logical reasoning", "Statistics").mapIndexed { index, name ->
+            """{"focusPart":null,"focused":${focused && index < 3},"name":"$name","partOf":null,"pastBasics":false,"reduced":false,"skillCount":4,"skipped":false}"""
+        }
+    return planOf(feasibility = feasibilityOf(coreFits = false, deepensMostAsked = false), numbers = numbersOf(1_380.0)).copy(
+        areas = ApiJson.decodeFromString("[${areas.joinToString(",")}]"),
+        focusTest = ApiJson.decodeFromString(focusTest),
+    )
+}
