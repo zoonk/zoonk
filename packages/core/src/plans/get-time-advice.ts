@@ -2,7 +2,7 @@ import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
-import { readFocusSubjects } from "../learner/placement/focus-test-summary";
+import { readCurrentFocusSubjects } from "../learner/facts/focus-test-summary";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
 import { getCourseFinish } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
@@ -246,7 +246,9 @@ export async function getPlanTimeAdvice({
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
       endDate: getCourseFinish(computed),
       focusSubjects:
-        feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],
+        feasibility.deadline !== null && !feasibility.fits
+          ? await readCurrentFocusSubjects(context.goal)
+          : [],
       fullCourseEndDate: fullCourse
         ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,

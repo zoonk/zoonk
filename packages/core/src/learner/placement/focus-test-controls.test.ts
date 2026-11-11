@@ -47,10 +47,10 @@ describe(updateFocusTest, () => {
     const { goal } = await examTestGoalFixture({ goal: PLAN_SHOWN, subjects: SUBJECTS });
 
     await expect(control(goal.id, { sessionQuestions: "on" })).resolves.toStrictEqual({
-      offer: null,
+      offer: { minutes: 12, questions: 12 },
       sessionQuestions: "on",
       setsFocus: false,
-      state: "checked",
+      state: "notStarted",
       subjects: null,
     });
 

@@ -1,6 +1,7 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { loadCurrentTestSummary } from "../learner/facts/focus-test-summary";
 import { readSessionQuestions } from "../learner/placement/focus-test-summary";
 import { isPlacementWeek } from "../sessions/_utils/session-placement";
 
@@ -15,7 +16,7 @@ export async function isGoalInPlacementWeek({
   timeZone: string;
 }): Promise<boolean> {
   const goal = await prisma.goal.findUnique({
-    select: { createdAt: true, details: true, kind: true },
+    select: { createdAt: true, details: true, kind: true, userId: true },
     where: { id: goalId },
   });
 
@@ -31,6 +32,10 @@ export async function isGoalInPlacementWeek({
 
   // An exam goal's sessions ask while its Focus test has subjects left, whatever the week; a day
   // the learner skipped still has tomorrow's questions to write.
-  const asks = readSessionQuestions(day);
+  const asks = readSessionQuestions({
+    ...day,
+    summary: await loadCurrentTestSummary({ goalId, now, userId: goal.userId }),
+  });
+
   return asks === "on" || asks === "skippedToday";
 }

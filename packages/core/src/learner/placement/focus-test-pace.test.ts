@@ -1,9 +1,8 @@
-import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { describe, expect, it } from "vitest";
 import { examTestGoalFixture } from "../_test-utils/exam-test-goal";
+import { readCurrentTestSummary } from "../facts/focus-test-summary";
 import { finishGoalPlacement } from "./finish-goal-placement";
-import { readFocusTestRecord } from "./focus-test-state";
 
 async function readPace(chosen: number[]) {
   const durations = [...chosen, ...Array.from({ length: 10 }, () => 8000)];
@@ -33,11 +32,7 @@ async function readPace(chosen: number[]) {
 
   const finished = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
-  const record = readFocusTestRecord(
-    await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
-  );
-
-  return { finished, summary: record?.summary };
+  return { finished, summary: await readCurrentTestSummary(user.id, goal.id) };
 }
 
 describe("the learner's pace from chosen test answers", () => {

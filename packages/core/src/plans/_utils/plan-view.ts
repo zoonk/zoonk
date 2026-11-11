@@ -1,5 +1,5 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -9,6 +9,7 @@ import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
+import { readCurrentTestSummary } from "../../learner/facts/focus-test-summary";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
@@ -143,11 +144,12 @@ function buildSteeringView({
 
 type PlanViewInput = { context: PlanContext; now: Date };
 
-function readPlanFocusTest({ goal, state, timeZone, today }: PlanContext) {
+async function readPlanFocusTest({ goal, state, timeZone, today }: PlanContext) {
   return readFocusTestSummary({
     focusAreas: state.settings.focusAreas,
     goal,
     localDate: today,
+    summary: goal.kind === "exam" ? await readCurrentTestSummary(goal.userId, goal.id) : null,
     timeZone,
   });
 }
@@ -287,7 +289,7 @@ export async function buildPlanView({
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,
     },
-    focusTest: readPlanFocusTest(context),
+    focusTest: await readPlanFocusTest(context),
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)

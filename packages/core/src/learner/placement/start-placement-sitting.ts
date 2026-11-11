@@ -4,7 +4,7 @@ import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { completePlacement } from "./_utils/complete-placement";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
-import { openTestSitting, saveTestSummary } from "./_utils/test-sitting";
+import { openTestSitting, syncTestSitting } from "./_utils/test-sitting";
 import { type PlacementSittingInput } from "./focus-test-contract";
 
 export type PlacementSittingResult =
@@ -67,7 +67,7 @@ export async function startPlacementSitting({
 
   await openTestSitting({ goal, now, offer, planId: open.focusTest.planId });
 
-  const opened = await saveTestSummary({
+  const opened = await syncTestSitting({
     goalId,
     plan: sitting ? await loadPlacementPlan(goalId) : plan,
     timeZone,

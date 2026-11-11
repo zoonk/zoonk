@@ -1,9 +1,10 @@
-import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import "server-only";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
+import { loadCurrentTestSummary } from "../../learner/facts/focus-test-summary";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
@@ -51,12 +52,17 @@ export function isPlacementWeek(day: PlacementDay): boolean {
  * Skip goal-creation day: the learner just answered placement, so open with teaching rather than
  * an empty review. An exam goal's sessions follow its Focus test instead of the first week.
  */
-function asksPlacement(day: PlacementDay & { goal: Pick<Goal, "kind"> }) {
+async function asksPlacement(day: PlacementDay & { goal: Pick<Goal, "kind" | "id" | "userId"> }) {
   if (getDay(day) < 1) {
     return false;
   }
 
-  return day.goal.kind === "exam" ? readSessionQuestions(day) === "on" : isPlacementWeek(day);
+  return day.goal.kind === "exam"
+    ? readSessionQuestions({
+        ...day,
+        summary: await loadCurrentTestSummary({ goalId: day.goal.id, userId: day.goal.userId }),
+      }) === "on"
+    : isPlacementWeek(day);
 }
 
 /** Review-only days have no new teaching for placement to skip. */
@@ -99,7 +105,7 @@ export async function loadSessionPlacement({
   const { finalStretchStart, graph, skills, structure } = plan;
 
   if (
-    !asksPlacement(context) ||
+    !(await asksPlacement(context)) ||
     skills.length === 0 ||
     placesNothing({ context, finalStretchStart, isReviewDay })
   ) {

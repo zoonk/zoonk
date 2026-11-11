@@ -1,6 +1,7 @@
-import "server-only";
 import { type Goal } from "@zoonk/db";
+import "server-only";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
+import { readCurrentTestSummary } from "../../../learner/facts/focus-test-summary";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { type TodayFocusTest } from "../../../learner/placement/focus-test-contract";
 import { readTodayFocusTest } from "../../../learner/placement/focus-test-summary";
@@ -15,9 +16,14 @@ export async function loadFocusTestSuggestion({
   localDate: Date;
   timeZone?: string;
 }): Promise<TodayFocusTest | null> {
+  if (goal.kind !== "exam") {
+    return null;
+  }
+
   const suggestion = readTodayFocusTest({
     goal,
     localDate,
+    summary: await readCurrentTestSummary(goal.userId, goal.id),
     timeShort: goal.targetDate !== null,
     timeZone: getAnswerTimeZone({ goal, timeZone }),
   });

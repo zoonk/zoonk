@@ -25,6 +25,7 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
+  now,
   tx = prisma,
 }: {
   /** When a Focus test started, which owes the questions a plan build skipped. */
@@ -37,6 +38,7 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
+  now?: Date;
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
   const plan = await tx.plan.findUnique({
@@ -61,7 +63,8 @@ export async function loadPlanBuild({
   const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    plan.placementPreparedAt === null && Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
+    plan.placementPreparedAt === null &&
+    (now?.getTime() ?? Date.now()) - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);
 
