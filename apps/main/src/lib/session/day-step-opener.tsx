@@ -9,7 +9,7 @@ import {
 import { type DayStep } from "@zoonk/learn/session/types";
 import { createContext, use } from "react";
 import { getStudyLessonHref } from "./lesson-opening";
-import { answerHere, stayingHere } from "./tap-answer";
+import { answerHere, openingHere } from "./tap-answer";
 import { useDayTaps } from "./use-day-taps";
 
 const ShownLearnerContext = createContext<string | null>(null);
@@ -25,7 +25,7 @@ function OpenDayStep({ beforeOpen, children, day, goalId, refresh }: DayStepOpen
   });
 
   const open = async (step: DayStep): Promise<boolean> => {
-    const ready = await answerHere(beforeOpen(), stayingHere(userId));
+    const ready = await answerHere(beforeOpen(), openingHere(userId));
 
     if (typeof ready === "boolean" || !ready.answer) {
       return ready === true;
