@@ -53,6 +53,33 @@ describe(findProductPages, () => {
     });
   });
 
+  it("keeps a release's page only when the learner named a release", async () => {
+    vi.mocked(generateText).mockResolvedValue({
+      ...createGenerateTextResult({
+        brandUrl: null,
+        docsUrl: null,
+        productUrl: null,
+        releaseUrl: "https://lumen.example/blog/orbit-notes-5",
+        releasesUrl: "https://lumen.example/releases",
+      }),
+      sources: [{ url: "https://lumen.example/" }],
+    } as never);
+
+    const unnamed = await findProductPages({ hints: HINTS, officialDomains: ["lumen.example"] });
+
+    const named = await findProductPages({
+      hints: { ...HINTS, release: "Orbit Notes 5" },
+      officialDomains: ["lumen.example"],
+    });
+
+    expect(unnamed.data).toMatchObject({
+      releaseUrl: null,
+      releasesUrl: "https://lumen.example/releases",
+    });
+
+    expect(named.data.releaseUrl).toBe("https://lumen.example/blog/orbit-notes-5");
+  });
+
   it("asks only for the named release's page when the product is known", async () => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({
