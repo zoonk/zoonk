@@ -7950,9 +7950,19 @@ msgid "Nothing to practice yet"
 msgstr "Henüz alıştırma yapacak bir şey yok"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "Kalanlar, aklında daha iyi kalmaları için başka bir gün tekrar gelecek."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "Kalanlarla hâlâ alıştırma yapabilirsin."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx

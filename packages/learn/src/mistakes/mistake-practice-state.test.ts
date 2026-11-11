@@ -4,6 +4,7 @@ import {
   type MistakePracticeSummary,
   type PracticeEntry,
   createPracticeState,
+  getPracticeEndNote,
   getPracticeSegments,
   practiceReducer,
 } from "./mistake-practice-state";
@@ -350,5 +351,31 @@ describe(getPracticeSegments, () => {
       segment,
       "current",
     ]);
+  });
+});
+
+describe(getPracticeEndNote, () => {
+  it("says a miss waits for another day and the mistakes a stopped run never reached are still ready", () => {
+    const practice = [entry("first", {}, 1), entry("second", {}, 1)];
+    const answer = { selectedIndex: 1 };
+
+    const answered = (isCorrect: boolean) =>
+      [
+        { answer, durationMs: 4000, sender: "check", type: "check" },
+        { feedback: { ...graded(`a${isCorrect}`), isCorrect }, mistakeId: "m", type: "answered" },
+        { type: "next" },
+      ] as const;
+
+    const play = (...actions: ReturnType<typeof answered>[number][]) =>
+      actions.reduce(
+        (current, action) => practiceReducer(current, action),
+        createPracticeState(practice),
+      );
+
+    expect(getPracticeEndNote(play())).toBe("unreached");
+    expect(getPracticeEndNote(play(...answered(false)))).toBe("missedAndUnreached");
+    expect(getPracticeEndNote(play(...answered(true)))).toBe("unreached");
+    expect(getPracticeEndNote(play(...answered(false), ...answered(true)))).toBe("missed");
+    expect(getPracticeEndNote(play(...answered(true), ...answered(true)))).toBeNull();
   });
 });

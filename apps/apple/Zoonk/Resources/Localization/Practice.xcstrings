@@ -13490,6 +13490,124 @@
         }
       }
     },
+    "The ones you missed come back another day, when they stick better." : {
+      "comment" : "End of a mistakes practice run with a miss.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les questions que tu as ratées reviennent un autre jour, pour que tu les retiennes mieux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quello che sbagli torna un altro giorno, così ti resta più impresso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te, przy których pojawił się błąd, wrócą innego dnia, żeby łatwiej było je zapamiętać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou volta outro dia, quando fica mais fácil fixar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
+          }
+        }
+      }
+    },
+    "The ones you missed come back another day. The rest are still ready to practice." : {
+      "comment" : "End of a mistakes practice run stopped early after a miss.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu retrouveras un autre jour les erreurs que tu n’as pas corrigées. Tu peux toujours réviser les autres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te z błędną odpowiedzią wrócą innego dnia. Pozostałe nadal możesz przećwiczyć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou volta outro dia. O restante continua disponível para praticar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
+          }
+        }
+      }
+    },
     "The questions were removed" : {
       "comment" : "A checkpoint ended without questions.",
       "localizations" : {
@@ -13608,61 +13726,61 @@
         }
       }
     },
-    "The rest come back another day, when they stick better." : {
-      "comment" : "End of a mistakes practice run with a miss.",
+    "The rest are still ready to practice." : {
+      "comment" : "End of a mistakes practice run stopped early, with no miss.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Rest kommt an einem anderen Tag wieder, damit du ihn dir besser merken kannst."
+            "value" : "Den Rest kannst du weiterhin üben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El resto vuelve otro día para que lo recuerdes mejor."
+            "value" : "El resto aún está disponible para practicar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les autres reviendront un autre jour, pour mieux les retenir."
+            "value" : "Tu peux toujours réviser les autres."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le altre tornano un altro giorno, così ti restano meglio in mente."
+            "value" : "Puoi ancora esercitarti sul resto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "残りの問題は、記憶に定着しやすいように、別の日にまた出題されます。"
+            "value" : "残りの問題は引き続き練習できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나머지 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+            "value" : "나머지 문제는 언제든 연습할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reszta wróci innego dnia, żeby wiedza lepiej się utrwaliła."
+            "value" : "Pozostałe nadal możesz przećwiczyć."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O restante volta outro dia, para você fixar melhor."
+            "value" : "O restante continua disponível para praticar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kalanlar, daha iyi hatırlaman için başka bir gün tekrar karşına çıkacak."
+            "value" : "Kalanlarla hâlâ alıştırma yapabilirsin."
           }
         }
       }
