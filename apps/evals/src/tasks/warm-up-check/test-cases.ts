@@ -215,6 +215,57 @@ export const TEST_CASES: TestCase<WarmUpCheckExpected, WarmUpCheckInput>[] = [
     }),
   },
   {
+    id: "en-spanish-reveal-names-the-wrong-language",
+    ...deck({
+      cards: [
+        card(
+          "In Mexican Spanish, what does 'embarazada' tell you about someone?",
+          "They're embarrassed / They're pregnant ✓ / They're tired",
+          'They\'re pregnant. "Embarazada" looks like "embarrassed," but the English word for that feeling is "avergonzada".',
+          'a false side detail, seen in production: "avergonzada" is the Spanish word for embarrassed, not the English one',
+        ),
+        card(
+          'What does Spanish "éxito" mean?',
+          "Exit / Success ✓ / Excitement",
+          'Success. An exit is "salida", the word on exit signs.',
+        ),
+        card(
+          'In Spanish, a "librería" is where you go to…',
+          "Borrow books / Buy books ✓ / Read the news",
+          'Buy books: it\'s a bookstore. A library is "biblioteca".',
+        ),
+        card(
+          'To say "I\'m 20 years old" in Spanish, you literally say…',
+          '"I have 20 years" ✓ / "I am 20 years" / "I make 20 years"',
+          '"I have 20 years": "Tengo 20 años". Spanish uses "tener", to have, for age.',
+        ),
+        card(
+          'The "ñ" in "año" sounds like…',
+          'The "ny" in "canyon" ✓ / The "n" in "no" / The "ng" in "sing"',
+          'Like the "ny" in "canyon". It\'s its own letter in the Spanish alphabet, right after "n".',
+        ),
+        card(
+          'In Spanish, "actual" means…',
+          "Real / Current ✓ / Exact",
+          'Current, as in "el presidente actual", the current president. For real, Spanish says "real" or "verdadero".',
+        ),
+        card(
+          "Where do the question marks go in a written Spanish question?",
+          "Only at the end / At the start and the end ✓",
+          'At both ends: "¿Cómo estás?" opens with an upside-down mark, so readers know a question is coming.',
+        ),
+        card(
+          'What does "ropa" mean in Spanish?',
+          "Rope / Clothes ✓ / Robe",
+          'Clothes, as in "ropa sucia", dirty laundry. A rope is "cuerda".',
+        ),
+      ],
+      goal: "Spanish",
+      kind: "language",
+      language: "en",
+    }),
+  },
+  {
     id: "en-psychology-misattributed-quote-and-myth",
     ...deck({
       cards: [
