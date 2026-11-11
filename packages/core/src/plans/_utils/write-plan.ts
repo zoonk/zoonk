@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import {
@@ -154,6 +155,8 @@ export async function writePlan({
   if (count === 0) {
     throw new PlanConflictError();
   }
+
+  await clearChangedTestFocus({ areas: plan.state.settings.focusAreas, goal: context.goal, tx });
 
   const goalUpdate = getGoalUpdate({ context, state: plan.state });
 

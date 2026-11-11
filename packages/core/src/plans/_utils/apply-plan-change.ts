@@ -5,6 +5,7 @@ import {
   findOfficialDateConflict,
   loadExamNoticeFacts,
 } from "../../exams/_utils/exam-notice-facts";
+import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { type PlanOperation } from "../plan-contract";
 import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
@@ -140,6 +141,7 @@ async function savePlanState({
       }
 
       await tx.plan.update({ data: { settings: state.settings }, where: { id: context.plan.id } });
+      await clearChangedTestFocus({ areas: state.settings.focusAreas, goal: context.goal, tx });
 
       await replaceWaitingProposals({
         applied: false,

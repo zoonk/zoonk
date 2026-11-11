@@ -80,9 +80,8 @@ async function startRecord({
 }
 
 /**
- * Notes the focus the test put on the plan, in the write that puts it there: the daily time's
- * save, or the learner applying the test's proposal. Takes the learner's lock, which a plan's
- * write may take after its own.
+ * Sets or restores the test's focus ownership in the plan's write. Takes the learner's lock,
+ * which a plan's write may take after its own.
  */
 export async function keepTestFocus({
   areas,
@@ -90,7 +89,7 @@ export async function keepTestFocus({
   tx,
   userId,
 }: {
-  areas: readonly string[];
+  areas: readonly string[] | null;
   goalId: string;
   tx: TransactionClient;
   userId: string;
@@ -98,10 +97,48 @@ export async function keepTestFocus({
   await lockLearner(tx, { lockPlanIds: [], userId });
 
   await changeFocusTestRecord({
-    change: (record) => ({ ...record, focus: [...areas] }),
+    change: (record) => ({ ...record, focus: areas ? [...areas] : null }),
     goalId,
     tx,
   });
+}
+
+async function writeTestRecord({
+  goal,
+  record,
+  tx,
+}: {
+  goal: Pick<Goal, "details" | "id">;
+  record: FocusTestRecord;
+  tx: TransactionClient;
+}): Promise<void> {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  await tx.goal.update({
+    data: { details: { ...details, [FOCUS_TEST_DETAIL]: record } },
+    where: { id: goal.id },
+  });
+}
+
+export async function clearChangedTestFocus({
+  areas,
+  goal,
+  tx,
+}: {
+  areas: readonly string[];
+  goal: Pick<Goal, "id" | "kind">;
+  tx: TransactionClient;
+}): Promise<void> {
+  if (goal.kind !== "exam") {
+    return;
+  }
+
+  const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
+  const record = readFocusTestRecord(current);
+
+  if (record?.focus && !isSameFocus(areas, record.focus)) {
+    await writeTestRecord({ goal: current, record: { ...record, focus: null }, tx });
+  }
 }
 
 /**
@@ -127,12 +164,7 @@ export async function changeFocusTestRecord({
   const after = change(before);
 
   if (!stored || !isDeepStrictEqual(stored, after)) {
-    const details = isJsonObject(goal.details) ? goal.details : {};
-
-    await tx.goal.update({
-      data: { details: { ...details, [FOCUS_TEST_DETAIL]: after } },
-      where: { id: goalId },
-    });
+    await writeTestRecord({ goal, record: after, tx });
   }
 
   return { after, before };

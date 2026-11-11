@@ -13,6 +13,7 @@ import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-uti
 import { settleFocusTestAfterSession } from "./_utils/settle-focus-test";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
+import { NEW_FOCUS_TEST_RECORD, readFocusTestRecord } from "./focus-test-state";
 import { getGoalPlacement } from "./get-goal-placement";
 
 const TIME_ZONE = "UTC";
@@ -140,6 +141,87 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       await expect(read(goal.id)).resolves.toMatchObject({ changes: ["replaced", "proposed"] });
     },
   );
+
+  it("allows an empty plan focus despite stored ownership left by an earlier writer", async () => {
+    const { goal } = await shortPlanExamGoalFixture({
+      goal: {
+        ...SHOWN,
+        details: { ...SHOWN.details, focusTest: { ...NEW_FOCUS_TEST_RECORD, focus: ["Ética"] } },
+      },
+    });
+
+    await expect(sit(goal.id, 1)).resolves.toMatchObject({ state: "proposed" });
+  });
+
+  it("proposes with no focus after the test's earlier applied focus was replaced and removed", async () => {
+    const { goal, plan } = await shortPlanExamGoalFixture({ goal: SHOWN });
+    const focus = await sit(goal.id, 1);
+
+    await expect(
+      decidePlanChange({
+        changeId: focus!.proposal!.id,
+        goalId: goal.id,
+        input: { status: "applied" },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(chooseFocus(goal.id, ["Ética"])).resolves.not.toBe("");
+    const replaced = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: {
+          operations: [
+            { areas: [], kind: "focusAreas" },
+            { kind: "setDailyMinutes", minutes: goal.dailyMinutes },
+          ],
+        },
+        trackAnalytics: false,
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      settings: { focusAreas: [] },
+    });
+
+    await expect(read(goal.id)).resolves.toStrictEqual({
+      changes: ["applied"],
+      focus: "suggested",
+    });
+
+    await expect(sit(goal.id, 0)).resolves.toMatchObject({ state: "proposed" });
+
+    await expect(read(goal.id)).resolves.toStrictEqual({
+      changes: ["applied", "proposed"],
+      focus: "proposed",
+    });
+
+    expect(readFocusTestRecord(replaced)?.focus).toBeNull();
+  });
+
+  it("restores the test's focus ownership when the learner undoes their own replacement", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: SHOWN });
+    const focus = await sit(goal.id, 1);
+
+    await expect(
+      decidePlanChange({
+        changeId: focus!.proposal!.id,
+        goalId: goal.id,
+        input: { status: "applied" },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const own = await chooseFocus(goal.id, ["Ética"]);
+
+    await expect(
+      decidePlanChange({ changeId: own, goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const restored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    expect(readFocusTestRecord(restored)?.focus).toStrictEqual(["Direito", "Português"]);
+  });
 
   it.each(["declined", "undone"] as const)(
     "keeps an in-flight completion from proposing a set the learner just %s",

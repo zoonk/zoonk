@@ -49,6 +49,7 @@ export async function loadFocusProposalFacts({
   const proposes = asks && timeSaved && timeShort;
 
   const focus = record?.focus ?? [];
+  const handPicked = focusAreas.length > 0 && !isSameFocus(focusAreas, focus);
 
   const changes = proposes
     ? await tx.planChange.findMany({
@@ -72,13 +73,13 @@ export async function loadFocusProposalFacts({
     !declined &&
     !statuses.has("proposed") &&
     !isSameFocus(focusAreas, suggested) &&
-    isSameFocus(focusAreas, focus);
+    !handPicked;
 
   return {
     declined,
     due: due ? suggested : null,
     focusAreas,
-    handPicked: focusAreas.length > 0 && !isSameFocus(focusAreas, focus),
+    handPicked,
     timeSaved,
     timeShort,
     waitingId: waiting?.id ?? null,
