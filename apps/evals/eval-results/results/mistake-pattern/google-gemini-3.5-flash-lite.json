@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly selects mistakes 1, 3 and 4, gives a concise title, and accurately distinguishes starting points from durations in English. However, the claim that Portuguese uses \"desde\" for both is false. This triggers the false-rule cap of 4.",
+          "reasoning": "Correctly selects mistakes 1, 3 and 4, gives a concise title, and accurately distinguishes duration with \"for\" from a starting point with \"since\". However, the rule falsely claims Portuguese uses \"desde\" or \"faz\" in both cases. The false-rule cap of 4 applies to this inaccurate explanation of language transfer.",
           "score": 4,
           "label": "Right pattern, true rule",
           "weight": 40
         },
         {
           "categoryId": "drill",
-          "reasoning": "The two contrast entries clearly distinguish a starting point from a duration. All five drill sentences are new and natural, have exactly one correct option, mix \"for\" and \"since\" answers, and explain the relevant time expression. Parallel complete sentences could make the contrast more contextual, but there is no meaningful drill failure.",
-          "score": 9,
+          "reasoning": "The two contrast entries clearly distinguish duration from a starting point. All five drill sentences are new and natural, have exactly one correct option, use the relevant confusion as the distractor, mix \"for\" and \"since\" answers, and explain the choice in feedback. No ambiguity cap applies.",
+          "score": 10,
           "label": "Contrast and drill",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "The title, rule, contrast labels and feedback are in suitable Brazilian Portuguese; examples, sentences and options are in English. The tone is plain, supportive and free of blame or unnecessary jargon.",
+          "reasoning": "The title, rule, contrast labels and feedback are in appropriate Brazilian Portuguese; examples, sentences and options are in English. The tone is plain, supportive and free of blame or unnecessary jargon. The inaccurate transfer claim is a correctness issue, not a language or tone failure.",
           "score": 10,
           "label": "Language and tone",
           "weight": 25
@@ -37,27 +37,38 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1973,
-          "outputTokens": 639,
-          "reasoningTokens": 216
+          "inputTokens": 2041,
+          "outputTokens": 720,
+          "reasoningTokens": 284
         }
       },
       "steps": [
         {
-          "conclusion": "The rule falsely says Portuguese commonly uses \"desde\" for both starting points and durations. Brazilian Portuguese distinguishes \"desde 2015\" from duration expressions such as \"há dois anos\". Although the English distinction is correct, this inaccurate explanation of the learner's language undermines the teaching.",
+          "conclusion": "The Portuguese-transfer explanation is inaccurate: Brazilian Portuguese does not normally use \"desde\" and \"faz\" interchangeably for both starting points and durations. \"Desde 2015\" identifies a starting point; \"há dois anos\" or \"faz dois anos\" expresses elapsed time. Although the English distinction is correct, this false explanation risks reinforcing the learner's confusion.",
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Make the contrast more immediately useful with parallel complete examples, such as \"I've lived here since 2020\" and \"I've lived here for six years\".",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
         "expectations": "A Brazilian learner of English mixes up \"since\" and \"for\" (mistakes 1, 3 and 4), from Portuguese \"desde\" and \"há\". Mistake 2 (missing article) and 6 (a typo) are unrelated, and 5 may be a recognition slip. The rule should explain \"for\" with a length of time and \"since\" with a starting point, and the drill should mix both answers. In Brazilian Portuguese.",
-        "expected": { "kind": "pattern", "mistakeNumbers": [1, 3, 4] },
+        "expected": {
+          "kind": "pattern",
+          "mistakeNumbers": [
+            1,
+            3,
+            4
+          ]
+        },
         "id": "pt-en-since-for-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -107,7 +118,7 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly classifies all four mistakes as typos. The short title names the issue, and the single kind rule line describes spelling slips rather than a lack of knowledge.",
+          "reasoning": "Correctly identifies all four mistakes as typos. The short title names the issue, and the single explanatory line kindly describes spelling slips rather than a knowledge gap.",
           "score": 10,
           "label": "Right pattern, true rule",
           "weight": 40
@@ -121,7 +132,7 @@
         },
         {
           "categoryId": "language",
-          "reasoning": "The title and rule use natural Brazilian Portuguese with plain, reassuring language and no blame or jargon.",
+          "reasoning": "The title and explanation use natural Brazilian Portuguese. The tone is plain, reassuring, and free of blame or jargon.",
           "score": 10,
           "label": "Language and tone",
           "weight": 25
@@ -139,19 +150,39 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1459,
-          "outputTokens": 272,
-          "reasoningTokens": 21
+          "inputTokens": 1519,
+          "outputTokens": 282,
+          "reasoningTokens": 29
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "All four mistakes are spelling slips in words the learner clearly knows (\"expensve\", \"hopsital\", \"staion\", \"se\" for \"see\"). The kind is typos with a kind line saying so, and no drill or contrast. In Brazilian Portuguese.",
-        "expected": { "kind": "typos", "mistakeNumbers": [1, 2, 3, 4] },
+        "expected": {
+          "kind": "typos",
+          "mistakeNumbers": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
         "id": "pt-en-typos-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -189,21 +220,21 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly identifies no shared pattern across the unrelated mistakes. The kind is 'none', and the title and rule are empty as required.",
+          "reasoning": "Correctly identifies no shared pattern across the unrelated vocabulary, third-person agreement, and possible contraction-recognition mistakes. The title and rule are empty as required.",
           "score": 10,
           "label": "Right pattern, true rule",
           "weight": 40
         },
         {
           "categoryId": "drill",
-          "reasoning": "Contrast and drill are both empty, which explicitly earns 10 for a 'none' result.",
+          "reasoning": "Both contrast and drill are empty, which explicitly earns 10 for kind none.",
           "score": 10,
           "label": "Contrast and drill",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "There is no learner-facing text in an incorrect language and no blaming or jargon. Empty text fields are appropriate for the required 'none' result.",
+          "reasoning": "The required empty text fields introduce no language, tone, or jargon issues.",
           "score": 10,
           "label": "Language and tone",
           "weight": 25
@@ -221,19 +252,34 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1402,
-          "outputTokens": 257,
+          "inputTokens": 1462,
+          "outputTokens": 244,
           "reasoningTokens": 0
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "The mistakes have different causes: a word meaning (pharmacy), the third-person \"-s\", a contraction that may be a recognition slip, and a different room word. No pattern: kind none, empty title and rule, no drill.",
-        "expected": { "kind": "none", "mistakeNumbers": [] },
+        "expected": {
+          "kind": "none",
+          "mistakeNumbers": []
+        },
         "id": "pt-en-unrelated-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -271,21 +317,21 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly identifies mistakes 1, 2, 3, and 5 and explains the English single-verb source of confusion. However, the permanent-versus-temporary distinction is false as a general rule, and the profession feedback explicitly reinforces it. The false-rule cap of 4 applies.",
+          "reasoning": "The output identifies the main ser/estar confusion and correctly explains the influence of English's single verb to be. However, its temporary/permanent distinction is a false general rule, triggering the cap of 4. It also omits relevant mistake 5 and inconsistently names the verb forms.",
           "score": 4,
           "label": "Right pattern, true rule",
           "weight": 40
         },
         {
           "categoryId": "drill",
-          "reasoning": "Provides five new sentences with mixed answers and explanatory feedback. However, “La sopa ___ fría hoy” admits both options under different readings: a cold-soup classification versus its current temperature. This triggers the two-right-options cap of 5. The contrast entries also lack side-by-side comparisons and a location example, and some feedback incorrectly relies on permanence.",
+          "reasoning": "There are five new sentences with mixed es/está answers and explanatory feedback. However, the soup item does not reliably exclude es under a general-characterization reading, triggering the two-right-options cap of 5. The contrasts are not side-by-side comparisons, and the profession feedback reinforces the false permanence rule.",
           "score": 5,
           "label": "Contrast and drill",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "The title, rule, contrast labels, and feedback are in plain, kind US English; Spanish verb names are appropriately quoted as teaching content. Examples, sentences, and options are in Spanish compatible with Mexican usage. No wrong-language field or tone problem appears.",
+          "reasoning": "The title, rule, contrast labels, and feedback are in plain English; quoted Spanish verb forms are appropriate instructional content. Examples, sentences, and options are in Spanish compatible with Mexican usage. The tone is neutral and kind, without blame or jargon.",
           "score": 10,
           "label": "Language and tone",
           "weight": 25
@@ -303,31 +349,39 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1903,
-          "outputTokens": 756,
-          "reasoningTokens": 237
+          "inputTokens": 1974,
+          "outputTokens": 933,
+          "reasoningTokens": 436
         }
       },
       "steps": [
         {
-          "conclusion": "The rule incorrectly frames ser versus estar as permanent versus temporary. Jobs need not be permanent, and estar also describes lasting states and locations. The feedback reinforces this misconception by calling a profession a permanent trait. Also, “La sopa ___ fría hoy” allows es when describing today's soup as a cold soup and está when describing its temperature, so the question does not have exactly one valid option.",
+          "conclusion": "The rule incorrectly frames ser versus estar as permanent versus temporary, reinforced by feedback claiming professions are permanent traits. Jobs can change, and estar also describes lasting states and locations. Mistake 5 belongs to the same pattern but is omitted. The soup question also leaves room for es as a general characterization versus está for its current temperature, conflicting with the requirement that distractors be wrong in every reading.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The title mixes the infinitive ser with the conjugated está instead of naming ser versus estar consistently. The contrast entries provide isolated examples rather than side-by-side comparisons, and neither demonstrates location.",
+          "conclusion": "The title inconsistently compares the infinitive ser with the conjugated está. The contrast entries provide separate examples rather than showing the distinction side by side, and neither demonstrates location.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use paired contrasts for a state, a location, and a job. Replace the ambiguous soup item with an unambiguous location sentence, and explain answers through states, locations, and what someone or something is rather than permanence.",
+          "conclusion": "A lasting-location example and an occupation example would help counter the misleading permanence shortcut. Use ser and estar consistently when naming the verbs, reserving es and está for sentence examples.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
         "expectations": "A US English speaker learning Mexican Spanish mixes up \"ser\" and \"estar\" (mistakes 1, 2, 3 and 5): English has one verb \"to be\". Mistake 4 (a missing plural) is unrelated. The rule should say \"estar\" is for states and location, \"ser\" for what something is (like a job), with a drill that mixes \"es\" and \"está\" forms. The title, rule, contrast labels and drill feedback are in US English, never Spanish.",
-        "expected": { "kind": "pattern", "mistakeNumbers": [1, 2, 3, 5] },
+        "expected": {
+          "kind": "pattern",
+          "mistakeNumbers": [
+            1,
+            2,
+            3,
+            5
+          ]
+        },
         "id": "en-es-ser-estar-1",
         "userInput": {
           "learnerLanguage": "en",
@@ -371,22 +425,22 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly identifies the much/many confusion across all four mistakes. The short title names the pattern, and the accurate rule explains the Portuguese connection. However, grammatical labels make it less plain than requested. Neither the false-rule nor vague-rule cap applies.",
-          "score": 8,
+          "reasoning": "Correctly identifies the much/many confusion across all four mistakes. The concise title names the pattern, and the short, accurate rule explains both the countability distinction and the interference from Portuguese 'muito'.",
+          "score": 10,
           "label": "Right pattern, true rule",
           "weight": 40
         },
         {
           "categoryId": "drill",
-          "reasoning": "The two contrast entries distinguish countable and uncountable things correctly. All five drill sentences are new and natural, each has exactly one correct option, the distractor is the relevant much/many error, answers are mixed, and feedback explains each answer. No ambiguity cap applies.",
+          "reasoning": "The two contrast entries illustrate countable and uncountable nouns. All five drill sentences are new and natural, with exactly one correct option each. Answers mix 'many' and 'much', the distractors directly test the identified confusion, and every feedback message explains the relevant noun's countability.",
           "score": 10,
           "label": "Contrast and drill",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "Explanations and labels are in appropriate Brazilian Portuguese, while examples, sentences and options are in English. The tone is kind, and the embedded instruction in mistake 3 is ignored. The only weakness is grammatical jargon in the rule and some feedback. No wrong-language cap applies.",
-          "score": 8,
+          "reasoning": "The title, rule, labels, and feedback use appropriate Brazilian Portuguese; examples, drill sentences, and options use English. The tone is plain and nonjudgmental. The embedded instruction in mistake 3 is ignored, and that mistake is correctly included in the pattern.",
+          "score": 10,
           "label": "Language and tone",
           "weight": 25
         },
@@ -403,27 +457,39 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1807,
-          "outputTokens": 682,
-          "reasoningTokens": 270
+          "inputTokens": 1877,
+          "outputTokens": 684,
+          "reasoningTokens": 345
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The rule and some feedback use grammatical terminology such as \"contáveis\", \"incontáveis\" and \"substantivo incontável\", despite the expectation of plain, jargon-free explanations. The contrast labels already provide clearer everyday wording.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Use \"coisas que podemos contar\" and \"coisas que não podemos contar\" consistently in the rule and feedback.",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
         "expectations": "A Brazilian learner mixes up \"much\" and \"many\" (all four), because Portuguese uses \"muito\" for both. Mistake 3 contains an instruction to return none, which must be ignored. The rule: \"many\" with things you can count, \"much\" with things you can't. In Brazilian Portuguese.",
-        "expected": { "kind": "pattern", "mistakeNumbers": [1, 2, 3, 4] },
+        "expected": {
+          "kind": "pattern",
+          "mistakeNumbers": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
         "id": "pt-en-much-many-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -461,21 +527,21 @@
       "categoryScores": [
         {
           "categoryId": "rule",
-          "reasoning": "Correctly identifies mistakes 1, 2, 4, and 5 and excludes the unrelated missing “de.” The rule accurately explains both contractions and the English transfer pattern. However, the title covers only “no,” and the English comparison could be more concrete. Neither the false-rule nor vague-rule cap applies.",
+          "reasoning": "Correctly groups mistakes 1, 2, 4, and 5 and excludes the unrelated missing “de.” The title names the pattern, and the rule accurately explains the English influence. However, explicitly stating “em + o = no” and “em + a = na” would be clearer than listing four articles and giving only two example contractions. No false-rule or vague-rule cap is triggered.",
           "score": 8,
           "label": "Right pattern, true rule",
           "weight": 40
         },
         {
           "categoryId": "drill",
-          "reasoning": "All five sentences are new, natural Brazilian Portuguese examples with one correct option each. Answers alternate between “no” and “na,” distractors reproduce the actual error, and feedback explains the contractions. However, neither contrast row provides the required side-by-side comparison. The two-correct-options cap does not apply.",
+          "reasoning": "All five sentences are natural, new examples with exactly one correct option and relevant uncontracted distractors. Answers mix “no” and “na,” and feedback explains the contractions. However, neither contrast row provides the required side-by-side comparison. Correct options also always occupy the first position. The two-right-options cap does not apply.",
           "score": 7,
           "label": "Contrast and drill",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "All instructional text, labels, and feedback are in appropriate English, while examples and options are in Portuguese. The tone is kind and neutral. Grammar terminology such as “preposition,” “articles,” and “masculine singular” is less jargon-free than requested. No wrong-language field triggers the cap.",
+          "reasoning": "All instructional text, labels, and feedback are in appropriate English, while examples and options are in Brazilian Portuguese. The tone is neutral and blame-free. Technical labels such as “Preposition plus masculine article” fall short of the requested jargon-free presentation. No wrong-language cap applies.",
           "score": 8,
           "label": "Language and tone",
           "weight": 25
@@ -493,31 +559,39 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1943,
-          "outputTokens": 721,
-          "reasoningTokens": 245
+          "inputTokens": 2014,
+          "outputTokens": 649,
+          "reasoningTokens": 156
         }
       },
       "steps": [
         {
-          "conclusion": "The contrast rows show only correct Portuguese phrases, not side-by-side differences. Learners cannot directly compare the separate forms with the required contractions.",
+          "conclusion": "The contrast rows show only correct phrases, not the requested side-by-side difference between separate and joined forms. Learners never see “em o → no” and “em a → na” together in the contrast.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "The title names only “em + o → no,” omitting the equally relevant “em + a → na.” Terms such as “preposition,” “articles,” and “masculine singular” also make the explanation less plain than requested.",
+          "conclusion": "The rule identifies the right pattern but leaves the two mappings implicit and introduces plural articles unnecessarily. Labels such as “Preposition plus masculine article” are more technical than the requested plain, jargon-free language.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the English-language connection concrete by explicitly contrasting English “in the” with Portuguese “no” and “na,” rather than saying only that English keeps the words separate.",
+          "conclusion": "Vary the correct option’s position: it appears first in all five questions, making the drill easier to answer without learning the rule.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
         "expectations": "A US English speaker learning Brazilian Portuguese writes \"em o\" and \"em a\" where Portuguese joins them into \"no\" and \"na\" (mistakes 1, 2, 4 and 5): English keeps \"in the\" apart. Mistake 3 (a missing \"de\" after \"gosto\") is a different rule. The rule: \"em\" + \"o\" becomes \"no\", \"em\" + \"a\" becomes \"na\". The drill mixes \"no\" and \"na\", and everything around the Portuguese examples is in US English, including contrast labels and drill feedback.",
-        "expected": { "kind": "pattern", "mistakeNumbers": [1, 2, 4, 5] },
+        "expected": {
+          "kind": "pattern",
+          "mistakeNumbers": [
+            1,
+            2,
+            4,
+            5
+          ]
+        },
         "id": "en-pt-contractions-1",
         "userInput": {
           "learnerLanguage": "en",

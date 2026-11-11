@@ -35,19 +35,19 @@
     {
       "steps": [
         {
-          "conclusion": "The can-do line \"Abrir uma planilha em branco no Mac e digitar um valor em uma célula\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "majorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The can-do line \"Abrir uma planilha em branco no Mac e digitar um valor em uma célula\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "minorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The can-do line \"Abrir uma planilha em branco no Mac e digitar um valor em uma célula\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "potentialImprovements",
-          "score": 8.714285714285714
+          "score": 10
         }
       ],
       "testCase": {
@@ -97,19 +97,19 @@
     {
       "steps": [
         {
-          "conclusion": "The description runs 37 words; it should be one sentence.",
+          "conclusion": "Every rule passed.",
           "kind": "majorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The description runs 37 words; it should be one sentence.",
+          "conclusion": "Every rule passed.",
           "kind": "minorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The description runs 37 words; it should be one sentence.",
+          "conclusion": "Every rule passed.",
           "kind": "potentialImprovements",
-          "score": 8.714285714285714
+          "score": 10
         }
       ],
       "testCase": {
@@ -159,19 +159,19 @@
     {
       "steps": [
         {
-          "conclusion": "The can-do line \"Windowsのコマンドプロンプトで Python の一行を実行できる\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "majorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The can-do line \"Windowsのコマンドプロンプトで Python の一行を実行できる\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "minorErrors",
-          "score": 8.714285714285714
+          "score": 10
         },
         {
-          "conclusion": "The can-do line \"Windowsのコマンドプロンプトで Python の一行を実行できる\" should be up to 12 words.",
+          "conclusion": "Every rule passed.",
           "kind": "potentialImprovements",
-          "score": 8.714285714285714
+          "score": 10
         }
       ],
       "testCase": {
@@ -190,17 +190,17 @@
     {
       "steps": [
         {
-          "conclusion": "\"맥에 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
+          "conclusion": "\"맥에서 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
           "kind": "majorErrors",
           "score": 8.714285714285714
         },
         {
-          "conclusion": "\"맥에 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
+          "conclusion": "\"맥에서 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
           "kind": "minorErrors",
           "score": 8.714285714285714
         },
         {
-          "conclusion": "\"맥에 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
+          "conclusion": "\"맥에서 스프레드시트 준비하기\" isn't worded as ko's can-do form.",
           "kind": "potentialImprovements",
           "score": 8.714285714285714
         }
