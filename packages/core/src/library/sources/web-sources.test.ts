@@ -215,16 +215,16 @@ describe(storeWebSource, () => {
       storeWebSource({ ...EDITAL, topic: "exam", url: newUrl() }),
     ]);
 
-    const [lawText, noticeText] = await Promise.all(
-      [law.id, notice.id].map(async (id) => {
-        const stored = await prisma.source.findUniqueOrThrow({ where: { id } });
-        return stored.extractedText ?? "";
-      }),
-    );
+    const [storedLaw, storedNotice] = await Promise.all([
+      prisma.source.findUniqueOrThrow({ where: { id: law.id } }),
+      prisma.source.findUniqueOrThrow({ where: { id: notice.id } }),
+    ]);
+
+    const lawText = storedLaw.extractedText ?? "";
 
     expect(lawText.length).toBeGreaterThan(700_000);
     expect(splitLawArticles(lawText).at(-1)?.heading).toBe("Art. 4000");
-    expect(noticeText).toHaveLength(500_000);
+    expect(storedNotice.extractedText).toHaveLength(500_000);
   });
 });
 
