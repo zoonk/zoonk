@@ -5,7 +5,7 @@ import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { LogOutIcon } from "lucide-react";
 import { revokeCliLoginAction } from "./_actions/revoke-cli-login";
 
-export function RevokeCliLoginForm({ loginId }: { loginId: string }) {
+export function RevokeCliLoginForm({ loginId, person }: { loginId: string; person: string }) {
   const [state, formAction] = useAdminActionState({
     action: revokeCliLoginAction,
     initialState: { error: null, submissionId: 0 },
@@ -15,7 +15,9 @@ export function RevokeCliLoginForm({ loginId }: { loginId: string }) {
     <div className="flex flex-col items-end gap-1">
       <form action={formAction}>
         <input name="loginId" type="hidden" value={loginId} />
-        <AdminActionSubmitButton icon={<LogOutIcon />}>Revoke</AdminActionSubmitButton>
+        <AdminActionSubmitButton icon={<LogOutIcon />}>
+          Revoke<span className="sr-only"> {person}&apos;s login</span>
+        </AdminActionSubmitButton>
       </form>
 
       <span

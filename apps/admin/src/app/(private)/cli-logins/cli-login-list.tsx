@@ -42,7 +42,7 @@ export async function CliLoginList() {
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <RevokeCliLoginForm loginId={login.id} />
+            <RevokeCliLoginForm loginId={login.id} person={login.user.name} />
           </TableCell>
         </TableRow>
       ))}

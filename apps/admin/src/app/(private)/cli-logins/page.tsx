@@ -22,7 +22,9 @@ export default function CliLoginsPage() {
             Each row is one machine logged in with pnpm zoonk login. A login renews itself while
             it&apos;s used and ends after 30 days without use. Revoke a lost machine&apos;s login to
             end it now; the person&apos;s other machines stay logged in, and that machine can log in
-            again.
+            again. A lost machine&apos;s login stops renewing; if you can&apos;t tell which row it
+            is, revoke all of the person&apos;s rows and they log in again on the machines they
+            still have.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
