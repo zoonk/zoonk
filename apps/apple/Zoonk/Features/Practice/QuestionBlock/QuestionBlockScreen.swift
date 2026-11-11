@@ -6,8 +6,8 @@ struct QuestionBlockScreen: View {
   let blockId: String
   var onFinished: ((Components.Schemas.StudyBlockCompletion) -> Void)?
   var onStop: (() async -> Bool)?
-  /// An exam goal's "Not today" on the Focus test's questions; `onGone` leaves a block it emptied.
-  var skipTestQuestions: (() async -> Bool)?
+  /// `onGone` leaves a block it emptied.
+  var skipTestQuestions: SkipTestQuestionsAction?
   var onGone: (() -> Void)?
 
   @Environment(SessionStore.self) private var session
@@ -19,7 +19,7 @@ struct QuestionBlockScreen: View {
     sessionId: String, blockId: String,
     onFinished: ((Components.Schemas.StudyBlockCompletion) -> Void)? = nil,
     onStop: (() async -> Bool)? = nil,
-    skipTestQuestions: (() async -> Bool)? = nil,
+    skipTestQuestions: SkipTestQuestionsAction? = nil,
     onGone: (() -> Void)? = nil
   ) {
     self.sessionId = sessionId
@@ -66,12 +66,12 @@ struct QuestionBlockScreen: View {
   }
 
   /// After it, the block as the day now has it: one left with no questions is gone from the day.
-  private var skipsToday: (@MainActor () async -> Bool)? {
+  private var skipsToday: SkipTestQuestionsAction? {
     guard let skipTestQuestions else {
       return nil
     }
 
-    return {
+    return SkipTestQuestionsAction(goalID: skipTestQuestions.goalID) {
       guard await skipTestQuestions() else {
         return false
       }

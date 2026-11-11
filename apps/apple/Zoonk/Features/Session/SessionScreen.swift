@@ -39,7 +39,7 @@ struct SessionScreen: View {
             return true
           },
           skipTestQuestions: examGoalID.map { goalID in
-            {
+            SkipTestQuestionsAction(goalID: goalID) {
               let skipped = await plans.updateFocusTest(
                 goalId: goalID, FocusTestControls(sessionQuestions: .skippedToday))
 

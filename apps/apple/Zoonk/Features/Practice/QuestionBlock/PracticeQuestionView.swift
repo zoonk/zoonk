@@ -160,9 +160,24 @@ struct QuestionTitle: View {
   }
 }
 
+/// An exam goal's "Not today" on the Focus test's questions in a session. Equal for the same goal,
+/// as SwiftUI's own actions are, so a new closure on each update doesn't redraw what reads it.
+struct SkipTestQuestionsAction: Equatable {
+  let goalID: String
+  let skip: @MainActor () async -> Bool
+
+  /// True when it saved.
+  @MainActor func callAsFunction() async -> Bool {
+    await skip()
+  }
+
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.goalID == rhs.goalID
+  }
+}
+
 extension EnvironmentValues {
-  /// An exam goal's "Not today" on the Focus test's questions in a session: true when it saved.
-  @Entry var skipTestQuestionsToday: (@MainActor () async -> Bool)?
+  @Entry var skipTestQuestionsToday: SkipTestQuestionsAction?
 }
 
 /// Main's `PlacementNote`: a Focus test question in a session, with "Not today" on an exam goal's
@@ -204,7 +219,7 @@ private struct PlacementNote: View {
     }
   }
 
-  private func skip(_ skipToday: @escaping @MainActor () async -> Bool) {
+  private func skip(_ skipToday: SkipTestQuestionsAction) {
     guard !isSkipping else {
       return
     }
