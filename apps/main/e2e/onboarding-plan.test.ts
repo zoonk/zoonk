@@ -80,6 +80,26 @@ test.describe("Placement and the plan", () => {
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.planRevealedAt).not.toBeNull();
   });
+
+  test("Start opens the step tagged to start, not Today", async ({ browser }) => {
+    const { goal, user } = await createStudyDay();
+    const details = isJsonObject(goal.details) ? goal.details : {};
+    const setup = Array.isArray(details.answered) ? details.answered : [];
+
+    await prisma.goal.update({
+      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto(`/start/${goal.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(page).toHaveURL((url) => url.pathname === "/session");
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(saved.planRevealedAt).not.toBeNull();
+  });
 });
 
 test("keeps the learner's time when saving it fails, and saves it on the next try", async ({

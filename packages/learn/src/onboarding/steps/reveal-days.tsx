@@ -162,19 +162,51 @@ function useFormatDay() {
     format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC", weekday: "short" });
 }
 
+function opensFromReveal(block: DayStep): boolean {
+  return !isFinished(block) && !block.waitReason;
+}
+
+/** The step Start opens, as its tagged row does; null sends Start to Today instead. */
+export function findRevealStart(reveal: PlanRevealDays | null): DayStep | null {
+  const session = reveal?.today;
+  const next = session?.blocks.find((block) => block.position === session.nextPosition);
+  return next && opensFromReveal(next) ? next : null;
+}
+
 /**
- * Today's own day, in Today's order: what the learner finished, then where they go on. A tapped row
- * ends the reveal (`markRevealed`) before its step opens, so Today never sends the learner back here.
+ * The reveal's rows and Start open a step through one opener, which ends the reveal
+ * (`markRevealed`) first, so Today never sends the learner back here. Null without a day to open.
  */
-export function RevealToday({
+export function RevealDayOpener({
+  children,
   goalId,
   markRevealed,
   refresh,
   reveal,
 }: {
+  children: (open: ((step: DayStep) => Promise<boolean>) | null) => React.ReactNode;
   goalId: string;
   markRevealed: () => Promise<boolean>;
   refresh: () => void;
+  reveal: PlanRevealDays | null;
+}) {
+  if (!reveal) {
+    return children(null);
+  }
+
+  return (
+    <DayStepOpener beforeOpen={markRevealed} day={reveal.today} goalId={goalId} refresh={refresh}>
+      {children}
+    </DayStepOpener>
+  );
+}
+
+/** Today's own day, in Today's order: what the learner finished, then where they go on. */
+export function RevealToday({
+  open,
+  reveal,
+}: {
+  open: ((step: DayStep) => Promise<boolean>) | null;
   reveal: PlanRevealDays | null;
 }) {
   const t = useExtracted();
@@ -204,21 +236,17 @@ export function RevealToday({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <DayStepOpener beforeOpen={markRevealed} day={session} goalId={goalId} refresh={refresh}>
-        {(open) => (
-          <ListGroup>
-            {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
-              <TodayRow
-                block={block}
-                key={block.position}
-                line={label(block)}
-                onOpen={isFinished(block) || block.waitReason ? null : () => open(block)}
-                tag={block === next ? nextTag : null}
-              />
-            ))}
-          </ListGroup>
-        )}
-      </DayStepOpener>
+      <ListGroup>
+        {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
+          <TodayRow
+            block={block}
+            key={block.position}
+            line={label(block)}
+            onOpen={open && opensFromReveal(block) ? () => open(block) : null}
+            tag={block === next ? nextTag : null}
+          />
+        ))}
+      </ListGroup>
     </PageSection>
   );
 }
