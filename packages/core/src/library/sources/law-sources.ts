@@ -1,9 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { isFileNameTitle } from "./file-name-title";
 import { getSourceValidUntil } from "./freshness-schedule";
 import { type LawRequest, isOfficialSite, toLawKey } from "./law-identity";
 import { getMaxTextLength } from "./parse-document";
+import { retitleFileNameSource } from "./retitle-source";
 import { SOURCE_READ_VERSION } from "./source-contract";
 import {
   type ResearchSourceCandidate,
@@ -37,22 +37,15 @@ export async function recordLawLookup({
   const key = toLawKey(law);
   const checkedAt = new Date();
 
-  await prisma.$transaction(async (tx) => {
-    await tx.lawLookup.upsert({
-      create: { ...key, checkedAt, sourceId },
-      update: { checkedAt, sourceId },
-      where: { lawKey: key },
-    });
-
-    const source = sourceId
-      ? await tx.source.findUnique({ select: { title: true }, where: { id: sourceId } })
-      : null;
-
-    // Learners see the title in citations and statute drills match on it; a file name helps neither.
-    if (sourceId && source && isFileNameTitle(source.title)) {
-      await tx.source.update({ data: { title: law.name }, where: { id: sourceId } });
-    }
+  await prisma.lawLookup.upsert({
+    create: { ...key, checkedAt, sourceId },
+    update: { checkedAt, sourceId },
+    where: { lawKey: key },
   });
+
+  if (sourceId) {
+    await retitleFileNameSource({ sourceId, title: law.name });
+  }
 }
 
 /**

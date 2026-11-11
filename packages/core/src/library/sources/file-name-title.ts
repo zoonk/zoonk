@@ -1,7 +1,15 @@
+function toStem(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\.[a-z]+$/u, "");
+}
+
 /**
- * "L9784" or "l12813.htm": a page's file name standing in for its title, as Planalto titles its law
- * pages. A document's own name has a space, or no digit.
+ * Whether a title is only its page's file name, as Planalto titles "l9784.htm" with "L9784". A
+ * name without spaces can still be a document's own, such as "COVID-19" or a Chinese title.
  */
-export function isFileNameTitle(title: string): boolean {
-  return !/\s/u.test(title.trim()) && /\d/u.test(title);
+export function isFileNameTitle({ title, url }: { title: string; url: string | null }): boolean {
+  const fileName = url ? URL.parse(url)?.pathname.split("/").at(-1) : undefined;
+  return Boolean(fileName) && toStem(title) === toStem(fileName ?? "");
 }

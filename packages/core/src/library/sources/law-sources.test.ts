@@ -73,8 +73,10 @@ describe(recordLawLookup, () => {
   it("names a law stored under its page's file name, and keeps a name already given", async () => {
     const law = lawRequest(uniqueWord());
 
+    const fileName = uniqueWord();
+
     const [fileNamed, named] = await Promise.all([
-      storedLaw({ title: "L9784", word: uniqueWord() }),
+      storedLaw({ title: fileName.toUpperCase(), word: fileName }),
       storedLaw({ title: "Código de Defesa do Consumidor", word: uniqueWord() }),
     ]);
 

@@ -240,7 +240,7 @@ describe(storeWebSource, () => {
     const url = newUrl();
     servePage(noticePage({ questions: 50, token: "a" }));
 
-    const law = { ...EDITAL, topic: "regulation" as const, url };
+    const law = { ...EDITAL, topic: "regulation" as const, url: `${url}/l9784.htm` };
     const source = await storeWebSource({ ...law, title: "L9784" });
     await storeWebSource({ ...law, title: "Lei nº 9.784, de 29 de janeiro de 1999" });
     await storeWebSource({ ...law, title: "L9784" });
@@ -250,6 +250,26 @@ describe(storeWebSource, () => {
     ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
 
     await storeWebSource({ ...law, title: "Lei do Processo Administrativo" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+  });
+
+  it("keeps the first name given to a page stored under its file name when stores race", async () => {
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = { ...EDITAL, topic: "regulation" as const, url: `${newUrl()}/l9784.htm` };
+    const source = await storeWebSource({ ...law, title: "L9784" });
+    const held = holdSourceLock(source.id);
+    const pid = await held.pid;
+
+    const first = storeWebSource({ ...law, title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+    await waitForBlockedStatement(pid, /\bsources\b/u);
+    const second = storeWebSource({ ...law, title: "Lei do Processo Administrativo" });
+    await waitForBlockedStatement(pid, /\bsources\b/u, 2);
+    held.release();
+    await Promise.all([first, second, held.done]);
 
     await expect(
       prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),

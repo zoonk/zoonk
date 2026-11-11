@@ -190,7 +190,7 @@ function scoreSearch({
 /** Learners see a source's title in citations, and statute drills match a law by it. */
 function scoreTitles({ found, scored }: { found: FoundOutput; scored: Score }): Score {
   const fileNames = found.documents.flatMap((document) =>
-    isFileNameTitle(document.title) ? [document.title] : [],
+    isFileNameTitle(document) ? [document.title] : [],
   );
 
   if (fileNames.length === 0) {
