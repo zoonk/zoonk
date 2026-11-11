@@ -45,7 +45,11 @@ export async function loadDocument(document: EvalDocument): Promise<ResearchDocu
 
   const { title, url } = document;
   const fetched = await fetchDocument(url);
-  const parsed = await parseDocument({ bytes: fetched.bytes, contentType: fetched.contentType });
+  const parsed = await parseDocument({
+    bytes: fetched.bytes,
+    charset: fetched.charset,
+    contentType: fetched.contentType,
+  });
   const isPdf = fetched.contentType === "application/pdf";
 
   return {

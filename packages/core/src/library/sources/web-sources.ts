@@ -35,6 +35,7 @@ export async function fetchAndParse(url: string, topic?: SourceTopic) {
 
   const parsed = await parseDocument({
     bytes: document.bytes,
+    charset: document.charset,
     contentType: document.contentType,
     topic,
   });

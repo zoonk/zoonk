@@ -8,6 +8,7 @@ import {
   type SupportedFileType,
   parseOffice,
 } from "officeparser";
+import { decodePage } from "./decode-page";
 import {
   DOCX_CONTENT_TYPE,
   IMAGE_CONTENT_TYPES,
@@ -42,18 +43,6 @@ export type ParsedDocument = { text: string | null; images: DocumentImage[]; pag
 
 function hashContent(content: Uint8Array | string): string {
   return createHash("sha256").update(content).digest("hex");
-}
-
-/**
- * Pages that declare no charset and aren't UTF-8 are windows-1252, as browsers read them: Planalto
- * serves its laws that way.
- */
-function decodeText(bytes: Uint8Array): string {
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-  } catch {
-    return new TextDecoder("windows-1252").decode(bytes);
-  }
 }
 
 export function hashDocument({ bytes, text }: { bytes: Uint8Array; text: string | null }): string {
@@ -162,10 +151,13 @@ async function parseOfficeDocument({
 
 export async function parseDocument({
   bytes,
+  charset,
   contentType,
   topic,
 }: {
   bytes: Uint8Array;
+  /** The charset the response declared, for a fetched page. */
+  charset?: string | null;
   contentType: string;
   topic?: SourceTopic;
 }): Promise<ParsedDocument> {
@@ -173,7 +165,8 @@ export async function parseDocument({
   const fileType = OFFICE_FILE_TYPES[type];
 
   if (fileType === "html") {
-    return parseOfficeDocument({ bytes: Buffer.from(decodeText(bytes)), fileType, topic });
+    const page = Buffer.from(decodePage({ bytes, charset }));
+    return parseOfficeDocument({ bytes: page, fileType, topic });
   }
 
   if (fileType) {
@@ -181,7 +174,7 @@ export async function parseDocument({
   }
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
-    const text = decodeText(bytes);
+    const text = decodePage({ bytes, charset });
 
     return {
       images: [],

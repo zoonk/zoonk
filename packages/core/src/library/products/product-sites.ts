@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { decodePage } from "../sources/decode-page";
 import { fetchDocument } from "../sources/fetch-document";
-import { type PageTags, decodeHtml, readPageTags } from "./page-tags";
+import { type PageTags, readPageTags } from "./page-tags";
 import { toNameKey, toRegistrableDomain } from "./product-keys";
 import { listProductPageIds } from "./product-pages";
 
@@ -161,7 +162,10 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
 
   return {
     domain,
-    tags: readPageTags({ html: decodeHtml(fetched.bytes), url: fetched.url }),
+    tags: readPageTags({
+      html: decodePage({ bytes: fetched.bytes, charset: fetched.charset }),
+      url: fetched.url,
+    }),
     url: fetched.url,
   };
 }
