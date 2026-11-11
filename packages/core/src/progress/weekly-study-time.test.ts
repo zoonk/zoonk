@@ -357,4 +357,36 @@ describe("weekly study time", () => {
       view: { plan: { weekTime: { targetMinutes: 4 + todayMinutes } } },
     });
   });
+
+  it("counts today's planned minutes for a goal without a stored zone in the request's zone", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-01T02:00:00Z"));
+    const user = await userFixture();
+
+    const { goal, planItems, skills } = await sessionGoalFixture({
+      challengesDone: true,
+      goal: { createdAt: daysAgo(10), kind: "exam", timezone: null },
+      userId: user.id,
+    });
+
+    await Promise.all([
+      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+      dueSkillFixture({ skillId: skills[0]?.id ?? "", userId: user.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+
+    const today = await getTodayView({ goalId: goal.id, timeZone: "America/New_York" });
+
+    if (today.status !== "ready") {
+      throw new Error(`Expected ready Today, received ${today.status}`);
+    }
+
+    const { localDate, minutes, week } = today.today.session;
+
+    expect(localDate).toStrictEqual(SESSION_TODAY);
+    expect(minutes.planned).toBeGreaterThan(0);
+    expect(week.time.targetMinutes).toBe(minutes.planned);
+  });
 });

@@ -44,6 +44,7 @@ export async function loadUnstartedDayView({
       loadStudyWeek({
         localDate,
         selectedPlan: { goalId: goal.id, settings: selection.state.settings },
+        timeZone,
         userId,
       }),
       loadBlockSubjects({ blocks, blueprint, goal }),
