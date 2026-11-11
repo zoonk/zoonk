@@ -254,7 +254,7 @@
    * A chart's fourth to sixth series. Blue, violet and pink-red mean something else, so these also
    * step in lightness: each stays apart from the other five for color-blind readers.
    */
-  --viz-series-4: oklch(0.48 0.16 120);
+  --viz-series-4: oklch(0.48 0.13 120);
   --viz-series-5: oklch(0.32 0.03 260);
   --viz-series-6: oklch(0.42 0.12 40);
   /* Grids, axes and construction lines: as faint as a border, but never as strong as the shapes on them. */
