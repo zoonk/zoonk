@@ -242,6 +242,7 @@ class QuestionBlockScreenshots {
         fold: Boolean = false,
         dark: Boolean = false,
         direction: LayoutDirection = LayoutDirection.Ltr,
+        day: Array<Pair<String, Any?>> = emptyArray(),
     ) {
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
@@ -255,6 +256,7 @@ class QuestionBlockScreenshots {
                             "level" to JsonObject(mapOf("color" to JsonPrimitive("yellow"), "level" to JsonPrimitive(3))),
                         ),
                     ),
+                *day,
             )
         val cache =
             AppCache(
@@ -283,6 +285,26 @@ class QuestionBlockScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() = showDone("phone-block-done")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDonePastMidpointCatchingUp() =
+        showDone(
+            "block-past-midpoint-catchup-some",
+            day =
+                arrayOf(
+                    "sessionBar" to JsonObject(mapOf("completed" to JsonPrimitive(5), "total" to JsonPrimitive(8))),
+                    "dayProgress" to
+                        JsonObject(
+                            mapOf(
+                                "catchUp" to JsonObject(mapOf("doneToday" to JsonPrimitive(2), "lessonsLeft" to JsonPrimitive(22))),
+                                "lead" to JsonPrimitive("left"),
+                                "lessonsComing" to JsonPrimitive(false),
+                                "percent" to JsonPrimitive(62),
+                            ),
+                        ),
+                ),
+        )
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")

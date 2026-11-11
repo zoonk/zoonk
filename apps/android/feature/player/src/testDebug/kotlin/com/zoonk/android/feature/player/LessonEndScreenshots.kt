@@ -119,6 +119,63 @@ class LessonEndScreenshots {
     fun phonePlanReveal() = capture("lessonend-plan-reveal-phone", PLAN_REVEAL, LessonEnding(inSession = true))
 
     @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayBeforeMidpoint() = capture("mid-before-midpoint", inSession(DAY_BEFORE_MIDPOINT, completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayPastMidpoint() =
+        capture("past-midpoint", inSession(DAY_PAST_MIDPOINT, completed = 5, total = 8, deferred = 2), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayOpen() = capture("open", inSession(DAY_OPEN, completed = 3, total = 4), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDayComplete() = capture("complete", inSession(DAY_COMPLETE, completed = 8, total = 8, sessionCompleted = true), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpNoneToday() =
+        capture("catchup-none", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 24, today = 0), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpSomeToday() =
+        capture("catchup-some", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 22, today = 2), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneCatchUpNoneLeft() =
+        capture("catchup-zero", inSession(DAY_BEFORE_MIDPOINT.catchUp(left = 0, today = 3), completed = 2, total = 8), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneWelcomeBack() =
+        capture("welcome-back", inSession(DAY_BEFORE_MIDPOINT.replace("25", "16"), completed = 1, total = 6), IN_SESSION_END)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi", fontScale = 2f)
+    fun phoneCatchUpSomeTodayInDarkWithLargeText() =
+        capture(
+            "catchup-some-dark-font200",
+            inSession(DAY_PAST_MIDPOINT.catchUp(left = 22, today = 2), completed = 5, total = 8),
+            IN_SESSION_END,
+            moreContrast = true,
+        )
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookDayPastMidpoint() =
+        capture(
+            "past-midpoint-book",
+            inSession(DAY_PAST_MIDPOINT.catchUp(left = 22, today = 2), completed = 5, total = 8),
+            IN_SESSION_END,
+            fold = true,
+        )
+
+    @Test
     @Config(qualifiers = TABLET)
     fun tabletPlanReveal() = capture("lessonend-plan-reveal-tablet", PLAN_REVEAL, LessonEnding(inSession = true))
 
@@ -233,6 +290,31 @@ private val IN_SESSION =
          "reminderOffer":null,"sessionBar":{"completed":1,"total":3},"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":0,"total":3}
         """.trimIndent(),
     )
+
+private val IN_SESSION_END = LessonEnding(inSession = true)
+
+private const val DAY_BEFORE_MIDPOINT = """{"catchUp":null,"lead":"done","lessonsComing":false,"percent":25}"""
+private const val DAY_PAST_MIDPOINT = """{"catchUp":null,"lead":"left","lessonsComing":false,"percent":62}"""
+private const val DAY_OPEN = """{"catchUp":null,"lead":"open","lessonsComing":true,"percent":null}"""
+private const val DAY_COMPLETE = """{"catchUp":null,"lead":"complete","lessonsComing":false,"percent":100}"""
+
+private fun String.catchUp(
+    left: Int,
+    today: Int,
+) = replace(""""catchUp":null""", """"catchUp":{"doneToday":$today,"lessonsLeft":$left}""")
+
+private fun inSession(
+    dayProgress: String,
+    completed: Int,
+    total: Int,
+    sessionCompleted: Boolean = false,
+    deferred: Int = 0,
+) = IN_SESSION
+    .replace(""""dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33}""", """"dayProgress":$dayProgress""")
+    .replace(
+        """"sessionBar":{"completed":1,"total":3},"sessionCompleted":false""",
+        """"sessionBar":{"completed":$completed,"total":$total},"sessionCompleted":$sessionCompleted""",
+    ).replace(""""deferredLessonsCount":2""", """"deferredLessonsCount":$deferred""")
 
 private val FIT: LessonFit =
     ApiJson.decodeFromString(
