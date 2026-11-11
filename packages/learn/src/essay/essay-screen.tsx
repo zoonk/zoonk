@@ -12,6 +12,7 @@ import { AnswersSaveError } from "../_components/save-error";
 import { focusStepTitle } from "../_components/steps";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { subscribeToDeviceStorage } from "../_utils/device-storage";
 import { isLongText } from "../questions/long-text";
 import { TaskFrame } from "../shell/task-frame";
 import { ClosedEssay } from "./essay-closed";
@@ -27,7 +28,6 @@ import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./e
 import { RewriteGuide } from "./essay-rewrite-guide";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "./essay-status-line";
 import { EssayWordCount } from "./essay-word-count";
-import { subscribeToDeviceStorage } from "../_utils/device-storage";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
 import { useFinishEssay } from "./use-finish-essay";
 
