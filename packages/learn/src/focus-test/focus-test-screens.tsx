@@ -40,7 +40,7 @@ function SittingSize({ facts, minutes }: { facts: readonly string[]; minutes: nu
 
   return (
     <div className="flex flex-col gap-1.5" data-slot="sitting-size">
-      <BigQuantity className="text-[2.5rem] leading-none">{about(minutes)}</BigQuantity>
+      <BigQuantity className="text-4xl leading-none">{about(minutes)}</BigQuantity>
       <TaskMeta facts={facts} />
     </div>
   );
