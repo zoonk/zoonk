@@ -575,7 +575,7 @@ private struct PlanReveal: View {
   @State private var opening: Task<Void, Never>?
   @State private var openingRow: Int?
   @State private var failedRow: Int?
-  @State private var startFailed = false
+  @State private var startFailure: StartFailure?
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
@@ -676,11 +676,19 @@ private struct PlanReveal: View {
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
   private func actions(day: StudyDay?) -> some View {
     VStack(spacing: 10) {
-      if startFailed {
+      switch startFailure {
+      case .save:
         FailureLine(
           message: LocalizedStringResource(
             "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved"))
+      case .open:
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't open this step. Try again.", table: "Today",
+            comment: "Under a step of the day, or a mission, that didn't open"))
+      case nil:
+        EmptyView()
       }
 
       HStack(spacing: 10) {
@@ -785,7 +793,7 @@ private struct PlanReveal: View {
       return
     }
 
-    startFailed = false
+    startFailure = nil
     failedRow = nil
 
     opening = Task {
@@ -796,7 +804,7 @@ private struct PlanReveal: View {
       } catch is CancellationError {
         return
       } catch {
-        startFailed = true
+        startFailure = .save
         return
       }
 
@@ -824,14 +832,14 @@ private struct PlanReveal: View {
       return
     }
 
-    startFailed = false
+    startFailure = nil
     failedRow = nil
     openingRow = fromStart ? nil : block.position
     let shown = router.shown
 
-    func fail() {
+    func fail(_ failure: StartFailure) {
       if fromStart {
-        startFailed = true
+        startFailure = failure
       } else {
         failedRow = block.position
       }
@@ -848,7 +856,7 @@ private struct PlanReveal: View {
       } catch is CancellationError {
         return
       } catch {
-        fail()
+        fail(.save)
         return
       }
 
@@ -874,11 +882,16 @@ private struct PlanReveal: View {
         router.showRoot(of: .today)
         router.openStudy(destination)
       case .failed:
-        fail()
+        fail(.open)
       case .done, .obsolete:
         break
       }
     }
+  }
+
+  private enum StartFailure {
+    case save
+    case open
   }
 
   /// The goal as the plan's sections read it; the summary has it only once it refreshes.
