@@ -8,6 +8,7 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import {
   ListGroup,
   ListRow,
@@ -152,7 +153,9 @@ function SuggestedFocus({
   const t = useExtracted();
   const intro = useFocusIntro();
   const space = useSentenceSpace();
+  const [applied, setApplied] = useState(false);
   const changesFocus = plan && (focus.state === "current" || focus.state === "handPicked");
+  const followsImportance = focus.basis === "importance";
 
   if (focus.rows.length === 0) {
     return null;
@@ -162,20 +165,25 @@ function SuggestedFocus({
     <PageSection>
       <PageSectionTitle>{t("Suggested focus")}</PageSectionTitle>
 
-      <p className={SECTION_NOTE_CLASS}>
-        {intro(focus.state)}
-        {focus.basis === "importance" && (
-          <>
-            {space}
-            {t("For now, this follows mainly what counts most in your exam.")}
-          </>
-        )}
-      </p>
+      {(!applied || followsImportance) && (
+        <p className={SECTION_NOTE_CLASS}>
+          {!applied && intro(focus.state)}
+          {!applied && followsImportance && space}
+          {followsImportance && t("For now, this follows mainly what counts most in your exam.")}
+        </p>
+      )}
 
       <FocusRows rows={focus.rows} />
 
       {plan && focus.state === "proposed" && focus.proposal && (
-        <FocusProposal onAnswered={onProposalAnswered} plan={plan} proposal={focus.proposal} />
+        <FocusProposal
+          onAnswered={(decision) => {
+            setApplied(decision === "applied");
+            onProposalAnswered?.();
+          }}
+          plan={plan}
+          proposal={focus.proposal}
+        />
       )}
 
       {changesFocus && (

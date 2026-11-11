@@ -68,7 +68,7 @@ export function FocusProposal({
   plan,
   proposal,
 }: {
-  onAnswered?: () => void;
+  onAnswered?: (decision: Decision) => void;
   plan: FocusTestPlanActions;
   proposal: Proposal;
 }) {
@@ -89,7 +89,7 @@ export function FocusProposal({
 
       if (change) {
         setAnswered({ change, decision: status });
-        onAnswered?.();
+        onAnswered?.(status);
       }
     });
   };
