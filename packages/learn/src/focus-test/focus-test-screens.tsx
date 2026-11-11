@@ -289,6 +289,7 @@ export function FocusTestCheckpoint({
         focusTest={focusTest}
         onProposalAnswered={() => setProposalAnswered(true)}
         plan={plan}
+        proposalAnswered={proposalAnswered}
       />
 
       <OnboardingFooter>

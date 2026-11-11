@@ -8,7 +8,6 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import {
   ListGroup,
   ListRow,
@@ -151,15 +150,17 @@ function SuggestedFocus({
   focus,
   onProposalAnswered,
   plan,
+  proposalAnswered,
 }: {
   focus: FocusTestFocus;
-  onProposalAnswered?: () => void;
+  onProposalAnswered: () => void;
   plan: FocusTestPlanActions | null;
+  /** The answer's own line says where the plan stands, so the intro written for the offer goes. */
+  proposalAnswered: boolean;
 }) {
   const t = useExtracted();
   const intro = useFocusIntro();
   const space = useSentenceSpace();
-  const [applied, setApplied] = useState(false);
 
   const changesFocus =
     plan &&
@@ -175,10 +176,10 @@ function SuggestedFocus({
     <PageSection>
       <PageSectionTitle>{t("Suggested focus")}</PageSectionTitle>
 
-      {(!applied || followsImportance) && (
+      {(!proposalAnswered || followsImportance) && (
         <p className={SECTION_NOTE_CLASS}>
-          {!applied && intro(focus.state)}
-          {!applied && followsImportance && space}
+          {!proposalAnswered && intro(focus.state)}
+          {!proposalAnswered && followsImportance && space}
           {followsImportance && t("For now, this follows mainly what counts most in your exam.")}
         </p>
       )}
@@ -186,14 +187,7 @@ function SuggestedFocus({
       <FocusRows rows={focus.rows} />
 
       {plan && focus.state === "proposed" && focus.proposal && (
-        <FocusProposal
-          onAnswered={(decision) => {
-            setApplied(decision === "applied");
-            onProposalAnswered?.();
-          }}
-          plan={plan}
-          proposal={focus.proposal}
-        />
+        <FocusProposal onAnswered={onProposalAnswered} plan={plan} proposal={focus.proposal} />
       )}
 
       {changesFocus && (
@@ -211,11 +205,13 @@ function SuggestedFocus({
 export function FocusTestResult({
   focusTest,
   onProposalAnswered,
-  plan = null,
+  plan,
+  proposalAnswered,
 }: {
   focusTest: FocusTestView;
-  onProposalAnswered?: () => void;
-  plan?: FocusTestPlanActions | null;
+  onProposalAnswered: () => void;
+  plan: FocusTestPlanActions | null;
+  proposalAnswered: boolean;
 }) {
   const sessionQuestionsNote = useSessionQuestionsNote();
   const { checkpoint, sessionQuestions, subjects } = focusTest;
@@ -232,6 +228,7 @@ export function FocusTestResult({
           focus={checkpoint.focus}
           onProposalAnswered={onProposalAnswered}
           plan={plan}
+          proposalAnswered={proposalAnswered}
         />
       )}
 
