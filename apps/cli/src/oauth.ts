@@ -1,13 +1,14 @@
-import { type StoredLogin } from "./credentials.ts";
-import { CliError } from "./errors.ts";
-import { type HttpResult, isRecord, postForm } from "./http.ts";
+import { secureUrl } from "./api-origin.ts";
+import { type StoredLogin, isPlainToken } from "./credentials.ts";
+import { type HttpResult, isRecord, postForm, unexpectedResponse } from "./http.ts";
 
 const CLIENT_ID = "zoonk-cli";
 const SCOPE = "staff:read offline_access";
 const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 /** RFC 8628 section 3.2: clients poll every 5 seconds when the server names no interval. */
 const DEFAULT_POLL_SECONDS = 5;
-const FIRST_SERVER_ERROR = 500;
+const OAUTH_ERROR_PATTERN = /^[a-z_]{1,64}$/u;
+const USER_CODE_PATTERN = /^[\w-]{1,64}$/u;
 
 const ENDPOINTS = {
   deviceCode: "/v1/auth/device/code",
@@ -24,14 +25,12 @@ export type DeviceCode = {
   verificationUriComplete?: string;
 };
 
+/** `error` is the OAuth error code, or the HTTP status when the answer names none. */
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
 
-function unexpectedResponse(result: HttpResult): CliError {
-  return new CliError(`The server answered with an unexpected response (HTTP ${result.status}).`);
-}
-
 function oauthError(result: HttpResult): string | null {
-  return isRecord(result.body) && typeof result.body.error === "string" ? result.body.error : null;
+  const error = isRecord(result.body) ? result.body.error : null;
+  return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
 }
 
 function toLogin(result: HttpResult): StoredLogin {
@@ -39,8 +38,8 @@ function toLogin(result: HttpResult): StoredLogin {
 
   if (
     !isRecord(body) ||
-    typeof body.access_token !== "string" ||
-    typeof body.refresh_token !== "string" ||
+    !isPlainToken(body.access_token) ||
+    !isPlainToken(body.refresh_token) ||
     typeof body.expires_in !== "number"
   ) {
     throw unexpectedResponse(result);
@@ -58,13 +57,7 @@ function toTokenResult(result: HttpResult): TokenResult {
     return { login: toLogin(result), ok: true };
   }
 
-  const error = oauthError(result);
-
-  if (!error) {
-    throw unexpectedResponse(result);
-  }
-
-  return { error, ok: false };
+  return { error: oauthError(result) ?? `HTTP ${result.status}`, ok: false };
 }
 
 export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
@@ -73,14 +66,20 @@ export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
     scope: SCOPE,
   });
 
-  const body = result.body;
+  const body = isRecord(result.body) ? result.body : {};
+  const verificationUri = secureUrl(body.verification_uri);
+  const verificationUriComplete = secureUrl(body.verification_uri_complete);
+
+  const hasUnsafeCompleteUri =
+    body.verification_uri_complete !== undefined && !verificationUriComplete;
 
   if (
     !result.ok ||
-    !isRecord(body) ||
     typeof body.device_code !== "string" ||
     typeof body.user_code !== "string" ||
-    typeof body.verification_uri !== "string" ||
+    !USER_CODE_PATTERN.test(body.user_code) ||
+    !verificationUri ||
+    hasUnsafeCompleteUri ||
     typeof body.expires_in !== "number"
   ) {
     throw unexpectedResponse(result);
@@ -91,11 +90,8 @@ export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
     expiresInSeconds: body.expires_in,
     intervalSeconds: typeof body.interval === "number" ? body.interval : DEFAULT_POLL_SECONDS,
     userCode: body.user_code,
-    verificationUri: body.verification_uri,
-    verificationUriComplete:
-      typeof body.verification_uri_complete === "string"
-        ? body.verification_uri_complete
-        : undefined,
+    verificationUri: verificationUri.href,
+    verificationUriComplete: verificationUriComplete?.href,
   };
 }
 
@@ -128,10 +124,6 @@ export async function refreshLogin({
     refresh_token: refreshToken,
   });
 
-  if (result.status >= FIRST_SERVER_ERROR) {
-    throw unexpectedResponse(result);
-  }
-
   return toTokenResult(result);
 }
 
@@ -142,14 +134,12 @@ export async function revokeLogin({
 }: {
   origin: string;
   refreshToken: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const result = await postForm(new URL(ENDPOINTS.revoke, origin), {
     client_id: CLIENT_ID,
     token: refreshToken,
     token_type_hint: "refresh_token",
-  });
+  }).catch(() => null);
 
-  if (result.status >= FIRST_SERVER_ERROR) {
-    throw unexpectedResponse(result);
-  }
+  return result?.ok === true;
 }
