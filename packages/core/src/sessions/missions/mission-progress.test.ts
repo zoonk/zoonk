@@ -1,5 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   studySessionBlockFixture,
@@ -7,9 +9,118 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { STUDY_SESSION_INCLUDE } from "../_utils/study-session-access";
 import { toBlockPayload } from "../block-payload";
 import { getDayMissions } from "./get-day-missions";
+
+async function readMissions(sessionId: string) {
+  return getDayMissions({
+    session: await prisma.studySession.findUniqueOrThrow({
+      include: STUDY_SESSION_INCLUDE,
+      where: { id: sessionId },
+    }),
+    timeZone: "UTC",
+  });
+}
+
+async function goalActivityFixture({
+  goalId,
+  skillId,
+  userId,
+}: {
+  goalId: string;
+  skillId: string | undefined;
+  userId: string;
+}) {
+  const thread = await prisma.lessonQuestionThread.create({
+    data: { goalId, kind: "plan", userId },
+  });
+
+  await Promise.all([
+    prisma.lessonQuestion.create({
+      data: {
+        contextKind: "lesson",
+        contextSnapshot: {},
+        goalId,
+        question: "Why?",
+        requestFingerprint: crypto.randomUUID(),
+        requestId: crypto.randomUUID(),
+        threadId: thread.id,
+      },
+    }),
+    prisma.languageConversation.create({
+      data: {
+        endedAt: new Date(),
+        goalId,
+        kind: "practice",
+        language: "en",
+        level: "A2",
+        minutes: 5,
+        scenario: {},
+        spokenSeconds: 60,
+        startedAt: new Date(),
+        status: "completed",
+        targetLanguage: "es",
+        titleSnapshot: "At the market",
+        userId,
+      },
+    }),
+    learningEventFixture({ goalId, kind: "review", lessonKind: "pronunciationReview", userId }),
+    mistakeFixture({ fixedAt: new Date(), skillId, status: "fixed", userId }),
+  ]);
+}
+
+describe("progress of missions done outside the day's blocks", () => {
+  it("counts only the session's own goal's activity", async () => {
+    const user = await userFixture();
+
+    const [mine, other] = await Promise.all([
+      learnerGoalFixture({ phases: [1], userId: user.id }),
+      learnerGoalFixture({ phases: [1], userId: user.id }),
+    ]);
+
+    const missions = {
+      picks: [
+        { anchor: {}, kind: "askBuddy", total: 1 },
+        { anchor: {}, kind: "call", total: 1 },
+        { anchor: {}, kind: "pronunciation", total: 1 },
+        { anchor: {}, kind: "fixMistake", total: 1 },
+      ],
+      version: 1,
+    };
+
+    const [mineDay, otherDay] = await Promise.all([
+      studySessionFixture({ goalId: mine.goal.id, missions, userId: user.id }),
+      studySessionFixture({ goalId: other.goal.id, missions, userId: user.id }),
+    ]);
+
+    await goalActivityFixture({
+      goalId: mine.goal.id,
+      skillId: mine.skills[0]?.id,
+      userId: user.id,
+    });
+
+    const [mineMissions, otherMissions] = await Promise.all([
+      readMissions(mineDay.id),
+      readMissions(otherDay.id),
+    ]);
+
+    expect(mineMissions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
+      ["askBuddy", "done"],
+      ["call", "done"],
+      ["pronunciation", "done"],
+      ["fixMistake", "done"],
+    ]);
+
+    expect(otherMissions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
+      ["askBuddy", "todo"],
+      ["call", "todo"],
+      ["pronunciation", "todo"],
+      ["fixMistake", "todo"],
+    ]);
+  });
+});
 
 describe("progress of saved plan-anchored missions", () => {
   it.each([

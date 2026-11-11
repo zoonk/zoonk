@@ -8,7 +8,7 @@ import { isCurrentSession } from "../_utils/current-session";
 import { STUDY_SESSION_INCLUDE } from "../_utils/study-session-access";
 import { type MissionCompletionSource, settleMissions } from "./settle-missions";
 
-/** Internal: a committed learner activity can finish any goal's offered mission, without ending its session. */
+/** Internal: a committed learner activity can finish its goal's offered missions, without ending its session. */
 export async function settleLearnerMissions({
   userId,
   timeZone,

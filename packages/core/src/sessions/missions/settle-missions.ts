@@ -27,7 +27,7 @@ import {
   type MissionPick,
   readMissionDocument,
 } from "./catalog";
-import { getDayMissions, hasDayMissionBonus } from "./get-day-missions";
+import { getDayMissions } from "./get-day-missions";
 import { findSourceLink, isLinkedSourceMission } from "./linked-call-mission";
 
 export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSource"]>;
@@ -270,9 +270,7 @@ export async function settleMissions({
         });
       }
 
-      const fullMealDue =
-        isFullMeal(missions) &&
-        !(await hasDayMissionBonus({ client: tx, now: lock.completedAt, session, timeZone }));
+      const fullMealDue = isFullMeal(missions) && session.fullMealAt === null;
 
       const settled = {
         blockResult: await keepBlockMissionResult(tx, {

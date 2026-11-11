@@ -1,6 +1,11 @@
 import "server-only";
 import { type Sql, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import {
+  type GoalPlan,
+  getMemberSkillIds,
+  loadGoalPlan,
+} from "../../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type DayBlockInput, toDayBlockView } from "../_utils/day-block-view";
 import { getStoredBlockWait } from "../block-wait";
@@ -10,7 +15,12 @@ import { type MissionPick } from "./catalog";
 import { getMissionBlocks } from "./mission-blocks";
 import { getBlockTitle, getMissionMinutes } from "./mission-time";
 
-export type MissionDay = { blocks: readonly DayBlockInput[]; localDate: Date; userId: string };
+export type MissionDay = {
+  blocks: readonly DayBlockInput[];
+  goalId: string | null;
+  localDate: Date;
+  userId: string;
+};
 
 const DAY_PROGRESS_KINDS: readonly MissionPick["kind"][] = [
   "askBuddy",
@@ -36,11 +46,12 @@ type DayProgressRow = {
   patterns: string[];
   pronunciation: number;
   questions: number;
-  usage: number;
 };
 
+/** Each goal's missions count only that goal's activity. */
 export type DayProgressQuery = {
   from: Date;
+  goalId: string | null;
   kinds: readonly MissionPick["kind"][];
   to: Date;
   userId: string;
@@ -49,19 +60,40 @@ export type DayProgressQuery = {
 /** A GET's request-wide day progress; without it, it's read fresh. */
 export type DayProgressReader = (query: DayProgressQuery) => Promise<DayProgressRow | undefined>;
 
+/** A goal's mistakes are the ones on its skills, as its notebook lists them. */
+async function loadMistakeSkillIds({
+  goalId,
+  kinds,
+  readPlan,
+}: {
+  goalId: string | null;
+  kinds: ReadonlySet<MissionPick["kind"]>;
+  readPlan: (goalId: string) => Promise<GoalPlan>;
+}): Promise<string[]> {
+  if (!goalId || !kinds.has("fixMistake")) {
+    return [];
+  }
+
+  const plan = await readPlan(goalId);
+  return getMemberSkillIds(plan.skills);
+}
+
 export async function queryDayProgress(
   client: TransactionClient,
-  { from, kinds: queried, to, userId }: DayProgressQuery,
+  { from, goalId, kinds: queried, to, userId }: DayProgressQuery,
+  readPlan: (goalId: string) => Promise<GoalPlan> = (id) =>
+    loadGoalPlan(id, undefined, { tx: client }),
 ): Promise<DayProgressRow | undefined> {
   const kinds = new Set(queried);
   const counted = (kind: MissionPick["kind"], query: Sql) => (kinds.has(kind) ? query : sql`0`);
+  const skillIds = await loadMistakeSkillIds({ goalId, kinds, readPlan });
 
   const [row] = await client.$queryRaw<DayProgressRow[]>`
     SELECT
       ${counted(
         "fixMistake",
         sql`(SELECT count(*) FROM mistakes WHERE user_id = ${userId}::uuid AND status = 'fixed'
-          AND fixed_at >= ${from} AND fixed_at < ${to})`,
+          AND skill_id = ANY(${skillIds}::uuid[]) AND fixed_at >= ${from} AND fixed_at < ${to})`,
       )}::int AS fixed,
       ${
         kinds.has("pattern")
@@ -72,23 +104,21 @@ export async function queryDayProgress(
       ${counted(
         "pronunciation",
         sql`(SELECT count(*) FROM learning_events WHERE user_id = ${userId}::uuid
-          AND lesson_kind = 'pronunciationReview' AND ended_at >= ${from} AND ended_at < ${to})`,
+          AND goal_id = ${goalId}::uuid AND lesson_kind = 'pronunciationReview'
+          AND ended_at >= ${from} AND ended_at < ${to})`,
       )}::int AS pronunciation,
       ${counted(
         "call",
         sql`(SELECT count(*) FROM language_conversations WHERE user_id = ${userId}::uuid
-          AND status = 'completed' AND spoken_seconds > 0 AND ended_at >= ${from} AND ended_at < ${to})`,
+          AND goal_id = ${goalId}::uuid AND status = 'completed' AND spoken_seconds > 0
+          AND ended_at >= ${from} AND ended_at < ${to})`,
       )}::int AS calls,
       ${counted(
         "askBuddy",
         sql`(SELECT count(*) FROM lesson_questions q JOIN lesson_question_threads t ON t.id = q.thread_id
-          WHERE t.user_id = ${userId}::uuid AND q.created_at >= ${from} AND q.created_at < ${to})`,
-      )}::int AS questions,
-      ${counted(
-        "askBuddy",
-        sql`(SELECT count(*) FROM usage_records WHERE user_id = ${userId}::uuid
-          AND kind = 'tutor_message' AND created_at >= ${from} AND created_at < ${to})`,
-      )}::int AS usage`;
+          WHERE t.user_id = ${userId}::uuid AND q.goal_id = ${goalId}::uuid
+          AND q.created_at >= ${from} AND q.created_at < ${to})`,
+      )}::int AS questions`;
 
   return row;
 }
@@ -117,13 +147,13 @@ async function loadDayProgress({
   // A running session keeps its day across midnight; its completion still feeds that day's picks.
   const to = through && through >= nextDay ? new Date(through.getTime() + 1) : nextDay;
   const kinds = new Set(picks.map((pick) => pick.kind));
-  const userId = session.userId;
+  const { goalId, userId } = session;
 
   if (!DAY_PROGRESS_KINDS.some((kind) => kinds.has(kind))) {
     return { calls: 0, fixed: 0, patterns: new Set(), pronunciation: 0, questions: 0 };
   }
 
-  const query = { from, kinds: [...kinds].toSorted(), to, userId };
+  const query = { from, goalId, kinds: [...kinds].toSorted(), to, userId };
   const row = await (readProgress ? readProgress(query) : queryDayProgress(client, query));
 
   return {
@@ -131,7 +161,7 @@ async function loadDayProgress({
     fixed: row?.fixed ?? 0,
     patterns: new Set(row?.patterns),
     pronunciation: row?.pronunciation ?? 0,
-    questions: Math.max(row?.questions ?? 0, row?.usage ?? 0),
+    questions: row?.questions ?? 0,
   };
 }
 
