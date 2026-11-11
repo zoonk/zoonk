@@ -565,7 +565,7 @@ fun categoryLabels(
     width: (String) -> Float,
 ): CategoryLabels {
     val widestWord = categories.flatMap(::labelWords).maxOfOrNull { width(it.trim()) } ?: band
-    val step = ceil(widestWord / band).toInt().coerceAtLeast(1)
+    val step = ceil(widestWord / band).toInt().coerceIn(1, max(categories.size, 1))
     return CategoryLabels(categories.map { wrapLabel(it, band * step, width) }, step)
 }
 
@@ -586,16 +586,38 @@ private val LABEL_BREAK = Regex("(?<=[\\s-])")
 
 private fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
 
+/** Wraps at spaces and hyphens; only a word wider than the whole room breaks between letters. */
 private fun wrapLabel(
     label: String,
     room: Float,
     width: (String) -> Float,
 ): List<String> =
     labelWords(label)
+        .flatMap { breakWord(it, room, width) }
         .fold(emptyList<String>()) { lines, word ->
             val line = lines.lastOrNull()
             if (line != null && width((line + word).trim()) <= room) lines.dropLast(1) + (line + word) else lines + word
         }.map(String::trim)
+
+private fun breakWord(
+    word: String,
+    room: Float,
+    width: (String) -> Float,
+): List<String> =
+    if (width(word.trim()) <= room) {
+        listOf(word)
+    } else {
+        word.fold(emptyList()) { pieces, character ->
+            val piece = pieces.lastOrNull()
+            if (piece != null &&
+                width((piece + character).trim()) <= room
+            ) {
+                pieces.dropLast(1) + (piece + character)
+            } else {
+                pieces + character.toString()
+            }
+        }
+    }
 
 @Composable
 private fun TimelineVisual(

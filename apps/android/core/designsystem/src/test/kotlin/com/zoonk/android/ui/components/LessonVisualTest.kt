@@ -51,6 +51,16 @@ class LessonVisualTest {
     }
 
     @Test
+    fun aWordWiderThanTheWholeChartBreaksBetweenLettersInsideIt() {
+        val word = "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz"
+        val labels = categoryLabels(20f, listOf(word, "B"), width)
+
+        assertEquals(2, labels.step)
+        assertEquals(word, labels.lines.first().joinToString(""))
+        assertTrue(labels.lines.first().all { width(it) <= 40f })
+    }
+
+    @Test
     fun lineChartNamesWrapThenSkipWhenAWordDoesntFit() {
         assertEquals(
             CategoryLabels(listOf(listOf("North", "America"), listOf("South-", "East", "Asia")), 1),
