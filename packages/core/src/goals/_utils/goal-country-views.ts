@@ -5,7 +5,11 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
 import { type GoalContentCountry, type GoalCountryFields } from "../country-contract";
 import { toContentCountryView, toCountryChoice } from "./content-country-view";
-import { getCountrySuggestions, loadRecentCountries } from "./country-suggestions";
+import {
+  type RecentCountries,
+  getCountrySuggestions,
+  loadRecentCountries,
+} from "./country-suggestions";
 
 function getSource(details: Goal["details"]): GoalContentCountry["source"] {
   const source = isJsonObject(details) ? details.contentCountrySource : null;
@@ -23,7 +27,7 @@ function toGoalCountries({
   goal: Goal;
   homeCountry: string | null;
   rebuild: GoalContentCountry["rebuild"];
-  recent: Awaited<ReturnType<typeof loadRecentCountries>>;
+  recent: RecentCountries;
 }): GoalCountryFields {
   const { language } = goal;
   const own = getLanguageCountry(language);
@@ -75,12 +79,15 @@ function toGoalCountries({
   };
 }
 
+/** GET callers pass `readRecentCountries`; writes read the goals fresh. */
 export async function loadGoalCountryViews({
   goals,
   profile,
+  readRecentCountries = loadRecentCountries,
 }: {
   goals: readonly Goal[];
   profile?: UserLearningProfile | null;
+  readRecentCountries?: typeof loadRecentCountries;
 }) {
   const userId = goals[0]?.userId;
 
@@ -90,7 +97,7 @@ export async function loadGoalCountryViews({
 
   const [savedProfile, recent, rebuilds] = await Promise.all([
     profile === undefined ? prisma.userLearningProfile.findUnique({ where: { userId } }) : profile,
-    loadRecentCountries(userId),
+    readRecentCountries(userId),
     prisma.followUp.findMany({
       select: { failedAt: true, input: true, key: true },
       where: { key: { in: goals.map((goal) => goal.id) }, kind: "rebuildGoalCurriculum", userId },

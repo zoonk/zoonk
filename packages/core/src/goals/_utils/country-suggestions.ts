@@ -23,9 +23,9 @@ export async function loadRecentCountries(userId: string) {
   });
 }
 
-function recentCountry(
-  goal: Awaited<ReturnType<typeof loadRecentCountries>>[number],
-): string | null {
+export type RecentCountries = Awaited<ReturnType<typeof loadRecentCountries>>;
+
+function recentCountry(goal: RecentCountries[number]): string | null {
   if (goal.examBlueprint?.country || goal.contentCountry) {
     return goal.examBlueprint?.country ?? goal.contentCountry;
   }
@@ -49,7 +49,7 @@ export function getCountrySuggestions({
   goalId?: string;
   homeCountry: string | null;
   language: string;
-  recent: Awaited<ReturnType<typeof loadRecentCountries>>;
+  recent: RecentCountries;
 }): SuggestedCountry[] {
   const earlier = [
     ...new Set(

@@ -13,6 +13,7 @@ import { getQuickTestMinutes } from "../../language/level-test/level-test-contra
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readLearningProfile } from "../../learner/facts/learning-profile";
 import { readProfileQuestionState } from "../../learner/facts/profile-questions";
+import { readRecentCountries } from "../../learner/facts/recent-countries";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readWarmUpState } from "../../library/warm-ups/claim-warm-up";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
@@ -134,7 +135,11 @@ export async function getOnboarding({
 
   const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp, profileState] =
     await Promise.all([
-      findLearningProfileView(userId, readLearningProfile(userId)),
+      findLearningProfileView({
+        knownProfile: readLearningProfile(userId),
+        readRecentCountries,
+        userId,
+      }),
       findActiveGoalId(userId),
       findOnboardingGoalIds(goal),
       findExamNotice({ details, goal, goalDate, today }),
@@ -146,7 +151,12 @@ export async function getOnboarding({
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
-    loadGoalViews({ activeGoalId, goals: [goal], readSubscription: readActiveSubscription }),
+    loadGoalViews({
+      activeGoalId,
+      goals: [goal],
+      readRecentCountries,
+      readSubscription: readActiveSubscription,
+    }),
   ]);
 
   if (!view) {

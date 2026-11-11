@@ -148,5 +148,5 @@ export async function updateLearningProfile(
     revalidateCacheTags([getLearningProfileCacheTag(userId)]);
   }
 
-  return { profile: await findLearningProfileView(userId, undefined, language), status: "updated" };
+  return { profile: await findLearningProfileView({ language, userId }), status: "updated" };
 }

@@ -105,9 +105,11 @@ function withPlannableDates({
 }
 
 async function withDraftCountries({
+  readRecentCountries,
   understanding,
   userId,
 }: {
+  readRecentCountries: typeof loadRecentCountries;
   understanding: GoalUnderstandingView | null;
   userId: string;
 }): Promise<GoalUnderstandingView | null> {
@@ -117,7 +119,7 @@ async function withDraftCountries({
 
   const [profile, recent, blueprints] = await Promise.all([
     prisma.userLearningProfile.findUnique({ where: { userId } }),
-    loadRecentCountries(userId),
+    readRecentCountries(userId),
     prisma.examBlueprint.findMany({
       select: { country: true, id: true },
       where: {
@@ -158,13 +160,18 @@ async function withDraftCountries({
   };
 }
 
-/** The lock follows the learner's plan and goals as they are now, so subscribing or pausing a goal unlocks more of the card. */
+/**
+ * The lock follows the learner's plan and goals as they are now, so subscribing or pausing a goal unlocks more of the card.
+ * GET callers pass `readRecentCountries`; writes read the goals fresh.
+ */
 export async function toDraftView({
   draft,
   goalId,
+  readRecentCountries = loadRecentCountries,
 }: {
   draft: OnboardingDraft;
   goalId: string | null;
+  readRecentCountries?: typeof loadRecentCountries;
 }): Promise<OnboardingDraftView> {
   const stored =
     draft.status === "understood" ? parseStoredUnderstanding(draft.understanding) : null;
@@ -173,6 +180,7 @@ export async function toDraftView({
   const today = toIsoDate(getDateInTimeZone({ date: now, timeZone: draft.timeZone }));
 
   const understanding = await withDraftCountries({
+    readRecentCountries,
     understanding: stored && withPlannableDates({ today, understanding: stored }),
     userId: draft.userId,
   });
@@ -195,8 +203,11 @@ export async function toDraftView({
   };
 }
 
-export async function loadDraftView(draft: OnboardingDraft): Promise<OnboardingDraftView> {
-  return toDraftView({ draft, goalId: await findDraftGoalId(draft) });
+export async function loadDraftView(
+  draft: OnboardingDraft,
+  readRecentCountries?: typeof loadRecentCountries,
+): Promise<OnboardingDraftView> {
+  return toDraftView({ draft, goalId: await findDraftGoalId(draft), readRecentCountries });
 }
 
 /** Persists the card using the draft's learner-local today and carries its identity into each goal. */

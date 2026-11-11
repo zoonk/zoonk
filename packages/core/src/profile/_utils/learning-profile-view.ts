@@ -1,6 +1,10 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
 import { toCountryChoice } from "../../goals/_utils/content-country-view";
-import { getCountrySuggestions, loadRecentCountries } from "../../goals/_utils/country-suggestions";
+import {
+  type RecentCountries,
+  getCountrySuggestions,
+  loadRecentCountries,
+} from "../../goals/_utils/country-suggestions";
 import { DEFAULT_BUDDY, resolveProfileBuddy } from "../default-buddy";
 import { type LearningProfileView } from "../learning-profile-contract";
 
@@ -29,7 +33,7 @@ function toLearningProfileView({
   availableGlasses: BuddyGlasses[];
   profile: UserLearningProfile | null;
   language: string;
-  recent: Awaited<ReturnType<typeof loadRecentCountries>>;
+  recent: RecentCountries;
 }): LearningProfileView {
   return {
     activeGoalId: profile?.activeGoalId ?? null,
@@ -48,18 +52,24 @@ function toLearningProfileView({
   };
 }
 
-/** GETs supply their request fact; write responses omit it for a fresh read. */
-export async function findLearningProfileView(
-  userId: string,
-  knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>,
+/** GETs supply their request facts; write responses omit them for fresh reads. */
+export async function findLearningProfileView({
+  knownProfile,
   language = "en",
-): Promise<LearningProfileView> {
+  readRecentCountries = loadRecentCountries,
+  userId,
+}: {
+  knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>;
+  language?: string;
+  readRecentCountries?: typeof loadRecentCountries;
+  userId: string;
+}): Promise<LearningProfileView> {
   const [profile, availableGlasses, recent] = await Promise.all([
     knownProfile === undefined
       ? prisma.userLearningProfile.findUnique({ where: { userId } })
       : knownProfile,
     listAvailableGlasses(userId),
-    loadRecentCountries(userId),
+    readRecentCountries(userId),
   ]);
 
   return toLearningProfileView({ availableGlasses, language, profile, recent });

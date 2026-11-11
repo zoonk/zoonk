@@ -30,6 +30,7 @@ import { findWaitingGoals } from "../../view-models/onboarding/_utils/waiting-go
 import { isGoalSetupLeft } from "../../view-models/onboarding/onboarding-steps";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readLearningProfile } from "../facts/learning-profile";
+import { readRecentCountries } from "../facts/recent-countries";
 import { getRequestInstant } from "../facts/request-instant";
 import { type LearnerFacts, loadLearnerFacts } from "./_utils/load-learner-facts";
 import { loadActiveGoalDay } from "./_utils/summary-day";
@@ -226,7 +227,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const activeGoalId = activeGoal?.id ?? null;
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
-  const countries = await loadGoalCountryViews({ goals, profile });
+  const countries = await loadGoalCountryViews({ goals, profile, readRecentCountries });
   const listed = toSummaryGoals({ activeGoalId, countries, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;

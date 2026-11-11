@@ -8,6 +8,7 @@ import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar"
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalCountryFields } from "../country-contract";
 import { type GoalView } from "../goal-contract";
+import { type loadRecentCountries } from "./country-suggestions";
 import { loadGoalCountryViews } from "./goal-country-views";
 import { getGoalLanguageFlag } from "./goal-language-flag";
 import { getGoalRegionChoices } from "./goal-region";
@@ -150,14 +151,16 @@ function toGoalView({
   };
 }
 
-/** GET callers pass `readActiveSubscription`; writes read the subscription fresh. */
+/** GET callers pass `readActiveSubscription` and `readRecentCountries`; writes read both fresh. */
 export async function loadGoalViews({
   activeGoalId,
   goals,
+  readRecentCountries,
   readSubscription,
 }: {
   activeGoalId: string | null;
   goals: readonly Goal[];
+  readRecentCountries?: typeof loadRecentCountries;
   readSubscription?: typeof findActiveSubscription;
 }): Promise<GoalView[]> {
   const plans = await prisma.plan.findMany({
@@ -167,7 +170,7 @@ export async function loadGoalViews({
 
   const [progress, countries] = await Promise.all([
     loadPlanProgress(plans, readSubscription),
-    loadGoalCountryViews({ goals }),
+    loadGoalCountryViews({ goals, readRecentCountries }),
   ]);
 
   return countries.map(({ countries: countryView, goal }) =>
