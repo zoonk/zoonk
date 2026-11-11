@@ -5,6 +5,7 @@ import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
+import { getTestQuestionStatuses } from "../focus-test-progress";
 import { type FocusTestSummaryRecord } from "../focus-test-state";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementStatus } from "../placement-contract";
@@ -20,13 +21,13 @@ import {
   getUndecidedSkills,
   isPlacementSettled,
 } from "../placement-steps";
-import { countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
+import { type TestTurn, countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
 import { loadFocusTest } from "./load-focus-test";
 import { findNextQuestion } from "./next-placement-skill";
 import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
 import { loadPlacementItems } from "./placement-bank-items";
-import { loadEvidence } from "./placement-evidence";
+import { type TestAnswer, loadEvidence } from "./placement-evidence";
 import { loadGoalExam } from "./placement-goal-exam";
 import {
   type PlacementQuestionView,
@@ -113,15 +114,28 @@ function getStatus({
 type StatusFacts = Parameters<typeof readSkillStatuses>[0] & {
   /** Skills a measured level places as known, whatever the answers say. */
   measuredKnown: ReadonlySet<string>;
+  testAnswers: readonly TestAnswer[];
+  turn: TestTurn | null;
 };
 
-function readStatuses({ measuredKnown, ...facts }: StatusFacts): SkillStatuses {
-  return new Map(
+function readStatuses({ measuredKnown, testAnswers, turn, ...facts }: StatusFacts) {
+  const statuses: SkillStatuses = new Map(
     [...readSkillStatuses(facts)].map(([skillId, status]) => [
       skillId,
       measuredKnown.has(skillId) ? "known" : status,
     ]),
   );
+
+  const questionStatuses = turn
+    ? getTestQuestionStatuses({
+        areaOf: (skillId) => turn.setup.areaOf.get(skillId) ?? null,
+        statuses,
+        subjects: turn.setup.subjects,
+        testAnswers,
+      })
+    : statuses;
+
+  return { questionStatuses, statuses };
 }
 
 type PlacementLoad = {
@@ -216,7 +230,7 @@ export async function loadPlacementWithSummary({
     listKnownByMeasuredLevel({ evidence, level: exam.measuredLevel, skills }),
   );
 
-  const statuses = readStatuses({
+  const { questionStatuses, statuses } = readStatuses({
     answeredOnly,
     answers,
     evidence,
@@ -225,10 +239,12 @@ export async function loadPlacementWithSummary({
     measuredKnown,
     ownLevel,
     skills,
+    testAnswers,
+    turn,
   });
 
   const complete = isPlacementSettled({ answeredOnly, skills, statuses });
-  const undecided = getUndecidedSkills({ answeredOnly, skills, statuses });
+  const undecided = getUndecidedSkills({ answeredOnly, skills, statuses: questionStatuses });
   const openSubjects = turn ? countOpenSubjects({ turn, undecided }) : 0;
   const settled = turn ? openSubjects === 0 : complete;
 
@@ -241,7 +257,7 @@ export async function loadPlacementWithSummary({
       focusAreas,
       ownLevel,
       skills: turn?.skills ?? skills,
-      statuses,
+      statuses: questionStatuses,
     },
     items,
     preparingSkillIds: build.preparingSkillIds,

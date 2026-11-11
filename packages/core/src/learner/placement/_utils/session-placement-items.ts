@@ -3,7 +3,7 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { listUnaskedAreas } from "../focus-test-progress";
+import { getTestQuestionStatuses, listUnaskedAreas } from "../focus-test-progress";
 import { type TestSubject } from "../focus-test-subjects";
 import { getKnownSubjects, getOwnLevel } from "../placement-contract";
 import { readSkillStatuses } from "../placement-known";
@@ -159,9 +159,20 @@ export async function pickSessionPlacementItems({
     skills,
   });
 
+  const areaOf = new Map(skills.map((skill) => [skill.id, skill.sectionTitle]));
+
+  const questionStatuses = test
+    ? getTestQuestionStatuses({
+        areaOf: (skillId) => test.areaOf.get(skillId) ?? areaOf.get(skillId) ?? null,
+        statuses,
+        subjects: test.subjects,
+        testAnswers,
+      })
+    : statuses;
+
   const undecided = claimedFirst({
-    skills: getUndecidedSkills({ answeredOnly, skills, statuses }),
-    statuses,
+    skills: getUndecidedSkills({ answeredOnly, skills, statuses: questionStatuses }),
+    statuses: questionStatuses,
   });
 
   const askable = bankItems

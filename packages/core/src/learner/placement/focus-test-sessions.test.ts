@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { PLAN_SHOWN, examTestGoalFixture } from "../_test-utils/exam-test-goal";
@@ -14,13 +15,21 @@ const SUBJECTS = [
   { name: "Informática", questions: 4 },
 ];
 
-async function setup() {
+async function setup({ inferred = false }: { inferred?: boolean } = {}) {
   const fixture = await examTestGoalFixture({ goal: PLAN_SHOWN, subjects: SUBJECTS });
   const { goal, items, subjectOf, user } = fixture;
   const asked = items.find((item) => subjectOf(item.skillId) === "Direito Administrativo");
 
+  if (inferred) {
+    await skillPrerequisiteFixture({
+      prerequisiteId: asked?.skillId ?? "",
+      skillId: fixture.skills.find((skill) => skill.area === "Português")?.id ?? "",
+    });
+  }
+
   // A sitting's answer: the heaviest subject is the only one asked so far.
   await attemptFixture({
+    ...(inferred && { answer: { dontKnow: true }, isCorrect: false }),
     isPlacement: true,
     itemId: asked?.id ?? "",
     skillId: asked?.skillId ?? "",
@@ -68,6 +77,12 @@ describe("the Focus test's questions inside sessions", () => {
     expect(firstWeek).toHaveLength(3);
     expect(firstWeek.at(-1)).toBe("Direito Administrativo");
     expect(new Set(later)).toStrictEqual(new Set(["Informática", "Português"]));
+  });
+
+  it("asks an unasked subject whose starting point was inferred from another subject", async () => {
+    const { pick } = await setup({ inferred: true });
+
+    await expect(pick(true)).resolves.toContain("Português");
   });
 
   it("settles the test when a session that asked its questions ends, and only then", async () => {

@@ -7,6 +7,7 @@ import {
 } from "./focus-test-rules";
 import { type FocusTestRecord } from "./focus-test-state";
 import { type TestSubject } from "./focus-test-subjects";
+import { type SkillStatuses } from "./placement-status";
 
 export type SubjectProgress = TestSubject & {
   /** Test answers on each of its plan areas, in the order of `areas`. */
@@ -151,5 +152,29 @@ export function listUnaskedAreas({
         (subject) => subject.part === null && !subject.areas.some((area) => answered.has(area)),
       )
       .flatMap((subject) => subject.areas),
+  );
+}
+
+/** An inferred starting point cannot replace a subject's own test answer. */
+export function getTestQuestionStatuses({
+  areaOf,
+  statuses,
+  subjects,
+  testAnswers,
+}: {
+  areaOf: (skillId: string) => string | null;
+  statuses: SkillStatuses;
+  subjects: readonly TestSubject[];
+  testAnswers: readonly TestAnswer[];
+}): SkillStatuses {
+  const unasked = listUnaskedAreas({ areaOf, subjects, testAnswers });
+
+  return new Map(
+    [...statuses].map(([skillId, status]) => [
+      skillId,
+      unasked.has(areaOf(skillId) ?? "") && (status === "known" || status === "unknown")
+        ? "unsure"
+        : status,
+    ]),
   );
 }

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
@@ -199,6 +200,37 @@ describe("an exam goal's Focus test", () => {
       },
       started: true,
       status: "asking",
+    });
+  });
+
+  it("asks an unanswered subject even when another subject settles its starting point", async () => {
+    const { goal, skills, subjectOf } = await examTestGoalFixture({
+      subjects: [
+        { name: "Math", questions: 10 },
+        { name: "Physics", questions: 5 },
+      ],
+    });
+
+    await skillPrerequisiteFixture({ prerequisiteId: skills[0]!.id, skillId: skills[1]!.id });
+
+    const first = await startSitting(goal.id);
+    expect(subjectOf(first.next?.skillId)).toBe("Math");
+
+    const second = await answer({ given: DONT_KNOW, goalId: goal.id, placement: first });
+
+    expect(subjectOf(second.next?.skillId)).toBe("Physics");
+
+    expect(second).toMatchObject({
+      areas: [{ confident: true }, { confident: true }],
+      focusTest: { counts: { asked: 1 }, sessionQuestions: "on", sitting: { end: null } },
+      status: "asking",
+    });
+
+    const last = await answer({ given: DONT_KNOW, goalId: goal.id, placement: second });
+
+    expect(last).toMatchObject({
+      focusTest: { counts: { asked: 2 }, sessionQuestions: "off", sitting: { end: "settled" } },
+      next: null,
     });
   });
 
