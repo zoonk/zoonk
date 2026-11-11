@@ -106,10 +106,13 @@ internal fun ColumnScope.UnderstoodScreen(
         )
     val startable = understanding.startableGoals(activeGoalsLeft)
     val locked = understanding.goals.drop(startable.size)
+    val full = activeGoalsLeft == 0L
+    // A full card's way on for a guest is a free account, which has room; for an account it's a pause or Plus.
+    val shownError = if (full && !hasAccount) GoalError.Limit(GoalLimitReason.Guest) else error
     // The draft counts the goals the plan can still follow; the up-front read of that cap may be older.
     val plusLimit =
-        GoalLimitReason.ActiveGoals.takeIf { activeGoalsLeft == 0L }
-            ?: listOfNotNull((error as? GoalError.Limit)?.reason, goalLimit.takeIf { it != GoalLimitReason.ActiveGoals })
+        GoalLimitReason.ActiveGoals.takeIf { full && hasAccount }
+            ?: listOfNotNull((shownError as? GoalError.Limit)?.reason, goalLimit.takeIf { it != GoalLimitReason.ActiveGoals })
                 .firstOrNull { it.isPlusLimit }
 
     if (rewriting) {
@@ -152,14 +155,14 @@ internal fun ColumnScope.UnderstoodScreen(
     }
 
     if (locked.isNotEmpty()) {
-        val remedy = (if (hasAccount) onSeePlus else onCreateAccount).takeIf { plusLimit == null && error?.needsAccount != true }
+        val remedy = (if (hasAccount) onSeePlus else onCreateAccount).takeIf { plusLimit == null && shownError?.needsAccount != true }
         LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), hasAccount, remedy)
     }
 
     if (plusLimit != null) {
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
     } else {
-        GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
+        GoalFooter(shownError, onCreateAccount, onOpenPlan, onSeePlus) {
             Button(
                 busy = isCreating,
                 onClick = onConfirm,
