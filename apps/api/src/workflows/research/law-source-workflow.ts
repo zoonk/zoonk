@@ -2,7 +2,6 @@ import { type LessonLaw } from "@zoonk/ai/tasks/lesson-laws";
 import { type FoundSourceDocument } from "@zoonk/ai/tasks/research/find-official-sources";
 import { isOfficialSite } from "@zoonk/core/library/sources/law-identity";
 import { getWorkflowMetadata } from "workflow";
-import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { findSourcesStep } from "./steps/find-sources-step";
 import {
@@ -125,9 +124,5 @@ export async function lawSourceWorkflow({ law }: { law: LawToLookUp }): Promise<
 
   if (found.status === "rejected") {
     throw found.reason;
-  }
-
-  if (sourceId) {
-    await scheduleFreshnessChecksStep([{ kind: "source", sourceId }]);
   }
 }

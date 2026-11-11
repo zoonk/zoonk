@@ -117,7 +117,6 @@ describe(lawSourceWorkflow, () => {
       url: camara.url,
     });
 
-    expect(source.nextCheckAt).not.toBeNull();
     expect(fetchedUrls()).toStrictEqual([refused.url, camara.url]);
   });
 

@@ -120,6 +120,29 @@ describe(linkLessonLaws, () => {
     expect(link.articles).toStrictEqual(expect.arrayContaining(["Art. 3º", "Art. 4º", "Art. 5º"]));
   });
 
+  it("checks a linked law for changes again after its checks stopped", async () => {
+    const [lesson, law] = await Promise.all([
+      libraryLessonFixture({ language: "pt" }),
+      sourceFixture({
+        extractedText: conflictOfInterestLaw(),
+        language: "pt",
+        mimeType: "text/html",
+        nextCheckAt: null,
+        structure: { images: 0, pages: null, topic: "regulation" },
+        title: "Lei nº 12.813, de 16 de maio de 2013",
+      }),
+    ]);
+
+    await linkLessonLaws({
+      laws: [{ articles: ["4"], searchTerms: [], sourceId: law.id }],
+      lessonId: lesson.id,
+      prompt: PROMPT,
+    });
+
+    const source = await prisma.source.findUniqueOrThrow({ where: { id: law.id } });
+    expect(source.nextCheckAt).not.toBeNull();
+  });
+
   it("links nothing for a law whose text is gone", async () => {
     const [lesson, law] = await Promise.all([
       libraryLessonFixture({ language: "pt" }),

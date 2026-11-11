@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
 import { SOURCED_PLAN_KEY } from "../curriculum/save-lesson-specs";
+import { scheduleFreshnessChecks } from "../exams/freshness-checks";
 import { hasLessonMaterial } from "../sources/goal-material";
 import { selectLawArticles, toLawPages } from "../sources/law-pages";
 
@@ -129,6 +130,10 @@ export async function linkLessonLaws({
       sourceId: source.id,
     })),
     skipDuplicates: true,
+  });
+
+  await scheduleFreshnessChecks({
+    targets: texts.map(({ source }) => ({ kind: "source", sourceId: source.id })),
   });
 }
 
