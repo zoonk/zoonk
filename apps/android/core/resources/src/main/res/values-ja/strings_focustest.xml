@@ -173,7 +173,6 @@
     <string name="focustest_proposal_undone">変更を取り消しました。学習計画は元どおりです。</string>
     <string name="focustest_undo">元に戻す</string>
     <string name="focustest_change_focus">重点科目を変える</string>
-    <string name="focustest_sessions_note">次回以降の学習で、まだ出題していない科目から少しずつ問題を出します。</string>
     <string name="focustest_continue_to_daily_time">1日の学習時間の設定に進む</string>
     <string name="focustest_done">達成</string>
     <!-- %1$s is a duration, such as "10 min". -->

@@ -173,7 +173,6 @@
     <string name="focustest_proposal_undone">변경을 취소했어요. 계획이 원래대로 돌아갔어요.</string>
     <string name="focustest_undo">실행 취소</string>
     <string name="focustest_change_focus">집중 과목 바꾸기</string>
-    <string name="focustest_sessions_note">다음 학습에서는 아직 문제가 나오지 않은 과목부터 문제를 조금씩 더 풀어요.</string>
     <string name="focustest_continue_to_daily_time">하루 학습 시간 설정하기</string>
     <string name="focustest_done">완료</string>
     <!-- %1$s is a duration, such as "10 min". -->

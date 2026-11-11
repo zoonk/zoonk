@@ -181,7 +181,6 @@
     <string name="focustest_proposal_undone">Rückgängig gemacht. Dein Plan ist wieder wie zuvor.</string>
     <string name="focustest_undo">Rückgängig machen</string>
     <string name="focustest_change_focus">Schwerpunkte ändern</string>
-    <string name="focustest_sessions_note">In deinen nächsten Lerneinheiten bekommst du noch ein paar Fragen, zuerst zu Fächern, die noch nicht dran waren.</string>
     <string name="focustest_continue_to_daily_time">Tägliche Lernzeit festlegen</string>
     <string name="focustest_done">Geschafft</string>
     <!-- %1$s is a duration, such as "10 min". -->

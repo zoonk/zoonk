@@ -189,7 +189,6 @@
     <string name="focustest_proposal_undone">Cambio deshecho. Tu plan volvió a estar como antes.</string>
     <string name="focustest_undo">Deshacer</string>
     <string name="focustest_change_focus">Cambiar el enfoque</string>
-    <string name="focustest_sessions_note">En tus próximas sesiones te haremos algunas preguntas más, empezando por las materias sobre las que aún no te preguntamos.</string>
     <string name="focustest_continue_to_daily_time">Continuar para elegir tu tiempo diario</string>
     <string name="focustest_done">Listo</string>
     <!-- %1$s is a duration, such as "10 min". -->

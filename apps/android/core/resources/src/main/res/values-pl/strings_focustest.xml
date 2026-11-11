@@ -197,7 +197,6 @@
     <string name="focustest_proposal_undone">Cofnięto. Twój plan jest znów taki jak wcześniej.</string>
     <string name="focustest_undo">Cofnij</string>
     <string name="focustest_change_focus">Zmień priorytety</string>
-    <string name="focustest_sessions_note">W kolejnych dniach nauki zadamy jeszcze kilka pytań, najpierw z niesprawdzonych dotąd przedmiotów.</string>
     <string name="focustest_continue_to_daily_time">Ustaw dzienny czas nauki</string>
     <string name="focustest_done">Zrealizowany</string>
     <!-- %1$s is a duration, such as "10 min". -->

@@ -189,7 +189,6 @@
     <string name="focustest_proposal_undone">Modification annulée. Ton plan est revenu à son état précédent.</string>
     <string name="focustest_undo">Annuler</string>
     <string name="focustest_change_focus">Changer les priorités</string>
-    <string name="focustest_sessions_note">Quelques questions supplémentaires te seront posées lors de tes prochaines séances, d’abord sur les matières pas encore abordées.</string>
     <string name="focustest_continue_to_daily_time">Passer à la durée quotidienne</string>
     <string name="focustest_done">Atteint</string>
     <!-- %1$s is a duration, such as "10 min". -->

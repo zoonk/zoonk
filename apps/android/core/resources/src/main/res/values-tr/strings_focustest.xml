@@ -181,7 +181,6 @@
     <string name="focustest_proposal_undone">Geri alındı. Planın önceki hâline döndü.</string>
     <string name="focustest_undo">Geri al</string>
     <string name="focustest_change_focus">Odağını değiştir</string>
-    <string name="focustest_sessions_note">Sonraki çalışmalarında, henüz soru sorulmayan branşlardan başlayarak birkaç soru daha soracağız.</string>
     <string name="focustest_continue_to_daily_time">Günlük çalışma süresine geç</string>
     <string name="focustest_done">Tamamlandı</string>
     <!-- %1$s is a duration, such as "10 min". -->

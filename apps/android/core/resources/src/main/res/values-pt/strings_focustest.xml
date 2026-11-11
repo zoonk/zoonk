@@ -189,7 +189,6 @@
     <string name="focustest_proposal_undone">Desfeito. Seu plano voltou a ser como antes.</string>
     <string name="focustest_undo">Desfazer</string>
     <string name="focustest_change_focus">Mudar o foco</string>
-    <string name="focustest_sessions_note">As próximas sessões vão trazer mais algumas perguntas, começando pelas matérias que ainda não apareceram.</string>
     <string name="focustest_continue_to_daily_time">Definir o tempo diário</string>
     <string name="focustest_done">Concluído</string>
     <!-- %1$s is a duration, such as "10 min". -->

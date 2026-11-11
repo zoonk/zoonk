@@ -93,7 +93,8 @@
     <string name="focustest_proposal_undone">Undone. Your plan is back as it was.</string>
     <string name="focustest_undo">Undo</string>
     <string name="focustest_change_focus">Change focus</string>
-    <string name="focustest_sessions_note">Your next sessions ask a few more questions, starting with subjects not asked yet.</string>
+    <!-- "Test questions" are the Focus test's questions. Use the same words for them as in "Pause test questions". -->
+    <string name="focustest_session_questions_on">Your next sessions ask a few more test questions.</string>
     <string name="focustest_continue_to_daily_time">Continue to daily time</string>
     <string name="focustest_done">Done</string>
     <!-- %1$s is a duration, such as "10 min". -->
@@ -126,7 +127,6 @@
         <item quantity="one">Up to %d more question</item>
         <item quantity="other">Up to %d more questions</item>
     </plurals>
-    <string name="focustest_session_questions_on">Your sessions ask a few test questions until every subject has an answer.</string>
     <string name="focustest_session_questions_paused">Test questions in your sessions are paused.</string>
     <string name="focustest_pause_questions">Pause test questions</string>
     <string name="focustest_ask_again">Ask them again</string>

@@ -97,9 +97,9 @@ internal fun FocusTestResult(
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         SubjectsButton(test.subjects, answered = true)
-        if (test.sessionQuestions == FocusTestSessionQuestions.ON && test.counts.asked < test.counts.quick) {
+        if (test.sessionQuestions == FocusTestSessionQuestions.ON) {
             Text(
-                stringResource(R.string.focustest_sessions_note),
+                stringResource(R.string.focustest_session_questions_on),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
