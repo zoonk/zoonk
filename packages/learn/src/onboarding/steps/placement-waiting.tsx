@@ -107,15 +107,19 @@ function PlacementStatus({
   );
 }
 
+type SkipCopy = { label: string; note: string | null };
+
 function PlacementBar({
   canSkip,
   holding,
   onSkip,
+  skip,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
+  skip?: SkipCopy;
   skipping: boolean;
 }) {
   const t = useExtracted();
@@ -142,11 +146,13 @@ function PlacementBar({
       {canSkip && (
         <div className="flex flex-col gap-1 lg:items-end">
           <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
-            {t("Skip for now")}
+            {skip?.label ?? t("Skip for now")}
           </OnboardingSecondaryButton>
-          <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-            {t("Your first sessions will ask a few of these instead.")}
-          </p>
+          {skip?.note !== null && (
+            <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
+              {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
+            </p>
+          )}
         </div>
       )}
     </WaitBar>
@@ -158,12 +164,14 @@ function PlacementWaitPage({
   holding,
   onSkip,
   run,
+  skip,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
   run: GenerationRun;
+  skip?: SkipCopy;
   skipping: boolean;
 }) {
   const since = useMountTime().getTime();
@@ -174,7 +182,13 @@ function PlacementWaitPage({
     <WaitBackToQuiz>
       <OnboardingColumn
         bar={
-          <PlacementBar canSkip={canSkip} holding={holding} onSkip={onSkip} skipping={skipping} />
+          <PlacementBar
+            canSkip={canSkip}
+            holding={holding}
+            onSkip={onSkip}
+            skip={skip}
+            skipping={skipping}
+          />
         }
         rail={
           <>
@@ -200,6 +214,7 @@ export function PlacementWaiting({
   questionsReady,
   readWarmUp,
   run,
+  skip,
   skipping,
 }: {
   buildFailed: boolean;
@@ -210,6 +225,8 @@ export function PlacementWaiting({
   questionsReady: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
+  /** What leaving the wait is called and does, when it isn't placement's own skip. */
+  skip?: SkipCopy;
   skipping: boolean;
 }) {
   const patient = usePatience();
@@ -234,6 +251,7 @@ export function PlacementWaiting({
         holding={holding}
         onSkip={onSkip}
         run={shown}
+        skip={skip}
         skipping={skipping}
       />
     </WaitScreen>

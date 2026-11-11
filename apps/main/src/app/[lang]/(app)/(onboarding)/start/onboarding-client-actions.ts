@@ -14,6 +14,7 @@ import {
 import { isValidLocale } from "@zoonk/utils/locale";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
+import { getFocusTestActions } from "./focus-test-client-actions";
 import {
   answerLevelTestAction,
   finishLevelTestAction,
@@ -27,12 +28,10 @@ import {
   createOnboardingGoalsAction,
   finishPlacementAction,
   getPlacementAction,
-  getPlacementMockAction,
   getPlanAction,
   joinWaitlistAction,
   readWarmUpAction,
   startOverAction,
-  stopPlacementMockAction,
 } from "./onboarding-actions";
 import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
@@ -65,9 +64,10 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim, getPageLanguage()),
   createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,
-  finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
+  finishPlacement: async (input) =>
+    (await finishPlacementAction({ ...input, timeZone: getLocalTimeZone() })) !== null,
+  focusTest: getFocusTestActions,
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
-  getPlacementMock: getPlacementMockAction,
   getPlan: getPlanAction,
   getTimeAdvice: getGoalTimeAdvice,
   joinWaitlist: joinWaitlistAction,
@@ -91,7 +91,6 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   readFirstLesson: readFirstLessonAction,
   readWarmUp: readWarmUpAction,
   startOver: startOverAction,
-  stopPlacementMock: (mockId) => stopPlacementMockAction(mockId, getLocalTimeZone()),
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };
 
@@ -99,8 +98,6 @@ const WEB_ONBOARDING_ROUTES = {
   course: getCourseHref,
   focusTest: (goalId) => `/focus-test?goal=${goalId}`,
   lesson: (lessonId) => `/learn/${lessonId}`,
-  mock: (mockId) => `/mock/${mockId}`,
-  placementMock: (goalId) => `/mock/placement/${goalId}`,
   planLink: (planId) => `/plan-link/${planId}`,
   today: "/today",
 } satisfies Omit<OnboardingRoutes, "signUp">;

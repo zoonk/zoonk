@@ -1,25 +1,8 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CircleStopIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
+import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindDot } from "../../_components/kind-tile";
-import {
-  ListGroup,
-  ListRowBody,
-  ListRowContent,
-  ListRowDescription,
-  ListRowLeading,
-  ListRowLink,
-  ListRowTitle,
-  ListRowTrailing,
-} from "../../_components/list-group";
-import { PlusMark } from "../../_components/plus-lock";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
-import { useFormatDuration } from "../../_utils/time-format";
-import { LearnLink } from "../../learn-link";
-import { type PlacementMockOutcome } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -31,64 +14,13 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 
-type PlacementMockOffer = NonNullable<PlacementMockOutcome["offer"]> & { href: string };
-
-function useMockOfferText() {
-  const t = useExtracted();
-  const duration = useFormatDuration();
-
-  return ({ minutes }: PlacementMockOffer): string => {
-    const longest = duration(minutes.longest);
-    const shortest = duration(minutes.shortest);
-
-    if (minutes.longest === minutes.shortest) {
-      return t("In the exam's format, about {time}.", { time: longest });
-    }
-
-    return t("In the exam's format, from {shortest} to {longest}. You pick how long.", {
-      longest,
-      shortest,
-    });
-  };
-}
-
-function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
-  const t = useExtracted();
-  const offerText = useMockOfferText();
-
-  return (
-    <ListGroup>
-      <ListRowLink href={mock.href}>
-        <ListRowLeading>
-          <KindDot kind="mock" />
-        </ListRowLeading>
-        <ListRowBody>
-          <ListRowContent>
-            <ListRowTitle>{t("Or take a mock exam")}</ListRowTitle>
-            <ListRowDescription>{offerText(mock)}</ListRowDescription>
-          </ListRowContent>
-          {mock.access === "plusRequired" && (
-            <ListRowTrailing>
-              <PlusMark />
-            </ListRowTrailing>
-          )}
-        </ListRowBody>
-      </ListRowLink>
-    </ListGroup>
-  );
-}
-
 export function PlacementIntro({
-  areaCount,
-  mock,
   onScratch,
   onStart,
   pending,
   starting,
   subject,
 }: {
-  areaCount: number;
-  mock: PlacementMockOffer | null;
   onScratch: () => void;
   onStart: () => void;
   pending: boolean;
@@ -103,18 +35,11 @@ export function PlacementIntro({
         <OnboardingSubject>{subject}</OnboardingSubject>
         <OnboardingTitle>{t("Let's see what you already know")}</OnboardingTitle>
         <OnboardingDescription>
-          {areaCount > 0
-            ? t(
-                "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-                { count: areaCount },
-              )
-            : t(
-                "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-              )}
+          {t(
+            "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
+          )}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      {mock && <PlacementMockRow mock={mock} />}
 
       <OnboardingFooter>
         <OnboardingPrimaryButton
@@ -170,43 +95,25 @@ function PlacementOutcome({
 export function PlacementDone({
   answered,
   forToday,
-  fromMock,
   onContinue,
   pending,
 }: {
   answered: number;
   forToday: boolean;
-  fromMock: boolean;
   onContinue: () => void;
   pending: boolean;
 }) {
   const t = useExtracted();
 
-  const done = fromMock
-    ? t("Mock exam done")
-    : t(
+  return (
+    <PlacementOutcome
+      done={t(
         "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}",
         { count: answered },
-      );
-
-  if (fromMock) {
-    return (
-      <PlacementOutcome done={done} onContinue={onContinue} pending={pending}>
-        <OnboardingTitle>{t("Your mock exam set your starting point")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t({
-            description: '"It" is the learner\'s starting point, named in the title.',
-            message:
-              "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day.",
-            values: { count: answered },
-          })}
-        </OnboardingDescription>
-      </PlacementOutcome>
-    );
-  }
-
-  return (
-    <PlacementOutcome done={done} onContinue={onContinue} pending={pending}>
+      )}
+      onContinue={onContinue}
+      pending={pending}
+    >
       <OnboardingTitle>
         {forToday ? t("That's enough questions for today") : t("Your starting point is set")}
       </OnboardingTitle>
@@ -240,44 +147,5 @@ export function PlacementUnavailable({
         )}
       </OnboardingDescription>
     </PlacementOutcome>
-  );
-}
-
-export function PlacementMockRunning({
-  href,
-  onStop,
-  pending,
-}: {
-  href: string;
-  onStop: () => void;
-  pending: boolean;
-}) {
-  const t = useExtracted();
-
-  return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingTitle>{t("Your mock exam is waiting")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t(
-            "Go on where you left it, or stop now: your plan starts from the questions you answered.",
-          )}
-        </OnboardingDescription>
-      </OnboardingHeading>
-
-      <OnboardingFooter>
-        <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
-          {t("Continue the mock exam")}
-        </LearnLink>
-        <OnboardingSecondaryButton
-          busy={pending}
-          icon={<CircleStopIcon aria-hidden="true" />}
-          onClick={onStop}
-          variant="ghost"
-        >
-          {t("Stop and see my plan")}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
   );
 }

@@ -8,18 +8,11 @@ import { type GenerationRun } from "../../generation/generation-run";
 import {
   type OnboardingActions,
   type PlacementAnswer,
-  type PlacementMockOutcome,
   type PlacementOutcome,
   type PlacementQuestion,
 } from "../onboarding-actions";
-import { saveFinish } from "./placement-finish";
 import { PlacementQuestionScreen } from "./placement-question";
-import {
-  PlacementDone,
-  PlacementIntro,
-  PlacementMockRunning,
-  PlacementUnavailable,
-} from "./placement-screens";
+import { PlacementDone, PlacementIntro, PlacementUnavailable } from "./placement-screens";
 import { PlacementWaiting } from "./placement-waiting";
 import { StepLoading } from "./step-parts";
 import { rememberStepStart, wasStepStarted } from "./step-started";
@@ -31,8 +24,7 @@ const POLL_MS = 3000;
 type ReadyOutcome = Extract<PlacementOutcome, { status: "ready" }>;
 
 type Phase =
-  | { answered: number; forToday: boolean; fromMock?: boolean; kind: "done" }
-  | { kind: "mockRunning"; mockId: string }
+  | { answered: number; forToday: boolean; kind: "done" }
   | { kind: "intro" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
@@ -85,23 +77,12 @@ function countSave({
 }
 
 function toResumedPhase({
-  mock,
   outcome,
   tapped,
 }: {
-  mock: PlacementMockOutcome["mock"];
   outcome: PlacementOutcome;
   tapped: boolean;
 }): Phase {
-  if (mock?.status === "running") {
-    return { kind: "mockRunning", mockId: mock.id };
-  }
-
-  if (mock?.status === "finished") {
-    const answered = outcome.status === "ready" ? outcome.answered : 0;
-    return { answered, forToday: false, fromMock: true, kind: "done" };
-  }
-
   if (outcome.status === "ready" && (tapped || outcome.started)) {
     return toPhase(outcome);
   }
@@ -115,7 +96,6 @@ function toResumedPhase({
 
 function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; goalId: string }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
-  const [mockOffer, setMockOffer] = useState<PlacementMockOutcome["offer"]>(null);
   const shown = useRef(NOTHING_SHOWN);
 
   const showPhase = (next: Phase) => {
@@ -136,25 +116,14 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
   };
 
   useReadOnOpen({
-    onRead: (read) => {
-      setMockOffer(read?.mock.offer ?? null);
-
+    onRead: (outcome) =>
       showPhase(
         toResumedPhase({
-          mock: read?.mock.mock ?? null,
-          outcome: read?.outcome ?? { status: "failed" },
+          outcome: outcome ?? { status: "failed" },
           tapped: wasStepStarted({ goalId, step: "placement" }),
         }),
-      );
-    },
-    read: async () => {
-      const [outcome, mock] = await Promise.all([
-        actions.getPlacement(goalId),
-        actions.getPlacementMock(goalId),
-      ]);
-
-      return { mock, outcome };
-    },
+      ),
+    read: () => actions.getPlacement(goalId),
   });
 
   const start = async () => {
@@ -169,23 +138,19 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     setPhase({ kind: outcome?.status === "unavailable" ? "unavailable" : "waiting" });
   };
 
-  return { countAnswer, mockOffer, phase, setPhase, showReady, start };
+  return { countAnswer, phase, setPhase, showReady, start };
 }
 
 export function PlacementStep({
   actions,
-  areaCount,
   goalId,
-  mockHrefs,
   onDone,
   onFinishFailed,
   run,
   subject,
 }: {
   actions: OnboardingActions;
-  areaCount: number;
   goalId: string;
-  mockHrefs: { mock: (mockId: string) => string; start: string };
   /** Saves the step and resolves whether it went through; a failure is this step's to say. */
   onDone: () => Promise<boolean>;
   /** Says a finish that didn't save, until the learner's next try. */
@@ -193,7 +158,7 @@ export function PlacementStep({
   run: GenerationRun | null;
   subject: string;
 }) {
-  const { countAnswer, mockOffer, phase, setPhase, showReady, start } = useResumedPlacement({
+  const { countAnswer, phase, setPhase, showReady, start } = useResumedPlacement({
     actions,
     goalId,
   });
@@ -204,12 +169,12 @@ export function PlacementStep({
   const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
 
-  const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
+  const finish = (fromScratch: boolean) =>
     startTransition(async () => {
       onFinishFailed(false);
 
       const { data: finished } = await safeAsync(() =>
-        saveFinish({ actions, fromScratch, goalId, stopMockId }),
+        actions.finishPlacement({ fromScratch, goalId }),
       );
 
       // Finishing is one save to the learner: it goes through once the step's save does too.
@@ -278,8 +243,6 @@ export function PlacementStep({
     case "intro":
       return (
         <PlacementIntro
-          areaCount={areaCount}
-          mock={mockOffer && { ...mockOffer, href: mockHrefs.start }}
           onScratch={() => finish(true)}
           onStart={() => {
             onFinishFailed(false);
@@ -325,20 +288,11 @@ export function PlacementStep({
           trueFalseLabels={phase.trueFalseLabels}
         />
       );
-    case "mockRunning":
-      return (
-        <PlacementMockRunning
-          href={mockHrefs.mock(phase.mockId)}
-          onStop={() => finish(false, phase.mockId)}
-          pending={isPending}
-        />
-      );
     case "done":
       return (
         <PlacementDone
           answered={phase.answered}
           forToday={phase.forToday}
-          fromMock={phase.fromMock ?? false}
           onContinue={() => finish(false)}
           pending={isPending}
         />

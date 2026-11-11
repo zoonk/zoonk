@@ -1,14 +1,11 @@
 "use client";
 
-import { MAX_TYPED_PLACEMENT_ANSWER_LENGTH } from "@zoonk/core/learner/placement/placement-limits";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
-import { Label } from "@zoonk/ui/components/label";
-import { Textarea } from "@zoonk/ui/components/textarea";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { AnswersSaveError } from "../../_components/save-error";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
@@ -25,6 +22,7 @@ import {
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
+import { TypedAnswerField } from "./typed-answer-field";
 
 function useQuestionChoices({
   question,
@@ -102,39 +100,6 @@ function toAnswer({
     : { selectedIndex: Number(value) };
 }
 
-function TypedAnswerField({
-  onChange,
-  onSubmit,
-  value,
-}: {
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-  value: string;
-}) {
-  const t = useExtracted();
-  const fieldId = useId();
-
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={fieldId}>{t("Your answer, in your own words")}</Label>
-      <Textarea
-        autoFocus
-        className="min-h-28 text-base"
-        id={fieldId}
-        maxLength={MAX_TYPED_PLACEMENT_ANSWER_LENGTH}
-        onChange={(event) => onChange(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-            event.preventDefault();
-            onSubmit();
-          }
-        }}
-        value={value}
-      />
-    </div>
-  );
-}
-
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
 function PlacementActions({
@@ -145,6 +110,8 @@ function PlacementActions({
   onStop,
   pending,
   pressed,
+  stopHint,
+  stopLabel,
 }: {
   canConfirm: boolean;
   dontKnowLabel: string;
@@ -153,6 +120,8 @@ function PlacementActions({
   onStop: () => void;
   pending: boolean;
   pressed: PlacementControl | null;
+  stopHint?: string;
+  stopLabel: string;
 }) {
   const t = useExtracted();
   const busy = pending ? pressed : null;
@@ -185,6 +154,12 @@ function PlacementActions({
         </OnboardingPrimaryButton>
       </div>
 
+      {stopHint && (
+        <p className="text-muted-foreground pt-2 text-center text-sm text-pretty" role="status">
+          {stopHint}
+        </p>
+      )}
+
       <Button
         busy={busy === "stop"}
         className="self-center"
@@ -194,7 +169,7 @@ function PlacementActions({
         type="button"
         variant="ghost"
       >
-        {t("Stop here and see my plan")}
+        {stopLabel}
       </Button>
     </OnboardingFooter>
   );
@@ -210,7 +185,10 @@ export function PlacementQuestionScreen({
   pending,
   progress,
   question,
+  stopHint,
+  stopLabel,
   subject,
+  total,
   trueFalseLabels = "trueFalse",
 }: {
   dontKnowLabel?: string;
@@ -224,7 +202,12 @@ export function PlacementQuestionScreen({
   /** 0 to 1. */
   progress: number;
   question: PlacementQuestion;
+  /** Said right above Stop, when stopping is worth suggesting. */
+  stopHint?: string;
+  stopLabel?: string;
   subject?: string;
+  /** The count promised up front, when the test has one. */
+  total?: number;
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const t = useExtracted();
@@ -265,7 +248,13 @@ export function PlacementQuestionScreen({
       <OnboardingColumn>
         <OnboardingHeading className="gap-5">
           {subject && number !== undefined && (
-            <OnboardingSubject position={t("Question {number, number}", { number })}>
+            <OnboardingSubject
+              position={
+                total === undefined
+                  ? t("Question {number, number}", { number })
+                  : t("Question {number, number} of {total, number}", { number, total })
+              }
+            >
               {subject}
             </OnboardingSubject>
           )}
@@ -308,6 +297,8 @@ export function PlacementQuestionScreen({
             }}
             pending={pending}
             pressed={pressed}
+            stopHint={stopHint}
+            stopLabel={stopLabel ?? t("Stop here and see my plan")}
           />
         </form>
       </OnboardingColumn>
