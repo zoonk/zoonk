@@ -26,6 +26,7 @@ const understoodGoalSchema = z.object({
   targetDate: z.string().optional(),
   targetLanguage: z.string().optional(),
   targetPosition: z.string().optional(),
+  targetRegion: z.string().optional(),
   targetScore: z.string().optional(),
   title: z.string(),
 });

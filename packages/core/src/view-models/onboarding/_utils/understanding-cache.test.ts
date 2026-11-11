@@ -51,6 +51,29 @@ describe(findCachedUnderstanding, () => {
     });
   });
 
+  it("keeps the country a language learner asked for", async () => {
+    const user = await userFixture();
+    const goal = `learn argentine spanish ${randomUUID()}`;
+
+    const language = {
+      kind: "language",
+      subject: "Spanish",
+      targetLanguage: "es",
+      targetRegion: "AR",
+      title: "Learn Argentine Spanish",
+    } as const;
+
+    await goalUnderstandingFixture({
+      goal,
+      result: { ...RESULT, goals: [language] },
+      userId: user.id,
+    });
+
+    await expect(readCached({ goal, userId: user.id })).resolves.toMatchObject({
+      goals: [{ targetLanguage: "es", targetRegion: "AR" }],
+    });
+  });
+
   it("never gives another learner a reading of the same words, and goes away with its learner", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = `pass the enem for medicine at ufmg ${randomUUID()}`;
