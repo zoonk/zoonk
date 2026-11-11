@@ -143,19 +143,24 @@ describe("the plan work a session end owes", () => {
           prisma.planChange.findMany({ orderBy: { id: "asc" }, where: { planId: plan.id } }),
         ]);
 
+      const before = await settledState();
+
       if (ending === "stop") {
         await stopStudySession({ input: {}, sessionId: session.id });
       } else {
         await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
       }
 
+      await expect(settledState()).resolves.toStrictEqual(before);
+
       await expect(
         prisma.followUp.findMany({ where: { kind: "settleSessionPlan", userId: user.id } }),
-      ).resolves.toMatchObject([
-        { input: { rebalance: false, sessionId: session.id }, key: session.id, revision: 0 },
-      ]);
+      ).resolves.toMatchObject(
+        ending === "stop"
+          ? [{ input: { rebalance: false, sessionId: session.id }, key: session.id, revision: 0 }]
+          : [],
+      );
 
-      const before = await settledState();
       await settleOwed();
       await expect(settledState()).resolves.toStrictEqual(before);
       expect(rebalancePlan).toHaveBeenCalledOnce();

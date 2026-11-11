@@ -103,17 +103,6 @@ async function completeIfFinished({
       const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
 
       if (current.status === "completed") {
-        const planOwed = await oweSessionPlanSettlement(tx, {
-          followUps: [],
-          goal: session.goal,
-          session: current,
-          timeZone,
-        });
-
-        if (planOwed) {
-          return { session: current, status: "completed" as const };
-        }
-
         throw new SessionCompletionUnchangedError("alreadyCompleted");
       }
 
