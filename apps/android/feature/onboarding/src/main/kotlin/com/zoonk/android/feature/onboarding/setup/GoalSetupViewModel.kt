@@ -187,15 +187,19 @@ internal class GoalSetupViewModel(
     var failedStep by mutableStateOf<Long?>(null)
         private set
 
+    var startStepFailed by mutableStateOf(false)
+        private set
+
     fun openRevealStep(
         day: DayView,
         step: DayStep,
         open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
+        fromStart: Boolean = false,
         isCurrent: () -> Boolean = { true },
         onOpened: suspend (AppRoute) -> Unit,
     ) {
         val tappedGoal = java.util.UUID.fromString(goalId)
-        reveal(step.position) {
+        reveal(step.position, fromStart) {
             if (!isCurrent()) return@reveal true
             when (val result = open(day, step, tappedGoal)) {
                 is MutationResult.Done -> {
@@ -216,23 +220,29 @@ internal class GoalSetupViewModel(
 
     private fun reveal(
         position: Long?,
+        fromStart: Boolean = false,
         onSaved: suspend () -> Boolean,
     ) {
         if (isSaving) return
         isSaving = true
-        openingStep = position
+        openingStep = position.takeUnless { fromStart }
         failedStep = null
+        startStepFailed = false
         clearFailure()
         val revealingGoal = goalId
         viewModelScope.launch {
-            val failed =
-                when (store.markPlanRevealed(revealingGoal)) {
-                    is WriteOutcome.Done -> !onSaved()
-                    WriteOutcome.Obsolete -> false
-                    else -> true
+            when (store.markPlanRevealed(revealingGoal)) {
+                is WriteOutcome.Done -> {
+                    if (!onSaved()) {
+                        if (fromStart) startStepFailed = true else failedStep = position
+                    }
                 }
-            if (failed) {
-                if (position == null) saveFailed = true else failedStep = position
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    if (position == null || fromStart) saveFailed = true else failedStep = position
+                }
             }
             openingStep = null
             isSaving = false

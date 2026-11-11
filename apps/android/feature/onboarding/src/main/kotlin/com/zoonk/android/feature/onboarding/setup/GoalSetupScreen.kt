@@ -561,13 +561,15 @@ private fun ColumnScope.QuestionStep(
                 onReveal = vm::reveal,
                 openingStep = vm.openingStep,
                 failedStep = vm.failedStep,
+                startStepFailed = vm.startStepFailed,
                 onOpenStep =
                     openRevealStep?.let { open ->
-                        { day, step ->
+                        { day, step, fromStart ->
                             vm.openRevealStep(
                                 day,
                                 step,
                                 open,
+                                fromStart = fromStart,
                                 isCurrent = { navigator.currentRoute == route },
                             ) { destination ->
                                 openRevealedPlan(navigator, route, prepareToday, destination)

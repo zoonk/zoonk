@@ -40,6 +40,7 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.READING_RUN
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -110,9 +111,10 @@ internal fun ColumnScope.PlanRevealStep(
     saveFailed: Boolean = false,
     playMoment: () -> Boolean = { false },
     planRevealed: Boolean = false,
-    onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+    onOpenStep: ((DayView, DayStep, Boolean) -> Unit)? = null,
     openingStep: Long? = null,
     failedStep: Long? = null,
+    startStepFailed: Boolean = false,
     today: com.zoonk.android.data.Resource<com.zoonk.api.models.PlanRevealToday>? = null,
 ) {
     val resource = plans.plan[goal.id]
@@ -128,7 +130,6 @@ internal fun ColumnScope.PlanRevealStep(
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
     var opening by rememberSaveable { mutableStateOf(false) }
     var starting by remember { mutableStateOf(false) }
-    var startingStep by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(opening) {
         if (!opening) return@LaunchedEffect
         val progress =
@@ -180,33 +181,33 @@ internal fun ColumnScope.PlanRevealStep(
                 RevealBody(
                     plan = plan,
                     reveal = preview,
+                    studyDay = day,
                     onOpenStep =
-                        onOpenStep?.takeUnless { opening || saving }?.let { open ->
-                            { day, step ->
-                                startingStep = false
-                                open(day, step)
+                        onOpenStep?.takeUnless { opening || (saving && openingStep == null) }?.let { open ->
+                            { rowDay, rowStep ->
+                                open(rowDay, rowStep, false)
                             }
                         },
                     openingStep = openingStep,
-                    failedStep = failedStep.takeUnless { startingStep },
+                    failedStep = failedStep,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
-                    starting = starting || (saving && (openingStep == null || startingStep)),
+                    starting =
+                        starting || (saving && openingStep == null) ||
+                            todayState == LoadState.Idle || todayState == LoadState.Loading,
                     startError =
                         when {
                             saveFailed -> R.string.onboarding_save_failed
-                            startingStep && failedStep != null -> R.string.today_step_open_failed
+                            startStepFailed -> R.string.today_step_open_failed
                             else -> null
                         },
                     playMoment = !planRevealed && remember { playMoment() },
                     onStart = {
                         val step = day?.steps?.firstOrNull { it.position == day.nextPosition && it.canOpen }
                         if (day != null && step != null && onOpenStep != null) {
-                            startingStep = true
-                            onOpenStep(day, step)
+                            onOpenStep(day, step, true)
                         } else {
-                            startingStep = false
                             if (onReveal != null) onReveal { opening = true } else opening = true
                         }
                     },
@@ -371,6 +372,7 @@ internal fun ColumnScope.NoticeReading(
 private fun ColumnScope.RevealBody(
     plan: Plan,
     reveal: com.zoonk.api.models.PlanRevealToday?,
+    studyDay: DayView?,
     goal: Goal,
     syllabus: Syllabus?,
     isGuest: Boolean,
@@ -387,7 +389,6 @@ private fun ColumnScope.RevealBody(
     onSeePlus: () -> Unit,
 ) {
     SetupContent {
-        val studyDay = reveal?.today?.toDayView()
         val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
         val coverage = revealCoverage(plan, goal.kind, syllabus)
 
@@ -395,7 +396,7 @@ private fun ColumnScope.RevealBody(
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-        studyDay?.let { RevealToday(it, reveal.minutes, playMoment, onOpenStep, openingStep, failedStep) }
+        studyDay?.let { RevealToday(it, requireNotNull(reveal).minutes, playMoment, onOpenStep, openingStep, failedStep) }
         reveal?.let { RevealWeek(it) }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
