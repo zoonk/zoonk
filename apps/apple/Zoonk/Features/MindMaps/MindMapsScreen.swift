@@ -204,7 +204,7 @@ private struct MindMapChaptersTab: View {
     }
 
     if !notMade.isEmpty {
-      MindMapCreateSection(goalId: goalId, maps: maps, notMade: notMade, isAlone: index.isEmpty)
+      MindMapCreateSection(goalId: goalId, maps: maps, notMade: notMade)
     } else if index.isEmpty {
       EmptyTab {
         Text(
@@ -218,8 +218,8 @@ private struct MindMapChaptersTab: View {
   }
 }
 
-/// The chapters without a map yet: a line for where the goal stands, one button for every map one
-/// tap can make, and the chapters themselves folded, each with its own Create.
+/// The chapters without a map yet: one button for every map one tap can make, one line for where
+/// they stand, and the chapters themselves folded, each with its own Create.
 private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
@@ -228,78 +228,58 @@ private struct MindMapCreateSection: View {
   let goalId: String
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
-  /// No chapter map opens yet, so this is the tab.
-  let isAlone: Bool
 
   var body: some View {
     let offer = maps.createOffer
+    let line = line(offer)
 
     Section {
-      VStack(alignment: .leading, spacing: 12) {
-        Text(verbatim: progress)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .contentTransition(.numericText())
-
-        if offer.startable > 0 {
-          Text(verbatim: offerLine(offer))
-            .typeStyle(.body)
-            .foregroundStyle(.mutedForeground)
-
-          BusyButton(isBusy: store.creatingAll.contains(goalId)) {
-            Task { await store.createAll(goalId: goalId) }
-          } label: {
-            if offer.startable == offer.eligible {
+      if offer.startable > 0 || line != nil {
+        VStack(alignment: .leading, spacing: 12) {
+          if offer.startable > 0 {
+            BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
+              Task { await store.createAll(goalId: goalId) }
+            } label: {
               Text(
-                "Create all chapter maps", tableName: "MindMaps",
-                comment: "Makes every chapter map one tap can make")
-            } else {
-              Text(
-                "Create up to \(offer.startable) chapter maps", tableName: "MindMaps",
-                comment: "Makes as many chapter maps as the learner's allowance lets start now")
+                "Create \(offer.startable) chapter maps", tableName: "MindMaps",
+                comment: "Makes as many chapter maps as one tap can start now")
             }
+            .buttonStyle(.outline)
           }
-          .buttonStyle(.outline)
-        } else if offer.eligible > 0, let stop = offer.stop {
-          let limit = stop.limit(tier: learner.summary.value?.tier ?? .free)
 
-          HelpLimitNotice(limit: limit.limit, message: limit.message)
+          if let line {
+            lineView(line)
+          }
         }
+        .listRowSeparator(.hidden)
+        .announcesStatus(note(line))
+      }
 
-        if store.createAllFailures[goalId] == .unreachable {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't reach the server. Check your connection.", table: "MindMaps",
-              comment: "Asking for a map didn't reach the server"))
-        }
-
-        if offer.needLessons > 0 {
+      DisclosureGroup(isExpanded: $showsChapters) {
+        if showsLessonsNote {
           Text(
-            "\(offer.needLessons) chapters need their lessons written first. Create each map on its own below.",
-            tableName: "MindMaps",
+            "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
             comment:
-              "Chapters whose maps can't be made all at once, since each writes its lessons first from its own row"
+              "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
-        }
-      }
-      .listRowSeparator(.hidden)
-      .announcesStatus(progress)
-
-      DisclosureGroup(isExpanded: $showsChapters) {
-        if let lessonsNote {
-          Text(verbatim: lessonsNote)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
         }
 
         ForEach(notMade) { map in
           MindMapRow(goalId: goalId, map: map, place: .library)
         }
       } label: {
-        Text("Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map")
+        LabeledContent {
+          Text(verbatim: notMade.count.formatted())
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        } label: {
+          Text(
+            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
+          )
           .typeStyle(.body)
+        }
       }
     } header: {
       SectionTitle(
@@ -307,60 +287,84 @@ private struct MindMapCreateSection: View {
     }
   }
 
-  /// Rows don't repeat what making a map of a chapter whose lessons aren't written means: this says
-  /// it once, when a row can.
-  private var lessonsNote: String? {
-    guard notMade.contains(where: { $0.status != .writingLessons && $0.lessonsToWrite > 0 }) else {
-      return nil
-    }
-
-    return learner.summary.value?.tier == .plus
-      ? String(
-        localized:
-          "Making a map for one of these writes its lessons first, so it takes a few minutes.",
-        table: "MindMaps",
-        comment:
-          "Over the chapters without a map, for a Plus learner with chapters whose lessons aren't written yet"
-      )
-      : String(
-        localized:
-          "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
-        table: "MindMaps",
-        comment:
-          "Over the chapters without a map, for a free learner with chapters whose lessons aren't written yet"
-      )
+  /// The one line under the button: the first of these that applies.
+  private enum Line {
+    case unreachable
+    case stopped(MindMapLimit)
+    case onTheWay(Int)
+    case fewer(Int)
+    case needLessons(Int)
   }
 
-  /// "9 of 24 chapter maps ready · 5 on the way"
-  private var progress: String {
-    let total = maps.chapters.count { $0.status != .unavailable && $0.status != .plusRequired }
-    let ready = maps.chapters.count { $0.status == .ready }
+  private func line(_ offer: MindMapCreateOffer) -> Line? {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
 
-    let readyLine = String(
-      localized: "\(ready) of \(total) chapter maps ready", table: "MindMaps",
-      comment: "How many of the goal's chapter maps are made")
-
-    guard onTheWay > 0 else {
-      return readyLine
+    if store.createAllFailures[goalId] == .unreachable {
+      return .unreachable
     }
 
-    return [
-      readyLine,
-      String(
-        localized: "\(onTheWay) on the way", table: "MindMaps",
-        comment: "How many chapter maps are being made now"),
-    ].joinedFacts()
+    if offer.eligible > 0, offer.startable == 0, let stop = offer.stop {
+      return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
+    }
+
+    if onTheWay > 0 {
+      return .onTheWay(onTheWay)
+    }
+
+    if offer.startable < offer.eligible {
+      return .fewer(offer.startable)
+    }
+
+    if offer.needLessons > 0 {
+      return .needLessons(offer.needLessons)
+    }
+
+    return nil
   }
 
-  private func offerLine(_ offer: MindMapCreateOffer) -> String {
-    offer.startable == offer.eligible
-      ? String(
-        localized: "\(offer.eligible) maps remain. You can leave while they're made.",
-        table: "MindMaps", comment: "Over the button that makes every remaining chapter map")
-      : String(
-        localized: "Starts in course order, within your current allowance.", table: "MindMaps",
-        comment: "Over the button that makes only some chapter maps, as many as the allowance lets")
+  @ViewBuilder
+  private func lineView(_ line: Line) -> some View {
+    switch line {
+    case .unreachable:
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't reach the server. Check your connection.", table: "MindMaps",
+          comment: "Asking for a map didn't reach the server"))
+    case .stopped(let limit):
+      HelpLimitNotice(limit: limit.limit, message: limit.message)
+    case .onTheWay, .fewer, .needLessons:
+      Text(verbatim: note(line) ?? "")
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  /// The line's words, when it's a note of the block's own rather than a notice.
+  private func note(_ line: Line?) -> String? {
+    switch line {
+    case .onTheWay(let count):
+      String(
+        localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
+        comment: "How many chapter maps are being made now")
+    case .fewer(let count):
+      String(
+        localized: "You can make \(count) more right now.", table: "MindMaps",
+        comment:
+          "Fewer chapter maps can start than are ready to make: as many as the allowance lets")
+    case .needLessons(let count):
+      String(
+        localized: "\(count) chapters need their lessons written first.", table: "MindMaps",
+        comment: "Chapters whose maps the button can't make, since each writes its lessons first")
+    case .unreachable, .stopped, nil:
+      nil
+    }
+  }
+
+  /// Rows don't repeat that writing lessons spends free lessons: this says it once, when a row
+  /// would write them.
+  private var showsLessonsNote: Bool {
+    learner.summary.value?.tier != .plus
+      && notMade.contains { $0.status != .writingLessons && $0.lessonsToWrite > 0 }
   }
 }
 
