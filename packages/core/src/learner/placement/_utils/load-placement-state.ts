@@ -6,6 +6,7 @@ import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
 import { type FocusTestSummaryRecord } from "../focus-test-state";
+import { type FocusPlan } from "../focus-test-view";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
@@ -115,6 +116,7 @@ type PlacementLoad = {
   focusTest: {
     dueFocus: string[] | null;
     inputVersion: number;
+    plan: FocusPlan;
     sittingId: string | null;
     summary: FocusTestSummaryRecord;
   } | null;
@@ -293,6 +295,7 @@ export async function loadPlacementWithSummary({
     focusTest: focusTest && {
       dueFocus: focusTest.dueFocus,
       inputVersion: focusTest.inputVersion,
+      plan: focusTest.plan,
       sittingId: focusTest.sittingId,
       summary: focusTest.summary,
     },

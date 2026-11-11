@@ -129,7 +129,13 @@ function getFocusState({
   return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : "handPicked";
 }
 
-function toFocus({ plan, rows }: { plan: FocusPlan; rows: FocusRow[] }): FocusTestFocus | null {
+export function toFocus({
+  plan,
+  rows,
+}: {
+  plan: FocusPlan;
+  rows: FocusRow[];
+}): FocusTestFocus | null {
   const state = getFocusState({ plan, suggested: rows.flatMap((row) => row.areas) });
 
   if (rows.length === 0 || state === null) {

@@ -3,11 +3,13 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { loadPlanChangeView } from "../../../plans/_utils/owned-plan";
 import { proposePlanChange } from "../../../plans/propose-plan-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
-import { type PlacementState, loadPlacementState } from "./load-placement-state";
+import { toFocus } from "../focus-test-view";
+import { type PlacementState } from "./load-placement-state";
 import { keepHandledSuggestion, saveTestSummary } from "./test-sitting";
 
 /**
@@ -47,11 +49,9 @@ export async function settleFocusTest({
   const plan = await loadPlacementPlan(goalId);
   const { focusTest, state } = await saveTestSummary({ goalId, plan, timeZone, today, userId });
 
-  if (!focusTest) {
-    return state;
-  }
+  const checkpoint = state.focusTest?.checkpoint;
 
-  if (!focusTest.dueFocus) {
+  if (!focusTest?.dueFocus || !checkpoint?.focus || !state.focusTest) {
     return state;
   }
 
@@ -74,9 +74,30 @@ export async function settleFocusTest({
       outcome: proposed.status === "unchanged" ? proposed.reason : "proposed",
       userId,
     });
+
+    return {
+      ...state,
+      focusTest: {
+        ...state.focusTest,
+        checkpoint: {
+          ...checkpoint,
+          focus: toFocus({
+            plan: {
+              ...focusTest.plan,
+              covered: proposed.status === "unchanged" && proposed.reason === "alreadyIn",
+              proposal:
+                proposed.status === "proposed"
+                  ? await loadPlanChangeView(proposed.changeId, { timeZone })
+                  : null,
+            },
+            rows: checkpoint.focus.rows,
+          }),
+        },
+      },
+    };
   }
 
-  return loadPlacementState({ goalId, plan, timeZone, today, userId });
+  return state;
 }
 
 async function settleAfterSession({

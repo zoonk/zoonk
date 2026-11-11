@@ -72,7 +72,7 @@ export async function finishGoalPlacement({
     };
   }
 
-  const completion = await completePlacement({
+  const { completion } = await completePlacement({
     goal: owned.goal,
     plan,
     timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone }),

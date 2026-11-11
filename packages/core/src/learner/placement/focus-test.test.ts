@@ -289,6 +289,32 @@ describe("an exam goal's Focus test", () => {
     ).resolves.toStrictEqual([{ incorrectAnswers: 3, seconds: 90 }]);
   });
 
+  it("starts a continuation directly from an ended sitting and keeps its result", async () => {
+    const { goal, user } = await examTestGoalFixture({
+      goal: PLAN_SHOWN,
+      subjects: [{ name: "Biologia", questions: 10, skills: 4 }],
+    });
+
+    const first = await startSitting(goal.id);
+    const ended = await answerTimes({ goalId: goal.id, placement: first, times: 4 });
+    expect(ended.focusTest?.sitting?.end).toBe("ceiling");
+
+    const continued = await startSitting(goal.id);
+
+    expect(continued).toMatchObject({
+      focusTest: {
+        sitting: { answered: 0, kind: "continuation", left: 4, questions: 4 },
+        subjects: [{ asked: 4, right: 4 }],
+      },
+      next: expect.anything(),
+      status: "asking",
+    });
+
+    await expect(
+      prisma.learningEvent.findMany({ where: { lessonKind: "focusTest", userId: user.id } }),
+    ).resolves.toMatchObject([{ correctAnswers: 4, seconds: 120 }]);
+  });
+
   it("ends at its promised count; finishing it shows the result and offers to continue", async () => {
     const { goal, user } = await examTestGoalFixture({
       goal: PLAN_SHOWN,

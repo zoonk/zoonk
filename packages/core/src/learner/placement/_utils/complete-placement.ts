@@ -10,6 +10,7 @@ import { type FocusTestView } from "../focus-test-contract";
 import { readFocusTestRecord } from "../focus-test-state";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
+import { type PlacementState } from "./load-placement-state";
 import { settleFocusTest } from "./settle-focus-test";
 import { type ClosedSitting, closeTestSitting } from "./test-sitting";
 
@@ -63,7 +64,7 @@ export async function completePlacement({
   plan: GoalPlan;
   sittingId?: string | null;
   timeZone: string;
-}): Promise<PlacementCompletion> {
+}): Promise<{ completion: PlacementCompletion; state: PlacementState }> {
   const { id: goalId, userId } = goal;
   const now = new Date();
   const tested = goal.kind === "exam";
@@ -95,11 +96,14 @@ export async function completePlacement({
     : applied.state;
 
   return {
-    areas: state.areas,
-    complete: state.complete,
-    focusTest: state.focusTest,
-    knownSkillIds: state.knownSkillIds,
-    phases: state.phases,
-    testedOutPlanItemIds: applied.testedOutPlanItemIds,
+    completion: {
+      areas: state.areas,
+      complete: state.complete,
+      focusTest: state.focusTest,
+      knownSkillIds: state.knownSkillIds,
+      phases: state.phases,
+      testedOutPlanItemIds: applied.testedOutPlanItemIds,
+    },
+    state,
   };
 }

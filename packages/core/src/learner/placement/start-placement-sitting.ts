@@ -42,35 +42,26 @@ export async function startPlacementSitting({
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const read = async () =>
-    loadPlacementWithSummary({
-      goalId,
-      plan: await loadPlacementPlan(goalId),
-      timeZone,
-      today,
-      userId,
-    });
-
-  const open = await read();
+  const plan = await loadPlacementPlan(goalId);
+  const open = await loadPlacementWithSummary({ goalId, plan, timeZone, today, userId });
   const sitting = open.state.focusTest?.sitting;
 
   if (sitting && sitting.end === null) {
     return { placement: open.state, status: "ready" };
   }
 
-  if (sitting) {
-    await completePlacement({
-      goal,
-      plan: await loadPlacementPlan(goalId),
-      sittingId: open.focusTest?.sittingId ?? null,
-      timeZone,
-    });
-  }
+  const { state } = sitting
+    ? await completePlacement({
+        goal,
+        plan,
+        sittingId: open.focusTest?.sittingId ?? null,
+        timeZone,
+      })
+    : open;
 
-  const { focusTest, state } = sitting ? await read() : open;
   const offer = state.focusTest?.offer;
 
-  if (!focusTest || !offer) {
+  if (!state.focusTest || !offer) {
     return { placement: state, status: "ready" };
   }
 
@@ -78,7 +69,7 @@ export async function startPlacementSitting({
 
   const opened = await saveTestSummary({
     goalId,
-    plan: await loadPlacementPlan(goalId),
+    plan: sitting ? await loadPlacementPlan(goalId) : plan,
     timeZone,
     today,
     userId,
