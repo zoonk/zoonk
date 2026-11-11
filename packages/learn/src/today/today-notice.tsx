@@ -8,6 +8,7 @@ import { useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
 import { TodayExamChoice } from "./today-exam-choice";
 import { TodayExamMoment } from "./today-exam-moment";
+import { TodayFocusTest } from "./today-focus-test";
 import { TodayInsight } from "./today-insight";
 import { TodayPlanChange } from "./today-plan-change";
 import { TodaySuggestedGoal } from "./today-suggested-goal";
@@ -36,6 +37,8 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
       return <TodayExamAccess />;
     case "examChoice":
       return <TodayExamChoice />;
+    case "focusTest":
+      return <TodayFocusTest />;
     case "insight":
       return <TodayInsight />;
     case "planChange":

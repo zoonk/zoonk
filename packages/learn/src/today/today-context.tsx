@@ -53,6 +53,9 @@ export type TodayActions = {
     status: PlanChangeDecisionInput["status"];
     surface?: PlanChangeDecisionInput["surface"];
   }) => Promise<PlanChangeView | "stale" | null>;
+  /** Today stops suggesting the Focus test for this goal. */
+  dismissFocusTest: () => Promise<boolean>;
+  focusTestHref: string;
   /** The standalone player for a lesson finished today, never its block in the session. */
   lessonHref: (block: DayStep) => string | null;
   lessonAgainHref: (lessonId: string) => string;

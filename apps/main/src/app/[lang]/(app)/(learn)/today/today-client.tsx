@@ -6,6 +6,7 @@ import {
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
+import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -30,6 +31,7 @@ import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
@@ -213,7 +215,16 @@ export function TodayClient({
           return next ? taps.next(next) : Promise.resolve(false);
         },
         decidePlanChange,
+        dismissFocusTest: async () => {
+          const saved = await updateFocusTestAction(today.goal.id, {
+            suggestion: "dismissed",
+            timeZone: getLocalTimeZone(),
+          });
+
+          return saved !== null;
+        },
         examHref: "/exam",
+        focusTestHref: "/focus-test",
         lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
         lessonHref: (block) =>
           getStudyLessonHref({ block, goalId: today.goal.id, session: today.session }),
