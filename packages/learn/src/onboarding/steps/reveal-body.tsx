@@ -144,6 +144,7 @@ export function RevealBody({
   markRevealed,
   moment,
   onStart,
+  refresh,
   reveal,
   signUpHref,
   syllabus,
@@ -155,6 +156,7 @@ export function RevealBody({
   /** False once the learner pressed Start: a reveal they open again shows its end, still. */
   moment: boolean;
   onStart: () => Promise<boolean>;
+  refresh: () => void;
   signUpHref: string;
   reveal: PlanRevealDays | null;
   syllabus: SyllabusView | null;
@@ -203,7 +205,12 @@ export function RevealBody({
           <RevealNoticeDay />
         </header>
 
-        <RevealToday goalId={goalId} markRevealed={markRevealed} reveal={reveal} />
+        <RevealToday
+          goalId={goalId}
+          markRevealed={markRevealed}
+          refresh={refresh}
+          reveal={reveal}
+        />
         <RevealWeek reveal={reveal} />
 
         <div className="flex flex-col gap-2">

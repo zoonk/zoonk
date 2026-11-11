@@ -5,9 +5,13 @@ import { type DayStep, type StudyDay } from "./session-types";
 
 /** `open` resolves to false when it couldn't open the step, and true once it did or the learner left. */
 export type DayStepOpenerProps = {
+  /** Runs first: the step opens only once it resolves true and the learner is still here. */
+  beforeOpen: () => Promise<boolean>;
   children: (open: (step: DayStep) => Promise<boolean>) => ReactNode;
   day: StudyDay;
   goalId: string;
+  /** Reads the day again when an open finds it changed. */
+  refresh: () => void;
 };
 
 const DayStepOpenerContext = createContext<ComponentType<DayStepOpenerProps> | null>(null);

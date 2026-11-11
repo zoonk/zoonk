@@ -5,8 +5,9 @@ import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted, useFormatter } from "next-intl";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { KindMark, type LearnKind } from "../../_components/kind-tile";
 import {
   ListGroup,
@@ -99,7 +100,7 @@ function TodayRow({
   const t = useExtracted();
   const title = useBlockTitle();
   const formatDuration = useFormatDuration();
-  const [pending, setPending] = useState(false);
+  const [pending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
   const details = [line, formatDuration(block.estimatedMinutes)].filter(Boolean);
 
@@ -129,14 +130,13 @@ function TodayRow({
     return <ListRow data-highlighted={tag ? "" : undefined}>{content}</ListRow>;
   }
 
-  const open = async () => {
-    setPending(true);
+  const open = () => {
     setFailed(false);
 
-    if (!(await onOpen())) {
-      setPending(false);
-      setFailed(true);
-    }
+    startTransition(async () => {
+      const { data: opened } = await safeAsync(onOpen);
+      setFailed(!opened);
+    });
   };
 
   return (
@@ -169,10 +169,12 @@ function useFormatDay() {
 export function RevealToday({
   goalId,
   markRevealed,
+  refresh,
   reveal,
 }: {
   goalId: string;
   markRevealed: () => Promise<boolean>;
+  refresh: () => void;
   reveal: PlanRevealDays | null;
 }) {
   const t = useExtracted();
@@ -202,7 +204,7 @@ export function RevealToday({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <DayStepOpener day={session} goalId={goalId}>
+      <DayStepOpener beforeOpen={markRevealed} day={session} goalId={goalId} refresh={refresh}>
         {(open) => (
           <ListGroup>
             {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
@@ -210,11 +212,7 @@ export function RevealToday({
                 block={block}
                 key={block.position}
                 line={label(block)}
-                onOpen={
-                  isFinished(block) || block.waitReason
-                    ? null
-                    : async () => (await markRevealed()) && open(block)
-                }
+                onOpen={isFinished(block) || block.waitReason ? null : () => open(block)}
                 tag={block === next ? nextTag : null}
               />
             ))}

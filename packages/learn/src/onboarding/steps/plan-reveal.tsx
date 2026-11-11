@@ -177,6 +177,7 @@ export function PlanReveal({
               markRevealed={markRevealed}
               moment={!planRevealed}
               onStart={start}
+              refresh={() => void safeAsync(refresh)}
               signUpHref={signUpHref}
               syllabus={syllabus}
               reveal={reveal}
