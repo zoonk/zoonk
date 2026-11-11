@@ -184,12 +184,18 @@ describe("finding due study reminders", () => {
     expect(listed).not.toContain(tokyo.user.id);
   });
 
-  it("reads a zone saved in another case as that zone, as Intl does", async () => {
-    const { user } = await learnerWithReminder({ timezone: "asia/tokyo" });
+  it.each([
+    ["asia/tokyo", "2026-10-07T10:10:00Z"],
+    ["+01:00", "2026-10-07T18:10:00Z"],
+  ])("reads %s the way the claim does", async (timezone, at) => {
+    const { user } = await learnerWithReminder({ timezone });
+    const now = new Date(at);
 
-    await expect(listDueStudyReminders(new Date("2026-10-07T10:10:00Z"))).resolves.toContain(
-      user.id,
-    );
+    await expect(listDueStudyReminders(now)).resolves.toContain(user.id);
+
+    await expect(claimStudyReminder({ now, userId: user.id })).resolves.toMatchObject({
+      status: "claimed",
+    });
   });
 });
 

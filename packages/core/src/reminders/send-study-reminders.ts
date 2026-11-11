@@ -1,7 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type PushPlatform } from "@zoonk/db/enums";
+import { getTimeZoneOffsetMs } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { findGoalsWithWork, hasStudiedRecently } from "./_utils/reminder-goals";
 import { getReminderPhone } from "./_utils/reminder-phone";
@@ -30,13 +32,28 @@ export type StudyReminderDelivery = Destination & {
   message: ReminderMessage;
 };
 
+/** The zone's wall clock as a Postgres `timestamp` literal, read with the same rules as the claim. */
+function getLocalClock({ now, zone }: { now: Date; zone: string | null }): string {
+  const timeZone = getAnswerTimeZone({ goal: zone === null ? null : { timezone: zone } });
+  const local = new Date(now.getTime() + getTimeZoneOffsetMs({ date: now, timeZone }));
+  return local.toISOString().slice(0, "YYYY-MM-DDTHH:mm:ss".length);
+}
+
 /**
  * A prefilter: rows whose local time, in the active goal's zone, is inside today's send window and
- * that weren't considered today. A zone Postgres doesn't know reads as UTC, so one bad zone can't
- * fail the scan; the claim checks the window again with the zone rules Today uses.
+ * that weren't considered today. Each zone's clock is read here rather than by Postgres, so the
+ * scan accepts every zone the claim does; a zone that appears mid-sweep reads as UTC until the next.
  */
 export async function listDueStudyReminders(now: Date): Promise<string[]> {
-  // Prisma binds a Date without its offset, so Postgres would read it in the session's zone.
+  const goals = await prisma.goal.findMany({
+    distinct: ["timezone"],
+    select: { timezone: true },
+    where: { user: { studyReminder: { isNot: null } } },
+  });
+
+  const zones = goals.map((goal) => goal.timezone);
+  const clocks = zones.map((zone) => getLocalClock({ now, zone }));
+
   const rows = await prisma.$queryRaw<{ userId: string }[]>`
     SELECT reminder.user_id AS "userId"
     FROM study_reminders AS reminder
@@ -49,9 +66,11 @@ export async function listDueStudyReminders(now: Date): Promise<string[]> {
       ORDER BY goal.created_at
       LIMIT 1
     ) AS active_goal ON TRUE
-    LEFT JOIN pg_timezone_names AS zone ON lower(zone.name) = lower(active_goal.timezone)
+    LEFT JOIN unnest(${zones}::text[], ${clocks}::timestamp[]) AS zone_clock (zone, local_now)
+      ON zone_clock.zone = active_goal.timezone
     CROSS JOIN LATERAL (
-      SELECT ${now.toISOString()}::timestamptz AT TIME ZONE COALESCE(zone.name, 'UTC') AS local_now
+      SELECT COALESCE(zone_clock.local_now, ${getLocalClock({ now, zone: null })}::timestamp)
+        AS local_now
     ) AS clock
     WHERE (reminder.email_on OR (reminder.push_on
       AND reminder.push_token IS NOT NULL
