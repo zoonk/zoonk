@@ -341,9 +341,14 @@ function getOperations(node: ExpressionNode): ExpressionNode[] {
   }
 }
 
-/** Every value the expression computes on the way to its result, the result included. */
+/** The expression's result and every value it computes on the way there. */
 export function getSubexpressions(expression: ParsedExpression): ParsedExpression[] {
-  return getOperations(expression.ast).map((ast) => ({ ...expression, ast }));
+  const operations = getOperations(expression.ast);
+
+  return (operations.length > 0 ? operations : [expression.ast]).map((ast) => ({
+    ...expression,
+    ast,
+  }));
 }
 
 export function parseExpression(source: string): ParseExpressionResult {

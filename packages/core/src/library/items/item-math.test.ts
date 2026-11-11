@@ -197,6 +197,26 @@ describe(withNewNumbers, () => {
     expect(result.values).toStrictEqual({ decrease: 10, increase: 20, weekday: 400, weekend: 180 });
   });
 
+  it("holds a step that shows a variable to its written form", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 4,
+      commonMistakes: [{ expression: "guests", misconception: "One each", reason: "No." }],
+      solution: "2 * guests",
+      steps: [{ expression: "guests", text: "There are {result} guests." }],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [{ max: 3, min: 2, name: "guests", step: 0.5, unit: null, value: 2 }],
+    };
+
+    const result = withNewNumbers({
+      math,
+      question: "{guests} guests, 2 tickets each?",
+      random: () => 0.5,
+    });
+
+    expect(result.steps).toStrictEqual(["There are 2 guests."]);
+  });
+
   it("keeps the checked numbers when no new draw works", () => {
     const math: GeneratedMathProblem = {
       ...discountMath,
