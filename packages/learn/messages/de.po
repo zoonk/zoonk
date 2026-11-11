@@ -153,6 +153,7 @@ msgstr "Tägliche Lernzeit"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -2384,7 +2385,6 @@ msgid "Chapter options"
 msgstr "Kapiteloptionen"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -4518,6 +4518,12 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "Im kostenlosen Tarif kannst du jeweils ein Ziel verfolgen. Pausier dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele."
 
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "Ziel umbenennen"
+
+#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "Dieses Ziel pausieren"
@@ -4538,6 +4544,7 @@ msgid "Resume your {goal} goal?"
 msgstr "Dein Ziel „{goal}“ fortsetzen?"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Fortsetzen"
@@ -4558,11 +4565,13 @@ msgid "Archive"
 msgstr "Archivieren"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "Dein Ziel „{goal}“ ist pausiert"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4712,12 +4721,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "Plan teilen"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "Ziel umbenennen"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4798,12 +4801,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "Probeprüfung"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "Dein Plan folgt nach ein paar Fragen"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "Beantworte sie und wir planen jeden Tag, bis du dein Ziel erreichst."
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · Wir erstellen deinen Plan"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "Das dauert normalerweise ein bis zwei Minuten. Dein Plan öffnet sich hier, sobald er fertig ist."
@@ -13904,6 +13917,11 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "Ziel pausieren oder Plus holen"
+
+#: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
 msgid "Starts with Plus"
 msgstr "Startet mit Plus"
@@ -13944,6 +13962,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "Wir konnten das Ziel nicht wechseln. Versuch es noch einmal."
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "Wir konnten dieses Ziel nicht starten. Versuch es noch einmal."
@@ -13954,6 +13973,7 @@ msgid ", current goal. Switch goal"
 msgstr ", aktuelles Ziel. Ziel wechseln"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "Deine Ziele"
@@ -13987,6 +14007,31 @@ msgstr "{done, plural, =0 {# von {total} Missionen heute} other {# von {total} M
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Lernbereiche"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "Pausieren"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "Platz für {goal} schaffen"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "Du verfolgst schon so viele Ziele, wie der kostenlose Tarif erlaubt. Pausier eines, um mit {goal} zu starten. Du kannst es später weiterverfolgen."
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "Schließen"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus holen"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
