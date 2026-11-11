@@ -138,9 +138,11 @@ function useFocusIntro() {
 
 function SuggestedFocus({
   focus,
+  onProposalAnswered,
   plan,
 }: {
   focus: FocusTestFocus;
+  onProposalAnswered?: () => void;
   plan: FocusTestPlanActions | null;
 }) {
   const t = useExtracted();
@@ -169,7 +171,7 @@ function SuggestedFocus({
       <FocusRows rows={focus.rows} />
 
       {plan && focus.state === "proposed" && focus.proposal && (
-        <FocusProposal plan={plan} proposal={focus.proposal} />
+        <FocusProposal onAnswered={onProposalAnswered} plan={plan} proposal={focus.proposal} />
       )}
 
       {changesFocus && (
@@ -186,9 +188,11 @@ function SuggestedFocus({
 
 export function FocusTestResult({
   focusTest,
+  onProposalAnswered,
   plan = null,
 }: {
   focusTest: FocusTestView;
+  onProposalAnswered?: () => void;
   plan?: FocusTestPlanActions | null;
 }) {
   const t = useExtracted();
@@ -201,7 +205,13 @@ export function FocusTestResult({
   return (
     <>
       <StartingPoints lessonsSkipped={checkpoint.lessonsSkipped} />
-      {checkpoint.focus && <SuggestedFocus focus={checkpoint.focus} plan={plan} />}
+      {checkpoint.focus && (
+        <SuggestedFocus
+          focus={checkpoint.focus}
+          onProposalAnswered={onProposalAnswered}
+          plan={plan}
+        />
+      )}
 
       <div className="flex flex-col items-start gap-2">
         <FocusTestSubjectsSheet answered subjects={subjects} />

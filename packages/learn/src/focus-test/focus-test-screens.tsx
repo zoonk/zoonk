@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { BigQuantity } from "../_components/big-quantity";
 import { ChangeSaveError } from "../_components/save-error";
 import { TaskMeta } from "../_components/task-meta";
@@ -267,7 +268,14 @@ export function FocusTestCheckpoint({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const [proposalAnswered, setProposalAnswered] = useState(false);
   const next = focusTest.offer;
+
+  // One filled button a screen: while a proposal waits, "Update my plan" is it.
+  const proposalWaits =
+    plan !== null && Boolean(focusTest.checkpoint?.focus?.proposal?.canApply) && !proposalAnswered;
+
+  const DoneButton = proposalWaits ? OnboardingSecondaryButton : OnboardingPrimaryButton;
 
   return (
     <OnboardingColumn>
@@ -277,18 +285,22 @@ export function FocusTestCheckpoint({
         <FocusTestEvidence end={end} focusTest={focusTest} />
       </OnboardingHeading>
 
-      <FocusTestResult focusTest={focusTest} plan={plan} />
+      <FocusTestResult
+        focusTest={focusTest}
+        onProposalAnswered={() => setProposalAnswered(true)}
+        plan={plan}
+      />
 
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          autoFocus
+        <DoneButton
+          autoFocus={!proposalWaits}
           busy={pressed === "main"}
           disabled={pressed === "other"}
           onClick={onDone}
         >
           {host === "onboarding" ? t("Continue to daily time") : t("Done")}
-        </OnboardingPrimaryButton>
+        </DoneButton>
         {next && (
           <OnboardingSecondaryButton
             busy={pressed === "other"}
