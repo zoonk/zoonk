@@ -131,7 +131,10 @@ A 10.
 B 11.
 C 13.
 D 30.
-E 33.`;
+E 33.
+QUESTÃO 144
+Ogerentedeumalojaanunciouumapromoçãoemquecadaclientequerealizar uma compra ganha um voucher.
+Paraisso,resolveualteraraquantidadede bolinhas brancas na urnaB.`;
 
     const gluedItem = {
       ...PRINTED_ITEM,
@@ -172,8 +175,7 @@ E 33.`;
   });
 
   it("keeps a long word of a paper that kept its spaces", () => {
-    const paper = `Lesen Sie den Text und beantworten Sie die Fragen. Für jede Frage gibt es nur eine richtige Antwort. Sie haben für diesen Teil der Prüfung neunzig Minuten Zeit. Schreiben Sie Ihre Antworten am Ende auf den Antwortbogen. Benutzen Sie dafür einen schwarzen oder blauen Stift. Wörterbücher und Telefone sind während der ganzen Prüfung nicht erlaubt. Wenn Sie fertig sind, geben Sie alle Blätter bei der Aufsicht ab und verlassen leise den Raum.
-QUESTÃO 136
+    const paper = `QUESTÃO 136
 Das Bundesausbildungsförderungsgesetz regelt die Förderung.
 Was regelt es?
 A Die Förderung.
@@ -229,7 +231,9 @@ E 札幌。`;
   });
 
   describe("a table the paper's text gives as rows of pipes", () => {
-    const TABLE_PAPER = `4 The geometry test scores for Andrea and Joe are shown in the table below.
+    const TABLE_PAPER = `3 Which scenario represents an exponential relationship?
+Use this space for computations.
+4 The geometry test scores for Andrea and Joe are shown in the table below.
 Use this space for computations.
 | Andrea | Joe |
 | 82 | 91 |
@@ -239,7 +243,8 @@ Which statement about their test scores is correct?
 (2) Joe's mean is higher.
 (3) Both means are equal.
 (4) Neither has a mean.
-5 Which polynomial has a degree of 3?`;
+5 Which polynomial has a degree of 3?
+Use this space for computations.`;
 
     const target = { ...TARGET, language: "en", optionCount: 4 };
 
@@ -262,6 +267,18 @@ Which statement about their test scores is correct?
 | --- | --- |
 | 82 | 91 |
 | 87 | 79 |`;
+
+      expect(
+        checkPastQuestion({ paperText: TABLE_PAPER, question: tableQuestion(context), target })
+          .problems,
+      ).toStrictEqual(["The support text isn't in the paper as printed."]);
+    });
+
+    it("refuses a table with a row left out", () => {
+      const context = `The geometry test scores for Andrea and Joe are shown in the table below.
+| Andrea | Joe |
+| --- | --- |
+| 87 | 78 |`;
 
       expect(
         checkPastQuestion({ paperText: TABLE_PAPER, question: tableQuestion(context), target })
