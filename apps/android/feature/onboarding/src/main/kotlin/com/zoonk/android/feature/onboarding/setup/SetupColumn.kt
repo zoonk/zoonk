@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
@@ -32,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.warmup.ReadyHold
@@ -109,8 +109,8 @@ private fun SetupColumnBody(
     Box(Modifier.fillMaxSize().imePadding()) {
         val scroll = rememberScrollState()
         val spread = fold?.takeIf { aside == null }
-        val waitSlot = remember { mutableStateOf<PageWait?>(null) }
-        val wait = waitSlot.value
+        val barSlot = remember { mutableStateOf<PageBar?>(null) }
+        val bar = barSlot.value
 
         Column(
             when {
@@ -132,12 +132,12 @@ private fun SetupColumnBody(
                 else -> {
                     Modifier.fillMaxSize()
                 }
-            }.then(wait?.hold?.let { Modifier.watchTouches(it) } ?: Modifier),
+            }.then(bar?.hold?.let { Modifier.watchTouches(it) } ?: Modifier),
         ) {
             BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
                 val height = maxHeight
 
-                CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, height - EDGE * 2, waitSlot)) {
+                CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, barSlot)) {
                     Box(
                         if (spread == null) Modifier.fillMaxSize().verticalScroll(scroll) else Modifier.fillMaxSize(),
                         contentAlignment = Alignment.TopCenter,
@@ -160,7 +160,7 @@ private fun SetupColumnBody(
                 }
             }
 
-            wait?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { HeldBar(it) }
+            bar?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { SetupActionBar(it) }
         }
 
         if (fold != null && aside != null) {
@@ -177,14 +177,12 @@ private fun SetupColumnBody(
 internal data class SetupPage(
     val fold: PageFold?,
     val scroll: ScrollState,
-    val height: Dp,
-    val wait: MutableState<PageWait?>,
+    val bar: MutableState<PageBar?>,
 )
 
 internal val LocalSetupPage = compositionLocalOf<SetupPage?> { null }
 
-/** A wait on the page that can hold once its work is ready, and its one way on then. */
-internal data class PageWait(
+internal data class PageBar(
     val hold: ReadyHold?,
     val action: String,
     val actions: State<@Composable () -> Unit>? = null,
@@ -200,41 +198,41 @@ internal fun PageHold(
     hold: ReadyHold,
     action: String,
 ) {
-    val slot = LocalSetupPage.current?.wait ?: return
-    val wait = PageWait(hold, action)
-    SideEffect { slot.value = wait }
+    val slot = LocalSetupPage.current?.bar ?: return
+    val bar = PageBar(hold, action)
+    SideEffect { slot.value = bar }
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
 @Composable
-internal fun PageWaitActions(
+internal fun PageActions(
     hold: ReadyHold? = null,
     visible: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val slot = LocalSetupPage.current?.wait
+    val slot = LocalSetupPage.current?.bar
     if (slot == null) {
         content()
         return
     }
     val actions = rememberUpdatedState(content)
-    val wait = PageWait(hold, "", actions, visible)
-    SideEffect { slot.value = wait }
+    val bar = PageBar(hold, "", actions, visible)
+    SideEffect { slot.value = bar }
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
 @Composable
-private fun HeldBar(wait: PageWait) {
+private fun SetupActionBar(bar: PageBar) {
     DockedActionBar {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             Box(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = MARGIN, vertical = EDGE)) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (wait.actions !=
+                    if (bar.actions !=
                         null
                     ) {
-                        wait.actions.value()
+                        bar.actions.value()
                     } else {
-                        Button(onClick = { wait.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
+                        Button(onClick = { bar.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(bar.action) }
                     }
                 }
             }
@@ -249,6 +247,7 @@ private fun HeldBar(wait: PageWait) {
  */
 @Composable
 internal fun ColumnScope.QuestionPages(
+    questionId: String,
     read: @Composable ColumnScope.() -> Unit,
     answer: @Composable ColumnScope.() -> Unit,
     actions: @Composable ColumnScope.() -> Unit,
@@ -257,12 +256,16 @@ internal fun ColumnScope.QuestionPages(
         val page = LocalSetupPage.current
         val fold = page?.fold
         val answerScroll = rememberScrollState()
+        LaunchedEffect(questionId) {
+            page?.scroll?.scrollTo(0)
+            answerScroll.scrollTo(0)
+        }
 
         Box(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
             // The answer's page is the one column's place, so what the learner picked, typed or recorded stays as the book opens or closes.
             Column(
                 if (fold == null) {
-                    Modifier.fillMaxWidth().heightIn(min = page?.height ?: 0.dp)
+                    Modifier.fillMaxWidth()
                 } else {
                     Modifier
                         .fillMaxSize()
@@ -287,7 +290,11 @@ internal fun ColumnScope.QuestionPages(
                     if (fold == null) read()
                     answer()
                 }
-                OnboardingActions(actions)
+                if (fold != null) {
+                    OnboardingActions(actions)
+                } else {
+                    PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
+                }
             }
 
             if (fold != null) {
