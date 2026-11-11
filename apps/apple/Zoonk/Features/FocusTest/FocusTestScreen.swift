@@ -10,6 +10,7 @@ struct FocusTestScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
+  @Environment(SessionStore.self) private var session
   @State private var choosesFocus = false
 
   var body: some View {
@@ -32,6 +33,9 @@ struct FocusTestScreen: View {
           ) {
             dismiss()
           }
+          // A new session opens the test again from its own read, so another session's question,
+          // wait and saves never stay on screen.
+          .id(session.authenticatedSession)
         }
       }
       .navigationTitle(
