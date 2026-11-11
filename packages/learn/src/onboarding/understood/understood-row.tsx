@@ -97,7 +97,7 @@ function RowEditor({
       }}
     >
       <label className="sr-only" htmlFor={inputId}>
-        {country ? t("Country") : label}
+        {label}
       </label>
       {country ? (
         <CountryField

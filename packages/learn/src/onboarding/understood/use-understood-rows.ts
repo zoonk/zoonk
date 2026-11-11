@@ -101,6 +101,7 @@ export function useLanguageRows() {
       (hasCountryRow || !isSaidInTitle({ title: draft.displayName ?? "", value: language })) && {
         ...(hasCountryRow && {
           country: { choices: regionChoices, language: targetLanguage },
+          editLabel: t("Country"),
           editable: { key: "targetRegion", kind: "country" },
         }),
         id: "targetLanguage",

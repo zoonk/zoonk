@@ -10763,12 +10763,6 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Fonte: {source}"
 
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-language.tsx
-msgctxt "vONi-O"
-msgid "Country"
-msgstr "Paese"
-
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10813,6 +10807,12 @@ msgstr "Lo rileggeremo. Per correggere un dettaglio, usa la matita accanto alla 
 msgctxt "Q47TXB"
 msgid "Read it again"
 msgstr "Rileggi"
+
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Paese"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"

@@ -10763,12 +10763,6 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Źródło: {source}"
 
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/plan-language.tsx
-msgctxt "vONi-O"
-msgid "Country"
-msgstr "Kraj"
-
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10813,6 +10807,12 @@ msgstr "Przeczytamy tekst jeszcze raz. Aby poprawić jeden szczegół, użyj oł
 msgctxt "Q47TXB"
 msgid "Read it again"
 msgstr "Przeczytaj jeszcze raz"
+
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Kraj"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
