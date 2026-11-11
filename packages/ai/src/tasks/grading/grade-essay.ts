@@ -17,12 +17,12 @@ import {
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * The learner waits on the grade. At high reasoning on 18 essays, twice (11 Nov 2026), Muse Ember
- * put 36 of 36 totals in their band at 6s p50 for $1.70/1k; Haiku 5.5 put 31 (it marks English
- * IELTS essays too low) at 21s p50 for $2.75/1k. A blind read by GPT-6.1 Sol preferred Ember's
- * grading on 11 essays and Haiku's on 3: Haiku invented errors and docked points the essays
- * earned. Gemini 3.8 Flash at high also kept every total in band on 11 essays (8 Nov 2026), at
- * $16.59/1k.
+ * The learner waits on the grade. At high reasoning on 18 essays run twice (11 Nov 2026), Muse
+ * Ember put all 36 totals in their band at 6 s p50 for $1.70/1k, and Haiku 5.5 put 31 (it marks
+ * English IELTS essays too low) at 21 s p50 for $2.75/1k. A blind GPT-6.1 Sol read preferred
+ * Ember's grading on 11 essays and Haiku's on 3: Haiku docked points for flaws the essays didn't
+ * have. Gemini 3.8 Flash at high kept all 11 totals in band on 8 Nov 2026, at $16.59/1k; at
+ * default reasoning, Haiku and Flash each missed one.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";

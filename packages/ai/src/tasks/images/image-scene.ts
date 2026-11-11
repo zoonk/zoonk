@@ -8,8 +8,9 @@ import { type ImageScene, imageSceneSchema, normalizeImageScene } from "./image-
 import systemPrompt from "./image-scene.prompt.md";
 
 /**
- * On 18 cases (11 Nov 2026), Ember scored 9.62 at $1.17/1k against Flash's 9.60 at $3.34/1k.
- * Claude's blind reads split 6 wins each and 6 ties; both kept the scene's teaching quality.
+ * The scene decides whether the picture teaches, and costs little next to the image itself. On 18
+ * cases (11 Nov 2026), Muse Ember scored 9.62 at 3.9 s p50 for $1.17/1k and Gemini 3.8 Flash 9.60
+ * at 6.5 s for $3.34/1k; a blind Claude read split them 6 wins each with 6 ties.
  */
 const defaultModel = "meta/muse-ember";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-luna"] as const;

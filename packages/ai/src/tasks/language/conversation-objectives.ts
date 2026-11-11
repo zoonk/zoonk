@@ -16,10 +16,10 @@ import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * GPT-Live delegates only to the client, so the voice model can't call a tool to mark objectives
- * and a text model reads the transcript, after each learner answer during the call. Over three runs
- * of 23 cases (11 Nov 2026), Muse Ember without reasoning got 68 of 69 at 1.0s p50 and 1.4s p95 for
- * $0.15/1k; Luna got 66 (it never ticks a finished TOEFL repetition) at 1.8s p50 and up to 3.3s
- * p95 for the same cost. Ember's default thinking triples its cost without a gain.
+ * and a text model reads the transcript after each learner answer, while the call goes on. On 25
+ * cases (11 Nov 2026), Muse Ember without reasoning got all 25 at 0.9 s p50 and 1.3 s p95 for
+ * $0.14/1k; Luna missed a finished TOEFL repetition at 1.8 s p50 and 3.3 s p95 for $0.16/1k. A
+ * blind read found 22 ties and 1 Ember win. Ember's default reasoning triples its cost for no gain.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "none";

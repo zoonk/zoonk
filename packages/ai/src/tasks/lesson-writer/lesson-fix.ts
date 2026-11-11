@@ -82,8 +82,9 @@ function applyLessonFixes({
 }
 
 /**
- * The owner keeps the writer as fixer: on six cases (11 Nov 2026), Fable, Carbon, Opus and Terra
- * all scored 10 at $179, $42, $76 and $12 per 1k runs, so neither new model justified a switch.
+ * The owner keeps the writer's own model as fixer: Luna broke the correct § 2º into § 1º (8 Nov
+ * 2026). On 6 cases (11 Nov 2026), Terra, Opus, Gemini 4 Carbon and Fable all scored 10, at $12,
+ * $76, $42 and $179 per 1k runs, so neither new model earned a place.
  * Returns changed screen indexes for provenance.
  */
 export async function fixLessonDraft(params: FixLessonDraftParams) {

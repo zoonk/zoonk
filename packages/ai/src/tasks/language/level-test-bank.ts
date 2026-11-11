@@ -15,9 +15,12 @@ import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
 
 /**
- * Shared banks favor Fable: on 8 blind-read cases (11 Nov 2026), it won 6, lost 1 and tied 1,
- * with 1 confirmed key flaw versus Opus's 2 and no level flaws; judges flagged 1 key flaw each.
- * Battle scores were 8.96 versus 8.67 at $2.13 versus $0.65 per bank, worth the gain for reuse.
+ * Written once per pair and shared, so quality wins. On 8 banks (11 Nov 2026), a blind GPT-6.1 Sol
+ * read preferred Fable to Opus on 6, Opus on 1 and tied 1; Fable keyed one German afternoon time as
+ * 3:15 and Opus left two keys ambiguous. Judges scored them 8.96 to 8.67, at $2,126 against $652
+ * per 1k banks. On 11 banks (8 Nov 2026), blind Argon judging preferred Opus to Sonnet 5.5 by 0.58
+ * and to Terra at high reasoning by 1.06 (PT 1.36). Terra runs at its default reasoning here, below
+ * the PT floor (7.36), so it's only an outage route. A second review call didn't help.
  */
 const defaultModel = "anthropic/claude-fable-5.2";
 

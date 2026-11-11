@@ -15,11 +15,11 @@ import toolPrompt from "./step-variant-tool.prompt.md";
 import basePrompt from "./step-variant.prompt.md";
 
 /**
- * At low reasoning on 8 cases (11 Nov 2026), Luna scored 8.91 (EN 9.04, PT 8.79) at 3.8s p50 for
- * $0.25/1k, Muse Ember 8.99 at 2.2s for $0.54/1k and Gemini 3.8 Flash 8.76 at 4.0s for $1.62/1k;
- * a blind read split Ember and Flash 2 to 2 with 4 ties, so Ember falls back first for a third of
- * the cost. Terra's 30 Oct outputs on 4 of those cases score 9.38 for $2.04/1k, too small a lead
- * for eight times Luna's cost.
+ * At low reasoning on 8 cases (11 Nov 2026), Luna scored 8.91 (EN 9.04, PT 8.79) at 3.8 s p50 for
+ * $0.25/1k, Muse Ember 8.99 at 2.2 s for $0.54/1k and Gemini 3.8 Flash 8.76 at 4.0 s for $1.62/1k.
+ * A blind read split Ember and Flash 2 to 2 with 4 ties, so Ember falls back first at a third of
+ * Flash's cost. Terra's 30 Oct outputs on 4 of those cases scored 9.38 at $2.04/1k, too small a
+ * lead for eight times Luna's cost.
  */
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "low";

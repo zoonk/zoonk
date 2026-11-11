@@ -36,8 +36,8 @@ import basePrompt from "./speaking-score.prompt.md";
 /**
  * Graded with one rubric after the IELTS, TOEFL and certificate graders merged, Luna scored 7.8 to
  * 9.2 per exam (27 Oct 2026); Flash Lite still overrated and misquoted. On 8 cases (11 Nov 2026),
- * Muse Ember matched Luna (8.67 to 8.63, $4.49/1k to $0.96/1k) and won a blind read 3 to 1 against
- * Gemini 3.8 Flash (7.99, $8.15/1k), which dropped Portuguese accents.
+ * Muse Ember matched Luna (8.67 to 8.63) at $4.49/1k against $0.96/1k, and won a blind read 3 to 1
+ * against Gemini 3.8 Flash (7.99, $8.15/1k), which dropped Portuguese accents.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["meta/muse-ember", "google/gemini-3.8-flash"] as const;

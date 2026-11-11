@@ -14,8 +14,8 @@ import promptTemplate from "./conversation-scenario.prompt.md";
 
 /**
  * Cached per chapter and level and shared, so it runs rarely. On 15 cases (11 Nov 2026), Luna
- * scored 9.34 at $1.63/1k and Muse Ember 9.24 at $3.74/1k; Ember won a blind read 12 to 1 against
- * Flash Lite (8.60), whose phone calls asked for a table and the bill.
+ * scored 9.34 at $1.63/1k and Muse Ember 9.24 at $3.74/1k (it reasons longer); Ember won a blind
+ * read 12 to 1 against Flash Lite (8.60), whose phone calls asked for a table and the bill.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["meta/muse-ember", "google/gemini-3.5-flash-lite"] as const;
