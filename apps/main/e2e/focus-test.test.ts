@@ -105,16 +105,33 @@ async function createExamGoalAtFocusTest(
   return goal;
 }
 
-/** The focus the test proposes on a plan already seen, as core stores it for the learner to answer. */
+function isoDayFromToday(days: number) {
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
+}
+
+/**
+ * The focus the test proposes on a plan already seen, as core stores it for the learner to answer.
+ * Its subject gains a lesson and starts later, as a focus sharing its days with another does.
+ */
 async function proposeFocus(goalId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-  const today = new Date().toISOString().slice(0, 10);
+  const today = isoDayFromToday(0);
+  const [area = ""] = SUBJECTS;
 
   return planChangeFixture({
     kind: "edited",
     payload: {
-      effect: { endDateAfter: today, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 },
-      operations: [{ areas: [SUBJECTS[0]], kind: "focusAreas" }],
+      effect: {
+        areaEnds: [
+          { after: isoDayFromToday(21), area, before: isoDayFromToday(20), lessonsGained: 1 },
+        ],
+        areaStarts: [{ after: isoDayFromToday(8), area, before: isoDayFromToday(5) }],
+        endDateAfter: today,
+        endDateBefore: null,
+        lessonsAdded: 0,
+        lessonsRemoved: 0,
+      },
+      operations: [{ areas: [area], kind: "focusAreas" }],
       previewBasis: { planVersion: plan.version, studyDay: today, timeZone: "UTC" },
       source: "focusTest",
     },
@@ -213,6 +230,11 @@ test.describe("An exam's Focus test in onboarding", () => {
     await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
     await expect(page.getByText(/^Questions on 2 of 3 subjects/u)).toBeVisible();
 
+    await page.getByRole("button", { name: "View all subjects" }).click();
+    await expect(page.getByText("Not known yet")).toBeVisible();
+    await expect(page.getByText("1 of 1 right")).toBeVisible();
+    await page.keyboard.press("Escape");
+
     await page.getByRole("button", { name: "Continue to daily time" }).click();
 
     await expect(
@@ -264,17 +286,22 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   const update = page.getByRole("button", { name: "Update my plan" });
   const done = page.getByRole("button", { exact: true, name: "Done" });
 
+  const intro = page.getByText(/Your plan can give these more time\./u);
+
   await expect(update).toBeVisible();
+  await expect(intro).toBeVisible();
+  await expect(page.getByText(/gets 1 more lesson.+You start Portuguese on/u)).toBeVisible();
   await expect(done).not.toHaveAttribute("aria-keyshortcuts", "Enter");
 
   await update.click();
   await expect(page.getByText("Done. Your plan now gives these more time.")).toBeVisible();
+  await expect(intro).toBeHidden();
   await expect(done).toHaveAttribute("aria-keyshortcuts", "Enter");
   expect(await readChangeStatus(change.id)).toBe("applied");
 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
-  expect(await readChangeStatus(change.id)).toBe("proposed");
+  expect(await readChangeStatus(change.id)).toBe("undone");
 });
 
 test("a skip that doesn't save says so on the wait for questions, and the same button retries it", async ({
