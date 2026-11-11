@@ -206,11 +206,49 @@ describe("an exam goal's Focus test", () => {
     const { goal, user } = await examTestGoalFixture({ subjects: THREE_SUBJECTS });
     const first = await startSitting(goal.id);
 
-    await answer({ goalId: goal.id, placement: first });
-    const repeated = await answer({ goalId: goal.id, placement: first });
+    const [repeated] = await Promise.all([
+      answer({ goalId: goal.id, placement: first }),
+      answer({ goalId: goal.id, placement: first }),
+    ]);
 
     expect(repeated.focusTest?.sitting).toMatchObject({ answered: 1, left: 11 });
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+  });
+
+  it("keeps all concurrent answers in the plan summary and settles their time once", async () => {
+    const { goal, items, skills, user } = await examTestGoalFixture({
+      goal: PLAN_SHOWN,
+      subjects: THREE_SUBJECTS,
+    });
+
+    await startSitting(goal.id);
+
+    await Promise.all(
+      skills.map((skill) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: {
+            answer: DONT_KNOW,
+            durationMs: 30_000,
+            itemId: items.find((item) => item.skillId === skill.id)?.id ?? "",
+          },
+        }),
+      ),
+    );
+
+    await expect(readRecord(goal.id)).resolves.toMatchObject({
+      sitting: { answered: 3 },
+      summary: { asked: 3, unasked: 0 },
+    });
+
+    await Promise.all([finish(goal.id), finish(goal.id)]);
+
+    await expect(
+      prisma.learningEvent.findMany({
+        select: { incorrectAnswers: true, seconds: true },
+        where: { lessonKind: "focusTest", userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ incorrectAnswers: 3, seconds: 90 }]);
   });
 
   it("ends at its promised count; finishing it shows the result and offers to continue", async () => {

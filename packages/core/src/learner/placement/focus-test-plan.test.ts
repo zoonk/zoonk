@@ -1,15 +1,18 @@
 import { prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { describe, expect, it } from "vitest";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { getPlanTimeAdvice } from "../../plans/get-time-advice";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { readFocusTestRecord } from "./focus-test-state";
+import { startPlacementSitting } from "./start-placement-sitting";
 
 const DONT_KNOW = { dontKnow: true } as const;
 const RIGHT = { selectedIndex: 0 };
@@ -41,10 +44,6 @@ async function sit(goalId: string, answers: readonly (typeof DONT_KNOW | typeof 
   }
 
   return result.completion;
-}
-
-function readDetails(details: unknown): Record<string, unknown> {
-  return isJsonObject(details) ? details : {};
 }
 
 async function readFocus(goalId: string) {
@@ -84,14 +83,12 @@ describe("the Focus test on a plan whose time is short", () => {
       },
     });
 
-    const { details } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-    await prisma.goal.update({
-      data: { details: { ...readDetails(details), answered: PLAN_SHOWN.details.answered } },
-      where: { id: goal.id },
-    });
-
-    await settleNewPlan({ goalId: goal.id });
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 5, question: "schedule", timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
 
     await expect(readFocus(goal.id)).resolves.toMatchObject({
       planFocus: ["Raciocínio", "Atualidades"],
@@ -162,6 +159,62 @@ describe("the Focus test on a plan whose time is short", () => {
     expect(after.status === "ready" && after.completion.focusTest?.checkpoint?.focus).toMatchObject(
       { proposal: null, state: "current" },
     );
+  });
+
+  it.each([false, true])(
+    "keeps an old test's focus ownership only while its change still sets it (hand-picked: %s)",
+    async (handPicked) => {
+      const { goal, plan, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+      await prisma.goal.update({ data: { details: PLAN_SHOWN.details }, where: { id: goal.id } });
+
+      const areas = ["Direito"];
+      const payload = { operations: [{ areas, kind: "focusAreas" }], source: "learner" };
+      const original = await planChangeFixture({ payload, planId: plan.id, status: "applied" });
+
+      await learningEventFixture({
+        contentIds: {
+          focusTestScore: JSON.stringify({ focusAreas: areas }),
+          planChangeId: original.id,
+        },
+        goalId: goal.id,
+        lessonKind: "focusTest",
+        userId: user.id,
+      });
+
+      await prisma.plan.update({
+        data: { settings: { ...parsePlanSettings(plan.settings), focusAreas: areas } },
+        where: { id: plan.id },
+      });
+
+      if (handPicked) {
+        await planChangeFixture({
+          createdAt: new Date(original.createdAt.getTime() + 1),
+          payload,
+          planId: plan.id,
+          status: "applied",
+        });
+      }
+
+      await startPlacementSitting({ goalId: goal.id, input: {} });
+
+      await expect(readFocus(goal.id)).resolves.toMatchObject({
+        planFocus: areas,
+        testFocus: handPicked ? null : areas,
+      });
+    },
+  );
+
+  it("proposes when the daily time was saved but the learner hasn't passed the reveal", async () => {
+    const { goal } = await shortPlanExamGoalFixture({
+      goal: { ...PLAN_SHOWN, planRevealedAt: null },
+    });
+
+    const completion = await sit(goal.id, [DONT_KNOW]);
+
+    expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
+      proposal: { source: "focusTest", status: "proposed" },
+      state: "proposed",
+    });
   });
 
   it("says the plan already follows its suggestion when a focus wouldn't move it", async () => {

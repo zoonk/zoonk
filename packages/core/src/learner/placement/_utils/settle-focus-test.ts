@@ -7,11 +7,7 @@ import { proposePlanChange } from "../../../plans/propose-plan-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
-import {
-  type PlacementState,
-  loadPlacementState,
-  loadPlacementWithSummary,
-} from "./load-placement-state";
+import { type PlacementState, loadPlacementState } from "./load-placement-state";
 import { keepHandledSuggestion, saveTestSummary } from "./test-sitting";
 
 /**
@@ -29,16 +25,7 @@ export async function startFocusTestSummary(goalId: string): Promise<void> {
   }
 
   const plan = await loadPlacementPlan(goalId);
-  const { focusTest } = await loadPlacementWithSummary({ goalId, plan, userId: goal.userId });
-
-  if (focusTest) {
-    await saveTestSummary({
-      goalId,
-      onlyFirst: true,
-      summary: focusTest.summary,
-      userId: goal.userId,
-    });
-  }
+  await saveTestSummary({ goalId, onlyFirst: true, plan, userId: goal.userId });
 }
 
 /**
@@ -56,13 +43,11 @@ export async function settleFocusTest({
   userId: string;
 }): Promise<PlacementState> {
   const plan = await loadPlacementPlan(goalId);
-  const { focusTest, state } = await loadPlacementWithSummary({ goalId, plan, today, userId });
+  const { focusTest, state } = await saveTestSummary({ goalId, plan, today, userId });
 
   if (!focusTest) {
     return state;
   }
-
-  await saveTestSummary({ goalId, summary: focusTest.summary, userId });
 
   if (!focusTest.dueFocus) {
     return state;

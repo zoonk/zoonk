@@ -33,15 +33,34 @@ async function findOldTestFocus({
     where: { goalId, lessonKind: "focusTest" },
   });
 
-  const score = isJsonObject(event?.contentIds) ? event.contentIds.focusTestScore : null;
+  const content = isJsonObject(event?.contentIds) ? event.contentIds : {};
+  const score = content.focusTestScore;
   const result = typeof score === "string" ? oldResultSchema.safeParse(JSON.parse(score)) : null;
 
-  if (!result?.success || result.data.focusAreas.length === 0) {
+  if (
+    !result?.success ||
+    result.data.focusAreas.length === 0 ||
+    typeof content.planChangeId !== "string"
+  ) {
     return null;
   }
 
   const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId } });
+
+  const latest = await tx.planChange.findFirst({
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    where: {
+      payload: { array_contains: [{ kind: "focusAreas" }], path: ["operations"] },
+      plan: { goalId },
+      status: "applied",
+    },
+  });
+
   const { focusAreas } = parsePlanSettings(plan?.settings);
+
+  if (latest?.id !== content.planChangeId) {
+    return null;
+  }
 
   return isSameFocus(focusAreas, result.data.focusAreas) ? focusAreas : null;
 }

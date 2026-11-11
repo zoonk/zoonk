@@ -106,7 +106,7 @@ function gradeAnswer({
  * A question placement asked outside a session is answered once: a repeated send, such as a retry
  * after a lost response, records and counts nothing again.
  */
-async function recordPlacementAnswer(input: LearnerAnswer): Promise<void> {
+async function recordPlacementAnswer(input: LearnerAnswer): Promise<boolean> {
   const { itemId, userId } = input;
 
   const events = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
@@ -126,6 +126,8 @@ async function recordPlacementAnswer(input: LearnerAnswer): Promise<void> {
   if (events) {
     publishLearnerAnswer({ events, userId });
   }
+
+  return events !== null;
 }
 
 /** Records diagnostics without adding notebook mistakes; dontKnow is a valid answer. */
@@ -167,7 +169,7 @@ export async function answerPlacementQuestion({
   const { isCorrect, snapshot } = graded;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
-  await recordPlacementAnswer({
+  const recorded = await recordPlacementAnswer({
     answer: input.answer,
     graded: { durationMs: input.durationMs, isCorrect },
     isPlacement: true,
@@ -180,7 +182,9 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   });
 
-  const { focusTest, state: placement } = await loadPlacementWithSummary({
+  const readPlacement = owned.goal.kind === "exam" ? saveTestSummary : loadPlacementWithSummary;
+
+  const { state: placement } = await readPlacement({
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
     plan,
@@ -188,34 +192,27 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   });
 
-  if (focusTest) {
-    await saveTestSummary({
-      goalId,
-      sittingAnswered: placement.focusTest?.sitting?.answered,
-      summary: focusTest.summary,
-      userId: owned.userId,
-    });
-  }
-
   const answer = isCorrect ? "correct" : "incorrect";
 
-  after(() =>
-    trackLearnerEvents({
-      events: [
-        {
-          name: "Placement Answered",
-          properties: {
-            answer: "dontKnow" in input.answer ? "dont_know" : answer,
-            duration_ms: input.durationMs,
-            question_number: placement.answered,
-            skill_id: item.skillId,
+  if (recorded) {
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Placement Answered",
+            properties: {
+              answer: "dontKnow" in input.answer ? "dont_know" : answer,
+              duration_ms: input.durationMs,
+              question_number: placement.answered,
+              skill_id: item.skillId,
+            },
           },
-        },
-      ],
-      goalId,
-      userId: owned.userId,
-    }),
-  );
+        ],
+        goalId,
+        userId: owned.userId,
+      }),
+    );
+  }
 
   return { isCorrect, placement, status: "ready" };
 }

@@ -92,6 +92,8 @@ test.describe("Learner model API", () => {
       }),
       apiContext.get(`/v1/goals/${goalId}/preparation`),
       apiContext.get(`/v1/goals/${goalId}/placement`),
+      apiContext.post(`/v1/goals/${goalId}/placement/sittings`, { data: {} }),
+      apiContext.patch(`/v1/goals/${goalId}/placement`, { data: { sessionQuestions: "paused" } }),
       apiContext.post(`/v1/goals/${goalId}/placement/completion`, { data: {} }),
       apiContext.get(`/v1/goals/${goalId}/chapters/${randomUUID()}/test-out`),
       apiContext.post(`/v1/goals/${goalId}/chapters/${randomUUID()}/test-out/generations`),

@@ -11,12 +11,14 @@ import {
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
+import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
-import { type FocusTestSummaryRecord } from "../focus-test-state";
 import { isPlacementSkipped } from "../placement-contract";
+import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
+import { loadPlacementWithSummary } from "./load-placement-state";
 
 /**
  * Opens the sitting the offer promised; one already open stays as it is. The first start also
@@ -26,12 +28,10 @@ export async function openTestSitting({
   goal,
   now,
   offer,
-  summary,
 }: {
   goal: Pick<Goal, "details" | "id" | "userId">;
   now: Date;
   offer: Pick<FocusTestOffer, "kind" | "questions">;
-  summary: FocusTestSummaryRecord;
 }): Promise<void> {
   const at = now.toISOString();
 
@@ -50,7 +50,6 @@ export async function openTestSitting({
                 startedAt: at,
               },
               startedAt: record.startedAt ?? at,
-              summary,
             },
       goalId: goal.id,
       tx,
@@ -154,38 +153,46 @@ export async function closeTestSitting({
   return closed;
 }
 
-/** Keeps what the plan's row, Today and the time question read, written where its inputs change. */
+/** Reads and keeps the summary under the learner's lock, so an earlier answer can't overwrite a later one. */
 export async function saveTestSummary({
   goalId,
   onlyFirst = false,
-  sittingAnswered,
-  summary,
+  ownLevel,
+  plan,
+  today,
   userId,
 }: {
   goalId: string;
-  /** Leaves a summary a test write already kept, which is newer than this read. */
   onlyFirst?: boolean;
-  /** The open sitting's answers so far, when the caller counted them. */
-  sittingAnswered?: number;
-  summary: FocusTestSummaryRecord;
+  ownLevel?: OwnLevel | null;
+  plan: GoalPlan;
+  today?: Date;
   userId: string;
-}): Promise<void> {
-  await writeLearnerChange({ userId }, async (tx) => {
-    await changeFocusTestRecord({
-      change: (record) => ({
-        ...record,
-        sitting:
-          record.sitting && sittingAnswered !== undefined
-            ? { ...record.sitting, answered: sittingAnswered }
-            : record.sitting,
-        summary: onlyFirst && record.summary ? record.summary : summary,
-      }),
-      goalId,
-      tx,
-    });
+}) {
+  const saved = await writeLearnerChange({ userId }, async (tx) => {
+    const read = await loadPlacementWithSummary({ goalId, ownLevel, plan, today, tx, userId });
+    const { focusTest, state } = read;
+
+    if (focusTest) {
+      await changeFocusTestRecord({
+        change: (record) => ({
+          ...record,
+          sitting:
+            record.sitting && state.focusTest?.sitting
+              ? { ...record.sitting, answered: state.focusTest.sitting.answered }
+              : record.sitting,
+          summary: onlyFirst && record.summary ? record.summary : focusTest.summary,
+        }),
+        goalId,
+        tx,
+      });
+    }
+
+    return read;
   });
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
+  return saved;
 }
 
 /** Notes the suggestion the test settled with the plan, so it isn't settled again. */
