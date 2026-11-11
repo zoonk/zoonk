@@ -27,7 +27,14 @@ function findQualifyingPart({
   );
 }
 
-function isQualifying({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+/** A qualifying test's subject adds nothing to the final score, but its minimum can eliminate. */
+export function isQualifyingSubject({
+  structure,
+  subject,
+}: {
+  structure: ExamStructure;
+  subject: Subject;
+}): boolean {
   return findQualifyingPart({ structure, subject }) !== null;
 }
 
@@ -133,7 +140,7 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
     groups.find((group) => coversSubject({ parts: group.parts, subject })) ?? null;
 
   const counted = listCountedSubjects(structure).filter(
-    (subject) => !isQualifying({ structure, subject }),
+    (subject) => !isQualifyingSubject({ structure, subject }),
   );
 
   const points = new Map(
@@ -141,7 +148,7 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
   );
 
   return structure.subjects.map((subject) => {
-    if (isQualifying({ structure, subject })) {
+    if (isQualifyingSubject({ structure, subject })) {
       return 0;
     }
 

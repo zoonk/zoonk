@@ -1,5 +1,6 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -8,9 +9,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import { examStructure } from "../../library/exams/_test-utils/exam-formats";
+import { askPlacement } from "../_test-utils/exam-test-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
-import { getGoalPlacement } from "./get-goal-placement";
 
 const KEY_POINTS = ["Names the shared denominator", "Adds the numerators"];
 
@@ -56,7 +57,14 @@ async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "sho
     itemFixture({ content: TYPED_CONTENT, format: "typed", skillId }),
     itemFixture({ content: choiceItemContent(), skillId }),
     prisma.plan.update({
-      data: { placementPreparedAt: new Date() },
+      data: {
+        // An exam's Focus test asks by subject, which a plan names through its areas or phases.
+        graph: {
+          phases: [{ milestone: null, name: "Reading" }],
+          skills: plannedSkills(fixture.skills),
+        },
+        placementPreparedAt: new Date(),
+      },
       where: { id: fixture.plan.id },
     }),
     goal === "hobby"
@@ -65,7 +73,8 @@ async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "sho
           data:
             goal === "language"
               ? { kind: "language", targetLanguage: "en" }
-              : { examBlueprintId: blueprint.id, kind: "exam" },
+              : // A learner who declined placement has no questions until the test starts.
+                { details: {}, examBlueprintId: blueprint.id, kind: "exam" },
           where: { id: fixture.goal.id },
         }),
   ]);
@@ -75,10 +84,10 @@ async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "sho
 }
 
 async function answerQuickRight({ goalId }: { goalId: string }) {
-  const first = await getGoalPlacement({ goalId });
-  const itemId = first.status === "ready" ? (first.placement.next?.itemId ?? "") : "";
+  const first = await askPlacement(goalId);
+  const itemId = first?.next?.itemId ?? "";
 
-  expect(first.status === "ready" && first.placement.next?.format).toBe("multipleChoice");
+  expect(first?.next?.format).toBe("multipleChoice");
 
   return answerPlacementQuestion({
     goalId,

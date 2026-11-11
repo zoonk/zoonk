@@ -10,9 +10,15 @@ import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { gradeTypedItemAnswer } from "../_utils/typed-grading";
 import { type TypedItem } from "../_utils/typed-items";
-import { recordLearnerAnswer } from "../record-learner-answer";
-import { type PlacementState, loadPlacementState } from "./_utils/load-placement-state";
+import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
+import {
+  type LearnerAnswer,
+  persistLearnerAnswer,
+  publishLearnerAnswer,
+} from "../record-learner-answer";
+import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
+import { saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
 
 export type PlacementAnswerResult =
@@ -91,6 +97,32 @@ function gradeAnswer({
   return "text" in answer ? null : gradeChoiceAnswer({ answer, item }).isCorrect;
 }
 
+/**
+ * A question placement asked outside a session is answered once: a repeated send, such as a retry
+ * after a lost response, records and counts nothing again.
+ */
+async function recordPlacementAnswer(input: LearnerAnswer): Promise<void> {
+  const { itemId, userId } = input;
+
+  const events = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const answered = await tx.attempt.findFirst({
+      select: { id: true },
+      where: { isPlacement: true, itemId, stepId: null, studySessionId: null, userId },
+    });
+
+    if (answered) {
+      return unchanged(null);
+    }
+
+    const { events: recorded } = await persistLearnerAnswer({ input, transaction: tx });
+    return recorded;
+  });
+
+  if (events) {
+    publishLearnerAnswer({ events, userId });
+  }
+}
+
 /** Records diagnostics without adding notebook mistakes; dontKnow is a valid answer. */
 export async function answerPlacementQuestion({
   goalId,
@@ -129,7 +161,7 @@ export async function answerPlacementQuestion({
 
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
-  await recordLearnerAnswer({
+  await recordPlacementAnswer({
     answer: input.answer,
     graded: { durationMs: input.durationMs, isCorrect },
     isPlacement: true,
@@ -141,13 +173,22 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   });
 
-  const placement = await loadPlacementState({
+  const { focusTest, state: placement } = await loadPlacementWithSummary({
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
     plan,
     today: getDateInTimeZone({ date: new Date(), timeZone }),
     userId: owned.userId,
   });
+
+  if (focusTest) {
+    await saveTestSummary({
+      goalId,
+      sittingAnswered: placement.focusTest?.sitting?.answered,
+      summary: focusTest.summary,
+      userId: owned.userId,
+    });
+  }
 
   const answer = isCorrect ? "correct" : "incorrect";
 
@@ -158,6 +199,7 @@ export async function answerPlacementQuestion({
           name: "Placement Answered",
           properties: {
             answer: "dontKnow" in input.answer ? "dont_know" : answer,
+            duration_ms: input.durationMs,
             question_number: placement.answered,
             skill_id: item.skillId,
           },

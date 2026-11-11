@@ -57,8 +57,16 @@ type OnboardingEvents = {
   "Goal Typed": { has_attachment: boolean; attempt_id?: string; submitted_at?: number };
   "Onboarding Progressed": OnboardingProgress;
   "Buddy Chosen": { buddy: BuddyKind; renamed: boolean };
+  "Focus Test Sitting Finished": {
+    answered: number;
+    dont_know: number;
+    duration_ms: number;
+    kind: "continuation" | "first";
+    questions: number;
+  };
   "Placement Answered": {
     answer: "correct" | "dont_know" | "incorrect";
+    duration_ms: number;
     question_number: number;
     skill_id: string;
   };

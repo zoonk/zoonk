@@ -4,6 +4,7 @@ import { listeningGoalFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { askPlacement } from "../_test-utils/exam-test-goal";
 import { loadGoalPlan } from "../_utils/goal-skill-graph";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
@@ -39,8 +40,7 @@ async function answerEveryQuestion({
   asked?: string[];
   goalId: string;
 }): Promise<{ asked: string[]; status: string | null }> {
-  const result = await getGoalPlacement({ goalId });
-  const placement = result.status === "ready" ? result.placement : null;
+  const placement = await askPlacement(goalId);
   const next = placement?.next;
 
   if (!next || asked.length >= MAX_QUESTIONS) {

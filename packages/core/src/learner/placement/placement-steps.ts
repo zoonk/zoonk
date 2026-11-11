@@ -208,6 +208,8 @@ function countAnswersByArea({
 }
 
 export type AreaPriority = {
+  /** An exam's Focus test asks only these areas, the first with something to ask next. */
+  areaOrder?: readonly string[];
   /** Each area's share of the exam (`getAreaShares`): the heaviest is asked first. */
   areaShares?: ReadonlyMap<string, number> | null;
   /** The plan's areas the learner said are weak (`PlanSettings.focusAreas`). */
@@ -287,6 +289,7 @@ function getDirectionalPool({
 /** Only selects askableSkillIds; null means nothing can be asked now. answeredOnly walks every topic in plan order before confirming. */
 export function chooseNextPlacementSkill({
   answeredOnly = false,
+  areaOrder,
   areaShares,
   askableSkillIds,
   evidence,
@@ -304,8 +307,10 @@ export function chooseNextPlacementSkill({
 }): string | null {
   const graph = buildSkillGraph(skills);
 
-  const candidates = getUndecidedSkills({ answeredOnly, skills, statuses }).filter((skill) =>
-    askableSkillIds.has(skill.id),
+  const candidates = getUndecidedSkills({ answeredOnly, skills, statuses }).filter(
+    (skill) =>
+      askableSkillIds.has(skill.id) &&
+      (!areaOrder || (skill.sectionTitle !== null && areaOrder.includes(skill.sectionTitle))),
   );
 
   if (candidates.length === 0) {
@@ -323,7 +328,10 @@ export function chooseNextPlacementSkill({
     );
   }
 
-  const area = pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
+  const area =
+    areaOrder?.find((name) => candidates.some((skill) => skill.sectionTitle === name)) ??
+    pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
+
   const inArea = candidates.filter((skill) => skill.sectionTitle === area);
   const last = evidence.findLast((answer) => graph.byId.get(answer.skillId)?.sectionTitle === area);
 

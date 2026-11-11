@@ -19,6 +19,7 @@ type PlanBuild = {
 };
 
 export async function loadPlanBuild({
+  askedAt = null,
   everySkill,
   focusAreas,
   goalId,
@@ -26,6 +27,8 @@ export async function loadPlanBuild({
   ownLevel,
   tx = prisma,
 }: {
+  /** When a Focus test started, which owes the questions a plan build skipped. */
+  askedAt?: Date | null;
   /** A test from the learner's own material, whose every skill gets questions. */
   everySkill: boolean;
   focusAreas: readonly string[];
@@ -55,10 +58,10 @@ export async function loadPlanBuild({
   }
 
   const graphWrittenAt = plan.generatedAt ?? plan.createdAt;
+  const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    plan.placementPreparedAt === null &&
-    Date.now() - graphWrittenAt.getTime() < QUESTION_WRITING_WINDOW_MS;
+    plan.placementPreparedAt === null && Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);
 

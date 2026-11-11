@@ -1,35 +1,15 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
-import { toChosenStructure } from "../../../exams/choices/exam-choices";
-import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { readNoticeFormats } from "../../../library/exams/notice-formats";
-import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
+import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
-import { getAreaShares } from "../../../plans/_utils/exam-subject-shares";
-import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
-import {
-  type PlanGraph,
-  type PlanSettings,
-  parsePlanGraph,
-  parsePlanSettings,
-} from "../../../plans/planner/plan-state";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
+import { type FocusTestSummaryRecord } from "../focus-test-state";
 import { type PlacementEvidence } from "../placement-beliefs";
-import { getPlacementBudgetSpent } from "../placement-budget";
-import {
-  type PlacementStatus,
-  getKnownSubjects,
-  getOwnLevel,
-  isLevelMeasured,
-} from "../placement-contract";
-import { getTargetDifficulty } from "../placement-difficulty";
-import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
+import { type PlacementStatus } from "../placement-contract";
+import { type PlacementItemCandidate } from "../placement-item-choice";
 import { listKnownByMeasuredLevel, listKnownSkillIds, readSkillStatuses } from "../placement-known";
-import { isOwnMaterialTest } from "../placement-material";
-import { confirmsInWriting, getPlacementQuickFormat } from "../placement-quick-format";
 import { type SkillStatuses } from "../placement-status";
 import {
   type AreaStart,
@@ -40,10 +20,14 @@ import {
   getUndecidedSkills,
   isPlacementSettled,
 } from "../placement-steps";
-import { chooseNextSkill } from "./next-placement-skill";
-import { countPlacementAnswers, isPlacementAnswerOn } from "./placement-answers";
+import { countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
+import { loadFocusTest } from "./load-focus-test";
+import { findNextQuestion } from "./next-placement-skill";
+import { countPlacementAnswers } from "./placement-answers";
+import { getAskingBudget } from "./placement-asking-budget";
 import { loadPlacementItems } from "./placement-bank-items";
 import { loadEvidence } from "./placement-evidence";
+import { loadGoalExam } from "./placement-goal-exam";
 import {
   type PlacementQuestionView,
   parsePlacementItem,
@@ -72,49 +56,6 @@ export type PlacementState = {
   trueFalseLabels: TrueFalseLabels;
 };
 
-function getChosenAreaShares({
-  graph,
-  settings,
-  structure,
-}: {
-  graph: PlanGraph;
-  settings: PlanSettings;
-  structure: ExamStructure | null;
-}): Map<string, number> | null {
-  return structure
-    ? getAreaShares({ graph, structure: toChosenStructure({ picks: settings, structure }) })
-    : null;
-}
-
-async function loadGoalExam(goalId: string, tx: TransactionClient) {
-  const [goal, plan] = await readDatabaseFacts(
-    tx,
-    () => tx.goal.findUnique({ include: { examBlueprint: true }, where: { id: goalId } }),
-    () => tx.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } }),
-  );
-
-  const blueprint = goal?.examBlueprint ?? null;
-  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
-  const notice = readNoticeFormats(goal?.details);
-  const graph = parsePlanGraph(plan?.graph);
-  const settings = parsePlanSettings(plan?.settings);
-
-  return {
-    answeredOnly: isOwnMaterialTest(blueprint),
-    areaShares: getChosenAreaShares({ graph, settings, structure }),
-    examBlueprintId: blueprint?.id ?? null,
-    focusAreas: settings.focusAreas,
-    focusedSkillIds: listFocusedSkillIds({ graph, settings }),
-    goalCreatedAt: goal?.createdAt ?? null,
-    goalLevel: goal ? getOwnLevel({ goal }) : null,
-    knownAreas: goal ? getKnownSubjects(goal) : [],
-    measuredLevel: goal && isLevelMeasured(goal) ? getOwnLevel({ goal }) : null,
-    quickFormat: getPlacementQuickFormat(structure ?? notice),
-    trueFalseLabels: getTrueFalseLabels(structure ?? notice),
-    typed: goal ? confirmsInWriting(goal) : false,
-  };
-}
-
 async function loadQuestion(
   itemId: string | undefined,
   tx: TransactionClient = prisma,
@@ -136,6 +77,7 @@ function getStatus({
   hasEvidence,
   hasNext,
   hasSkills,
+  tested,
   waitsForQuestions,
 }: {
   buildFailed: boolean;
@@ -145,6 +87,8 @@ function getStatus({
   hasEvidence: boolean;
   hasNext: boolean;
   hasSkills: boolean;
+  /** An exam goal's Focus test has nothing to ask outside a sitting, which isn't "unavailable". */
+  tested: boolean;
   waitsForQuestions: boolean;
 }): PlacementStatus {
   if (!hasSkills) {
@@ -163,19 +107,30 @@ function getStatus({
     return "waitingForQuestions";
   }
 
-  return hasEvidence ? "done" : "unavailable";
+  return hasEvidence || tested ? "done" : "unavailable";
 }
 
-/** Uses all answers, not only placement's; today applies the learner-local daily budget. */
-export async function loadPlacementState({
-  answer: sessionAnswer = null,
-  goalId,
-  ownLevel: requestedLevel,
-  plan,
-  today = null,
-  userId,
-  tx = prisma,
-}: {
+type StatusFacts = Parameters<typeof readSkillStatuses>[0] & {
+  /** Skills a measured level places as known, whatever the answers say. */
+  measuredKnown: ReadonlySet<string>;
+};
+
+function readStatuses({ measuredKnown, ...facts }: StatusFacts): SkillStatuses {
+  return new Map(
+    [...readSkillStatuses(facts)].map(([skillId, status]) => [
+      skillId,
+      measuredKnown.has(skillId) ? "known" : status,
+    ]),
+  );
+}
+
+type PlacementLoad = {
+  /** What an exam goal's writes need beside the state; null for other goals. */
+  focusTest: { dueFocus: string[] | null; summary: FocusTestSummaryRecord } | null;
+  state: PlacementState;
+};
+
+type PlacementRead = {
   /** Include a placement question answered inside a first-week session. */
   answer?: PlacementEvidence | null;
   goalId: string;
@@ -185,154 +140,170 @@ export async function loadPlacementState({
   today?: Date | null;
   userId: string;
   tx?: TransactionClient;
-}): Promise<PlacementState> {
-  const skills = plan.skills;
-  const skillIds = skills.map((skill) => skill.id);
+};
 
-  const {
-    answeredOnly,
-    examBlueprintId,
-    areaShares,
-    focusAreas,
-    focusedSkillIds,
-    goalCreatedAt,
-    goalLevel,
-    knownAreas,
-    measuredLevel,
-    quickFormat,
-    trueFalseLabels,
-    typed,
-  } = await loadGoalExam(goalId, tx);
+async function loadPlacementFacts({
+  goalId,
+  requestedLevel,
+  skillIds,
+  tx,
+  userId,
+}: {
+  goalId: string;
+  requestedLevel: OwnLevel | null | undefined;
+  skillIds: string[];
+  tx: TransactionClient;
+  userId: string;
+}) {
+  const exam = await loadGoalExam(goalId, tx);
+  const ownLevel = requestedLevel ?? exam.goalLevel;
 
-  const ownLevel = requestedLevel ?? goalLevel;
-
-  const [{ attempts, evidence, placementAnswers, seenItemIds }, { bankItems, build }] =
-    await readDatabaseFacts(
-      tx,
-      () => loadEvidence({ skillIds, tx, userId }),
-      () =>
-        loadPlanBuild({
-          everySkill: answeredOnly,
-          focusAreas,
-          goalId,
-          knownAreas,
-          ownLevel,
+  const [answersRead, { bankItems, build }] = await readDatabaseFacts(
+    tx,
+    () => loadEvidence({ skillIds, tx, userId }),
+    () =>
+      loadPlanBuild({
+        askedAt: getTestStart(exam.test),
+        everySkill: exam.answeredOnly,
+        focusAreas: exam.focusAreas,
+        goalId,
+        knownAreas: exam.knownAreas,
+        ownLevel,
+        tx,
+      }).then(async (planBuild) => ({
+        bankItems: await loadPlacementItems({
+          examBlueprintId: exam.examBlueprintId,
+          skillIds,
           tx,
-        }).then(async (planBuild) => ({
-          bankItems: await loadPlacementItems({
-            examBlueprintId,
-            skillIds,
-            tx,
-            typed,
-            writingSkillIds: planBuild.preparingSkillIds,
-          }),
-          build: planBuild,
-        })),
-    );
+          typed: exam.typed,
+          writingSkillIds: planBuild.preparingSkillIds,
+        }),
+        build: planBuild,
+      })),
+  );
 
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
     ...item,
-    seen: seenItemIds.has(item.id),
+    seen: answersRead.seenItemIds.has(item.id),
   }));
 
-  /** Keep the full material's budget stable while question batches arrive or time out. */
-  const topics = answeredOnly ? skills.length : 0;
+  return { ...answersRead, build, exam, items, ownLevel };
+}
 
-  const dayBudgetSpent =
-    today === null
-      ? 0
-      : getPlacementBudgetSpent({
-          answers: attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
-          topics,
-        });
+/** Uses all answers, not only placement's; today applies the learner-local daily budget. */
+export async function loadPlacementWithSummary({
+  answer: sessionAnswer = null,
+  goalId,
+  ownLevel: requestedLevel,
+  plan,
+  today = null,
+  userId,
+  tx = prisma,
+}: PlacementRead): Promise<PlacementLoad> {
+  const skills = plan.skills;
+  const skillIds = skills.map((skill) => skill.id);
 
-  const dayBudgetUsed = dayBudgetSpent >= 1;
+  const { attempts, build, evidence, exam, items, ownLevel, placementAnswers, testAnswers } =
+    await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
 
+  const { answeredOnly, focusAreas, focusedSkillIds, knownAreas, quickFormat } = exam;
+  const turn = exam.test ? startTestTurn({ setup: exam.test, skills, testAnswers }) : null;
+
+  const budget = getAskingBudget({ attempts, today, turn });
   const answers = sessionAnswer ? [...placementAnswers, sessionAnswer] : placementAnswers;
 
   const measuredKnown = new Set(
-    listKnownByMeasuredLevel({ evidence, level: measuredLevel, skills }),
+    listKnownByMeasuredLevel({ evidence, level: exam.measuredLevel, skills }),
   );
 
-  const statuses: SkillStatuses = new Map(
-    [
-      ...readSkillStatuses({
-        answeredOnly,
-        answers,
-        evidence,
-        focusedSkillIds,
-        knownAreas,
-        ownLevel,
-        skills,
-      }),
-    ].map(([skillId, status]) => [skillId, measuredKnown.has(skillId) ? "known" : status]),
-  );
-
-  const complete = isPlacementSettled({ answeredOnly, skills, statuses });
-  const askableSkillIds = new Set(items.filter((item) => !item.seen).map((item) => item.skillId));
-
-  const needsItems = getUndecidedSkills({ answeredOnly, skills, statuses })
-    .filter((skill) => !askableSkillIds.has(skill.id))
-    .map((skill) => skill.id);
-
-  const nextSkillId = chooseNextSkill({
-    askableSkillIds,
-    choice: { answeredOnly, areaShares, evidence, focusAreas, ownLevel, skills, statuses },
-    preparingSkillIds: build.preparingSkillIds,
-    quickSkillIds: new Set(
-      items.filter((item) => !item.seen && item.format === quickFormat).map((item) => item.skillId),
-    ),
+  const statuses = readStatuses({
+    answeredOnly,
+    answers,
+    evidence,
+    focusedSkillIds,
+    knownAreas,
+    measuredKnown,
+    ownLevel,
+    skills,
   });
 
-  const waitsForNext = nextSkillId !== null && !askableSkillIds.has(nextSkillId);
+  const complete = isPlacementSettled({ answeredOnly, skills, statuses });
+  const undecided = getUndecidedSkills({ answeredOnly, skills, statuses });
+  const openSubjects = turn ? countOpenSubjects({ turn, undecided }) : 0;
+  const settled = turn ? openSubjects === 0 : complete;
 
-  const nextItem =
-    nextSkillId && !waitsForNext && !build.waitsForExam
-      ? pickPlacementItem({
-          confirming: evidence.some(
-            (answer) => answer.skillId === nextSkillId && answer.outcome === "correct",
-          ),
-          items,
-          quickFormat,
-          skillId: nextSkillId,
-          targetDifficulty: getTargetDifficulty({
-            evidence,
-            ownLevel,
-            skillId: nextSkillId,
-            skills,
-          }),
-        })
-      : null;
+  const found = findNextQuestion({
+    choice: {
+      answeredOnly,
+      areaOrder: turn?.areaOrder,
+      areaShares: exam.areaShares,
+      evidence,
+      focusAreas,
+      ownLevel,
+      skills: turn?.skills ?? skills,
+      statuses,
+    },
+    items,
+    preparingSkillIds: build.preparingSkillIds,
+    quickFormat,
+    waitsForExam: build.waitsForExam,
+  });
 
-  const next = dayBudgetUsed ? null : await loadQuestion(nextItem?.id, tx);
-  const answered = countPlacementAnswers({ attempts, since: goalCreatedAt });
+  const next = budget.open ? await loadQuestion(found.item?.id, tx) : null;
+  const answered = countPlacementAnswers({ attempts, since: exam.goalCreatedAt });
+
+  const focusTest = await loadFocusTest({
+    answeredOnly,
+    evidence,
+    found: {
+      asked: next !== null,
+      nextSkillId: found.skillId,
+      openSubjects,
+      waiting: found.waiting,
+    },
+    plan,
+    today,
+    turn,
+    tx,
+  });
 
   return {
-    answered,
-    areas: getAreaStarts({ skills, statuses }),
-    complete,
-    dayBudgetSpent,
-    dayBudgetUsed,
-    focusTest: null,
-    knownSkillIds: [
-      ...new Set([
-        ...listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }),
-        ...measuredKnown,
-      ]),
-    ],
-    needsItems,
-    next,
-    phases: getPhaseStarts({ skills, statuses }),
-    started: answered > 0,
-    status: getStatus({
-      buildFailed: build.failed,
+    focusTest: focusTest && { dueFocus: focusTest.dueFocus, summary: focusTest.summary },
+    state: {
+      answered,
+      areas: getAreaStarts({ skills, statuses }),
       complete,
-      dayBudgetUsed,
-      hasEvidence: evidence.length > 0,
-      hasNext: next !== null,
-      hasSkills: skills.length > 0 && !build.waitsForExam,
-      waitsForQuestions: waitsForNext,
-    }),
-    trueFalseLabels,
+      dayBudgetSpent: budget.spent,
+      dayBudgetUsed: budget.used,
+      focusTest: focusTest?.view ?? null,
+      knownSkillIds: [
+        ...new Set([
+          ...listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }),
+          ...measuredKnown,
+        ]),
+      ],
+      needsItems: undecided
+        .filter((skill) => !found.askableSkillIds.has(skill.id))
+        .map((skill) => skill.id),
+      next,
+      phases: getPhaseStarts({ skills, statuses }),
+      started: turn ? (turn.progress.sitting?.answered ?? 0) > 0 : answered > 0,
+      status: getStatus({
+        buildFailed: build.failed,
+        complete: settled,
+        dayBudgetUsed: !budget.open,
+        hasEvidence: evidence.length > 0,
+        hasNext: next !== null,
+        hasSkills: skills.length > 0 && !build.waitsForExam,
+        tested: Boolean(turn),
+        waitsForQuestions: found.waiting,
+      }),
+      trueFalseLabels: exam.trueFalseLabels,
+    },
   };
+}
+
+export async function loadPlacementState(input: PlacementRead): Promise<PlacementState> {
+  const { state } = await loadPlacementWithSummary(input);
+  return state;
 }

@@ -11,6 +11,7 @@ type AttemptRow = {
   answeredAt: Date;
   durationMs: number;
   isCorrect: boolean;
+  isPlacement: boolean;
   item: { format: ItemFormat } | null;
   itemId: string | null;
   localDate: Date;
@@ -43,6 +44,34 @@ function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
   return attempts.map((attempt) => toEvidence(attempt)).filter((item) => item !== null);
 }
 
+/** An answer to a question placement asked, in a sitting of its own or inside a session. */
+export type TestAnswer = {
+  answeredAt: Date;
+  durationMs: number;
+  outcome: PlacementEvidence["outcome"];
+  skillId: string;
+  /** Asked outside a session: a sitting's answer. */
+  standalone: boolean;
+};
+
+function toTestAnswers(attempts: readonly AttemptRow[]): TestAnswer[] {
+  return attempts.flatMap((attempt) => {
+    const standalone = isPlacementAnswer(attempt);
+
+    return attempt.skillId && (standalone || attempt.isPlacement)
+      ? [
+          {
+            answeredAt: attempt.answeredAt,
+            durationMs: attempt.durationMs,
+            outcome: getOutcome(attempt),
+            skillId: attempt.skillId,
+            standalone,
+          },
+        ]
+      : [];
+  });
+}
+
 /** Returns evidence oldest first. */
 export async function loadEvidence({
   skillIds,
@@ -60,6 +89,7 @@ export async function loadEvidence({
       answeredAt: true,
       durationMs: true,
       isCorrect: true,
+      isPlacement: true,
       item: { select: { format: true } },
       itemId: true,
       localDate: true,
@@ -78,5 +108,6 @@ export async function loadEvidence({
     evidence: toEvidenceList(chronological),
     placementAnswers: toEvidenceList(chronological.filter((attempt) => isPlacementAnswer(attempt))),
     seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),
+    testAnswers: toTestAnswers(chronological),
   };
 }

@@ -8,6 +8,7 @@ import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/pl
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
+import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
@@ -103,11 +104,15 @@ export async function applyPlacement({
   return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
 }
 
-function endedPlacement(details: unknown): boolean {
-  const record = isJsonObject(details) ? details : {};
+/** A learner who declined placement and later started the Focus test has answers to apply. */
+function endedPlacement(goal: { details: unknown }): boolean {
+  const record = isJsonObject(goal.details) ? goal.details : {};
   const answered = Array.isArray(record.answered) ? record.answered : [];
 
-  return answered.includes("placement") && record.placementDeclined !== true;
+  return (
+    answered.includes("placement") &&
+    (record.placementDeclined !== true || isFocusTestStarted(goal))
+  );
 }
 
 /** Test-outs and their announcement complete the setup task atomically, so retries announce skipped work once. */
@@ -115,7 +120,7 @@ export async function applyPlacementToNewPlan(goalId: string): Promise<void> {
   const task = { goalId, task: "placement" as const };
   const plan = await prisma.plan.findUnique({ include: { goal: true }, where: { goalId } });
 
-  if (!plan || !endedPlacement(plan.goal.details)) {
+  if (!plan || !endedPlacement(plan.goal)) {
     await endPlanSetupTask(task);
     return;
   }

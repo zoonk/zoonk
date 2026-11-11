@@ -2,6 +2,9 @@ import { z } from "zod";
 import { planChangeSchema } from "../../plans/plan-change-contract";
 import { answerTimeZoneSchema } from "../contract";
 
+/** The `source` of the plan changes the test proposes, which the apps word like a rebalance. */
+export const FOCUS_TEST_SOURCE = "focusTest";
+
 const countSchema = z.int().min(0);
 
 const UNCHECKED_PARTS = ["written", "listening", "speaking", "practical"] as const;

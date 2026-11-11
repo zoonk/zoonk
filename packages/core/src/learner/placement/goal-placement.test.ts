@@ -17,6 +17,7 @@ import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
+import { askPlacement } from "../_test-utils/exam-test-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
@@ -172,6 +173,7 @@ async function answerNext({
       name: "Placement Answered",
       properties: {
         answer: "dontKnow" in answer ? "dont_know" : "correct",
+        duration_ms: 5000,
         question_number: (placement?.answered ?? 0) + 1,
         skill_id: placement?.next?.skillId,
       },
@@ -1162,7 +1164,7 @@ describe(finishGoalPlacement, () => {
       }),
     ]);
 
-    const first = await readNext(goal.id);
+    const first = await askPlacement(goal.id);
     expect(first?.next?.skillId).toBe(skills[0]?.id);
 
     const afterMiss = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: first });
@@ -1171,10 +1173,18 @@ describe(finishGoalPlacement, () => {
     const asked = new Set([first?.next?.skillId]);
     let placement = afterMiss;
 
-    for (let turn = 0; turn < topics * 2 && placement?.status === "asking"; turn += 1) {
-      asked.add(placement.next?.skillId);
+    for (let turn = 0; turn < topics * 2; turn += 1) {
+      // A sitting that reached its count gives way to the next one.
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement });
+      const asking = placement?.next ? placement : await askPlacement(goal.id);
+
+      if (!asking?.next) {
+        break;
+      }
+
+      asked.add(asking.next.skillId);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement: asking });
     }
 
     expect(sortIds([...asked])).toStrictEqual(sortIds(skills.map((skill) => skill.id)));
@@ -1206,11 +1216,20 @@ describe(finishGoalPlacement, () => {
       }),
     ]);
 
-    let placement = await readNext(goal.id);
+    let placement = await askPlacement(goal.id);
 
-    for (let turn = 0; turn < skills.length && placement?.status === "asking"; turn += 1) {
+    for (const _ of skills) {
+      // A sitting that reached its count gives way to the next one.
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement });
+      const asking = placement?.next ? placement : await askPlacement(goal.id);
+      placement = asking;
+
+      if (!asking?.next) {
+        break;
+      }
+
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: asking });
     }
 
     expect(placement).toMatchObject({
@@ -1240,6 +1259,7 @@ describe(finishGoalPlacement, () => {
     expect(result.status === "ready" && result.completion).toStrictEqual({
       areas: [{ area: null, confident: true, startSkillId: skills[0]?.id }],
       complete: true,
+      focusTest: null,
       knownSkillIds: [],
       phases: [
         { confident: true, phase: 0, startSkillId: skills[0]?.id },
