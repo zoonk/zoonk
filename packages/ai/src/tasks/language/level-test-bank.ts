@@ -1,6 +1,5 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type CefrLevel } from "@zoonk/utils/cefr";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -13,6 +12,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
+import { LEVEL_TEST_LEVELS, type TestLevel } from "./level-test-levels";
 
 /**
  * Written once per pair and shared, so quality wins. On 8 banks (11 Nov 2026), a blind GPT-6.1 Sol
@@ -30,14 +30,11 @@ const fallbackModels = [
   "openai/gpt-6.1-terra",
 ] as const;
 
-/** C2 isn't placed by a three-minute test. */
-const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const satisfies readonly CefrLevel[];
 const TEST_SKILLS = ["reading", "listening"] as const;
 /** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
 const OPTIONS_PER_QUESTION = WRONG_OPTIONS + 1;
 
-type TestLevel = (typeof TEST_LEVELS)[number];
 type TestSkill = (typeof TEST_SKILLS)[number];
 type WordRange = { max: number; min: number };
 
@@ -189,19 +186,18 @@ function toTestQuestion({
   };
 }
 
-type WrittenLevel = { level: TestLevel; output: GeneratedLevel };
-
-function toLevelTestBank(levels: readonly WrittenLevel[]): GenerateLevelTestBankSchema {
-  return {
-    questions: levels.flatMap(({ level, output }) =>
-      TEST_SKILLS.flatMap((skill) =>
-        output[skill]
-          .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
-          .map((question) => toTestQuestion({ level, question, skill })),
-      ),
-    ),
-    speaking: levels.map(({ level, output }) => ({ level, ...output.speaking })),
-  };
+function toLevelQuestions({
+  level,
+  output,
+}: {
+  level: TestLevel;
+  output: GeneratedLevel;
+}): LevelTestQuestion[] {
+  return TEST_SKILLS.flatMap((skill) =>
+    output[skill]
+      .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
+      .map((question) => toTestQuestion({ level, question, skill })),
+  );
 }
 
 function formatWords({ max, min }: WordRange): string {
@@ -238,16 +234,16 @@ ${formatSituations(level)}
 `;
 }
 
-async function writeLevel({
-  languages,
-  level,
-  params,
-}: {
-  languages: ReturnType<typeof getLanguagePromptContext>;
-  level: TestLevel;
-  params: GenerateLevelTestBankParams;
-}) {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+type GenerateLevelTestBankLevelParams = GenerateLevelTestBankParams & { level: TestLevel };
+
+export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLevelParams) {
+  const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
+
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.learnerLanguage,
+  });
+
   const userPrompt = buildLevelPrompt({ languages, level, targetLanguage: params.targetLanguage });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
@@ -267,24 +263,35 @@ async function writeLevel({
     task: "level-test-bank",
   });
 
-  return { level, output: result.output, provenance, usage: result.usage, userPrompt };
+  const { output } = result;
+
+  return {
+    data: {
+      questions: toLevelQuestions({ level, output }),
+      speaking: { level, ...output.speaking },
+    },
+    provenance,
+    systemPrompt,
+    usage: result.usage,
+    userPrompt,
+  };
 }
 
 export async function generateLevelTestBank(params: GenerateLevelTestBankParams) {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
   // The levels are one job, so their calls share a trace unless the caller's job already has one.
   const analytics = { ...params.analytics, traceId: params.analytics?.traceId ?? randomUUID() };
 
   const levels = await Promise.all(
-    TEST_LEVELS.map((level) => writeLevel({ languages, level, params: { ...params, analytics } })),
+    LEVEL_TEST_LEVELS.map((level) => generateLevelTestBankLevel({ ...params, analytics, level })),
   );
 
+  const data: GenerateLevelTestBankSchema = {
+    questions: levels.flatMap((level) => level.data.questions),
+    speaking: levels.map((level) => level.data.speaking),
+  };
+
   return {
-    data: toLevelTestBank(levels),
+    data,
     provenance: combineTaskProvenance(levels.map((level) => level.provenance)),
     systemPrompt,
     usage: sumLanguageModelUsage(levels.map((level) => level.usage)),

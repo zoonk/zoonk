@@ -13,7 +13,8 @@ const MS_PER_SECOND = 1000;
 const MAX_QUESTION_SECONDS = 300;
 
 export type AnsweredActivity = {
-  answers: readonly { durationMs: number; isCorrect: boolean }[];
+  /** `isCorrect` is null for a question taken out of its test after it was answered: it counts as neither right nor wrong. */
+  answers: readonly { durationMs: number; isCorrect: boolean | null }[];
   contentIds: Record<string, string>;
   goalId: string;
   lessonKind: "focusTest" | "levelTest" | "testOut";
@@ -34,8 +35,8 @@ export async function settleAnsweredActivity(
     userId,
   }: AnsweredActivity & { lock: ProgressLock },
 ): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
-  const correct = answers.filter((answer) => answer.isCorrect).length;
-  const incorrect = answers.length - correct;
+  const correct = answers.filter((answer) => answer.isCorrect === true).length;
+  const incorrect = answers.filter((answer) => answer.isCorrect === false).length;
 
   const seconds = Math.round(
     answers.reduce(

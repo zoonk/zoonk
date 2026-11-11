@@ -53,6 +53,10 @@ export const levelTestProgressSchema = z.object({
       unannounced: z.array(z.string()).default([]),
     })
     .optional(),
+  /** The levels a finish set. A bank check can later remove an answered question; they stay. */
+  scores: z
+    .object({ listening: z.number(), reading: z.number(), speaking: z.number().optional() })
+    .optional(),
   speaking: z
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()

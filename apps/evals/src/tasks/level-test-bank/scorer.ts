@@ -4,7 +4,6 @@ import {
   type GenerateLevelTestBankSchema,
   LEVEL_TEST_PASSAGE_WORDS,
 } from "@zoonk/ai/tasks/language/level-test-bank";
-import { hasEnoughQuestions } from "@zoonk/core/language/level-test/rules";
 import { LEVEL_TEST_BANK_SCORE_CATEGORIES } from "./score-categories";
 
 type LevelTestQuestion = GenerateLevelTestBankSchema["questions"][number];
@@ -68,11 +67,7 @@ export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
     SKILLS.map((skill) => getGroupProblems({ bank, level, skill })),
   );
 
-  const playable = hasEnoughQuestions(bank.questions)
-    ? []
-    : ["A skill has fewer questions than the test asks, so the bank isn't saved."];
-
-  const parts = [playable, ...groups, getSpeakingProblems(bank)];
+  const parts = [...groups, getSpeakingProblems(bank)];
 
   return {
     judgedOutput: output,

@@ -1,12 +1,13 @@
 import "server-only";
+import { combineTaskProvenance } from "@zoonk/ai/combine-task-provenance";
+import { type TaskProvenance } from "@zoonk/ai/task-provenance";
 import {
   type GenerateLevelTestBankParams,
-  generateLevelTestBank,
+  type GenerateLevelTestBankSchema,
 } from "@zoonk/ai/tasks/language/level-test-bank";
 import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";
-import { hasEnoughQuestions } from "../level-test-rules";
 
 const STALE_CLAIM_MS = 660_000;
 
@@ -23,71 +24,66 @@ export type LevelTestBankState =
 
 export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelTestBank | null {
   const bank = levelTestBankSchema.safeParse(row?.content);
-  return bank.success && hasEnoughQuestions(bank.data.questions) ? bank.data : null;
+  return bank.success && bank.data.questions.length > 0 ? bank.data : null;
 }
 
 export function findBankRow(pair: LanguagePair) {
   return prisma.languageLevelTest.findUnique({ where: { languagePair: pair } });
 }
 
-async function writeBank({
-  analytics,
-  claimId,
-  pair,
-}: {
-  analytics: LevelTestBankAnalytics;
-  claimId: string;
-  pair: LanguagePair;
-}): Promise<boolean> {
-  const { data, provenance } = await generateLevelTestBank({
-    analytics: { ...analytics, contentScope: "shared" },
-    learnerLanguage: pair.language,
-    targetLanguage: pair.targetLanguage,
-  });
+export type LevelTestBankLevel = {
+  provenance: TaskProvenance;
+  questions: GenerateLevelTestBankSchema["questions"];
+  speaking: GenerateLevelTestBankSchema["speaking"][number];
+};
 
-  if (!hasEnoughQuestions(data.questions)) {
-    throw new Error("The level test bank is short of questions for a skill.");
-  }
-
+function toStoredQuestions(questions: LevelTestBankLevel["questions"]) {
   const counts = new Map<string, number>();
 
-  const questions = data.questions.map((question) => {
+  return questions.map((question) => {
     const key = `${question.skill}-${question.level}`;
     const index = counts.get(key) ?? 0;
     counts.set(key, index + 1);
     return { ...question, id: `${key}-${index}` };
   });
+}
+
+/** False when a newer run took the claim over, so its bank stays. */
+export async function storeBank({
+  claimId,
+  levels,
+  pair,
+}: {
+  claimId: string;
+  levels: readonly LevelTestBankLevel[];
+  pair: LanguagePair;
+}): Promise<boolean> {
+  const questions = toStoredQuestions(levels.flatMap((level) => level.questions));
+
+  if (questions.length === 0) {
+    throw new Error("No placement question passed its check");
+  }
+
+  const speaking = levels.map((level) => level.speaking);
+  const provenance = combineTaskProvenance(levels.map((level) => level.provenance));
 
   const { count } = await prisma.languageLevelTest.updateMany({
-    data: { content: { questions, speaking: data.speaking }, ...toProvenanceData(provenance) },
+    data: {
+      checkedAt: new Date(),
+      content: { questions, speaking },
+      ...toProvenanceData(provenance),
+    },
     where: { ...pair, runId: claimId },
   });
 
   return count > 0;
 }
 
-async function releaseClaim({ claimId, pair }: { claimId: string; pair: LanguagePair }) {
+export async function releaseClaim({ claimId, pair }: { claimId: string; pair: LanguagePair }) {
   await prisma.languageLevelTest.updateMany({
     data: { generatedAt: new Date(0) },
     where: { ...pair, model: "", runId: claimId },
   });
-}
-
-export async function writeClaimedBank({
-  analytics,
-  claimId,
-  pair,
-}: {
-  analytics: LevelTestBankAnalytics;
-  claimId: string;
-  pair: LanguagePair;
-}): Promise<boolean> {
-  try {
-    return await writeBank({ analytics, claimId, pair });
-  } catch (error) {
-    await releaseClaim({ claimId, pair });
-    throw error;
-  }
 }
 
 /** A null claim means another run owns the bank; do not start a second writer. */

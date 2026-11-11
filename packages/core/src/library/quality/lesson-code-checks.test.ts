@@ -8,7 +8,7 @@ import {
   writtenTemperatureLesson,
   writtenTypedAnswer,
 } from "./_test-utils/written-lessons";
-import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
+import { checkScreenText, checkWrittenLesson, toReviewedLesson } from "./lesson-code-checks";
 
 type CheckOptions = {
   allowActivityFallback?: boolean;
@@ -591,8 +591,73 @@ describe(checkWrittenLesson, () => {
     const lesson = writtenTemperatureLesson();
 
     expect(codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "## Recap"]) })).toStrictEqual(
-      [[null, "markdown"]],
+      [
+        [null, "markdown"],
+        [null, "markdown"],
+      ],
     );
+  });
+
+  it("checks the prose learners read in an activity and a math check's wrong-answer reasons", () => {
+    const flawed =
+      "It's worth noting that it reads 10<sup>-5</sup> °C, about [insert value] of a degree.";
+
+    const long =
+      "At seven in the morning the thermometer on the wall outside the kitchen window shows three degrees below zero, and by noon the bright winter sun has slowly warmed the air by eight more degrees.";
+
+    const lesson = writtenTemperatureLesson();
+    const [mathCheck, activity] = [lesson.screens[3], lesson.screens[5]];
+
+    if (mathCheck?.kind !== "mathCheck" || activity?.kind !== "activity") {
+      throw new Error("Screen 4 is a math check and screen 6 an activity.");
+    }
+
+    const content: { check: object } = JSON.parse(activity.content);
+
+    const inActivity = (patch: object) =>
+      codesOf(withScreen(5, { ...activity, content: JSON.stringify({ ...content, ...patch }) }));
+
+    const flaws = ["markdown", "placeholder", "filler"].map((code) => [5, code]);
+
+    expect(inActivity({ prompt: flawed })).toStrictEqual(flaws);
+    expect(inActivity({ check: { ...content.check, question: flawed } })).toStrictEqual(flaws);
+    expect(inActivity({ check: { ...content.check, explanation: flawed } })).toStrictEqual(flaws);
+    expect(inActivity({ prompt: long })).toStrictEqual([[5, "readingLevel"]]);
+
+    const [mistake, ...others] = mathCheck.math.commonMistakes;
+
+    const reasoned = (reason: string) =>
+      codesOf(
+        withScreen(3, {
+          ...mathCheck,
+          math: { ...mathCheck.math, commonMistakes: [{ ...mistake!, reason }, ...others] },
+        }),
+      );
+
+    expect(reasoned(flawed)).toStrictEqual(
+      expect.arrayContaining(["markdown", "placeholder", "filler"].map((code) => [3, code])),
+    );
+
+    expect(reasoned(long)).toStrictEqual([[3, "readingLevel"]]);
+  });
+
+  it("reads each summary label as the plain text every player draws it as", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const labeled = (label: string) =>
+      codesOf({
+        ...lesson,
+        summary: { ideas: [{ label, text: "A rise moves up the thermometer." }], shape: "hub" },
+      });
+
+    expect(labeled("The $x^2$ rule")).toStrictEqual([[null, "rawMath"]]);
+    expect(labeled("The 10^{-5} scale")).toStrictEqual([[null, "rawMath"]]);
+    expect(labeled("10<sup>-5</sup> scale")).toStrictEqual([[null, "markdown"]]);
+    expect(labeled("The **rise** rule")).toStrictEqual([[null, "markdown"]]);
+    expect(labeled("The [insert name] rule")).toStrictEqual([[null, "placeholder"]]);
+    expect(labeled("In this lesson: rises")).toStrictEqual([[null, "lessonFraming"]]);
+    expect(labeled("It's worth noting: rises")).toStrictEqual([[null, "filler"]]);
+    expect(labeled("The $5 sensor")).toStrictEqual([]);
   });
 
   it("rejects LaTeX the player would show as raw text", () => {
@@ -696,6 +761,22 @@ describe(checkWrittenLesson, () => {
     };
 
     expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
+  });
+});
+
+describe(toReviewedLesson, () => {
+  it("shows the review the ranges practice draws a math check's new numbers from", () => {
+    const lesson = writtenTemperatureLesson();
+    const mathCheck = lesson.screens[3];
+
+    if (mathCheck?.kind !== "mathCheck") {
+      throw new Error("Screen 4 is a calculation.");
+    }
+
+    const reviewed = toReviewedLesson({ lesson, screens: check(lesson).screens });
+
+    expect(reviewed.screens[3]?.content).toMatchObject({ newNumbers: mathCheck.math.variables });
+    expect(reviewed.screens[0]?.content).not.toHaveProperty("newNumbers");
   });
 });
 

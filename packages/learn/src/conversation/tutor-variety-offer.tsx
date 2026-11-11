@@ -27,8 +27,8 @@ function VarietyTile({ flag }: { flag: string | null }) {
 
 /**
  * Nothing is saved before the tap. `saved` is the goal having this country, so a later card's
- * country takes over; the tap's own success shows only until the refreshed goal says it. Apply is
- * a form, so React sends a tap made before the page hydrates once it does.
+ * country takes over, and `onApply` resolves once the goal says it. Apply is a form, so React sends a
+ * tap made before the page hydrates once it does.
  */
 export function VarietyOffer({
   offer,
@@ -45,21 +45,15 @@ export function VarietyOffer({
   const varietyName = useVarietyName();
   const varietyNote = useVarietyNote();
   const [isPending, startTransition] = useTransition();
-  const [outcome, setOutcome] = useState<"failed" | "saved" | null>(null);
+  const [failed, setFailed] = useState(false);
   const { targetLanguage: language, targetRegion: region, taughtRegion } = offer;
 
-  if (saved && outcome === "saved") {
-    setOutcome(null);
-  }
-
-  const isSaved = saved || outcome === "saved";
-
   const apply = () => {
-    setOutcome(null);
+    setFailed(false);
 
     startTransition(async () => {
       const { data: applied } = await safeAsync(onApply);
-      setOutcome(applied ? "saved" : "failed");
+      setFailed(!applied);
 
       if (applied) {
         // The button leaves with the save, so focus stays on the card that says how it went.
@@ -84,10 +78,10 @@ export function VarietyOffer({
       title={varietyName({ language, region })}
     >
       <StatusRegion className="text-muted-foreground text-sm">
-        {isSaved && t("Saved. You can change it in your plan.")}
+        {saved && t("Saved. You can change it in your plan.")}
       </StatusRegion>
 
-      {!isSaved && (
+      {!saved && (
         <form action={apply}>
           <OfferButton busy={isPending} type="submit">
             {t("Apply")}
@@ -95,7 +89,7 @@ export function VarietyOffer({
         </form>
       )}
 
-      {outcome === "failed" && <ChangeSaveError />}
+      {failed && <ChangeSaveError />}
     </OfferCard>
   );
 }

@@ -11,6 +11,7 @@ import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { wordFixture, wordPronunciationFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
@@ -360,6 +361,50 @@ describe(gradeSpokenAnswer, () => {
     );
   });
 
+  it("checks word by word when the transcript writes a number differently from the sentence", async () => {
+    const sentence = "My phone number is 234-555-0123";
+    const said = "My phone number is two three four five five five one, zero one two three.";
+    const user = await userFixture();
+    const step = await createSpokenStep();
+
+    await prisma.step.update({
+      data: {
+        content: {
+          language: "en",
+          prompt: "Diga o seu número de telefone.",
+          targetText: sentence,
+          translation: "Meu número de telefone é 234-555-0123",
+        },
+      },
+      where: { id: step.id },
+    });
+
+    mockSession(user.id);
+    mockTranscript(said);
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: {
+        transcript: said,
+        words: sentence
+          .split(" ")
+          .map((text) => ({ heard: null, issue: null, status: "correct" as const, text })),
+      },
+    } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: { explanation: null, isCorrect: true },
+      status: "graded",
+    });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ expectedText: sentence, language: "en" }),
+    );
+
+    expect(explainSpokenAnswer).not.toHaveBeenCalled();
+  });
+
   it("fails instead of grading when neither check can hear the answer", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
@@ -375,7 +420,7 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("gives each word to practice its native audio, respelling and tip", async () => {
-    const word = `quay${crypto.randomUUID().slice(0, 6)}`;
+    const word = `quay${crypto.randomUUID().replaceAll(/[\d-]/gu, "")}`;
 
     const [organization, learner, skill, lesson] = await Promise.all([
       organizationFixture(),
@@ -443,6 +488,57 @@ describe(gradeSpokenAnswer, () => {
         { expected: "train?", heard: "rain" },
       ],
     });
+  });
+
+  it("gives a word to practice the respelling and tip of the same saved guide", async () => {
+    const word = `thanks${crypto.randomUUID().slice(0, 6)}`;
+
+    const [organization, learner, skill, lesson] = await Promise.all([
+      organizationFixture(),
+      userFixture(),
+      skillFixture(),
+      libraryLessonFixture({ language: "pt", targetLanguage: "en" }),
+    ]);
+
+    const [step, lowercase] = await Promise.all([
+      libraryStepFixture({
+        content: { language: "en", prompt: "Agradeça.", targetText: `${word} a lot` },
+        kind: "spokenAnswer",
+        lessonId: lesson.id,
+        skillId: skill.id,
+      }),
+      wordFixture({ organizationId: organization.id, targetLanguage: "en", word }),
+    ]);
+
+    const capitalized = await wordFixture({
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: word.charAt(0).toUpperCase() + word.slice(1),
+    });
+
+    await Promise.all([
+      wordPronunciationFixture({
+        pronunciation: "FENKS",
+        userLanguage: "pt",
+        wordId: lowercase.id,
+      }),
+      wordPronunciationFixture({
+        pronunciation: "THENKS",
+        tip: "Use o 'th', não o 'f'.",
+        userLanguage: "pt",
+        wordId: capitalized.id,
+      }),
+    ]);
+
+    mockSession(learner.id);
+    mockTranscript("fanks a lot");
+    mockExplanation('Ouvimos "fanks".');
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result.status === "graded" && result.grade.wordsToPractice).toMatchObject([
+      { respelling: "FENKS", text: word, tip: null },
+    ]);
   });
 
   it("explains a mistake once and reuses it for the next learner who says the same thing", async () => {

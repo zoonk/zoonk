@@ -32,16 +32,6 @@ const SPOKEN_MOSTLY = 0.6;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
-/** The test asks each skill this many questions, so a bank with fewer for a skill can't run it. */
-export function hasEnoughQuestions(
-  questions: readonly Pick<LevelTestQuestion, "skill">[],
-): boolean {
-  return QUESTION_SKILLS.every(
-    (skill) =>
-      questions.filter((question) => question.skill === skill).length >= QUESTIONS_PER_SKILL,
-  );
-}
-
 export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
 
 function getBand(level: CefrLevel): number {
@@ -224,13 +214,12 @@ export function getNextLevelTestStep({
     skill,
   }));
 
-  const turn = counts
-    .filter((item) => item.count < QUESTIONS_PER_SKILL)
-    .toSorted((a, b) => a.count - b.count)[0];
-
-  const question = turn
-    ? pickQuestion({ bank, progress, score: targets[turn.skill], skill: turn.skill })
-    : null;
+  const question =
+    counts
+      .filter((item) => item.count < QUESTIONS_PER_SKILL)
+      .toSorted((a, b) => a.count - b.count)
+      .map(({ skill }) => pickQuestion({ bank, progress, score: targets[skill], skill }))
+      .find((picked) => picked !== null) ?? null;
 
   if (question) {
     return { kind: "question", question };

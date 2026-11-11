@@ -9,6 +9,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../../_test-utils/blob-uploads";
+import { getScreenPictures } from "../../lesson-player/_utils/screen-pictures";
 import { mockSearchTerms } from "../identity/_test-utils/identity-mocks";
 import {
   drawBlankImage,
@@ -363,5 +364,68 @@ describe(removeImageAsset, () => {
 
     expect(option).toBeNull();
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
+  });
+
+  it("stops its screens waiting for it within their picture wait, so learners read its description at once", async () => {
+    const [asset, option, lesson] = await Promise.all([
+      mediaAssetFixture(),
+      mediaAssetFixture(),
+      libraryLessonFixture(),
+    ]);
+
+    const [, options] = await Promise.all([
+      libraryStepFixture({
+        content: {
+          basis: null,
+          image: { alt, prompt: alt },
+          options: [
+            {
+              id: "a",
+              isCorrect: true,
+              reason: "The cut lets microbes in.",
+              text: "Through the cut",
+            },
+            {
+              id: "b",
+              isCorrect: false,
+              reason: "Unbroken skin keeps them out.",
+              text: "Through the palm",
+            },
+          ],
+          question: "Where do the microbes get in?",
+        },
+        kind: "check",
+        lessonId: lesson.id,
+        mediaAssetId: asset.id,
+        position: 0,
+      }),
+      libraryStepFixture({
+        content: pictureCheckContent,
+        kind: "check",
+        lessonId: lesson.id,
+        position: 1,
+      }),
+    ]);
+
+    await prisma.stepOptionPicture.create({
+      data: { mediaAssetId: option.id, optionId: "gothic", stepId: options.id },
+    });
+
+    await Promise.all([
+      removeImageAsset({ assetId: asset.id }),
+      removeImageAsset({ assetId: option.id }),
+    ]);
+
+    const screens = await prisma.step.findMany({
+      include: { mediaAsset: true, optionPictures: { include: { mediaAsset: true } } },
+      orderBy: { position: "asc" },
+      where: { lessonId: lesson.id },
+    });
+
+    expect(
+      screens.map((row) =>
+        getScreenPictures({ content: row.content as object, kind: row.kind, row }),
+      ),
+    ).toMatchObject([{ image: null, imagePending: false }, { imagePending: false }]);
   });
 });

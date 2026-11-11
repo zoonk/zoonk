@@ -30,11 +30,11 @@ export const pl: ExampleSet = {
       review: ["Funkcja kwadratowa", "Ciągi"],
       scores: [{ label: "Matematyka", range: "62–70%" }],
     },
-    name: "Matura",
     sittings: ["2027-05-04"],
     timeZone: "Europe/Warsaw",
   },
-  exams: "Matura, egzamin ósmoklasisty, egzamin zawodowy albo na aplikację",
+  exams:
+    "matura, egzamin ósmoklasisty, egzamin zawodowy, egzamin na aplikację albo sprawdzian w szkole",
   move: "london",
   topic: {
     chapters: [

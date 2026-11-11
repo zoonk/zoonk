@@ -43,7 +43,6 @@ export const en: ExampleSet = {
         { label: "Math", range: "600–650" },
       ],
     },
-    name: "SAT",
     sittings: [
       "2026-11-07",
       "2026-12-05",
@@ -61,7 +60,7 @@ export const en: ExampleSet = {
     ],
     timeZone: "America/New_York",
   },
-  exams: "The SAT, the ACT, AP exams or the bar",
+  exams: "the SAT, the ACT, AP exams, the bar or a school test",
   move: "mexico-city",
   topic: {
     chapters: [

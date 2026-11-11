@@ -2,6 +2,7 @@ import { countWords, replaceEmDashes } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 import { countListeningVoices } from "../audio/listening-voices";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
+import { fitsTypedQuestion } from "./listening-answer-fit";
 import {
   LISTENING_GENDERS,
   type ListeningQuestion,
@@ -168,6 +169,13 @@ function isAnswerHeard(script: string, question: ListeningQuestion): boolean {
   });
 }
 
+function hasFittingAnswer(question: ListeningQuestion): boolean {
+  return (
+    question.format !== "typed" ||
+    question.acceptedAnswers.some((answer) => fitsTypedQuestion(answer, question))
+  );
+}
+
 function findQuestionProblems(script: string, question: ListeningQuestion): string[] {
   const label = `"${getQuestionText(question).slice(0, 60)}"`;
 
@@ -176,6 +184,8 @@ function findQuestionProblems(script: string, question: ListeningQuestion): stri
       `${label}: its evidence isn't in the script word for word.`,
     !isAnswerHeard(script, question) &&
       `${label}: none of its accepted answers is said in the script.`,
+    !hasFittingAnswer(question) &&
+      `${label}: none of its accepted answers fits its word limit and gap.`,
   ].filter((problem) => typeof problem === "string");
 }
 

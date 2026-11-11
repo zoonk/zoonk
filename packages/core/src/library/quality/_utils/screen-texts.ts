@@ -16,6 +16,67 @@ function mapOptional(text: string | null, rewrite: (text: string) => string): st
   return text === null ? null : rewrite(text);
 }
 
+type ActivityRewrites = { label: TextRewrite; prose: TextRewrite };
+
+function mapProse(value: JsonObject, keys: readonly string[], rewrite: TextRewrite): JsonObject {
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entry]) => [
+      key,
+      keys.includes(key) && typeof entry === "string" ? rewrite(entry) : entry,
+    ]),
+  );
+}
+
+function mapCheckProse(check: JsonObject, { label, prose }: ActivityRewrites): JsonObject {
+  const { options } = check;
+
+  return {
+    ...mapProse(check, ["question", "explanation"], prose),
+    ...(Array.isArray(options) && {
+      options: options.map((option) =>
+        isJsonObject(option)
+          ? mapProse(mapProse(option, ["text"], label), ["reason"], prose)
+          : option,
+      ),
+    }),
+  };
+}
+
+function parseObject(content: string): JsonObject | null {
+  try {
+    const parsed: unknown = JSON.parse(content);
+    return isJsonObject(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Only an activity's prompt and check are prose every template shares. Its fields hold code,
+ * expected output, trace values, data and labels other fields refer to, which code runs or
+ * compares character for character, so they never change.
+ */
+function mapActivityProse({
+  content,
+  ...rewrites
+}: ActivityRewrites & { content: string }): string {
+  const parsed = parseObject(content);
+
+  if (!parsed) {
+    return content;
+  }
+
+  const { check } = parsed;
+
+  const prose = {
+    ...mapProse(parsed, ["prompt"], rewrites.prose),
+    ...(isJsonObject(check) && { check: mapCheckProse(check, rewrites) }),
+  };
+
+  const written = JSON.stringify(prose);
+  return written === JSON.stringify(parsed) ? content : written;
+}
+
 export function mapScreenTexts(screen: WrittenScreen, map: TextMap): WrittenScreen {
   const as = (kind: TextKind) => (text: string) => (text ? map({ ...kind, text }) : text);
   const [prose, label, formula] = [as(PROSE), as(LABEL), as(FORMULA)];
@@ -58,14 +119,27 @@ export function mapScreenTexts(screen: WrittenScreen, map: TextMap): WrittenScre
     }
     case "mathCheck": {
       const [context, question] = [mapOptional(screen.context, prose), prose(screen.question)];
-      return { ...screen, context, correctReason: prose(screen.correctReason), question };
+      const correctReason = prose(screen.correctReason);
+
+      const commonMistakes = screen.math.commonMistakes.map((mistake) => ({
+        ...mistake,
+        reason: prose(mistake.reason),
+      }));
+
+      return {
+        ...screen,
+        context,
+        correctReason,
+        math: { ...screen.math, commonMistakes },
+        question,
+      };
     }
     case "typedAnswer": {
       const [context, question] = [mapOptional(screen.context, prose), prose(screen.question)];
       return { ...screen, context, question, sampleAnswer: prose(screen.sampleAnswer) };
     }
     case "activity":
-      return screen;
+      return { ...screen, content: mapActivityProse({ content: screen.content, label, prose }) };
     default:
       throw new Error("Unknown written screen kind.");
   }
@@ -80,61 +154,4 @@ export function getScreenTexts(screen: WrittenScreen): ScreenText[] {
   });
 
   return texts;
-}
-
-const CHECK_PROSE = ["question", "explanation"];
-const OPTION_PROSE = ["text", "reason"];
-
-function mapProse(value: JsonObject, keys: readonly string[], rewrite: TextRewrite): JsonObject {
-  return Object.fromEntries(
-    Object.entries(value).map(([key, entry]) => [
-      key,
-      keys.includes(key) && typeof entry === "string" ? rewrite(entry) : entry,
-    ]),
-  );
-}
-
-function mapCheckProse(check: JsonObject, rewrite: TextRewrite): JsonObject {
-  const { options } = check;
-
-  return {
-    ...mapProse(check, CHECK_PROSE, rewrite),
-    ...(Array.isArray(options) && {
-      options: options.map((option) =>
-        isJsonObject(option) ? mapProse(option, OPTION_PROSE, rewrite) : option,
-      ),
-    }),
-  };
-}
-
-function parseObject(content: string): JsonObject | null {
-  try {
-    const parsed: unknown = JSON.parse(content);
-    return isJsonObject(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Only an activity's prompt and check are prose every template shares. Its fields hold code,
- * expected output, trace values, data and labels other fields refer to, which code runs or
- * compares character for character, so they never change.
- */
-export function mapActivityProse(content: string, rewrite: TextRewrite): string {
-  const parsed = parseObject(content);
-
-  if (!parsed) {
-    return content;
-  }
-
-  const { check } = parsed;
-
-  const prose = {
-    ...mapProse(parsed, ["prompt"], rewrite),
-    ...(isJsonObject(check) && { check: mapCheckProse(check, rewrite) }),
-  };
-
-  const written = JSON.stringify(prose);
-  return written === JSON.stringify(parsed) ? content : written;
 }

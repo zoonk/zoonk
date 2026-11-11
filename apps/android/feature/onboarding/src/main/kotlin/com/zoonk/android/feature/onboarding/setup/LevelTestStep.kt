@@ -461,6 +461,7 @@ private fun ColumnScope.LevelTestSpeaking(
     // The recorder's own model, shared by its key: skipping while a sentence is graded would race the grade.
     val voice = viewModel(key = recorderKey) { VoiceAnswerModel(context) }
     QuestionPages(
+        questionId = recorderKey,
         read = {
             OnboardingHeading(stringResource(R.string.onboarding_language_test_say_it))
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -472,14 +473,15 @@ private fun ColumnScope.LevelTestSpeaking(
                 Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             }
         },
-        answer = {},
+        answer = {
+            VoiceAnswerRecorder(
+                grade = { store.speakLevelTest(goalId, it) },
+                onGraded = {},
+                navigator = navigator,
+                key = recorderKey,
+            )
+        },
     ) {
-        VoiceAnswerRecorder(
-            grade = { store.speakLevelTest(goalId, it) },
-            onGraded = {},
-            navigator = navigator,
-            key = recorderKey,
-        )
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip_part))
         }
