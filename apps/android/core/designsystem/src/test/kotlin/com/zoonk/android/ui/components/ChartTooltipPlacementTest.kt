@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class ChartTooltipPlacementTest {
@@ -34,5 +35,17 @@ class ChartTooltipPlacementTest {
         val day = IntRect(left = 0, top = 30, right = 20, bottom = 50)
 
         assertEquals(IntOffset(0, 58), tooltipOffset(day, card, width = 400, room = 0..200, gap = 8))
+    }
+
+    @Test
+    fun aColumnScrolledAboveTheViewportShowsNoTooltip() {
+        assertNull(tooltipOffset(column, card, width = 400, room = 310..300, gap = 8))
+    }
+
+    @Test
+    fun aDayScrolledPastTheChartsSideShowsNoTooltip() {
+        val day = IntRect(left = 410, top = 100, right = 430, bottom = 120)
+
+        assertNull(tooltipOffset(day, card, width = 400, room = 0..200, gap = 8))
     }
 }

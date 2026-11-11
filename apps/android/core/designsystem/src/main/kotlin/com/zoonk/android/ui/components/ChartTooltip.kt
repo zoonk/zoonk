@@ -109,11 +109,11 @@ fun ChartTooltip(
 
 /**
  * [tooltip] beside the chart point whose bounds [anchor] gives from this layout's start edge, hidden
- * while it gives `null` for a point scrolled out of view: above the point, below it when that doesn't
- * fit, beside it when neither does, and never past the layout's sides or out of the part of the page
- * [inspector]'s [holdsChartTooltips] area shows. With [riseAbove] it may cover what comes before the
- * chart, which draws under it. It takes no touches and TalkBack skips it, since the points say their
- * own detail.
+ * while it gives `null` or the point is outside the part of the page [inspector]'s [holdsChartTooltips]
+ * area shows: above the point, below it when that doesn't fit, beside it when neither does, and never
+ * past the layout's sides or out of that part of the page. With [riseAbove] it may cover what comes
+ * before the chart, which draws under it. It takes no touches and TalkBack skips it, since the points
+ * say their own detail.
  */
 @Composable
 fun ChartTooltipArea(
@@ -143,7 +143,8 @@ fun ChartTooltipArea(
             val point = card?.let { anchor(area) } ?: return@layout
             val top = if (riseAbove) Int.MIN_VALUE else 0
             val room = shown?.let { maxOf(top, it.first)..minOf(area.height, it.last) } ?: 0..area.height
-            card.placeRelative(tooltipOffset(point, IntSize(card.width, card.height), area.width, room, gap), zIndex = 1f)
+            val offset = tooltipOffset(point, IntSize(card.width, card.height), area.width, room, gap) ?: return@layout
+            card.placeRelative(offset, zIndex = 1f)
         }
     }
 }
@@ -155,14 +156,19 @@ private fun ChartInspector.shownRows(layout: LayoutCoordinates): IntRange? {
     return ceil(shown.top).toInt()..floor(shown.bottom).toInt()
 }
 
-/** Where a [card] goes beside [point] in a layout [width] wide, kept within the rows of [room]. */
+/**
+ * Where a [card] goes beside [point] in a layout [width] wide, kept within the rows of [room], or
+ * `null` when [point] is outside them or the layout's sides.
+ */
 internal fun tooltipOffset(
     point: IntRect,
     card: IntSize,
     width: Int,
     room: IntRange,
     gap: Int,
-): IntOffset {
+): IntOffset? {
+    if (point.bottom <= room.first || point.top >= room.last || point.right <= 0 || point.left >= width) return null
+
     val centered = (point.center.x - card.width / 2).coerceIn(0, (width - card.width).coerceAtLeast(0))
     val lowest = (room.last - card.height).coerceAtLeast(room.first)
     val above = point.top - gap - card.height

@@ -180,7 +180,6 @@ private fun Density.dayBounds(
 
     return list.layoutInfo.visibleItemsInfo
         .firstOrNull { it.index == index / DAYS_PER_WEEK }
-        ?.takeIf { it.offset + size > 0 && it.offset < area.width }
         ?.let { IntRect(left = it.offset, top = top, right = it.offset + size, bottom = top + size) }
 }
 
