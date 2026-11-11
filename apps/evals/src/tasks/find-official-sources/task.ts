@@ -15,6 +15,8 @@ export type FindOfficialSourcesExpected = {
   officialDomains: string[];
   noticeHints: string[];
   sectionHints?: string[];
+  /** A law's text on at least this many official sites, since some refuse downloads. */
+  minOfficialSites?: number;
   copies?: { contentHints: string[]; refusingSites: string[] };
 };
 
@@ -65,6 +67,14 @@ function findBoardMiss({
   }
 
   return `Named ${found.board ?? "no board"} instead of ${expected.board}`;
+}
+
+function countSites(documents: FoundOutput["documents"]): number {
+  return new Set(
+    documents.map((document) =>
+      URL.canParse(document.url) ? new URL(document.url).hostname.replace(/^www\d*\./u, "") : "",
+    ),
+  ).size;
 }
 
 async function readCopy(url: string): Promise<string | null> {
@@ -143,12 +153,14 @@ const scoreFoundSources: TaskScorer<FindOfficialSourcesExpected> = ({ output, te
 
   const missing = listMissingSections({ expected, official });
   const boardMiss = findBoardMiss({ expected, found });
+  const sites = countSites(current);
 
   const gaps = [
     ...(missing.length > 0
       ? [`No official page for these sections' format: ${missing.join(", ")}`]
       : []),
     ...(boardMiss ? [boardMiss] : []),
+    ...(sites < (expected.minOfficialSites ?? 0) ? [`The text on ${sites} official site`] : []),
   ];
 
   if (current.length > 0) {

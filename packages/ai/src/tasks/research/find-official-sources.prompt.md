@@ -14,6 +14,9 @@ You find the official documents a learning app needs to prepare learners for a g
   - `kind`: `official` when published on the organizer's or institution's own domain, `secondary` otherwise.
   - `documentType`: `notice`, `correction`, `annex` (one of the notice's annexes published as its own file, its content list included), `syllabus`, `pastPaper`, `officialPage`, `terms`, `law`, `documentation` or `other`.
   - `reason`: one short sentence on why it's needed and which edition it belongs to.
+{{#regulation}}
+- For a law, `documents` starts with its current consolidated text on up to 3 different official sites, in the order to try them, since some official sites refuse automated downloads: the government's own legislation site first, then the parliament's site or an official legal database (for a Brazilian law, planalto.gov.br, then camara.leg.br or lexml.gov.br). Each is the whole law with its amendments: never an index or a page that links to its parts, a summary, or the original text without its amendments.
+{{/regulation}}
 - `officialFound`: true only when at least one document is on an official domain and belongs to the current or upcoming edition (for a syllabus, a course or curriculum still in use).
 {{#exam}}
 - `board`: the organization that runs the current edition (its board or banca), as its notice or official page names it, such as the institute the notice says carries out the selection. The `PLAN`'s board is a guess made before any search, and an exam can change boards between editions, so only the current edition's documents decide. Null when none of them names it.
