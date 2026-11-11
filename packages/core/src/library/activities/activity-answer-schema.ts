@@ -1,8 +1,8 @@
 import { z } from "zod";
+import { MAX_ANSWER_ITEMS } from "./answer-limits";
 import { MAX_PROGRAM_OUTPUT_LENGTH, MAX_QUERY_ROWS } from "./programs/program-limits";
 import { MAX_DEVICE_DELAY_MS, MIN_DEVICE_DELAY_MS } from "./templates/_utils/music";
 
-export const MAX_ANSWER_ITEMS = 200;
 const MAX_ANSWER_TEXT = 2000;
 
 const answerTextSchema = z.string().max(MAX_ANSWER_TEXT);

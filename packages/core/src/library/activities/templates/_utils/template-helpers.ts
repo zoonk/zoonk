@@ -1,5 +1,5 @@
-import { MAX_ANSWER_ITEMS } from "../../activity-answer-schema";
 import { type ActivityVariable } from "../../activity-schemas";
+import { MAX_ANSWER_ITEMS } from "../../answer-limits";
 import {
   type ActivityCheckTarget,
   type ActivityIssue,
