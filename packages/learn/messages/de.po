@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "Wir haben „{heard}“ gehört"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "Das Wort kommt am {date} wieder."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Dieses Wort sitzt. Es kommt nicht wieder."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Ein Akzent ist kein Hindernis. Wörter, die noch anders klingen, kommen morgen wieder."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Ein Akzent steht dir nie im Weg."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7964,9 +7954,19 @@ msgid "Nothing to practice yet"
 msgstr "Noch nichts zum Üben"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "Der Rest kommt an einem anderen Tag wieder, damit du dir den Stoff besser merkst."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "Den Rest kannst du weiterhin üben."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -13388,12 +13388,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Deine Lektion ist noch nicht gespeichert"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Wiederholung am {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13593,11 +13587,6 @@ msgid "Saved to your mistakes"
 msgstr "In deinem Fehlerheft gespeichert"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "In deinem Fehlerheft gespeichert · morgen kommt die Aufgabe wieder"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Keine Antwort"
@@ -13633,31 +13622,6 @@ msgstr "netto {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Eine falsche Antwort hebt eine richtige auf. Nicht sicher? Lass die Antwort frei."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Das hast du am {date} gesehen."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Wieder richtig, genau wie am {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "Am {date} hast du das richtig beantwortet. Wenn du es jetzt wiederholst, merkst du es dir besser."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "Am {date} hast du „{answer}“ geantwortet."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "Am {date} ist dir das noch schwergefallen."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13796,12 +13760,6 @@ msgstr "In weniger als einer Minute geschafft"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "In {time} geschafft"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Wieder dran am {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

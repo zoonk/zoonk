@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "Escuchamos “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "Volverá a aparecer el {date}."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Esta ya te sale bien. No volverá a aparecer."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Tu acento nunca te impide avanzar. Las palabras que aún suenan diferentes volverán mañana."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Tu acento nunca te impide avanzar."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7964,9 +7954,19 @@ msgid "Nothing to practice yet"
 msgstr "Aún no hay nada que practicar"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "Los demás vuelven otro día para que el repaso te ayude a recordar mejor."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "El resto aún está disponible para practicar."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -13388,12 +13388,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Tu lección aún no se guardó"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Repaso el {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13593,11 +13587,6 @@ msgid "Saved to your mistakes"
 msgstr "Guardado en tu cuaderno de errores"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Guardado en tu cuaderno de errores · volverá mañana"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "En blanco"
@@ -13633,31 +13622,6 @@ msgstr "neto {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Una respuesta incorrecta anula una correcta. ¿Tienes dudas? Déjala en blanco."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Viste esta pregunta el {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Acertaste de nuevo, como el {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "Acertaste el {date}. Repasarla ahora te ayuda a recordarla."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "El {date} respondiste “{answer}”."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "El {date}, esta pregunta te dio problemas."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13796,12 +13760,6 @@ msgstr "Terminaste en menos de un minuto"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Terminaste en {time}"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Vuelven el {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

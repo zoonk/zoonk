@@ -58,30 +58,23 @@ export function isPastTimeLimit({
   return timeLimitSeconds !== null && durationMs >= timeLimitSeconds * MS_PER_SECOND;
 }
 
-export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
+export type PracticeCandidate = { id: string; skillId: string | null };
 
-/** Oldest first with one-per-skill breadth; excludes mistakes from the learner's current local day. */
+/** Keeps the given order (oldest first) with one-per-skill breadth. */
 export function selectMistakesToPractice<TMistake extends PracticeCandidate>({
   limit,
   mistakes,
-  today,
 }: {
   limit: number;
   mistakes: readonly TMistake[];
-  /** The learner-local date, as a UTC-midnight label. */
-  today: Date;
 }): TMistake[] {
-  const eligible = mistakes
-    .filter((mistake) => mistake.createdLocalDate.getTime() < today.getTime())
-    .toSorted((a, b) => a.createdLocalDate.getTime() - b.createdLocalDate.getTime());
-
-  const firstPerSkill = eligible.filter(
+  const firstPerSkill = mistakes.filter(
     (mistake, index) =>
       mistake.skillId === null ||
-      eligible.findIndex((other) => other.skillId === mistake.skillId) === index,
+      mistakes.findIndex((other) => other.skillId === mistake.skillId) === index,
   );
 
-  const rest = eligible.filter((mistake) => !firstPerSkill.includes(mistake));
+  const rest = mistakes.filter((mistake) => !firstPerSkill.includes(mistake));
 
   return [...firstPerSkill, ...rest].slice(0, limit);
 }

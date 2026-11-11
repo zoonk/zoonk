@@ -5,102 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All six keyed answers are uniquely defensible among their options. The assembly questions correctly apply prior notice, protection of an earlier meeting, and the prohibition on weapons under article 5, XVI. The habeas data questions correctly distinguish correction of personal records from access to a public contract under LXXII. The mandado de segurança questions correctly address an unlawful official refusal supported by documentary evidence and the incompatibility of necessary evidentiary development with that remedy under LXIX. No wrong-key, ambiguity, or factual-error cap is triggered.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The assembly distractors identify useful misconceptions, and the explanations generally explain why each alternative fails. However, several habeas corpus distractors are implausible at the specified intermediate level, particularly using it to collect payment or obtain a diploma. Repeatedly labeling unrelated objectives as confusion with freedom of movement does not supply a convincing learner mistake. The cap of 7 for several implausible distractors applies.",
-          "score": 7,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "No examination format is specified. The questions use recognizable civic, administrative, and workplace situations, readable Brazilian Portuguese, and direct commands. Option lengths do not systematically reveal the answers, and the multiple-choice format suits the requested setting.",
-          "score": 9,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The questions require application rather than definition recall and provide two items per skill in Portuguese. The assembly scenarios add substantively different legal problems—collision with an earlier meeting and carrying a weapon—rather than merely changing the location of the used situations. Personal-data correction and access to a public contract also differ substantively from the previously used request for one's own records. Nevertheless, difficulty is fairly uniform, and the final payment dispute introduces a separate collection-action obstacle instead of cleanly testing the evidence requirement for mandado de segurança.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4421,
-          "outputTokens": 1018,
-          "reasoningTokens": 347
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "Several distractors are weak for intermediate learners, especially habeas corpus to collect a debt, obtain a diploma, or access a public contract. These repeatedly introduce freedom-of-movement remedies without any contextual reason to confuse them with the appropriate remedy, making elimination too easy.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Use more plausible distractors based on authorization, public-character databases, administrative refusal, and preconstituted evidence. For the final mandado de segurança question, use a nonmonetary dispute requiring expert evidence: seeking payment creates an additional obstacle because mandado de segurança is not a substitute for a collection action, weakening the question's isolation of the evidence requirement.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).",
-        "id": "pt-constitutional-mock-avoids-used-situations-1",
-        "userInput": {
-          "quickCount": 2,
-          "typedCount": 0,
-          "language": "pt",
-          "quickFormat": "multipleChoice",
-          "skills": [
-            {
-              "description": "Aplicar o direito de reunião (art. 5º, XVI) a situações concretas: aviso prévio, autorização, armas, local.",
-              "level": "intermediate",
-              "name": "Direito de reunião",
-              "usedSituations": [
-                "Moradores de um bairro marcaram uma reunião pacífica em uma praça pública, sem armas, e avisaram a prefeitura com antecedência.",
-                "Um grupo quer se reunir em praça pública sem pedir autorização ao poder público."
-              ]
-            },
-            {
-              "description": "Reconhecer quando cabe habeas data (art. 5º, LXXII) e distingui-lo do mandado de segurança.",
-              "level": "intermediate",
-              "name": "Habeas data",
-              "usedSituations": [
-                "Uma pessoa pediu ao órgão público acesso aos próprios dados cadastrais e teve o pedido negado."
-              ]
-            },
-            {
-              "description": "Reconhecer quando cabe mandado de segurança (art. 5º, LXIX) e seus requisitos.",
-              "level": "intermediate",
-              "name": "Mandado de segurança"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculations confirm all six keyed answers: 32, $7.20, 5% increase, 0%, $3.50 per additional guest, and 50 gallons. Each question has exactly one correct option. However, the backpack feedback falsely identifies 20% as the increase from $120 to $150; that increase is 25%. This factual error triggers the cap of 7.",
           "score": 7,
           "label": "Correctness",
@@ -567,6 +471,108 @@
               "description": "Decidir entre alternativas próximas e administrar o tempo de uma questão difícil durante a prova.",
               "level": "intermediate",
               "name": "Decidir entre alternativas e administrar o tempo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All six questions have one defensible keyed answer. Article 5, XVI supports both respecting an earlier meeting and the requirements concerning weapons and authorization. Habeas data appropriately covers correction of one's own government-held records, while mandado de segurança fits the documented public-information denial and unlawful competition-registration denial. The final question correctly applies the statutory 120-day deadline under Law 12.016/2009. No answer-key or factual-error cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors represent specific mistakes, including confusing notice with authorization, treating habeas data as access to any public information, and confusing documentary proof with exemption from a filing deadline. Their feedback explains the relevant distinction. The 180-day alternative is weaker: neither its label nor its explanation establishes why a learner would plausibly select that particular deadline. This is an isolated weakness rather than the several-distractor failure that triggers the cap.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "No exam is named, and the questions generally use credible Brazilian civic and administrative situations with clear commands and reasonably balanced options. The competition, record-correction, and public-expenditure scenarios are plausible applications. There is no material exam-format mismatch or conspicuous answer-length giveaway.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The public-square meeting in skills[0].quick[0] repeats an expressly excluded used situation, notwithstanding the added scheduling conflict. Otherwise, the questions are in Portuguese and generally apply the intended skills. Record correction is meaningfully different from the previously used request to access one's own records, and the two mandado de segurança questions address different requirements. The deadline item provides only shallow application, limiting the difficulty spread.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 6,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1160,
+          "inputTokens": 5119,
+          "outputTokens": 1185,
+          "reasoningTokens": 516
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "skills[0].quick[0] reuses the expressly excluded situation of a peaceful, unarmed meeting in a public square. Adding a competing meeting changes the legal issue, but retains the prohibited scenario rather than supplying a genuinely new situation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The 180-day distractor in skills[2].quick[1] has a weak misconception basis: its label and feedback identify the incorrect deadline without explaining a recognizable source of confusion. The deadline question also offers less intermediate-level reasoning than its 'hard' designation suggests.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the public-square scenario with an unused setting and factual problem. Strengthen the deadline question by testing a meaningful procedural distinction and using distractors grounded in recognizable confusions between legal remedies or deadlines.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).",
+        "id": "pt-constitutional-mock-avoids-used-situations-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Aplicar o direito de reunião (art. 5º, XVI) a situações concretas: aviso prévio, autorização, armas, local.",
+              "level": "intermediate",
+              "name": "Direito de reunião",
+              "usedSituations": [
+                "Moradores de um bairro marcaram uma reunião pacífica em uma praça pública, sem armas, e avisaram a prefeitura com antecedência.",
+                "Um grupo quer se reunir em praça pública sem pedir autorização ao poder público."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe habeas data (art. 5º, LXXII) e distingui-lo do mandado de segurança.",
+              "level": "intermediate",
+              "name": "Habeas data",
+              "usedSituations": [
+                "Uma pessoa pediu ao órgão público acesso aos próprios dados cadastrais e teve o pedido negado."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe mandado de segurança (art. 5º, LXIX) e seus requisitos.",
+              "level": "intermediate",
+              "name": "Mandado de segurança"
             }
           ]
         }

@@ -118,7 +118,10 @@ describe("lesson replay identity vs picture arrival", () => {
       expect(wrong.mistake).not.toBeNull();
 
       await prisma.mistake.update({
-        data: { createdAt: new Date(Date.now() - 2 * 86_400_000) },
+        data: {
+          createdAt: new Date(Date.now() - 2 * 86_400_000),
+          missedAt: new Date(Date.now() - 2 * 86_400_000),
+        },
         where: { id: wrong.mistake!.id },
       });
 
@@ -129,7 +132,7 @@ describe("lesson replay identity vs picture arrival", () => {
       expect(after.lesson.step).toMatchObject({ image: { id: asset.id } });
 
       const again = await answer({
-        answeredAt: new Date(),
+        answeredAt: new Date(Date.now() - 86_400_000),
         correct: false,
         replay: after,
         skillId: skill.id,

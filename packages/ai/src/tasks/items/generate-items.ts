@@ -17,6 +17,7 @@ import {
 } from "./item-schemas";
 import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
+import { formatUsedSituations, getSituationSeed } from "./used-situations";
 
 /**
  * On 28 cases (8 Nov 2026), Terra scored 9.09 (EN 9.22, PT 8.92) at $10.00/1k; Luna (8.71),
@@ -63,6 +64,7 @@ export type GenerateItemsParams = {
   /** Null for general items. */
   field?: string | null;
   examFormat?: ItemExamFormat | null;
+  usedSituations?: readonly string[];
   model?: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
@@ -71,7 +73,8 @@ export type GenerateItemsParams = {
 };
 
 function buildUserPrompt(params: GenerateItemsParams): string {
-  const { examFormat, field, format, skill } = params;
+  const { examFormat, field, format, skill, usedSituations } = params;
+  const seed = `${getSituationSeed([{ name: skill.name, usedSituations }])}:${format}`;
   const count = Math.min(params.count ?? DEFAULT_COUNT, MAX_COUNT);
 
   const optionCount =
@@ -93,12 +96,12 @@ function buildUserPrompt(params: GenerateItemsParams): string {
     COUNT: ${count}${optionCount}${select}${entryLine}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatItemSetting({ language: params.language, seed: `${skill.name}:${format}`, targetLanguage: params.targetLanguage })}
+${formatItemSetting({ language: params.language, seed, targetLanguage: params.targetLanguage })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}
     EXAM: ${examFormat?.name ?? "none"}
-    EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}
+    EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}${formatUsedSituations({ indent: "    ", situations: usedSituations })}
   `;
 }
 
@@ -121,6 +124,7 @@ export async function generateItems(params: GenerateItemsParams) {
     languageGoal: Boolean(params.targetLanguage),
     numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
     severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
+    usedSituations: Boolean(params.usedSituations?.length),
   });
 
   const schema = z.object({ items: z.array(GENERATED_ITEM_SCHEMAS[format]) });

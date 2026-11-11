@@ -19,12 +19,14 @@
   "mistakes_open_lesson": "7e49f578343aa48274b18086c39d7f9c08642d31195d116e578a37d8af2ca015",
   "mistakes_other_questions": "4223452a8e38e2567526f41cd73b3fc200423bd90e7c6373dd751e414d1cb7bb",
   "mistakes_practice": "79c869a4d01607fed704c2a5380595e5346f78522702ccabfbe0a074a842b820",
-  "mistakes_practice_comes_back": "ed260a03333418809b3fee73fe5ae292ae156fb8b601d53c05009d3095121024",
+  "mistakes_practice_comes_back": "a3b83f11c57b6231b4fd6a754be8fef95c320355cc8e61c7d85d9a0f477f32a0",
   "mistakes_practice_end": "3f4a259d25e2d1e5c2a226560537dfa2c588d59fa440b9a650a266d0ff8996ab",
   "mistakes_practice_fixed": "f83e8201e87b5c731e0c8715bdb96bcb0b117585f25ccb8a4ead785c63e2fd36",
+  "mistakes_practice_missed_and_unreached": "d7d870e4715b1a273eae45afdf2484832308c7c2bf1547a96816ff882ea744eb",
   "mistakes_practice_skill": "6c49c332f3f1dc5461d314795ebb2d9093348c1a3cbbb4394b55762eddc88743",
   "mistakes_practice_title": "fb8b331a81887db11395ed58dd54e153bd2b36b24958cece5f0cb80dba72c726",
   "mistakes_practice_tomorrow": "83e5bf688a128dafac655783b8366cd4b9ec01e92e38d36b6ccea277cddfe42f",
+  "mistakes_practice_unreached": "28f538ae365c3ff36c554137d4ee7cb698f967e560a93b9d15a48f46b3a43353",
   "mistakes_ready": "0c1ef37e8a938920e0652f64bc7492e4182df674cbf9e2016c25afa08ab360fa",
   "mistakes_show_more": "146ece201b3697c70880e37b2f15c23147053cbae60f9fafb68228c97a3aef9c",
   "mistakes_tab_fixed": "5ccf921294cd847e17dcca3cc26e549453b774d99c04ccc2bd8d9e556972ebfe",
@@ -36,7 +38,9 @@
     <string name="mistakes_practice_title">Esercitati sui tuoi errori</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Termina l’esercitazione. Le risposte già date contano.</string>
-    <string name="mistakes_practice_comes_back">Gli altri tornano un altro giorno, per aiutarti a ricordare meglio.</string>
+    <string name="mistakes_practice_comes_back">Quello che sbagli torna un altro giorno, così ti resta più impresso.</string>
+    <string name="mistakes_practice_missed_and_unreached">Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto.</string>
+    <string name="mistakes_practice_unreached">Puoi ancora esercitarti sul resto.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d errore corretto</item>
         <item quantity="many">%d errori corretti</item>

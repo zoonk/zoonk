@@ -170,7 +170,9 @@ private fun dayNote(
     status: String,
 ): String? {
     val locale = currentLocale()
-    val saidByTime = !day.hitGoal && (day.studied || (day.kind == StudySessionWeekDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
+    val saidByTime =
+        !day.hitGoal &&
+            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == StudySessionWeekDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
 
     return if (saidByTime) null else status.replaceFirstChar { it.titlecase(locale) }
 }

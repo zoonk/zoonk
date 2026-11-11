@@ -6,12 +6,7 @@ import { readFinishedChapter } from "../mind-maps/finished-chapters";
 import { findReminderOffer } from "../reminders/_utils/reminder-offer";
 import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyBlock } from "./_utils/finish-empty-block";
-import {
-  findLessonFinish,
-  getLessonComesBack,
-  markLessonBlockDone,
-  readFinishedLessonId,
-} from "./_utils/lesson-block";
+import { findLessonFinish, markLessonBlockDone, readFinishedLessonId } from "./_utils/lesson-block";
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
@@ -200,7 +195,6 @@ async function finishQuestionBlock(
       brainPower: settlement.brainPower,
       capsulesOpened: settlement.capsulesOpened,
       checkpoint,
-      comesBackOn: null,
       correct: settlement.correct,
       finishedChapter: null,
       netScore,
@@ -251,13 +245,7 @@ export async function finishLessonBlock({
     trackBlockCompleted({ block: owned.block, seconds: finish.seconds, session: owned.session });
   }
 
-  const [comesBackOn, testOutOffer, finishedChapter, reminderOffer] = await Promise.all([
-    getLessonComesBack({
-      lessonId,
-      targetDate: owned.session.goal?.targetDate ?? null,
-      timeZone: owned.timeZone,
-      userId: owned.userId,
-    }),
+  const [testOutOffer, finishedChapter, reminderOffer] = await Promise.all([
     lessonId && goalId ? findTestOutOffer({ goalId, lessonId, userId: owned.userId }) : null,
     // Read again: marking the block done may have finished the chapter after `finish` was read.
     prisma.learningEvent
@@ -278,7 +266,6 @@ export async function finishLessonBlock({
       brainPower: finish.brainPower,
       capsulesOpened: 0,
       checkpoint: null,
-      comesBackOn,
       correct: finish.correctAnswers,
       finishedChapter,
       netScore: null,

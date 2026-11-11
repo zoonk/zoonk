@@ -1,6 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { formatCast } from "../_utils/cast";
 import { generateItems } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import type * as Ai from "ai";
@@ -40,10 +41,11 @@ describe(generateItems, () => {
       languageGoal: false,
       numericEntry: false,
       severalPicks: false,
+      usedSituations: false,
     });
 
     expect(userPrompt).toContain("EXAM: ENEM");
-    expect(userPrompt).not.toMatch(/OPTION_COUNT|FIELD|TARGET_LANGUAGE/u);
+    expect(userPrompt).not.toMatch(/OPTION_COUNT|FIELD|TARGET_LANGUAGE|USED_SITUATIONS/u);
   });
 
   it("writes a language exam's essay in its language, set where it is spoken", async () => {
@@ -111,6 +113,7 @@ describe(generateItems, () => {
       languageGoal: false,
       numericEntry: false,
       severalPicks: false,
+      usedSituations: false,
     });
 
     expect(userPrompt).toContain("OPTION_COUNT: 4");
@@ -134,6 +137,7 @@ describe(generateItems, () => {
       languageGoal: false,
       numericEntry: false,
       severalPicks: true,
+      usedSituations: false,
     });
 
     expect(picks.userPrompt).toContain("SELECT: all");
@@ -153,6 +157,7 @@ describe(generateItems, () => {
       languageGoal: false,
       numericEntry: true,
       severalPicks: false,
+      usedSituations: false,
     });
 
     expect(integer.userPrompt).toContain("ENTRY: integer");
@@ -167,5 +172,28 @@ describe(generateItems, () => {
     });
 
     expect(single.userPrompt).not.toMatch(/SELECT|ENTRY/u);
+  });
+
+  it("lists the skill's used situations with their rule, and draws another cast than a skill without them", async () => {
+    const { userPrompt } = await generateItems({
+      format: "multipleChoice",
+      language: "en",
+      level: "intermediate",
+      skill,
+      usedSituations: ["Ana splits a bill.", "A shop raises prices twice."],
+    });
+
+    expect(withItemRules).toHaveBeenCalledWith(
+      "# Goal",
+      expect.objectContaining({ usedSituations: true }),
+    );
+
+    expect(userPrompt).toContain(
+      "USED_SITUATIONS:\n      - Ana splits a bill.\n      - A shop raises prices twice.",
+    );
+
+    expect(userPrompt).not.toContain(
+      formatCast({ language: "en", seed: `${skill.name}:multipleChoice` }),
+    );
   });
 });

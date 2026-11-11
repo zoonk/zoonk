@@ -147,7 +147,7 @@ function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }:
 }
 
 function addToNotebook({ attemptId, context }: { attemptId: string; context: AnswerContext }) {
-  const { before, input, itemId, recent, skillId, stepId, transaction } = context;
+  const { answeredAt, before, input, itemId, recent, skillId, stepId, transaction } = context;
   const entry = input.mistake;
 
   if (input.graded.isCorrect || input.purpose !== "learning" || !entry) {
@@ -159,6 +159,7 @@ function addToNotebook({ attemptId, context }: { attemptId: string; context: Ans
       attemptId,
       itemId,
       language: input.language,
+      missedAt: answeredAt,
       practicedMistakeId: input.practicedMistakeId,
       signals: {
         dontKnow: input.answer.dontKnow === true,

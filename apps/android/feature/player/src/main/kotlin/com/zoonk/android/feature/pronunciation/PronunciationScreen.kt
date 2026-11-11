@@ -114,9 +114,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
@@ -129,8 +127,6 @@ import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
-import java.time.ZoneId
-import kotlin.time.toJavaInstant
 
 /** `/pronunciation` (main's `PronunciationReviewScreen`): the active goal's words due to say again, or [AppRoute.Pronunciation.goalId]'s. */
 @Composable
@@ -537,27 +533,13 @@ private fun RecorderStatus(
 
 @Composable
 private fun GradeNote(grade: PronunciationAnswerGrade) {
-    val locale = currentLocale()
-    Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (grade.isCorrect) {
-            FeedbackVerdict(stringResource(R.string.pronunciation_sounded_right), FeedbackTone.Right)
-        } else {
-            Text(
-                stringResource(R.string.pronunciation_heard, grade.transcript),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                style = MaterialTheme.typography.titleSmall,
-            )
-        }
-        val next = grade.nextReviewAt
+    if (grade.isCorrect) {
+        FeedbackVerdict(stringResource(R.string.pronunciation_sounded_right), FeedbackTone.Right)
+    } else {
         Text(
-            if (next == null) {
-                stringResource(R.string.pronunciation_learned)
-            } else {
-                val day = next.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                stringResource(R.string.pronunciation_comes_back, formatDate(day, locale, DateStyle.Long))
-            },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+            stringResource(R.string.pronunciation_heard, grade.transcript),
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            style = MaterialTheme.typography.titleSmall,
         )
     }
 }

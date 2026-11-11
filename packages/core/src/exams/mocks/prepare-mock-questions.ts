@@ -5,6 +5,7 @@ import {
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
 import { listPastQuestionExamples } from "../../library/items/past-question-examples";
+import { loadUsedSituations } from "../../library/items/used-situations";
 import { toItemExam } from "../../lookahead/item-exam";
 import { type PlacementItemSkill } from "../../lookahead/placement-item-skills";
 import { loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
@@ -116,6 +117,8 @@ export async function loadMockWritingSkills({
   const blueprint = goal?.examBlueprint ?? null;
   const exam = blueprint ? toItemExam(blueprint) : null;
 
+  const usedSituations = await loadUsedSituations({ examBlueprintId: blueprint?.id, skillIds });
+
   return Promise.all(
     skillIds
       .flatMap((id) => rows.find((row) => row.id === id) ?? [])
@@ -124,7 +127,11 @@ export async function loadMockWritingSkills({
           ? await listPastQuestionExamples({ examBlueprintId: blueprint.id, skillIds: [skill.id] })
           : [];
 
-        return { ...skill, exam: exam && { ...exam, pastQuestions }, usedSituations: [] };
+        return {
+          ...skill,
+          exam: exam && { ...exam, pastQuestions },
+          usedSituations: usedSituations.get(skill.id) ?? [],
+        };
       }),
   );
 }
