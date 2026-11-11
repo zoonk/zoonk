@@ -27,11 +27,19 @@
   "session_block_weekly_challenge": "9f695f03355828e93b367f09c4839fa1d865cd943562f595bd439b6292982547",
   "session_block_what_you_know": "352c5bca9b3a0fa52154d3586a5f4a387e00d73f722343fce811a76d2ed1dc14",
   "session_block_writing_practice": "bbbd364ad678d35b5d4100c26ed0808470a5051289592c0887ae59c6c06b413e",
+  "session_catch_up_to_go": "eaf20dc1289c561788c78227d9fd663202c609a0ac1e88ed6383f1ad37d19aa1",
+  "session_caught_up_today": "7094279eacc098ee23ad5c04c741db5e25fc1ce9944a86100d5103341bbab13c",
+  "session_day_done": "56f74aafedfa4675db1bdc6d7f7b9782d529bd90b9250024a09e9849487f40e1",
+  "session_day_done_caption": "57d46b3c58e753fd8d6db5f5366eac3ebafa6b07b216948d99b73fd4fe81d64a",
+  "session_day_left": "bce9f7f0c51aedec31e4431987840fc1585a6d5787264dfa33a55bd2cff63009",
+  "session_day_more_coming": "a2b60a473dc3ad6c474c15969c45d1961e3556c0cd8c84e69aba7ed96ef8822a",
+  "session_day_open": "724e6ed57cf82fc4fd3e4926f724377b0cdeefcc44929393a02ccb654667961a",
   "session_energy_at": "34005aed26ed7eb25542d4e4afd7e0f1f4c521ab4743856ae73975485336ff2b",
   "session_energy_detail": "82e536b309c232a14d375913886f73aa52f15aeec13a475aa867815667148831",
   "session_energy_glowing": "437670414a99ac2307c7b3651ea9fda1dd3ac100df0a1002e414298203c18b10",
   "session_energy_glowing_brightest": "ff802443e02beb2e3b048133d0df139a7c433ee92b85656cad230e5e0ccda24b",
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
+  "session_lessons_deferred": "dfed8ada294ef6b08f3d93cdeb6daf75e1c6d3dbb99f0d896b47c259437699f4",
   "session_level_up": "103aaec73ea808e508820a536e7a91945b02c0f7dd52e0a966b19af43d8b59cc",
   "session_next_continue": "dd797e6439ba7fbad564cbdd266684dba4e0ea9681d4727e2b1852815ce24974",
   "session_next_eyebrow": "85d4f662cf5696db68110c59f47ee87fe590679824969d65fa8694d5563bc326",
@@ -42,6 +50,7 @@
   "session_next_stop_failed": "215f669d94b4de038a638f60daa2a72ee7699d05071e96380aa62954c93db622",
   "session_next_while_waiting": "da48b440c101c98f2ed91d58210bbf7e77a15af9011d02f301ef316f2092d7f6",
   "session_next_writing_note": "db700f6aecf98d26ba018fa447bf415a94b24415e6f66c347e4f78c4afd4e5e6",
+  "session_no_catch_up_left": "51394b3fbf9f8feb98b45fbb4c8d6d5335b84888b48314b6341cc4d8327fba46",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
   "session_review_intro_first_week": "700941929601f24413421e173187bac69adcbab4db7299acfc52a48faf7b9faa",
@@ -223,4 +232,43 @@
     <string name="session_next_while_waiting">Während du wartest: %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
     <string name="session_next_instead">Stattdessen: %1$s</string>
+    <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
+    <plurals name="session_day_done">
+        <item quantity="one">%1$s von %2$s heute geschafft</item>
+        <item quantity="other">%1$s von %2$s heute geschafft</item>
+    </plurals>
+    <!-- A finished block's line about today's session, past its midpoint. %1$s is how many of the day's blocks are left, shown larger. -->
+    <plurals name="session_day_left">
+        <item quantity="one">%1$s heute noch offen</item>
+        <item quantity="other">%1$s heute noch offen</item>
+    </plurals>
+    <!-- Under "3 left today": %1$s of the session's %2$s blocks are done. -->
+    <plurals name="session_day_done_caption">
+        <item quantity="one">%1$s von %2$s geschafft</item>
+        <item quantity="other">%1$s von %2$s geschafft</item>
+    </plurals>
+    <!-- A finished block's line about today's session while the day still holds time for lessons not on the list yet, so it has no total. %1$s is how many blocks are done, shown larger. -->
+    <plurals name="session_day_open">
+        <item quantity="one">%1$s heute geschafft</item>
+        <item quantity="other">%1$s heute geschafft</item>
+    </plurals>
+    <!-- Under "3 done today": more lessons are being written and join today's session on their own. -->
+    <string name="session_day_more_coming">Weitere kommen nach und nach dazu</string>
+    <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
+    <plurals name="session_caught_up_today">
+        <item quantity="one">%1$s heute nachgeholt</item>
+        <item quantity="other">%1$s heute nachgeholt</item>
+    </plurals>
+    <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
+    <plurals name="session_catch_up_to_go">
+        <item quantity="one">%1$s noch offen</item>
+        <item quantity="other">%1$s noch offen</item>
+    </plurals>
+    <!-- At a finished block's end, once every lesson earlier days left is done. -->
+    <string name="session_no_catch_up_left">Keine Lektionen mehr nachzuholen.</string>
+    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="session_lessons_deferred">
+        <item quantity="one">%1$s Lektion wurde auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
+        <item quantity="other">%1$s Lektionen wurden auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
+    </plurals>
 </resources>

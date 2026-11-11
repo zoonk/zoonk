@@ -56,7 +56,6 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, one {{done, number} de # aula concluída} other {{done, number} de # aulas concluídas}}"
 
 #: src/_components/chapter-mark.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "Pulado"
@@ -11510,6 +11509,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, one {Um dia à frente} other {# dias à frente}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, one {# aula para colocar em dia} other {# aulas para colocar em dia}}"
@@ -13377,6 +13377,50 @@ msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "Salvando seu progresso…"
 
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {<number>#</number> restantes hoje} one {<number>#</number> restante hoje} other {<number>#</number> restantes hoje}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> concluídos hoje} one {<number>#</number> concluído hoje} other {<number>#</number> concluídos hoje}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> de {total} concluídos hoje} one {<number>#</number> de {total} concluído hoje} other {<number>#</number> de {total} concluídos hoje}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {# de {total} concluídos} one {# de {total} concluído} other {# de {total} concluídos}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "Mais conforme você avança"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, one {# aula ficou} other {# aulas ficaram}} para outro dia, para o estudo de hoje caber em {time}."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "Nenhuma aula para colocar em dia."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, one {<gain># colocada em dia hoje</gain>} other {<gain># colocadas em dia hoje</gain>}} · {left, plural, one {falta #} other {faltam #}}"
+
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
 msgid "This lesson is being written for you. It's usually ready in a few minutes."
@@ -13683,11 +13727,6 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {# de {total} concluídos} one {# de {total} concluído} other {# de {total} concluídos}} · mais conforme você avança"
 
 #: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {# de {total} concluídos} one {# de {total} concluído} other {# de {total} concluídos}}"
-
-#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-screen.tsx
@@ -13699,11 +13738,6 @@ msgstr "Sessão de hoje"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "Pontuação líquida {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, one {# aula ficou} other {# aulas ficaram}} para outro dia, para o estudo de hoje caber em {time}."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -14791,6 +14825,18 @@ msgstr "{answered, number} de {count, plural, one {# pergunta} other {# pergunta
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, one {# concluído} other {# concluídos}}"
+
+#. Counts blocks of today's study session the learner skipped.
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, one {# pulado} other {# pulados}}"
+
+#. Counts blocks of today's study session the learner finished and skipped.
+#: src/today/today-session-card.tsx
+msgctxt "DIDXQf"
+msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
+msgstr "{completed, plural, one {# concluído} other {# concluídos}} · {skipped, plural, one {# pulado} other {# pulados}}"
 
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"

@@ -144,6 +144,7 @@
   "today_setting_up_detail": "193a19c0dcac36cb5414eb253837b3bdc3a5bf2d75039e67562dbadfc2a97780",
   "today_setting_up_goal": "657edf312bdd75144431335704eca81f6924d8fcf3d9fa086d66a1970bcd1f4b",
   "today_show_less": "b7e7f158a3d6a8be6b53331e3c7947d3fbd0d066afa545fcc0ea83e62057132f",
+  "today_skipped_count": "c723f7724fafabdbab33dce1c747968aa07299ed6e913b933348292fdc653c7a",
   "today_start_new_goal": "44f063b5c39f7ae0c19d3bf4992ae226ecb083e75d30c9992c87129a5f7483da",
   "today_start_session": "15736c8dd3868806531c9fa8b9b2ede8731f1d23f41811531fe971a18951f8dd",
   "today_step_after_lessons": "c0250b82cb775626a523946a774aa247f846ff72028e2d86f8d597fd25217c47",
@@ -253,6 +254,11 @@
     <plurals name="today_done_count">
         <item quantity="one">%d tamamlandı</item>
         <item quantity="other">%d tamamlandı</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d atlandı</item>
+        <item quantity="other">%d atlandı</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d daha</item>

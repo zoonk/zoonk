@@ -68,6 +68,11 @@ fun day(
         goalId = GOAL,
         localDate = DAY,
         steps = steps,
+        sessionBar =
+            SessionBar(
+                completed = steps.count { it.status == StudyBlock.Status.COMPLETED },
+                total = steps.count { it.status != StudyBlock.Status.SKIPPED },
+            ),
         nextPosition = nextPosition,
         state = StudySession.State.UNDERWAY,
         missions = emptyList(),

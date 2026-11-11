@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDaySegmentCount, getDayTime, getFoldMinutes, getHeldMinutes } from "./today-time";
+import { getDayTime, getFoldMinutes, getHeldMinutes } from "./today-time";
 
 function step(estimatedMinutes: number, status: "active" | "completed" | "pending" | "skipped") {
   return { estimatedMinutes, status };
@@ -79,27 +79,6 @@ describe(getHeldMinutes, () => {
       }),
     ).toBe(0);
   });
-});
-
-describe(getDaySegmentCount, () => {
-  it.each([
-    { blocks: [], held: true, segments: 0 },
-    { blocks: [step(10, "pending")], held: true, segments: 2 },
-    { blocks: [step(10, "pending")], held: false, segments: 1 },
-    { blocks: [step(10, "pending"), step(10, "pending")], held: false, segments: 2 },
-  ])(
-    "counts $segments progress segments for $blocks with held time: $held",
-    ({ blocks, held, segments }) => {
-      expect(
-        getDaySegmentCount({
-          blocks,
-          lessonsComing: held,
-          lessonsToPrepare: false,
-          minutes: { left: 30 },
-        }),
-      ).toBe(segments);
-    },
-  );
 });
 
 describe(getFoldMinutes, () => {

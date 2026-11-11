@@ -13,13 +13,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.session.DayPart
+import com.zoonk.android.feature.session.DayProgress
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.blockTitle
+import com.zoonk.android.feature.session.dayParts
 import com.zoonk.android.feature.session.learnKind
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -27,74 +27,32 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudyBlock
 
 /**
- * Main's `DayProgress`: the day's blocks by their minutes, the ones ahead in their kind's color.
+ * Main's `DayProgress`: one equal part per counted block, the ones ahead in their kind's color.
  * Tapping a block opens what it is and where the learner stands in it.
  */
 @Composable
-internal fun DayProgress(
+internal fun TodayDayProgress(
     model: TodayDayModel,
     modifier: Modifier,
 ) {
     val day = model.day
-    val done = day.steps.count(DayStep::isFinished)
-    val tertiary = MaterialTheme.colorScheme.tertiary
-    val skipped = MaterialTheme.colorScheme.onSurface.copy(alpha = SKIPPED_ALPHA)
-    val held = day.heldMinutes
-    val parts =
-        day.steps.map { step ->
-            val fill =
-                when (step.state(day.nextPosition)) {
-                    SegmentState.Done -> {
-                        MeterPart.Fill.Solid(tertiary)
-                    }
+    val next = day.steps.firstOrNull { it.position == day.nextPosition }
+    val parts = dayParts(day.steps, isNext = { it.position == day.nextPosition }, nextShare = next?.share ?: 0f)
 
-                    SegmentState.Skipped -> {
-                        MeterPart.Fill.Solid(skipped)
-                    }
-
-                    SegmentState.Current -> {
-                        MeterPart.Fill.Place(step.share)
-                    }
-
-                    SegmentState.Ahead -> {
-                        if (step.learnKind == LearnKind.Lesson) {
-                            MeterPart.Fill.Track
-                        } else {
-                            MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
-                        }
-                    }
-                }
-            MeterPart(fill, weight = step.estimatedMinutes.coerceAtLeast(1).toFloat())
-        } + listOfNotNull(held.takeIf { it > 0 }?.let { MeterPart(MeterPart.Fill.Track, weight = it.toFloat()) })
-
-    MeterParts(parts, modifier, contentDescription = stepsDone(done, day.steps.size)) { index ->
-        val step = day.steps.getOrNull(index)
-        if (step != null) StepSegment(step, step.state(day.nextPosition)) else HeldSegment(model, held)
+    DayProgress(parts, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(day.sessionBar)) { index ->
+        val part = parts.getOrNull(index)
+        if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
     }
 }
-
-private enum class SegmentState { Done, Skipped, Current, Ahead }
-
-private fun DayStep.state(nextPosition: Long?): SegmentState =
-    when {
-        status == StudyBlock.Status.COMPLETED -> SegmentState.Done
-        status == StudyBlock.Status.SKIPPED -> SegmentState.Skipped
-        position == nextPosition -> SegmentState.Current
-        else -> SegmentState.Ahead
-    }
 
 private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 @Composable
-private fun StepSegment(
-    step: DayStep,
-    state: SegmentState,
-) {
-    val title = blockTitle(step)
-    val facts = segmentFacts(step, state)
+private fun StepSegment(part: DayPart) {
+    val step = part.step
 
-    Segment(title = title, facts = facts, note = kindNote(step.learnKind), kind = step.learnKind)
+    Segment(title = blockTitle(step), facts = segmentFacts(part), note = kindNote(step.learnKind), kind = step.learnKind)
 }
 
 /** The day's time kept for lessons that aren't on its list yet. */
@@ -141,27 +99,21 @@ private fun Segment(
 }
 
 @Composable
-private fun segmentFacts(
-    step: DayStep,
-    state: SegmentState,
-): String {
+private fun segmentFacts(part: DayPart): String {
+    val step = part.step
     val locale = currentLocale()
     val time = formatMinutes(step.estimatedMinutes.toInt(), locale)
 
-    return when (state) {
-        SegmentState.Done -> {
+    return when (part.state) {
+        DayPart.State.Done -> {
             stringResource(R.string.today_step_done)
         }
 
-        SegmentState.Skipped -> {
-            stringResource(R.string.today_step_skipped)
-        }
-
-        SegmentState.Ahead -> {
+        DayPart.State.Ahead -> {
             time
         }
 
-        SegmentState.Current -> {
+        DayPart.State.Current -> {
             if (step.status == StudyBlock.Status.ACTIVE && step.answered > 0) {
                 val questions = step.questions.toInt()
                 pluralStringResource(
@@ -193,6 +145,3 @@ private fun kindNote(kind: LearnKind): String? {
 
     return note?.let { stringResource(it) }
 }
-
-private const val SKIPPED_ALPHA = 0.25f
-private const val AHEAD_ALPHA = 0.5f

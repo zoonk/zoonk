@@ -144,6 +144,7 @@
   "today_setting_up_detail": "8cc36d3d9728537302367156f72c1dd15b64b64b151d7c346c3eb550370dca95",
   "today_setting_up_goal": "1127d43c56bfea713bc9ac317c49576158097837aaf4e2ef29934d08c43bfa1f",
   "today_show_less": "a5804450d77e3ed4030c8a3527e9edaffff04e8bfa756b050665d163f41eeb29",
+  "today_skipped_count": "59189dc1ade0c53c90b82c9c3e84f455bf1168c3c1783a5c2c6cc4bf5f94d29a",
   "today_start_new_goal": "b26f64ff48475547ae6d93df71e71b4b32706ab8d3686a12fa3eb80a65f24a2c",
   "today_start_session": "bb9d44deecb041ffe82ab51c4a3a77826c7a637ece601b4830c6fd77e2f0327e",
   "today_step_after_lessons": "074f43f999a882de5c0048156ecd53d3a966a67c2f0732a42b68a37e4649f750",
@@ -246,6 +247,10 @@
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="other">%dステップ完了</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="other">%dステップをスキップ</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="other">+%d件</item>

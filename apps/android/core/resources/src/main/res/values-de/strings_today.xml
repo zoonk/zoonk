@@ -144,6 +144,7 @@
   "today_setting_up_detail": "e82e88096b8c415be497594a0b5d3e8e43dbdc3bbc8708eeee8e4585a3274df3",
   "today_setting_up_goal": "be1c26fcd55a28ef7aaf0310ed48db6afadb6ff0a7a95fd499561bacb53c8eb9",
   "today_show_less": "9736a737ce3e1de20d03983f92993049eddd717ae88b5c570fcc2fcd2b99e527",
+  "today_skipped_count": "60cbd0a67faac84aaaead0c0186b1d6ceb38acf1489fc0dfbdeb68c0d430987f",
   "today_start_new_goal": "7edc38637d68f6e613598862dc6e34f358990bb6cee32a8688bb7207a8ec8284",
   "today_start_session": "9c90b1d4123a1b3b7131759de3b6df631460ad4a566413dc37898eadb1a6b6dd",
   "today_step_after_lessons": "f14560001492ac08f82c0fed4effe695c5e29a3881545e5bb5c0f5b581fb7345",
@@ -253,6 +254,11 @@
     <plurals name="today_done_count">
         <item quantity="one">%d erledigt</item>
         <item quantity="other">%d erledigt</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d übersprungen</item>
+        <item quantity="other">%d übersprungen</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d weitere</item>

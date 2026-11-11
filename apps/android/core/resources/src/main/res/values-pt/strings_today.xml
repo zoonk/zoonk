@@ -144,6 +144,7 @@
   "today_setting_up_detail": "a0cb329724d2a6289ac2f5ca18b1eafdcf41b7a57aadb2473070bc0632effa86",
   "today_setting_up_goal": "20aff07ea8e8b9637497a34e33f1da6631af468ede09c0a57164e951f9ef3ae6",
   "today_show_less": "c83f5a993e8642bb3b205386cf4cb6d8543efd495418a2417db9192ec3966986",
+  "today_skipped_count": "8a024a2fb46a7c875e2ceb908210b5c862fb926f741fff733a7f37dae4dbbdae",
   "today_start_new_goal": "94bb8a9aa04a7d37654b51e94871a567a9b5d04995342bac5c9211bf315097ad",
   "today_start_session": "df2a998e984800b9437ed943106ba08287b3db1e41ce154d8bd1c096f707df80",
   "today_step_after_lessons": "93dfb4ebf07e8dd95f3f18c76ca1292111ba6777b177bf4f3c811d0e085061a8",
@@ -260,6 +261,12 @@
         <item quantity="one">%d concluído</item>
         <item quantity="many">%d concluídos</item>
         <item quantity="other">%d concluídos</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d pulado</item>
+        <item quantity="many">%d pulados</item>
+        <item quantity="other">%d pulados</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d a mais</item>

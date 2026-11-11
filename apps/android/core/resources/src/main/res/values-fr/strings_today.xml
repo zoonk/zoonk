@@ -144,6 +144,7 @@
   "today_setting_up_detail": "9d6a3622a5bfead2c527c6cfaef5406643b4840f28d01c8a49b240a552545cbb",
   "today_setting_up_goal": "075f01d49c8dae331b486d28c1a98f7200fae8dc691576939aa3a0943c964c4b",
   "today_show_less": "9c1ce46ec3e0a0c9a93b4007ea04f3d102673031f5883140f4dfe118f3c4cecb",
+  "today_skipped_count": "cc36fce593141d4eda5d7be22cee8d6fd4feb65667793e4cb195ff83a9d1e612",
   "today_start_new_goal": "2556d4773c37d5d45514148016a9b5e825a71aa7efe7fdd900200e2d49c57bc7",
   "today_start_session": "34317da559ffc46559517b4460ed4fdf35869314a63a9e708b7cd6825243c584",
   "today_step_after_lessons": "28e587849bf31e3d97e05c8fcb3c0c3eb65d7ddcda24604b6ceaac91910a877a",
@@ -260,6 +261,12 @@
         <item quantity="one">%d étape terminée</item>
         <item quantity="many">%d étapes terminées</item>
         <item quantity="other">%d étapes terminées</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d sautée</item>
+        <item quantity="many">%d sautées</item>
+        <item quantity="other">%d sautées</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d autre</item>
