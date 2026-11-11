@@ -62,6 +62,8 @@ describe(matchSpokenAnswer, () => {
       ["What is your name?", "What's your name?"],
       ["She's here and she is happy.", "She is here and she is happy."],
       ["She is here and she's happy.", "She's here and she's happy."],
+      ["She's happy because she's won.", "She is happy because she has won."],
+      ["I'd go if I'd finished.", "I would go if I had finished."],
     ];
 
     for (const [expected = "", heard = ""] of pairs) {
@@ -76,7 +78,11 @@ describe(matchSpokenAnswer, () => {
       language: "en",
     });
 
-    expect(match.words[0]).toStrictEqual({ heard: "what", status: "different", text: "What's" });
+    expect(match.words[0]).toStrictEqual({
+      heard: "what was",
+      status: "different",
+      text: "What's",
+    });
   });
 
   it("shows what was heard of a word that was only partly said", () => {

@@ -1,7 +1,11 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { Converter as createChineseConverter } from "opencc-js/t2cn";
-import { expandAmbiguousContractions, expandContractions } from "./_utils/english-contractions";
+import {
+  expandContractions,
+  isSameSpokenWord,
+  joinContractions,
+} from "./_utils/english-contractions";
 import { alignWords } from "./_utils/word-alignment";
 
 type SpokenWordStatus = "correct" | "different" | "missed";
@@ -104,7 +108,7 @@ function getTokenOutcomes({
   const outcomes = new Map<number, TokenOutcome>();
   let heardIndex = 0;
 
-  for (const step of alignWords(expected, heard)) {
+  for (const step of alignWords({ expected, heard, isSameWord: isSameSpokenWord })) {
     if (step.kind === "match") {
       outcomes.set(step.expected, { heardIndex, matched: true });
       heardIndex += 1;
@@ -144,9 +148,9 @@ function toWordResult({
     return { heard: null, status: "missed", text: word.text };
   }
 
-  const heard = heardTokens
-    .slice(Math.min(...heardIndexes), Math.max(...heardIndexes) + 1)
-    .join(separator);
+  const heard = joinContractions(
+    heardTokens.slice(Math.min(...heardIndexes), Math.max(...heardIndexes) + 1).join(separator),
+  );
 
   return { heard, status: "different", text: word.text };
 }
@@ -166,17 +170,8 @@ export function matchSpokenAnswer({
   heard: string;
   language: string;
 }): SpokenAnswerMatch {
-  const writtenWords = toExpectedWords({ expected, language });
-  const writtenHeard = toTokens({ language, text: heard });
-
-  const texts = [writtenWords.flatMap((word) => word.tokens), writtenHeard];
-
-  const expectedWords = writtenWords.map((word) => ({
-    ...word,
-    tokens: expandAmbiguousContractions({ language, texts, tokens: word.tokens }),
-  }));
-
-  const heardTokens = expandAmbiguousContractions({ language, texts, tokens: writtenHeard });
+  const expectedWords = toExpectedWords({ expected, language });
+  const heardTokens = toTokens({ language, text: heard });
 
   const outcomes = getTokenOutcomes({
     expected: expectedWords.flatMap((word) => word.tokens),
@@ -201,7 +196,7 @@ export function matchSpokenAnswer({
 
   return {
     isCorrect: words.length > 0 && correctCount === words.length,
-    normalizedHeard: heardTokens.join(separator),
+    normalizedHeard: joinContractions(heardTokens.join(separator)),
     score: words.length === 0 ? 0 : correctCount / words.length,
     words,
   };
