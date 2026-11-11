@@ -3,7 +3,7 @@ import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
 import { credentialsPath } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { HELP } from "./help.ts";
-import { type HttpResult, UNAUTHORIZED, isRecord } from "./http.ts";
+import { type HttpResult, UNAUTHORIZED, isRecord, unexpectedResponse } from "./http.ts";
 import { logIn, logOut } from "./login.ts";
 import { notLoggedIn, sendAuthorized } from "./session.ts";
 
@@ -13,10 +13,13 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
   }
 
   const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
-  const message = typeof error?.message === "string" ? error.message : "The request failed.";
-  const details = error?.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
 
-  return new CliError(`${message} (HTTP ${result.status})${details}`);
+  if (typeof error?.message !== "string") {
+    return unexpectedResponse(result);
+  }
+
+  const details = error.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
+  return new CliError(`${error.message} (HTTP ${result.status})${details}`);
 }
 
 async function runRequest({
@@ -32,6 +35,10 @@ async function runRequest({
 
   if (!result.ok) {
     throw apiError({ origin, result });
+  }
+
+  if (!isRecord(result.body)) {
+    throw unexpectedResponse(result);
   }
 
   process.stdout.write(`${JSON.stringify(result.body, null, 2)}\n`);

@@ -2,7 +2,7 @@ import { mkdtempSync, readdirSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { credentialsPath, readLogin, removeLogin, saveLogin } from "./credentials.ts";
+import { changeLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
 
 const PRODUCTION = "https://api.zoonk.com";
 const LOCAL = "http://api.zoonk.localhost:1355";
@@ -29,32 +29,50 @@ describe("credentials file", () => {
     }
   });
 
-  it("keeps one owner-only login per API", () => {
+  it("keeps one owner-only login per API", async () => {
     const file = createCredentialsFile();
 
-    saveLogin({ file, login: login("production"), origin: PRODUCTION });
-    saveLogin({ file, login: login("local"), origin: LOCAL });
-    saveLogin({ file, login: login("production-renewed"), origin: PRODUCTION });
+    await saveLogin({ file, login: login("production"), origin: PRODUCTION });
+    await saveLogin({ file, login: login("local"), origin: LOCAL });
+    await saveLogin({ file, login: login("production-renewed"), origin: PRODUCTION });
 
     expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("production-renewed"));
     expect(readLogin({ file, origin: LOCAL })).toStrictEqual(login("local"));
-    expect(file).toMatch(/\/zoonk\/credentials\.json$/u);
+    expect(file).toMatch(/\/zoonk\/credentials\.db$/u);
     expect(permissions(file)).toBe("600");
     expect(permissions(dirname(file))).toBe("700");
-    expect(readdirSync(dirname(file))).toStrictEqual(["credentials.json"]);
+    expect(readdirSync(dirname(file))).toStrictEqual(["credentials.db"]);
   });
 
-  it("removes a login only while it still holds the given refresh token", () => {
+  it("rolls back a change that fails, and removes only the API's login it's asked to", async () => {
     const file = createCredentialsFile();
 
-    saveLogin({ file, login: login("newer"), origin: PRODUCTION });
-    saveLogin({ file, login: login("local"), origin: LOCAL });
+    await saveLogin({ file, login: login("production"), origin: PRODUCTION });
+    await saveLogin({ file, login: login("local"), origin: LOCAL });
 
-    removeLogin({ file, origin: PRODUCTION, refreshToken: login("older").refreshToken });
-    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("newer"));
+    await expect(
+      changeLogin({
+        change: () => Promise.reject(new Error("refresh failed")),
+        file,
+        origin: PRODUCTION,
+      }),
+    ).rejects.toThrow("refresh failed");
 
-    removeLogin({ file, origin: PRODUCTION, refreshToken: login("newer").refreshToken });
+    await changeLogin({ change: async () => ({ result: null, save: null }), file, origin: LOCAL });
+
+    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("production"));
+    expect(readLogin({ file, origin: LOCAL })).toBeNull();
+  });
+
+  it("reads a login whose tokens a header can't carry as no login", async () => {
+    const file = createCredentialsFile();
+
+    await saveLogin({
+      file,
+      login: { ...login("broken"), accessToken: "access\r\nX-Injected: yes" },
+      origin: PRODUCTION,
+    });
+
     expect(readLogin({ file, origin: PRODUCTION })).toBeNull();
-    expect(readLogin({ file, origin: LOCAL })).toStrictEqual(login("local"));
   });
 });

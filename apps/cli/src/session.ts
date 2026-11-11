@@ -1,12 +1,6 @@
 import { loginCommand } from "./api-origin.ts";
 import { type ApiRequest } from "./args.ts";
-import {
-  type LoginPlace,
-  type StoredLogin,
-  readLogin,
-  removeLogin,
-  saveLogin,
-} from "./credentials.ts";
+import { type LoginPlace, type StoredLogin, changeLogin, readLogin } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { type HttpResult, UNAUTHORIZED, sendRequest } from "./http.ts";
 import { refreshLogin } from "./oauth.ts";
@@ -25,29 +19,44 @@ function isExpiring(login: StoredLogin): boolean {
 }
 
 /**
- * Reads the file again right before refreshing: the provider rotates refresh tokens and, past its
- * short reuse window, treats a rotated one as stolen and ends every CLI login of that person.
+ * Refreshes under the file's lock with the latest saved token: the provider rotates refresh tokens
+ * and, past its short reuse window, treats a rotated one as stolen and ends every CLI login of
+ * that person.
  */
 async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLogin }) {
-  const stored = readLogin({ file, origin });
+  const renewed = await changeLogin({
+    change: async (stored) => {
+      if (!stored) {
+        return { result: null };
+      }
 
-  if (!stored) {
+      if (stored.accessToken !== used.accessToken && !isExpiring(stored)) {
+        return { result: stored };
+      }
+
+      const refresh = await refreshLogin({ origin, refreshToken: stored.refreshToken });
+
+      if (refresh.ok) {
+        return { result: refresh.login, save: refresh.login };
+      }
+
+      if (refresh.error === "invalid_grant") {
+        return { result: null, save: null };
+      }
+
+      throw new CliError(
+        `Couldn't renew the login for ${origin} (${refresh.error}). It's kept; try again shortly.`,
+      );
+    },
+    file,
+    origin,
+  });
+
+  if (!renewed) {
     throw notLoggedIn(origin);
   }
 
-  if (stored.accessToken !== used.accessToken && !isExpiring(stored)) {
-    return stored;
-  }
-
-  const result = await refreshLogin({ origin, refreshToken: stored.refreshToken });
-
-  if (!result.ok) {
-    removeLogin({ file, origin, refreshToken: stored.refreshToken });
-    throw notLoggedIn(origin);
-  }
-
-  saveLogin({ file, login: result.login, origin });
-  return result.login;
+  return renewed;
 }
 
 async function currentLogin({ file, origin }: LoginPlace): Promise<StoredLogin> {
