@@ -323,7 +323,16 @@ function GoalStartFlow({
             creation={{
               error: creation.error,
               isCreating: creation.isCreating || submission.isSubmitting,
-              run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
+              run: (run) =>
+                creation.create({
+                  onCreated: navigation.toSteps,
+                  onLimit: (reason) => {
+                    if (reason === "activeGoals") {
+                      void draftActions.loadRead();
+                    }
+                  },
+                  run,
+                }),
               startExplanation,
             }}
             draft={state.draft}

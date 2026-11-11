@@ -5,7 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, needsAccountFor, useGoalLimitMessage } from "../goal-errors";
-import { type CreateGoalsOutcome } from "../onboarding-actions";
+import { type CreateGoalsOutcome, type GoalLimitReason } from "../onboarding-actions";
 
 function useCreateError() {
   const t = useExtracted();
@@ -38,9 +38,11 @@ export function useGoalCreation() {
 
   const create = ({
     onCreated,
+    onLimit,
     run,
   }: {
     onCreated: (goalId: string) => void;
+    onLimit?: (reason: GoalLimitReason) => void;
     run: () => Promise<CreateGoalsOutcome>;
   }) =>
     startCreating(async () => {
@@ -65,9 +67,12 @@ export function useGoalCreation() {
         message: createError(outcome),
         needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
       });
+
+      if (outcome.status === "limitReached") {
+        onLimit?.(outcome.reason);
+      }
     });
 
-  /** A draft read after a refusal for the goals followed, with room, answers that refusal. */
   const clearActiveGoalsError = (draft: OnboardingDraftView) => {
     if (draft.activeGoalsLeft !== 0) {
       setError((current) => (current?.limit === "activeGoals" ? null : current));

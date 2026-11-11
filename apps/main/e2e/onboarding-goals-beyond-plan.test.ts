@@ -23,7 +23,6 @@ const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
 
 const FULL = "You're following as many goals as the free plan allows.";
 
-/** Each followed goal from an earlier card, the first one shown on the tabs. */
 async function createLearnerFollowing(count: number) {
   const user = await createE2EUser(getBaseURL());
 
@@ -146,6 +145,37 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
+
+    await page.context().close();
+  });
+
+  test("a card whose last slot went elsewhere shows the plan's limit once refused, and starts again after a pause", async ({
+    browser,
+  }) => {
+    const { user } = await createLearnerFollowing(2);
+    const { page } = await openCard({ browser, user });
+    const elsewhere = await goalFixture({ title: "Started in another tab", userId: user.id });
+    await planFixture({ goalId: elsewhere.id });
+
+    await page.getByRole("button", { name: "Looks right" }).click();
+
+    await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
+    await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
+
+    await page.getByRole("link", { name: "Go to your Plan" }).click();
+    await page.getByRole("button", { name: "Plan options" }).click();
+    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+
+    await expect(
+      page.getByText("Nothing is planned until you resume it.").filter({ visible: true }),
+    ).toBeVisible();
+
+    await page.goBack();
+
+    await expect(page.getByRole("button", { name: "Looks right" })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: FULL })).toHaveCount(0);
+    await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
 
     await page.context().close();
   });
