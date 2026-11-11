@@ -114,29 +114,6 @@ class OnboardingStoreTest {
         }
 
     @Test
-    fun aVisitorTheSecurityCheckWontLetInAsAGuestIsAskedForAnAccount() =
-        runTest {
-            val session = FakeSession(null)
-            val api = FakeOnboardingApi()
-            val store =
-                OnboardingStore(
-                    api,
-                    AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
-                    session,
-                ) { SignInResult.Failed(ApiError.Unavailable, "BOT_DETECTED") }
-
-            val goal = store.sendGoal("pass the bar exam", "en")
-            val course = store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null)
-
-            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), goal)
-            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), course)
-            assertEquals(GoalError.Limit(GoalLimitReason.GuestBlocked), goal.startError())
-            assertTrue(goal.startError().needsAccount)
-            assertTrue(api.understandCalls.isEmpty())
-            assertTrue(api.courseStarts.isEmpty())
-        }
-
-    @Test
     fun limitsSayWhatRanOutAndWhen() =
         runTest {
             val session = FakeSession(ana)

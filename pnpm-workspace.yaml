@@ -45,7 +45,6 @@ catalog:
   "@vercel/analytics": 2.0.1
   "@vitejs/plugin-react": 6.2.1
   ai: 7.0.164
-  botid: 1.5.12
   fast-check: 4.10.2
   icu-minify: 4.14.9
   jose: 6.2.15

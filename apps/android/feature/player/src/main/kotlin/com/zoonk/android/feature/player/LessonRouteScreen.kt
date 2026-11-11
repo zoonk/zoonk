@@ -63,8 +63,6 @@ import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
-import com.zoonk.android.feature.onboarding.GoalLimitReason
-import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.showAttemptInView
 import com.zoonk.android.feature.player.model.LessonLoad
@@ -356,8 +354,6 @@ internal fun GuestGateView(
     onRetry: () -> Unit,
 ) {
     val failed = failure != null
-    // No retry gets past the security check; an account does.
-    val blocked = failure == AccountFailure.BotDetected
 
     LessonFrame(
         title = outline.title,
@@ -366,14 +362,10 @@ internal fun GuestGateView(
             if (failed) {
                 {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        if (blocked) {
-                            Button(onClick = onLogIn, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.gate_log_in)) }
-                        } else {
-                            OutlinedButton(onClick = onLogIn, modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.gate_log_in))
-                            }
-                            Button(onClick = onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.player_try_again)) }
+                        OutlinedButton(onClick = onLogIn, modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.gate_log_in))
                         }
+                        Button(onClick = onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.player_try_again)) }
                     }
                 }
             } else {
@@ -384,7 +376,7 @@ internal fun GuestGateView(
             Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             if (failed) {
                 Text(
-                    if (blocked) goalLimitMessage(GoalLimitReason.GuestBlocked) else stringResource(R.string.player_open_failed),
+                    stringResource(R.string.player_open_failed),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )

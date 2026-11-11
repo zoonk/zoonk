@@ -4,11 +4,7 @@ import { keepSessionToken, readBrowserSession } from "@/lib/workflow/auth-header
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-/** Better Auth's captcha plugin answers this code when Vercel BotID flags the browser. */
-const BOT_CHECK_REFUSED = "VERIFICATION_FAILED";
-
-/** `blocked`: the bot check refused this browser, so trying again won't help. */
-type GuestSession = { learnerId: string; status: "ready" } | { status: "blocked" | "failed" };
+type GuestSession = { learnerId: string; status: "ready" } | { status: "failed" };
 
 const FAILED: GuestSession = { status: "failed" };
 
@@ -33,7 +29,7 @@ async function startGuestSession(): Promise<GuestSession> {
 
   if (error || !guest) {
     logError("[ensureGuestSession] Could not start a guest session:", error);
-    return error?.code === BOT_CHECK_REFUSED ? { status: "blocked" } : FAILED;
+    return FAILED;
   }
 
   keepSessionToken(guest.token);

@@ -149,13 +149,6 @@ struct AccountFailureMessage: View {
 
   private func message(for failure: AccountFailure) -> LocalizedStringResource {
     switch failure {
-    case .botDetected:
-      LocalizedStringResource(
-        "A security check blocked this request. Try again or contact hello@zoonk.com.",
-        table: "Account",
-        comment:
-          "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button"
-      )
     case .emailCodeDelivery:
       LocalizedStringResource(
         "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",

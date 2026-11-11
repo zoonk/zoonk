@@ -9607,12 +9607,6 @@ msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
 msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "보안 검사에서 이 브라우저가 차단됐어요. 다른 브라우저를 사용하거나 무료 계정을 만들어 보세요."
-
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."

@@ -13,9 +13,7 @@ import {
   socialProviders,
 } from "./server";
 
-/** BotID (the `captcha` plugin) only answers on Vercel, so the E2E build, which runs outside it, leaves it out. */
 const e2ePluginOverrideIds = new Set([
-  "captcha",
   "email-otp",
   "next-cookies",
   "one-time-token",

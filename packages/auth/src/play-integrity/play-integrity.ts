@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { z } from "zod";
-import { type AppAttestBinding, getAppAttestClientData } from "../app-attest/app-attest-contract";
 import { GOOGLE_PLAY_PACKAGE_NAME } from "../google/service-account";
 import { consumeAppChallenge } from "../request-guards/app-challenge";
 import { decodePlayIntegrityToken } from "./decode-play-integrity-token";
@@ -13,10 +12,20 @@ const verdictSchema = z.object({
   requestDetails: z.object({ requestHash: z.string(), requestPackageName: z.string() }),
 });
 
-/** The Android app sets the token's request hash to this, so both must build it the same way. */
-function getRequestHash({ binding, challenge }: { binding: AppAttestBinding; challenge: string }) {
+export type PlayIntegrityBinding = { fields: string[]; operation: "restore-key" };
+
+const CLIENT_DATA_VERSION = "zoonk-app-attest:1";
+
+/** The released Android app sets the token's request hash to this exact text, so both must build it the same way. */
+function getRequestHash({
+  binding,
+  challenge,
+}: {
+  binding: PlayIntegrityBinding;
+  challenge: string;
+}) {
   return createHash("sha256")
-    .update(getAppAttestClientData({ binding, challenge }))
+    .update([CLIENT_DATA_VERSION, challenge, binding.operation, ...binding.fields].join("\n"))
     .digest("base64url");
 }
 
@@ -37,7 +46,7 @@ export async function hasPlayIntegrityProof({
   binding,
   headers,
 }: {
-  binding: AppAttestBinding;
+  binding: PlayIntegrityBinding;
   headers: Headers;
 }): Promise<boolean> {
   const parsed = playIntegrityHeadersSchema.safeParse({

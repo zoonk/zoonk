@@ -22,8 +22,8 @@ const SERVER_ERROR = 500;
 
 /**
  * Better Auth's server-side email validation is stricter than the browser's, so an email it rejects
- * becomes a form error instead of a Server Components crash, as does a request it refuses (BotID, its
- * rate limit).
+ * becomes a form error instead of a Server Components crash, as does a request its
+ * rate limit refuses.
  */
 function getExpectedVerificationOTPErrorState(error: unknown): VerificationOTPState | null {
   const authError = getAuthError(error);
@@ -74,7 +74,6 @@ export async function sendVerificationOTPAction(
     return { status: "invalidEmail" };
   }
 
-  // Through Better Auth's handler, as the apps' route is, so its BotID check and rate limit apply.
   const { error } = await safeAsync(() => sendSignInCode({ email, requestHeaders }));
 
   if (error) {

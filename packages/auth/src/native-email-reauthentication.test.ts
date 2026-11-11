@@ -2,17 +2,14 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { bearer } from "better-auth/plugins";
-import { checkBotId } from "botid/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BETTER_AUTH_BASE_PATH } from "./config";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
-import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
 import { sendVerificationOTP } from "./plugins/otp";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 
-/** BotID requires Vercel and email delivery requires Next's request context. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
+/** Email delivery requires Next's request context. */
 vi.mock("./plugins/otp", () => ({ sendVerificationOTP: vi.fn() }));
 
 const BASE_URL = "http://localhost:3000";
@@ -20,12 +17,11 @@ const SEND_PATH = "/email-otp/send-verification-otp";
 
 const auth = betterAuth({
   ...baseAuthConfig,
-  /** Better Auth's test mode otherwise disables origin checks even with a production bot verdict. */
+  /** Better Auth's test mode otherwise disables origin checks in this test. */
   advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
   baseURL: BASE_URL,
   plugins: [
     ...baseAuthPlugins,
-    botCheckPlugin(),
     createEmailOTPPlugin({ storeOTP: "hashed" }),
     bearer(),
     guestPlugin(),
@@ -34,20 +30,18 @@ const auth = betterAuth({
   secret: "native-email-reauthentication-test-secret",
 });
 
-async function learner({ expired = false, isAnonymous = false, banned = false } = {}) {
+async function learner() {
   const token = randomUUID();
 
   const user = await prisma.user.create({
     data: {
-      banned,
       email: `native-reauthentication-${randomUUID()}@example.test`,
       emailVerified: true,
-      isAnonymous,
       name: "Native Learner",
       sessions: {
         create: {
           createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-          expiresAt: new Date(Date.now() + (expired ? -60_000 : 24 * 60 * 60 * 1000)),
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
           token,
         },
       },
@@ -84,30 +78,11 @@ function bearerHeaders(token?: string) {
   return new Headers({ ...(token && { authorization: `Bearer ${token}` }), "x-forwarded-for": ip });
 }
 
-function rejectedToken({ kind, token }: { kind: string; token: string }) {
-  if (kind === "missing") {
-    return;
-  }
-
-  if (kind === "invalid") {
-    return randomUUID();
-  }
-
-  return token;
-}
-
-describe("native email reauthentication under the production BotID guard", () => {
+describe("native email reauthentication without sign-in attestation", () => {
   beforeEach(() => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("VERCEL_ENV", "production");
     vi.stubEnv("E2E_TESTING", "false");
-
-    vi.mocked(checkBotId).mockResolvedValue({
-      bypassed: false,
-      isBot: true,
-      isHuman: false,
-      isVerifiedBot: false,
-    });
 
     vi.mocked(sendVerificationOTP).mockClear();
   });
@@ -134,62 +109,6 @@ describe("native email reauthentication under the production BotID guard", () =>
     ).resolves.toMatchObject({ createdAt: session.createdAt, expiresAt: session.expiresAt });
   });
 
-  it.each(["missing", "other account", "invalid", "expired", "revoked", "guest", "banned"])(
-    "refuses a code request with a %s token before delivery",
-    async (kind) => {
-      const user = await learner();
-
-      const other = await learner({
-        banned: kind === "banned",
-        expired: kind === "expired",
-        isAnonymous: kind === "guest",
-      });
-
-      const token = rejectedToken({ kind, token: other.token });
-
-      const email = kind === "other account" || kind === "missing" ? user.email : other.email;
-
-      if (kind === "revoked") {
-        await prisma.session.delete({ where: { token: other.token } });
-      }
-
-      const response = await nativePost({
-        body: { email, type: "sign-in" },
-        headers: bearerHeaders(token),
-      });
-
-      expect(response.status).toBe(403);
-      expect(sendVerificationOTP).not.toHaveBeenCalled();
-
-      await expect(
-        prisma.verification.count({ where: { identifier: `sign-in-otp-${email}` } }),
-      ).resolves.toBe(0);
-    },
-  );
-
-  it("never exempts OTP login or other email-code purposes", async () => {
-    const user = await learner();
-
-    const responses = await Promise.all([
-      nativePost({
-        body: { email: user.email, type: "forget-password" },
-        headers: bearerHeaders(user.token),
-      }),
-      nativePost({
-        body: { email: user.email, type: "email-verification" },
-        headers: bearerHeaders(user.token),
-      }),
-      nativePost({
-        body: { email: user.email, otp: "123456" },
-        headers: bearerHeaders(user.token),
-        path: "/sign-in/email-otp",
-      }),
-    ]);
-
-    expect(responses.map((response) => response.status)).toStrictEqual([403, 403, 403]);
-    expect(sendVerificationOTP).not.toHaveBeenCalled();
-  });
-
   it.each(["missing", "untrusted"])(
     "keeps browser origin checks for an authenticated send with a %s origin",
     async (kind) => {
@@ -207,32 +126,6 @@ describe("native email reauthentication under the production BotID guard", () =>
       expect(sendVerificationOTP).not.toHaveBeenCalled();
     },
   );
-
-  it("doesn't fall back to a valid cookie when the bearer is invalid or missing", async () => {
-    const user = await learner();
-
-    const signedSession = await auth.api.getSession({
-      headers: bearerHeaders(user.token),
-      returnHeaders: true,
-    });
-
-    const cookie = signedSession.headers
-      .getSetCookie()
-      .map((value) => value.split(";")[0])
-      .join("; ");
-
-    const responses = await Promise.all(
-      [undefined, "invalid-token"].map((token) => {
-        const headers = bearerHeaders(token);
-        headers.set("cookie", cookie);
-        headers.set("origin", BASE_URL);
-        return nativePost({ body: { email: user.email, type: "sign-in" }, headers });
-      }),
-    );
-
-    expect(responses.map((response) => response.status)).toStrictEqual([403, 403]);
-    expect(sendVerificationOTP).not.toHaveBeenCalled();
-  });
 
   it("preserves Better Auth's three-per-minute send limit", async () => {
     const user = await learner();

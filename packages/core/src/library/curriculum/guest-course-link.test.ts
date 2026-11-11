@@ -15,11 +15,6 @@ import { createLibraryChapter } from "../chapters/create-library-chapter";
 import { findOrCreateGoalCourse } from "./find-or-create-goal-course";
 import { setGoalPrimaryCourse } from "./goal-primary-course";
 
-/** BotID classifies requests on Vercel; persistence and sign-in use their real implementations. */
-vi.mock("../../../../auth/node_modules/botid/server", () => ({
-  checkBotId: vi.fn().mockResolvedValue({ isBot: false }),
-}));
-
 const PRIVATE_COURSE = {
   language: "en",
   normalizedTitle: "existing private",
