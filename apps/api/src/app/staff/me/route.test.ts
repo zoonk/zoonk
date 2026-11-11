@@ -92,13 +92,17 @@ describe("GET /staff/me", () => {
     expect([byBearer.status, byCookie.status]).toStrictEqual([401, 401]);
   });
 
-  it("refuses a learner's token", async () => {
+  it("refuses a learner's token with the message every staff route gives", async () => {
     const learner = await userFixture();
     const { accessToken } = await cliTokenFixture({ user: learner });
 
     const response = await whoami(`Bearer ${accessToken}`);
 
     expect(response.status).toBe(403);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { message: "This login does not have staff access." },
+    });
   });
 
   it("refuses an organization admin who isn't a platform admin", async () => {
