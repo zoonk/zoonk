@@ -1,6 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
+import { WRONG_PARAGRAPH_PLAN } from "../lesson-fix/wrong-paragraph-plan";
 import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { MOBILITY_LESSON } from "../lesson-writer/mobility-lesson-spec";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
@@ -16,6 +17,8 @@ const SHARED_EXPECTATIONS = `
 `;
 
 const { "en-tax-deadlines": taxDeadlines, "pt-estabilidade": estabilidade } = SOURCED_LESSONS;
+
+const { spec: conflictOfInterest } = WRONG_PARAGRAPH_PLAN;
 
 type ChapterLessons = NonNullable<LessonSpecParams["chapterLessons"]>;
 
@@ -527,7 +530,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - Written for candidates of the exam in EXAMS (law students and graduates): no screen explains what the OAB, the Constitution, a lawyer or the Estatuto is; the briefs plan the finalidades as the statute states them, telling the institutional ones (defend the Constitution, the legal order, human rights, social justice, the good application of laws and the quick administration of justice) from the corporate ones (representation, defense, selection and discipline of lawyers, exclusively)
-      - Briefs name the provision each rule comes from (art. 44, I and II, of Lei 8.906/1994, the Estatuto da Advocacia e da OAB) and nothing contradicts it
+      - With no SOURCES, briefs state each rule by what it says, without its article, paragraph or item number, and nothing contradicts art. 44, I and II, of Lei 8.906/1994 (the Estatuto da Advocacia e da OAB)
       - Checks and the application are planned like that exam's multiple-choice questions on the topic: a case or a statement about the OAB's finalidades and wrong answers that are confusions candidates make (an institutional finalidade taken as corporate, an exclusive one shared with other bodies, the OAB as an ordinary professional council), never an option no candidate would pick
       - No screen names the exam, its board or its notice (no "OAB 1ª fase", "FGV", "Exame de Ordem", "edital"); the OAB itself may be named, since the course is about it
 
@@ -1484,6 +1487,31 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
         release: { name: "iPhone 17", releasedOn: "2025-09-19" },
       },
       skills: ["Use Camera Control to shoot and adjust photos"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who studied law
+      - With no SOURCES, briefs state each rule by what it says, without its article, paragraph or item number. A regression to avoid (production, 8 Nov 2026): this lesson's plan cited "Lei nº 12.813/2013, art. 4º, § 1º" for the rule that a conflict of interest doesn't depend on harm to public property or on an advantage received, which is in § 2º, and the wrong paragraph reached learners. A brief that names any article, paragraph or item number is the regression, even a right one
+      - The rules are right: a conflict of interest needs no harm to public property and no advantage received; working for a company interested in one's own decision is a conflict; a direct or indirect interest in the matter is an impedimento, which the servant communicates and then stops acting; amizade íntima or inimizade notória with an interested party allows suspeição, which mere acquaintance doesn't
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-conflito-interesses-no-provision-numbers",
+    origin: "production",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: WRONG_PARAGRAPH_PLAN.chapterLessons,
+      chapterTitle: WRONG_PARAGRAPH_PLAN.chapterTitle,
+      courseTitle: WRONG_PARAGRAPH_PLAN.courseTitle,
+      exams: WRONG_PARAGRAPH_PLAN.exams,
+      language: "pt",
+      lessonCanDo: conflictOfInterest.canDo,
+      lessonDescription: conflictOfInterest.description,
+      lessonTitle: conflictOfInterest.title,
+      level: WRONG_PARAGRAPH_PLAN.level,
+      skills: conflictOfInterest.skills.map((skill) => skill.name),
     },
   },
 ];

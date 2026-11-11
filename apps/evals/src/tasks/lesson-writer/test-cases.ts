@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
+import { WRONG_PARAGRAPH_PLAN } from "../lesson-fix/wrong-paragraph-plan";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
 import { BROAD_LESSONS } from "./broad-lesson-specs";
 import { BUDGET_LESSON_SPECS } from "./budget-lesson-specs";
@@ -938,6 +939,19 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-renda-bruta-liquida-money-format",
     userInput: budgetLesson("pt-renda-bruta-liquida-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who studied law
+      - A regression to avoid (production, 8 Nov 2026): the plan's screens 4 and 6 cite "Lei nº 12.813/2013, art. 4º, § 1º" for the rule that a conflict of interest doesn't depend on harm to public property or on an advantage received. That rule is in § 2º; § 1º says to consult the Comissão de Ética Pública or the CGU when in doubt. The lesson cites § 2º for it, or states the rule without a paragraph number. Citing § 1º for it on any screen, \`basis\`, reason or summary is the regression
+      - Every other provision the lesson cites is right: Lei 12.813/2013, art. 3º, I (what a conflict of interest is) and art. 5º, II (working for a company interested in one's decisions); Lei 9.784/1999, art. 18, I (impedimento for a direct or indirect interest), art. 19 (communicate the impedimento and abstain from acting) and art. 20 (suspeição for amizade íntima or inimizade notória)
+      - No screen names the exam, its board or its notice ("CGU" may appear only as the body the law names, never as "o concurso da CGU")
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-conflito-interesses-wrong-paragraph",
+    origin: "production",
+    userInput: WRONG_PARAGRAPH_PLAN,
   },
   ...BROAD_CASES,
 ];
