@@ -11,8 +11,8 @@ import {
 } from "../spoken-answer-contract";
 import {
   type SpokenAnswerMatch,
-  hasTranscribedLetterNames,
   matchSpokenAnswer,
+  needsWordByWordCheck,
 } from "../spoken-answer-match";
 import { readPlayedMs } from "./played-length";
 
@@ -81,8 +81,9 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
 
 /**
  * Each check backs up the other, on another provider. It also covers a language the transcriber
- * refuses, such as Irish or Malagasy, which the word-by-word check hears. A spelled-out word goes
- * to the word-by-word check too, since only it hears which letter names were said.
+ * refuses, such as Irish or Malagasy, which the word-by-word check hears. A spelled-out word or a
+ * number the transcript wrote differently goes to the word-by-word check too, since only it hears
+ * what was said.
  */
 export async function hearSpokenSentence({
   check = "fast",
@@ -102,7 +103,7 @@ export async function hearSpokenSentence({
 
   if (
     check === "fast" &&
-    hasTranscribedLetterNames({ language: input.language, words: heard.match.words })
+    needsWordByWordCheck({ language: input.language, words: heard.match.words })
   ) {
     return assessWordByWord(input);
   }

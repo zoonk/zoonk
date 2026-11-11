@@ -1,6 +1,7 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { Converter as createChineseConverter } from "opencc-js/t2cn";
+import { expandContractions, spellContractionsAsExpected } from "./_utils/english-contractions";
 import { alignWords } from "./_utils/word-alignment";
 
 type SpokenWordStatus = "correct" | "different" | "missed";
@@ -16,27 +17,8 @@ export type SpokenAnswerMatch = {
 
 const MAX_WORDS_TO_EXPLAIN = 2;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
-
-const ENGLISH_CONTRACTIONS: readonly [RegExp, string][] = [
-  [/\bcan't\b/gu, "can not"],
-  [/\bwon't\b/gu, "will not"],
-  [/n't\b/gu, " not"],
-  [/'re\b/gu, " are"],
-  [/'ve\b/gu, " have"],
-  [/'m\b/gu, " am"],
-  [/'ll\b/gu, " will"],
-];
-
-function expandContractions({ language, text }: { language: string; text: string }): string {
-  if (!language.startsWith("en")) {
-    return text;
-  }
-
-  return ENGLISH_CONTRACTIONS.reduce(
-    (expanded, [pattern, replacement]) => expanded.replaceAll(pattern, replacement),
-    text,
-  );
-}
+const DIGIT = /\p{Nd}/u;
+const DIGIT_GROUP = /^\p{Nd}+$/u;
 
 /** Speech recognition may return either Chinese script; compare in simplified characters. */
 const toSimplifiedChinese = createChineseConverter({ from: "t", to: "cn" });
@@ -61,9 +43,14 @@ function isLoneLetter(token: string): boolean {
   return LONE_LETTER.test(token);
 }
 
-function splitSpelledLetters(token: string): string[] {
+function splitSpelledOut(token: string): string[] {
   const parts = token.split("-");
-  return parts.length > 1 && parts.every((part) => isLoneLetter(part)) ? parts : [token];
+
+  const isSpelledOut =
+    parts.length > 1 &&
+    (parts.every((part) => isLoneLetter(part)) || parts.every((part) => DIGIT_GROUP.test(part)));
+
+  return isSpelledOut ? parts : [token];
 }
 
 function toTokens({ language, text }: { language: string; text: string }): string[] {
@@ -83,7 +70,7 @@ function toTokens({ language, text }: { language: string; text: string }): strin
   return normalized
     .split(" ")
     .filter(Boolean)
-    .flatMap((token) => splitSpelledLetters(token));
+    .flatMap((token) => splitSpelledOut(token));
 }
 
 function getTokenSeparator(language: string): string {
@@ -174,12 +161,15 @@ export function matchSpokenAnswer({
   language: string;
 }): SpokenAnswerMatch {
   const expectedWords = toExpectedWords({ expected, language });
-  const heardTokens = toTokens({ language, text: heard });
+  const expectedTokens = expectedWords.flatMap((word) => word.tokens);
 
-  const outcomes = getTokenOutcomes({
-    expected: expectedWords.flatMap((word) => word.tokens),
-    heard: heardTokens,
+  const heardTokens = spellContractionsAsExpected({
+    expected: expectedTokens,
+    heard: toTokens({ language, text: heard }),
+    language,
   });
+
+  const outcomes = getTokenOutcomes({ expected: expectedTokens, heard: heardTokens });
 
   const offsets = getTokenOffsets(expectedWords);
   const separator = getTokenSeparator(language);
@@ -236,11 +226,7 @@ function isLetterNameHeardAsLetters({
   return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));
 }
 
-/**
- * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), so its
- * transcript can't tell whether the name said was the one expected.
- */
-export function hasTranscribedLetterNames({
+function hasTranscribedLetterNames({
   language,
   words,
 }: {
@@ -253,6 +239,29 @@ export function hasTranscribedLetterNames({
   }
 
   return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
+}
+
+function isNumberWrittenOtherwise(word: SpokenWordResult): boolean {
+  return word.status !== "correct" && (DIGIT.test(word.text) || DIGIT.test(word.heard ?? ""));
+}
+
+/**
+ * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), and a number
+ * as digits or words whichever way the sentence doesn't ("3" for "three", "two three four" for
+ * "234"), so its transcript can't tell whether those were said right. The word-by-word check,
+ * which hears the recording against the sentence, can.
+ */
+export function needsWordByWordCheck({
+  language,
+  words,
+}: {
+  language: string;
+  words: readonly SpokenWordResult[];
+}): boolean {
+  return (
+    words.some((word) => isNumberWrittenOtherwise(word)) ||
+    hasTranscribedLetterNames({ language, words })
+  );
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {
