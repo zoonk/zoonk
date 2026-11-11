@@ -47,7 +47,7 @@ async function createFirstWeekDay() {
     where: { id: review.id },
   });
 
-  return day;
+  return { ...day, placementItemId: item.id };
 }
 
 async function answerPlacement(page: Page) {
@@ -206,6 +206,34 @@ test.describe("Today's session", () => {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
     await replayFromToday(page, lesson);
+    await page.context().close();
+  });
+
+  test('"Not today" takes the test question out of the session, which goes on with the rest', async ({
+    browser,
+  }) => {
+    const { placementItemId, user } = await createFirstWeekDay();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const start = page.getByRole("button", { name: /^Start/u });
+    await expectHydrated(start);
+    await start.press("Enter");
+
+    const testQuestion = page.getByRole("heading", { name: /^Placement:/u });
+    await expect(testQuestion).toBeVisible();
+    await page.getByRole("button", { name: "Not today" }).click();
+
+    await expect(page.getByRole("heading", { name: /^Capsule one/u })).toBeVisible();
+    await expect(testQuestion).toHaveCount(0);
+
+    await playCapsules(page);
+    await expectMoment(page, "Review done");
+
+    await expect(
+      prisma.attempt.count({ where: { itemId: placementItemId, userId: user.id } }),
+    ).resolves.toBe(0);
+
     await page.context().close();
   });
 
