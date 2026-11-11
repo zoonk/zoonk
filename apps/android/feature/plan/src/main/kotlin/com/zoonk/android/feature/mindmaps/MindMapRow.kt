@@ -196,7 +196,7 @@ internal fun ConnectedMindMapRow(
  * its thumbnail once ready, otherwise a dashed slot with the map's mark, a spinner while it's on its
  * way or a lock while it's Plus-only; then what to do about it. A plan out of new maps ([cap]) or a
  * refused tap shows why under the row instead of Create; the Mind maps page says the cap once, above
- * its rows.
+ * its rows, and puts the chapter's number before its line where the row is [numbered].
  */
 @Composable
 internal fun MindMapRow(
@@ -209,10 +209,11 @@ internal fun MindMapRow(
     actions: MindMapRowActions,
     modifier: Modifier = Modifier,
     saved: Boolean = false,
+    numbered: Boolean = true,
 ) {
     val title = map.rowTitle(place, shown)
     val status = map.statusLine(place, shown, plus)
-    val supporting = if (place == MindMapPlace.Library) factsLine(chapterNumber(map.position), status) else status
+    val supporting = if (place == MindMapPlace.Library && numbered) factsLine(chapterNumber(map.position), status) else status
     val refused = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
     val notice = refused ?: cap?.takeIf { place != MindMapPlace.Library }
     val library = place == MindMapPlace.Library

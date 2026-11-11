@@ -2,12 +2,10 @@ package com.zoonk.android.feature.mindmaps
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,8 +35,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -48,10 +44,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,6 +58,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.navigation.AppNavigator
@@ -74,19 +71,15 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
-import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.LessonMindMap
@@ -196,29 +189,38 @@ fun MindMapStudyScreen(
 
 private val LessonMindMap.opens: Boolean get() = !locked && map != null
 
-/** What a slide shows once its map is read. */
+/** What a slide shows once its map is read, and its [title]: the map's, or its chapter's while the map can't show. */
 internal sealed interface Slide {
-    data object Loading : Slide
+    val title: String?
+
+    data class Loading(
+        override val title: String?,
+    ) : Slide
 
     /** The deck counted it, but it no longer opens. */
-    data object Gone : Slide
+    data class Gone(
+        override val title: String?,
+    ) : Slide
 
     data class Failed(
+        override val title: String?,
         val retry: () -> Unit,
     ) : Slide
 
     data class Chapter(
         val chapterId: UUID,
-        val position: Long,
         val map: ViewedMap,
         val saved: Boolean,
-    ) : Slide
+    ) : Slide {
+        override val title: String get() = map.title
+    }
 
     data class Lesson(
         val chapterId: UUID,
-        val chapterPosition: Long,
         val lesson: LessonMindMap,
-    ) : Slide
+    ) : Slide {
+        override val title: String get() = lesson.title
+    }
 }
 
 @Composable
@@ -233,8 +235,8 @@ private fun slideOf(
     val lessonId =
         when (slot) {
             is DeckSlot.Chapter -> {
-                val outline = chapter?.outline?.takeIf { chapter.opens } ?: return Slide.Gone
-                return Slide.Chapter(chapterId, chapter.position, ViewedMap(chapter.title, chapter.image, outline), chapter.saved)
+                val outline = chapter?.outline?.takeIf { chapter.opens } ?: return Slide.Gone(chapter?.title)
+                return Slide.Chapter(chapterId, ViewedMap(chapter.title, chapter.image, outline), chapter.saved)
             }
 
             is DeckSlot.Lesson -> {
@@ -247,12 +249,13 @@ private fun slideOf(
     val scope = rememberCoroutineScope()
     val lessons = read.value?.lessons?.filter { it.opens }
     val lesson = lessons?.firstOrNull { it.lessonId.toString() == lessonId }
+    val chapterTitle = chapter?.title ?: read.value?.chapter?.title
     return when {
-        lesson != null -> Slide.Lesson(chapterId, chapter?.position ?: read.value?.chapter?.position ?: 0, lesson)
-        lessons != null -> Slide.Gone
-        read is LoadState.Failed -> Slide.Failed { scope.launch { resource.refresh() } }
-        read == LoadState.Empty -> Slide.Gone
-        else -> Slide.Loading
+        lesson != null -> Slide.Lesson(chapterId, lesson)
+        lessons != null -> Slide.Gone(chapterTitle)
+        read is LoadState.Failed -> Slide.Failed(chapterTitle) { scope.launch { resource.refresh() } }
+        read == LoadState.Empty -> Slide.Gone(chapterTitle)
+        else -> Slide.Loading(chapterTitle)
     }
 }
 
@@ -282,9 +285,10 @@ internal data class StudyActions(
 )
 
 /**
- * The reader: Close, the map's title and where it is, and a menu above; the map; then Previous,
- * "5 of 12", Save and Next (Done on the last) below. Swipe, ← and →, S to save and Esc move, save
- * and close as main's keys do. Pages turn as a screen turns, which the animator duration scale stills.
+ * The reader, in the lesson player's own bars: Close, the map's title, its bookmark and a menu above;
+ * the map; then Previous (from the second map) and Next, Done on the last, below. Swipe, ← and →,
+ * Enter, S to save and Esc move, save and close as main's keys do. Pages turn as a screen turns,
+ * which the animator duration scale stills.
  */
 @Composable
 internal fun MindMapStudy(
@@ -309,8 +313,6 @@ internal fun MindMapStudy(
     val toggleSave = { target?.let { actions.save(it, chapterOf(current), !saved) } }
 
     LaunchedEffect(pager) { snapshotFlow { pager.settledPage }.collect { actions.settled(deck[it]) } }
-    val focus = remember { FocusRequester() }
-    LaunchedEffect(Unit) { focus.requestFocus() }
 
     SpreadScreen {
         TaskScaffold(
@@ -321,27 +323,46 @@ internal fun MindMapStudy(
                     when (event.key) {
                         Key.DirectionLeft -> if (rtl) next() else previous()
                         Key.DirectionRight -> if (rtl) previous() else next()
+                        Key.Enter, Key.NumPadEnter -> next()
                         Key.S -> toggleSave()
                         Key.Escape -> actions.close()
                         else -> return@onKeyEvent false
                     }
                     true
                 },
-            title = { StudyTitle(current) },
-            actions = { StudyMenu(current, onFirst = { goTo(0) }, actions.navigate) },
+            title = { current.title?.let { LessonTitle(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }) } },
+            actions = {
+                if (target != null) MapBookmark(saved, onToggle = { toggleSave() })
+                StudyMenu(current, first = page == 0, onFirst = { goTo(0) }, actions.navigate)
+            },
             bottomBar = {
-                StudyBar(
-                    page = page,
-                    count = deck.size,
-                    saved = saved.takeIf { target != null },
-                    onPrevious = { previous() },
-                    onSave = { toggleSave() },
-                    onNext = { next() },
-                )
+                TaskActionBar {
+                    TaskActions(
+                        back =
+                            if (page > 0) {
+                                {
+                                    OutlinedIconButton(onClick = { previous() }) {
+                                        Icon(
+                                            painterResource(R.drawable.ic_chevron_left),
+                                            contentDescription = stringResource(R.string.mindmaps_previous),
+                                        )
+                                    }
+                                }
+                            } else {
+                                null
+                            },
+                    ) { main ->
+                        Button(
+                            onClick = { next() },
+                            modifier = main,
+                            leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_check) }) else null,
+                            trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
+                        ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
+                    }
+                }
             },
         ) { padding ->
-            // Keys reach the deck only from focus inside it; this takes that focus without a stop for TalkBack.
-            Box(Modifier.focusRequester(focus).focusable().clearAndSetSemantics {})
+            KeyFocus()
             HorizontalPager(
                 state = pager,
                 modifier = Modifier.fillMaxSize().padding(padding),
@@ -362,41 +383,9 @@ private fun chapterOf(slide: Slide): UUID? =
     }
 
 @Composable
-private fun StudyTitle(slide: Slide) {
-    val locale = currentLocale()
-    val (title, context) =
-        when (slide) {
-            is Slide.Chapter -> {
-                slide.map.title to stringResource(R.string.mindmaps_chapter_number, formatNumber(slide.position.toDouble(), locale))
-            }
-
-            is Slide.Lesson -> {
-                slide.lesson.title to
-                    factsLine(
-                        stringResource(R.string.mindmaps_chapter_number, formatNumber(slide.chapterPosition.toDouble(), locale)),
-                        stringResource(R.string.mindmaps_lesson_number, formatNumber(slide.lesson.position.toDouble(), locale)),
-                    )
-            }
-
-            else -> {
-                return
-            }
-        }
-    Column {
-        Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Text(
-            context,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
-}
-
-@Composable
 private fun StudyMenu(
     slide: Slide,
+    first: Boolean,
     onFirst: () -> Unit,
     navigate: (AppRoute) -> Unit,
 ) {
@@ -408,6 +397,7 @@ private fun StudyMenu(
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.mindmaps_start_from_first)) },
+                enabled = !first,
                 onClick = {
                     open = false
                     onFirst()
@@ -440,58 +430,17 @@ private fun StudyMenu(
     }
 }
 
-/** Previous, where the learner is, Save (when the map can be saved) and Next, which ends as Done. */
-@Composable
-private fun StudyBar(
-    page: Int,
-    count: Int,
-    saved: Boolean?,
-    onPrevious: () -> Unit,
-    onSave: () -> Unit,
-    onNext: () -> Unit,
-) {
-    val locale = currentLocale()
-    val last = page == count - 1
-
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedIconButton(onClick = onPrevious, enabled = page > 0) {
-            Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.mindmaps_previous))
-        }
-        Text(
-            stringResource(R.string.mindmaps_position, formatNumber((page + 1).toDouble(), locale), formatNumber(count.toDouble(), locale)),
-            Modifier.weight(1f),
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.zoonkType.data,
-        )
-        if (saved != null) {
-            TextButton(
-                onClick = onSave,
-                leadingIcon = { ButtonIcon(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark) },
-            ) { Text(stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save)) }
-        }
-        Button(
-            onClick = onNext,
-            trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
-        ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
-    }
-}
-
 @Composable
 private fun SlideView(
     slide: Slide,
     zoom: (chapterId: UUID) -> Unit,
 ) {
     when (slide) {
-        Slide.Loading -> {
+        is Slide.Loading -> {
             PageLoading(color = MaterialTheme.colorScheme.tertiary)
         }
 
-        Slide.Gone -> {
+        is Slide.Gone -> {
             Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
                 Text(
                     stringResource(R.string.mindmaps_map_gone),
@@ -595,22 +544,14 @@ private fun ZoomablePicture(
     )
 }
 
-/** The player's map of a lesson's ideas, phone-wide, before the fold on a book. */
+/** The player's map of a lesson's ideas, phone-wide, on the page before the split where the screen spreads, as the player's screen. */
 @Composable
 private fun LessonSlide(content: StepContent.Map) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
     BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-        val fold = pageFold(maxWidth, span)
+        val fold = spreadFold(maxWidth, span)
         Column(
-            (
-                if (fold !=
-                    null
-                ) {
-                    Modifier.width(fold.start)
-                } else {
-                    Modifier.fillMaxWidth()
-                }
-            ).fillMaxHeight().verticalScroll(rememberScrollState()),
+            (fold?.let { Modifier.width(it.start) } ?: Modifier.fillMaxWidth()).fillMaxHeight().verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(Modifier.taskColumn().padding(vertical = 16.dp)) { LessonMapView(content) }

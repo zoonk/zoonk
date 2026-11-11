@@ -85,6 +85,10 @@ class MindMapScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "de-w320dp-h1400dp-xxhdpi")
+    fun smallPhoneGerman() = capture("small-de")
+
+    @Test
     @Config(qualifiers = "w700dp-h1400dp-xhdpi")
     fun medium() = capture("medium")
 
@@ -173,12 +177,17 @@ class MindMapScreenshots {
         val PART = offer(needLessons = 2, startable = 3, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
         val PLUS_MONTH = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"month\""))
         val GUEST = offer(needLessons = 1, startable = 0, stop = stop("signUpRequired", "null", "null"))
+        val FREE_LIMIT = offer(needLessons = 2, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
+        val NEED_LESSONS = offer(needLessons = 2, startable = 0, eligible = 0)
+        val NEED_LESSONS_AT_LIMIT =
+            offer(needLessons = 2, startable = 0, eligible = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
 
         fun offer(
             needLessons: Int,
             startable: Int,
+            eligible: Int = 5,
             stop: String = "null",
-        ) = """{"eligible":5,"needLessons":$needLessons,"startable":$startable,"stop":$stop}"""
+        ) = """{"eligible":$eligible,"needLessons":$needLessons,"startable":$startable,"stop":$stop}"""
 
         fun stop(
             reason: String,
@@ -197,6 +206,9 @@ class MindMapScreenshots {
                 mapJson(7, "Modern physics", "plusRequired"),
                 mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
             )
+
+        /** The chapters with none on their way. */
+        val SETTLED = CHAPTERS.filterNot { "\"drawing\"" in it || "\"writingLessons\"" in it }
         val GROUPS =
             listOf(
                 lessonGroupJson(1, (1..4).toList()),
@@ -217,6 +229,7 @@ class MindMapScreenshots {
             tab: StudyTab = StudyTab.Chapters,
             tier: LimitTier = LimitTier.Free,
             notMade: Boolean = false,
+            createAll: CreateAll? = null,
             chapters: List<String> = CHAPTERS,
             groups: List<String> = GROUPS,
             saved: List<String> = SAVED,
@@ -224,7 +237,7 @@ class MindMapScreenshots {
             val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(unreachable = true))
             MindMapsPage(
                 goalMindMaps(chapters, groups, saved, offer),
-                MindMapsState(requests = stuck, plus = tier == LimitTier.Plus, tier = tier),
+                MindMapsState(requests = stuck, createAll = createAll, plus = tier == LimitTier.Plus, tier = tier),
                 NO_ACTIONS,
                 initialTab = tab,
                 notMadeShown = notMade,
@@ -244,10 +257,14 @@ class MindMapScreenshots {
             }
 
         @Composable
-        fun Study(slide: Slide) {
+        fun Study(
+            slide: Slide,
+            start: Int = 4,
+            count: Int = 12,
+        ) {
             MindMapStudy(
-                List(12) { DeckSlot.Chapter(mapChapter(it)) },
-                start = 4,
+                List(count) { DeckSlot.Chapter(mapChapter(it)) },
+                start = start,
                 slide = { slide },
                 saves = emptyMap(),
                 actions = STUDY_ACTIONS,
@@ -256,7 +273,7 @@ class MindMapScreenshots {
 
         val chapterSlide = { saved: Boolean ->
             val map = chapterMindMap("ready")
-            Slide.Chapter(map.chapterId, map.position, ViewedMap(map.title, map.image, map.outline!!), saved)
+            Slide.Chapter(map.chapterId, ViewedMap(map.title, map.image, map.outline!!), saved)
         }
 
         @Composable
@@ -313,6 +330,14 @@ class MindMapScreenshots {
                 "mind-maps-offer-part" to { Library(PART) },
                 "mind-maps-offer-plus-month" to { Library(PLUS_MONTH, tier = LimitTier.Plus) },
                 "mind-maps-offer-guest" to { Library(GUEST, tier = LimitTier.Guest) },
+                "mind-maps-offer-all-settled" to { Library(ALL, chapters = SETTLED) },
+                "mind-maps-offer-part-settled" to { Library(PART, chapters = SETTLED) },
+                "mind-maps-offer-free-limit" to { Library(FREE_LIMIT, chapters = SETTLED) },
+                "mind-maps-offer-free-limit-open" to { Library(FREE_LIMIT, chapters = SETTLED, notMade = true) },
+                "mind-maps-offer-need-lessons-at-limit-open" to { Library(NEED_LESSONS_AT_LIMIT, chapters = SETTLED, notMade = true) },
+                "mind-maps-offer-need-lessons" to { Library(NEED_LESSONS, chapters = SETTLED, notMade = true) },
+                "mind-maps-offer-need-lessons-plus" to { Library(NEED_LESSONS, chapters = SETTLED, notMade = true, tier = LimitTier.Plus) },
+                "mind-maps-offer-unreachable" to { Library(ALL, chapters = SETTLED, createAll = CreateAll.Unreachable) },
                 "mind-maps-long" to { Library(chapters = LONG) },
                 "mind-maps-lessons" to { Library(tab = StudyTab.Lessons) },
                 "mind-maps-lessons-empty" to { Library(tab = StudyTab.Lessons, groups = emptyList()) },
@@ -325,7 +350,16 @@ class MindMapScreenshots {
                 "study-chapter-saved" to { Study(chapterSlide(true)) },
                 "study-lesson" to {
                     val lesson = chapterLessonMaps().lessons[1]
-                    Study(Slide.Lesson(UUID.fromString(mapChapter(3)), 3, lesson))
+                    Study(Slide.Lesson(UUID.fromString(mapChapter(3)), lesson))
+                },
+                "study-first" to { Study(chapterSlide(false), start = 0) },
+                "study-last" to { Study(chapterSlide(false), start = 11) },
+                "study-one" to { Study(chapterSlide(false), start = 0, count = 1) },
+                "study-loading" to { Study(Slide.Loading("Waves and sound")) },
+                "study-long-title" to {
+                    val map = chapterMindMap("ready")
+                    val title = "Grundlagen der Quantenverschränkung und ihre Anwendungen heute"
+                    Study(Slide.Chapter(map.chapterId, ViewedMap(title, map.image, map.outline!!), saved = false))
                 },
                 "mind-map-viewer" to {
                     val map = chapterMindMap("ready")

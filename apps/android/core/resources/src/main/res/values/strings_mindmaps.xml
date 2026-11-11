@@ -107,34 +107,30 @@
     <string name="mindmaps_remove_spoken">Remove %1$s from saved maps</string>
     <!-- Over the chapters whose mind maps aren't made yet, at the end of the Chapters tab. -->
     <string name="mindmaps_not_made_yet">Not made yet</string>
-    <!-- How many of the chapters' maps are ready, over the ones not made yet: "9 of 24 chapter maps ready". -->
-    <plurals name="mindmaps_ready_of">
-        <item quantity="one">%1$s of %2$s chapter map ready</item>
-        <item quantity="other">%1$s of %2$s chapter maps ready</item>
+    <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
+    <plurals name="mindmaps_create_count">
+        <item quantity="one">Create %1$s chapter map</item>
+        <item quantity="other">Create %1$s chapter maps</item>
     </plurals>
-    <!-- How many chapter maps are being made, after how many are ready: "9 of 24 chapter maps ready · 5 on the way". -->
-    <string name="mindmaps_on_the_way">%1$s on the way</string>
-    <!-- Makes every chapter map that can be made now. -->
-    <string name="mindmaps_create_all">Create all chapter maps</string>
-    <!-- Makes as many chapter maps as the learner's allowance lets, in course order. %1$s is how many. -->
-    <plurals name="mindmaps_create_up_to">
-        <item quantity="one">Create up to %1$s chapter map</item>
-        <item quantity="other">Create up to %1$s chapter maps</item>
+    <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
+    <plurals name="mindmaps_being_made">
+        <item quantity="one">%1$s on the way. You can leave while it\'s made.</item>
+        <item quantity="other">%1$s on the way. You can leave while they\'re made.</item>
     </plurals>
-    <!-- Over Create all chapter maps. %1$s is how many maps it makes. -->
-    <plurals name="mindmaps_remain">
-        <item quantity="one">%1$s map remains. You can leave while it\'s made.</item>
-        <item quantity="other">%1$s maps remain. You can leave while they\'re made.</item>
+    <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
+    <plurals name="mindmaps_can_make_more">
+        <item quantity="one">You can make %1$s more right now.</item>
+        <item quantity="other">You can make %1$s more right now.</item>
     </plurals>
-    <!-- Over Create up to N chapter maps, when the learner's allowance covers only some. -->
-    <string name="mindmaps_create_part">Starts in course order, within your current allowance.</string>
     <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
     <plurals name="mindmaps_need_lessons">
-        <item quantity="one">%1$s chapter needs its lessons written first. Create its map on its own below.</item>
-        <item quantity="other">%1$s chapters need their lessons written first. Create each map on its own below.</item>
+        <item quantity="one">%1$s chapter needs its lessons written first.</item>
+        <item quantity="other">%1$s chapters need their lessons written first.</item>
     </plurals>
     <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
     <string name="mindmaps_show_chapters">Show chapters</string>
+    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
+    <string name="mindmaps_lessons_count_free">Writing lessons counts toward your free lessons.</string>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Save</string>
     <!-- A map the learner saved; tapping it again removes it. -->
@@ -144,8 +140,6 @@
     <string name="mindmaps_save_map_failed">Couldn\'t save this map. Try again.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">More options</string>
-    <!-- Where the learner is in the maps they're studying: "5 of 12". -->
-    <string name="mindmaps_position">%1$s of %2$s</string>
     <string name="mindmaps_previous">Previous</string>
     <string name="mindmaps_next">Next</string>
     <!-- Closes the maps being studied after the last one. -->
@@ -156,8 +150,6 @@
     <string name="mindmaps_open_chapter">Open chapter</string>
     <!-- In the study menu: opens the lesson of the map shown. -->
     <string name="mindmaps_open_lesson">Open lesson</string>
-    <!-- A lesson's number in its chapter, after the chapter's: "Chapter 5 · Lesson 3". -->
-    <string name="mindmaps_lesson_number">Lesson %1$s</string>
     <!-- What screen readers say a tap on a map's picture does. -->
     <string name="mindmaps_zoom">Zoom</string>
     <!-- A map the deck counted that can't open anymore. -->

@@ -26,7 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -44,12 +46,10 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.LessonMapGroup
 import com.zoonk.api.models.MindMapAllowanceStop
-import com.zoonk.api.models.MindMapCreateOffer
 import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
@@ -84,11 +84,14 @@ internal fun LazyListScope.chaptersTab(
     if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
 }
 
+/** [stop] is what keeps any new map from starting now, which takes its Create away; [numbered] rows say which chapter they are. */
 @Composable
 private fun ChapterRow(
     map: GoalMindMap,
     actions: TabActions,
     open: (() -> Unit)? = null,
+    stop: Limit? = null,
+    numbered: Boolean = true,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
     val local = actions.state.requests[map.chapterId]
@@ -103,7 +106,7 @@ private fun ChapterRow(
             place = MindMapPlace.Library,
             shown = shown,
             local = local,
-            cap = null,
+            cap = stop,
             plus = actions.state.plus,
             actions =
                 MindMapRowActions(
@@ -113,14 +116,15 @@ private fun ChapterRow(
                     toggleSave = toggle,
                 ),
             saved = saved,
+            numbered = numbered,
         )
     }
 }
 
 /**
- * Main's "Not made yet": how many maps are ready and on their way, what one tap makes (or what
- * stops it), how many chapters need their lessons written first, and those chapters under Show
- * chapters with today's Create on each.
+ * Main's "Not made yet": a button that starts as many maps as can start now, one line (the first
+ * that applies), and those chapters folded under Show chapters, each with its Create while a new
+ * map can start. The list mixes subjects without their headers, so its rows go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
@@ -141,8 +145,21 @@ private fun LazyListScope.notMadeBlock(
         )
     }
     if (open) {
+        val offer = mindMaps.createOffer
+        val stop = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
+        // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
+        if (stop == null && actions.state.tier != LimitTier.Plus && notMade.any { it.lessonsToWrite > 0 }) {
+            item(key = "not-made-note", contentType = "note") {
+                Text(
+                    stringResource(R.string.mindmaps_lessons_count_free),
+                    Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
         items(notMade, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
-            Divided(true) { ChapterRow(map, actions) }
+            Divided(true) { ChapterRow(map, actions, stop = stop, numbered = false) }
         }
     }
 }
@@ -153,84 +170,67 @@ private fun NotMadeSummary(
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
-    val chapters = mindMaps.chapters.filter { it.status != GoalMindMap.Status.PLUS_REQUIRED }
-    val ready = chapters.count { it.status == GoalMindMap.Status.READY }
-    val onTheWay = chapters.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
-    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    val locale = currentLocale()
-    // Once some can start, the button says how many; what stops the rest shows only when none can.
-    val limit = (offer.stop?.limit(actions.state.tier) ?: actions.state.cap).takeIf { offer.startable == 0L }
 
     Column(Modifier.padding(top = 24.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.mindmaps_not_made_yet))
-        Text(
-            factsLine(
-                pluralStringResource(
-                    R.plurals.mindmaps_ready_of,
-                    chapters.size,
-                    formatNumber(ready.toDouble(), locale),
-                    formatNumber(chapters.size.toDouble(), locale),
-                ),
-                if (onTheWay > 0) stringResource(R.string.mindmaps_on_the_way, formatNumber(onTheWay.toDouble(), locale)) else null,
-            ),
-            color = quiet,
-            style = MaterialTheme.zoonkType.data,
-        )
-
-        offerLine(offer)?.let { Text(it, color = quiet, style = MaterialTheme.typography.bodyMedium) }
 
         if (offer.startable > 0) {
             val count = offer.startable.toInt()
             OutlinedButton(
                 onClick = actions.page.createAll,
                 busy = actions.state.createAll == CreateAll.Pending,
-            ) {
-                Text(
-                    if (offer.startable == offer.eligible) {
-                        stringResource(R.string.mindmaps_create_all)
-                    } else {
-                        pluralStringResource(R.plurals.mindmaps_create_up_to, count, formatNumber(count.toDouble(), locale))
-                    },
-                )
-            }
+            ) { Text(pluralStringResource(R.plurals.mindmaps_create_count, count, formatNumber(count.toDouble(), currentLocale()))) }
         }
 
-        if (actions.state.createAll == CreateAll.Unreachable) {
-            Text(stringResource(R.string.mindmaps_unreachable), color = quiet, style = MaterialTheme.typography.bodyMedium)
-        }
-
-        if (offer.needLessons > 0) {
-            val count = offer.needLessons.toInt()
-            Text(
-                pluralStringResource(R.plurals.mindmaps_need_lessons, count, formatNumber(count.toDouble(), locale)),
-                color = quiet,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-
-        if (limit != null) {
-            MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
-        }
+        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, actions) }
     }
 }
 
-/** What Create all makes: every map left, or as many as the allowance lets in course order; nothing when nothing can start. */
+/**
+ * The block's one line, the first that applies: the tap didn't reach the server, what stops every
+ * map from starting, maps on their way, how many more fit now, or chapters whose lessons come first.
+ */
 @Composable
-private fun offerLine(offer: MindMapCreateOffer): String? =
-    when {
-        offer.startable == 0L -> {
-            null
-        }
+private fun NotMadeLine(
+    mindMaps: GoalMindMaps,
+    actions: TabActions,
+) {
+    val offer = mindMaps.createOffer
+    val locale = currentLocale()
+    val onTheWay = mindMaps.chapters.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
+    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
+    val limit = (offer.stop?.limit(actions.state.tier) ?: actions.state.cap.takeIf { offer.eligible > 0 }).takeIf { offer.startable == 0L }
+    val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
-        offer.startable < offer.eligible -> {
-            stringResource(R.string.mindmaps_create_part)
-        }
+    val text =
+        when {
+            actions.state.createAll == CreateAll.Unreachable -> {
+                stringResource(R.string.mindmaps_unreachable)
+            }
 
-        else -> {
-            val count = offer.eligible.toInt()
-            pluralStringResource(R.plurals.mindmaps_remain, count, formatNumber(count.toDouble(), currentLocale()))
+            limit != null -> {
+                MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
+                return
+            }
+
+            onTheWay > 0 -> {
+                counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
+            }
+
+            offer.startable in 1..<offer.eligible -> {
+                counted(R.plurals.mindmaps_can_make_more, offer.startable)
+            }
+
+            offer.needLessons > 0 -> {
+                counted(R.plurals.mindmaps_need_lessons, offer.needLessons)
+            }
+
+            else -> {
+                return
+            }
         }
-    }
+    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =

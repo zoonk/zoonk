@@ -3,11 +3,14 @@ package com.zoonk.android.feature.mindmaps
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -136,7 +141,10 @@ internal fun mindMapDescription(
     }.joinToString("\n")
 }
 
-/** The map in words: its title and central idea, its numbered branches, a comparison and the gist. */
+/**
+ * The map in words under the header that names it: its central idea, its numbered branches, a
+ * comparison and the gist.
+ */
 @Composable
 internal fun MindMapOutlineText(
     outline: MindMapOutline,
@@ -145,10 +153,7 @@ internal fun MindMapOutlineText(
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(outline.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
-        }
+        Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
 
         outline.branches.forEachIndexed { index, branch ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -234,6 +239,28 @@ internal fun rememberSavePicture(
 }
 
 private const val PICTURE_TYPE = "image/webp"
+
+/** Keys reach a screen only from focus inside it; this takes that focus as the screen opens, without a stop for TalkBack. */
+@Composable
+internal fun KeyFocus() {
+    val focus = remember { FocusRequester() }
+    Box(Modifier.focusRequester(focus).focusable().clearAndSetSemantics {})
+    LaunchedEffect(Unit) { focus.requestFocus() }
+}
+
+/** A map's bookmark in its top bar, wherever the map shows: outlined, then filled once saved. */
+@Composable
+internal fun MapBookmark(
+    saved: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconToggleButton(checked = saved, onCheckedChange = { onToggle() }) {
+        Icon(
+            painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
+            contentDescription = stringResource(R.string.mindmaps_save),
+        )
+    }
+}
 
 /** A map that can't be made now: why, worded by what ran out, with Create a free account or See Plus where they help. */
 @Composable

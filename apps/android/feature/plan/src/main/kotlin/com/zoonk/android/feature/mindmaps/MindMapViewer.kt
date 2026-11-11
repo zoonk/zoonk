@@ -21,7 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -210,6 +209,7 @@ internal fun MindMapViewer(
 
         TaskScaffold(
             onClose = onClose,
+            modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
             title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             actions = {
                 if (image != null && !outlineBeside) {
@@ -217,14 +217,7 @@ internal fun MindMapViewer(
                         Text(stringResource(if (asText) R.string.mindmaps_as_picture else R.string.mindmaps_as_text))
                     }
                 }
-                if (onBookmark != null) {
-                    IconToggleButton(checked = map.saved, onCheckedChange = { onBookmark() }) {
-                        Icon(
-                            painterResource(if (map.saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
-                            contentDescription = stringResource(R.string.mindmaps_save),
-                        )
-                    }
-                }
+                if (onBookmark != null) MapBookmark(map.saved, onBookmark)
                 if (onSave != null) {
                     IconButton(onClick = onSave) {
                         Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
@@ -232,6 +225,7 @@ internal fun MindMapViewer(
                 }
             },
         ) { padding ->
+            KeyFocus()
             if (image == null || textOnly) {
                 OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
             } else {
