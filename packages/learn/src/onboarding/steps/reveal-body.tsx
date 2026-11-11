@@ -72,30 +72,28 @@ function RevealActions({
   isGuest,
   onAdjust,
   onStart,
-  opensStep,
   signUpHref,
   started,
 }: {
   isGuest: boolean;
   onAdjust: () => void;
-  onStart: () => Promise<boolean>;
-  /** Start opens a step rather than only saving, so a failure is the step's, as on its row. */
-  opensStep: boolean;
+  /** What failed, so the learner reads whether the plan didn't save or its step didn't open. */
+  onStart: () => Promise<StartFailure | null>;
   signUpHref: string;
   started: boolean;
 }) {
   const t = useExtracted();
   const startRef = useEnterClick<HTMLButtonElement>();
   const [pending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const [failure, setFailure] = useState<StartFailure | null>(null);
 
   // Busy until the next page opens; a failed start keeps the learner here to try again.
   const start = () => {
-    setFailed(false);
+    setFailure(null);
 
     startTransition(async () => {
-      const { data: opened } = await safeAsync(onStart);
-      setFailed(!opened);
+      const { data, error } = await safeAsync(onStart);
+      setFailure(error ? "save" : data);
     });
   };
 
@@ -107,7 +105,8 @@ function RevealActions({
       )}
       data-slot="reveal-actions"
     >
-      {failed && (opensStep ? <StepOpenFailed /> : <ChangeSaveError />)}
+      {failure === "save" && <ChangeSaveError />}
+      {failure === "open" && <StepOpenFailed />}
 
       <div className="flex gap-2 lg:flex-col-reverse">
         <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
@@ -142,6 +141,8 @@ function RevealRailBlock({ children, title }: { children: React.ReactNode; title
   );
 }
 
+type StartFailure = "open" | "save";
+
 type RevealBodyProps = {
   buddy: LearnBuddy | null;
   isGuest: boolean;
@@ -154,17 +155,32 @@ type RevealBodyProps = {
 function RevealColumn({
   buddy,
   isGuest,
+  markRevealed,
   onStart,
   openStep,
   reveal,
   signUpHref,
   syllabus,
-}: RevealBodyProps & { openStep: ((step: DayStep) => Promise<boolean>) | null }) {
+}: RevealBodyProps & {
+  markRevealed: () => Promise<boolean>;
+  openStep: ((step: DayStep) => Promise<boolean>) | null;
+}) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
   const startStep = findRevealStart(reveal);
-  const openStart = openStep && startStep ? () => openStep(startStep) : null;
+
+  // Saved first on its own, so a failure says whether the plan or the step is what didn't go.
+  const openStart =
+    openStep && startStep
+      ? async (): Promise<StartFailure | null> => {
+          if (!(await markRevealed())) {
+            return "save";
+          }
+
+          return (await openStep(startStep)) ? null : "open";
+        }
+      : null;
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -225,8 +241,7 @@ function RevealColumn({
       <RevealActions
         isGuest={isGuest}
         onAdjust={() => setEditor({ open: true, section: null })}
-        onStart={openStart ?? onStart}
-        opensStep={openStart !== null}
+        onStart={openStart ?? (async () => ((await onStart()) ? null : "save"))}
         signUpHref={signUpHref}
         started={started}
       />
@@ -256,7 +271,7 @@ export function RevealBody({
         refresh={refresh}
         reveal={props.reveal}
       >
-        {(openStep) => <RevealColumn {...props} openStep={openStep} />}
+        {(openStep) => <RevealColumn {...props} markRevealed={markRevealed} openStep={openStep} />}
       </RevealDayOpener>
     </CelebrationScope>
   );
