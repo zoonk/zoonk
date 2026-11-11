@@ -419,6 +419,60 @@ describe(writeLanguageLessonContent, () => {
     });
   });
 
+  it("replaces a saved romanization with the new lesson's and keeps it when the lesson has none", async () => {
+    const organization = await aiOrganizationFixture();
+    const base = uniqueDraft(crypto.randomUUID());
+    const [rent, deposit, utilities] = base.words;
+    const [question, ...otherSentences] = base.sentences;
+
+    const draft: Draft = {
+      ...base,
+      sentences: [{ ...question!, romanization: "hau mach iz da rent" }, ...otherSentences],
+      words: [{ ...rent!, romanization: "da rent" }, deposit!, utilities!],
+    };
+
+    const [savedRent, savedDeposit, savedQuestion] = await Promise.all([
+      wordFixture({
+        organizationId: organization.id,
+        romanization: "the rant",
+        targetLanguage: "en",
+        word: rent!.word,
+      }),
+      wordFixture({
+        organizationId: organization.id,
+        romanization: "da di-pozit",
+        targetLanguage: "en",
+        word: deposit!.word,
+      }),
+      prisma.sentence.create({
+        data: {
+          organizationId: organization.id,
+          romanization: "how match is the rant",
+          sentence: question!.sentence,
+          targetLanguage: "en",
+        },
+      }),
+    ]);
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    mockDraft(draft);
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    const [words, sentence] = await Promise.all([
+      prisma.word.findMany({ where: { id: { in: [savedRent.id, savedDeposit.id] } } }),
+      prisma.sentence.findUniqueOrThrow({ where: { id: savedQuestion.id } }),
+    ]);
+
+    expect(Object.fromEntries(words.map((row) => [row.id, row.romanization]))).toStrictEqual({
+      [savedDeposit.id]: "da di-pozit",
+      [savedRent.id]: "da rent",
+    });
+
+    expect(sentence.romanization).toBe("hau mach iz da rent");
+  });
+
   it("voices each word its word banks show once, so every target-language tile plays it", async () => {
     const organization = await aiOrganizationFixture();
     const key = `ka${crypto.randomUUID()}`;

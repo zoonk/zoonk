@@ -119,13 +119,8 @@ async function saveWords({
     rows.flatMap((row) => {
       const romanization = romanizations.get(row.word);
 
-      return !row.romanization && romanization
-        ? [
-            prisma.word.updateMany({
-              data: { ...written, romanization },
-              where: { id: row.id, romanization: null },
-            }),
-          ]
+      return romanization && romanization !== row.romanization
+        ? [prisma.word.update({ data: { ...written, romanization }, where: { id: row.id } })]
         : [];
     }),
   );
@@ -200,13 +195,8 @@ async function saveSentences({
     rows.flatMap((row) => {
       const romanization = romanizations.get(row.sentence);
 
-      return !row.romanization && romanization
-        ? [
-            prisma.sentence.updateMany({
-              data: { ...written, romanization },
-              where: { id: row.id, romanization: null },
-            }),
-          ]
+      return romanization && romanization !== row.romanization
+        ? [prisma.sentence.update({ data: { ...written, romanization }, where: { id: row.id } })]
         : [];
     }),
   );
