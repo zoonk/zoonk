@@ -588,7 +588,7 @@ private fun SessionSegments(
             }
         }
     val weights = steps.map { it.estimatedMinutes.toFloat() }
-    val progress = stepsDone(steps.count(DayStep::isFinished), steps.size)
+    val progress = stepsDone(day.sessionBar)
 
     if (counted) {
         Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {

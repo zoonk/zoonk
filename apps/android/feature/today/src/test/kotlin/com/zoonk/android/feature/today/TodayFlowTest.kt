@@ -61,7 +61,9 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import org.junit.Assert.assertEquals
@@ -139,7 +141,7 @@ class TodayFlowTest {
                 "minutes" to minutes,
                 "state" to "underway",
                 *sessionFields,
-            )
+            ).withSessionBar()
         val today = decodeFixture<Today>("today", "session" to day, *todayFields.toTypedArray())
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         todayApi.shown = today
@@ -240,6 +242,17 @@ class TodayFlowTest {
             put("done", 0)
             put("planned", 240)
         }
+
+/** Core's count for the blocks the test shows: skipped blocks count neither as done nor in the total. */
+    private fun JsonObject.withSessionBar(): JsonObject {
+        val statuses = getValue("blocks").jsonArray.map { it.jsonObject["status"]?.jsonPrimitive?.content }
+        val bar =
+            buildJsonObject {
+                put("completed", statuses.count { it == "completed" })
+                put("total", statuses.count { it != "skipped" })
+            }
+        return JsonObject(this + ("sessionBar" to bar))
+    }
 
     private fun sevenMinuteLessons(count: Int) =
         JsonArray(

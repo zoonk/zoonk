@@ -53,10 +53,12 @@ import com.zoonk.android.feature.session.DayProgress
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
+import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.feature.session.learnKind
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
@@ -103,7 +105,7 @@ internal fun LazyListScope.todaySession(
 
     freshStartItem(model)
 
-    if (day.steps.isNotEmpty() && (day.steps.size >= 2 || day.heldMinutes > 0)) {
+    if (drawsDayProgress(day.sessionBar.total, held = day.heldMinutes > 0)) {
         item(key = "segments", contentType = "segments") { TodayDayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
@@ -522,40 +524,38 @@ private fun FoldRow(
     }
 }
 
-/** Main's `DayProgress`: one equal part per block, the ones ahead in their kind's color. */
+/** Main's `DayProgress`: one equal part per counted block, the ones ahead in their kind's color. */
 @Composable
 private fun TodayDayProgress(
     model: TodayDayModel,
     modifier: Modifier,
 ) {
     val day = model.day
-    val done = day.steps.count(DayStep::isFinished)
     val tertiary = MaterialTheme.colorScheme.tertiary
-    val skipped = MaterialTheme.colorScheme.onSurface.copy(alpha = SKIPPED_ALPHA)
     val fills =
-        day.steps.map { step ->
+        day.steps.filter { it.status != StudyBlock.Status.SKIPPED }.map { step ->
             when {
                 step.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(tertiary)
-                step.status == StudyBlock.Status.SKIPPED -> MeterPart.Fill.Solid(skipped)
                 step.position == day.nextPosition -> MeterPart.Fill.Place(step.share)
                 step.learnKind == LearnKind.Lesson -> MeterPart.Fill.Track
                 else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
             }
         }
 
-    DayProgress(fills, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(done, day.steps.size))
+    DayProgress(fills, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(day.sessionBar))
 }
 
 private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 @Composable
-internal fun stepsDone(
-    done: Int,
-    total: Int,
-): String {
+internal fun stepsDone(bar: SessionBar): String {
     val locale = currentLocale()
-    return stringResource(R.string.today_steps_done, formatNumber(done.toDouble(), locale), formatNumber(total.toDouble(), locale))
+    return stringResource(
+        R.string.today_steps_done,
+        formatNumber(bar.completed.toDouble(), locale),
+        formatNumber(bar.total.toDouble(), locale),
+    )
 }
 
 @Composable
@@ -564,16 +564,14 @@ private fun DayMeta(
     status: ActionStatus,
     modifier: Modifier,
 ) {
-    val done = model.day.steps.count(DayStep::isFinished)
-
     // While Continue waits or failed, its words take the line, as main's meta does.
     Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
-            if (model.day.steps.isNotEmpty()) {
+            if (model.day.sessionBar.total > 0) {
                 Text(
-                    text = stepsDone(done, model.day.steps.size),
+                    text = stepsDone(model.day.sessionBar),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.zoonkType.data,
@@ -685,5 +683,4 @@ private fun TodayDayStatus(
 private const val DONE_ROWS = 1
 private const val FOLD_MORE = "fold-more"
 private const val OPEN_BACKLOG_LIMIT = 5
-private const val SKIPPED_ALPHA = 0.25f
 private const val AHEAD_ALPHA = 0.5f

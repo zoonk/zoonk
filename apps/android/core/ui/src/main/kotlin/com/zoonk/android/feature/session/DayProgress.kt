@@ -55,6 +55,12 @@ fun DayProgress(
     MeterParts(parts, modifier, contentDescription)
 }
 
+/** A day of one part draws no meter: the words already say "1 of 1". */
+fun drawsDayProgress(
+    parts: Int,
+    held: Boolean,
+): Boolean = parts + (if (held) 1 else 0) >= 2
+
 /** Under a finished block's facts: the lessons earlier days left, as of this completion. */
 @Composable
 fun CatchUpLine(
@@ -154,7 +160,7 @@ fun SessionDayProgress(
             }
             caption?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
         }
-        if (total > 1 || open) FinishedBlockMeter(completed, total, held = open)
+        if (drawsDayProgress(total, held = open)) FinishedBlockMeter(completed, total, held = open)
         if (deferred > 0) {
             Text(
                 pluralStringResource(
