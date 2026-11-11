@@ -45,6 +45,7 @@ struct TodayDayView: View {
         }
       } secondary: {
         ZoonkList {
+          UnfinishedGoalSection()
           aside
           TodayPracticeSection(view: view, language: language)
         }
@@ -56,6 +57,7 @@ struct TodayDayView: View {
           header(actionInHeader: actionInHeader)
           day(showsAction: !actionInHeader)
           notice
+          UnfinishedGoalSection()
 
           // Main's tablet column: missions beside the week, preparation beside practice.
           if actionInHeader {
