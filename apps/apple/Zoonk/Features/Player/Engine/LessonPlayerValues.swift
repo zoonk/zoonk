@@ -25,8 +25,6 @@ struct LessonStepResult: Hashable, Sendable {
   var spelling: String?
   /// A spoken answer's words as heard.
   var heard: SpokenHeard?
-  /// When the idea comes back, once the server recorded the answer.
-  var nextReviewAt: Date?
   var savedMistake = false
   /// The id a device-graded answer is saved under, so a late server reply about an earlier
   /// answer to the same screen can't change this one.
@@ -107,7 +105,6 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let energyDelta: Double
   let seconds: Int
   let isFirstCompletion: Bool
-  let nextReviewAt: Date?
   let day: DayResult?
   /// When the lesson was one of the session's blocks.
   let block: BlockMoment?

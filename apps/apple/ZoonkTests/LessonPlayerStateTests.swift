@@ -1615,16 +1615,14 @@ final class LessonPlayerSavingTests: XCTestCase {
     state.resolve(step.id, result: LessonStepResult(grade, attemptId: "first"))
     XCTAssertEqual(state.firstVerdicts, [step.id: true])
 
-    var server = LessonStepResult(
+    let server = LessonStepResult(
       isCorrect: false, answerText: nil, correctAnswer: "Je suis Marie.", feedback: nil)
-    server.nextReviewAt = .distantFuture
     state.confirm(
       step.id, attemptId: "first", answer: .reading(arrangedWords: ["Je", "suis", "Marie"]),
       verdict: server)
 
     XCTAssertEqual(state.results[step.id]?.isCorrect, false)
     XCTAssertEqual(state.results[step.id]?.correctAnswer, "Je suis Marie.")
-    XCTAssertEqual(state.results[step.id]?.nextReviewAt, .distantFuture)
     XCTAssertEqual(state.firstVerdicts, [step.id: false], "the lesson counts the server's verdict")
   }
 

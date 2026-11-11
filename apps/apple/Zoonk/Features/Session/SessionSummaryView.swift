@@ -512,7 +512,7 @@ private struct SummaryTiles: View {
       StatTile(
         label: Text("To review", tableName: "Session", comment: "Topics that come back to review"),
         value: Text(summary.comesBack.reduce(0) { $0 + $1.skills }, format: .number),
-        systemImage: "arrow.counterclockwise", detail: comesBack)
+        systemImage: "arrow.counterclockwise")
 
       if showsBrainPower {
         StatTile(
@@ -575,19 +575,6 @@ private struct SummaryTiles: View {
         : Text("Progress", tableName: "Session", comment: "The goal's progress"),
       format(after), moved ? format(start) : nil, moved && after < start
     )
-  }
-
-  private var comesBack: Text? {
-    guard !summary.comesBack.isEmpty else {
-      return nil
-    }
-
-    let days = summary.comesBack.compactMap { studyDate($0.date) }
-      .map { $0.formatted(.studyDay.month(.abbreviated).day()) }
-
-    return Text(
-      "Back \(days.formatted(.list(type: .and)))", tableName: "Session",
-      comment: "When the topics to review come back, such as Back Oct 30 and Nov 7")
   }
 }
 

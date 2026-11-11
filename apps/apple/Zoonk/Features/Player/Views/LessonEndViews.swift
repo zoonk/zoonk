@@ -328,10 +328,8 @@ struct LessonCompletionView: View {
         }
       }
 
-      let facts = [studied(summary.seconds), review(summary.nextReviewAt)].compactMap { $0 }
-
-      if !facts.isEmpty {
-        Text(facts.joinedFacts())
+      if let studied = studied(summary.seconds) {
+        Text(studied)
           .typeStyle(.note.monospacedDigit())
           .foregroundStyle(.mutedForeground)
       }
@@ -356,15 +354,6 @@ struct LessonCompletionView: View {
       localized: "\(progressLearningTime(seconds)) studied",
       table: "Player",
       comment: "The study time this lesson counted; the argument is a duration like '4 min'")
-  }
-
-  private func review(_ reviewAt: Date?) -> String? {
-    reviewAt.map {
-      String(
-        localized: "Review on \($0.formatted(.dateTime.day().month(.abbreviated)))",
-        table: "Player",
-        comment: "When the lesson's idea comes back for review")
-    }
   }
 }
 

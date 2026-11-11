@@ -626,7 +626,6 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    result.nextReviewAt = verdict.nextReviewAt
     result.savedMistake = verdict.savedMistake
 
     if result.isCorrect != verdict.isCorrect {
