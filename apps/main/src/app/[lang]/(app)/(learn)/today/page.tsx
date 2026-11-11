@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
-import { getOnboardingResume } from "@zoonk/core/view-models/onboarding/resume";
+import { getUnfinishedOnboardingDraft } from "@zoonk/core/view-models/onboarding/unfinished-draft";
 import { Page } from "@zoonk/learn/page";
 import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
@@ -84,11 +84,12 @@ async function loadOpenExplanation(): Promise<Explanation | null> {
 /** A goal card typed after the learner's newest goal and not confirmed yet, which Today offers back. */
 async function loadUnfinishedGoal(): Promise<UnfinishedGoal | null> {
   "use cache: private";
+  return getUnfinishedOnboardingDraft();
+}
 
-  const result = await getOnboardingResume();
-  const resume = result.status === "ready" ? result.resume : null;
-
-  return resume?.kind === "draft" ? { draftId: resume.draftId, prompt: resume.prompt } : null;
+async function UnfinishedGoalOffer({ goal }: { goal: Promise<UnfinishedGoal | null> }) {
+  const unfinished = await goal;
+  return unfinished && <UnfinishedGoalNotice goal={unfinished} />;
 }
 
 /** The complete no-goal display can prefetch; starting a goal still claims its fresh limit. */
@@ -160,29 +161,33 @@ async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null
 async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
   const { goal } = await searchParams;
 
-  const [result, reminderGoal, unfinishedGoal] = await Promise.all([
-    loadTodayScreen(),
-    findReminderGoal(goal),
-    loadUnfinishedGoal(),
-  ]);
+  // Read beside the day, but the day never waits for it.
+  const unfinishedGoal = loadUnfinishedGoal();
+  const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
 
   const reminder = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;
-  const unfinished = unfinishedGoal && <UnfinishedGoalNotice goal={unfinishedGoal} />;
+
+  const unfinished = (
+    <Suspense>
+      <UnfinishedGoalOffer goal={unfinishedGoal} />
+    </Suspense>
+  );
 
   // With no day to show, the card leads the page.
-  const banner = (reminder || unfinished) && (
+  const banner = (
     <>
       {reminder}
       {unfinished}
     </>
   );
 
+  if (result.status === "noGoal" && result.suggestedGoal) {
+    return <WelcomeBack suggestion={result.suggestedGoal} />;
+  }
+
   if (result.status === "noGoal") {
-    return result.suggestedGoal ? (
-      <WelcomeBack suggestion={result.suggestedGoal} />
-    ) : (
-      <TodayFirstGoal draftId={unfinishedGoal?.draftId ?? null} />
-    );
+    const draft = await unfinishedGoal;
+    return <TodayFirstGoal draftId={draft?.draftId ?? null} />;
   }
 
   // A cookie without a session behind it is a learner whose session ended, not someone new.

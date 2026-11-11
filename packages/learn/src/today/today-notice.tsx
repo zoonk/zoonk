@@ -76,12 +76,12 @@ export function TodayNotice({
 
   return (
     <div
-      className={cn("flex flex-col empty:hidden", className)}
+      className={cn("flex flex-col gap-3 empty:hidden", className)}
       data-slot="today-notice"
       ref={slot}
     >
       <NoticeOfKind kind={kind} />
-      {children ? <div className="not-first:mt-3">{children}</div> : null}
+      {children}
     </div>
   );
 }
