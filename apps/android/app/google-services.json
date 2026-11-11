@@ -8,9 +8,7 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:435450998434:android:01d787f5fcbc2b716231fb",
-        "android_client_info": {
-          "package_name": "com.zoonk"
-        }
+        "android_client_info": { "package_name": "com.zoonk" }
       },
       "oauth_client": [
         {
@@ -18,11 +16,7 @@
           "client_type": 3
         }
       ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI"
-        }
-      ],
+      "api_key": [{ "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI" }],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
@@ -33,9 +27,7 @@
             {
               "client_id": "435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2.apps.googleusercontent.com",
               "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.zoonk.dev"
-              }
+              "ios_info": { "bundle_id": "com.zoonk.dev" }
             }
           ]
         }
@@ -44,9 +36,7 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:435450998434:android:eca47232d8a4bdee6231fb",
-        "android_client_info": {
-          "package_name": "com.zoonk.debug"
-        }
+        "android_client_info": { "package_name": "com.zoonk.debug" }
       },
       "oauth_client": [
         {
@@ -54,11 +44,7 @@
           "client_type": 3
         }
       ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI"
-        }
-      ],
+      "api_key": [{ "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI" }],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
@@ -69,9 +55,7 @@
             {
               "client_id": "435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2.apps.googleusercontent.com",
               "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.zoonk.dev"
-              }
+              "ios_info": { "bundle_id": "com.zoonk.dev" }
             }
           ]
         }
