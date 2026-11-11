@@ -7,7 +7,7 @@ import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
-import { hashDocument, parseDocument } from "./parse-document";
+import { hashDocument, hashFirstReading, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
 import {
   SOURCE_READ_VERSION,
@@ -43,9 +43,21 @@ export async function fetchAndParse(url: string, topic?: SourceTopic) {
   return {
     contentHash: hashDocument({ bytes: document.bytes, text: parsed.text }),
     contentType: document.contentType,
+    document,
     parsed,
     url: document.url,
   };
+}
+
+/** Only a source an older reader stored needs the first reading's hash to tell a re-read apart. */
+function hashStoredReading({
+  fetched,
+  readVersion,
+}: {
+  fetched: Awaited<ReturnType<typeof fetchAndParse>>;
+  readVersion: number;
+}): Promise<string> | null {
+  return readVersion < SOURCE_READ_VERSION ? hashFirstReading(fetched.document) : null;
 }
 
 function toStructure({
@@ -82,15 +94,23 @@ function toSourceContent({
 
 function saveChangedContent({
   content,
+  firstReadingHash,
   sourceId,
   topic,
 }: {
   content: ReturnType<typeof toSourceContent>;
+  firstReadingHash: string | null;
   sourceId: string;
   topic: SourceTopic;
 }): Promise<WebSource> {
   return prisma.$transaction(async (tx) => {
-    const owed = await oweSourceChangeNotice({ sourceId, text: content.extractedText, topic, tx });
+    const owed = await oweSourceChangeNotice({
+      firstReadingHash,
+      sourceId,
+      text: content.extractedText,
+      topic,
+      tx,
+    });
 
     return tx.source.update({
       data: { ...content, ...owed },
@@ -120,10 +140,18 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
     validUntil: getSourceValidUntil({ fetchedAt: now, topic: input.topic }),
   });
 
-  const stored = await prisma.source.findUnique({ select: { contentHash: true, id: true }, where });
+  const stored = await prisma.source.findUnique({
+    select: { contentHash: true, id: true, readVersion: true },
+    where,
+  });
 
   if (stored && stored.contentHash !== content.contentHash) {
-    return saveChangedContent({ content, sourceId: stored.id, topic: input.topic });
+    return saveChangedContent({
+      content,
+      firstReadingHash: await hashStoredReading({ fetched, readVersion: stored.readVersion }),
+      sourceId: stored.id,
+      topic: input.topic,
+    });
   }
 
   return prisma.source.upsert({
@@ -227,7 +255,12 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
   });
 
   return {
-    source: await saveChangedContent({ content, sourceId: source.id, topic }),
+    source: await saveChangedContent({
+      content,
+      firstReadingHash: await hashStoredReading({ fetched, readVersion: source.readVersion }),
+      sourceId: source.id,
+      topic,
+    }),
     status: "changed",
   };
 }

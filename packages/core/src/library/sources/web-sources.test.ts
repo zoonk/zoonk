@@ -13,6 +13,7 @@ import {
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
 import { splitLawArticles } from "./law-articles";
+import { hashFirstReading } from "./parse-document";
 import { recordSourceChangeNotice } from "./source-change-notices";
 import { getOwedSourceChange } from "./unnoticed-changes";
 import {
@@ -43,6 +44,40 @@ function newUrl() {
 }
 
 const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
+
+/** Planalto serves its laws in windows-1252 and declares no charset. */
+function latin1Page(body: string): Uint8Array {
+  return Buffer.from(`<html><body>${body}</body></html>`, "latin1");
+}
+
+function serveBytes(bytes: Uint8Array) {
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(bytes, { headers: { "content-type": "text/html" } }),
+  );
+}
+
+function storeLawPage(bytes: Uint8Array) {
+  serveBytes(bytes);
+  return storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+}
+
+/** As the reader before `readVersion` stored the page: its text and hash, under reader version 0. */
+async function storeAsFirstReader({
+  bytes,
+  sourceId,
+  text,
+}: {
+  bytes: Uint8Array;
+  sourceId: string;
+  text: string;
+}) {
+  const contentHash = await hashFirstReading({ bytes, contentType: "text/html" });
+
+  await prisma.source.update({
+    data: { contentHash, extractedText: text, readVersion: 0 },
+    where: { id: sourceId },
+  });
+}
 
 function noticePage({ questions, token }: { questions: number; token: string }) {
   return `<html><body><input type="hidden" value="${token}"><h1>Edital 2026</h1><p>A prova terá ${questions} questões.</p></body></html>`;
@@ -283,18 +318,13 @@ describe(refreshWebSource, () => {
   });
 
   it("re-reads a law stored by an older reader without telling learners it changed", async () => {
-    servePage(noticePage({ questions: 50, token: "a" }));
+    const page = latin1Page("<p>Art. 1º O prazo é de <s>dez</s> quinze dias.</p>");
+    const law = await storeLawPage(page);
 
-    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
-
-    await prisma.source.update({
-      data: {
-        contentHash: "older-reading",
-        extractedText:
-          "Edital 2026\nRedação revogada: a prova terá 40 questões.\nA prova ter\uFFFD 50 quest\uFFFDes.",
-        readVersion: 0,
-      },
-      where: { id: law.id },
+    await storeAsFirstReader({
+      bytes: page,
+      sourceId: law.id,
+      text: "Art. 1\uFFFD O prazo \uFFFD de dez quinze dias.",
     });
 
     await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "changed" });
@@ -305,23 +335,20 @@ describe(refreshWebSource, () => {
   });
 
   it("still tells learners a law changed when it changed on its first read by a newer reader", async () => {
-    servePage(noticePage({ questions: 60, token: "a" }));
+    const before = latin1Page("<p>Art. 1º A alíquota é de 1,5%.</p>");
+    const law = await storeLawPage(before);
 
-    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
-
-    await prisma.source.update({
-      data: {
-        contentHash: "older-reading",
-        extractedText: "Edital 2026\nA prova ter\uFFFD 50 quest\uFFFDes.",
-        readVersion: 0,
-      },
-      where: { id: law.id },
+    await storeAsFirstReader({
+      bytes: before,
+      sourceId: law.id,
+      text: "Art. 1\uFFFD A al\uFFFDquota \uFFFD de 1,5%.",
     });
 
+    serveBytes(latin1Page("<p>Art. 1º A alíquota é de 15%.</p>"));
     await refreshWebSource(law.id);
 
     await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
-      { unnoticedChanges: expect.stringContaining("+ A prova terá 60 questões.") },
+      { unnoticedChanges: expect.stringContaining("+ Art. 1º A alíquota é de 15%.") },
     );
   });
 

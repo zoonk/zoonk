@@ -76,13 +76,41 @@ function getPageNumber(node: OfficeParserAST["content"][number], position: numbe
   return typeof number === "number" ? number : position + 1;
 }
 
+/** How bytes become text. A change to it moves `SOURCE_READ_VERSION`. */
+type Reading = { decodesCharset: boolean; dropsStruckText: boolean; maxLength: number };
+
 /** Official law sites strike through wording a later law revoked and keep it on the page. */
+function toReading(topic?: SourceTopic | null): Reading {
+  return {
+    decodesCharset: true,
+    dropsStruckText: topic === "regulation",
+    maxLength: getMaxTextLength(topic),
+  };
+}
+
+/** Reader version 0, which stored the sources saved before `readVersion` existed. */
+const FIRST_READING: Reading = {
+  decodesCharset: false,
+  dropsStruckText: false,
+  maxLength: MAX_EXTRACTED_TEXT_LENGTH,
+};
+
 function dropStruckText(node: OfficeContentNode): false | undefined {
   return node.formatting?.strikethrough ? false : undefined;
 }
 
-async function readText({ ast, isLaw }: { ast: OfficeParserAST; isLaw: boolean }): Promise<string> {
-  const { value } = await ast.to("text", isLaw ? { onNode: dropStruckText } : undefined);
+async function readText({
+  ast,
+  reading,
+}: {
+  ast: OfficeParserAST;
+  reading: Reading;
+}): Promise<string> {
+  const { value } = await ast.to(
+    "text",
+    reading.dropsStruckText ? { onNode: dropStruckText } : undefined,
+  );
+
   return value;
 }
 
@@ -122,11 +150,11 @@ async function readPagedText({
 async function parseOfficeDocument({
   bytes,
   fileType,
-  topic,
+  reading,
 }: {
   bytes: Uint8Array;
   fileType: SupportedFileType;
-  topic?: SourceTopic;
+  reading: Reading;
 }): Promise<ParsedDocument> {
   const ast = await parseOffice(Buffer.from(bytes), {
     extractAttachments: fileType === "docx" || fileType === "pptx",
@@ -138,49 +166,48 @@ async function parseOfficeDocument({
 
   const text = PAGED_FILE_TYPES.has(fileType)
     ? await readPagedText({ ast, fileType })
-    : await readText({ ast, isLaw: topic === "regulation" });
+    : await readText({ ast, reading });
 
   return {
     images: ast.attachments
       .filter((attachment) => MODEL_IMAGE_TYPES.has(attachment.mimeType))
       .map((attachment) => ({ data: attachment.data, mediaType: attachment.mimeType })),
     pages: countPages(ast),
-    text: limitText({ maxLength: getMaxTextLength(topic), text }),
+    text: limitText({ maxLength: reading.maxLength, text }),
   };
 }
 
-export async function parseDocument({
-  bytes,
-  charset,
-  contentType,
-  topic,
-}: {
+type DocumentBytes = {
   bytes: Uint8Array;
   /** The charset the response declared, for a fetched page. */
   charset?: string | null;
   contentType: string;
-  topic?: SourceTopic;
-}): Promise<ParsedDocument> {
+};
+
+async function readDocument({
+  bytes,
+  charset,
+  contentType,
+  reading,
+}: DocumentBytes & { reading: Reading }): Promise<ParsedDocument> {
   const type = normalizeContentType(contentType);
   const fileType = OFFICE_FILE_TYPES[type];
 
   if (fileType === "html") {
-    const page = Buffer.from(decodePage({ bytes, charset }));
-    return parseOfficeDocument({ bytes: page, fileType, topic });
+    const page = reading.decodesCharset ? Buffer.from(decodePage({ bytes, charset })) : bytes;
+    return parseOfficeDocument({ bytes: page, fileType, reading });
   }
 
   if (fileType) {
-    return parseOfficeDocument({ bytes, fileType, topic });
+    return parseOfficeDocument({ bytes, fileType, reading });
   }
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
-    const text = decodePage({ bytes, charset });
+    const text = reading.decodesCharset
+      ? decodePage({ bytes, charset })
+      : new TextDecoder().decode(bytes);
 
-    return {
-      images: [],
-      pages: null,
-      text: limitText({ maxLength: getMaxTextLength(topic), text }),
-    };
+    return { images: [], pages: null, text: limitText({ maxLength: reading.maxLength, text }) };
   }
 
   if (MODEL_IMAGE_TYPES.has(type)) {
@@ -188,4 +215,20 @@ export async function parseDocument({
   }
 
   throw new Error(`Unsupported document type: ${type}`);
+}
+
+export function parseDocument({
+  topic,
+  ...document
+}: DocumentBytes & { topic?: SourceTopic }): Promise<ParsedDocument> {
+  return readDocument({ ...document, reading: toReading(topic) });
+}
+
+/**
+ * The hash these bytes had under reader version 0. When it's the hash a source stored then, the
+ * page hasn't changed since: only how it's read did, which learners aren't told about.
+ */
+export async function hashFirstReading(document: DocumentBytes): Promise<string> {
+  const parsed = await readDocument({ ...document, reading: FIRST_READING });
+  return hashDocument({ bytes: document.bytes, text: parsed.text });
 }

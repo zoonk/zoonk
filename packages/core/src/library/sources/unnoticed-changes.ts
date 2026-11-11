@@ -1,6 +1,5 @@
 import "server-only";
 import { type Source, type TransactionClient } from "@zoonk/db";
-import { isCutText } from "./parse-document";
 import { SOURCE_READ_VERSION, type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
 import { appendTextChange, summarizeTextChange } from "./text-change";
 
@@ -21,29 +20,6 @@ type OwedColumns = Pick<
   | "unnoticedRevision"
 >;
 
-/** A line's letters and digits, which no change in how a page's accents were decoded moves. */
-function toLineKey(line: string): string {
-  return line.toLowerCase().replaceAll(/[^a-z0-9]/gu, "");
-}
-
-/**
- * True when `current` says nothing `previous` didn't: it dropped lines (struck-through wording),
- * decoded accents differently, or went on past where an older reader cut the text.
- */
-function isOnlyRereading({ current, previous }: { current: string; previous: string }): boolean {
-  const known = new Set(previous.split("\n").map((line) => toLineKey(line)));
-
-  const lines = current
-    .split("\n")
-    .map((line) => toLineKey(line))
-    .filter(Boolean);
-
-  const lastKnown = lines.findLastIndex((line) => known.has(line));
-  const compared = isCutText(previous) ? lines.slice(0, lastKnown + 1) : lines;
-
-  return compared.every((line) => known.has(line));
-}
-
 export type OwedSourceChange = {
   change: string;
   contentHash: string;
@@ -58,11 +34,14 @@ export type OwedSourceChange = {
  * what was written from the version in between, and a new change gets its notice new attempts.
  */
 export async function oweSourceChangeNotice({
+  firstReadingHash,
   sourceId,
   text,
   topic,
   tx,
 }: {
+  /** `hashFirstReading` of the bytes `text` was read from, for a source stored by that reader. */
+  firstReadingHash: string | null;
   sourceId: string;
   text: string | null;
   topic: SourceTopic;
@@ -93,8 +72,7 @@ export async function oweSourceChangeNotice({
   const change = summarizeTextChange({ current: text, previous: stored.extractedText });
 
   const isRereading =
-    stored.readVersion < SOURCE_READ_VERSION &&
-    isOnlyRereading({ current: text ?? "", previous: stored.extractedText ?? "" });
+    stored.readVersion < SOURCE_READ_VERSION && firstReadingHash === stored.contentHash;
 
   if (!change || isRereading) {
     return {};
