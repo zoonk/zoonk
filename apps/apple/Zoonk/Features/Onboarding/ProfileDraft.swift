@@ -53,16 +53,14 @@ struct ProfileDraft: Equatable {
   }
   /// Studies: each picked field's course or subject.
   var subjects: [String: String]
-  /// Conditions: the learner ticked "Save this to my profile".
-  var consented: Bool
 
-  /// A declined question opens on the row that declined it. With memory off, the support note is
-  /// hidden, so it's left out of the answer and its saved fact stays as it is.
+  /// A declined question opens on the row that declined it; conditions have none, so they open
+  /// empty. With memory off, the support note is hidden, so it's left out of the answer and its
+  /// saved fact stays as it is.
   init(_ view: ProfileQuestionView, memoryEnabled: Bool = true) {
     question = view.id
     picks = view.saved.picks
     text = view.id == .learningSupport && !memoryEnabled ? "" : view.saved.text
-    consented = view.id == .conditions && !view.saved.picks.isEmpty
     subjects = [:]
 
     for study in view.saved.studies {
@@ -73,7 +71,8 @@ struct ProfileDraft: Equatable {
     decline =
       if view.status == .declined && picks.isEmpty && text.isEmpty {
         switch view.id {
-        case .work, .conditions: .ratherNotSay
+        case .work: .ratherNotSay
+        case .conditions: nil
         default: .noneOfThese
         }
       } else {
@@ -115,7 +114,6 @@ struct ProfileDraft: Equatable {
     picks = []
     text = ""
     subjects = [:]
-    consented = false
   }
 
   /// Rows checked for what often helps with the conditions picked on the screen before. True when
@@ -163,10 +161,9 @@ struct ProfileDraft: Equatable {
     }
   }
 
-  /// Saving declines an empty screen. Conditions picked without consent never leave the device:
-  /// they decline too.
+  /// Saving declines an empty screen.
   var isDeclined: Bool {
-    decline != nil || isEmpty || (question == .conditions && !consented)
+    decline != nil || isEmpty
   }
 
   /// The job belongs to a status with work in it.
@@ -225,6 +222,18 @@ struct ProfileDraft: Equatable {
   /// What `POST /v1/me/profile-questions/answers` takes, and onboarding's answer for this question.
   var input: [String: Any] {
     ["answer": answer, "question": question.rawValue]
+  }
+
+  /// Onboarding's Skip leaves a question for the next goal, but declines conditions, so a learner
+  /// who skips them isn't asked about their health at every new goal.
+  var skipInput: [String: Any] {
+    guard question == .conditions else {
+      return ["answer": NSNull(), "question": question.rawValue]
+    }
+
+    var declined = self
+    declined.decline = .ratherNotSay
+    return declined.input
   }
 }
 
