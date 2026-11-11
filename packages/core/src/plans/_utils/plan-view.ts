@@ -25,6 +25,7 @@ import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
 import { findPlanPhase } from "./phase-states";
+import { listPlanAreaNames } from "./plan-area-order";
 import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
@@ -42,10 +43,6 @@ import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
-function listAreaNames(graph: PlanGraph): string[] {
-  return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
-}
-
 function buildAreas({
   graph,
   partAreas,
@@ -57,7 +54,7 @@ function buildAreas({
 }): PlanView["areas"] {
   const names = graph.skills.map((skill) => getSkillArea({ graph, skill }));
 
-  return listAreaNames(graph).map((name) => ({
+  return listPlanAreaNames({ focusAreas: settings.focusAreas, graph }).map((name) => ({
     focusPart: settings.focusParts.find((part) => part.area === name)?.name ?? null,
     focused: settings.focusAreas.includes(name),
     name,

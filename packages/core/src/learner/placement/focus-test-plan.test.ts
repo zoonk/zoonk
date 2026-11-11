@@ -100,9 +100,19 @@ describe("the Focus test on a plan whose time is short", () => {
       testFocus: ["Raciocínio", "Atualidades"],
     });
 
-    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+    const revealed = await getGoalPlan(goal.id);
+
+    expect(revealed).toMatchObject({
       plan: { focusTest: { setsFocus: true, state: "checked", subjects: { asked: 4, total: 6 } } },
     });
+
+    expect(
+      revealed.status === "ready"
+        ? revealed.plan.areas
+            .filter((area) => area.focused && !area.partOf)
+            .map((area) => area.name)
+        : [],
+    ).toStrictEqual(["Raciocínio", "Atualidades"]);
   });
 
   it("leaves a learner who skipped the test with no focus", async () => {
