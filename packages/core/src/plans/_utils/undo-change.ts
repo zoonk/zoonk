@@ -114,7 +114,6 @@ export async function undoChange({
       await keepTestFocus({
         areas: snapshot.state.settings.focusAreas,
         goalId: context.goal.id,
-        planVersion: context.plan.version + 1,
         tx,
         userId: context.goal.userId,
       });

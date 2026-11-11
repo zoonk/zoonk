@@ -87,27 +87,18 @@ async function startRecord({
 export async function keepTestFocus({
   areas,
   goalId,
-  planVersion,
   tx,
   userId,
 }: {
   areas: readonly string[];
   goalId: string;
-  planVersion?: number;
   tx: TransactionClient;
   userId: string;
 }): Promise<void> {
   await lockLearner(tx, { lockPlanIds: [], userId });
 
   await changeFocusTestRecord({
-    change: (record) => ({
-      ...record,
-      focus: [...areas],
-      handled:
-        record.handled && planVersion !== undefined
-          ? { ...record.handled, planVersion }
-          : record.handled,
-    }),
+    change: (record) => ({ ...record, focus: [...areas] }),
     goalId,
     tx,
   });

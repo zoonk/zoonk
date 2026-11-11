@@ -389,7 +389,7 @@ describe("the Focus test on a plan whose time is short", () => {
   });
 
   it.each(["declined", "undone"] as const)(
-    "keeps a %s proposal dismissed until a committed replan",
+    "keeps a %s proposal dismissed after a date edit and settlement",
     async (status) => {
       const { goal, plan, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
       const completion = await sit(goal.id, [DONT_KNOW]);
@@ -442,11 +442,16 @@ describe("the Focus test on a plan whose time is short", () => {
 
       await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
         completion: {
-          focusTest: {
-            checkpoint: { focus: { proposal: { source: "focusTest" }, state: "proposed" } },
-          },
+          focusTest: { checkpoint: { focus: { proposal: null, state: "handPicked" } } },
         },
       });
+
+      await expect(
+        prisma.planChange.findMany({
+          select: { status: true },
+          where: { payload: { equals: "focusTest", path: ["source"] }, planId: plan.id },
+        }),
+      ).resolves.toStrictEqual([{ status }]);
     },
   );
 });

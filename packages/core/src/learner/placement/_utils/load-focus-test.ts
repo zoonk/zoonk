@@ -54,7 +54,10 @@ function getHandledSuggestion({
 
   return {
     current:
-      status === "proposed" || status === "applied" || handled.planVersion === setup.plan.version
+      status === "proposed" ||
+      status === "applied" ||
+      isDismissed(status) ||
+      handled.planVersion === setup.plan.version
         ? handled
         : null,
     last: handled,
