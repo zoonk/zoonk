@@ -234,7 +234,6 @@ ${formatSituations(level)}
 
 type GenerateLevelTestBankLevelParams = GenerateLevelTestBankParams & { level: TestLevel };
 
-/** One level's questions and sentence; the levels are independent, so each is its own call. */
 export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLevelParams) {
   const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
 
