@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-11T02:17:45.697Z",
+  "fetchedAt": "2026-11-11T19:23:20.294Z",
   "models": {
     "alibaba/qwen-3-14b": { "input": 1.2e-7, "output": 2.4e-7 },
     "alibaba/qwen-3-235b": { "input": 2.2e-7, "output": 8.8e-7 },
@@ -142,7 +142,7 @@
       "inputCacheRead": 2.5e-7,
       "output": 0.000006
     },
-    "alibaba/qwen3.8-27b": { "input": 6e-8, "inputCacheRead": 5.9e-8, "output": 0.0000023 },
+    "alibaba/qwen3.8-27b": { "input": 6e-8, "inputCacheRead": 5.9e-8, "output": 0.0000022 },
     "alibaba/qwen3.8-flash": {
       "input": 1.5e-7,
       "inputCacheRead": 1.6e-8,
@@ -467,32 +467,6 @@
     "bfl/flux-pro-1.0-fill": { "input": 0, "output": 0, "perImage": 0.05 },
     "bfl/flux-pro-1.1": { "input": 0, "output": 0, "perImage": 0.04 },
     "bfl/flux-pro-1.1-ultra": { "input": 0, "output": 0, "perImage": 0.06 },
-    "bytedance/seed-1.6": {
-      "input": 2.5e-7,
-      "inputCacheRead": 5e-8,
-      "inputTiers": [
-        { "cost": 2.5e-7, "max": 128001, "min": 0 },
-        { "cost": 5e-7, "min": 128001 }
-      ],
-      "output": 0.000002,
-      "outputTiers": [
-        { "cost": 0.000002, "max": 128001, "min": 0 },
-        { "cost": 0.000004, "min": 128001 }
-      ]
-    },
-    "bytedance/seed-1.8": {
-      "input": 2.5e-7,
-      "inputCacheRead": 5e-8,
-      "inputTiers": [
-        { "cost": 2.5e-7, "max": 128001, "min": 0 },
-        { "cost": 5e-7, "min": 128001 }
-      ],
-      "output": 0.000002,
-      "outputTiers": [
-        { "cost": 0.000002, "max": 128001, "min": 0 },
-        { "cost": 0.000004, "min": 128001 }
-      ]
-    },
     "bytedance/seed-2.1-turbo": { "input": 5e-7, "inputCacheRead": 1e-7, "output": 0.0000025 },
     "bytedance/seedream-4.0": { "input": 0, "output": 0, "perImage": 0.03 },
     "bytedance/seedream-4.5": { "input": 0, "output": 0, "perImage": 0.04 },
@@ -822,6 +796,7 @@
         "priority": { "input": 0.0000036, "inputCacheRead": 1.8e-7, "output": 0.000018 }
       }
     },
+    "google/gemini-decision-1": { "input": 1e-7, "output": 0 },
     "google/gemini-nano-banana-2.1": {
       "input": 0.0000015,
       "inputCacheRead": 1.5e-7,
