@@ -3,6 +3,7 @@ package com.zoonk.android.feature.mindmaps
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
@@ -237,6 +241,14 @@ internal fun rememberSavePicture(
 }
 
 private const val PICTURE_TYPE = "image/webp"
+
+/** Keys reach a screen only from focus inside it; this takes that focus as the screen opens, without a stop for TalkBack. */
+@Composable
+internal fun KeyFocus() {
+    val focus = remember { FocusRequester() }
+    Box(Modifier.focusRequester(focus).focusable().clearAndSetSemantics {})
+    LaunchedEffect(Unit) { focus.requestFocus() }
+}
 
 /** A map's bookmark in its top bar, wherever the map shows: outlined, then filled once saved. */
 @Composable

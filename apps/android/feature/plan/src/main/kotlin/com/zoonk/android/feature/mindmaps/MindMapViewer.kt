@@ -209,6 +209,7 @@ internal fun MindMapViewer(
 
         TaskScaffold(
             onClose = onClose,
+            modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
             title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             actions = {
                 if (image != null && !outlineBeside) {
@@ -224,6 +225,7 @@ internal fun MindMapViewer(
                 }
             },
         ) { padding ->
+            KeyFocus()
             if (image == null || textOnly) {
                 OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
             } else {

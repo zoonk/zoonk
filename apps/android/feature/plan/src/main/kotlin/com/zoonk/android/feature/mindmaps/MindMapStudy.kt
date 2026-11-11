@@ -2,7 +2,6 @@ package com.zoonk.android.feature.mindmaps
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -36,8 +35,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -48,7 +45,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -318,8 +314,6 @@ internal fun MindMapStudy(
     val toggleSave = { target?.let { actions.save(it, chapterOf(current), !saved) } }
 
     LaunchedEffect(pager) { snapshotFlow { pager.settledPage }.collect { actions.settled(deck[it]) } }
-    val focus = remember { FocusRequester() }
-    LaunchedEffect(Unit) { focus.requestFocus() }
 
     SpreadScreen {
         TaskScaffold(
@@ -369,8 +363,7 @@ internal fun MindMapStudy(
                 }
             },
         ) { padding ->
-            // Keys reach the deck only from focus inside it; this takes that focus without a stop for TalkBack.
-            Box(Modifier.focusRequester(focus).focusable().clearAndSetSemantics {})
+            KeyFocus()
             HorizontalPager(
                 state = pager,
                 modifier = Modifier.fillMaxSize().padding(padding),
