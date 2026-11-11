@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { decodeHtmlEntities } from "../_utils/html-entities";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import languagePracticePrompt from "./grade-typed-answer-language-practice.prompt.md";
 import basePrompt from "./grade-typed-answer.prompt.md";
 import {
@@ -37,13 +38,17 @@ const languagePracticeSchema = z.object({
   isCorrect: z.boolean(),
   keyPoints: keyPointsSchema,
   corrections: z.array(z.object({ wrong: z.string(), right: z.string() })),
+  spelling: z.string().nullable(),
   feedback: z.string(),
 });
 /* oxlint-enable eslint/sort-keys */
 
-type ModelGrade = z.infer<typeof schema> & { corrections?: TypedAnswerCorrection[] };
+type ModelGrade = z.infer<typeof schema> & {
+  corrections?: TypedAnswerCorrection[];
+  spelling?: string | null;
+};
 
-const languagePracticeSystemPrompt = `${basePrompt}\n${languagePracticePrompt}`;
+const languagePracticeSystemPrompt = `${basePrompt}\n${languagePracticePrompt}\n${regionalFormsPrompt}`;
 
 export type TypedAnswerCorrection = { wrong: string; right: string };
 
@@ -66,8 +71,8 @@ export type TypedAnswerGrade = {
   feedback: string | null;
   method: TypedAnswerGradeMethod;
   /**
-   * In language practice the model still decides whether a slip changed the word's form, so a
-   * grade can have a spelling and still be wrong.
+   * The answer with its slips fixed. In language practice the model writes it and still decides
+   * whether a slip changed the word's form, so a grade can have a spelling and still be wrong.
    */
   spelling: string | null;
 };
@@ -96,17 +101,17 @@ function toGrade({
   feedback,
   isCorrect,
   keyPoints,
-  match,
   method,
   metNumbers,
+  spelling,
 }: {
   corrections: TypedAnswerCorrection[];
   feedback: string | null;
   isCorrect: boolean;
   keyPoints: string[];
-  match: TypedAnswerMatch;
   method: TypedAnswerGradeMethod;
   metNumbers: ReadonlySet<number>;
+  spelling: string | null;
 }): TypedAnswerGrade {
   const graded = keyPoints.map((text, index) => ({ met: metNumbers.has(index + 1), text }));
   const metCount = graded.filter((keyPoint) => keyPoint.met).length;
@@ -118,13 +123,21 @@ function toGrade({
     keyPoints: graded,
     method,
     score: graded.length === 0 ? 0 : metCount / graded.length,
-    spelling: match.kind === "typo" ? match.acceptedAnswer : null,
+    spelling,
   };
 }
 
 /** Code already ignores case, spacing and punctuation, so a correction of only those isn't one. */
 function changesTheAnswer(correction: TypedAnswerCorrection): boolean {
   return normalizeTypedAnswer(correction.wrong) !== normalizeTypedAnswer(correction.right);
+}
+
+/**
+ * The model's, not the accepted answer code matched as a typo: "querés" is one letter from
+ * "quieres" but no slip, and a fix keeps the learner's variety and wording.
+ */
+function getSlipFix({ answer, spelling }: { answer: string; spelling?: string | null }) {
+  return spelling && changesTheAnswer({ right: spelling, wrong: answer }) ? spelling : null;
 }
 
 function getFormCorrections({
@@ -264,9 +277,9 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
       feedback: decodeHtmlEntities(result.output.feedback),
       isCorrect: result.output.isCorrect,
       keyPoints,
-      match,
       metNumbers,
       method: "model",
+      spelling: getSlipFix({ answer: params.answer, spelling: result.output.spelling }),
     }),
     provenance,
     systemPrompt,

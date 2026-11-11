@@ -10,6 +10,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
 import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
+import { CountryField } from "../../language-variety/country-field";
 import { UseDateButton } from "../../plan/notice-day";
 import { AimRowPicker } from "./understood-aim-picker";
 import { type UnderstoodRow as Row } from "./use-understood-rows";
@@ -54,6 +55,7 @@ function SourceLink({ source }: { source: NonNullable<Row["source"]> }) {
 }
 
 function RowEditor({
+  country,
   defaultValue,
   label,
   onCancel,
@@ -61,6 +63,7 @@ function RowEditor({
   timeZone,
   type,
 }: {
+  country: Row["country"];
   defaultValue: string;
   label: string;
   onCancel: () => void;
@@ -82,7 +85,7 @@ function RowEditor({
       onSubmit={(event) => {
         event.preventDefault();
 
-        if (!value.trim()) {
+        if (!value.trim() && !country) {
           return;
         }
 
@@ -96,15 +99,27 @@ function RowEditor({
       <label className="sr-only" htmlFor={inputId}>
         {label}
       </label>
-      <Input
-        autoFocus
-        id={inputId}
-        onChange={(event) => setValue(event.target.value)}
-        onKeyDown={(event) => event.key === "Escape" && onCancel()}
-        type={type}
-        value={value}
-        {...(type === "date" ? bounds : {})}
-      />
+      {country ? (
+        <CountryField
+          autoFocus
+          choices={country.choices}
+          id={inputId}
+          language={country.language}
+          onChange={(region) => setValue(region ?? "")}
+          onKeyDown={(event) => event.key === "Escape" && onCancel()}
+          value={value || null}
+        />
+      ) : (
+        <Input
+          autoFocus
+          id={inputId}
+          onChange={(event) => setValue(event.target.value)}
+          onKeyDown={(event) => event.key === "Escape" && onCancel()}
+          type={type}
+          value={value}
+          {...(type === "date" ? bounds : {})}
+        />
+      )}
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
         <Button busy={isSaving} icon={<CheckIcon aria-hidden="true" />} size="sm" type="submit">
@@ -269,6 +284,7 @@ export function UnderstoodRowItem({
         <div className="flex min-w-0 flex-col gap-0.5">
           {editing && row.editable ? (
             <RowEditor
+              country={row.country}
               defaultValue={editValue}
               label={label}
               onCancel={() => onEdit(false)}

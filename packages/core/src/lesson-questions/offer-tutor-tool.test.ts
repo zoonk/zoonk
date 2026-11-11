@@ -507,6 +507,58 @@ describe("every feature the buddy can suggest", () => {
     });
   });
 
+  it("offers a language goal one of its language's countries without saving it", async () => {
+    const { goal } = await learnSetup();
+    const asked = await askBuddy(goal.id, "Can I learn Argentine Spanish?");
+
+    await expect(
+      offerTutorTool({ ...asked, country: "AR", tool: "variety" }),
+    ).resolves.toStrictEqual({ reason: "notLanguage", status: "unavailable" });
+
+    const learner = await userFixture();
+
+    const spanish = await goalFixture({
+      kind: "language",
+      targetLanguage: "es",
+      targetRegion: "UY",
+      userId: learner.id,
+    });
+
+    await planFixture({
+      goalId: spanish.id,
+      graph: { phases: [{ milestone: null, name: "A1" }], skills: [] },
+    });
+
+    mockSession(learner.id);
+    const spanishAsked = await askBuddy(spanish.id, "Can I learn Argentine Spanish?");
+
+    await expect(
+      offerTutorTool({ ...spanishAsked, country: "PT", tool: "variety" }),
+    ).resolves.toStrictEqual({ reason: "countryNotOffered", status: "unavailable" });
+
+    await expect(
+      offerTutorTool({ ...spanishAsked, country: "UY", tool: "variety" }),
+    ).resolves.toStrictEqual({ reason: "alreadySet", status: "unavailable" });
+
+    await expect(
+      offerTutorTool({ ...spanishAsked, country: "ar", tool: "variety" }),
+    ).resolves.toStrictEqual({
+      offer: {
+        goalId: spanish.id,
+        kind: "variety",
+        languageFlag: "ar",
+        targetLanguage: "es",
+        targetRegion: "AR",
+        taughtRegion: "MX",
+      },
+      status: "offered",
+    });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ where: { id: spanish.id } }),
+    ).resolves.toMatchObject({ targetRegion: "UY" });
+  });
+
   it("opens the written test's page for an exam that has one, locked once a free plan's first days end", async () => {
     const { goal } = await learnSetup();
     const asked = await askBuddy(goal.id, "I want to practise my essay");

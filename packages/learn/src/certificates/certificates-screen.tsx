@@ -29,7 +29,7 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
-import { GoalMark } from "../shell/goal-mark";
+import { GoalCountryName, GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   useCertificateDate,
@@ -44,7 +44,12 @@ export type ListedCertificate = { facts: OwnedCertificateFacts; links: Certifica
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
 export type CertificateUpNext = {
-  goal: { kind: string; targetLanguage: string | null; displayName: string };
+  goal: {
+    displayName: string;
+    languageFlag: string | null;
+    targetLanguage: string | null;
+    targetRegion: string | null;
+  };
   id: string;
   /** The plan's share of lessons done, 0 to 1; null for a language. */
   progress: number | null;
@@ -153,7 +158,10 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle>{item.goal.displayName}</ListRowTitle>
+          <ListRowTitle>
+            {item.goal.displayName}
+            <GoalCountryName goal={item.goal} />
+          </ListRowTitle>
           <ListRowDescription>
             {item.progress === null
               ? t("Comes when you finish a level, studying at least half of it")

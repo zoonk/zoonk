@@ -1,3 +1,5 @@
+import { type Goal } from "@zoonk/db";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
@@ -10,11 +12,23 @@ const MAX_PRACTICE_BLOCK_MINUTES = 15;
 
 export type PracticeTopic = { area: string; name: string };
 
-export function getPlanTopics(graph: PlanGraph): Map<string, PracticeTopic> {
+/** A language goal's one area is its course's title, which can name a variety ("American English"), so its practice names the language. */
+export function getPlanTopics({
+  goal,
+  graph,
+}: {
+  goal: Pick<Goal, "kind" | "language" | "targetLanguage"> | null;
+  graph: PlanGraph;
+}): Map<string, PracticeTopic> {
+  const language =
+    goal?.kind === "language" && goal.targetLanguage
+      ? getLanguageName({ targetLanguage: goal.targetLanguage, userLanguage: goal.language })
+      : null;
+
   return new Map(
     graph.skills.map((skill) => [
       skill.skillId,
-      { area: getSkillArea({ graph, skill }), name: skill.name },
+      { area: language ?? getSkillArea({ graph, skill }), name: skill.name },
     ]),
   );
 }

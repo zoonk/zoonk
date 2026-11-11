@@ -14918,7 +14918,7 @@
         }
       },
       "patch": {
-        "description": "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals and keeps the plan unless the pause left lessons on days now past, when it plans again from today and returns that change (`GET /goals/{goalId}/plan/resume-preview` shows it first); archiving the goal the tabs show moves them to another active goal.",
+        "description": "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals and keeps the plan unless the pause left lessons on days now past, when it plans again from today and returns that change (`GET /goals/{goalId}/plan/resume-preview` shows it first); archiving the goal the tabs show moves them to another active goal. A language goal's `targetRegion` changes only the variety its buddy and practice calls use: no plan change.",
         "operationId": "updateGoal",
         "security": [
           {
@@ -14998,7 +14998,7 @@
             }
           },
           "422": {
-            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date.",
+            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved.",
             "content": {
               "application/json": {
                 "schema": {
@@ -15008,6 +15008,9 @@
                     },
                     {
                       "$ref": "#/components/schemas/TargetDateOutOfRangeError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TargetRegionNotOfferedError"
                     }
                   ]
                 }
@@ -28771,10 +28774,15 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "targetLanguage": {
-            "description": "The language being learned",
+            "description": "The language being learned. A tag with one of the language's countries (`es-AR`) is stored as the language (`es`) with that `targetRegion`",
             "type": "string",
             "maxLength": 10,
             "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country, as an ISO 3166-1 alpha-2 code: the buddy and practice calls use its variety, while lessons and their audio stay those of the language. One the language doesn't list, or that contradicts the country in `targetLanguage`, is refused as invalid",
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "title": {
             "type": "string",
@@ -28844,6 +28852,12 @@
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country from its `regionChoices`, or null for none. Lessons and the plan don't change. Another country, or one on a goal that isn't a language goal, is refused with 422 TARGET_REGION_NOT_OFFERED",
+            "nullable": true,
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "timeZone": {
             "type": "string",
@@ -30419,6 +30433,35 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200
+              }
+            },
+            "required": [
+              "field",
+              "goal",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "enum": [
+                  "targetRegion"
+                ]
+              },
+              "goal": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9,
+                "description": "Which goal of the card, in order: 0 is the main goal"
+              },
+              "value": {
+                "nullable": true,
+                "description": "One of the goal's `regionChoices`, or null for none",
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
               }
             },
             "required": [
@@ -38226,7 +38269,7 @@
           },
           "languageFlag": {
             "nullable": true,
-            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
             "type": "string"
           },
           "plan": {
@@ -38287,6 +38330,13 @@
             "type": "string",
             "description": "What the learner typed"
           },
+          "regionChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            },
+            "description": "The countries a language goal can set as `targetRegion` (`PATCH /goals/{goalId}`), named in the goal's language and sorted by name; empty for other goals and languages without countries"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -38319,6 +38369,11 @@
             "nullable": true,
             "type": "string"
           },
+          "targetRegion": {
+            "nullable": true,
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+            "type": "string"
+          },
           "timezone": {
             "nullable": true,
             "type": "string"
@@ -38341,13 +38396,37 @@
           "plan",
           "primaryCourseId",
           "prompt",
+          "regionChoices",
           "status",
           "studyDays",
           "studyTime",
           "targetDate",
           "targetLanguage",
+          "targetRegion",
           "timezone",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "RegionChoice": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "The country's name in the goal's language"
+          },
+          "taught": {
+            "type": "boolean",
+            "description": "The country whose variety lessons and their audio teach"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "taught"
         ],
         "additionalProperties": false
       },
@@ -45771,8 +45850,15 @@
           },
           "languageFlag": {
             "nullable": true,
-            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
             "type": "string"
+          },
+          "regionChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            },
+            "description": "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries"
           },
           "status": {
             "type": "string",
@@ -45793,6 +45879,11 @@
             "nullable": true,
             "type": "string"
           },
+          "targetRegion": {
+            "nullable": true,
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language",
+            "type": "string"
+          },
           "title": {
             "type": "string"
           }
@@ -45808,9 +45899,11 @@
           "isSettingUp",
           "kind",
           "languageFlag",
+          "regionChoices",
           "status",
           "targetDate",
           "targetLanguage",
+          "targetRegion",
           "title"
         ],
         "additionalProperties": false
@@ -45832,6 +45925,11 @@
               }
             ]
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "The flag the goal shows once started, as a goal's `languageFlag`: a language goal's country when its `input` names one, else its language's; null for other goals",
+            "type": "string"
+          },
           "locked": {
             "type": "boolean",
             "description": "The plan follows no more goals at once: show it with the Plus lock, opening Plus"
@@ -45841,6 +45939,7 @@
           "displayName",
           "id",
           "input",
+          "languageFlag",
           "locked"
         ],
         "additionalProperties": false
@@ -77406,6 +77505,48 @@
           {
             "type": "object",
             "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "variety"
+                ],
+                "description": "The goal's language as one country speaks it, for the buddy and practice calls: Apply is `PATCH /goals/{goalId}` with this `targetRegion`, and nothing changes before it"
+              },
+              "languageFlag": {
+                "nullable": true,
+                "description": "The offered country's flag, as flag-icons names it: what the goal's `languageFlag` becomes once applied",
+                "type": "string"
+              },
+              "targetLanguage": {
+                "type": "string"
+              },
+              "targetRegion": {
+                "type": "string",
+                "description": "The country offered, a two-letter code"
+              },
+              "taughtRegion": {
+                "type": "string",
+                "description": "The country whose variety lessons and their audio keep"
+              }
+            },
+            "required": [
+              "goalId",
+              "kind",
+              "languageFlag",
+              "targetLanguage",
+              "targetRegion",
+              "taughtRegion"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
               "kind": {
                 "type": "string",
                 "enum": [
@@ -81234,6 +81375,38 @@
         "required": [
           "change",
           "goal"
+        ],
+        "additionalProperties": false
+      },
+      "TargetRegionNotOfferedError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "TARGET_REGION_NOT_OFFERED"
+                ]
+              },
+              "details": {
+                "description": "Additional error details"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
         ],
         "additionalProperties": false
       },
@@ -89962,13 +90135,22 @@
                 "$ref": "#/components/schemas/LanguageAim"
               }
             ]
+          },
+          "regionChoices": {
+            "default": [],
+            "description": "The countries a language goal can pick for `draft.targetRegion`, named in the learner's language; edit it with field targetRegion. Empty for other goals and languages without countries",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            }
           }
         },
         "required": [
           "cutoff",
           "draft",
           "examDates",
-          "languageAim"
+          "languageAim",
+          "regionChoices"
         ],
         "additionalProperties": false
       },
@@ -96881,10 +97063,15 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "targetLanguage": {
-            "description": "The language being learned",
+            "description": "The language being learned. A tag with one of the language's countries (`es-AR`) is stored as the language (`es`) with that `targetRegion`",
             "type": "string",
             "maxLength": 10,
             "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country, as an ISO 3166-1 alpha-2 code: the buddy and practice calls use its variety, while lessons and their audio stay those of the language. One the language doesn't list, or that contradicts the country in `targetLanguage`, is refused as invalid",
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "title": {
             "type": "string",

@@ -19,7 +19,10 @@ export async function runObjectiveCheck({
   turns,
   userId,
 }: {
-  row: Pick<LanguageConversation, "goalId" | "language" | "objectivesMet" | "targetLanguage">;
+  row: Pick<
+    LanguageConversation,
+    "goalId" | "language" | "objectivesMet" | "targetLanguage" | "targetRegion"
+  >;
   scenario: SavedScenario;
   turns: ConversationTurn[];
   userId: string;
@@ -45,6 +48,7 @@ export async function runObjectiveCheck({
       objectives: open,
       situation: scenario.situation,
       targetLanguage: row.targetLanguage,
+      targetRegion: row.targetRegion,
       turns,
     });
 

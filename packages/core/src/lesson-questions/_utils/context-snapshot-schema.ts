@@ -109,6 +109,7 @@ const planScopeSnapshotSchema = z.object({
     target: z.string().nullable(),
     targetDate: z.string().nullable(),
     title: z.string(),
+    variety: z.object({ chosen: z.string(), lessons: z.string() }).optional(),
   }),
   language: z.string(),
   mistakes: z.array(

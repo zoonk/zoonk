@@ -8,12 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.varietyName
 
 /**
  * Main's `GoalMark`: a language goal's flag (`languageFlag`, as the API names it), or the goal's first
- * letter on a quiet tile.
+ * letter on a quiet tile. Decorative: [goalSpokenName] says the country beside the goal's title.
  */
 @Composable
 fun GoalMark(
@@ -49,6 +53,20 @@ fun GoalMark(
 }
 
 private val MARK_SIZE = 20.dp
+
+/**
+ * What TalkBack reads for a goal: its title, then the country the learner chose ("Argentine Spanish,
+ * Spanish (Argentina)"), which its flag can't say; just the title without one.
+ */
+@Composable
+fun goalSpokenName(
+    title: String,
+    targetLanguage: String?,
+    targetRegion: String?,
+): String {
+    if (targetLanguage == null || targetRegion == null) return title
+    return stringResource(R.string.goal_with_variety, title, varietyName(targetLanguage, targetRegion, currentLocale()))
+}
 
 /** Main's `text-[0.625rem]` on its `size-4.5` tile. */
 private const val MARK_LETTER_SHARE = 0.56f

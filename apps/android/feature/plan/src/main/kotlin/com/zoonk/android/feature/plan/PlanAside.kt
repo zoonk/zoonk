@@ -34,6 +34,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.varietyName
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
@@ -187,8 +188,8 @@ private fun LinkRow(
 }
 
 /**
- * Main's "Your plan": the date, time a day, study days, mock exams, the exam's choices and what a
- * language plan practices. Each row opens Adjust plan at its section, once [onOpen] is given.
+ * Main's "Your plan": the date, time a day, study days, mock exams, the exam's choices, a language
+ * goal's language and what a language plan practices. Each row opens Adjust plan at its section, once [onOpen] is given.
  */
 @Composable
 internal fun PlanProperties(
@@ -246,6 +247,14 @@ internal fun PlanProperties(
                     warning = picked.isEmpty(),
                 )
             }
+            page.variety?.let { variety ->
+                PropertyRow(
+                    stringResource(R.string.onboarding_row_language),
+                    varietyName(variety.language, variety.region, locale),
+                    onOpen?.let { { it(PlanSection.Language) } },
+                    onClickLabel = adjust,
+                )
+            }
             if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
                 val skipped =
                     page.plan.steering.skippedActivities
@@ -269,7 +278,7 @@ internal fun PlanProperties(
     }
 }
 
-enum class PlanSection { Date, Time, Days, Choices, Practice }
+enum class PlanSection { Language, Date, Time, Days, Choices, Practice }
 
 @Composable
 private fun PropertyRow(

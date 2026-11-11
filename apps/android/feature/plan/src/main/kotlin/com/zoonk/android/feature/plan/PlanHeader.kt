@@ -44,7 +44,6 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
 import java.time.temporal.ChronoUnit
@@ -55,7 +54,7 @@ internal fun PlanHeader(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     modifier: Modifier = Modifier,
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
@@ -113,7 +112,7 @@ private fun PlanMenu(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     rename: GoalRename?,
     report: FeedbackSheet?,
 ) {
@@ -199,7 +198,7 @@ private fun MenuItems(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onRename: (() -> Unit)?,
     report: FeedbackSheet?,
     onDismiss: () -> Unit,
@@ -255,14 +254,14 @@ private fun MenuItems(
                 MenuItem(
                     R.drawable.ic_play_arrow,
                     stringResource(R.string.plan_resume_goal),
-                    close { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(GoalUpdateInput.Status.ACTIVE) },
+                    close { if (resume == Resume.Confirm) onDialog(GoalDialog.Resume) else onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
                     enabled = !isSaving && resume != Resume.Pending,
                 )
             } else {
                 MenuItem(
                     R.drawable.ic_pause,
                     stringResource(R.string.plan_pause_goal),
-                    close { onSetStatus(GoalUpdateInput.Status.PAUSED) },
+                    close { onSetStatus(LearnerSummaryGoal.Status.PAUSED) },
                     enabled = !isSaving,
                 )
             }
@@ -282,7 +281,7 @@ private enum class GoalDialog { Archive, Resume }
 private fun GoalStatusDialog(
     dialog: GoalDialog,
     page: PlanPageState,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val archive = dialog == GoalDialog.Archive
@@ -294,7 +293,7 @@ private fun GoalStatusDialog(
             TextButton(
                 onClick = {
                     onDismiss()
-                    onSetStatus(if (archive) GoalUpdateInput.Status.ARCHIVED else GoalUpdateInput.Status.ACTIVE)
+                    onSetStatus(if (archive) LearnerSummaryGoal.Status.ARCHIVED else LearnerSummaryGoal.Status.ACTIVE)
                 },
             ) { Text(stringResource(if (archive) R.string.plan_archive else R.string.plan_resume)) }
         },

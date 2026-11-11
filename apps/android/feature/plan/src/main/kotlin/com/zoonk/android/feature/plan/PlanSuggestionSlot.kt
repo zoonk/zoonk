@@ -53,7 +53,7 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
-import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
@@ -316,7 +316,7 @@ internal fun PlanSuggestionSlot(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
@@ -380,7 +380,7 @@ private fun SlotSuggestion(
     slot: Slot,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
 ) {
     val layout = slot.layout
@@ -560,14 +560,14 @@ private fun PausedSuggestion(
     layout: SuggestionLayout,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
 ) {
     val title = stringResource(R.string.plan_goal_paused, page.goal.displayName)
     val resumeAction =
         @Composable {
             SuggestionAction(
                 text = stringResource(R.string.plan_resume),
-                onClick = { onSetStatus(GoalUpdateInput.Status.ACTIVE) },
+                onClick = { onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
                 enabled = !isSaving && resume != Resume.Pending,
             )
         }

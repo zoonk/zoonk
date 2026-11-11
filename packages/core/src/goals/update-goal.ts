@@ -25,6 +25,7 @@ import { type PlanOperationError } from "../plans/planner/plan-operations";
 import { getScheduleOperations } from "../plans/planner/schedule-operations";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { assertTargetDates } from "../plans/target-date-range";
+import { isGoalRegion } from "./_utils/goal-region";
 import { findActiveGoalLimit, moveActiveGoalAway } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
@@ -39,7 +40,7 @@ export type GoalUpdateResult =
   | { change: PlanChangeView | null; goal: GoalView; status: "updated" }
   | { error: PlanOperationError; status: "invalid" }
   | { limit: AllowanceLimit; status: "limitReached" }
-  | { status: "notFound" | "unauthorized" };
+  | { status: "notFound" | "regionNotOffered" | "unauthorized" };
 
 /** For logs and admin only; the apps word these changes from their operations. */
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
@@ -67,6 +68,7 @@ function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInpu
     displayName: input.displayName,
     status: input.status,
     studyTime: input.studyTime,
+    targetRegion: input.targetRegion,
     timezone: input.timeZone,
     title: input.title,
   };
@@ -228,6 +230,11 @@ export async function updateGoal({
   }
 
   const { goal, userId } = owned;
+
+  if (input.targetRegion && !isGoalRegion({ goal, region: input.targetRegion })) {
+    return { status: "regionNotOffered" };
+  }
+
   const isActivating = input.status === "active" && goal.status !== "active";
   const limit = isActivating ? await findActiveGoalLimit({ goalId, userId }) : null;
 

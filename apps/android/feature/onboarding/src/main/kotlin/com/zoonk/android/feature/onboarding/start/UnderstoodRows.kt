@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.start
 import android.content.res.Resources
 import android.icu.text.ListFormatter
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -10,11 +11,13 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatTimeOfDay
 import com.zoonk.android.ui.format.languageName
+import com.zoonk.android.ui.format.varietyName
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
 import com.zoonk.api.models.LanguageAim
 import com.zoonk.api.models.OnboardingExamDate
+import com.zoonk.api.models.RegionChoice
 import com.zoonk.api.models.TargetCutoff
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -28,7 +31,7 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-enum class EditorKind { Text, Date, Time }
+enum class EditorKind { Text, Date, Time, Region }
 
 enum class EditableField(
     val key: String,
@@ -43,6 +46,7 @@ enum class EditableField(
     TargetPosition("targetPosition", EditorKind.Text),
     TargetScore("targetScore", EditorKind.Text),
     StudyTime("studyTime", EditorKind.Time),
+    TargetRegion("targetRegion", EditorKind.Region),
 }
 
 data class RowSource(
@@ -53,14 +57,28 @@ data class RowSource(
 data class GoalFacts(
     val isLanguage: Boolean,
     val targetLanguage: String?,
+    val targetRegion: String?,
+    val taughtRegion: String?,
     val details: Map<String, JsonElement?>?,
     val displayName: String,
     val language: String,
 )
 
-fun GoalDraftOutput.facts() = GoalFacts(kind == GoalDraftOutput.Kind.LANGUAGE, targetLanguage, details, displayName.orEmpty(), language)
+fun UnderstoodGoal.facts() =
+    GoalFacts(
+        draft.kind == GoalDraftOutput.Kind.LANGUAGE,
+        draft.targetLanguage,
+        draft.targetRegion,
+        regionChoices.taughtRegion(),
+        draft.details,
+        draft.displayName.orEmpty(),
+        draft.language,
+    )
 
-fun Goal.facts() = GoalFacts(kind == Goal.Kind.LANGUAGE, targetLanguage, details, displayName, language)
+fun Goal.facts() =
+    GoalFacts(kind == Goal.Kind.LANGUAGE, targetLanguage, targetRegion, regionChoices.taughtRegion(), details, displayName, language)
+
+private fun List<RegionChoice>.taughtRegion() = firstOrNull { it.taught }?.code
 
 data class UnderstoodRow(
     val id: String,
@@ -89,7 +107,11 @@ class UnderstoodRows(
         vararg args: Any,
     ) = resources.getString(id, *args)
 
-    fun rows(goal: UnderstoodGoal): List<UnderstoodRow> {
+    /** [keepLanguage]: the learner cleared the country on this screen, so its row stays to choose again. */
+    fun rows(
+        goal: UnderstoodGoal,
+        keepLanguage: Boolean = false,
+    ): List<UnderstoodRow> {
         val draft = goal.draft
         val levelNote = draft.details.text("levelNote")
 
@@ -101,7 +123,7 @@ class UnderstoodRows(
                 editable = EditableField.DisplayName,
             ),
             dateRow(draft, goal.examDates),
-        ) + languageRows(draft.facts()) + detailRows(draft.facts(), goal.cutoff, goal.languageAim) +
+        ) + languageRows(goal.facts(), keepLanguage) + detailRows(goal.facts(), goal.cutoff, goal.languageAim) +
             listOfNotNull(
                 levelNote?.let {
                     UnderstoodRow(
@@ -154,10 +176,16 @@ class UnderstoodRows(
             )
         }
 
-    fun languageRows(draft: GoalFacts): List<UnderstoodRow> {
+    /** A country the learner asked for shows, with how far it reaches, even when the title names the language. */
+    fun languageRows(
+        draft: GoalFacts,
+        keep: Boolean = false,
+    ): List<UnderstoodRow> {
         val target = draft.targetLanguage
         if (!draft.isLanguage || target == null) return emptyList()
-        val language = languageName(target)
+        val region = draft.targetRegion
+        val choosing = region != null || keep
+        val language = varietyName(target, region, locale)
         val native = draft.details.text("nativeLanguage") ?: draft.language
 
         return listOfNotNull(
@@ -165,7 +193,9 @@ class UnderstoodRows(
                 "targetLanguage",
                 text(R.string.onboarding_row_language),
                 language,
-            ).takeUnless { isSaidIn(draft.displayName, language) },
+                note = varietyNote(resources, locale, target, region, draft.taughtRegion),
+                editable = EditableField.TargetRegion.takeIf { choosing },
+            ).takeUnless { !choosing && isSaidIn(draft.displayName, language) },
             UnderstoodRow("nativeLanguage", text(R.string.onboarding_row_you_speak), languageName(native)),
         )
     }

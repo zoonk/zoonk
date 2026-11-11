@@ -494,28 +494,28 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "There is exactly one fix, targeting the expected grammar mistake with an exact learner quote and the correct, natural replacement. The explanation is brief and correctly identifies availability as a use of estar, but lacks the requested English “to be” comparison.",
+          "reasoning": "There is exactly one fix, quoting the learner accurately and correcting the most useful mistake with natural, level-appropriate Spanish. The explanation correctly assigns estar to availability, but omits the expected state-based explanation and English comparison; the permanence shorthand is less reliable.",
           "score": 8,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Both praised phrases come from the learner and correctly accomplish meaningful tasks: asking the rent and requesting a viewing. Pronunciation guidance is optional, and leaving it empty avoids unsupported claims.",
+          "reasoning": "All three praised phrases were spoken by the learner, are correct at A2, and contributed to asking about rent or arranging the viewing. Pronunciation guidance is optional, and leaving it empty avoids unsupported claims.",
           "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "The correction and quoted Spanish are appropriate, and the explanation is accessible English. However, the encouragement is entirely in Spanish instead of the learner's English, triggering the maximum score of 5 for a field in the wrong language.",
-          "score": 5,
+          "reasoning": "The explanation and encouragement use natural US English. The correction and quoted phrases use appropriate Mexican Spanish with correct accents and punctuation, and the feedback is accessible at A2.",
+          "score": 10,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The feedback is concise and respectful. The encouragement directly addresses the learner in one sentence and acknowledges actual accomplishments in this call without scores, promises, excessive praise, or references to the app or transcript.",
+          "reasoning": "The feedback is brief, direct, and respectful. The encouragement addresses the learner as “you” and accurately recognizes accomplishments from this call without scores, promises, or excessive praise.",
           "score": 10,
           "label": "Kind and safe",
           "weight": 20
@@ -523,7 +523,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 6 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -533,26 +533,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2027,
-          "outputTokens": 595,
-          "reasoningTokens": 173
+          "inputTokens": 2036,
+          "outputTokens": 808,
+          "reasoningTokens": 352
         }
       },
       "steps": [
         {
-          "conclusion": "The encouragement is in Spanish rather than US English, violating the required language for learner-facing feedback.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "The explanation correctly connects availability with estar, but omits the requested comparison that English uses one verb, “to be,” where Spanish distinguishes ser and estar.",
+          "conclusion": "The correction is exactly right, but the explanation does not explicitly identify availability as a state or connect Spanish's two verbs to English's single verb “to be.” The reference to “more permanent characteristics” is an oversimplified guide to choosing ser versus estar.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "Replace the explanation with: “Availability is a state, so Spanish uses estar: está disponible. English uses ‘to be’ for both states and characteristics, while Spanish distinguishes estar and ser.”",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -730,6 +730,130 @@
             {
               "speaker": "learner",
               "text": "Ok, obrigado."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "There is exactly one useful, accurate correction, the quoted mistake is the learner’s own wording, and the explanation correctly identifies estar as the verb for availability. However, “better” omits the specifically requested full question retaining “Vos sabés.” No wrong-correction or false-rule cap applies.",
+          "score": 8,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Both praised phrases were actually said, are correct, and accomplish important call objectives: asking the rent and accepting a viewing time. The empty pronunciation list makes no unsupported claims.",
+          "score": 10,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation and encouragement are natural US English, and the Spanish correction and quotations are appropriate for A2. Required accents are present, and no Argentine forms are replaced with another variant.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is concise, direct, and supportive. The encouragement addresses the learner as “you” and accurately acknowledges this call’s accomplishments without scores, promises, exaggerated praise, or references to the transcript or app.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2057,
+          "outputTokens": 629,
+          "reasoningTokens": 165
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The correction appropriately changes “es disponible” to “está disponible,” but gives only a fragment rather than the requested full question: “¿Vos sabés si el departamento está disponible?” It does not incorrectly change or criticize the learner’s vos forms.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The explanation could connect the correction to English: English uses “be” for availability, while Spanish uses “estar” for this state. This would make the distinction more useful to this learner.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker who chose Argentine Spanish, at A2, on the same Coyoacán call. Their vos forms (\"sabés\", \"podés\") are correct Argentine Spanish: calling one a mistake, or changing it to \"tú\" or \"usted\" in \"better\", is a major error. The fix should be \"es disponible\" to \"está disponible\", explaining that availability is a state and takes \"estar\", with \"better\" keeping their vos (\"¿Vos sabés si el departamento está disponible?\"). \"Went well\" can quote \"¿Cuánto es la renta?\" or \"el sábado a las cinco me viene bien\". In US English.",
+        "id": "en-es-ar-a2-voseo-kept-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "level": "A2",
+          "objectivesMet": [
+            "Preguntar por la renta",
+            "Quedar para ver el departamento"
+          ],
+          "scenario": {
+            "characterName": "Lucía",
+            "objectives": [
+              "Preguntar por la renta",
+              "Preguntar qué incluye",
+              "Quedar para ver el departamento"
+            ],
+            "situation": "You saw an ad for an apartment in Coyoacán. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
+            "title": "Call about an apartment"
+          },
+          "targetLanguage": "es",
+          "targetRegion": "AR",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hola, ¿qué tal? Soy Lucía, la dueña del departamento de Coyoacán."
+            },
+            {
+              "speaker": "learner",
+              "text": "Hola, Lucía. Llamo por el departamento. ¿Vos sabés si el departamento es disponible?"
+            },
+            {
+              "speaker": "character",
+              "text": "Sí, todavía está disponible."
+            },
+            {
+              "speaker": "learner",
+              "text": "¿Cuánto es la renta?"
+            },
+            {
+              "speaker": "character",
+              "text": "Son doce mil pesos por mes, más los servicios."
+            },
+            {
+              "speaker": "learner",
+              "text": "Muy bien. Quiero ver el departamento el sábado, ¿podés?"
+            },
+            {
+              "speaker": "character",
+              "text": "El sábado a la mañana no puedo, pero a la tarde sí, a las cinco."
+            },
+            {
+              "speaker": "learner",
+              "text": "Perfecto, el sábado a las cinco me viene bien. Muchas gracias."
             }
           ]
         }

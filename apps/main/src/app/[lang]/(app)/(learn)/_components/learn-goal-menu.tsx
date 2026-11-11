@@ -20,19 +20,50 @@ type Placement = "bar" | "sidebar";
 
 function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   return goals.flatMap(
-    ({ dailyMinutes, id, kind, status, targetDate, targetLanguage, displayName }) =>
+    ({
+      dailyMinutes,
+      displayName,
+      id,
+      kind,
+      languageFlag,
+      status,
+      targetDate,
+      targetLanguage,
+      targetRegion,
+    }) =>
       status === "archived" || (kind === "explain" && status === "completed")
         ? []
-        : [{ dailyMinutes, displayName, id, kind, status, targetDate, targetLanguage }],
+        : [
+            {
+              dailyMinutes,
+              displayName,
+              id,
+              kind,
+              languageFlag,
+              status,
+              targetDate,
+              targetLanguage,
+              targetRegion,
+            },
+          ],
   );
 }
 
 function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, locked, displayName }) => {
+  return goals.flatMap(({ id, input, languageFlag, locked, displayName }) => {
     const [goal] = input.goals;
 
     return goal
-      ? [{ displayName, id, kind: goal.kind, locked, targetLanguage: goal.targetLanguage ?? null }]
+      ? [
+          {
+            displayName,
+            id,
+            languageFlag,
+            locked,
+            targetLanguage: goal.targetLanguage ?? null,
+            targetRegion: goal.targetRegion ?? null,
+          },
+        ]
       : [];
   });
 }

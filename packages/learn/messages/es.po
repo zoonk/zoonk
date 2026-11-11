@@ -988,6 +988,7 @@ msgstr "Sonidos"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Idioma"
@@ -2909,6 +2910,7 @@ msgid "Use my date anyway"
 msgstr "Usar mi fecha de todos modos"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -2976,6 +2978,17 @@ msgstr "Una breve llamada de voz, a tu nivel."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Hacer un simulacro"
+
+#. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "axUi06"
+msgid "Your buddy and practice calls use {variety}."
+msgstr "Tu compañero y las llamadas de práctica usan {variety}."
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "n-Iy44"
+msgid "Saved. You can change it in your plan."
+msgstr "Se guardó. Puedes cambiar esta preferencia en tu plan."
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -5408,6 +5421,23 @@ msgstr "En tus propias palabras. La meta es {level}"
 msgctxt "qm_eL5"
 msgid "Something else"
 msgstr "Otra cosa"
+
+#: src/language-variety/country-field.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "Sin preferencia"
+
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones y su audio usan {taughtVariety}."
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
+#: src/language-variety/use-variety-words.ts
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "Tu compañero y las llamadas de práctica usan {variety}. Las lecciones y su audio usan {taughtVariety}."
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10758,6 +10788,12 @@ msgid "Read it again"
 msgstr "Leerlo de nuevo"
 
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "País"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
 msgstr "Hablas"
@@ -13860,6 +13896,12 @@ msgstr "Repasos"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "Repaso rápido"
+
+#. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
+#: src/shell/goal-mark.tsx
+msgctxt "goalSwitcher.4dyYDe"
+msgid ", {variety}"
+msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"

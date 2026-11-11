@@ -68,6 +68,9 @@ model Goal {
   details               Json                   @default("{}")
   language              String                 @db.VarChar(10)
   targetLanguage        String?                @map("target_language") @db.VarChar(10)
+  /// A language goal's country (ISO 3166-1 alpha-2), only when the learner asked for one: their
+  /// buddy and practice calls use its variety, while lessons stay those of `targetLanguage`.
+  targetRegion          String?                @map("target_region") @db.VarChar(2)
   targetDate            DateTime?              @map("target_date") @db.Date
   dailyMinutes          Int                    @map("daily_minutes") @db.SmallInt
   /// Local time, such as "20:00".

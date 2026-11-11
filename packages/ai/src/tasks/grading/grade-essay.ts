@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type EssayCriterionDefinition,
   buildEssayGrade,
@@ -130,7 +131,7 @@ function buildOutputSchema({
 }
 
 function getSystemPrompt(rubric: EssayRubric): string {
-  return selectPromptVariants({
+  const rubricPrompt = selectPromptVariants({
     template: promptTemplate,
     variants: {
       ap: rubric.kind === "ap",
@@ -139,6 +140,8 @@ function getSystemPrompt(rubric: EssayRubric): string {
       oab: rubric.kind === "oab",
     },
   });
+
+  return `${rubricPrompt}\n${regionalFormsPrompt}`;
 }
 
 function formatCriterion(criterion: EssayCriterionDefinition): string {

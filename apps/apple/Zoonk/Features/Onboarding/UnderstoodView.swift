@@ -107,10 +107,18 @@ private struct UnderstoodCard: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var rewriting = false
   @State private var editing: FieldEdit?
+  @State private var choosingVariety: VarietyChoice?
+  @State private var countryAsked: Set<Int> = []
 
   private struct FieldEdit: Equatable {
     let goal: Int
     let field: UnderstoodField
+  }
+
+  private struct VarietyChoice: Identifiable {
+    let goal: Int
+
+    var id: Int { goal }
   }
 
   var body: some View {
@@ -138,9 +146,13 @@ private struct UnderstoodCard: View {
               timeZone: draft.timeZone,
               isEditing: editing == row.field.map { FieldEdit(goal: index, field: $0) },
               onEdit: { isEditing in
-                editing = isEditing ? row.field.map { FieldEdit(goal: index, field: $0) } : nil
+                if row.field == .targetRegion {
+                  choosingVariety = isEditing ? VarietyChoice(goal: index) : nil
+                } else {
+                  editing = isEditing ? row.field.map { FieldEdit(goal: index, field: $0) } : nil
+                }
               },
-              onSave: { value in await save(row: row, goal: index, value: value) })
+              onSave: { value in await save(field: row.field, goal: index, value: value) })
           }
         }
       }
@@ -202,6 +214,26 @@ private struct UnderstoodCard: View {
         }
       }
     }
+    .sheet(item: $choosingVariety) { choice in
+      if let variety = variety(goal: choice.goal) {
+        LanguageVarietySheet(variety: variety) { region in
+          await save(field: .targetRegion, goal: choice.goal, value: region)
+        }
+        .zoonkStyles()
+      }
+    }
+  }
+
+  private func variety(goal index: Int) -> LanguageVariety? {
+    guard understood.goals.indices.contains(index) else {
+      return nil
+    }
+
+    let goal = understood.goals[index]
+    let facts = try? UnderstoodFacts(goal.draft.value1)
+
+    return LanguageVariety(
+      language: facts?.targetLanguage, region: facts?.targetRegion, choices: goal.regionChoices)
   }
 
   private var startable: Range<Int> {
@@ -213,7 +245,8 @@ private struct UnderstoodCard: View {
   }
 
   private func rows(goal index: Int) -> [UnderstoodRow] {
-    let rows = UnderstoodRows.rows(for: understood.goals[index])
+    let rows = UnderstoodRows.rows(
+      for: understood.goals[index], countryAsked: countryAsked.contains(index))
 
     guard index == 0,
       let schedule = UnderstoodRows.scheduleRow(understood)
@@ -225,9 +258,13 @@ private struct UnderstoodCard: View {
   }
 
   /// False when it couldn't be saved, so the editor stays open to try again.
-  private func save(row: UnderstoodRow, goal: Int, value: String) async -> Bool {
-    guard let field = row.field else {
+  private func save(field: UnderstoodField?, goal: Int, value: String?) async -> Bool {
+    guard let field else {
       return false
+    }
+
+    if field == .targetRegion {
+      countryAsked.insert(goal)
     }
 
     do {
@@ -239,6 +276,11 @@ private struct UnderstoodCard: View {
     } catch is CancellationError {
       return true
     } catch {
+      // One that timed out may have landed, and the screen must show what the draft now says.
+      if let fresh = try? await onboarding.understanding(id: draft.id) {
+        onDraft(fresh)
+      }
+
       return false
     }
   }

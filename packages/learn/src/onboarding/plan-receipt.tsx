@@ -79,7 +79,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   const facts: (ReceiptFact | null | false)[] = [
     { id: "title", label: t("Goal"), value: goal.displayName },
     dateFact(goal),
-    ...languageRows(goal),
+    ...languageRows({ draft: goal, regionChoices: goal.regionChoices }),
     ...detailRows(goal, null, goal.kind === "language" ? toLanguageAimView(goal.details) : null),
     level !== null && { id: "level", label: t("Your level"), value: level },
     isAnswered({ goal, question: "schedule" }) && {

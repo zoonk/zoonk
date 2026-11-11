@@ -988,6 +988,7 @@ msgstr "効果音"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "言語"
@@ -2909,6 +2910,7 @@ msgid "Use my date anyway"
 msgstr "それでも指定した日付を使う"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -2976,6 +2978,17 @@ msgstr "レベルに合った短い会話を声に出して練習します。"
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "模試を受ける"
+
+#. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "axUi06"
+msgid "Your buddy and practice calls use {variety}."
+msgstr "相棒とのやり取りや会話練習では{variety}を使います。"
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "n-Iy44"
+msgid "Saved. You can change it in your plan."
+msgstr "保存しました。学習計画から変更できます。"
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -5408,6 +5421,23 @@ msgstr "自分の言葉で入力。{level}を目指します"
 msgctxt "qm_eL5"
 msgid "Something else"
 msgstr "その他"
+
+#: src/language-variety/country-field.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "指定なし"
+
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンとその音声では{taughtVariety}を使います。"
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
+#: src/language-variety/use-variety-words.ts
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "相棒とのやり取りや会話練習では{variety}を使います。レッスンとその音声では{taughtVariety}を使います。"
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10758,6 +10788,12 @@ msgid "Read it again"
 msgstr "もう一度読み取る"
 
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "国"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
 msgstr "話せる言語"
@@ -13860,6 +13896,12 @@ msgstr "復習"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "さっと復習"
+
+#. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
+#: src/shell/goal-mark.tsx
+msgctxt "goalSwitcher.4dyYDe"
+msgid ", {variety}"
+msgstr "、{variety}"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"

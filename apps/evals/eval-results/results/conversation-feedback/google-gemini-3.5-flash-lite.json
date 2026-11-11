@@ -494,28 +494,28 @@
       "categoryScores": [
         {
           "categoryId": "fix",
-          "reasoning": "There is exactly one fix, it quotes the learner accurately, and it supplies the required natural correction. The explanation correctly associates availability with “estar,” but omits the explicitly expected English “to be” comparison. A direct explanation about availability as a state would also be clearer than the broader temporary-state framing.",
+          "reasoning": "There is exactly one fix, it quotes the learner accurately, and it gives the required natural correction, “¿El departamento está disponible?” The explanation appropriately associates availability with estar, but omits the requested English comparison and could avoid emphasizing temporariness.",
           "score": 8,
           "label": "One clear, useful fix",
           "weight": 35
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Both praised phrases are correct excerpts from the learner’s speech and serve meaningful purposes: asking the rent and requesting a viewing. Pronunciation is optional, and leaving it empty avoids unsupported claims.",
+          "reasoning": "Both praised phrases were spoken by the learner, are correct at this level, and performed useful functions: asking the rent and requesting a viewing. Pronunciation guidance is optional, and none is included.",
           "score": 10,
           "label": "Honest praise and pronunciation",
           "weight": 25
         },
         {
           "categoryId": "language",
-          "reasoning": "The explanation and encouragement are in natural US English. The correction and quoted phrases are appropriate Mexican Spanish with the necessary accents, and the feedback suits an A2 learner.",
+          "reasoning": "The explanation and encouragement are natural US English. The correction and quoted phrases are appropriate Mexican Spanish, with correct accents and A2-accessible language.",
           "score": 10,
           "label": "Right language and level",
           "weight": 20
         },
         {
           "categoryId": "tone",
-          "reasoning": "The feedback is short, direct, and supportive. The encouragement addresses the learner as “you” and accurately recognizes two accomplishments from this call without scores, promises, exaggerated praise, or prohibited references.",
+          "reasoning": "The feedback is short, direct, and supportive. The encouragement addresses the learner as “you” and accurately recognizes accomplishments from this call without exaggerated praise, promises, scores, or references to internal systems.",
           "score": 10,
           "label": "Kind and safe",
           "weight": 20
@@ -533,9 +533,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2018,
-          "outputTokens": 577,
-          "reasoningTokens": 136
+          "inputTokens": 2022,
+          "outputTokens": 593,
+          "reasoningTokens": 176
         }
       },
       "steps": [
@@ -545,12 +545,12 @@
           "score": 10
         },
         {
-          "conclusion": "The explanation omits the expected comparison with English: English uses one verb, “to be,” where Spanish distinguishes “ser” and “estar.” This would help explain the learner’s specific mistake.",
+          "conclusion": "The explanation omits the expected comparison with English: English uses the single verb “to be,” while Spanish uses “estar” for availability.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Focus the explanation on availability being a state rather than on temporary states generally, which can encourage an unreliable temporary-versus-permanent shortcut.",
+          "conclusion": "Explain availability directly as a state rather than emphasizing that it is temporary, which can encourage an unreliable temporary-versus-permanent shortcut.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -730,6 +730,130 @@
             {
               "speaker": "learner",
               "text": "Ok, obrigado."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "Provides exactly one useful correction: 'es disponible' becomes 'está disponible'. It quotes the learner accurately, preserves the correct Argentine 'vos sabés', and briefly explains availability as a state requiring estar.",
+          "score": 10,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "All three praised phrases are correct, were spoken by the learner, and meaningfully contributed to asking about rent or arranging the viewing. The empty pronunciation list avoids unsupported pronunciation claims.",
+          "score": 10,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation and encouragement are natural US English. Spanish quotations retain their accents, and the correction respects Argentine voseo and the learner's A2 level.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is concise and direct. The encouragement addresses the learner as 'you' and accurately recognizes two accomplishments from this call without exaggerated praise, promises, scores, or references to internal processing.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2082,
+          "outputTokens": 439,
+          "reasoningTokens": 86
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker who chose Argentine Spanish, at A2, on the same Coyoacán call. Their vos forms (\"sabés\", \"podés\") are correct Argentine Spanish: calling one a mistake, or changing it to \"tú\" or \"usted\" in \"better\", is a major error. The fix should be \"es disponible\" to \"está disponible\", explaining that availability is a state and takes \"estar\", with \"better\" keeping their vos (\"¿Vos sabés si el departamento está disponible?\"). \"Went well\" can quote \"¿Cuánto es la renta?\" or \"el sábado a las cinco me viene bien\". In US English.",
+        "id": "en-es-ar-a2-voseo-kept-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "level": "A2",
+          "objectivesMet": [
+            "Preguntar por la renta",
+            "Quedar para ver el departamento"
+          ],
+          "scenario": {
+            "characterName": "Lucía",
+            "objectives": [
+              "Preguntar por la renta",
+              "Preguntar qué incluye",
+              "Quedar para ver el departamento"
+            ],
+            "situation": "You saw an ad for an apartment in Coyoacán. Call the owner, Lucía, to ask about the rent and arrange a viewing.",
+            "title": "Call about an apartment"
+          },
+          "targetLanguage": "es",
+          "targetRegion": "AR",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hola, ¿qué tal? Soy Lucía, la dueña del departamento de Coyoacán."
+            },
+            {
+              "speaker": "learner",
+              "text": "Hola, Lucía. Llamo por el departamento. ¿Vos sabés si el departamento es disponible?"
+            },
+            {
+              "speaker": "character",
+              "text": "Sí, todavía está disponible."
+            },
+            {
+              "speaker": "learner",
+              "text": "¿Cuánto es la renta?"
+            },
+            {
+              "speaker": "character",
+              "text": "Son doce mil pesos por mes, más los servicios."
+            },
+            {
+              "speaker": "learner",
+              "text": "Muy bien. Quiero ver el departamento el sábado, ¿podés?"
+            },
+            {
+              "speaker": "character",
+              "text": "El sábado a la mañana no puedo, pero a la tarde sí, a las cinco."
+            },
+            {
+              "speaker": "learner",
+              "text": "Perfecto, el sábado a las cinco me viene bien. Muchas gracias."
             }
           ]
         }

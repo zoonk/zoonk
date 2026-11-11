@@ -22,6 +22,7 @@ const SECOND_STEP: ModelMessage[] = [
 
 const CALL: GoalTutorAppToolRequest = {
   area: null,
+  country: null,
   goal: null,
   tool: "conversationCall",
   topic: null,

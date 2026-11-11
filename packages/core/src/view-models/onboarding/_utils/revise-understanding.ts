@@ -1,12 +1,10 @@
 import "server-only";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
+import { isGoalRegion } from "../../../goals/_utils/goal-region";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { isLanguageAim } from "../../../language/aims/language-aims";
-import {
-  type GoalUnderstandingView,
-  type OnboardingDraftEdit,
-  type UnderstoodGoalView,
-} from "../onboarding-contract";
+import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
+import { type OnboardingDraftEdit } from "../onboarding-draft-edit-contract";
 import { getUnderstoodAim } from "./understanding-view";
 
 type GoalsUnderstanding = Extract<GoalUnderstandingView, { status: "goals" }>;
@@ -46,6 +44,26 @@ function reviseTargetDate({
   return { ...goal, draft: value === null ? draft : { ...draft, targetDate: value } };
 }
 
+function reviseTargetRegion({
+  goal,
+  value,
+}: {
+  goal: UnderstoodGoalView;
+  value: string | null;
+}): UnderstoodGoalView | null {
+  const draft = withoutKey(goal.draft, "targetRegion");
+
+  if (value === null) {
+    return { ...goal, draft };
+  }
+
+  const { kind, language, targetLanguage = null } = draft;
+
+  return isGoalRegion({ goal: { kind, language, targetLanguage }, region: value })
+    ? { ...goal, draft: { ...draft, targetRegion: value } }
+    : null;
+}
+
 function reviseGoal({
   edit,
   goal,
@@ -59,6 +77,8 @@ function reviseGoal({
       return { ...goal, draft: { ...goal.draft, [edit.field]: edit.value } };
     case "targetDate":
       return reviseTargetDate({ goal, value: edit.value });
+    case "targetRegion":
+      return reviseTargetRegion({ goal, value: edit.value });
     case "targetScore":
       return goal.draft.kind === "language" && !isLanguageAim(edit.value)
         ? null
@@ -78,7 +98,7 @@ function setTextDetail({
   edit,
   goal,
 }: {
-  edit: Exclude<TextEdit, { field: "targetDate" }>;
+  edit: Exclude<TextEdit, { field: "targetDate" | "targetRegion" }>;
   goal: UnderstoodGoalView;
 }): UnderstoodGoalView {
   const details = setDetail({
