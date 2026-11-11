@@ -17,8 +17,8 @@ import {
   FocusTestInvitation,
   FocusTestResume,
 } from "./focus-test-screens";
-import { getSubjectName } from "./focus-test-subjects";
 import { useFocusTest } from "./use-focus-test";
+import { getSubjectName } from "./use-focus-test-texts";
 
 function useWaitSkip({ answered, host }: { answered: boolean; host: FocusTestHost }) {
   const t = useExtracted();

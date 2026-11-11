@@ -169,6 +169,7 @@ describe(getNextSitting, () => {
     expect(
       getNextSitting(testWith({ sitting: sittingWith({ answered: 1, left: 14 }) })),
     ).toBeNull();
+
     expect(getNextSitting(testWith({ checkpoint: CHECKPOINT }))).toBeNull();
   });
 });

@@ -24,8 +24,8 @@ import { LearnLink } from "../learn-link";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useProposalEffectText } from "../plan/use-effect-text";
 import { type SittingEnd } from "./focus-test-phase";
-import { FocusTestSubjectsSheet, getSubjectName } from "./focus-test-subjects";
-import { useFocusReasonText } from "./use-focus-test-texts";
+import { FocusTestSubjectsSheet } from "./focus-test-subjects";
+import { getSubjectName, useFocusReasonText } from "./use-focus-test-texts";
 
 type Proposal = NonNullable<FocusTestFocus["proposal"]>;
 type Decision = "applied" | "declined" | "undone";

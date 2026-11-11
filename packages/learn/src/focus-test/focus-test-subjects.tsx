@@ -20,11 +20,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { useSubjectStateText } from "./use-focus-test-texts";
-
-export function getSubjectName(subject: { name: string; shortName: string | null }): string {
-  return subject.shortName ?? subject.name;
-}
+import { getSubjectName, useSubjectStateText } from "./use-focus-test-texts";
 
 /**
  * Before the first answer every quick subject would read "Not asked yet", so only what the test
