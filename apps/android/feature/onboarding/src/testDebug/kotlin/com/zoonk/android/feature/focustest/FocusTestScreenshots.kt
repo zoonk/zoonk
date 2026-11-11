@@ -165,7 +165,7 @@ class FocusTestScreenshots {
     fun checkpointOnPlanProposalNotNow() =
         shoot(
             "focus-test-checkpoint-plan-proposal-not-now",
-            closing(focusOf(state = "proposed", proposal = PROPOSAL)),
+            closing(focusOf(state = "proposed", basis = "importance", proposal = PROPOSAL)),
             host = FocusTestHost.Plan,
         ) {
             tap("Use my answers")

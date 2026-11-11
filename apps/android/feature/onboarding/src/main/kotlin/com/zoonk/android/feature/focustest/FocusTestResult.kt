@@ -163,7 +163,7 @@ private fun SuggestedFocus(
 
     // Once the proposal is answered in any way, the answer's line says what happened instead.
     val answered = proposal != null && plan?.answer?.change?.id == proposal.id
-    val intro = listOfNotNull(focusIntro(focus.state)?.takeUnless { answered }, importance)
+    val intro = if (answered) emptyList() else listOfNotNull(focusIntro(focus.state), importance)
 
     Section(stringResource(R.string.focustest_suggested_focus)) {
         if (intro.isNotEmpty()) {
