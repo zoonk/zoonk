@@ -104,7 +104,12 @@ function readMarkdownTables(lines: readonly string[]): FoundTable[] {
     }
 
     const read = readMarkdownTable(lines, index);
-    return read ? [...found, { ...read, start: index }] : found;
+
+    if (read) {
+      found.push({ ...read, start: index });
+    }
+
+    return found;
   }, []);
 }
 
