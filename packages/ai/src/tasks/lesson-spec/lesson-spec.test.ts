@@ -188,38 +188,18 @@ describe(generateLessonSpec, () => {
   });
 
   it("plans the lesson again when its plan breaks a shape rule, and keeps the better plan", async () => {
-    // Five teaching screens in a row: a check comes after at most four.
-    const longRun = oneSkillLesson({
-      kinds: [
-        "hook",
-        "explanation",
-        "guess",
-        "explanation",
-        "workedExample",
-        "explanation",
-        "explanation",
-        "check",
-        "application",
-      ],
-      title: "Long run",
+    const noApplication = oneSkillLesson({
+      kinds: ["hook", "explanation", "guess", "explanation", "check"],
+      title: "No application",
     });
 
     const fixed = oneSkillLesson({
-      kinds: [
-        "hook",
-        "explanation",
-        "guess",
-        "workedExample",
-        "check",
-        "explanation",
-        "check",
-        "application",
-      ],
+      kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
       title: "Fixed",
     });
 
     vi.mocked(generateText)
-      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [longRun] }))
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [noApplication] }))
       .mockResolvedValueOnce(createGenerateTextResult({ lessons: [fixed] }));
 
     const params = {
@@ -239,14 +219,14 @@ describe(generateLessonSpec, () => {
 
     // A second plan that's no better leaves the first one, and a good plan is planned once.
     vi.mocked(generateText)
-      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [longRun] }))
-      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [longRun] }))
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [noApplication] }))
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [noApplication] }))
       .mockResolvedValueOnce(createGenerateTextResult({ lessons: [fixed] }));
 
     const kept = await generateLessonSpec(params);
     const planned = await generateLessonSpec(params);
 
-    expect(kept.data.lessons[0]?.title).toBe("Long run");
+    expect(kept.data.lessons[0]?.title).toBe("No application");
     expect(planned.data.lessons[0]?.title).toBe("Fixed");
     expect(generateText).toHaveBeenCalledTimes(5);
   });
