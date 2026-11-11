@@ -16,6 +16,16 @@ describe(decodePage, () => {
     expect(decodePage({ bytes: latin1(html), charset: "ISO-8859-1" })).toBe(html);
   });
 
+  it("decodes a page by its <meta> when its response declares a charset no decoder knows", () => {
+    const html = `<meta charset="windows-1251"><p>Привет</p>`;
+
+    const bytes = new Uint8Array(
+      Buffer.from(html.replace("Привет", "\u00CF\u00F0\u00E8\u00E2\u00E5\u00F2"), "latin1"),
+    );
+
+    expect(decodePage({ bytes, charset: "x-unknown" })).toBe(html);
+  });
+
   it("decodes a UTF-16 page by its byte-order mark", () => {
     const html = `<a href="https://lumen.example/">Lumen</a>`;
     const units = Uint16Array.from(`﻿${html}`, (character) => character.codePointAt(0) ?? 0);
