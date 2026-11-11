@@ -3,46 +3,50 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
-import { listActiveCliLogins } from "@/data/cli-logins/list-active-cli-logins";
+import { listCliLoginsByPerson } from "@/data/cli-logins/list-cli-logins-by-person";
 import { formatDateTime } from "@/lib/format";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
-import { RevokeCliLoginForm } from "./revoke-cli-login-form";
+import { RevokeCliLoginsForm } from "./revoke-cli-logins-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "Person" },
-  { label: "Login" },
+  { label: "CLI logins" },
   { align: "right", label: "" },
 ];
 
 export async function CliLoginList() {
-  const logins = await listActiveCliLogins();
+  const people = await listCliLoginsByPerson();
 
   return (
     <AdminTableColumns
       columns={COLUMNS}
       emptyLabel="No one is logged in to the CLI."
-      isEmpty={logins.length === 0}
+      isEmpty={people.length === 0}
     >
-      {logins.map((login) => (
-        <TableRow key={login.id}>
+      {people.map((person) => (
+        <TableRow key={person.user.id}>
           <TableCell className="whitespace-normal">
-            <Link className="font-medium hover:underline" href={`/users/${login.user.id}`} prefetch>
-              {login.user.name}
+            <Link
+              className="font-medium hover:underline"
+              href={`/users/${person.user.id}`}
+              prefetch
+            >
+              {person.user.name}
             </Link>
-            <div className="text-muted-foreground text-xs break-all">{login.user.email}</div>
+            <div className="text-muted-foreground text-xs break-all">{person.user.email}</div>
           </TableCell>
           <TableCell className="whitespace-normal">
-            <div>{login.client.name ?? login.client.clientId}</div>
+            <div>{person.machines === 1 ? "1 machine" : `${person.machines} machines`}</div>
             <div className="text-muted-foreground text-xs">
-              Renewed {formatDateTime(login.createdAt)}
+              Last renewed {formatDateTime(person.lastRenewedAt)}
             </div>
             <div className="text-muted-foreground text-xs">
-              Ends {formatDateTime(login.expiresAt)} if unused
+              Ends {formatDateTime(person.endsAt)} if unused
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <RevokeCliLoginForm loginId={login.id} />
+            <RevokeCliLoginsForm name={person.user.name} userId={person.user.id} />
           </TableCell>
         </TableRow>
       ))}

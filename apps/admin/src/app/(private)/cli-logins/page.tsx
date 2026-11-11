@@ -19,10 +19,10 @@ export default function CliLoginsPage() {
         <ContainerHeaderGroup>
           <ContainerTitle>CLI logins</ContainerTitle>
           <ContainerDescription>
-            Each row is one machine logged in with pnpm zoonk login. A login renews itself while
-            it&apos;s used and ends after 30 days without use. Revoke a lost machine&apos;s login to
-            end it now; the person&apos;s other machines stay logged in, and that machine can log in
-            again.
+            Everyone logged in with pnpm zoonk login, and on how many machines. A login renews
+            itself while it&apos;s used and ends after 30 days without use. Revoke ends all of a
+            person&apos;s CLI logins at once, on every machine; they log in again on the machines
+            they still have.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

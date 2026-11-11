@@ -1,21 +1,23 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getStaffActor } from "./get-staff-actor";
-import { type StaffResult } from "./read";
+import { z } from "zod";
+import { type StaffResult, staffRead } from "./read";
 
 type StaffMember = { email: string; id: string; name: string; role: string | null };
 
-export async function getStaffMe(): Promise<StaffResult<{ user: StaffMember }>> {
-  const actor = await getStaffActor();
-
-  if (actor.status !== "ready") {
-    return { status: actor.status };
-  }
-
-  const user = await prisma.user.findUniqueOrThrow({
-    select: { email: true, id: true, name: true, role: true },
-    where: { id: actor.userId },
+export function getStaffMe(): Promise<StaffResult<{ user: StaffMember }>> {
+  return staffRead({
+    call: { verb: "me" },
+    input: {},
+    run: async (_input, actor) => ({
+      data: {
+        user: await prisma.user.findUniqueOrThrow({
+          select: { email: true, id: true, name: true, role: true },
+          where: { id: actor.userId },
+        }),
+      },
+      rows: 1,
+    }),
+    schema: z.object({}),
   });
-
-  return { status: "ready", user };
 }

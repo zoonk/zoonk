@@ -33,7 +33,7 @@
     "./auth/ott/state": "./src/auth/ott-state.ts",
     "./auth/purge-expired-auth-records": "./src/auth/purge-expired-auth-records.ts",
     "./auth/purge-verifications": "./src/auth/purge-expired-verifications.ts",
-    "./auth/revoke-cli-login": "./src/auth/revoke-cli-login.ts",
+    "./auth/revoke-cli-logins": "./src/auth/revoke-cli-logins.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/course-content-tags": "./src/cache/course-content-tags.ts",
     "./cache/course-content": "./src/cache/revalidate-course-content.ts",
