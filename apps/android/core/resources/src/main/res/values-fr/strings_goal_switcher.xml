@@ -6,7 +6,12 @@
   "goal_switcher_explore_courses": "1a3347cbf72f4d58d0cdaf0a6ff6189cb26f5596b25d3561a82fa7c81a6e63e2",
   "goal_switcher_failed": "6287d1685278059c1baf8d718a3a72472902f522901899d21da69b2cc4f09bd1",
   "goal_switcher_finished": "fe5c20f46939a3d680ffe5ddd33f2365f4ec94c9c05d3b94928a2148bc87a49b",
+  "goal_switcher_make_room_description": "6e2285380757b9376a7e235db7c7f372f5f386fb5f6e2a90952f0bebbf4f53fd",
+  "goal_switcher_make_room_title": "a8fc8faf1ed7057325242d2b27a6c146ac4080110dc408557c90678990599377",
   "goal_switcher_new_goal": "0ec81881b019c5f6c88684abd71c69f9d394f28f1d08bd7935ab5d0474487546",
+  "goal_switcher_pause": "730b25327228191a18595971b402f4ce26507ee5bc01317300bdd94c8c228c20",
+  "goal_switcher_pause_goal": "ca55fcfabf87f39f2aa0f14d3ea1dacb002cde78cf3eceedaf44bdac91d695f2",
+  "goal_switcher_pause_or_plus": "49a528868489414b23ba2faff6681ef5fa9fc6a6b9fc34aa7f69898ccb46b2e7",
   "goal_switcher_paused": "55d3964a6c486a77c77eff3045c72d3a1c78d3cfce95cfd2c65972df748c89ad",
   "goal_switcher_quick_explanations": "72f5f0f455fa5c254df047e9e4f13b75caced1bf1e2a538da10a453723cf997f",
   "goal_switcher_ready_to_start": "4466c01dc22cf1be90ddb76c0465ba123d19464cacb2812472c01da4334755f6",
@@ -34,4 +39,14 @@
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Prêt à démarrer</string>
     <string name="goal_switcher_start_failed">Impossible de démarrer cet objectif. Réessaie.</string>
+    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
+    <string name="goal_switcher_pause_or_plus">Mets un objectif en pause ou passe à Plus</string>
+    <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_title">Fais de la place pour %1$s</string>
+    <!-- %1$s is the name of the goal waiting to start. -->
+    <string name="goal_switcher_make_room_description">Tu as atteint la limite d’objectifs de la formule gratuite. Mets-en un en pause pour commencer %1$s. Tu pourras le reprendre plus tard.</string>
+    <!-- Button beside a goal the learner follows: it pauses that goal. -->
+    <string name="goal_switcher_pause">Mettre en pause</string>
+    <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->
+    <string name="goal_switcher_pause_goal">Mettre %1$s en pause</string>
 </resources>
