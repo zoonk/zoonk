@@ -114,8 +114,9 @@ describe("the plan work a session end owes", () => {
           ? firstOwed.input
           : { goalId: goal.id, rebalance: false, sessionId: session.id, timeZone: "UTC" },
         key: session.id,
-        revision: pending ? 1 : 0,
       });
+
+      expect(owed[0]?.revision).toBeGreaterThan(pending ? firstOwed.revision : -1);
 
       await endFollowUp(firstOwed);
 
@@ -134,12 +135,30 @@ describe("the plan work a session end owes", () => {
       ).resolves.toMatchObject([{ status: "proposed" }]);
 
       expect(rebalancePlan).toHaveBeenCalledOnce();
-      await stopStudySession({ input: {}, sessionId: session.id });
-      await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
+
+      const settledState = () =>
+        Promise.all([
+          prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+          prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+          prisma.planChange.findMany({ orderBy: { id: "asc" }, where: { planId: plan.id } }),
+        ]);
+
+      if (ending === "stop") {
+        await stopStudySession({ input: {}, sessionId: session.id });
+      } else {
+        await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
+      }
 
       await expect(
-        prisma.followUp.count({ where: { kind: "settleSessionPlan", userId: user.id } }),
-      ).resolves.toBe(0);
+        prisma.followUp.findMany({ where: { kind: "settleSessionPlan", userId: user.id } }),
+      ).resolves.toMatchObject([
+        { input: { rebalance: false, sessionId: session.id }, key: session.id, revision: 0 },
+      ]);
+
+      const before = await settledState();
+      await settleOwed();
+      await expect(settledState()).resolves.toStrictEqual(before);
+      expect(rebalancePlan).toHaveBeenCalledOnce();
     },
   );
 

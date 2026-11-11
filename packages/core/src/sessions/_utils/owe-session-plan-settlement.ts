@@ -16,16 +16,15 @@ export async function oweSessionPlanSettlement(
   const { goalId } = session;
   const firstEnd = !session.endedAt && !session.stoppedAt;
 
-  const testAnswers =
-    goal?.kind === "exam"
-      ? await tx.attempt.count({
+  const testAnswer =
+    !firstEnd && goal?.kind === "exam"
+      ? await tx.attempt.findFirst({
+          select: { id: true },
           where: { isPlacement: true, studySessionId: session.id, userId: session.userId },
         })
-      : 0;
+      : null;
 
-  const newAnswers = testAnswers > (session.testAnswersOwed ?? 0);
-
-  const planOwed = goalId !== null && (firstEnd || newAnswers);
+  const planOwed = goalId !== null && (firstEnd || testAnswer !== null);
 
   const pending = planOwed
     ? await tx.followUp.findUnique({
@@ -59,13 +58,6 @@ export async function oweSessionPlanSettlement(
     ],
     userId: session.userId,
   });
-
-  if (newAnswers) {
-    await tx.studySession.update({
-      data: { testAnswersOwed: testAnswers },
-      where: { id: session.id },
-    });
-  }
 
   return planOwed;
 }

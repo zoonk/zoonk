@@ -50,8 +50,6 @@ model StudySession {
   /// The first "Stop for today": memory reads the day and the plan rebalances then, once, however
   /// often the learner stops.
   stoppedAt      DateTime?           @map("stopped_at")
-  /// Test answers covered by a durable session-end obligation. Required once released.
-  testAnswersOwed Int?                @default(0) @map("test_answers_owed")
   createdAt      DateTime            @default(now()) @map("created_at")
   updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
   blocks         StudySessionBlock[]
