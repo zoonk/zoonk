@@ -33,6 +33,7 @@
   "session_energy_glowing_brightest": "0f7dda432d1d1c3b050d26ece6109c0dec475fa75f5995687a08b90f8e17f7a1",
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
   "session_level_up": "8132f6a958bc4d3b50d1aeaf27a17ef93d0c382556eb24e35048a4f9e208b7d7",
+  "session_next_continue": "85164fcd78662ae75f9e72dc560dc6e189aebbc2a1cd909ef79820d8fbd1f551",
   "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
   "session_next_instead": "7aeff6ba9d09f5a27a60a008c5a230a035bb03ebb85d5a2fc9d5e125b6ed60e8",
   "session_next_lesson_ready": "8789126525b3bc8944fab8e6dd8b9dd871206aa546927b65956f74bd831e9d26",
@@ -43,6 +44,16 @@
   "session_next_writing_note": "9a76be4fc92fc1443eda03b0dc4e844286d2b2e9597c4f0119cf1d728c73cddf",
   "session_opening_slow": "c811d1d79512bddbfcb9454a09369afd262ba7c2e2035cce66902bc5e7c1e4df",
   "session_opening_very_slow": "7233b3958b298253de9f0be30b5be9d201e7c658c4d13b2eac03e2bbb8b1f98c",
+  "session_review_intro_first_week": "63eb240df185ed9bc658c9a2d4eac5716ae573652aa1e6cb1fe098bc016b2307",
+  "session_review_intro_forget": "903b925f3b119981ff4b37f8ec3c03bf5c0d124da9b6570f0a6d2cb0883aa1d7",
+  "session_review_intro_forget_title": "d04f8c09131cb7eeb6e345b8e3772892cfcab87a7bd61076db06e571a321b30c",
+  "session_review_intro_short": "639da30542ef2a1bc9e210333290cb7c0b5b98182c9e261c13a13a5583aeee2a",
+  "session_review_intro_short_title": "3bd8e8e98fa1ef4785dcb5ba2dd2c34e2dbcafe73fd0e6defd14c9ca360476ba",
+  "session_review_intro_spacing": "f37bf9ecf434b4d09121677e816b210ed73a0ed392662f76938701c39a6a7c3f",
+  "session_review_intro_spacing_title": "bf8052248f72c20b519f704b3dfe551f047df6de13fee45e2ddc8ac85d5ec649",
+  "session_review_intro_title": "e8eab05876a0c6389424961b9a2aad563db0b9cfe6510e8d592b722fb7aff90b",
+  "session_review_intro_weakest": "1b89c46ef43d2727ad631c1673d4c762b8708215d51a96e3f06fa79767b26661",
+  "session_review_intro_weakest_title": "d2ec0b705deb64d9867c20cc7208e7815e809c28c187b1da7a6e315fe0959e8b",
   "session_summary_back_on": "e13e08a35c61dfd04c2c65b90492bcd0834c1d11ff712655e32cfcdc32c15464",
   "session_summary_brain_power": "d6888ae922b57b4bf759e8b52e80129f70a81761141106a41573c81661d2cb19",
   "session_summary_buddy_happy": "b007627753b20b70f8b15e046f2c3d0c7335fdee8e0d4c674993b5d11921f09f",
@@ -203,6 +214,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A continuación</string>
     <string name="session_next_start">Empezar</string>
+    <string name="session_next_continue">Continuar</string>
+    <string name="session_review_intro_title">Cómo funcionan los repasos</string>
+    <string name="session_review_intro_forget_title">Justo antes de olvidar</string>
+    <string name="session_review_intro_forget">Cada idea que estudias vuelve justo antes de que empieces a olvidarla.</string>
+    <string name="session_review_intro_spacing_title">Si aciertas, vuelve más tarde</string>
+    <string name="session_review_intro_spacing">Si aciertas, vuelve en unos días, luego en unas semanas y después en unos meses. Si fallas, vuelve antes.</string>
+    <string name="session_review_intro_short_title">Al inicio y siempre breves</string>
+    <string name="session_review_intro_short">Los repasos van al inicio de tu sesión y ocupan una pequeña parte, incluso si llevas días sin entrar.</string>
+    <string name="session_review_intro_weakest_title">Los temas que más te cuestan hoy</string>
+    <string name="session_review_intro_weakest">No hay nada que estés a punto de olvidar, así que practicas lo que más te cuesta.</string>
+    <string name="session_review_intro_first_week">Unas preguntas rápidas para comprobar lo que ya sabes.</string>
     <string name="session_next_writing_note">Estamos preparando esta lección para ti. Suele estar lista en unos minutos.</string>
     <string name="session_next_lesson_ready">Tu lección está lista.</string>
     <string name="session_next_stop">Dejarlo por hoy</string>

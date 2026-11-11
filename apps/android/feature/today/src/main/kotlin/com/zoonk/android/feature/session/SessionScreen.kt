@@ -361,6 +361,8 @@ internal fun NextStop(
         val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
         val startFocus = remember { FocusRequester() }
         var screenFocused by remember { mutableStateOf(false) }
+        val reviewStarts = rememberReviewStarts()
+        val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
         val instead = alternative?.takeIf { !ready && goalId != null }
 
         LaunchedEffect(step.position, waiting, step.screen) {
@@ -409,6 +411,7 @@ internal fun NextStop(
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
                                 else -> Unit
                             }
+                            OpeningWaitLine(opening)
                             TaskActions { main ->
                                 onStop?.let {
                                     // Main stacks the actions on a narrow layout once an alternative joins them.
@@ -424,12 +427,23 @@ internal fun NextStop(
                                     LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
                                     Button(
                                         busy = viewModel.busy == SessionAction.Start,
-                                        onClick = { viewModel.start(day, step, goal) },
+                                        onClick = {
+                                            reviewStarts.note(step, goal)
+                                            viewModel.start(day, step, goal)
+                                        },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
                                         leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
-                                        Text(stringResource(R.string.session_next_start))
+                                        Text(
+                                            stringResource(
+                                                if (step.status == StudyBlock.Status.ACTIVE) {
+                                                    R.string.session_next_continue
+                                                } else {
+                                                    R.string.session_next_start
+                                                },
+                                            ),
+                                        )
                                     }
                                 }
                                 instead?.let { other ->
@@ -493,6 +507,7 @@ internal fun NextStop(
                                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                             }
                             StepFacts(step)
+                            ReviewIntro(step, reviewStarts.openAtFirst(goalId), Modifier.padding(top = 16.dp))
                             if (written && !hold.holding) {
                                 Text(
                                     stringResource(R.string.session_next_lesson_ready),
