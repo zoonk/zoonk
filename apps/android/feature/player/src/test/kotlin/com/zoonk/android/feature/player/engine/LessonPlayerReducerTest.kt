@@ -241,6 +241,44 @@ class LessonPlayerReducerTest {
         assertEquals(mapOf("quiz" to true), forward.firstVerdicts)
     }
 
+    /** Previous works from an answered question's result too, back through earlier answered questions, which only show again. */
+    @Test
+    fun goesBackFromAResultThroughEarlierAnsweredQuestions() {
+        val steps = listOf(checkStep("q1"), explanationStep("tip"), checkStep("q2"))
+        val atResult = play(steps, *answerCheck("q1", true), LessonAction.Continue, LessonAction.Continue, *answerCheck("q2", true))
+        assertEquals(LessonPhase.Feedback to true, atResult.phase to atResult.canGoBack)
+
+        val atTip = atResult.then(LessonAction.GoBack)
+        assertEquals("tip" to LessonPhase.Playing, atTip.currentId to atTip.phase)
+
+        val atQ1 = atTip.then(LessonAction.GoBack)
+        assertEquals(Triple(0, LessonPhase.Feedback, true), Triple(atQ1.position, atQ1.phase, atQ1.reviewing))
+
+        val again = atQ1.then(LessonAction.Continue).then(LessonAction.Continue)
+        assertEquals(Triple(2, LessonPhase.Feedback, true), Triple(again.position, again.phase, again.reviewing))
+        assertEquals(atResult.answers to atResult.results, again.answers to again.results)
+    }
+
+    /** A retry starts over only the first time the learner reaches it; coming back to it after Previous shows its answer. */
+    @Test
+    fun keepsARetriedQuestionsAnswerWhenTheLearnerGoesBackPastItAndReturns() {
+        val steps = listOf(checkStep("quiz"), explanationStep("tip"))
+        val retried = play(steps, *answerCheck("quiz", false), LessonAction.Continue, LessonAction.Continue, *answerCheck("quiz", true))
+        assertEquals(listOf("quiz", "tip", "quiz") to 2, retried.queue to retried.position)
+
+        val returned =
+            retried
+                .then(LessonAction.GoBack)
+                .then(LessonAction.GoBack)
+                .then(LessonAction.Continue)
+                .then(LessonAction.Continue)
+        assertEquals(Triple(2, LessonPhase.Feedback, true), Triple(returned.position, returned.phase, returned.reviewing))
+        assertEquals(retried.results["quiz"] to retried.rounds, returned.results["quiz"] to returned.rounds)
+
+        val atFirst = retried.then(LessonAction.GoBack).then(LessonAction.GoBack)
+        assertEquals(0 to false, atFirst.position to atFirst.showAttemptInView().results["quiz"]?.isCorrect)
+    }
+
     /** Going back is looking, not undoing: Previous and Explain first keep a screen's answer, revealed steps and round. */
     @Test
     fun previousAndExplainFirstKeepTheScreenAsTheLearnerLeftIt() {
@@ -269,17 +307,42 @@ class LessonPlayerReducerTest {
         assertNull(comesBack.results["quiz"])
     }
 
-    /** A missed question that comes back plays its attempt there, so Previous stops before its earlier copy. */
+    /** Previous goes back past a retry still to answer: its earlier copy shows the first attempt, and the retry still asks. */
     @Test
-    fun previousStopsBeforeAnEarlierCopyOfAQuestionThatComesBack() {
+    fun goesBackPastARetryStillToAnswerShowingItsFirstAttempt() {
         val steps = listOf(checkStep("quiz"), explanationStep("after"))
-        val atAfter = play(steps, *answerCheck("quiz", false), LessonAction.Continue, LessonAction.Continue, LessonAction.GoBack)
+        val picked = LessonAnswer.Check("right")
+        val retry =
+            play(
+                steps,
+                *answerCheck("quiz", false),
+                LessonAction.Continue,
+                LessonAction.Continue,
+                LessonAction.SelectAnswer("quiz", picked),
+            )
+        assertEquals(Triple(2, LessonPhase.Playing, true), Triple(retry.position, retry.phase, retry.canGoBack))
 
-        assertEquals("after" to false, atAfter.currentId to atAfter.canGoBack)
-        assertEquals(1, atAfter.then(LessonAction.GoBack).position)
+        val atFirst = retry.then(LessonAction.GoBack).then(LessonAction.GoBack)
+        assertEquals(Triple(0, LessonPhase.Feedback, true), Triple(atFirst.position, atFirst.phase, atFirst.reviewing))
+        val shown = atFirst.showAttemptInView()
+        assertEquals(LessonAnswer.Check("wrong") to false, shown.answers["quiz"] to shown.results["quiz"]?.isCorrect)
+
+        val returned = atFirst.then(LessonAction.Continue).then(LessonAction.Continue)
+        assertEquals(Triple(2, LessonPhase.Playing, false), Triple(returned.position, returned.phase, returned.reviewing))
+        assertEquals(picked to null, returned.answers["quiz"] to returned.results["quiz"])
+        assertEquals(retry.rounds, returned.rounds)
+        assertEquals(returned, returned.showAttemptInView())
 
         val straightBack = play(listOf(checkStep("last")), *answerCheck("last", false), LessonAction.Continue)
-        assertEquals(1 to false, straightBack.position to straightBack.canGoBack)
+        assertEquals(1 to true, straightBack.position to straightBack.canGoBack)
+        assertEquals(
+            false,
+            straightBack
+                .then(LessonAction.GoBack)
+                .showAttemptInView()
+                .results["last"]
+                ?.isCorrect,
+        )
     }
 
     /** A language answer still waiting for its one chance to fix itself shows the notice again when the learner returns. */

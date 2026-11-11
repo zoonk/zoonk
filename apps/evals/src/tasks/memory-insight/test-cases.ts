@@ -5,6 +5,8 @@ import { type MemoryInsightOutput } from "@zoonk/ai/tasks/memory/insight-rules";
 export type MemoryInsightExpected = {
   kinds: MemoryInsightOutput["kind"][];
   mentions?: string[];
+  /** Words the message must not use, such as a 24-hour time in US English. */
+  avoids?: string[];
   languageWords?: string[];
   studyHours?: [number, number];
   skill?: number;
@@ -195,8 +197,9 @@ export const TEST_CASES: InsightCase[] = [
   }),
   insightCase({
     expected: {
+      avoids: ["20:00", "21:00", "22:00", "23:00"],
       kinds: ["scheduleIdea"],
-      mentions: ["pm", "evening", "night", ":00"],
+      mentions: ["pm", "evening", "night"],
       studyHours: [20, 23],
     },
     id: "en-schedule-evening",

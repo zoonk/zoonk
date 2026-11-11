@@ -1,0 +1,164 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-fable-5.2": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "US English passages for Japanese speakers. Questions, options and translations must be natural Japanese in Japanese script. Preserve a.m./p.m. distinctions, monetary amounts and names. A1 concrete facts, A2 sequence or two facts, B1 reasons or main points, B2 implied attitude or purpose, C1 implicit meaning or register. Each question has exactly one defensible key, including reviews with mixed opinions; no instructions or self-corrections in options.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-11T03:07:47.701Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Every reading, listening, and speaking item fits its exact word count window and cognitive CEFR target, from simple fact retrieval at A1 to register and implicit meaning at C1.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Each question has one clearly supported answer and three plausible distractors of uniform length, with accurate answer indices.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "US English context and conventions are applied naturally throughout, and all Japanese questions, options, and translations are written in natural Japanese script.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A delivers an exceptional set of items that strictly adhere to all word counts, CEFR calibration rules, and situational prompts. The passages are authentic US English, the Japanese questions and options are completely natural, and every item has a single incontrovertible answer key.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages and questions scale cleanly across CEFR levels and meet all length constraints, though both B2 and C1 speaking sentences rely on third conditionals (with C1 adding inversion).",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All 20 questions have a single unambiguous key supported by the text, balanced option lengths, and well-constructed distractors that target partial comprehension.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Passages read and sound like authentic US English, and all Japanese text is natural and consistently rendered in Japanese script.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model B is nearly identical in quality to Model A, offering outstanding CEFR progression, well-crafted distractors, and natural US English and Japanese. It ranks slightly behind only because one B2 reading question uses a Romanized name ('Diego') in the Japanese question stem instead of katakana in Model A, while Model B had a slightly narrower B2/C1 grammatical separation in the speaking prompts (both using past counterfactuals).",
+          "score": 9.6
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 12704,
+        "outputTokens": 577,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Questions progress appropriately from stated facts to reasons, implied attitudes, and nuanced register; the C1 business-jargon question is particularly well targeted. Speaking complexity also increases clearly, although some lower-level passages introduce avoidable difficulty, such as the A1 future construction and the awkward appointment chronology.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every marked answer is supported, and the mixed-opinion reviews retain one clear overall interpretation. Distractors generally reuse passage details while changing timing, causation, or attitude, and options are reasonably balanced in length.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Written and spoken genres sound distinct and generally natural, with varied situations and accurate Japanese speaking translations. Minor issues include Roman-script “Diego” in a Japanese question, unspecified a.m./p.m. in the A1 bus times, and the unnatural “the dentist is sick that day” in a rescheduling message.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A offers the stronger progression: B1 tests reasons and overall opinions, while B2 and C1 increasingly require inference, tone, and register. Its answer keys are consistently defensible, with mostly minor weaknesses in localization and beginner-level phrasing.",
+          "score": 8.35
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The B1 travel question asks what Emma will do next, answered by directly matching “renting a car and driving there tonight”; this is an A2-style stated-action question and triggers the maximum score of 5. Advanced inference and register tasks are strong, but the A1 speaking sentence also exceeds the requested four-to-six-word range.",
+              "score": 5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers consistently match the passages, including the restaurant's mixed evaluation and the sleep researcher's understated skepticism. Alternatives are generally comparable in length and clearly distinguishable using passage evidence.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The English is fluent and genre-appropriate, and Japanese questions and translations are generally natural. Localization needs small corrections: Ava is inconsistently rendered as アヴァ and エイバ, and the A1 train departure times leave a.m./p.m. unspecified.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model B has strong, nuanced advanced passages and reliably keyed questions. It ranks lower because the B1 travel question tests a directly stated next action rather than the required main point, reason, or opinion, triggering the calibration cap.",
+          "score": 7.15
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 12520,
+        "outputTokens": 1156,
+        "reasoningTokens": 516
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "46f009bb984c2854",
+    "anthropic/claude-fable-5.2": "1401404e1030f5c4"
+  },
+  "swapped": false,
+  "taskId": "level-test-bank",
+  "testCaseId": "ja-en-fable-1"
+}

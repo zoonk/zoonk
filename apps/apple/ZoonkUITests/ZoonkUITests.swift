@@ -119,10 +119,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected the level button to push Statistics")
     // The calendar's title row swaps layouts as text grows (`ViewThatFits`), which the audit reads
     // as text that doesn't scale and is clipped; at the largest size the title and key show whole.
-    // The picked day's line under the calendar is hidden from VoiceOver, which reads the same text
-    // as the calendar's value, so the audit flags it as text without an element.
-    try performAccessibilityAudit(
-      in: app, skipping: [.dynamicType, .textClipped, .elementDetection])
+    try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
   }
 
   @MainActor

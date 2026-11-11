@@ -39,6 +39,35 @@ async function load(input: Awaited<ReturnType<typeof languageGoalFixture>>) {
   });
 }
 
+function patternFixture({ goalId, userId }: { goalId: string; userId: string }) {
+  return prisma.mistakePattern.create({
+    data: {
+      content: {
+        contrast: [],
+        drill: [
+          {
+            answer: "for",
+            feedback: "Use for with a duration.",
+            options: ["for", "since"],
+            sentence: "I studied ___ two years.",
+          },
+        ],
+        examples: [],
+        rule: "Use for with a duration.",
+      },
+      createdAt: new Date("2026-10-12T12:00:00Z"),
+      goalId,
+      kind: "pattern",
+      language: "en",
+      model: "test",
+      promptVersion: "test",
+      runId: "test",
+      title: "For and since",
+      userId,
+    },
+  });
+}
+
 async function duePronunciation(
   input: Awaited<ReturnType<typeof languageGoalFixture>>,
   count: number,
@@ -150,6 +179,17 @@ describe("language mission eligibility against real quota and material rows", ()
     expect(
       facts.firstSteps?.steps.some((step) => step.kind === "call" || step.kind === "askBuddy"),
     ).toBe(false);
+  });
+
+  it("offers a pattern only to the goal it was noticed in, not another goal of its language", async () => {
+    const input = await languageGoalFixture();
+    const other = await languageGoalFixture({ userId: input.user.id });
+    await patternFixture({ goalId: input.goal.id, userId: input.user.id });
+
+    const [mine, theirs] = await Promise.all([load(input), load(other)]);
+
+    expect(mine.candidates.map((candidate) => candidate.kind)).toContain("pattern");
+    expect(theirs.candidates.map((candidate) => candidate.kind)).not.toContain("pattern");
   });
 
   it("prioritizes a valid pattern's final offer day without spending AI usage", async () => {

@@ -5,25 +5,66 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
-/** A checked attempt comes back: the screen's answer, result and revealed steps start over, and its canvas with them. */
-private fun LessonPlayerState.startOver(id: String): LessonPlayerState =
-    copy(answers = answers - id, results = results - id, revealed = revealed - id, rounds = rounds + (id to round(id) + 1))
+/**
+ * A checked attempt comes back: the screen's answer, result and revealed steps start over, and its canvas with them. The
+ * first attempt stays for the question's earlier copy to show.
+ */
+private fun LessonPlayerState.startOver(id: String): LessonPlayerState {
+    val result = results[id]
+    val first = if (result != null && id !in firstAttempts) LessonAttempt(answers[id], result, revealed[id], round(id)) else null
+    return copy(
+        answers = answers - id,
+        firstAttempts = if (first != null) firstAttempts + (id to first) else firstAttempts,
+        results = results - id,
+        revealed = revealed - id,
+        rounds = rounds + (id to round(id) + 1),
+    )
+}
+
+private fun LessonPlayerState.isEarlierCopy(index: Int): Boolean = queue.lastIndexOf(queue[index]) > index
+
+/** A screen shows an attempt when it has a result, or is the earlier copy of a question whose retry started over. */
+fun LessonPlayerState.hasAttemptAt(index: Int): Boolean {
+    val id = queue.getOrNull(index) ?: return false
+    return id in results || (id in firstAttempts && isEarlierCopy(index))
+}
+
+/** The state the screen in view shows: an earlier copy of a question shows its own attempt. */
+fun LessonPlayerState.showAttemptInView(): LessonPlayerState {
+    val id = queue.getOrNull(position) ?: return this
+    val first = firstAttempts[id]?.takeIf { isEarlierCopy(position) } ?: return this
+    return copy(
+        answers = if (first.answer != null) answers + (id to first.answer) else answers - id,
+        results = results + (id to first.result),
+        revealed = if (first.revealed != null) revealed + (id to first.revealed) else revealed - id,
+        rounds = rounds + (id to first.round),
+    )
+}
 
 fun LessonPlayerState.round(stepId: String): Int = rounds[stepId] ?: 0
 
-/** A screen with a result opens answered, to review; a retry, or a check in "I already know this", starts over. */
+/**
+ * A screen with a result opens answered, to review; a check in "I already know this" starts over, and so does a retry the
+ * first time the learner reaches it, so Previous and Continue only revisit its answer.
+ */
 fun LessonPlayerState.enterPosition(
     position: Int,
     now: Long,
 ): LessonPlayerState {
     val id = queue.getOrNull(position)
-    val startsOver = id != null && id in results && (quickCheck != null || queue.indexOf(id) < position)
+    val isFirstRetry = id != null && queue.indexOf(id) < position && id !in firstAttempts
+    val startsOver = id != null && id in results && (quickCheck != null || isFirstRetry)
     val entered = if (startsOver) startOver(id) else this
-    val answered = id in entered.results
+    val answered = entered.hasAttemptAt(position)
     return entered.copy(
         checkFailed = false,
         checkIssue = null,
-        notice = if (!answered && id in selfCorrected) LessonNotice.SelfCorrect else entered.recoveryNotice(position),
+        notice =
+            when {
+                answered -> null
+                id in selfCorrected -> LessonNotice.SelfCorrect
+                else -> entered.recoveryNotice(position)
+            },
         phase = if (answered) LessonPhase.Feedback else LessonPhase.Playing,
         position = position,
         reviewing = answered,
@@ -147,26 +188,26 @@ fun LessonPlayerState.continueChallenge(): LessonPlayerState {
 }
 
 val LessonPlayerState.canGoBack: Boolean
-    get() = phase == LessonPhase.Playing && position > 0 && quickCheck == null && run !is LessonRun.Refused && !comesBackLater(position - 1)
+    get() =
+        (phase == LessonPhase.Playing || phase == LessonPhase.Feedback) && position > 0 && quickCheck == null &&
+            run !is LessonRun.Refused &&
+            !comesBackLater(position - 1)
 
-/** A question that comes back plays its attempt there, so its earlier copy, with no result, isn't played again. */
-private fun LessonPlayerState.comesBackLater(index: Int): Boolean {
-    val id = queue[index]
-    return id !in results && queue.lastIndexOf(id) > index
-}
+/** An earlier copy of a question with no attempt to show would ask it again, which its retry does. */
+private fun LessonPlayerState.comesBackLater(index: Int): Boolean = isEarlierCopy(index) && !hasAttemptAt(index)
 
 fun LessonPlayerState.goBack(now: Long): LessonPlayerState {
     val previousId = queue.getOrNull(position - 1)
 
     if (!canGoBack || previousId == null) return this
 
-    val reviewingPrevious = previousId in results
+    val reviewingPrevious = hasAttemptAt(position - 1)
 
     // Going back is looking, not undoing: the screen left keeps its answer and work for when the learner returns.
     return copy(
         checkFailed = false,
         checkIssue = null,
-        notice = recoveryNotice(position - 1),
+        notice = if (reviewingPrevious) null else recoveryNotice(position - 1),
         phase = if (reviewingPrevious) LessonPhase.Feedback else LessonPhase.Playing,
         position = position - 1,
         reviewing = reviewingPrevious,

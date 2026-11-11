@@ -1,0 +1,117 @@
+{
+ "pair-1": {
+  "case": "en-cafe-au-revoir-inside-a-question-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-2": {
+  "case": "en-neighbor-character-says-goodbye-first-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-3": {
+  "case": "en-neighbor-problem-then-proposal-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-4": {
+  "case": "en-neighbor-proposal-accepted-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-5": {
+  "case": "en-neighbor-proposal-no-answer-yet-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-6": {
+  "case": "en-work-invitation-no-answer-yet-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-7": {
+  "case": "en-work-lunch-agreed-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-8": {
+  "case": "en-work-lunch-invited-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-9": {
+  "case": "en-work-mark-everything-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-10": {
+  "case": "pt-arriving-visit-only-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-11": {
+  "case": "pt-ielts-name-only-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-12": {
+  "case": "pt-ielts-part-one-done-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-13": {
+  "case": "pt-renting-character-offers-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-14": {
+  "case": "pt-renting-learner-says-goodbye-first-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-15": {
+  "case": "pt-renting-misheard-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-16": {
+  "case": "pt-renting-only-the-character-says-goodbye-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-17": {
+  "case": "pt-renting-own-language-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-18": {
+  "case": "pt-renting-two-questions-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-19": {
+  "case": "pt-renting-viewing-not-agreed-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-20": {
+  "case": "pt-renting-viewing-with-mistakes-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-21": {
+  "case": "pt-toefl-first-repetition-1",
+  "X": "meta-muse-ember:none",
+  "Y": "openai-gpt-6-luna"
+ },
+ "pair-22": {
+  "case": "pt-toefl-interview-done-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ },
+ "pair-23": {
+  "case": "pt-toefl-repetitions-done-1",
+  "X": "openai-gpt-6-luna",
+  "Y": "meta-muse-ember:none"
+ }
+}

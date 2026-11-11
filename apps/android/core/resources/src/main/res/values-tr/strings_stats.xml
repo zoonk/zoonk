@@ -7,6 +7,7 @@
   "stats_all_goals": "df57247f88400be2cb655d31ce06f47ee046377bc96951364d5d85404cc60cb2",
   "stats_answer_count": "09e722c8d547c29d34ed83dfae5bc45b52e04b62e26a44d5eb762bd2df843125",
   "stats_answers": "4b35b66dc9a89f79be3c1da5a4f6dc6a5b3894c3d2978c76dd338537aeb0f398",
+  "stats_answers_to_count": "8782c47c1258ee446bdf0993028716527cf45fb251246314158f9940137acc87",
   "stats_any_day": "193e2fd7fec703de2de0cd3f8d3304dcb99f1316529c4fe9b01c87adeaf04c58",
   "stats_any_day_studied": "0f297c0ac85094f1f38f9d8217f9424cd6a09295b14ed9bf2ba32b5e124bc93e",
   "stats_any_time": "dadcc8d1aab84362f496b8083d75e8c57ba2f5a0783d2a11fb9f47ca310bea44",
@@ -23,15 +24,12 @@
   "stats_calendar_activity_summary": "3cc249aa9bf25e7d1901c825ca0d6e17442e5a1d7caf87b3d9be54eedbf0a587",
   "stats_calendar_energy_summary": "a10a5f13ed6c693f4fc2d8038059c424a15ecbf9b353b73f38acbb816b6f72dc",
   "stats_correct_of_total": "23067ed48934033cea20271bd63bc778c9bed5172a5d89a7756122dbdc93bf7a",
-  "stats_day_activities": "c8a367969b269b1abce382809787fea34271757431929c56d5ab19d8ae666ee4",
-  "stats_day_energy": "99d6969adedd2237882039b466289a8e7bfb50b7f4a2f478fe65a9059c89ed4c",
-  "stats_day_no_energy": "ee7f9b21985fbc7d6861c00f78e8464c4cd5475c2b2a86a4864d15c1976756e9",
-  "stats_day_no_study": "0596fe1b85242d6ce178969bb48ef1b7da265d470ba86c4cb79a072de9301b14",
   "stats_days": "06f338ba8c1ba2d2243dea1f6f17323267172cc4ed67dc9d3d320dbff318a01a",
   "stats_days_even": "f03e1f3c2a116e8658eb81f4aa4e75a0a6416702835390335c6046bdc36619e7",
   "stats_days_studied": "5d8d9adac39aba821eca2b80461f7850af1e2a30cc3873f5d8c6ad8d4fed9444",
   "stats_empty_title": "9f563f136b917ac8a4445115e9f43796134c2a25cfd534fe579e9352f4ebd1b2",
   "stats_energy": "c6e3bd516586d1d1d4aa0dab6b3cb4eb798e3bd7b636d33dd59dcd3807c08ca5",
+  "stats_energy_amount": "01fc97c7452938a2e15eafd22cb0f9e539cc7f8f03f868299d5447ea9b580209",
   "stats_energy_average": "c89a926d7629464c44184be70a5ae6f9591459d0d3f712796bf86ea600a2f8dd",
   "stats_energy_line": "05a2e81be83d3935f13c12691cff6e1b6c8d03392f2cc096e78eb645c6d805eb",
   "stats_evening": "3673cc394ffc60e6d19ee53990973d095a6acee28d1ea69eb38cdf20d8360c43",
@@ -58,6 +56,8 @@
   "stats_next_level": "110ca6bfda481ba7562f790aa7539bac93a62d479e92df7f67e20855f4f9f172",
   "stats_night": "9110a2fbd00ff7e77ce6159f02c96c0d6b1759ee2c964babd4ee8f5c32a64e3e",
   "stats_no_answers": "8db8020f939941722ccfb42b3d262eb5fb3eafdd399bc50b40b9afe91e38411b",
+  "stats_no_energy": "ba917f377349c253018dc7686cd5a051a5095bb5d9f229e9328d3c8ea7ea18de",
+  "stats_no_study": "439a535a48423aabd1ec27baec573650123e456d6fd0a90eb74b4d9bbda4703a",
   "stats_not_enough": "3402d943f33896b1b900e6d964dd92a92596c2a66cae05886c2291bcb2f15e26",
   "stats_not_yet": "c806bee8c96418cc585eeaadba6f2722c4f02d25b92f45b90a38a97adb2311f0",
   "stats_of_all_answers": "063b451f605382c841b1b1348b528eab70edf9508a880b00b87582ae7e94bcf3",
@@ -169,14 +169,12 @@
         <item quantity="one">%1$s etkinlik</item>
         <item quantity="other">%1$s etkinlik</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · Çalışma yok</string>
-    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
-    <plurals name="stats_day_activities">
-        <item quantity="one">%1$s · %2$s etkinlik</item>
-        <item quantity="other">%1$s · %2$s etkinlik</item>
-    </plurals>
-    <string name="stats_day_no_energy">%1$s · Enerji kaydı yok</string>
-    <string name="stats_day_energy">%1$s · %2$s Enerji</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
+    <string name="stats_no_study">Çalışma yok</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
+    <string name="stats_no_energy">Enerji kaydı yok</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
+    <string name="stats_energy_amount">%1$s Enerji</string>
     <string name="stats_calendar_energy_summary">Son 12 aydaki Enerji: bugün %1$s, başladığından beri ortalama %2$s</string>
     <string name="stats_right_answers">Doğru cevaplar</string>
     <string name="stats_right">Doğru</string>
@@ -216,6 +214,11 @@
         <item quantity="other">%1$s cevap</item>
     </plurals>
     <string name="stats_no_answers">Cevap yok</string>
+    <!-- A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, as in "7 answers, needs 10 to count". -->
+    <plurals name="stats_answers_to_count">
+        <item quantity="one">%1$s cevap, hesaba katılması için %2$s gerekiyor</item>
+        <item quantity="other">%1$s cevap, hesaba katılması için %2$s gerekiyor</item>
+    </plurals>
     <string name="stats_throughout_week">Hafta boyunca</string>
     <string name="stats_throughout_day">Gün boyunca</string>
     <string name="stats_any_day">Her gün</string>

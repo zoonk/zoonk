@@ -161,7 +161,7 @@ export const buddyStatusResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned when any goal paid it for that session's learner-local date.",
+          "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned once that session paid it; each goal's day pays its own.",
       }),
   })
   .meta({ id: "BuddyStatus" });

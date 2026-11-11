@@ -64,6 +64,9 @@ function checkMessage({
     expected.languageWords && !containsAny(insight.message, expected.languageWords)
       ? "The message isn't in the learner's language."
       : null,
+    expected.avoids && containsAny(insight.message, expected.avoids)
+      ? `The message says ${expected.avoids.join("/")}.`
+      : null,
     containsAny(insight.message, PROMISE_WORDS) ? "The message promises a result." : null,
     insight.message.includes("!") ? "The message uses an exclamation mark." : null,
     fromHour !== undefined && (hour === null || hour < fromHour || hour > (toHour ?? fromHour))

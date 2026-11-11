@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "bbbd734d7b1cdf96505265b2db72a0520280ee253385e7abce040200b7c621c5",
-  "missions_already_earned": "2d4b2c704103cec8379005879b2bd7999bc65b757e89d06b4cfb98424fb12576",
   "missions_ask_anything": "9ad80ca55e7cb80730ee2683771a00ef7525a49104df35e01e096b35e45f034b",
   "missions_ask_buddy": "827971315c28fdc04393182ca8f39f9cbee71b24a1a76c8014e4ced3f2fd8a15",
   "missions_brain_power": "8733c75a1aa7c30a94b91bd11aff21ba012b3996bff7aaa5f336a7734a9c9635",
@@ -66,7 +65,6 @@
     <string name="missions_done">Misje ukończone</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">Udało ci się zdobyć +%1$s pkt Mocy Umysłu.</string>
-    <string name="missions_already_earned">Dzisiejsze +%1$s pkt Mocy Umysłu są już twoje.</string>
     <plurals name="missions_count">
         <item quantity="one">%d misja</item>
         <item quantity="few">%d misje</item>

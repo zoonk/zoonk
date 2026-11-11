@@ -1,7 +1,8 @@
 import { type TaskSegment } from "@zoonk/learn/task-header";
 import { getChallengeProgress } from "./_utils/challenge-progress";
+import { canGoBack } from "./_utils/lesson-back";
 import { isAtEnd } from "./_utils/lesson-end";
-import { canGoBack, continueStopsAt } from "./_utils/lesson-flow";
+import { continueStopsAt } from "./_utils/lesson-flow";
 import { getHyperdriveStreak } from "./_utils/lesson-hyperdrive";
 import {
   getExplanationsAfter,

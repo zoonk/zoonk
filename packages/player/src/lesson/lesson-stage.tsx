@@ -194,7 +194,8 @@ export function LessonStage({
   step: PlayableLibraryStep;
   turn: ScreenTurn | null;
 }) {
-  const { actions, screen, state } = useLessonPlayer();
+  const { actions, played, screen, state: inView } = useLessonPlayer();
+  const state = isShown ? inView : played;
   const result = state.results[step.id];
 
   const next = result && {

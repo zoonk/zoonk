@@ -8,7 +8,7 @@ import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
+import { getDayMissions } from "../missions/get-day-missions";
 import { type DayProgressReader } from "../missions/mission-day-views";
 import { getVisibleSessionTotal } from "../session-minutes";
 import { loadCatchUpView } from "./catch-up";
@@ -170,7 +170,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true, trialEnded: false };
 
-  const [outlines, missions, fullMealEarned, plusLessons, reserved] = await Promise.all([
+  const [outlines, missions, plusLessons, reserved] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -179,7 +179,6 @@ export async function loadStudySessionView({
       timeZone,
       ...(current && { through: new Date() }),
     }),
-    hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
       access: examAccess,
       goalId: session.goalId,
@@ -196,7 +195,6 @@ export async function loadStudySessionView({
     dayEndsAt,
     dayMinutes,
     examAccess,
-    fullMealEarned,
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (outlines ?? "idle") : null,

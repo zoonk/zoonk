@@ -1,0 +1,3232 @@
+[
+  {
+    "task": "course-intent",
+    "model": "meta/muse-ember",
+    "scored": 183,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "de",
+        "score": 10
+      },
+      {
+        "accuracy": 0.9925373134328358,
+        "cases": 134,
+        "language": "en",
+        "score": 9.970149253731343
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "fr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "id",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 27,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "tr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "zh",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 2258.5956284153003,
+    "averageOutputTokens": 462.14207650273227,
+    "classification": {
+      "accuracy": 0.994535519125683,
+      "counts": {
+        "ambiguous": {
+          "ambiguous": 24,
+          "learn": 1
+        },
+        "exam": {
+          "exam": 8
+        },
+        "learn": {
+          "learn": 129
+        },
+        "question": {
+          "question": 14
+        },
+        "unsafe": {
+          "unsafe": 7
+        }
+      },
+      "labels": [
+        "ambiguous",
+        "exam",
+        "learn",
+        "question",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.96,
+          "correct": 24,
+          "label": "ambiguous",
+          "total": 25
+        },
+        {
+          "accuracy": 1,
+          "correct": 8,
+          "label": "exam",
+          "total": 8
+        },
+        {
+          "accuracy": 1,
+          "correct": 129,
+          "label": "learn",
+          "total": 129
+        },
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "question",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 7,
+          "label": "unsafe",
+          "total": 7
+        }
+      ],
+      "total": 183
+    },
+    "costPer1000Runs": 0.42968548633879766,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.2461262910000004,
+    "latencyP95": 2.7444966669999995,
+    "runCost": 0.07863244399999997,
+    "spent": 0.07863244399999997,
+    "failures": [
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "adversarial-policy-bypass-1"
+      },
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "adversarial-context-exhaustion-1"
+      },
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "sony-bdp-code-execution-1"
+      },
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "pt-adversarial-policy-bypass-1"
+      },
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "pt-adversarial-context-exhaustion-1"
+      }
+    ]
+  },
+  {
+    "task": "course-intent",
+    "model": "openai/gpt-6-luna",
+    "scored": 188,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "de",
+        "score": 10
+      },
+      {
+        "accuracy": 0.9927007299270073,
+        "cases": 137,
+        "language": "en",
+        "score": 9.97080291970803
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "fr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "id",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 29,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "tr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "zh",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 2273.8563829787236,
+    "averageOutputTokens": 46.170212765957444,
+    "classification": {
+      "accuracy": 0.9946808510638298,
+      "counts": {
+        "ambiguous": {
+          "ambiguous": 25
+        },
+        "exam": {
+          "exam": 8
+        },
+        "learn": {
+          "learn": 128,
+          "ambiguous": 1
+        },
+        "question": {
+          "question": 14
+        },
+        "unsafe": {
+          "unsafe": 12
+        }
+      },
+      "labels": [
+        "ambiguous",
+        "exam",
+        "learn",
+        "question",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 25,
+          "label": "ambiguous",
+          "total": 25
+        },
+        {
+          "accuracy": 1,
+          "correct": 8,
+          "label": "exam",
+          "total": 8
+        },
+        {
+          "accuracy": 0.9922480620155039,
+          "correct": 128,
+          "label": "learn",
+          "total": 129
+        },
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "question",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 12,
+          "label": "unsafe",
+          "total": 12
+        }
+      ],
+      "total": 188
+    },
+    "costPer1000Runs": 0.05427446808510635,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.585547125000001,
+    "latencyP95": 2.7018266250000016,
+    "runCost": 0.010203599999999993,
+    "spent": 0.010203599999999993
+  },
+  {
+    "task": "course-intent",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 188,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "de",
+        "score": 10
+      },
+      {
+        "accuracy": 0.9635036496350365,
+        "cases": 137,
+        "language": "en",
+        "score": 9.854014598540147
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "fr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "id",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 29,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "tr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "zh",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 2332.8670212765956,
+    "averageOutputTokens": 10.622340425531915,
+    "classification": {
+      "accuracy": 0.973404255319149,
+      "counts": {
+        "ambiguous": {
+          "ambiguous": 25
+        },
+        "exam": {
+          "exam": 8
+        },
+        "learn": {
+          "learn": 124,
+          "ambiguous": 4,
+          "exam": 1
+        },
+        "question": {
+          "question": 14
+        },
+        "unsafe": {
+          "unsafe": 12
+        }
+      },
+      "labels": [
+        "ambiguous",
+        "exam",
+        "learn",
+        "question",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 25,
+          "label": "ambiguous",
+          "total": 25
+        },
+        {
+          "accuracy": 1,
+          "correct": 8,
+          "label": "exam",
+          "total": 8
+        },
+        {
+          "accuracy": 0.9612403100775194,
+          "correct": 124,
+          "label": "learn",
+          "total": 129
+        },
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "question",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 12,
+          "label": "unsafe",
+          "total": 12
+        }
+      ],
+      "total": 188
+    },
+    "costPer1000Runs": 0.7264159574468084,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.0227889170000126,
+    "latencyP95": 1.223269583000001,
+    "runCost": 0.1365662,
+    "spent": 0.1365662
+  },
+  {
+    "task": "course-intent",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 188,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "de",
+        "score": 10
+      },
+      {
+        "accuracy": 0.9562043795620438,
+        "cases": 137,
+        "language": "en",
+        "score": 9.824817518248175
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "fr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "id",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 29,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "tr",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "zh",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 3830.218085106383,
+    "averageOutputTokens": 68.49468085106383,
+    "classification": {
+      "accuracy": 0.9680851063829787,
+      "counts": {
+        "ambiguous": {
+          "ambiguous": 25
+        },
+        "exam": {
+          "exam": 8
+        },
+        "learn": {
+          "learn": 123,
+          "ambiguous": 6
+        },
+        "question": {
+          "question": 14
+        },
+        "unsafe": {
+          "unsafe": 12
+        }
+      },
+      "labels": [
+        "ambiguous",
+        "exam",
+        "learn",
+        "question",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 25,
+          "label": "ambiguous",
+          "total": 25
+        },
+        {
+          "accuracy": 1,
+          "correct": 8,
+          "label": "exam",
+          "total": 8
+        },
+        {
+          "accuracy": 0.9534883720930233,
+          "correct": 123,
+          "label": "learn",
+          "total": 129
+        },
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "question",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 12,
+          "label": "unsafe",
+          "total": 12
+        }
+      ],
+      "total": 188
+    },
+    "costPer1000Runs": 0.09069574468085104,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.249257459000015,
+    "latencyP95": 2.0668750419999995,
+    "runCost": 0.017050799999999994,
+    "spent": 0.017050799999999994
+  },
+  {
+    "task": "goal-specificity",
+    "model": "meta/muse-ember",
+    "scored": 21,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 9,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 7,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "tr",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 644,
+    "averageOutputTokens": 135.28571428571428,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "false": {
+          "false": 14
+        },
+        "true": {
+          "true": 7
+        }
+      },
+      "labels": [
+        "false",
+        "true"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "false",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 7,
+          "label": "true",
+          "total": 7
+        }
+      ],
+      "total": 21
+    },
+    "costPer1000Runs": 0.12975714285714285,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 0.9127612090000039,
+    "latencyP95": 1.1461041669999976,
+    "runCost": 0.0027248999999999997,
+    "spent": 0.0027248999999999997
+  },
+  {
+    "task": "goal-specificity",
+    "model": "openai/gpt-6-luna",
+    "scored": 21,
+    "languages": [
+      {
+        "accuracy": 0.8888888888888888,
+        "cases": 9,
+        "language": "en",
+        "score": 9.333333333333334
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 7,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "tr",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 599.9047619047619,
+    "averageOutputTokens": 39.523809523809526,
+    "classification": {
+      "accuracy": 0.9523809523809523,
+      "counts": {
+        "false": {
+          "false": 14
+        },
+        "true": {
+          "true": 6,
+          "false": 1
+        }
+      },
+      "labels": [
+        "false",
+        "true"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "false",
+          "total": 14
+        },
+        {
+          "accuracy": 0.8571428571428571,
+          "correct": 6,
+          "label": "true",
+          "total": 7
+        }
+      ],
+      "total": 21
+    },
+    "costPer1000Runs": 0.07975238095238094,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.5727012500000128,
+    "latencyP95": 2.0747332089999984,
+    "runCost": 0.0016747999999999997,
+    "spent": 0.0016747999999999997
+  },
+  {
+    "task": "goal-specificity",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 21,
+    "languages": [
+      {
+        "accuracy": 0.8888888888888888,
+        "cases": 9,
+        "language": "en",
+        "score": 9.555555555555555
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 7,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "tr",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 571.4285714285714,
+    "averageOutputTokens": 903.9047619047619,
+    "classification": {
+      "accuracy": 0.9523809523809523,
+      "counts": {
+        "false": {
+          "false": 14
+        },
+        "true": {
+          "true": 6,
+          "false": 1
+        }
+      },
+      "labels": [
+        "false",
+        "true"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "false",
+          "total": 14
+        },
+        {
+          "accuracy": 0.8571428571428571,
+          "correct": 6,
+          "label": "true",
+          "total": 7
+        }
+      ],
+      "total": 21
+    },
+    "costPer1000Runs": 2.4311904761904763,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 5.332754041999986,
+    "latencyP95": 7.2758308329999855,
+    "runCost": 0.051055,
+    "spent": 0.051055
+  },
+  {
+    "task": "goal-specificity",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 21,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 9,
+        "language": "en",
+        "score": 9.777777777777779
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "it",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ko",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "pl",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 7,
+        "language": "pt",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "tr",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 1137,
+    "averageOutputTokens": 62.476190476190474,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "false": {
+          "false": 14
+        },
+        "true": {
+          "true": 7
+        }
+      },
+      "labels": [
+        "false",
+        "true"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 14,
+          "label": "false",
+          "total": 14
+        },
+        {
+          "accuracy": 1,
+          "correct": 7,
+          "label": "true",
+          "total": 7
+        }
+      ],
+      "total": 21
+    },
+    "costPer1000Runs": 0.07725142857142857,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.626719832999981,
+    "latencyP95": 2.099459833000001,
+    "runCost": 0.00162228,
+    "spent": 0.00162228
+  },
+  {
+    "task": "understand-goal",
+    "model": "meta/muse-ember",
+    "scored": 64,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 24,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 8
+      },
+      {
+        "accuracy": 1,
+        "cases": 37,
+        "language": "pt",
+        "score": 9.945945945945946
+      }
+    ],
+    "averageInputTokens": 3444.71875,
+    "averageOutputTokens": 1666.796875,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "explain": {
+          "explain": 3
+        },
+        "goals": {
+          "goals": 55
+        },
+        "instrument": {
+          "instrument": 2
+        },
+        "unclear": {
+          "unclear": 3
+        },
+        "unsafe": {
+          "unsafe": 1
+        }
+      },
+      "labels": [
+        "explain",
+        "goals",
+        "instrument",
+        "unclear",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "explain",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 55,
+          "label": "goals",
+          "total": 55
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "instrument",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "unclear",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "unsafe",
+          "total": 1
+        }
+      ],
+      "total": 64
+    },
+    "costPer1000Runs": 1.1629483124999997,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.8236167920000006,
+    "latencyP95": 7.405309290999997,
+    "runCost": 0.07442869199999999,
+    "spent": 0.07442869199999999,
+    "failures": [
+      {
+        "calls": [],
+        "message": "The response was filtered due to the prompt triggering our content management policy.",
+        "reason": "provider",
+        "testCaseId": "en-unsafe-hack-1"
+      }
+    ]
+  },
+  {
+    "task": "understand-goal",
+    "model": "openai/gpt-6-luna",
+    "scored": 65,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 25,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 8
+      },
+      {
+        "accuracy": 1,
+        "cases": 37,
+        "language": "pt",
+        "score": 9.945945945945946
+      }
+    ],
+    "averageInputTokens": 3346.6769230769232,
+    "averageOutputTokens": 306.5076923076923,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "explain": {
+          "explain": 3
+        },
+        "goals": {
+          "goals": 55
+        },
+        "instrument": {
+          "instrument": 2
+        },
+        "unclear": {
+          "unclear": 3
+        },
+        "unsafe": {
+          "unsafe": 2
+        }
+      },
+      "labels": [
+        "explain",
+        "goals",
+        "instrument",
+        "unclear",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "explain",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 55,
+          "label": "goals",
+          "total": 55
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "instrument",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "unclear",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "unsafe",
+          "total": 2
+        }
+      ],
+      "total": 65
+    },
+    "costPer1000Runs": 0.20090684615384619,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 4.0541732079999635,
+    "latencyP95": 5.565868582999974,
+    "runCost": 0.013058945,
+    "spent": 0.013058945
+  },
+  {
+    "task": "understand-goal",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 65,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 25,
+        "language": "en",
+        "score": 9.92
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "es",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 8
+      },
+      {
+        "accuracy": 1,
+        "cases": 37,
+        "language": "pt",
+        "score": 9.891891891891891
+      }
+    ],
+    "averageInputTokens": 2991.0307692307692,
+    "averageOutputTokens": 249.84615384615384,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "explain": {
+          "explain": 3
+        },
+        "goals": {
+          "goals": 55
+        },
+        "instrument": {
+          "instrument": 2
+        },
+        "unclear": {
+          "unclear": 3
+        },
+        "unsafe": {
+          "unsafe": 2
+        }
+      },
+      "labels": [
+        "explain",
+        "goals",
+        "instrument",
+        "unclear",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "explain",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 55,
+          "label": "goals",
+          "total": 55
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "instrument",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "unclear",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "unsafe",
+          "total": 2
+        }
+      ],
+      "total": 65
+    },
+    "costPer1000Runs": 1.5159804615384609,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.5475748330000205,
+    "latencyP95": 1.9821000830000266,
+    "runCost": 0.09853872999999996,
+    "spent": 0.09853872999999996
+  },
+  {
+    "task": "understand-goal",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 65,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 25,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "es",
+        "score": 9
+      },
+      {
+        "accuracy": 1,
+        "cases": 1,
+        "language": "ja",
+        "score": 10
+      },
+      {
+        "accuracy": 0.972972972972973,
+        "cases": 37,
+        "language": "pt",
+        "score": 9.216216216216216
+      }
+    ],
+    "averageInputTokens": 5641.030769230769,
+    "averageOutputTokens": 410.3692307692308,
+    "classification": {
+      "accuracy": 0.9846153846153847,
+      "counts": {
+        "explain": {
+          "explain": 3
+        },
+        "goals": {
+          "goals": 54,
+          "unclear": 1
+        },
+        "instrument": {
+          "instrument": 2
+        },
+        "unclear": {
+          "unclear": 3
+        },
+        "unsafe": {
+          "unsafe": 2
+        }
+      },
+      "labels": [
+        "explain",
+        "goals",
+        "instrument",
+        "unclear",
+        "unsafe"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "explain",
+          "total": 3
+        },
+        {
+          "accuracy": 0.9818181818181818,
+          "correct": 54,
+          "label": "goals",
+          "total": 55
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "instrument",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "unclear",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "unsafe",
+          "total": 2
+        }
+      ],
+      "total": 65
+    },
+    "costPer1000Runs": 0.36699969230769225,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.2581797500000103,
+    "latencyP95": 2.9354544999999925,
+    "runCost": 0.023854979999999998,
+    "spent": 0.023854979999999998
+  },
+  {
+    "task": "plan-edit-intent",
+    "model": "meta/muse-ember",
+    "scored": 58,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 22,
+        "language": "en",
+        "score": 9.590909090909092
+      },
+      {
+        "accuracy": 0.9722222222222222,
+        "cases": 36,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 3543.948275862069,
+    "averageOutputTokens": 1118.344827586207,
+    "classification": {
+      "accuracy": 0.9827586206896551,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 3
+        },
+        "addTopics": {
+          "addTopics": 5
+        },
+        "focusAreas": {
+          "focusAreas": 12,
+          "reduceAreas": 1
+        },
+        "none": {
+          "none": 4
+        },
+        "reduceAreas": {
+          "reduceAreas": 2
+        },
+        "restoreActivities": {
+          "restoreActivities": 1
+        },
+        "setAreaStart": {
+          "setAreaStart": 2
+        },
+        "setDailyMinutes": {
+          "setDailyMinutes": 3
+        },
+        "setDifficultyBias": {
+          "setDifficultyBias": 1
+        },
+        "setPracticeBias": {
+          "setPracticeBias": 3
+        },
+        "setTargetDate": {
+          "setTargetDate": 4
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 9
+        },
+        "setWrittenCadence": {
+          "setWrittenCadence": 3
+        },
+        "skipActivities": {
+          "skipActivities": 1
+        },
+        "skipAreas": {
+          "skipAreas": 4
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "addTopics",
+        "focusAreas",
+        "none",
+        "reduceAreas",
+        "restoreActivities",
+        "setAreaStart",
+        "setDailyMinutes",
+        "setDifficultyBias",
+        "setPracticeBias",
+        "setTargetDate",
+        "setWeekdayMinutes",
+        "setWrittenCadence",
+        "skipActivities",
+        "skipAreas"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "addLightWeek",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "addTopics",
+          "total": 5
+        },
+        {
+          "accuracy": 0.9230769230769231,
+          "correct": 12,
+          "label": "focusAreas",
+          "total": 13
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "none",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "reduceAreas",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "restoreActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "setAreaStart",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setDailyMinutes",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "setDifficultyBias",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setPracticeBias",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "setTargetDate",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 9,
+          "label": "setWeekdayMinutes",
+          "total": 9
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWrittenCadence",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "skipActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "skipAreas",
+          "total": 4
+        }
+      ],
+      "total": 58
+    },
+    "costPer1000Runs": 0.9135672413793108,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.8343204580000019,
+    "latencyP95": 5.450896042000007,
+    "runCost": 0.052986900000000024,
+    "spent": 0.052986900000000024
+  },
+  {
+    "task": "plan-edit-intent",
+    "model": "openai/gpt-6-luna",
+    "scored": 58,
+    "languages": [
+      {
+        "accuracy": 0.9545454545454546,
+        "cases": 22,
+        "language": "en",
+        "score": 9.181818181818182
+      },
+      {
+        "accuracy": 0.9444444444444444,
+        "cases": 36,
+        "language": "pt",
+        "score": 8.583333333333334
+      }
+    ],
+    "averageInputTokens": 3460.7241379310344,
+    "averageOutputTokens": 203.75862068965517,
+    "classification": {
+      "accuracy": 0.9482758620689655,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 3
+        },
+        "addTopics": {
+          "addTopics": 4,
+          "focusAreas": 1
+        },
+        "focusAreas": {
+          "focusAreas": 12,
+          "reduceAreas": 1
+        },
+        "none": {
+          "none": 3,
+          "setDailyMinutes": 1
+        },
+        "reduceAreas": {
+          "reduceAreas": 2
+        },
+        "restoreActivities": {
+          "restoreActivities": 1
+        },
+        "setAreaStart": {
+          "setAreaStart": 2
+        },
+        "setDailyMinutes": {
+          "setDailyMinutes": 3
+        },
+        "setDifficultyBias": {
+          "setDifficultyBias": 1
+        },
+        "setPracticeBias": {
+          "setPracticeBias": 3
+        },
+        "setTargetDate": {
+          "setTargetDate": 4
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 9
+        },
+        "setWrittenCadence": {
+          "setWrittenCadence": 3
+        },
+        "skipActivities": {
+          "skipActivities": 1
+        },
+        "skipAreas": {
+          "skipAreas": 4
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "addTopics",
+        "focusAreas",
+        "none",
+        "reduceAreas",
+        "restoreActivities",
+        "setAreaStart",
+        "setDailyMinutes",
+        "setDifficultyBias",
+        "setPracticeBias",
+        "setTargetDate",
+        "setWeekdayMinutes",
+        "setWrittenCadence",
+        "skipActivities",
+        "skipAreas"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "addLightWeek",
+          "total": 3
+        },
+        {
+          "accuracy": 0.8,
+          "correct": 4,
+          "label": "addTopics",
+          "total": 5
+        },
+        {
+          "accuracy": 0.9230769230769231,
+          "correct": 12,
+          "label": "focusAreas",
+          "total": 13
+        },
+        {
+          "accuracy": 0.75,
+          "correct": 3,
+          "label": "none",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "reduceAreas",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "restoreActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "setAreaStart",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setDailyMinutes",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "setDifficultyBias",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setPracticeBias",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "setTargetDate",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 9,
+          "label": "setWeekdayMinutes",
+          "total": 9
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWrittenCadence",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "skipActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "skipAreas",
+          "total": 4
+        }
+      ],
+      "total": 58
+    },
+    "costPer1000Runs": 0.16400810344827588,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 3.0037829580000253,
+    "latencyP95": 8.10201441600005,
+    "runCost": 0.00951247,
+    "spent": 0.00951247
+  },
+  {
+    "task": "plan-edit-intent",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 58,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 22,
+        "language": "en",
+        "score": 9.590909090909092
+      },
+      {
+        "accuracy": 0.9722222222222222,
+        "cases": 36,
+        "language": "pt",
+        "score": 9.75
+      }
+    ],
+    "averageInputTokens": 3184.310344827586,
+    "averageOutputTokens": 155.1551724137931,
+    "classification": {
+      "accuracy": 0.9827586206896551,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 3
+        },
+        "addTopics": {
+          "addTopics": 5
+        },
+        "focusAreas": {
+          "focusAreas": 12,
+          "reduceAreas": 1
+        },
+        "none": {
+          "none": 4
+        },
+        "reduceAreas": {
+          "reduceAreas": 2
+        },
+        "restoreActivities": {
+          "restoreActivities": 1
+        },
+        "setAreaStart": {
+          "setAreaStart": 2
+        },
+        "setDailyMinutes": {
+          "setDailyMinutes": 3
+        },
+        "setDifficultyBias": {
+          "setDifficultyBias": 1
+        },
+        "setPracticeBias": {
+          "setPracticeBias": 3
+        },
+        "setTargetDate": {
+          "setTargetDate": 4
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 9
+        },
+        "setWrittenCadence": {
+          "setWrittenCadence": 3
+        },
+        "skipActivities": {
+          "skipActivities": 1
+        },
+        "skipAreas": {
+          "skipAreas": 4
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "addTopics",
+        "focusAreas",
+        "none",
+        "reduceAreas",
+        "restoreActivities",
+        "setAreaStart",
+        "setDailyMinutes",
+        "setDifficultyBias",
+        "setPracticeBias",
+        "setTargetDate",
+        "setWeekdayMinutes",
+        "setWrittenCadence",
+        "skipActivities",
+        "skipAreas"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "addLightWeek",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "addTopics",
+          "total": 5
+        },
+        {
+          "accuracy": 0.9230769230769231,
+          "correct": 12,
+          "label": "focusAreas",
+          "total": 13
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "none",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "reduceAreas",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "restoreActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "setAreaStart",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setDailyMinutes",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "setDifficultyBias",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setPracticeBias",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "setTargetDate",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 9,
+          "label": "setWeekdayMinutes",
+          "total": 9
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWrittenCadence",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "skipActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "skipAreas",
+          "total": 4
+        }
+      ],
+      "total": 58
+    },
+    "costPer1000Runs": 1.3362913793103444,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.3650050410000258,
+    "latencyP95": 1.6887317499999772,
+    "runCost": 0.07750489999999997,
+    "spent": 0.07750489999999997
+  },
+  {
+    "task": "plan-edit-intent",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 58,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 22,
+        "language": "en",
+        "score": 9.590909090909092
+      },
+      {
+        "accuracy": 0.9444444444444444,
+        "cases": 36,
+        "language": "pt",
+        "score": 9.333333333333334
+      }
+    ],
+    "averageInputTokens": 5994.224137931034,
+    "averageOutputTokens": 380.17241379310343,
+    "classification": {
+      "accuracy": 0.9655172413793104,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 3
+        },
+        "addTopics": {
+          "addTopics": 4,
+          "focusAreas": 1
+        },
+        "focusAreas": {
+          "focusAreas": 12,
+          "reduceAreas": 1
+        },
+        "none": {
+          "none": 4
+        },
+        "reduceAreas": {
+          "reduceAreas": 2
+        },
+        "restoreActivities": {
+          "restoreActivities": 1
+        },
+        "setAreaStart": {
+          "setAreaStart": 2
+        },
+        "setDailyMinutes": {
+          "setDailyMinutes": 3
+        },
+        "setDifficultyBias": {
+          "setDifficultyBias": 1
+        },
+        "setPracticeBias": {
+          "setPracticeBias": 3
+        },
+        "setTargetDate": {
+          "setTargetDate": 4
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 9
+        },
+        "setWrittenCadence": {
+          "setWrittenCadence": 3
+        },
+        "skipActivities": {
+          "skipActivities": 1
+        },
+        "skipAreas": {
+          "skipAreas": 4
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "addTopics",
+        "focusAreas",
+        "none",
+        "reduceAreas",
+        "restoreActivities",
+        "setAreaStart",
+        "setDailyMinutes",
+        "setDifficultyBias",
+        "setPracticeBias",
+        "setTargetDate",
+        "setWeekdayMinutes",
+        "setWrittenCadence",
+        "skipActivities",
+        "skipAreas"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "addLightWeek",
+          "total": 3
+        },
+        {
+          "accuracy": 0.8,
+          "correct": 4,
+          "label": "addTopics",
+          "total": 5
+        },
+        {
+          "accuracy": 0.9230769230769231,
+          "correct": 12,
+          "label": "focusAreas",
+          "total": 13
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "none",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "reduceAreas",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "restoreActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "setAreaStart",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setDailyMinutes",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "setDifficultyBias",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setPracticeBias",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "setTargetDate",
+          "total": 4
+        },
+        {
+          "accuracy": 1,
+          "correct": 9,
+          "label": "setWeekdayMinutes",
+          "total": 9
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWrittenCadence",
+          "total": 3
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "skipActivities",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 4,
+          "label": "skipAreas",
+          "total": 4
+        }
+      ],
+      "total": 58
+    },
+    "costPer1000Runs": 0.32975827586206896,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.0457509169999977,
+    "latencyP95": 5.621218250000035,
+    "runCost": 0.01912598,
+    "spent": 0.01912598
+  },
+  {
+    "task": "plan-routine-fit",
+    "model": "meta/muse-ember",
+    "scored": 6,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 993.8333333333334,
+    "averageOutputTokens": 1550.1666666666667,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 2
+        },
+        "none": {
+          "none": 1
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 3
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "none",
+        "setWeekdayMinutes"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "addLightWeek",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "none",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWeekdayMinutes",
+          "total": 3
+        }
+      ],
+      "total": 6
+    },
+    "costPer1000Runs": 0.8744666666666667,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.584947542000009,
+    "latencyP95": 13.414089999999996,
+    "runCost": 0.0052468,
+    "spent": 0.0052468
+  },
+  {
+    "task": "plan-routine-fit",
+    "model": "openai/gpt-6-luna",
+    "scored": 6,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 0.6666666666666666,
+        "cases": 3,
+        "language": "pt",
+        "score": 7
+      }
+    ],
+    "averageInputTokens": 938.1666666666666,
+    "averageOutputTokens": 100.83333333333333,
+    "classification": {
+      "accuracy": 0.8333333333333334,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 2
+        },
+        "none": {
+          "none": 1
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 2,
+          "none": 1
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "none",
+        "setWeekdayMinutes"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "addLightWeek",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "none",
+          "total": 1
+        },
+        {
+          "accuracy": 0.6666666666666666,
+          "correct": 2,
+          "label": "setWeekdayMinutes",
+          "total": 3
+        }
+      ],
+      "total": 6
+    },
+    "costPer1000Runs": 0.1442333333333333,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.1653010420000065,
+    "latencyP95": 3.106241540999967,
+    "runCost": 0.0008653999999999999,
+    "spent": 0.0008653999999999999
+  },
+  {
+    "task": "plan-routine-fit",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 6,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 879.5,
+    "averageOutputTokens": 66.16666666666667,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 2
+        },
+        "none": {
+          "none": 1
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 3
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "none",
+        "setWeekdayMinutes"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "addLightWeek",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "none",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWeekdayMinutes",
+          "total": 3
+        }
+      ],
+      "total": 6
+    },
+    "costPer1000Runs": 0.4292666666666667,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.0758427080000401,
+    "latencyP95": 1.387252833000035,
+    "runCost": 0.0025756,
+    "spent": 0.0025756
+  },
+  {
+    "task": "plan-routine-fit",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 6,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 3,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 1716,
+    "averageOutputTokens": 209.66666666666666,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "addLightWeek": {
+          "addLightWeek": 2
+        },
+        "none": {
+          "none": 1
+        },
+        "setWeekdayMinutes": {
+          "setWeekdayMinutes": 3
+        }
+      },
+      "labels": [
+        "addLightWeek",
+        "none",
+        "setWeekdayMinutes"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 2,
+          "label": "addLightWeek",
+          "total": 2
+        },
+        {
+          "accuracy": 1,
+          "correct": 1,
+          "label": "none",
+          "total": 1
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "setWeekdayMinutes",
+          "total": 3
+        }
+      ],
+      "total": 6
+    },
+    "costPer1000Runs": 0.2569,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.1103083340000013,
+    "latencyP95": 3.5234601249999833,
+    "runCost": 0.0015414,
+    "spent": 0.0015414
+  },
+  {
+    "task": "memory-search-terms",
+    "model": "meta/muse-ember",
+    "scored": 10,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 5,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "pt",
+        "score": 9.4
+      }
+    ],
+    "averageInputTokens": 909.8,
+    "averageOutputTokens": 2092.3,
+    "classification": {
+      "accuracy": 0.9,
+      "counts": {
+        "all": {
+          "all": 9,
+          "missed": 1
+        }
+      },
+      "labels": [
+        "all",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.9,
+          "correct": 9,
+          "label": "all",
+          "total": 10
+        }
+      ],
+      "total": 10
+    },
+    "costPer1000Runs": 1.13713,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 4.175955332999991,
+    "latencyP95": 8.184810457999992,
+    "runCost": 0.011371299999999999,
+    "spent": 0.011371299999999999
+  },
+  {
+    "task": "memory-search-terms",
+    "model": "openai/gpt-6-luna",
+    "scored": 10,
+    "languages": [
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "en",
+        "score": 9.4
+      },
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "pt",
+        "score": 9.4
+      }
+    ],
+    "averageInputTokens": 869.6,
+    "averageOutputTokens": 211.6,
+    "classification": {
+      "accuracy": 0.8,
+      "counts": {
+        "all": {
+          "all": 8,
+          "missed": 2
+        }
+      },
+      "labels": [
+        "all",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.8,
+          "correct": 8,
+          "label": "all",
+          "total": 10
+        }
+      ],
+      "total": 10
+    },
+    "costPer1000Runs": 0.19276000000000001,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 3.494157540999993,
+    "latencyP95": 4.41170095899998,
+    "runCost": 0.0019276000000000002,
+    "spent": 0.0019276000000000002
+  },
+  {
+    "task": "memory-search-terms",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 10,
+    "languages": [
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "en",
+        "score": 9.4
+      },
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "pt",
+        "score": 9.4
+      }
+    ],
+    "averageInputTokens": 860.1,
+    "averageOutputTokens": 59,
+    "classification": {
+      "accuracy": 0.8,
+      "counts": {
+        "all": {
+          "all": 8,
+          "missed": 2
+        }
+      },
+      "labels": [
+        "all",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.8,
+          "correct": 8,
+          "label": "all",
+          "total": 10
+        }
+      ],
+      "total": 10
+    },
+    "costPer1000Runs": 0.40553,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.0990831670000334,
+    "latencyP95": 1.3671477500000038,
+    "runCost": 0.0040552999999999995,
+    "spent": 0.0040552999999999995
+  },
+  {
+    "task": "memory-search-terms",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 10,
+    "languages": [
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "en",
+        "score": 9.4
+      },
+      {
+        "accuracy": 0.8,
+        "cases": 5,
+        "language": "pt",
+        "score": 9.4
+      }
+    ],
+    "averageInputTokens": 1419.6,
+    "averageOutputTokens": 55.6,
+    "classification": {
+      "accuracy": 0.8,
+      "counts": {
+        "all": {
+          "all": 8,
+          "missed": 2
+        }
+      },
+      "labels": [
+        "all",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.8,
+          "correct": 8,
+          "label": "all",
+          "total": 10
+        }
+      ],
+      "total": 10
+    },
+    "costPer1000Runs": 0.11282399999999998,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.6160626669999911,
+    "latencyP95": 2.9255940420000117,
+    "runCost": 0.0011282399999999998,
+    "spent": 0.0011282399999999998
+  },
+  {
+    "task": "library-search-terms",
+    "model": "meta/muse-ember",
+    "scored": 16,
+    "languages": [
+      {
+        "accuracy": 0.7142857142857143,
+        "cases": 7,
+        "language": "en",
+        "score": 8.857142857142858
+      },
+      {
+        "accuracy": 0.7777777777777778,
+        "cases": 9,
+        "language": "pt",
+        "score": 9.11111111111111
+      }
+    ],
+    "averageInputTokens": 1459,
+    "averageOutputTokens": 186.8125,
+    "classification": {
+      "accuracy": 0.75,
+      "counts": {
+        "found": {
+          "found": 12,
+          "missed": 4
+        }
+      },
+      "labels": [
+        "found",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.75,
+          "correct": 12,
+          "label": "found",
+          "total": 16
+        }
+      ],
+      "total": 16
+    },
+    "costPer1000Runs": 0.23930624999999997,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 0.9365539580000041,
+    "latencyP95": 1.429728999999992,
+    "runCost": 0.0038288999999999997,
+    "spent": 0.0038288999999999997
+  },
+  {
+    "task": "library-search-terms",
+    "model": "openai/gpt-6-luna",
+    "scored": 16,
+    "languages": [
+      {
+        "accuracy": 0.7142857142857143,
+        "cases": 7,
+        "language": "en",
+        "score": 8.857142857142858
+      },
+      {
+        "accuracy": 0.7777777777777778,
+        "cases": 9,
+        "language": "pt",
+        "score": 9.11111111111111
+      }
+    ],
+    "averageInputTokens": 1389.75,
+    "averageOutputTokens": 139.8125,
+    "classification": {
+      "accuracy": 0.75,
+      "counts": {
+        "found": {
+          "found": 12,
+          "missed": 4
+        }
+      },
+      "labels": [
+        "found",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.75,
+          "correct": 12,
+          "label": "found",
+          "total": 16
+        }
+      ],
+      "total": 16
+    },
+    "costPer1000Runs": 0.10493124999999996,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 3.051767999999982,
+    "latencyP95": 4.41537945800001,
+    "runCost": 0.0016788999999999994,
+    "spent": 0.0016788999999999994
+  },
+  {
+    "task": "library-search-terms",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 16,
+    "languages": [
+      {
+        "accuracy": 0.8571428571428571,
+        "cases": 7,
+        "language": "en",
+        "score": 9.428571428571429
+      },
+      {
+        "accuracy": 0.8888888888888888,
+        "cases": 9,
+        "language": "pt",
+        "score": 9.333333333333334
+      }
+    ],
+    "averageInputTokens": 1388.8125,
+    "averageOutputTokens": 1313.3125,
+    "classification": {
+      "accuracy": 0.875,
+      "counts": {
+        "found": {
+          "found": 14,
+          "missed": 2
+        }
+      },
+      "labels": [
+        "found",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.875,
+          "correct": 14,
+          "label": "found",
+          "total": 16
+        }
+      ],
+      "total": 16
+    },
+    "costPer1000Runs": 3.6999250000000004,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 6.156197042000015,
+    "latencyP95": 9.29822983299999,
+    "runCost": 0.0591988,
+    "spent": 0.0591988
+  },
+  {
+    "task": "library-search-terms",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 16,
+    "languages": [
+      {
+        "accuracy": 0.7142857142857143,
+        "cases": 7,
+        "language": "en",
+        "score": 8.857142857142858
+      },
+      {
+        "accuracy": 0.7777777777777778,
+        "cases": 9,
+        "language": "pt",
+        "score": 9.11111111111111
+      }
+    ],
+    "averageInputTokens": 2223.125,
+    "averageOutputTokens": 116.375,
+    "classification": {
+      "accuracy": 0.75,
+      "counts": {
+        "found": {
+          "found": 12,
+          "missed": 4
+        }
+      },
+      "labels": [
+        "found",
+        "missed"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 0.75,
+          "correct": 12,
+          "label": "found",
+          "total": 16
+        }
+      ],
+      "total": 16
+    },
+    "costPer1000Runs": 0.16663624999999996,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.5608658750000177,
+    "latencyP95": 2.9521818340000463,
+    "runCost": 0.0026661799999999993,
+    "spent": 0.0026661799999999993
+  },
+  {
+    "task": "icon-match",
+    "model": "meta/muse-ember",
+    "scored": 4,
+    "languages": [
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 589,
+    "averageOutputTokens": 134,
+    "classification": null,
+    "costPer1000Runs": 0.12589999999999998,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 0.8024782499999855,
+    "latencyP95": 1.127452958000009,
+    "runCost": 0.0005036,
+    "spent": 0.0005036
+  },
+  {
+    "task": "icon-match",
+    "model": "openai/gpt-6-luna",
+    "scored": 4,
+    "languages": [
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 525,
+    "averageOutputTokens": 49.25,
+    "classification": null,
+    "costPer1000Runs": 0.07712499999999999,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.214162875000038,
+    "latencyP95": 3.7647478750000007,
+    "runCost": 0.00030849999999999996,
+    "spent": 0.00030849999999999996
+  },
+  {
+    "task": "icon-match",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 4,
+    "languages": [
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "en",
+        "score": 9.333333333333332
+      },
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 475.75,
+    "averageOutputTokens": 1131.5,
+    "classification": null,
+    "costPer1000Runs": 2.9714750000000008,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 5.399305541999987,
+    "latencyP95": 8.577564666999969,
+    "runCost": 0.011885900000000003,
+    "spent": 0.011885900000000003
+  },
+  {
+    "task": "icon-match",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 4,
+    "languages": [
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": null,
+        "cases": 2,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 1044,
+    "averageOutputTokens": 114.75,
+    "classification": null,
+    "costPer1000Runs": 0.17864999999999998,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.770486333000008,
+    "latencyP95": 2.551077459000051,
+    "runCost": 0.0007145999999999999,
+    "spent": 0.0007145999999999999
+  },
+  {
+    "task": "upload-visibility",
+    "model": "meta/muse-ember",
+    "scored": 8,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 6,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 666.375,
+    "averageOutputTokens": 804.375,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "private": {
+          "private": 5
+        },
+        "public": {
+          "public": 3
+        }
+      },
+      "labels": [
+        "private",
+        "public"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "private",
+          "total": 5
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "public",
+          "total": 3
+        }
+      ],
+      "total": 8
+    },
+    "costPer1000Runs": 0.46882500000000005,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.6765709579999966,
+    "latencyP95": 2.409570458000002,
+    "runCost": 0.0037506,
+    "spent": 0.0037506
+  },
+  {
+    "task": "upload-visibility",
+    "model": "openai/gpt-6-luna",
+    "scored": 8,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 6,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 624.625,
+    "averageOutputTokens": 113.375,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "private": {
+          "private": 5
+        },
+        "public": {
+          "public": 3
+        }
+      },
+      "labels": [
+        "private",
+        "public"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "private",
+          "total": 5
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "public",
+          "total": 3
+        }
+      ],
+      "total": 8
+    },
+    "costPer1000Runs": 0.11914999999999998,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 2.1224167919999455,
+    "latencyP95": 3.9410564160000066,
+    "runCost": 0.0009531999999999999,
+    "spent": 0.0009531999999999999
+  },
+  {
+    "task": "upload-visibility",
+    "model": "google/gemini-3.5-flash-lite",
+    "scored": 8,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 6,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 559.75,
+    "averageOutputTokens": 57.625,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "private": {
+          "private": 5
+        },
+        "public": {
+          "public": 3
+        }
+      },
+      "labels": [
+        "private",
+        "public"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "private",
+          "total": 5
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "public",
+          "total": 3
+        }
+      ],
+      "total": 8
+    },
+    "costPer1000Runs": 0.31198750000000003,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.0881975420000962,
+    "latencyP95": 1.313434917000006,
+    "runCost": 0.0024959,
+    "spent": 0.0024959
+  },
+  {
+    "task": "upload-visibility",
+    "model": "anthropic/claude-haiku-5.5",
+    "scored": 8,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 6,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 1247.625,
+    "averageOutputTokens": 129.5,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "private": {
+          "private": 5
+        },
+        "public": {
+          "public": 3
+        }
+      },
+      "labels": [
+        "private",
+        "public"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "private",
+          "total": 5
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "public",
+          "total": 3
+        }
+      ],
+      "total": 8
+    },
+    "costPer1000Runs": 0.15798749999999998,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 1.715807374999975,
+    "latencyP95": 3.143961917000008,
+    "runCost": 0.0012638999999999999,
+    "spent": 0.0012638999999999999
+  },
+  {
+    "task": "upload-visibility",
+    "model": "google/gemini-3.8-flash",
+    "scored": 8,
+    "languages": [
+      {
+        "accuracy": 1,
+        "cases": 2,
+        "language": "en",
+        "score": 10
+      },
+      {
+        "accuracy": 1,
+        "cases": 6,
+        "language": "pt",
+        "score": 10
+      }
+    ],
+    "averageInputTokens": 559.75,
+    "averageOutputTokens": 242,
+    "classification": {
+      "accuracy": 1,
+      "counts": {
+        "private": {
+          "private": 5
+        },
+        "public": {
+          "public": 3
+        }
+      },
+      "labels": [
+        "private",
+        "public"
+      ],
+      "perLabel": [
+        {
+          "accuracy": 1,
+          "correct": 5,
+          "label": "private",
+          "total": 5
+        },
+        {
+          "accuracy": 1,
+          "correct": 3,
+          "label": "public",
+          "total": 3
+        }
+      ],
+      "total": 8
+    },
+    "costPer1000Runs": 1.3273125,
+    "extraCost": 0,
+    "judgeCost": 0,
+    "latencyP50": 3.6303588330000003,
+    "latencyP95": 4.653072,
+    "runCost": 0.0106185,
+    "spent": 0.0106185
+  }
+]

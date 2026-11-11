@@ -117,7 +117,7 @@ fun reduce(
         }
 
         LessonAction.GoBack -> {
-            if (state.phase == LessonPhase.Playing) state.goBack(now) else state
+            state.goBack(now)
         }
 
         is LessonAction.DontKnow -> {

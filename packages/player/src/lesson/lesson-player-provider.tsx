@@ -6,6 +6,7 @@ import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
+import { showAttemptInView } from "./_utils/lesson-attempts";
 import { addHeldAnswers, resumeLesson } from "./_utils/lesson-resume";
 import {
   LessonPlayerConfigContext,
@@ -154,7 +155,8 @@ export function LessonPlayerProvider({
   useAbandonTracking({ state, track });
   usePreloadMath(lesson.steps);
   usePreloadActivityCanvases(lesson.steps);
-  const screen = useMemo(() => getLessonScreen(state), [state]);
+  const shown = useMemo(() => showAttemptInView(state), [state]);
+  const screen = useMemo(() => getLessonScreen(shown), [shown]);
   const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 
   const onOpen = useEffectEvent(() => {
@@ -227,7 +229,10 @@ export function LessonPlayerProvider({
     ],
   );
 
-  const runtime = useMemo(() => ({ actions, screen, state }), [actions, screen, state]);
+  const runtime = useMemo(
+    () => ({ actions, played: state, screen, state: shown }),
+    [actions, screen, shown, state],
+  );
 
   return (
     <LessonPlayerConfigContext value={config}>

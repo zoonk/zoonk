@@ -2,11 +2,26 @@
   "modelId": "google/gemini-3.5-flash-lite",
   "results": [
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -21,8 +36,14 @@
                   "id": "interest",
                   "text": "Simple interest on a loan. Calculate simple interest"
                 },
-                { "id": "tax", "text": "Sales tax. Add tax to a price at the register" },
-                { "id": "tips", "text": "Tipping at restaurants. Work out a tip on a bill" }
+                {
+                  "id": "tax",
+                  "text": "Sales tax. Add tax to a price at the register"
+                },
+                {
+                  "id": "tips",
+                  "text": "Tipping at restaurants. Work out a tip on a bill"
+                }
               ],
               "targetId": "target"
             }
@@ -36,7 +57,9 @@
               "item": {
                 "description": "Find the final price of an item on sale",
                 "level": "beginner",
-                "skills": ["Calculate a discounted price"],
+                "skills": [
+                  "Calculate a discounted price"
+                ],
                 "title": "Calculate a discount"
               },
               "kind": "lesson",
@@ -47,11 +70,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -62,7 +100,10 @@
                   "id": "target",
                   "text": "Stoichiometric coefficients. Make atoms match on both sides of a reaction. Adjust coefficients so reactants and products have the same atoms"
                 },
-                { "id": "moles", "text": "The mole. Convert grams to moles with molar mass" },
+                {
+                  "id": "moles",
+                  "text": "The mole. Convert grams to moles with molar mass"
+                },
                 {
                   "id": "bonds",
                   "text": "Ionic and covalent bonds. Tell how atoms share or give electrons"
@@ -79,7 +120,9 @@
               "item": {
                 "description": "Make both sides of a chemical equation have the same atoms",
                 "level": "beginner",
-                "skills": ["Balance a chemical equation using coefficients"],
+                "skills": [
+                  "Balance a chemical equation using coefficients"
+                ],
                 "title": "Balance chemical equations"
               },
               "kind": "lesson",
@@ -90,11 +133,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -134,11 +192,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -169,7 +242,9 @@
               "item": {
                 "description": "How plants turn light into chemical energy",
                 "level": "beginner",
-                "objectives": ["Explain how plants make glucose from light"],
+                "objectives": [
+                  "Explain how plants make glucose from light"
+                ],
                 "title": "Photosynthesis"
               },
               "kind": "chapter",
@@ -180,11 +255,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -195,8 +285,14 @@
                   "id": "target",
                   "text": "IELTS Academic: what to expect on test day. British Council. https://takeielts.britishcouncil.org/academic"
                 },
-                { "id": "toefl", "text": "TOEFL iBT test content. ETS. https://www.ets.org/toefl" },
-                { "id": "cambridge", "text": "C1 Advanced exam format. Cambridge English" }
+                {
+                  "id": "toefl",
+                  "text": "TOEFL iBT test content. ETS. https://www.ets.org/toefl"
+                },
+                {
+                  "id": "cambridge",
+                  "text": "C1 Advanced exam format. Cambridge English"
+                }
               ],
               "targetId": "target"
             }
@@ -206,7 +302,10 @@
         "userInput": {
           "subjects": [
             {
-              "item": { "publisher": "British Council", "title": "IELTS Academic test format" },
+              "item": {
+                "publisher": "British Council",
+                "title": "IELTS Academic test format"
+              },
               "kind": "source",
               "language": "en"
             }
@@ -215,11 +314,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -230,8 +344,14 @@
                   "id": "target",
                   "text": "Circle graph of monthly spending split into rent, food and savings"
                 },
-                { "id": "bar", "text": "Bar graph comparing rainfall in four cities" },
-                { "id": "coins", "text": "A jar of coins on a kitchen table" }
+                {
+                  "id": "bar",
+                  "text": "Bar graph comparing rainfall in four cities"
+                },
+                {
+                  "id": "coins",
+                  "text": "A jar of coins on a kitchen table"
+                }
               ],
               "targetId": "target"
             }
@@ -241,7 +361,9 @@
         "userInput": {
           "subjects": [
             {
-              "item": { "title": "A pie chart with three slices showing a household budget" },
+              "item": {
+                "title": "A pie chart with three slices showing a household budget"
+              },
               "kind": "image",
               "language": "en"
             }
@@ -250,11 +372,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -265,8 +402,14 @@
                   "id": "target",
                   "text": "Grandezas diretamente proporcionais. Descubra um valor desconhecido quando duas grandezas crescem juntas. Montar uma proporção entre duas razões"
                 },
-                { "id": "percent", "text": "Porcentagem. Calcular uma parte de um total" },
-                { "id": "fractions", "text": "Frações equivalentes. Simplificar frações" }
+                {
+                  "id": "percent",
+                  "text": "Porcentagem. Calcular uma parte de um total"
+                },
+                {
+                  "id": "fractions",
+                  "text": "Frações equivalentes. Simplificar frações"
+                }
               ],
               "targetId": "target"
             }
@@ -279,7 +422,9 @@
               "item": {
                 "description": "Encontrar um valor a partir de três valores conhecidos",
                 "level": "beginner",
-                "skills": ["Resolver problemas de regra de três"],
+                "skills": [
+                  "Resolver problemas de regra de três"
+                ],
                 "title": "Regra de três simples"
               },
               "kind": "lesson",
@@ -290,11 +435,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -309,7 +469,10 @@
                   "id": "simple",
                   "text": "Juros simples. Juros calculados só sobre o capital inicial. Calcular juros simples"
                 },
-                { "id": "inflation", "text": "Inflação e poder de compra. Entender o IPCA" }
+                {
+                  "id": "inflation",
+                  "text": "Inflação e poder de compra. Entender o IPCA"
+                }
               ],
               "targetId": "target"
             }
@@ -322,7 +485,9 @@
               "item": {
                 "description": "Calcular quanto um investimento rende ao longo do tempo",
                 "level": "beginner",
-                "skills": ["Calcular o montante de uma aplicação"],
+                "skills": [
+                  "Calcular o montante de uma aplicação"
+                ],
                 "title": "Juros compostos"
               },
               "kind": "lesson",
@@ -333,11 +498,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -377,11 +557,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -412,7 +607,9 @@
               "item": {
                 "description": "Causas, fases e consequências da revolução de 1789",
                 "level": "intermediate",
-                "objectives": ["Explicar por que a monarquia francesa caiu"],
+                "objectives": [
+                  "Explicar por que a monarquia francesa caiu"
+                ],
                 "title": "Revolução Francesa"
               },
               "kind": "chapter",
@@ -423,7 +620,10 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
         {
           "conclusion": "Item 1 (Edital ENEM 2026): found the target, plus 2 of 2 near misses.",
@@ -450,7 +650,10 @@
                   "id": "target",
                   "text": "Exame Nacional do Ensino Médio 2026: edital. Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira"
                 },
-                { "id": "encceja", "text": "Edital Encceja 2026. Inep" },
+                {
+                  "id": "encceja",
+                  "text": "Edital Encceja 2026. Inep"
+                },
                 {
                   "id": "sisu",
                   "text": "Sisu 2026: cronograma de inscrições. Ministério da Educação"
@@ -464,7 +667,10 @@
         "userInput": {
           "subjects": [
             {
-              "item": { "publisher": "Inep", "title": "Edital ENEM 2026" },
+              "item": {
+                "publisher": "Inep",
+                "title": "Edital ENEM 2026"
+              },
               "kind": "source",
               "language": "pt"
             }
@@ -473,22 +679,25 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "missed" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
         {
-          "conclusion": "Item 1 (Célula animal com núcleo, mitocôndrias e membrana plasmática): target target not found with terms: célula animal, mitocôndrias, núcleo, membrana plasmática, ilustração, esquema, biologia celular.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Item 1 (Célula animal com núcleo, mitocôndrias e membrana plasmática): target target not found with terms: célula animal, mitocôndrias, núcleo, membrana plasmática, ilustração, esquema, biologia celular.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Item 1 (Célula animal com núcleo, mitocôndrias e membrana plasmática): target target not found with terms: célula animal, mitocôndrias, núcleo, membrana plasmática, ilustração, esquema, biologia celular.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -500,8 +709,14 @@
                   "id": "target",
                   "text": "Diagrama de uma célula eucariótica mostrando organelas"
                 },
-                { "id": "bacteria", "text": "Bactéria em forma de bastonete com flagelo" },
-                { "id": "plant", "text": "Folha verde ao sol com gotas de orvalho" }
+                {
+                  "id": "bacteria",
+                  "text": "Bactéria em forma de bastonete com flagelo"
+                },
+                {
+                  "id": "plant",
+                  "text": "Folha verde ao sol com gotas de orvalho"
+                }
               ],
               "targetId": "target"
             }
@@ -511,7 +726,9 @@
         "userInput": {
           "subjects": [
             {
-              "item": { "title": "Célula animal com núcleo, mitocôndrias e membrana plasmática" },
+              "item": {
+                "title": "Célula animal com núcleo, mitocôndrias e membrana plasmática"
+              },
               "kind": "image",
               "language": "pt"
             }
@@ -520,11 +737,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
@@ -535,7 +767,10 @@
                   "id": "target",
                   "text": "Probabilidade e estatística. Médias, variação, amostras e testes para analisar dados"
                 },
-                { "id": "calculus", "text": "Cálculo. Limites, derivadas e integrais" },
+                {
+                  "id": "calculus",
+                  "text": "Cálculo. Limites, derivadas e integrais"
+                },
                 {
                   "id": "finance",
                   "text": "Matemática financeira. Juros, descontos e investimentos"
@@ -550,7 +785,9 @@
           "subjects": [
             {
               "goal": "Analisar dados no trabalho",
-              "item": { "title": "Estatística" },
+              "item": {
+                "title": "Estatística"
+              },
               "kind": "course",
               "language": "pt"
             }
@@ -559,20 +796,23 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "missed" },
+      "classification": {
+        "expected": "found",
+        "predicted": "missed"
+      },
       "steps": [
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: classes de dependentes, dependente, classes, primeira classe, exclusão. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, dependência presumida, dependência comprovada, econômica, comprovada, presumida. Item 5 (Classificar dependentes do segurado): target target not found with terms: classificar dependentes, segurado, dependentes, classe, enquadramento. Item 7 (Identificar causas de perda da qualidade de dependente): target target not found with terms: perda da qualidade, condição de dependente, cessação, perda, dependentes.",
+          "conclusion": "Item 3 (Dependência econômica presumida): target target not found with terms: dependência, econômica, presumida, comprovada, dependência econômica, dependência presumida, dependência comprovada, prova de dependência.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: classes de dependentes, dependente, classes, primeira classe, exclusão. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, dependência presumida, dependência comprovada, econômica, comprovada, presumida. Item 5 (Classificar dependentes do segurado): target target not found with terms: classificar dependentes, segurado, dependentes, classe, enquadramento. Item 7 (Identificar causas de perda da qualidade de dependente): target target not found with terms: perda da qualidade, condição de dependente, cessação, perda, dependentes.",
+          "conclusion": "Item 3 (Dependência econômica presumida): target target not found with terms: dependência, econômica, presumida, comprovada, dependência econômica, dependência presumida, dependência comprovada, prova de dependência.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: classes de dependentes, dependente, classes, primeira classe, exclusão. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, dependência presumida, dependência comprovada, econômica, comprovada, presumida. Item 5 (Classificar dependentes do segurado): target target not found with terms: classificar dependentes, segurado, dependentes, classe, enquadramento. Item 7 (Identificar causas de perda da qualidade de dependente): target target not found with terms: perda da qualidade, condição de dependente, cessação, perda, dependentes.",
+          "conclusion": "Item 3 (Dependência econômica presumida): target target not found with terms: dependência, econômica, presumida, comprovada, dependência econômica, dependência presumida, dependência comprovada, prova de dependência.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -590,7 +830,10 @@
                   "id": "near-1",
                   "text": "Segurados obrigatórios do RGPS. Empregado, contribuinte individual e segurado especial"
                 },
-                { "id": "near-2", "text": "Salário-maternidade. Quem recebe e por quanto tempo" }
+                {
+                  "id": "near-2",
+                  "text": "Salário-maternidade. Quem recebe e por quanto tempo"
+                }
               ],
               "targetId": "target"
             },
@@ -621,7 +864,10 @@
                   "id": "near-1",
                   "text": "Cálculo da renda mensal inicial. Média dos salários de contribuição"
                 },
-                { "id": "near-2", "text": "União estável. Como provar a convivência" }
+                {
+                  "id": "near-2",
+                  "text": "União estável. Como provar a convivência"
+                }
               ],
               "targetId": "target"
             },
@@ -648,8 +894,14 @@
                   "id": "target",
                   "text": "Enquadrar cônjuge, filhos, pais e irmãos na ordem de beneficiários do RGPS"
                 },
-                { "id": "near-1", "text": "Classificar segurados obrigatórios e facultativos" },
-                { "id": "near-2", "text": "Calcular o período de carência" }
+                {
+                  "id": "near-1",
+                  "text": "Classificar segurados obrigatórios e facultativos"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Calcular o período de carência"
+                }
               ],
               "targetId": "target"
             },
@@ -659,7 +911,10 @@
                   "id": "target",
                   "text": "Reconhecer quando a lei presume a dependência econômica e quando o beneficiário precisa demonstrá-la"
                 },
-                { "id": "near-1", "text": "Comprovar tempo de contribuição com documentos" },
+                {
+                  "id": "near-1",
+                  "text": "Comprovar tempo de contribuição com documentos"
+                },
                 {
                   "id": "near-2",
                   "text": "Diferenciar aposentadoria por idade e por tempo de contribuição"
@@ -692,7 +947,9 @@
             {
               "goal": "Passar no concurso do INSS",
               "item": {
-                "courses": ["Direito Previdenciário"],
+                "courses": [
+                  "Direito Previdenciário"
+                ],
                 "description": "Quem são os dependentes do segurado no RGPS e como provam essa condição",
                 "level": "beginner",
                 "objectives": [
@@ -707,10 +964,14 @@
             {
               "goal": "Passar no concurso do INSS",
               "item": {
-                "courses": ["Direito Previdenciário"],
+                "courses": [
+                  "Direito Previdenciário"
+                ],
                 "description": "Os dependentes se dividem em três classes, e a primeira exclui as demais",
                 "level": "beginner",
-                "skills": ["Classificar dependentes do segurado"],
+                "skills": [
+                  "Classificar dependentes do segurado"
+                ],
                 "title": "Classes de dependentes"
               },
               "kind": "lesson",
@@ -719,10 +980,14 @@
             {
               "goal": "Passar no concurso do INSS",
               "item": {
-                "courses": ["Direito Previdenciário"],
+                "courses": [
+                  "Direito Previdenciário"
+                ],
                 "description": "Para a primeira classe, a dependência econômica é presumida; para as outras, precisa ser comprovada",
                 "level": "beginner",
-                "skills": ["Diferenciar dependência presumida e comprovada"],
+                "skills": [
+                  "Diferenciar dependência presumida e comprovada"
+                ],
                 "title": "Dependência econômica presumida"
               },
               "kind": "lesson",
@@ -731,10 +996,14 @@
             {
               "goal": "Passar no concurso do INSS",
               "item": {
-                "courses": ["Direito Previdenciário"],
+                "courses": [
+                  "Direito Previdenciário"
+                ],
                 "description": "Casamento, maioridade ou fim da invalidez encerram a condição de dependente",
                 "level": "beginner",
-                "skills": ["Identificar causas de perda da qualidade de dependente"],
+                "skills": [
+                  "Identificar causas de perda da qualidade de dependente"
+                ],
                 "title": "Perda da condição de dependente"
               },
               "kind": "lesson",
@@ -772,11 +1041,26 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": {
+        "expected": "found",
+        "predicted": "missed"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, calculate percentage, find percentage, bill, salary. Item 4 (Percent increase and decrease): target target not found with terms: percent, increase, decrease, percent change, price increase, price decrease. Item 6 (Add a percentage to a price): target target not found with terms: percentage, price, tax, tip, add percentage, increase price.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, calculate percentage, find percentage, bill, salary. Item 4 (Percent increase and decrease): target target not found with terms: percent, increase, decrease, percent change, price increase, price decrease. Item 6 (Add a percentage to a price): target target not found with terms: percentage, price, tax, tip, add percentage, increase price.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, calculate percentage, find percentage, bill, salary. Item 4 (Percent increase and decrease): target target not found with terms: percent, increase, decrease, percent change, price increase, price decrease. Item 6 (Add a percentage to a price): target target not found with terms: percentage, price, tax, tip, add percentage, increase price.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
@@ -804,7 +1088,10 @@
                   "id": "target",
                   "text": "Percent of a quantity. Multiply by the rate as a decimal, as in 15% of 80"
                 },
-                { "id": "near-1", "text": "Ratios and rates. Compare two quantities as a ratio" },
+                {
+                  "id": "near-1",
+                  "text": "Ratios and rates. Compare two quantities as a ratio"
+                },
                 {
                   "id": "near-2",
                   "text": "Simple interest. Interest on the original sum each year"
@@ -818,7 +1105,10 @@
                   "id": "target",
                   "text": "Tax at checkout. Apply the tax rate to find the total, including VAT"
                 },
-                { "id": "near-1", "text": "Tips at restaurants. Work out a tip on a bill" },
+                {
+                  "id": "near-1",
+                  "text": "Tips at restaurants. Work out a tip on a bill"
+                },
                 {
                   "id": "near-2",
                   "text": "Store markups. How shops set a selling price above cost"
@@ -836,23 +1126,44 @@
                   "id": "near-1",
                   "text": "Compound interest. Interest earned on interest over years"
                 },
-                { "id": "near-2", "text": "Reading line graphs. Spot trends over time" }
+                {
+                  "id": "near-2",
+                  "text": "Reading line graphs. Spot trends over time"
+                }
               ],
               "targetId": "target"
             },
             {
               "library": [
-                { "id": "target", "text": "Find part of a whole from a percent rate" },
-                { "id": "near-1", "text": "Convert a fraction to a decimal" },
-                { "id": "near-2", "text": "Find the average of a list of numbers" }
+                {
+                  "id": "target",
+                  "text": "Find part of a whole from a percent rate"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Convert a fraction to a decimal"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Find the average of a list of numbers"
+                }
               ],
               "targetId": "target"
             },
             {
               "library": [
-                { "id": "target", "text": "Increase an amount by a given percent" },
-                { "id": "near-1", "text": "Subtract a discount from a price" },
-                { "id": "near-2", "text": "Round an amount to the nearest cent" }
+                {
+                  "id": "target",
+                  "text": "Increase an amount by a given percent"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Subtract a discount from a price"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Round an amount to the nearest cent"
+                }
               ],
               "targetId": "target"
             },
@@ -862,8 +1173,14 @@
                   "id": "target",
                   "text": "Relative change between two values, as an increase or a decrease"
                 },
-                { "id": "near-1", "text": "Compare two fractions" },
-                { "id": "near-2", "text": "Find the difference between two dates" }
+                {
+                  "id": "near-1",
+                  "text": "Compare two fractions"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Find the difference between two dates"
+                }
               ],
               "targetId": "target"
             }
@@ -875,7 +1192,9 @@
             {
               "goal": "Handle money at my new retail job",
               "item": {
-                "courses": ["Everyday math"],
+                "courses": [
+                  "Everyday math"
+                ],
                 "description": "Use percentages to compare prices, discounts and tax",
                 "level": "beginner",
                 "objectives": [
@@ -890,10 +1209,14 @@
             {
               "goal": "Handle money at my new retail job",
               "item": {
-                "courses": ["Everyday math"],
+                "courses": [
+                  "Everyday math"
+                ],
                 "description": "Work out 15% of a bill or 20% of a salary",
                 "level": "beginner",
-                "skills": ["Calculate a percentage of a number"],
+                "skills": [
+                  "Calculate a percentage of a number"
+                ],
                 "title": "Find a percentage of an amount"
               },
               "kind": "lesson",
@@ -902,10 +1225,14 @@
             {
               "goal": "Handle money at my new retail job",
               "item": {
-                "courses": ["Everyday math"],
+                "courses": [
+                  "Everyday math"
+                ],
                 "description": "Find what you pay at the register when tax is added",
                 "level": "beginner",
-                "skills": ["Add a percentage to a price"],
+                "skills": [
+                  "Add a percentage to a price"
+                ],
                 "title": "Add sales tax to a price"
               },
               "kind": "lesson",
@@ -914,10 +1241,14 @@
             {
               "goal": "Handle money at my new retail job",
               "item": {
-                "courses": ["Everyday math"],
+                "courses": [
+                  "Everyday math"
+                ],
                 "description": "Describe how much a price went up or down as a percent",
                 "level": "beginner",
-                "skills": ["Calculate percent change"],
+                "skills": [
+                  "Calculate percent change"
+                ],
                 "title": "Percent increase and decrease"
               },
               "kind": "lesson",
@@ -955,22 +1286,25 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "missed" },
+      "classification": {
+        "expected": "found",
+        "predicted": "found"
+      },
       "steps": [
         {
-          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: dominância, recessividade, alelo dominante, alelo recessivo, fenótipo, genótipo. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelos dominantes, alelos recessivos, fenótipo, alelo, expressão gênica.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: dominância, recessividade, alelo dominante, alelo recessivo, fenótipo, genótipo. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelos dominantes, alelos recessivos, fenótipo, alelo, expressão gênica.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: dominância, recessividade, alelo dominante, alelo recessivo, fenótipo, genótipo. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelos dominantes, alelos recessivos, fenótipo, alelo, expressão gênica.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -982,8 +1316,14 @@
                   "id": "target",
                   "text": "Segregação dos alelos na meiose. Monoibridismo e proporção 3:1"
                 },
-                { "id": "near-1", "text": "Mitose. Divisão celular que forma células iguais" },
-                { "id": "near-2", "text": "Evolução por seleção natural. Darwin e a adaptação" }
+                {
+                  "id": "near-1",
+                  "text": "Mitose. Divisão celular que forma células iguais"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Evolução por seleção natural. Darwin e a adaptação"
+                }
               ],
               "targetId": "target"
             },
@@ -993,8 +1333,14 @@
                   "id": "target",
                   "text": "Tabela de gametas para prever genótipo e fenótipo dos descendentes"
                 },
-                { "id": "near-1", "text": "Heredograma. Ler a árvore genealógica de uma família" },
-                { "id": "near-2", "text": "Mutações genéticas. Alterações no DNA" }
+                {
+                  "id": "near-1",
+                  "text": "Heredograma. Ler a árvore genealógica de uma família"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Mutações genéticas. Alterações no DNA"
+                }
               ],
               "targetId": "target"
             },
@@ -1008,7 +1354,10 @@
                   "id": "near-1",
                   "text": "Codominância e herança intermediária. Flores rosas de pais vermelho e branco"
                 },
-                { "id": "near-2", "text": "Grupos sanguíneos ABO. Alelos múltiplos" }
+                {
+                  "id": "near-2",
+                  "text": "Grupos sanguíneos ABO. Alelos múltiplos"
+                }
               ],
               "targetId": "target"
             },
@@ -1018,16 +1367,31 @@
                   "id": "target",
                   "text": "Diibridismo. Dois genes em cromossomos diferentes e a proporção 9:3:3:1"
                 },
-                { "id": "near-1", "text": "Ligação gênica e crossing-over" },
-                { "id": "near-2", "text": "Herança ligada ao sexo. Daltonismo e hemofilia" }
+                {
+                  "id": "near-1",
+                  "text": "Ligação gênica e crossing-over"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Herança ligada ao sexo. Daltonismo e hemofilia"
+                }
               ],
               "targetId": "target"
             },
             {
               "library": [
-                { "id": "target", "text": "Prever a separação dos alelos na formação dos gametas" },
-                { "id": "near-1", "text": "Prever o número de cromossomos após a mitose" },
-                { "id": "near-2", "text": "Calcular a frequência de alelos em uma população" }
+                {
+                  "id": "target",
+                  "text": "Prever a separação dos alelos na formação dos gametas"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Prever o número de cromossomos após a mitose"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Calcular a frequência de alelos em uma população"
+                }
               ],
               "targetId": "target"
             },
@@ -1037,8 +1401,14 @@
                   "id": "target",
                   "text": "Combinar os gametas numa grade e ler as proporções de genótipo"
                 },
-                { "id": "near-1", "text": "Construir um heredograma" },
-                { "id": "near-2", "text": "Ler uma tabela periódica" }
+                {
+                  "id": "near-1",
+                  "text": "Construir um heredograma"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Ler uma tabela periódica"
+                }
               ],
               "targetId": "target"
             },
@@ -1048,16 +1418,31 @@
                   "id": "target",
                   "text": "Reconhecer o gene dominante que se expressa no heterozigoto"
                 },
-                { "id": "near-1", "text": "Identificar organelas da célula animal" },
-                { "id": "near-2", "text": "Reconhecer mutações silenciosas" }
+                {
+                  "id": "near-1",
+                  "text": "Identificar organelas da célula animal"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Reconhecer mutações silenciosas"
+                }
               ],
               "targetId": "target"
             },
             {
               "library": [
-                { "id": "target", "text": "Resolver problemas de diibridismo com dois genes" },
-                { "id": "near-1", "text": "Resolver problemas de herança ligada ao X" },
-                { "id": "near-2", "text": "Aplicar a lei de Hardy-Weinberg" }
+                {
+                  "id": "target",
+                  "text": "Resolver problemas de diibridismo com dois genes"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Resolver problemas de herança ligada ao X"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Aplicar a lei de Hardy-Weinberg"
+                }
               ],
               "targetId": "target"
             }
@@ -1069,10 +1454,14 @@
             {
               "goal": "Passar no ENEM",
               "item": {
-                "courses": ["Biologia"],
+                "courses": [
+                  "Biologia"
+                ],
                 "description": "Cada característica é determinada por um par de fatores que se separam na formação dos gametas",
                 "level": "beginner",
-                "skills": ["Aplicar a lei da segregação"],
+                "skills": [
+                  "Aplicar a lei da segregação"
+                ],
                 "title": "Primeira lei de Mendel"
               },
               "kind": "lesson",
@@ -1081,10 +1470,14 @@
             {
               "goal": "Passar no ENEM",
               "item": {
-                "courses": ["Biologia"],
+                "courses": [
+                  "Biologia"
+                ],
                 "description": "Prever os descendentes de um cruzamento",
                 "level": "beginner",
-                "skills": ["Montar um quadro de Punnett"],
+                "skills": [
+                  "Montar um quadro de Punnett"
+                ],
                 "title": "Cruzamentos e quadro de Punnett"
               },
               "kind": "lesson",
@@ -1093,10 +1486,14 @@
             {
               "goal": "Passar no ENEM",
               "item": {
-                "courses": ["Biologia"],
+                "courses": [
+                  "Biologia"
+                ],
                 "description": "Por que um alelo pode esconder o outro",
                 "level": "beginner",
-                "skills": ["Identificar alelos dominantes e recessivos"],
+                "skills": [
+                  "Identificar alelos dominantes e recessivos"
+                ],
                 "title": "Dominância e recessividade"
               },
               "kind": "lesson",
@@ -1105,10 +1502,14 @@
             {
               "goal": "Passar no ENEM",
               "item": {
-                "courses": ["Biologia"],
+                "courses": [
+                  "Biologia"
+                ],
                 "description": "Características diferentes são herdadas de forma independente",
                 "level": "beginner",
-                "skills": ["Aplicar a segregação independente"],
+                "skills": [
+                  "Aplicar a segregação independente"
+                ],
                 "title": "Segunda lei de Mendel"
               },
               "kind": "lesson",

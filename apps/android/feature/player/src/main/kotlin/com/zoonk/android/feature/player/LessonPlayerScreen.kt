@@ -640,7 +640,7 @@ private fun Content(
                         if (it) openRecaps + round else openRecaps - round
                 }
             }
-            val work = rememberScreenWork(canvasWork, step.id, state.round(step.id))
+            val work = rememberScreenWork(canvasWork, step.id, state.round(step.id), state.firstAttempts[step.id]?.round)
 
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {

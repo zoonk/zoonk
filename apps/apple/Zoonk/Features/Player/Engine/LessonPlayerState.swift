@@ -67,6 +67,12 @@ struct LessonPlayerState: Equatable, Sendable {
     let attemptId: String
   }
 
+  struct Attempt: Hashable, Sendable {
+    let answer: LessonAnswer?
+    let result: LessonStepResult
+    let round: Int
+  }
+
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
@@ -87,6 +93,8 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var answerOrder: [String] = []
   /// Questions already sent to the end of the lesson once.
   private(set) var retried: Set<String> = []
+  /// A question's attempt from before its retry started over, which its earlier copy still shows.
+  private var firstAttempts: [String: Attempt] = [:]
   /// Language answers that already had their one chance to self-correct.
   private(set) var selfCorrected: Set<String> = []
   /// How many parts of a worked example, or decisions of a challenge, are shown.
@@ -171,16 +179,17 @@ struct LessonPlayerState: Equatable, Sendable {
     return false
   }
 
-  /// Previous is on every screen after the first while it's being played, the map included, not
-  /// during "I know this". It never returns to the earlier copy of a question that came back: the
-  /// later copy holds its attempt, so the earlier one would ask for an answer again.
+  /// Previous is on every screen after the first, its result and the map included, not during
+  /// "I know this". An earlier copy of a question with no attempt to show would ask it again, which
+  /// its retry does, so Previous never returns to one.
   var canGoBack: Bool {
-    guard phase == .playing || phase == .map, position > 0, quickCheck == nil, !isRefused else {
+    guard phase == .playing || phase == .feedback || phase == .map, position > 0,
+      quickCheck == nil, !isRefused
+    else {
       return false
     }
 
-    let previous = queue[position - 1]
-    return results[previous] != nil || !queue[position...].contains(previous)
+    return hasAttempt(at: position - 1) || !isEarlierCopy(position - 1)
   }
 
   /// A screen's verdict when it counts: a hook's guess is never wrong, and "I don't know yet" and an
@@ -407,10 +416,9 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    let previousId = queue[position - 1]
     checkFailed = false
     notice = nil
-    reviewing = results[previousId] != nil
+    reviewing = hasAttempt(at: position - 1)
     phase = reviewing ? .feedback : .playing
     position -= 1
     stepStartedAt = now
@@ -801,17 +809,21 @@ struct LessonPlayerState: Equatable, Sendable {
     completion?.status = .failed
   }
 
-  /// An answered screen shows its result, as Previous does. It starts over only as a missed
-  /// question coming back (a later copy) or in "I know this". Any other shows what the learner
-  /// left, with why it still waits: its chance to self-correct, or a finish that came back for it.
+  /// An answered screen shows its result, as Previous does. It starts over only in "I know this"
+  /// or as a missed question coming back (a later copy) the first time the learner reaches it, so
+  /// Previous and Continue only revisit its answer. Any other shows what the learner left, with why
+  /// it still waits: its chance to self-correct, or a finish that came back for it.
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
+    let isFirstRetry =
+      (queue.firstIndex(of: id) ?? newPosition) < newPosition && firstAttempts[id] == nil
 
-    if results[id] != nil {
-      if quickCheck != nil || queue.firstIndex(of: id) != newPosition {
-        clearAnswer(id)
-        results[id] = nil
-      }
+    if results[id] != nil, quickCheck != nil || isFirstRetry {
+      startOver(id)
+    }
+
+    if hasAttempt(at: newPosition) {
+      notice = nil
     } else if selfCorrected.contains(id) {
       notice = .selfCorrect
     } else if let reason = recovery?[id] {
@@ -819,15 +831,54 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     checkFailed = false
-    reviewing = results[id] != nil
+    reviewing = hasAttempt(at: newPosition)
     phase = reviewing ? .feedback : .playing
     position = newPosition
     stepStartedAt = now
   }
 
-  private mutating func clearAnswer(_ stepId: String) {
+  /// A checked attempt comes back: the screen's answer and result start over, and its canvas with
+  /// them. The first attempt stays for the question's earlier copy to show.
+  private mutating func startOver(_ stepId: String) {
+    if let result = results[stepId], firstAttempts[stepId] == nil {
+      firstAttempts[stepId] = Attempt(
+        answer: answers[stepId], result: result, round: rounds[stepId] ?? 0)
+    }
+
     answers[stepId] = nil
+    results[stepId] = nil
     rounds[stepId, default: 0] += 1
+  }
+
+  private func isEarlierCopy(_ index: Int) -> Bool {
+    queue[(index + 1)...].contains(queue[index])
+  }
+
+  /// A screen shows an attempt when it has a result, or is the earlier copy of a question whose
+  /// retry started over.
+  private func hasAttempt(at index: Int) -> Bool {
+    guard index < queue.count else {
+      return false
+    }
+
+    let id = queue[index]
+    return results[id] != nil || (firstAttempts[id] != nil && isEarlierCopy(index))
+  }
+
+  /// The state the screen in view shows: an earlier copy of a question shows its own attempt.
+  func showingAttemptInView() -> LessonPlayerState {
+    guard position < queue.count, let first = firstAttempts[queue[position]],
+      isEarlierCopy(position)
+    else {
+      return self
+    }
+
+    var shown = self
+    let id = queue[position]
+    shown.answers[id] = first.answer
+    shown.results[id] = first.result
+    shown.rounds[id] = first.round
+    return shown
   }
 
   private mutating func complete(status: Completion.Status) {
@@ -901,8 +952,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }.map(\.element)
 
     for id in missed {
-      clearAnswer(id)
-      results[id] = nil
+      startOver(id)
     }
 
     quickCheck = nil
@@ -1033,6 +1083,7 @@ struct LessonPlayerState: Equatable, Sendable {
     firstVerdictAttemptIds = [:]
     answerOrder = []
     retried = []
+    firstAttempts = [:]
     selfCorrected = []
     revealed = [:]
     misses = []

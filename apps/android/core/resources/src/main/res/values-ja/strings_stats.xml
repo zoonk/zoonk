@@ -7,6 +7,7 @@
   "stats_all_goals": "c66a49273cf9c17a1b0c2712cd142ded053eeebcd72b1f7fc53be5355e44f560",
   "stats_answer_count": "a61d5c8dbd2d5c410213e0c33ecb7e6418b3a54cae13ae2fcf5c0d42a3c6bba4",
   "stats_answers": "a4df4937fe6ac437a814bd58e2d0f75c6d33b703e3e6667b860321e3d5dbb017",
+  "stats_answers_to_count": "811d426ccc4db1741b80d2ef1d2418c85ff4ce12fb9b3f805d9ae98a5a067053",
   "stats_any_day": "a525962c2ae59b6e8638f16dac8de85963d61bcbd70662984c50e7b3a14fd410",
   "stats_any_day_studied": "a0b3d920776b261fb64b3c5ac06d5fde68f95f19aacfa5cc2e7ab40b28a7f2ed",
   "stats_any_time": "9d4d8a9141273beba70fc2886bcaeddbd87151a75eb72e4f07235792eb50ae5d",
@@ -23,15 +24,12 @@
   "stats_calendar_activity_summary": "f4ff0ff6807c9d2a8f4d7ea0cf4b671ebc92effc3eef5a7b68de3ab7bbf21579",
   "stats_calendar_energy_summary": "b7c12006f4e1b488dc81596cdc891bea919d4ce7a099b5bf045553feb70fa8fb",
   "stats_correct_of_total": "207fa060a3a08f04c1ea9189832f6154b3c4751794c2281f562b82fbe33aacde",
-  "stats_day_activities": "24ec7b9a94b40704d9f386f4c362f8c56cf2320355cd3fab67d59c50d271da30",
-  "stats_day_energy": "d9c5426944244666c2bb63f8b7269b59f156698436980df152a166b6adc67c6c",
-  "stats_day_no_energy": "423f24a91e8b14171f2cf8a04d83456ef7afc97f944aded6cbfe0a12b19e9d23",
-  "stats_day_no_study": "444ee39aac0e9a72e3830858a59bab82469e757b159c5096b59aa062f62dc730",
   "stats_days": "dfc29661c42d75f015a772b97f713074ea417fc00e88546fc522332bf4cd2bbd",
   "stats_days_even": "cfddd218dce740df042974dab8f010727b2a783c41e9bad31946bb03ffee3dc4",
   "stats_days_studied": "f64c48ebec791696b7c7a857ce7e200ea6738859c0c881965f580141168b83d2",
   "stats_empty_title": "0c9be60f57418235093daa11b44296102e75eb674084850505de57f862b72730",
   "stats_energy": "32f6033d4147aad3f397aca196e1f62ebe9ff078d11e21339611dabf4d7baa33",
+  "stats_energy_amount": "2c67628c9cdeee90eadcf4bdfdcf0d4c7edd37ca9a102bee401d490c88228b8a",
   "stats_energy_average": "13a40513916d7d7cb23733d01fe3dd82f56e51b219950d83c05447c8b113e24b",
   "stats_energy_line": "b58832f58c49612062f5277e42691b916e612435161d74c2c286e49b9bb51c5c",
   "stats_evening": "9fafdf75fd6bb534c280dd23b1e7ddfcb2cf3217c79f6918bb727a3f5c0950ef",
@@ -58,6 +56,8 @@
   "stats_next_level": "94a2502b587f021e332844aa969b6817249c57faf97bfade6d79c5906e63d087",
   "stats_night": "3149ad09bbd0ebf51e2110adb4dbf2bbc44216d333547e28197d18a6d86966c8",
   "stats_no_answers": "7a18a3fa1d2d51b4be46a497701e36de399b260a3ddfc8d7c0454adc3c1f757d",
+  "stats_no_energy": "24940d14392a7ee4edd4dadaed432b37186926686bf5de33d088e04fcd5e95b2",
+  "stats_no_study": "7bc7fb4b834e1363a8970d4c0e563be7ffd774a443d68314c36bcdaf59b2785a",
   "stats_not_enough": "15712627b55ef2b8b348469aa665e47c12ebb5824af900d0493192582fbd3620",
   "stats_not_yet": "562ba61b1a5dd9e118725b6e9e35a983f134a1266be0d8bf409bf0d19bb05cab",
   "stats_of_all_answers": "66dff2d30637f4a3ba5b24da44c9e4fa0f37f23eea79e86a8f74b8499b38bb26",
@@ -166,13 +166,12 @@
     <plurals name="stats_activities">
         <item quantity="other">%1$s件のアクティビティ</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · 学習なし</string>
-    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
-    <plurals name="stats_day_activities">
-        <item quantity="other">%1$s · %2$s件のアクティビティ</item>
-    </plurals>
-    <string name="stats_day_no_energy">%1$s · エネルギーの記録なし</string>
-    <string name="stats_day_energy">%1$s · エネルギー%2$s</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
+    <string name="stats_no_study">学習なし</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
+    <string name="stats_no_energy">エネルギーの記録なし</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
+    <string name="stats_energy_amount">エネルギー%1$s</string>
     <string name="stats_calendar_energy_summary">過去12か月のエネルギー：今日は%1$s、開始以来の平均は%2$s</string>
     <string name="stats_right_answers">正解率</string>
     <string name="stats_right">正解</string>
@@ -206,6 +205,10 @@
         <item quantity="other">%1$s件の回答</item>
     </plurals>
     <string name="stats_no_answers">回答なし</string>
+    <!-- A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, as in "7 answers, needs 10 to count". -->
+    <plurals name="stats_answers_to_count">
+        <item quantity="other">%1$s問に回答、傾向の判定には%2$s問必要です</item>
+    </plurals>
     <string name="stats_throughout_week">曜日別</string>
     <string name="stats_throughout_day">時間帯別</string>
     <string name="stats_any_day">どの曜日でも</string>

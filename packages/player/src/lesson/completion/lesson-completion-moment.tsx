@@ -87,6 +87,7 @@ function CompletionLinks({ pending }: { pending: boolean }) {
         {pending ? (
           <PendingMainAction>
             <NextLabel nextLesson={nextLesson} />
+            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
           </PendingMainAction>
         ) : (
           <LinkComponent

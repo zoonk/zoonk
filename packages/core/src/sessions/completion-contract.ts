@@ -252,7 +252,7 @@ export const studyBlockCompletionSchema = z
       .object({ bonus: z.number().int(), paid: z.boolean() })
       .meta({
         description:
-          "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Payment remains once per learner-local day across goals.",
+          "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts this goal's work from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Each goal's day pays once.",
       }),
     milestones: z.array(milestoneSchema),
     missions: z.array(missionSchema),

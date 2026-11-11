@@ -188,7 +188,7 @@ export function LessonPracticeStep(props: Props) {
         track: idle,
       }}
     >
-      <LessonPlayerRuntimeContext value={{ actions, screen, state }}>
+      <LessonPlayerRuntimeContext value={{ actions, played: state, screen, state }}>
         <LessonInteractionProvider>
           <LessonPicturesProvider
             getLessonPictures={undefined}
