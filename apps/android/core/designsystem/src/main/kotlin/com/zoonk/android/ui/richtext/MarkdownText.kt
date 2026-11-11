@@ -109,9 +109,14 @@ private const val FORMULA_OPEN = '\uE000'
 private const val FORMULA_CLOSE = '\uE001'
 private val FORMULA = Regex("$FORMULA_OPEN(\\d+)$FORMULA_CLOSE")
 
+internal data class MarkdownFormula(
+    val display: Boolean,
+    val latex: String,
+)
+
 internal class MarkdownDocument(
     val root: Node,
-    val formulas: List<String>,
+    val formulas: List<MarkdownFormula>,
 )
 
 internal fun parseMarkdown(markdown: String): MarkdownDocument {
@@ -121,8 +126,8 @@ internal fun parseMarkdown(markdown: String): MarkdownDocument {
 
 private val FENCE = Regex("^ {0,3}(`{3,}|~{3,})")
 
-internal fun takeOutFormulas(markdown: String): Pair<String, List<String>> {
-    val formulas = mutableListOf<String>()
+internal fun takeOutFormulas(markdown: String): Pair<String, List<MarkdownFormula>> {
+    val formulas = mutableListOf<MarkdownFormula>()
     val output = StringBuilder()
     val prose = StringBuilder()
     var fence: String? = null
@@ -159,9 +164,11 @@ internal fun takeOutFormulas(markdown: String): Pair<String, List<String>> {
     return output.toString() to formulas
 }
 
+private val MATH_BLOCK_OPEN = Regex(" {0,3}([$]{2,})[^$\\n]*(?:\\n|$)")
+
 private fun takeOutProseFormulas(
     text: String,
-    formulas: MutableList<String>,
+    formulas: MutableList<MarkdownFormula>,
 ): String {
     val output = StringBuilder()
     var index = 0
@@ -185,16 +192,42 @@ private fun takeOutProseFormulas(
             continue
         }
 
-        if (text.startsWith("$$", index)) {
-            val close = text.indexOf("$$", index + 2)
-            val content = if (close == -1) "" else text.substring(index + 2, close).trim()
-
-            if (content.isNotEmpty()) {
-                output.append(FORMULA_OPEN).append(formulas.size).append(FORMULA_CLOSE)
-                formulas += content
-                index = close + 2
+        if ((index == 0 || text[index - 1] == '\n')) {
+            val opening = MATH_BLOCK_OPEN.matchAt(text, index)
+            if (opening != null) {
+                val run = opening.groupValues[1].length
+                val contentStart = opening.range.last + 1
+                val closing = Regex("(?m)^ {0,3}[$]{$run,}[ \\t]*(?=\\n|$)").find(text, contentStart)
+                val end = closing?.range?.first ?: text.length
+                val content = text.substring(contentStart, end).removeSuffix("\n")
+                output
+                    .append("\n\n")
+                    .append(FORMULA_OPEN)
+                    .append(formulas.size)
+                    .append(FORMULA_CLOSE)
+                    .append("\n\n")
+                formulas += MarkdownFormula(display = true, latex = content)
+                index = closing?.range?.last?.plus(1) ?: text.length
                 continue
             }
+        }
+
+        if (text.startsWith("$$", index)) {
+            val run = text.drop(index).takeWhile { it == '$' }.length
+            val closing = Regex("(?<![$])[$]{$run}(?![$])").find(text, index + run)
+            if (closing != null) {
+                var content = text.substring(index + run, closing.range.first).replace('\n', ' ')
+                if (content.startsWith(' ') && content.endsWith(' ') && content.any { it != ' ' }) {
+                    content = content.substring(1, content.length - 1)
+                }
+                output.append(FORMULA_OPEN).append(formulas.size).append(FORMULA_CLOSE)
+                formulas += MarkdownFormula(display = false, latex = content)
+                index = closing.range.last + 1
+                continue
+            }
+            output.append(text, index, index + run)
+            index += run
+            continue
         }
 
         output.append(character)
@@ -209,7 +242,7 @@ private fun Node.children(): List<Node> = generateSequence(firstChild) { it.next
 @Composable
 private fun Blocks(
     parent: Node,
-    formulas: List<String>,
+    formulas: List<MarkdownFormula>,
     links: ((String) -> Unit)?,
     style: TextStyle,
     modifier: Modifier = Modifier,
@@ -223,7 +256,7 @@ private fun Blocks(
 @Composable
 private fun Block(
     node: Node,
-    formulas: List<String>,
+    formulas: List<MarkdownFormula>,
     links: ((String) -> Unit)?,
     style: TextStyle,
 ) {
@@ -231,8 +264,8 @@ private fun Block(
         is Paragraph -> {
             val formula = soleFormula(node)
 
-            if (formula != null) {
-                MathText(formulas[formula], style = style)
+            if (formula != null && formulas[formula].display) {
+                MathText(formulas[formula].latex, style = style)
             } else {
                 RichTextLine(inlineText(node, formulas, links), Modifier, style)
             }
@@ -319,7 +352,7 @@ private fun CodeBlock(code: String) {
 @Composable
 private fun MarkdownList(
     list: Node,
-    formulas: List<String>,
+    formulas: List<MarkdownFormula>,
     links: ((String) -> Unit)?,
     style: TextStyle,
 ) {
@@ -350,7 +383,7 @@ private fun MarkdownList(
 @Composable
 private fun MarkdownTable(
     table: TableBlock,
-    formulas: List<String>,
+    formulas: List<MarkdownFormula>,
     links: ((String) -> Unit)?,
 ) {
     val rows = table.children().flatMap { section -> section.children().filterIsInstance<TableRow>() }
@@ -382,7 +415,7 @@ private fun MarkdownTable(
 @Composable
 private fun inlineText(
     block: Node,
-    formulas: List<String>,
+    formulas: List<MarkdownFormula>,
     links: ((String) -> Unit)?,
 ): SpokenText {
     val words = rememberMathWords()
@@ -394,7 +427,7 @@ private fun inlineText(
 }
 
 private class InlineWriter(
-    private val formulas: List<String>,
+    private val formulas: List<MarkdownFormula>,
     private val links: ((String) -> Unit)?,
     private val words: MathWords,
     private val codeBackground: Color,
@@ -487,7 +520,7 @@ private class InlineWriter(
 
         FORMULA.findAll(literal).forEach { match ->
             append(literal.substring(from, match.range.first))
-            val math = typesetMath(formulas[match.groupValues[1].toInt()], words)
+            val math = typesetMath(formulas[match.groupValues[1].toInt()].latex, words)
             builder.append(math.text)
             spoken.append(math.spoken)
             hasMath = true

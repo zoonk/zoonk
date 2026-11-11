@@ -9,7 +9,7 @@ class MarkdownFormulasTest {
     fun takesOutDisplayFormulasSoMarkdownNeverReadsTheirMarks() {
         val (text, formulas) = takeOutFormulas("Pay $$\\frac{a_1 * b_1}{2}$$ now, not \$5 or \$10.")
 
-        assertEquals(listOf("\\frac{a_1 * b_1}{2}"), formulas)
+        assertEquals(listOf(MarkdownFormula(display = false, latex = "\\frac{a_1 * b_1}{2}")), formulas)
         assertEquals("Pay \uE0000\uE001 now, not \$5 or \$10.", text)
     }
 
@@ -17,7 +17,7 @@ class MarkdownFormulasTest {
     fun readsAFormulaAcrossLines() {
         val (_, formulas) = takeOutFormulas("$$\nv = \\sqrt{\\frac{GM}{r}}\n$$")
 
-        assertEquals(listOf("v = \\sqrt{\\frac{GM}{r}}"), formulas)
+        assertEquals(listOf(MarkdownFormula(display = true, latex = "v = \\sqrt{\\frac{GM}{r}}")), formulas)
     }
 
     @Test
@@ -25,7 +25,7 @@ class MarkdownFormulasTest {
         val markdown = "Run `echo \$\$HOME\$\$` and:\n\n```sh\necho \$\$ \$\$\n```\n\nThen \\\$\$x\$\$ stays."
         val (text, formulas) = takeOutFormulas(markdown)
 
-        assertEquals(emptyList<String>(), formulas)
+        assertEquals(emptyList<MarkdownFormula>(), formulas)
         assertEquals(markdown, text)
     }
 }
