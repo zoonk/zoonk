@@ -615,6 +615,54 @@ describe("checking a bank's questions", () => {
     ).resolves.toMatchObject({ correctAnswers: 0, incorrectAnswers: 0, seconds: 30 });
   });
 
+  it("moves a learner on when the check removes the question on their screen", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+
+    await prisma.languageLevelTest.create({
+      data: {
+        ...pair,
+        content: uncheckedBank(crypto.randomUUID()),
+        model: "test",
+        promptVersion: "test",
+        runId: "old-bank",
+      },
+    });
+
+    const shown = await getLanguageLevelTest(goalId);
+
+    const shownId =
+      shown.status === "ready" &&
+      shown.test.status === "ready" &&
+      shown.test.next.kind === "question"
+        ? shown.test.next.question.id
+        : "";
+
+    const questions = await claimLevelTestBankCheck(pair);
+
+    const keptIds = (questions ?? []).flatMap((question) =>
+      question.id === shownId ? [] : [question.id],
+    );
+
+    await keepCheckedLevelTestQuestions({ keptIds, pair });
+
+    const answered = await answerLanguageLevelTest({
+      goalId,
+      input: { answerIndex: 0, questionId: shownId },
+    });
+
+    expect(answered).toMatchObject({
+      status: "ready",
+      test: { answered: 0, next: { kind: "question" }, status: "ready" },
+    });
+
+    expect(
+      answered.status === "ready" &&
+        answered.test.status === "ready" &&
+        answered.test.next.kind === "question" &&
+        answered.test.next.question.id,
+    ).not.toBe(shownId);
+  });
+
   it("leaves a stored bank as it was when every question fails, since the check misfired", async () => {
     const pair = freshPair();
     const content = uncheckedBank(crypto.randomUUID());
