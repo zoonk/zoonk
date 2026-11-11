@@ -164,6 +164,7 @@ function filterWhere({ model, filter }: { model: DatabaseModel; filter: StaffFil
   }
 
   if (
+    ops.includes("isNull") &&
     (filter.op === "eq" || filter.op === "ne") &&
     (filter.value === null || filter.value === undefined || filter.value === "null")
   ) {
