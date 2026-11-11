@@ -33,7 +33,7 @@ describe(splitLawArticles, () => {
         body: "Artigo incluído depois.",
         documentPart: 1,
         heading: "Art. 4º-A",
-        number: "4-A",
+        number: "4A",
         text: "Art. 4º-A Artigo incluído depois.",
       },
       {
@@ -54,7 +54,7 @@ describe(splitLawArticles, () => {
 
     expect(headings("Artículo 1. Objeto.\nArtículo 12 bis. Datos.")).toStrictEqual([
       ["Artículo 1", "1"],
-      ["Artículo 12 bis", "12bis"],
+      ["Artículo 12 bis", "12BIS"],
     ]);
 
     expect(
@@ -205,8 +205,29 @@ describe(toArticleNumber, () => {
       ["4", "5-A", "107.51", "Art. 4º, § 2º", "Artículo 4.", "第四条", "Article 4bis"].map((hint) =>
         toArticleNumber(hint),
       ),
-    ).toStrictEqual(["4", "5-A", "107.51", "4", "4", "4", "4"]);
+    ).toStrictEqual(["4", "5A", "107.51", "4", "4", "4", "4BIS"]);
 
     expect(toArticleNumber("o caput")).toBeNull();
+  });
+
+  it("names the same article a heading with a letter suffix heads, however the hint writes it", () => {
+    const cases = [
+      {
+        hints: ["47B", "s. 47B", "Section 47B"],
+        text: "Section 47 A.\nSection 47B B.\nSection 48 C.",
+      },
+      { hints: ["312g", "§ 312g"], text: "§ 312 A.\n§ 312g B.\n§ 313 C." },
+      { hints: ["4-A", "4º-A", "Art. 4º-A", "4A"], text: "Art. 4º A.\nArt. 4º-A B.\nArt. 5º C." },
+      {
+        hints: ["12 bis", "12bis", "Artículo 12 bis"],
+        text: "Artículo 12. A.\nArtículo 12 bis. B.",
+      },
+    ];
+
+    for (const { hints, text } of cases) {
+      const suffixed = splitLawArticles(text)[1]?.number;
+
+      expect(hints.map((hint) => toArticleNumber(hint))).toStrictEqual(hints.map(() => suffixed));
+    }
   });
 });

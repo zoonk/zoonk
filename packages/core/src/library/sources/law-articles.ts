@@ -1,6 +1,7 @@
 const LINE_START = String.raw`(?:^|[\n\f])[^\S\n\f]*`;
 const ORDINAL = String.raw`(?:\.?[º°ª]|o\b|er\b)?`;
 const SUFFIX = String.raw`(?:-[A-Z]{1,2}\b|[^\S\n]+(?:bis|ter|quater)\b)?`;
+const HINT_SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
 const DIGITS = String.raw`\d+(?:\.\d+)*`;
 
@@ -16,7 +17,7 @@ const HEADING_FAMILIES = [
 ].map((heading) => new RegExp(`${LINE_START}(?<heading>${heading})`, "gu"));
 
 const ARTICLE_NUMBER = new RegExp(
-  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)${ORDINAL}(?<suffix>${SUFFIX})`,
+  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)${ORDINAL}(?<suffix>${HINT_SUFFIX})`,
   "u",
 );
 
@@ -30,7 +31,7 @@ export type LawArticleText = {
   /** Starts at 1 and moves on when numbering starts again, as in an appended amendment. */
   documentPart: number;
   heading: string;
-  /** "4", "4-A", "12bis": the same for a revoked wording kept beside its new one. */
+  /** "4", "4A", "12BIS": the same for a revoked wording kept beside its new one. */
   number: string;
   text: string;
 };
@@ -68,7 +69,7 @@ function toNumber(groups: Record<string, string | undefined>): { number: string;
   const numeral = groups.number ?? "";
   const parts = /^\d/u.test(numeral) ? numeral.split(".").map((part) => Number(part)) : null;
   const value = parts?.[0] ?? parseCjkNumber(numeral);
-  const suffix = (groups.suffix ?? "").replaceAll(/\s+/gu, "");
+  const suffix = (groups.suffix ?? "").replaceAll(/[\s-]+/gu, "").toUpperCase();
 
   return { number: `${parts?.join(".") ?? value}${suffix}`, value };
 }
@@ -168,7 +169,7 @@ export function splitLawArticlePieces(text: string): LawArticlePiece[] | null {
     : articles.flatMap((article) => toArticlePieces(article));
 }
 
-/** "Art. 4º, § 2º", "art. 4" and "第四条" name article "4"; "4º-A" names "4-A". */
+/** "Art. 4º, § 2º", "art. 4" and "第四条" name article "4"; "4º-A" and "4A" name "4A". */
 export function toArticleNumber(hint: string): string | null {
   const groups = ARTICLE_NUMBER.exec(hint)?.groups;
   return groups ? toNumber(groups).number : null;
