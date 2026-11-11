@@ -70,17 +70,11 @@ export async function getWeeklyChallenge({
     goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
   ]);
 
-  const item = findNextWeeklyItem(items);
-
-  if (!item) {
-    return { challenge: null, status: "ready" };
-  }
-
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
   const today = getDateInTimeZone({ date: new Date(), timeZone });
-  const isMock = item.kind === "mock";
+  const hasMock = items.some((item) => item.kind === "mock" && item.status === "todo");
 
-  const viewer = isMock ? await readEntitlementViewer() : null;
+  const viewer = hasMock ? await readEntitlementViewer() : null;
 
   const access = getExamPrepAccess({
     examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
@@ -88,6 +82,14 @@ export async function getWeeklyChallenge({
     timeZone,
     today,
   });
+
+  const item = findNextWeeklyItem({ includesMockExams: access.includesMockExams, items, today });
+
+  if (!item) {
+    return { challenge: null, status: "ready" };
+  }
+
+  const isMock = item.kind === "mock";
 
   const card = isMock
     ? await loadMockCard({ blueprint, date: item.scheduledFor ?? today, goal, today })
