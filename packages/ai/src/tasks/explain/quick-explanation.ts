@@ -27,7 +27,7 @@ const MAX_CHECK_OPTIONS = 4;
 const MAX_RELATED_QUESTIONS = 3;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; the story comes before the check and the ending. */
-const schema = z.object({
+export const quickExplanationSchema = z.object({
   title: z.string(),
   description: z.string(),
   screens: z
@@ -49,7 +49,7 @@ const schema = z.object({
 });
 /* oxlint-enable eslint/sort-keys */
 
-export type QuickExplanation = z.infer<typeof schema>;
+export type QuickExplanation = z.infer<typeof quickExplanationSchema>;
 
 export type QuickExplanationParams = {
   question: string;
@@ -83,7 +83,7 @@ ${formatUntrustedInput({ QUESTION: question })}
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: quickExplanationSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
