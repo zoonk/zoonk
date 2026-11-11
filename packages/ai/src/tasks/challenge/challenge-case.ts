@@ -16,13 +16,16 @@ import systemPrompt from "./challenge-case.prompt.md";
 
 /**
  * A challenge is written once per chapter and shared, so quality outweighs cost: on 6 cases (11 Nov
- * 2026), Sol scored 8.74 (EN 8.82, PT 8.67) at $50/1k against Terra's 8.41 at $23/1k. Gemini 4
- * Carbon scored 7.61 at $199/1k, no better than Argon (7.60, $66/1k); a blind read liked its richer
- * choices on 5 of 6 but confirmed the factual errors the judge flagged. Sonnet and Opus reject this
- * schema as too large, so Argon is only a below-floor outage route.
+ * 2026), Sol scored 8.74 (EN 8.82, PT 8.67) at $50/1k against Terra's 8.41 at $23/1k. Kimi K3.1 Pro
+ * is the other-provider route: 8.50 over 3 runs (EN and PT 8.50), all 18 passing the code checks, at
+ * $251/1k and a p95 of 198 s, which only an outage of both OpenAI models pays; a blind read preferred
+ * it to Gemini 4 Argon (7.60) on all 6, where Argon called a p-value the chance a result is luck.
+ * Gemini 4 Carbon scored 7.61, Muse Ember 7.41 and DeepSeek V4 Pro 6.86, and Grok 4.7 timed out on
+ * every case. Sonnet, Opus and Fable reject this schema as a grammar too large to compile, even with
+ * no nullable fields.
  */
 const defaultModel = "openai/gpt-6.1-sol";
-const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-4-argon"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "moonshotai/kimi-k3.1-pro"] as const;
 
 /** A work case feels like a real job; a "What if" is a light scenario for overview courses. */
 type ChallengeCaseVariant = "whatIf" | "work";
