@@ -62,16 +62,33 @@ function toComparableLines(text: string, separator: RegExp): string[] {
   return text.split(separator).map((line) => toComparableText(line));
 }
 
-/**
- * Page notes are left out of both sides, so a quote may keep or drop them and nothing else; a
- * table's `| --- |` row is the formatting it needs to show as one, so it isn't compared.
- */
-function isQuoted({ notes, paper, text }: { notes: Set<string>; paper: string; text: string }) {
-  const quote = toComparableLines(text, /\n/u)
-    .filter((line) => !notes.has(line) && !TABLE_DELIMITER_ROW.test(line))
-    .join("");
+type ComparablePaper = { notes: Set<string>; printed: string; withoutNotes: string };
 
-  return quote.length > 0 && paper.includes(quote);
+function toComparablePaper(paperText: string): ComparablePaper {
+  const lines = toComparableLines(paperText, PAGE_LINE);
+  const notes = findPageNotes(paperText);
+
+  return {
+    notes,
+    printed: lines.join(""),
+    withoutNotes: lines.filter((line) => !notes.has(line)).join(""),
+  };
+}
+
+/**
+ * A table's `| --- |` row is the formatting it needs to show as one, so it isn't compared. A
+ * quote matches as printed, or with page notes left out of both sides; a command every question
+ * repeats ("Assinale a alternativa correta.") is a page note too, and matches as printed.
+ */
+function isQuoted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
+  const lines = toComparableLines(text, /\n/u).filter((line) => !TABLE_DELIMITER_ROW.test(line));
+  const quote = lines.join("");
+  const withoutNotes = lines.filter((line) => !paper.notes.has(line)).join("");
+
+  return (
+    (quote.length > 0 && paper.printed.includes(quote)) ||
+    (withoutNotes.length > 0 && paper.withoutNotes.includes(withoutNotes))
+  );
 }
 
 function findLetterRuns(text: string): string[] {
@@ -120,16 +137,14 @@ function findQuoteProblems({
   paperText: string;
   question: PastQuestion;
 }): string[] {
-  const paperLines = toComparableLines(paperText, PAGE_LINE);
-  const notes = findPageNotes(paperText);
-  const paper = paperLines.filter((line) => !notes.has(line)).join("");
+  const paper = toComparablePaper(paperText);
   const lostSpaces = hasLostSpaces(paperText);
 
   return getQuotedParts(question.item).flatMap(({ label, text }) => {
     const runTogether = lostSpaces ? findRunTogetherWords(text) : [];
 
     return [
-      ...(isQuoted({ notes, paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
+      ...(isQuoted({ paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
       ...runTogether.map(
         (run) => `${label} runs words together as the paper's text does: "${run}".`,
       ),

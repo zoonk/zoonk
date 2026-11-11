@@ -275,6 +275,29 @@ E 札幌。`;
     ).toStrictEqual(["Option 1 isn't in the paper as printed."]);
   });
 
+  it("accepts a command that every question repeats", () => {
+    const paper = [41, 42, 43, 44, 45, 46]
+      .map(
+        (number) =>
+          `QUESTÃO ${number}\nUma loja vendeu ${number} camisas.\nAssinale a alternativa correta.\nA 28%.\nB 30%.\nC 18%.\nD 32%.\nE 25%.`,
+      )
+      .join("\n");
+
+    const item = {
+      ...PRINTED_ITEM,
+      context: "Uma loja vendeu 41 camisas.",
+      question: "Assinale a alternativa correta.",
+    };
+
+    expect(
+      checkPastQuestion({
+        paperText: paper,
+        question: question({ citation: "Questão 41", item, number: "41" }),
+        target: TARGET,
+      }).problems,
+    ).toStrictEqual([]);
+  });
+
   describe("a table the paper's text gives as rows of pipes", () => {
     const TABLE_PAPER = `1 Which expression is equivalent to 2(x + 3)?
 Use this space for computations.
