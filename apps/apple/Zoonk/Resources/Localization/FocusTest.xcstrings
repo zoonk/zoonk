@@ -2733,7 +2733,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In deinen Lerneinheiten gibt es vorerst keine Testfragen."
+            "value" : "Testfragen in deinen Lerneinheiten sind pausiert."
           }
         },
         "es" : {
@@ -2757,19 +2757,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習中の診断問題の出題を一時停止しています。"
+            "value" : "学習中のテスト問題の出題を一時停止しています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습에 나오는 진단 문제를 일시 중지했어요."
+            "value" : "학습 중 진단 문제 출제가 일시 중지됐어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na razie nie zadajemy pytań z testu podczas nauki."
+            "value" : "Pytania testowe podczas nauki są wstrzymane."
           }
         },
         "pt" : {
@@ -2781,7 +2781,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalışmalarında test sorularına ara verildi."
+            "value" : "Çalışmalarındaki test sorularına ara verildi."
           }
         }
       }
@@ -4021,7 +4021,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meinen Plan aktualisieren"
+            "value" : "Meinen Plan anpassen"
           }
         },
         "es" : {
@@ -4051,7 +4051,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 계획에 반영하기"
+            "value" : "내 계획 바꾸기"
           }
         },
         "pl" : {
@@ -4729,55 +4729,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan sieht dafür schon genug Zeit vor, deshalb braucht er keinen Schwerpunkt."
+            "value" : "Dein Plan sieht für diese Fächer schon genug Zeit vor, daher ist kein Schwerpunkt nötig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan ya tiene tiempo para todo esto, así que no necesita un enfoque."
+            "value" : "Tu plan ya dedica suficiente tiempo a estas materias, así que no hace falta darles más."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan prévoit déjà du temps pour tout ça, pas besoin de définir une priorité."
+            "value" : "Ton plan prévoit déjà assez de temps pour ces matières, donc pas besoin de leur en consacrer plus."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo piano prevede già tempo per questi argomenti, quindi non serve dare loro la priorità."
+            "value" : "Il tuo piano prevede già abbastanza tempo per queste materie, quindi non serve aggiungerne altro."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画にはこれらを学ぶ時間がすでにあるので、重点項目を設定する必要はありません。"
+            "value" : "これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획에 이미 이 내용을 공부할 시간이 있어서 따로 집중 학습을 설정할 필요는 없어요."
+            "value" : "이미 계획에 이 과목들을 공부할 시간이 잡혀 있어서 추가로 배정할 필요가 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W twoim planie jest już na nie czas, więc nie trzeba ustalać priorytetów."
+            "value" : "Twój plan już przewiduje czas na te przedmioty, więc nie trzeba go zwiększać."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano já tem tempo para tudo isso, então não precisa de um foco."
+            "value" : "Seu plano já reserva tempo para essas matérias, então não precisa dar mais foco a elas."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planında bunlara zaten zaman ayrılmış, bu yüzden ayrıca bir odak seçmene gerek yok."
+            "value" : "Planında bunlar için zaten zaman var, bu yüzden ek süreye gerek yok."
           }
         }
       }
@@ -4973,13 +4973,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan les dedica más tiempo."
+            "value" : "Tu plan dedica más tiempo a estas materias."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan consacre plus de temps à ces matières."
+            "value" : "Ton plan accorde plus de temps à ces matières."
           }
         },
         "it" : {
@@ -4991,31 +4991,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画では、これらの科目に時間を多く割いています。"
+            "value" : "学習計画では、これらの科目に多くの時間を割きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획에서 이 과목들에 시간을 더 배정해요."
+            "value" : "이 과목들에 학습 시간을 더 배정해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój plan przeznacza na nie więcej czasu."
+            "value" : "Twój plan przeznacza więcej czasu na te przedmioty."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano reserva mais tempo para essas matérias."
+            "value" : "Seu plano dedica mais tempo a essas matérias."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planın bunlara daha fazla zaman ayırıyor."
+            "value" : "Planın bu branşlara daha fazla süre ayırıyor."
           }
         }
       }

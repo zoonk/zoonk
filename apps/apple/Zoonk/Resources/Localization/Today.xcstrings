@@ -16654,7 +16654,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meinen Plan aktualisieren"
+            "value" : "Meinen Plan anpassen"
           }
         },
         "es" : {
@@ -16684,7 +16684,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 계획에 반영하기"
+            "value" : "내 계획 바꾸기"
           }
         },
         "pl" : {
@@ -18991,7 +18991,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton Test de priorités suggère de prévoir plus de temps pour %@."
+            "value" : "Ton Test de priorités suggère de consacrer plus de temps à %@."
           }
         },
         "it" : {
@@ -19003,19 +19003,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重点診断の結果、%@の学習時間を増やすとよさそうです。"
+            "value" : "重点診断の結果から、%@に多めに時間を充てるのがおすすめです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "집중 진단 결과, %@ 공부에 시간을 더 쓰는 게 좋아요."
+            "value" : "집중 진단 결과, %@에 시간을 더 쓰는 걸 추천해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test priorytetów sugeruje więcej czasu na naukę: %@."
+            "value" : "Twój Test priorytetów podpowiada, na co poświęcić więcej czasu: %@."
           }
         },
         "pt" : {
@@ -19027,7 +19027,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odak testin %@ için daha fazla zaman ayırmanı öneriyor."
+            "value" : "Odak testine göre %@ için daha fazla zaman ayırman iyi olur."
           }
         }
       }
