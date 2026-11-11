@@ -11,7 +11,8 @@ import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
-const YESTERDAY = new Date(Date.now() - 86_400_000);
+/** From the test clock, which some tests freeze at a fixed day. */
+const yesterday = () => new Date(Date.now() - 86_400_000);
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
 
@@ -25,7 +26,7 @@ async function setup() {
 
   const mistake = await mistakeFixture({
     cause: "misread",
-    createdAt: YESTERDAY,
+    createdAt: yesterday(),
     itemId: original.id,
     skillId: skill.id,
     userId: user.id,
@@ -55,7 +56,7 @@ async function answer({
     originalMistake.itemId === itemId
       ? originalMistake
       : await mistakeFixture({
-          createdAt: YESTERDAY,
+          createdAt: yesterday(),
           itemId,
           skillId: originalMistake.skillId,
           userId: originalMistake.userId,
