@@ -39,10 +39,6 @@ function queryErrorCode(error: unknown): string | undefined {
     ) {
       return cause.originalCode;
     }
-
-    if ("code" in meta && typeof meta.code === "string") {
-      return meta.code;
-    }
   }
 
   return "code" in error && typeof error.code === "string" ? error.code : undefined;
