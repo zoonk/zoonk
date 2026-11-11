@@ -1,3 +1,4 @@
+import { secureUrl } from "./api-origin.ts";
 import { type StoredLogin, isPlainToken } from "./credentials.ts";
 import { type HttpResult, isRecord, postForm, unexpectedResponse } from "./http.ts";
 
@@ -8,6 +9,7 @@ const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 const DEFAULT_POLL_SECONDS = 5;
 const FIRST_SERVER_ERROR = 500;
 const OAUTH_ERROR_PATTERN = /^[a-z_]{1,64}$/u;
+const USER_CODE_PATTERN = /^[\w-]{1,64}$/u;
 
 const ENDPOINTS = {
   deviceCode: "/v1/auth/device/code",
@@ -70,14 +72,20 @@ export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
     scope: SCOPE,
   });
 
-  const body = result.body;
+  const body = isRecord(result.body) ? result.body : {};
+  const verificationUri = secureUrl(body.verification_uri);
+  const verificationUriComplete = secureUrl(body.verification_uri_complete);
+
+  const hasUnsafeCompleteUri =
+    body.verification_uri_complete !== undefined && !verificationUriComplete;
 
   if (
     !result.ok ||
-    !isRecord(body) ||
     typeof body.device_code !== "string" ||
     typeof body.user_code !== "string" ||
-    typeof body.verification_uri !== "string" ||
+    !USER_CODE_PATTERN.test(body.user_code) ||
+    !verificationUri ||
+    hasUnsafeCompleteUri ||
     typeof body.expires_in !== "number"
   ) {
     throw unexpectedResponse(result);
@@ -88,11 +96,8 @@ export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
     expiresInSeconds: body.expires_in,
     intervalSeconds: typeof body.interval === "number" ? body.interval : DEFAULT_POLL_SECONDS,
     userCode: body.user_code,
-    verificationUri: body.verification_uri,
-    verificationUriComplete:
-      typeof body.verification_uri_complete === "string"
-        ? body.verification_uri_complete
-        : undefined,
+    verificationUri: verificationUri.href,
+    verificationUriComplete: verificationUriComplete?.href,
   };
 }
 
