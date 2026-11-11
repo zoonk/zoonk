@@ -83,10 +83,7 @@ async function recordTestActivity({
     bank.questions.map((question) => [question.id, question.answerIndex]),
   );
 
-  // A question its check removed from the bank counts like a skipped one.
-  const fresh = progress.answers
-    .slice(progress.counted)
-    .filter((answer) => !answer.skipped && rightAnswers.has(answer.id));
+  const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
 
   if (fresh.length === 0) {
     return;
@@ -95,7 +92,9 @@ async function recordTestActivity({
   await settleAnsweredActivity(transaction, {
     answers: fresh.map((answer) => ({
       durationMs: answer.durationMs,
-      isCorrect: answer.answerIndex !== null && rightAnswers.get(answer.id) === answer.answerIndex,
+      isCorrect: rightAnswers.has(answer.id)
+        ? answer.answerIndex !== null && rightAnswers.get(answer.id) === answer.answerIndex
+        : null,
     })),
     contentIds: {},
     goalId,

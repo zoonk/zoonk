@@ -7,7 +7,7 @@ import {
 } from "@zoonk/ai/tasks/language/check-level-test-questions";
 import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { logInfo } from "@zoonk/utils/logger";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import {
   type LanguagePair,
   type LevelTestBankAnalytics,
@@ -96,8 +96,8 @@ export async function claimLevelTestBankCheck(
 
 /**
  * System workflow capability: leaves the bank only the questions that passed. A learner's answer
- * to a removed question stops counting, and the test asks another in its place. A bank with none
- * left is given up, so the pair's next level test writes a new one.
+ * to a removed question stops counting toward their level, and the test asks another in its place.
+ * Every question failing means the check misfired, not the bank, so nothing changes.
  */
 export async function keepCheckedLevelTestQuestions({
   keptIds,
@@ -114,11 +114,13 @@ export async function keepCheckedLevelTestQuestions({
     return { removed: 0 };
   }
 
+  if (questions.length === 0) {
+    logError("[level-test] Every question of a stored bank failed its check", pair);
+    return { removed: 0 };
+  }
+
   await prisma.languageLevelTest.update({
-    data:
-      questions.length > 0
-        ? { content: { ...bank, questions } }
-        : { checkedAt: null, content: {}, generatedAt: new Date(0), model: "" },
+    data: { content: { ...bank, questions } },
     where: { languagePair: pair },
   });
 
