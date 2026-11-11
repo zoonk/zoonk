@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type LearningActivityDay } from "@zoonk/core/progress/get-learning-activity";
+import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -145,15 +146,15 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
     getActivityCalendarDay({ day, index, maximumActivitiesCompleted }),
   );
 
-  const details = days.map((day) => ({
-    label: formatDay(day.date),
-    value: t({
+  const details = days.map((day): ChartPointDetail => [
+    formatDay(day.date),
+    t({
       description:
         "A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.",
       message: "{count, plural, =0 {No study} one {# activity} other {# activities}}",
       values: { count: day.activitiesCompleted },
     }),
-  }));
+  ]);
 
   const startIndex = days.findIndex((day) => day.date.getTime() === keyboardStartDate?.getTime());
 

@@ -29,7 +29,8 @@ const POINT_ATTRIBUTE = "data-chart-point";
 
 const TOOLTIP_GAP = 8;
 
-export type ChartPointDetail = { label: string; note?: string; value: string };
+/** A tuple rather than an object: a year of calendar days sends one per day, and keys would repeat in each. */
+export type ChartPointDetail = readonly [label: string, value: string, note?: string];
 
 type InspectedPoint = { anchor: Element; index: number };
 
@@ -209,12 +210,12 @@ export function ChartInspectorPoint({
   });
 }
 
-function ChartPointTooltipContent({ detail }: { detail: ChartPointDetail }) {
+function ChartPointTooltipContent({ detail: [label, value, note] }: { detail: ChartPointDetail }) {
   return (
     <ChartTooltipContent>
-      <ChartTooltipLabel>{detail.label}</ChartTooltipLabel>
-      <ChartTooltipValue>{detail.value}</ChartTooltipValue>
-      {detail.note && <ChartTooltipNote>{detail.note}</ChartTooltipNote>}
+      <ChartTooltipLabel>{label}</ChartTooltipLabel>
+      <ChartTooltipValue>{value}</ChartTooltipValue>
+      {note && <ChartTooltipNote>{note}</ChartTooltipNote>}
     </ChartTooltipContent>
   );
 }
@@ -232,7 +233,7 @@ export function ChartInspectorTooltip({ within }: { within?: string }) {
   return (
     <>
       <p aria-live="polite" className="sr-only" id={liveRegionId}>
-        {detail && [detail.label, detail.value, detail.note].filter(Boolean).join(", ")}
+        {detail?.filter(Boolean).join(", ")}
       </p>
 
       <TooltipPrimitive.Root

@@ -19,11 +19,12 @@ const VIEWPORT_SLOT = "contribution-calendar-viewport";
 
 /**
  * The viewport's scroller clips what's drawn outside the grid, so the ring sits inside the day and
- * keyboard focus rings the day itself. Its inner line keeps it readable on every level's color.
+ * keyboard focus rings the day itself. Its inner line keeps it readable on every level's color. The grid
+ * holds it once, instead of every day of a year repeating it in the page.
  */
 const DAY_RING_CLASS = cn(
-  "data-active:inset-ring-foreground data-active:ring-background data-active:ring-3 data-active:inset-ring-2 data-active:ring-inset",
-  "in-focus-visible:data-current:inset-ring-foreground in-focus-visible:data-current:ring-background in-focus-visible:data-current:ring-3 in-focus-visible:data-current:inset-ring-2 in-focus-visible:data-current:ring-inset",
+  "**:data-active:inset-ring-foreground **:data-active:ring-background **:data-active:ring-3 **:data-active:inset-ring-2 **:data-active:ring-inset",
+  "focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
 );
 
 const CALENDAR_SIZE_CLASS = cn(
@@ -145,6 +146,7 @@ export function ContributionCalendarGrid({
     <ChartInspectorPoints
       className={cn(
         "flex w-max min-w-full justify-between gap-(--calendar-gap) focus-visible:ring-0 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
+        DAY_RING_CLASS,
         className,
       )}
       data-slot="contribution-calendar-grid"
@@ -196,7 +198,7 @@ export function ContributionCalendarDay({
   return (
     <ChartInspectorPoint
       aria-hidden="true"
-      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", DAY_RING_CLASS, className)}
+      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", className)}
       data-slot="contribution-calendar-day"
       {...props}
     />

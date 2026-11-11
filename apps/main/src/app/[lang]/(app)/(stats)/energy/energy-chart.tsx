@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type EnergyDay } from "@zoonk/core/progress/energy";
+import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -129,22 +130,21 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
 
   const calendarDays = days.map((day, index) => getEnergyCalendarDay({ day, index }));
 
-  const details = days.map((day) => ({
-    label: formatDay(day.date),
-    value:
-      day.energy === null
-        ? t({
-            description:
-              "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.",
-            message: "No Energy recorded",
-          })
-        : t({
-            description:
-              "A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.",
-            message: "{percentage} Energy",
-            values: { percentage: formatMetricPercent({ format, value: day.energy }) },
-          }),
-  }));
+  const details = days.map((day): ChartPointDetail => [
+    formatDay(day.date),
+    day.energy === null
+      ? t({
+          description:
+            "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.",
+          message: "No Energy recorded",
+        })
+      : t({
+          description:
+            "A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.",
+          message: "{percentage} Energy",
+          values: { percentage: formatMetricPercent({ format, value: day.energy }) },
+        }),
+  ]);
 
   const startIndex = days.findIndex((day) => day.date.getTime() === keyboardStartDate?.getTime());
 

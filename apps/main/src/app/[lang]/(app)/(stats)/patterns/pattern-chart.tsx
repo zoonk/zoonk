@@ -10,6 +10,7 @@ import {
   ChartInspectorPoint,
   ChartInspectorPoints,
   ChartInspectorTooltip,
+  type ChartPointDetail,
 } from "@zoonk/ui/components/chart-inspector";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -221,7 +222,12 @@ export async function PatternChart({
     columns.map(async (column) => ({ column, ...(await getPatternTexts(column.pattern)) })),
   );
 
-  const details = points.map(({ column, note, value }) => ({ label: column.name, note, value }));
+  const details = points.map(({ column, note, value }): ChartPointDetail => [
+    column.name,
+    value,
+    note,
+  ]);
+
   const bestIndex = columns.findIndex((column) => getPatternState(column) === "best");
 
   return (
