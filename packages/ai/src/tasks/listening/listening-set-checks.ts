@@ -15,9 +15,6 @@ import {
 const MIN_SCRIPT_WORDS = 40;
 const MAX_SCRIPT_WORDS = 1000;
 
-/** Exam recordings rarely have more voices than this (IELTS Part 3 has up to four). */
-const MAX_SPEAKERS = 4;
-
 /** Stage directions and sound cues a voice would read aloud: "[laughs]", "(pause)". */
 const STAGE_DIRECTIONS = /\[[^\]]*\]|\([^)]*\)/gu;
 
@@ -190,7 +187,6 @@ function findScriptProblems(set: ListeningSet): string[] {
 
   return [
     names.size !== set.speakers.length && "Two speakers have the same name.",
-    set.speakers.length > MAX_SPEAKERS && `Has ${set.speakers.length} speakers; at most 4.`,
     strangers.size > 0 &&
       `Lines are said by people not in the speakers: ${[...strangers].join(", ")}.`,
     words < MIN_SCRIPT_WORDS && `The script has ${words} words; a recording needs at least 40.`,

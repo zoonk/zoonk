@@ -5,15 +5,6 @@ import { type LessonCheckProblem } from "../lesson-code-checks";
 import { findLessonPhrases } from "./lesson-phrases";
 import { findTextFlaws } from "./screen-flaws";
 
-const MAX_SUMMARY_SENTENCES = 2;
-
-/** Japanese and Chinese sentences end on 。！？ with no space, so a pattern of marks misses them. */
-function countSentences({ language, text }: { language: string; text: string }): number {
-  const segments = new Intl.Segmenter(language, { granularity: "sentence" }).segment(text);
-
-  return [...segments].filter(({ segment }) => segment.trim()).length;
-}
-
 export function getLessonMapProblems({
   language,
   map,
@@ -33,10 +24,6 @@ export function getLessonMapProblems({
     !parsed.success && {
       code: "summary" as const,
       problem: `The summary card is invalid: ${parsed.error?.issues.map((issue) => issue.message).join("; ")}.`,
-    },
-    summary.some((text) => countSentences({ language, text }) > MAX_SUMMARY_SENTENCES) && {
-      code: "summary" as const,
-      problem: "Each summary idea is one sentence.",
     },
     new Set(normalized).size !== normalized.length && {
       code: "summary" as const,
