@@ -2,7 +2,7 @@ import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
 import { type TransactionClient, type User } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { getUserSearchWhere } from "../users/user-search";
-import { parseStaffInput, staffFindUserSchema, staffSearchUsersSchema } from "./input";
+import { staffFindUserSchema, staffSearchUsersSchema } from "./input";
 import { staffRead, staffTransaction } from "./read";
 
 function userFacts(user: User) {
@@ -44,16 +44,17 @@ async function usersWithPlans({ client, users }: { client: TransactionClient; us
 export function findStaffUser(input: unknown) {
   return staffRead({
     call: { model: "User", verb: "users.find" },
-    run: async () => {
-      const { query } = parseStaffInput(staffFindUserSchema, input);
+    input,
+    run: async ({ query }) => {
+      const normalized = query.toLowerCase();
       const id = uuidSchema().safeParse(query);
 
       const user = await staffTransaction(async (client) => {
         const found = await client.user.findFirst({
           where: {
             OR: [
-              { email: { equals: query, mode: "insensitive" } },
-              { username: { equals: query, mode: "insensitive" } },
+              { email: normalized },
+              { username: normalized },
               ...(id.success ? [{ id: id.data }] : []),
             ],
           },
@@ -65,15 +66,15 @@ export function findStaffUser(input: unknown) {
 
       return { data: { user }, rows: user === null ? 0 : 1 };
     },
+    schema: staffFindUserSchema,
   });
 }
 
 export function searchStaffUsers(input: unknown) {
   return staffRead({
     call: { model: "User", verb: "users.search" },
-    run: async () => {
-      const { query, limit } = parseStaffInput(staffSearchUsersSchema, input);
-
+    input,
+    run: async ({ query, limit }) => {
       const users = await staffTransaction(async (client) => {
         const found = await client.user.findMany({
           orderBy: { id: "asc" },
@@ -86,5 +87,6 @@ export function searchStaffUsers(input: unknown) {
 
       return { data: { users }, rows: users.length };
     },
+    schema: staffSearchUsersSchema,
   });
 }

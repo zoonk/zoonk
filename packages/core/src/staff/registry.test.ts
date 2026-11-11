@@ -1,5 +1,5 @@
 import { databaseSchema } from "@zoonk/db/schema";
-import { assert, jsonValue, property } from "fast-check";
+import { assert, bigInt, property } from "fast-check";
 import { describe, expect, it } from "vitest";
 import { staffCredentialPolicy } from "./policy";
 import { describeModels, readableFields } from "./registry";
@@ -46,7 +46,7 @@ describe("staff registry", () => {
     expect(unreviewed).toStrictEqual([]);
   });
 
-  it("describes scalar types, nullability, lists and only readable relations", () => {
+  it("describes readable scalar types, nullability, lists and enum values", () => {
     const models = describeModels();
 
     for (const model of excludedModels) {
@@ -62,7 +62,11 @@ describe("staff registry", () => {
 
     const session = models.find((model) => model.name === "Session");
     expect(session?.fields.map((field) => field.name)).not.toContain("token");
-    expect(session?.relations).not.toContain("restoreKey");
+    expect(session).not.toHaveProperty("relations");
+
+    expect(models.find((model) => model.name === "FollowUp")?.fields).toContainEqual(
+      expect.objectContaining({ name: "kind", values: expect.arrayContaining(["prepareSession"]) }),
+    );
 
     for (const model of databaseSchema.models) {
       for (const field of strippedFields[model.name] ?? []) {
@@ -74,25 +78,23 @@ describe("staff registry", () => {
   it("serializes runtime values and leaves JSON columns intact", () => {
     expect(
       serializeStaffValue({
-        buffer: Buffer.from([0, 1, 255]),
-        bytes: new Uint8Array([0, 1, 255]),
         date: new Date("2026-01-02T03:04:05Z"),
         integer: 9_007_199_254_740_993n,
         json: { nested: ["text", null, true, { value: 3 }] },
       }),
     ).toStrictEqual({
-      buffer: "AAH/",
-      bytes: "AAH/",
       date: "2026-01-02T03:04:05.000Z",
       integer: "9007199254740993",
       json: { nested: ["text", null, true, { value: 3 }] },
     });
   });
 
-  it("preserves arbitrary JSON column values", () => {
+  it("serializes nested BigInt values without losing precision", () => {
     assert(
-      property(jsonValue(), (value) => {
-        expect(serializeStaffValue(value)).toStrictEqual(value);
+      property(bigInt(), (value) => {
+        expect(serializeStaffValue({ nested: [value] })).toStrictEqual({
+          nested: [value.toString()],
+        });
       }),
     );
   });

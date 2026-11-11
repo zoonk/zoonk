@@ -10,6 +10,21 @@ vi.mock("./get-staff-actor", () => ({
 }));
 
 describe("staff user lookup", () => {
+  it("treats percent signs and underscores as literal lookup characters", async () => {
+    const marker = randomUUID().slice(0, 8);
+    const user = await userFixture({ email: `abc${marker}@wild.test` });
+    await prisma.user.update({ data: { username: `abc${marker}` }, where: { id: user.id } });
+
+    await Promise.all(
+      ["%", `_bc${marker}@wild.test`, `_bc${marker}`].map(async (query) => {
+        await expect(findStaffUser({ query })).resolves.toStrictEqual({
+          status: "ready",
+          user: null,
+        });
+      }),
+    );
+  });
+
   it("finds exact email, username or id and includes account and effective-plan facts", async () => {
     const user = await userFixture();
     const username = `staff_${randomUUID()}`;

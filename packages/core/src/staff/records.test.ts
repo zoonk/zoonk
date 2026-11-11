@@ -15,7 +15,7 @@ const { actor } = vi.hoisted(() => ({
     vi.fn<
       () => Promise<
         | { status: "ready"; userId: string; clientId: string }
-        | { status: "unauthorized" | "forbidden" }
+        | { status: "unauthorized" | "forbidden"; userId?: string; clientId?: string }
       >
     >(),
 }));
@@ -44,6 +44,24 @@ describe("staff reads", () => {
     actor.mockRejectedValueOnce(error);
     await expect(getStaffModels()).rejects.toBe(error);
     expect(logInfo).not.toHaveBeenCalled();
+  });
+
+  it("attributes forbidden calls when the principal supplies its identity", async () => {
+    actor.mockResolvedValueOnce({
+      clientId: "zoonk-cli",
+      status: "forbidden",
+      userId: "staff-fixture",
+    });
+
+    await expect(getStaffModels()).resolves.toStrictEqual({ status: "forbidden" });
+    const [line] = vi.mocked(logInfo).mock.calls[0] ?? [];
+    const entry: unknown = JSON.parse(String(line));
+
+    expect(entry).toMatchObject({
+      actorUserId: "staff-fixture",
+      clientId: "zoonk-cli",
+      outcome: "forbidden",
+    });
   });
 
   it.each(["unauthorized", "forbidden"] as const)(

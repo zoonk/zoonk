@@ -27,7 +27,7 @@ function count(body: unknown) {
 }
 
 describe("staff record routes", () => {
-  it("never exposes credential models or relations in model discovery, get, list or count", async () => {
+  it("never exposes credential models in model discovery, get, list or count", async () => {
     await signInStaff();
     const response = await getModels();
     expect(response.status).toBe(200);
@@ -36,9 +36,8 @@ describe("staff record routes", () => {
       .object({
         models: z.array(
           z.object({
-            fields: z.array(z.object({ name: z.string() })),
+            fields: z.array(z.object({ name: z.string(), values: z.array(z.string()).optional() })),
             name: z.string(),
-            relations: z.array(z.string()),
           }),
         ),
       })
@@ -66,9 +65,10 @@ describe("staff record routes", () => {
 
     const session = body.models.find((model) => model.name === "Session");
     expect(session?.fields.map((field) => field.name)).not.toContain("token");
-    expect(session?.relations).not.toContain("restoreKey");
-    const user = body.models.find((model) => model.name === "User");
-    expect(user?.relations.some((relation) => relation.startsWith("oauth"))).toBe(false);
+
+    expect(body.models.find((model) => model.name === "FollowUp")?.fields).toContainEqual(
+      expect.objectContaining({ name: "kind", values: expect.arrayContaining(["prepareSession"]) }),
+    );
   });
 
   it("strips stored credentials from actual account, session and subscription rows", async () => {
