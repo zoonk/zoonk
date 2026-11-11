@@ -26,6 +26,7 @@ export type DeviceCode = {
   verificationUriComplete?: string;
 };
 
+/** `error` is the OAuth error code, or the HTTP status when the answer names none. */
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
 
 function oauthError(result: HttpResult): string | null {
@@ -57,13 +58,7 @@ function toTokenResult(result: HttpResult): TokenResult {
     return { login: toLogin(result), ok: true };
   }
 
-  const error = oauthError(result);
-
-  if (!error) {
-    throw unexpectedResponse(result);
-  }
-
-  return { error, ok: false };
+  return { error: oauthError(result) ?? `HTTP ${result.status}`, ok: false };
 }
 
 export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
@@ -129,10 +124,6 @@ export async function refreshLogin({
     grant_type: "refresh_token",
     refresh_token: refreshToken,
   });
-
-  if (result.status >= FIRST_SERVER_ERROR) {
-    throw unexpectedResponse(result);
-  }
 
   return toTokenResult(result);
 }

@@ -36,11 +36,17 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
 
       const refresh = await refreshLogin({ origin, refreshToken: stored.refreshToken });
 
-      if (!refresh.ok) {
+      if (refresh.ok) {
+        return { result: refresh.login, save: refresh.login };
+      }
+
+      if (refresh.error === "invalid_grant") {
         return { result: null, save: null };
       }
 
-      return { result: refresh.login, save: refresh.login };
+      throw new CliError(
+        `Couldn't renew the login for ${origin} (${refresh.error}). It's kept; try again shortly.`,
+      );
     },
     file,
     origin,

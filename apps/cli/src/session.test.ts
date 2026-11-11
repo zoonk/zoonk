@@ -280,4 +280,20 @@ describe(sendAuthorized, () => {
     expect(String(failure)).not.toContain("SECRET");
     expect(api.staffCalls).toStrictEqual([]);
   });
+
+  it.each([
+    [429, { error: "temporarily_unavailable" }],
+    [503, {}],
+  ])("keeps the login when a refresh fails with HTTP %i", async (status, body) => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: { body, status } });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
+  });
 });
