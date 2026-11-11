@@ -160,6 +160,8 @@ struct StepButtons: View {
   var canSkip = true
   var continueLabel: Text?
   var continueIcon: ActionIcon? = .forward
+  /// False while another button on the screen is the filled one.
+  var continueIsMain = true
   var skipLabel: Text?
   var skipIcon: ActionIcon? = .skip
   var note: Text?
@@ -182,7 +184,7 @@ struct StepButtons: View {
           continueLabel
             ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
         }
-        .buttonStyle(.mainAction)
+        .buttonStyle(continueIsMain ? ZoonkButtonStyle.mainAction : .ghost)
         .disabled((!canContinue || isSaving) && !proceeds)
 
         if let onSkip {

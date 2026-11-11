@@ -15,9 +15,15 @@ struct FocusTestCheckpoint: View {
   let onContinueTest: () -> Void
 
   @State private var showsSubjects = false
+  /// The learner answered the focus the test proposes, so "Done" is the filled button again.
+  @State private var answeredProposal = false
 
   var body: some View {
     let next = focusTest.offer
+    let focus = focusTest.checkpoint?.focus
+    let proposalWaits =
+      host == .plan && focus?.state == .proposed && focus?.proposal?.canApply == true
+      && !answeredProposal
 
     ZoonkList {
       StepHeader(
@@ -36,7 +42,8 @@ struct FocusTestCheckpoint: View {
 
         if let focus = checkpoint.focus, !focus.rows.isEmpty {
           FocusTestSuggestedFocus(
-            focus: focus, goalID: goalID, decides: host == .plan, changeFocus: changeFocus)
+            focus: focus, goalID: goalID, decides: host == .plan, changeFocus: changeFocus,
+            isAnswered: $answeredProposal)
         }
       }
 
@@ -74,6 +81,7 @@ struct FocusTestCheckpoint: View {
             "Done", tableName: "FocusTest",
             comment: "Leaves the Focus test's result for the plan"),
         continueIcon: host == .onboarding ? .forward : .check,
+        continueIsMain: !proposalWaits,
         skipLabel: next.map {
           Text(
             "Continue the test\u{00A0}· \(FocusTestCopy.about(minutes: $0.minutes))",
@@ -121,6 +129,7 @@ private struct FocusTestSuggestedFocus: View {
   /// On a plan already there, the proposal is answered here.
   let decides: Bool
   var changeFocus: (() -> Void)?
+  @Binding var isAnswered: Bool
 
   var body: some View {
     Section {
@@ -129,7 +138,7 @@ private struct FocusTestSuggestedFocus: View {
       }
 
       if decides, focus.state == .proposed, let proposal = focus.proposal {
-        FocusTestProposal(proposal: proposal, goalID: goalID)
+        FocusTestProposal(proposal: proposal, goalID: goalID, isAnswered: $isAnswered)
       }
 
       if let changeFocus, [.current, .alreadyFits, .handPicked].contains(focus.state) {
@@ -199,6 +208,7 @@ private struct FocusTestSuggestedFocus: View {
 private struct FocusTestProposal: View {
   let proposal: TodayView.PlanChange
   let goalID: String
+  @Binding var isAnswered: Bool
 
   @Environment(PlanStore.self) private var plans
   @State private var decision: PlanChangeDecision?
@@ -313,6 +323,7 @@ private struct FocusTestProposal: View {
       case .done(let change?):
         answered = change
         decision = status
+        isAnswered = true
       case .done(nil), .failed:
         failed = true
       case .obsolete:
