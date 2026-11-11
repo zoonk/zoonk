@@ -50,7 +50,7 @@
   "focustest_reason_listening": "cefe2093c2a5242ef24cf01b5a8b296769a98c157296e89baa060153f0449900",
   "focustest_reason_minimum_score": "c0511c89a9f19a0912d64228ae1869200e7bfa2b5c7cea1f26afa4ee42be10c9",
   "focustest_reason_not_asked": "38bc2002f64b7a1bda6a4467220329e7fc75f4b69bc2d8a39f07139f0e8c2e52",
-  "focustest_reason_practical": "861ca6e204e98f9b394b30eebe408a7f6a6bbc1bf61661d4606e1d9356625862",
+  "focustest_reason_not_checked": "861ca6e204e98f9b394b30eebe408a7f6a6bbc1bf61661d4606e1d9356625862",
   "focustest_reason_speaking": "1577fb1b1b8bda8d580f19f3a5e6b51cb5fef8d4664fcd16ef927a4c9ef97087",
   "focustest_reason_weight": "4d8bf5960eeb5642a69235740926f61c0b3b9600c188d1a126a332102c3d6f18",
   "focustest_reason_written": "3160eea6818a26d824895a039d920d91085a1163ffb91bfcf28c3b62ff37221a",
@@ -180,10 +180,7 @@
     <string name="focustest_reason_answers">Tes réponses suggèrent de réviser %1$s.</string>
     <string name="focustest_reason_minimum_score">Cette partie exige un Score minimum.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">L’expression écrite compte beaucoup ; elle n’est pas évaluée ici.</string>
-    <string name="focustest_reason_listening">L’écoute compte beaucoup ; elle n’est pas évaluée ici.</string>
-    <string name="focustest_reason_speaking">L’expression orale compte beaucoup ; elle n’est pas évaluée ici.</string>
-    <string name="focustest_reason_practical">Cette partie compte beaucoup ; elle n’est pas évaluée ici.</string>
+    <string name="focustest_reason_not_checked">Cette partie compte beaucoup ; elle n’est pas évaluée ici.</string>
     <string name="focustest_reason_not_asked">Cette matière compte pour beaucoup. Ton niveau de départ n’a pas encore été évalué.</string>
     <string name="focustest_reason_weight">Cette matière compte pour beaucoup.</string>
     <string name="focustest_update_plan">Mettre à jour mon plan</string>

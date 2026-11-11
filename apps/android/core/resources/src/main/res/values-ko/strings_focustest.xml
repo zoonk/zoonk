@@ -50,7 +50,7 @@
   "focustest_reason_listening": "b69a5c7415f5dc99f07b2adba18a48331912a36a712a8370c0815052c2da5797",
   "focustest_reason_minimum_score": "ab1008c8506f3fb18e8c62a0a635ab4e9b3e31c8bdeb0d2ee20510651ecf7505",
   "focustest_reason_not_asked": "e458be49f9061fc909ff77a69e0abf556a333571d6996bbe5944727450818bf9",
-  "focustest_reason_practical": "ea73e834fc74547bc3060d77383df8493de0a7b5d77c3b57d3aa5c82ef70c875",
+  "focustest_reason_not_checked": "ea73e834fc74547bc3060d77383df8493de0a7b5d77c3b57d3aa5c82ef70c875",
   "focustest_reason_speaking": "70ac9ade3d3bbf26a997266f71cd34eeb5d3cf7fefbc750d147401970c2b40f0",
   "focustest_reason_weight": "a83fc4eb70b206f161bcf23736efe660080429756bcba3325820fb7c0fd65ebf",
   "focustest_reason_written": "573665eeb2e0a501ec234e02557a13d4118bab65729ed2145927b3036355c587",
@@ -164,10 +164,7 @@
     <string name="focustest_reason_answers">답변을 보면 %1$s 복습이 도움이 될 것 같아요.</string>
     <string name="focustest_reason_minimum_score">이 파트에는 최소 점수 기준이 있어요.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">쓰기는 비중이 크지만 여기서는 확인하지 않아요.</string>
-    <string name="focustest_reason_listening">듣기는 비중이 크지만 여기서는 확인하지 않아요.</string>
-    <string name="focustest_reason_speaking">말하기는 비중이 크지만 여기서는 확인하지 않아요.</string>
-    <string name="focustest_reason_practical">이 부분은 비중이 크지만 여기서는 확인하지 않아요.</string>
+    <string name="focustest_reason_not_checked">이 부분은 비중이 크지만 여기서는 확인하지 않아요.</string>
     <string name="focustest_reason_not_asked">이 과목은 시험에서 비중이 커요. 아직 어느 정도 아는지 확인하지 않았어요.</string>
     <string name="focustest_reason_weight">이 과목은 시험에서 비중이 커요.</string>
     <string name="focustest_update_plan">내 계획 바꾸기</string>

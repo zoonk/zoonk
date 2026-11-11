@@ -50,7 +50,7 @@
   "focustest_reason_listening": "56e5104d3047e47419133daa688620949cce9b38240778b8072bcde5924aa766",
   "focustest_reason_minimum_score": "2421b146edb3e96f2f8864f4caa9f1bd8b45fbedb3d494d40fe86ff18d2458a6",
   "focustest_reason_not_asked": "4fea094df0ae565ba9f118298182a81c4c9879f2c03cd588c9d3f9405840e13e",
-  "focustest_reason_practical": "0999533aaca9353527216c7d36032fd31b437c5b08f1d5fd61d9021b94565786",
+  "focustest_reason_not_checked": "0999533aaca9353527216c7d36032fd31b437c5b08f1d5fd61d9021b94565786",
   "focustest_reason_speaking": "5fc3a2dc093955ddcc47265048e2f0500b61c8cb2f3613a3833e84daad0cb5c0",
   "focustest_reason_weight": "4203a75117fa7fbc855f1683452838132cf398da2803b354ccbaa0e638284754",
   "focustest_reason_written": "faa1362158d7b4caff42961273f04d8e23e2e6b4f37c6ded7c3635e3b0f3939a",
@@ -180,10 +180,7 @@
     <string name="focustest_reason_answers">Suas respostas sugerem que vale revisar %1$s.</string>
     <string name="focustest_reason_minimum_score">Essa parte exige uma pontuação mínima.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">A escrita tem bastante peso; ela não é avaliada aqui.</string>
-    <string name="focustest_reason_listening">A escuta tem bastante peso; ela não é avaliada aqui.</string>
-    <string name="focustest_reason_speaking">A conversação tem bastante peso; ela não é avaliada aqui.</string>
-    <string name="focustest_reason_practical">Essa parte tem bastante peso; ela não é avaliada aqui.</string>
+    <string name="focustest_reason_not_checked">Essa parte tem bastante peso; ela não é avaliada aqui.</string>
     <string name="focustest_reason_not_asked">Essa matéria tem bastante peso. A gente ainda não avaliou o que você já sabe dela.</string>
     <string name="focustest_reason_weight">Essa matéria tem bastante peso.</string>
     <string name="focustest_update_plan">Atualizar meu plano</string>

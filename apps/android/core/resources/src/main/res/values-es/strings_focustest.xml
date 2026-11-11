@@ -50,7 +50,7 @@
   "focustest_reason_listening": "f5d49a8c283cab28ef9b23791ad292c0524cc7698d4468eacd3faf0d50f15e31",
   "focustest_reason_minimum_score": "46171aa4bc10023344f813139215620079a05bc406489745c7df7a36b0bbf837",
   "focustest_reason_not_asked": "4051534367380f4d0d3e500ef784f76a85c29a21922d34d9220eca9f02f7d0f8",
-  "focustest_reason_practical": "45e9be258b128257d0b99b3d815eaa975df91f07f36ceb2bacee4ea0a455ab17",
+  "focustest_reason_not_checked": "45e9be258b128257d0b99b3d815eaa975df91f07f36ceb2bacee4ea0a455ab17",
   "focustest_reason_speaking": "157e6307aff3a42e5151e586e3ac0c1ee101aab129c5f556ebc0ea42459ef916",
   "focustest_reason_weight": "1c0378b592deab9c633fc9e647e2ce08e484f6f8606b605516cfd1bd63b21580",
   "focustest_reason_written": "84e252fdcd81ff0ec02d2dea81f827396d029c979bb02316480b378a84338083",
@@ -180,10 +180,7 @@
     <string name="focustest_reason_answers">Tus respuestas sugieren repasar %1$s.</string>
     <string name="focustest_reason_minimum_score">Esta parte requiere un puntaje mínimo.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">La expresión escrita tiene mucho peso; no se evalúa aquí.</string>
-    <string name="focustest_reason_listening">La escucha tiene mucho peso; no se evalúa aquí.</string>
-    <string name="focustest_reason_speaking">La expresión oral tiene mucho peso; no se evalúa aquí.</string>
-    <string name="focustest_reason_practical">Esta parte tiene mucho peso; no se evalúa aquí.</string>
+    <string name="focustest_reason_not_checked">Esta parte tiene mucho peso; no se evalúa aquí.</string>
     <string name="focustest_reason_not_asked">Esta materia tiene mucho peso. Aún no se evaluó tu nivel inicial.</string>
     <string name="focustest_reason_weight">Esta materia tiene mucho peso.</string>
     <string name="focustest_update_plan">Actualizar mi plan</string>

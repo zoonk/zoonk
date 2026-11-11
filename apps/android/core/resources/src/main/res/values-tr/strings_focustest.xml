@@ -50,7 +50,7 @@
   "focustest_reason_listening": "21b8938023815182e0c25b2c943322abddce9857eca8f1a619d0aac4e90a768b",
   "focustest_reason_minimum_score": "d131efe18948cba9e01f0669dcf9327dcb0dbf747a2d62c04b2f0493bf0e5a7a",
   "focustest_reason_not_asked": "dd41c4ba3f6be190a545073ae191dbf3813630ba89def06bd24be1d085c39b4e",
-  "focustest_reason_practical": "e491020fc5f8b1fe09a807d025e62603b5d1636d92a89af6bf09bf2d5cf1f536",
+  "focustest_reason_not_checked": "e491020fc5f8b1fe09a807d025e62603b5d1636d92a89af6bf09bf2d5cf1f536",
   "focustest_reason_speaking": "c9f1ea606dcb03b5c62a6b9f338823f0ab30464a923db0e5d8a60e7ac0a4cc0f",
   "focustest_reason_weight": "b936c7f556026e22f6e79159d2352060e430b6beb27ae44a0fc4afee2e05d150",
   "focustest_reason_written": "b8ae792a201ddbcb522ee11f3d75e78928c25b952024597a9b966147b8585e66",
@@ -172,10 +172,7 @@
     <string name="focustest_reason_answers">Cevaplarına göre %1$s için tekrar yapman iyi olur.</string>
     <string name="focustest_reason_minimum_score">Bu bölümde minimum puan şartı var.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">Yazmanın puana etkisi büyük; burada değerlendirilmiyor.</string>
-    <string name="focustest_reason_listening">Dinlemenin puana etkisi büyük; burada değerlendirilmiyor.</string>
-    <string name="focustest_reason_speaking">Konuşmanın puana etkisi büyük; burada değerlendirilmiyor.</string>
-    <string name="focustest_reason_practical">Bu kısmın puana etkisi büyük; burada değerlendirilmiyor.</string>
+    <string name="focustest_reason_not_checked">Bu kısmın puana etkisi büyük; burada değerlendirilmiyor.</string>
     <string name="focustest_reason_not_asked">Bu branşın puana etkisi büyük. Başlangıç düzeyin henüz değerlendirilmedi.</string>
     <string name="focustest_reason_weight">Bu branşın puana etkisi büyük.</string>
     <string name="focustest_update_plan">Planımı güncelle</string>

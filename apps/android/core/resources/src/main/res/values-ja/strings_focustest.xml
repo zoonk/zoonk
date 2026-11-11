@@ -50,7 +50,7 @@
   "focustest_reason_listening": "a9f8776e8b42368ee134eefb6d26fe4d12aab93576832fcec548d662876d4d38",
   "focustest_reason_minimum_score": "5f26573b233f7b896ce84f9103a1081a8f92cec7bcee35baea9bd331c1687739",
   "focustest_reason_not_asked": "2f221d7662bdb53bfebea2ff4d2a77fcd05b9d81a68738b2dbaa66b05047bf24",
-  "focustest_reason_practical": "1c348659df457042e175e7a89d55f05522ef2879210a6cd1dd4706e373fadfa0",
+  "focustest_reason_not_checked": "1c348659df457042e175e7a89d55f05522ef2879210a6cd1dd4706e373fadfa0",
   "focustest_reason_speaking": "520056a00b6171f57aa6c35479314c59c388ca9fe7ea040ab400c68b92fcf57f",
   "focustest_reason_weight": "07a3df722857ae4c75aa8e8e58410b59eccec0f3b2a65ece76dbd874f39fbc35",
   "focustest_reason_written": "ffa4ed831eb2e46df8379408e4de636b6c6ca513aa6185bafbeb7fcb6d428769",
@@ -164,10 +164,7 @@
     <string name="focustest_reason_answers">回答から、%1$sを復習するとよさそうです。</string>
     <string name="focustest_reason_minimum_score">このパートには最低スコアが設定されています。</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">ライティングは配点が高いですが、この診断の対象外です。</string>
-    <string name="focustest_reason_listening">リスニングは配点が高いですが、この診断の対象外です。</string>
-    <string name="focustest_reason_speaking">スピーキングは配点が高いですが、この診断の対象外です。</string>
-    <string name="focustest_reason_practical">この部分は配点が高いですが、この診断の対象外です。</string>
+    <string name="focustest_reason_not_checked">この部分は配点が高いですが、この診断の対象外です。</string>
     <string name="focustest_reason_not_asked">この科目は配点が高いです。今の理解度はまだ診断していません。</string>
     <string name="focustest_reason_weight">この科目は配点が高いです。</string>
     <string name="focustest_update_plan">学習計画を更新する</string>

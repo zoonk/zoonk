@@ -50,7 +50,7 @@
   "focustest_reason_listening": "37b753edd29ddd291226b27b3e9909ad84a37e43a52a23b59284f5d9972dba95",
   "focustest_reason_minimum_score": "93d5f48a2ee48d799714d0ca85ebf33c6cba83707ea3afdfd76b252482aaac4e",
   "focustest_reason_not_asked": "e0effba46377b43ee819287cd9272737c9c864e78cdb4e57b008f3c31e68f70f",
-  "focustest_reason_practical": "35298eb5fc68402c27e78d2e30f97bfb07926f93d85b1b2a19d911c84c25d506",
+  "focustest_reason_not_checked": "35298eb5fc68402c27e78d2e30f97bfb07926f93d85b1b2a19d911c84c25d506",
   "focustest_reason_speaking": "6ea0ec080548a918f5f8d15ab40f5b6725a36146cdd247600deed56fa7219a41",
   "focustest_reason_weight": "511f1c80122efbb9022457af0d2a5e337c69c0bf5a39150e53a63a3cb3acd1df",
   "focustest_reason_written": "eadeeca4162ae10f6c088cef93d401995f867ee8ef2727ca310336b846022900",
@@ -172,10 +172,7 @@
     <string name="focustest_reason_answers">Deine Antworten legen nahe, %1$s zu wiederholen.</string>
     <string name="focustest_reason_minimum_score">Für diesen Teil brauchst du einen Mindestscore.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_written">Schreiben zählt besonders viel; es wird hier nicht geprüft.</string>
-    <string name="focustest_reason_listening">Hören zählt besonders viel; es wird hier nicht geprüft.</string>
-    <string name="focustest_reason_speaking">Sprechen zählt besonders viel; es wird hier nicht geprüft.</string>
-    <string name="focustest_reason_practical">Dieser Teil zählt besonders viel; er wird hier nicht geprüft.</string>
+    <string name="focustest_reason_not_checked">Dieser Teil zählt besonders viel; er wird hier nicht geprüft.</string>
     <string name="focustest_reason_not_asked">Dieses Fach zählt besonders viel. Dein Vorwissen in diesem Fach wurde noch nicht geprüft.</string>
     <string name="focustest_reason_weight">Dieses Fach zählt besonders viel.</string>
     <string name="focustest_update_plan">Meinen Plan anpassen</string>

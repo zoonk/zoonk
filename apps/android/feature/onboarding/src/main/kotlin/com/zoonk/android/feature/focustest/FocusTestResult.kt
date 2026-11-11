@@ -124,36 +124,18 @@ private fun focusIntro(state: FocusTestFocus.State): String =
         },
     )
 
+/** The row's title already names the subject, so no reason says it again. */
 @Composable
-private fun reasonText(row: FocusTestFocusRow): String {
-    if (row.reason == FocusTestFocusRow.Reason.ANSWERS) {
-        return stringResource(R.string.focustest_reason_answers, displayName(row.subject.name, row.subject.shortName))
-    }
-    return stringResource(
-        when (row.reason) {
-            FocusTestFocusRow.Reason.ANSWERS, FocusTestFocusRow.Reason.MINIMUM_SCORE -> {
-                R.string.focustest_reason_minimum_score
-            }
-
-            FocusTestFocusRow.Reason.NOT_ASKED -> {
-                R.string.focustest_reason_not_asked
-            }
-
-            FocusTestFocusRow.Reason.WEIGHT -> {
-                R.string.focustest_reason_weight
-            }
-
-            FocusTestFocusRow.Reason.NOT_CHECKED -> {
-                when (row.part) {
-                    FocusTestFocusRow.Part.WRITTEN -> R.string.focustest_reason_written
-                    FocusTestFocusRow.Part.LISTENING -> R.string.focustest_reason_listening
-                    FocusTestFocusRow.Part.SPEAKING -> R.string.focustest_reason_speaking
-                    FocusTestFocusRow.Part.PRACTICAL, null -> R.string.focustest_reason_practical
-                }
-            }
+private fun reasonText(reason: FocusTestFocusRow.Reason): String =
+    stringResource(
+        when (reason) {
+            FocusTestFocusRow.Reason.ANSWERS -> R.string.focustest_reason_answers
+            FocusTestFocusRow.Reason.MINIMUM_SCORE -> R.string.focustest_reason_minimum_score
+            FocusTestFocusRow.Reason.NOT_CHECKED -> R.string.focustest_reason_not_checked
+            FocusTestFocusRow.Reason.NOT_ASKED -> R.string.focustest_reason_not_asked
+            FocusTestFocusRow.Reason.WEIGHT -> R.string.focustest_reason_weight
         },
     )
-}
 
 @Composable
 private fun SuggestedFocus(
@@ -175,7 +157,7 @@ private fun SuggestedFocus(
                 if (index > 0) HorizontalDivider()
                 ListRow(
                     headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
-                    supporting = { Text(reasonText(row)) },
+                    supporting = { Text(reasonText(row.reason)) },
                 )
             }
         }
