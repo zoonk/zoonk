@@ -62,13 +62,13 @@ function SuggestedGoalCard({
         <SuggestionDescription>{t("Build a plan in 1 minute.")}</SuggestionDescription>
 
         <SuggestionActions>
-          <SuggestionAction disabled={isPending} onClick={() => answer("accepted")}>
+          <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
             {t("Build my plan")}
           </SuggestionAction>
 
           <SuggestionAction
+            action={() => answer("dismissed")}
             disabled={isPending}
-            onClick={() => answer("dismissed")}
             variant="outline"
           >
             {t("Not now")}
@@ -104,25 +104,27 @@ export function SuggestedGoalOffer({
         </p>
       </div>
 
-      <div className="flex gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
+      <form className="flex gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
         <Button
           disabled={isPending}
           focusableWhenDisabled
-          onClick={() => answer("accepted")}
+          formAction={() => answer("accepted")}
           size="lg"
+          type="submit"
         >
           {t("Build my plan")}
         </Button>
         <Button
           disabled={isPending}
           focusableWhenDisabled
-          onClick={() => answer("dismissed")}
+          formAction={() => answer("dismissed")}
           size="lg"
+          type="submit"
           variant="outline"
         >
           {t("Not now")}
         </Button>
-      </div>
+      </form>
 
       {failed && <ChangeSaveError />}
     </section>
