@@ -24,6 +24,7 @@ struct TodayDayView: View {
   @State private var answeredUpload: TodayView.UploadRequest?
   /// Today stops carrying an insight once it's answered, so its card keeps it to show the answer.
   @State private var answeredInsight: MemoryInsight?
+  @State private var insightAnswers: [String: Bool] = [:]
   @State private var uploadDraft = MaterialDraft()
 
   enum Tap: Equatable {
@@ -237,7 +238,11 @@ struct TodayDayView: View {
     case .insight:
       if let insight = view.insight ?? answeredInsight {
         Section {
-          MemoryInsightCard(insight: insight) {
+          MemoryInsightCard(
+            insight: insight,
+            answer: Binding(
+              get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 })
+          ) {
             holdShownNotice()
             answeredInsight = insight
           }
@@ -489,6 +494,7 @@ struct TodayDayView: View {
     examChoiceDraft = []
     answeredUpload = nil
     answeredInsight = nil
+    insightAnswers = [:]
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
     countNotice()

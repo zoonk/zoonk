@@ -6,9 +6,10 @@ struct MemoryInsightCard: View {
   @Environment(BuddyStore.self) private var store
 
   let insight: MemoryInsight
+  /// Held by Today, so the answer outlives the card when a layout change builds it again.
+  @Binding var answer: Bool?
   var onAnswering: () -> Void = {}
 
-  @State private var answer: Bool?
   @State private var failed = false
   @State private var isSaving = false
 
