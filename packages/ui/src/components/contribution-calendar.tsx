@@ -1,45 +1,25 @@
 "use client";
 
+import {
+  ChartInspector,
+  ChartInspectorPoint,
+  ChartInspectorPoints,
+  ChartInspectorTooltip,
+  type ChartPointDetail,
+} from "@zoonk/ui/components/chart-inspector";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ComponentProps, createContext, use, useId, useMemo, useState } from "react";
+import { type ComponentProps } from "react";
 import { getContributionCalendarTargetIndex } from "./_utils/contribution-calendar-keyboard";
 
-const DAY_SELECTOR = '[data-slot="contribution-calendar-day"]';
+const NO_DETAILS: readonly ChartPointDetail[] = [];
 
-const NO_LABELS: readonly string[] = [];
-
-type ContributionCalendarContextValue = {
-  activeIndex: number;
-  inspecting: boolean;
-  labels: readonly string[];
-  readoutId: string;
-  setActiveIndex: (index: number) => void;
-};
-
-const ContributionCalendarContext = createContext<ContributionCalendarContextValue | null>(null);
-
-function useContributionCalendar(): ContributionCalendarContextValue {
-  const context = use(ContributionCalendarContext);
-
-  if (!context) {
-    throw new Error("Contribution calendar parts must be used inside ContributionCalendar");
-  }
-
-  return context;
-}
-
-function getEventDayIndex(target: EventTarget | null): number | null {
-  if (!(target instanceof Element)) {
-    return null;
-  }
-
-  const day = target.closest<HTMLElement>(DAY_SELECTOR);
-  const index = day ? Number(day.dataset.index) : Number.NaN;
-
-  return Number.isInteger(index) ? index : null;
-}
+/** The viewport's scroller clips a ring around the grid, so keyboard focus rings the day itself. */
+const DAY_RING_CLASS = cn(
+  "data-active:ring-foreground data-active:ring-offset-background data-active:ring-2 data-active:ring-offset-1",
+  "in-focus-visible:data-current:ring-foreground in-focus-visible:data-current:ring-offset-background in-focus-visible:data-current:ring-2 in-focus-visible:data-current:ring-offset-1",
+);
 
 const CALENDAR_SIZE_CLASS = cn(
   "@container/calendar [--calendar-gap:round(down,clamp(0.125rem,0.25cqw,0.375rem),1px)]",
@@ -47,37 +27,24 @@ const CALENDAR_SIZE_CLASS = cn(
   "pointer-coarse:[--calendar-cell:1.25rem]",
 );
 
+/** `details` say each day's date and value, in the days' index order. */
 export function ContributionCalendar({
   children,
   className,
   defaultIndex = 0,
-  labels = NO_LABELS,
+  details = NO_DETAILS,
   style,
   weeks,
   ...props
 }: ComponentProps<"figure"> & {
   defaultIndex?: number;
-  labels?: readonly string[];
+  details?: readonly ChartPointDetail[];
   weeks?: number;
 }) {
-  const readoutId = useId();
-  const [picked, setPicked] = useState<number | null>(null);
-
   const weeksStyle: CSSPropertiesWithVariables = weeks ? { "--calendar-weeks": weeks } : {};
 
-  const value = useMemo<ContributionCalendarContextValue>(
-    () => ({
-      activeIndex: picked ?? defaultIndex,
-      inspecting: picked !== null,
-      labels,
-      readoutId,
-      setActiveIndex: setPicked,
-    }),
-    [defaultIndex, labels, picked, readoutId],
-  );
-
   return (
-    <ContributionCalendarContext value={value}>
+    <ChartInspector defaultIndex={defaultIndex} details={details}>
       <figure
         className={cn("flex min-w-0 flex-col gap-3", CALENDAR_SIZE_CLASS, className)}
         data-slot="contribution-calendar"
@@ -85,8 +52,9 @@ export function ContributionCalendar({
         {...props}
       >
         {children}
+        <ChartInspectorTooltip />
       </figure>
-    </ContributionCalendarContext>
+    </ChartInspector>
   );
 }
 
@@ -158,57 +126,21 @@ export function ContributionCalendarContent({
 }
 
 /** Name it with `aria-label`. */
-export function ContributionCalendarGrid({ children, className, ...props }: ComponentProps<"div">) {
-  const { activeIndex, labels, readoutId, setActiveIndex } = useContributionCalendar();
-
-  const pick = (target: EventTarget | null) => {
-    const index = getEventDayIndex(target);
-
-    if (index !== null) {
-      setActiveIndex(index);
-    }
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const index = getContributionCalendarTargetIndex({
-      currentIndex: activeIndex,
-      key: event.key,
-      totalDays: labels.length,
-    });
-
-    if (index === null) {
-      return;
-    }
-
-    event.preventDefault();
-    setActiveIndex(index);
-
-    event.currentTarget
-      .querySelector(`${DAY_SELECTOR}[data-index="${index}"]`)
-      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
-  };
-
+export function ContributionCalendarGrid({
+  className,
+  ...props
+}: ComponentProps<typeof ChartInspectorPoints>) {
   return (
-    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The grid is one control: arrows and the pointer pick a day for the readout.
-    <div
-      aria-describedby={readoutId}
+    <ChartInspectorPoints
       className={cn(
-        "focus-visible:ring-ring/50 flex w-max min-w-full cursor-pointer justify-between gap-(--calendar-gap) rounded-sm outline-none focus-visible:ring-[3px] [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
+        "flex w-max min-w-full justify-between gap-(--calendar-gap) focus-visible:ring-0 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
         className,
       )}
       data-slot="contribution-calendar-grid"
       dir="ltr"
-      onClick={(event) => pick(event.target)}
-      onFocus={() => setActiveIndex(activeIndex)}
-      onKeyDown={onKeyDown}
-      onPointerMove={(event) => pick(event.target)}
-      role="group"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- One tab stop for the whole calendar, instead of a tiny target per day.
-      tabIndex={0}
+      getTargetIndex={getContributionCalendarTargetIndex}
       {...props}
-    >
-      {children}
-    </div>
+    />
   );
 }
 
@@ -248,44 +180,15 @@ export function ContributionCalendarPeriod({
 
 export function ContributionCalendarDay({
   className,
-  index,
   ...props
-}: ComponentProps<"span"> & { index: number }) {
-  const { activeIndex, inspecting } = useContributionCalendar();
-  const isActive = inspecting && index === activeIndex;
-
+}: ComponentProps<typeof ChartInspectorPoint>) {
   return (
-    <span
+    <ChartInspectorPoint
       aria-hidden="true"
-      className={cn(
-        "size-(--calendar-cell) shrink-0 rounded-[2px]",
-        isActive && "ring-foreground ring-2 ring-offset-1",
-        className,
-      )}
-      data-active={isActive || undefined}
-      data-index={index}
+      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", DAY_RING_CLASS, className)}
       data-slot="contribution-calendar-day"
       {...props}
     />
-  );
-}
-
-export function ContributionCalendarReadout({ className, ...props }: ComponentProps<"p">) {
-  const { activeIndex, labels, readoutId } = useContributionCalendar();
-
-  return (
-    <p
-      aria-live="polite"
-      className={cn(
-        "text-muted-foreground min-h-5 font-mono text-xs leading-5 tabular-nums",
-        className,
-      )}
-      data-slot="contribution-calendar-readout"
-      id={readoutId}
-      {...props}
-    >
-      {labels.at(activeIndex)}
-    </p>
   );
 }
 

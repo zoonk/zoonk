@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  ChartTooltipContent,
+  ChartTooltipLabel,
+  ChartTooltipNote,
+  ChartTooltipValue,
+} from "@zoonk/ui/components/chart-tooltip";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { useExtracted, useFormatter } from "next-intl";
 import {
@@ -7,9 +13,6 @@ import {
   ProgressChartLine,
   ProgressChartPercentYAxis,
   ProgressChartTooltip,
-  ProgressChartTooltipContent,
-  ProgressChartTooltipLabel,
-  ProgressChartTooltipValue,
   ProgressChartXAxis,
   ProgressLineChart,
 } from "../_components/progress-line-chart";
@@ -28,17 +31,17 @@ export function ScoreChartPlot({ dataPoints }: { dataPoints: SerializedScoreData
       <ProgressChartTooltip<SerializedScoreDataPoint>>
         {(data) => (
           <div aria-live="polite" role="status">
-            <ProgressChartTooltipContent>
-              <ProgressChartTooltipLabel>{data.label}</ProgressChartTooltipLabel>
-              <ProgressChartTooltipValue className="text-success-text">
+            <ChartTooltipContent>
+              <ChartTooltipLabel>{data.label}</ChartTooltipLabel>
+              <ChartTooltipValue className="text-success-text">
                 {formatMetricPercent({ format, value: data.score })}
-              </ProgressChartTooltipValue>
-              <p className="text-muted-foreground text-xs">
+              </ChartTooltipValue>
+              <ChartTooltipNote>
                 {t("{count, plural, one {# answer} other {# answers}}", {
                   count: data.totalAnswers,
                 })}
-              </p>
-            </ProgressChartTooltipContent>
+              </ChartTooltipNote>
+            </ChartTooltipContent>
           </div>
         )}
       </ProgressChartTooltip>
