@@ -94,7 +94,10 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
   );
 }
 
-/** RTL so an overflowing calendar opens at its newest edge. */
+/**
+ * RTL so an overflowing calendar opens at its newest edge. On touch it is as wide as a whole number of
+ * weeks and snaps to them, so a swipe never rests on half a week.
+ */
 export function ContributionCalendarViewport({
   children,
   className,
@@ -103,7 +106,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))]",
+        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))] pointer-coarse:snap-x pointer-coarse:snap-mandatory",
         className,
       )}
       data-slot={VIEWPORT_SLOT}
@@ -156,7 +159,7 @@ export function ContributionCalendarWeek({ children, className, ...props }: Comp
   return (
     <div
       className={cn(
-        "relative grid w-(--calendar-cell) shrink-0 grid-rows-7 gap-(--calendar-gap) pt-5",
+        "relative grid w-(--calendar-cell) shrink-0 snap-end grid-rows-7 gap-(--calendar-gap) pt-5",
         className,
       )}
       data-slot="contribution-calendar-week"
