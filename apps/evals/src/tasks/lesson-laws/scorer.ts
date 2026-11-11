@@ -8,6 +8,8 @@ type ExpectedLaw = {
   country: string;
   language: string;
   domains: string[];
+  /** How many of `domains` it should list, where a country has several official publishers. */
+  minDomains?: number;
   /** One of them among the law's article hints. */
   articles: string[];
 };
@@ -49,16 +51,23 @@ function checkLaw({ expected, laws }: { expected: ExpectedLaw; laws: LessonLaw[]
 
   const articles = new Set(law.articles.map((article) => normalizeArticle(article)));
 
+  const officialDomains = law.officialDomains.filter((domain) =>
+    includesAny({ value: domain, words: expected.domains }),
+  );
+
   return [
     { label: `${label} named`, passed: true },
     { label: `${label} country`, passed: law.country === expected.country },
     { label: `${label} language`, passed: law.language === expected.language },
-    {
-      label: `${label} official domain`,
-      passed: law.officialDomains.some((domain) =>
-        includesAny({ value: domain, words: expected.domains }),
-      ),
-    },
+    { label: `${label} official domain`, passed: officialDomains.length > 0 },
+    ...(expected.minDomains
+      ? [
+          {
+            label: `${label} official domains`,
+            passed: new Set(officialDomains).size >= expected.minDomains,
+          },
+        ]
+      : []),
     {
       label: `${label} article`,
       passed: expected.articles.some((article) => articles.has(normalizeArticle(article))),

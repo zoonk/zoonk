@@ -21,6 +21,148 @@
       ],
       "testCase": {
         "expected": {
+          "forbidden": [
+            "concurso",
+            "edital"
+          ],
+          "laws": [
+            {
+              "articles": [
+                "4"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "12.813",
+                "12813"
+              ]
+            },
+            {
+              "articles": [
+                "18",
+                "19",
+                "20"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "9.784",
+                "9784"
+              ]
+            }
+          ]
+        },
+        "id": "pt-conflito-interesses-lei-12813-1",
+        "origin": "production",
+        "userInput": {
+          "chapterTitle": "Ética pública e conduta profissional na CGU",
+          "courseTitle": "Direito Administrativo",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Identificar conflitos de interesses e preservar a imparcialidade funcional",
+          "lessonDescription": "Como reconhecer interesses privados que ameaçam a atuação imparcial e aplicar as regras de impedimento e suspeição.",
+          "lessonTitle": "Imparcialidade e conflito de interesses",
+          "skills": [
+            "Identificar conflitos de interesses",
+            "Preservar a imparcialidade funcional"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "5"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br",
+                "stf.jus.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "constituicao"
+              ]
+            }
+          ]
+        },
+        "id": "pt-remedios-constitucionais-1",
+        "userInput": {
+          "chapterTitle": "Direitos e garantias fundamentais",
+          "courseTitle": "Direito Constitucional",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Escolher o remédio constitucional que cabe em cada caso",
+          "lessonDescription": "Quando cabem habeas corpus, habeas data e mandado de segurança, e o que cada um protege.",
+          "lessonTitle": "Habeas corpus, habeas data e mandado de segurança",
+          "skills": [
+            "Distinguir habeas corpus de mandado de segurança",
+            "Reconhecer quando cabe habeas data"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
           "laws": [
             {
               "articles": [
@@ -332,19 +474,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Wrong: 13.709 official domains",
           "kind": "majorErrors",
-          "score": 10
+          "score": 9.428571428571429
         },
         {
-          "conclusion": "None",
+          "conclusion": "Wrong: 13.709 official domains",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.428571428571429
         },
         {
-          "conclusion": "None",
+          "conclusion": "Wrong: 13.709 official domains",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.428571428571429
         }
       ],
       "testCase": {
@@ -362,11 +504,13 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
+                "normas.leg.br",
                 "lexml.gov.br",
+                "senado.leg.br",
                 "gov.br/anpd"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "13.709",
                 "13709",
@@ -426,11 +570,13 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
+                "normas.leg.br",
                 "lexml.gov.br",
+                "senado.leg.br",
                 "oab.org.br"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "8.906",
                 "8906"
@@ -703,142 +849,6 @@
           "skills": [
             "Count the notice period",
             "Check that a notice is valid"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "forbidden": [
-            "concurso",
-            "edital"
-          ],
-          "laws": [
-            {
-              "articles": [
-                "4"
-              ],
-              "country": "BR",
-              "domains": [
-                "planalto.gov.br",
-                "camara.leg.br",
-                "senado.leg.br",
-                "lexml.gov.br"
-              ],
-              "language": "pt",
-              "nameIncludes": [
-                "12.813",
-                "12813"
-              ]
-            },
-            {
-              "articles": [
-                "18",
-                "19",
-                "20"
-              ],
-              "country": "BR",
-              "domains": [
-                "planalto.gov.br",
-                "camara.leg.br",
-                "senado.leg.br",
-                "lexml.gov.br"
-              ],
-              "language": "pt",
-              "nameIncludes": [
-                "9.784",
-                "9784"
-              ]
-            }
-          ]
-        },
-        "id": "pt-conflito-interesses-lei-12813-1",
-        "origin": "production",
-        "userInput": {
-          "chapterTitle": "Ética pública e conduta profissional na CGU",
-          "courseTitle": "Direito Administrativo",
-          "isPrivate": false,
-          "language": "pt",
-          "lessonCanDo": "Identificar conflitos de interesses e preservar a imparcialidade funcional",
-          "lessonDescription": "Como reconhecer interesses privados que ameaçam a atuação imparcial e aplicar as regras de impedimento e suspeição.",
-          "lessonTitle": "Imparcialidade e conflito de interesses",
-          "skills": [
-            "Identificar conflitos de interesses",
-            "Preservar a imparcialidade funcional"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "laws": [
-            {
-              "articles": [
-                "5"
-              ],
-              "country": "BR",
-              "domains": [
-                "planalto.gov.br",
-                "camara.leg.br",
-                "senado.leg.br",
-                "lexml.gov.br",
-                "stf.jus.br"
-              ],
-              "language": "pt",
-              "nameIncludes": [
-                "constituicao"
-              ]
-            }
-          ]
-        },
-        "id": "pt-remedios-constitucionais-1",
-        "userInput": {
-          "chapterTitle": "Direitos e garantias fundamentais",
-          "courseTitle": "Direito Constitucional",
-          "isPrivate": false,
-          "language": "pt",
-          "lessonCanDo": "Escolher o remédio constitucional que cabe em cada caso",
-          "lessonDescription": "Quando cabem habeas corpus, habeas data e mandado de segurança, e o que cada um protege.",
-          "lessonTitle": "Habeas corpus, habeas data e mandado de segurança",
-          "skills": [
-            "Distinguir habeas corpus de mandado de segurança",
-            "Reconhecer quando cabe habeas data"
           ]
         }
       }

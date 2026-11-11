@@ -5,7 +5,16 @@ import { type LessonLawsExpected } from "./scorer";
 
 const { spec: conflictOfInterest } = WRONG_PARAGRAPH_PLAN;
 
-const BRAZILIAN_DOMAINS = ["planalto.gov.br", "camara.leg.br", "senado.leg.br", "lexml.gov.br"];
+const BRAZILIAN_DOMAINS = [
+  "planalto.gov.br",
+  "camara.leg.br",
+  "normas.leg.br",
+  "lexml.gov.br",
+  "senado.leg.br",
+];
+
+/** Brazil's federal laws are published on all five, and the law lookup tries up to 3 of them. */
+const MIN_BRAZILIAN_DOMAINS = 3;
 
 export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
   {
@@ -17,6 +26,7 @@ export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
           country: "BR",
           domains: BRAZILIAN_DOMAINS,
           language: "pt",
+          minDomains: MIN_BRAZILIAN_DOMAINS,
           nameIncludes: ["12.813", "12813"],
         },
         {
@@ -24,6 +34,7 @@ export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
           country: "BR",
           domains: BRAZILIAN_DOMAINS,
           language: "pt",
+          minDomains: MIN_BRAZILIAN_DOMAINS,
           nameIncludes: ["9.784", "9784"],
         },
       ],
@@ -49,6 +60,7 @@ export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
           country: "BR",
           domains: [...BRAZILIAN_DOMAINS, "stf.jus.br"],
           language: "pt",
+          minDomains: MIN_BRAZILIAN_DOMAINS,
           nameIncludes: ["constituicao"],
         },
       ],
@@ -240,6 +252,7 @@ export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
           country: "BR",
           domains: [...BRAZILIAN_DOMAINS, "gov.br/anpd"],
           language: "pt",
+          minDomains: MIN_BRAZILIAN_DOMAINS,
           nameIncludes: ["13.709", "13709", "lgpd"],
         },
       ],
@@ -269,6 +282,7 @@ export const TEST_CASES: TestCase<LessonLawsExpected, LessonLawsParams>[] = [
           country: "BR",
           domains: [...BRAZILIAN_DOMAINS, "oab.org.br"],
           language: "pt",
+          minDomains: MIN_BRAZILIAN_DOMAINS,
           nameIncludes: ["8.906", "8906"],
         },
       ],

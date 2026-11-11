@@ -4,19 +4,19 @@
     {
       "steps": [
         {
-          "conclusion": "Wrong: 12.813 article",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 9.666666666666666
+          "score": 10
         },
         {
-          "conclusion": "Wrong: 12.813 article",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 9.666666666666666
+          "score": 10
         },
         {
-          "conclusion": "Wrong: 12.813 article",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9.666666666666666
+          "score": 10
         }
       ],
       "testCase": {
@@ -34,10 +34,12 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
-                "lexml.gov.br"
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "12.813",
                 "12813"
@@ -53,10 +55,12 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
-                "lexml.gov.br"
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "9.784",
                 "9784"
@@ -110,11 +114,13 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
+                "normas.leg.br",
                 "lexml.gov.br",
+                "senado.leg.br",
                 "stf.jus.br"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "constituicao"
               ]
@@ -498,11 +504,13 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
+                "normas.leg.br",
                 "lexml.gov.br",
+                "senado.leg.br",
                 "gov.br/anpd"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "13.709",
                 "13709",
@@ -562,11 +570,13 @@
               "domains": [
                 "planalto.gov.br",
                 "camara.leg.br",
-                "senado.leg.br",
+                "normas.leg.br",
                 "lexml.gov.br",
+                "senado.leg.br",
                 "oab.org.br"
               ],
               "language": "pt",
+              "minDomains": 3,
               "nameIncludes": [
                 "8.906",
                 "8906"
