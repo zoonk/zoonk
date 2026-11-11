@@ -48,9 +48,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.closesChartTooltip
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageDirective
 import kotlinx.coroutines.flow.combine
@@ -76,6 +78,7 @@ internal class StatsContext(
     val stats: StatsStore,
     val wide: Boolean,
     val expanded: Boolean,
+    val inspector: ChartInspector,
 ) {
     fun open(page: StatsPage) = navigator.open(page.route)
 }
@@ -94,8 +97,10 @@ fun StatsScreen(
     navigator: AppNavigator,
     stats: StatsStore = app.stats,
 ) {
+    val inspector = remember { ChartInspector() }
+
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(page.title)) }) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).closesChartTooltip(inspector)) {
             val directive = pageDirective(maxWidth, panesTouch = true)
             val listBeside = directive.maxHorizontalPartitions > 1
 
@@ -112,7 +117,7 @@ fun StatsScreen(
                     AnimatedPane {
                         BoxWithConstraints {
                             val wide = maxWidth >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
-                            StatsPageArea(page, StatsContext(app, navigator, stats, wide, expanded = listBeside && wide))
+                            StatsPageArea(page, StatsContext(app, navigator, stats, wide, expanded = listBeside && wide, inspector))
                         }
                     }
                 },
