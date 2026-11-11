@@ -13,13 +13,11 @@ import {
   expectVerdict,
   focusOn,
   openActivity,
+  openActivityToResume,
   press,
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
-import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { buildLesson } from "../preview/preview-lesson";
-import { type ActivityContent, activityStep, explanationStep } from "../preview/preview-steps";
 
 const fixtures = activityContentFixtures;
 
@@ -45,20 +43,6 @@ const chainQuestion = {
 
 const { calculator, scenario } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
-
-function openBeforeAnotherScreen(content: ActivityContent) {
-  renderLessonPlayer({
-    lesson: buildLesson([
-      activityStep({ content }),
-      explanationStep({ text: "Next.", title: "Next" }),
-    ]),
-  });
-}
-
-async function leaveAndComeBack() {
-  await page.getByRole("button", { name: /^Continue/u }).click();
-  await page.getByRole("button", { name: "Previous screen" }).click();
-}
 
 function chartLabels() {
   return [...document.querySelectorAll("figure svg text")].map((text) => ({
@@ -488,9 +472,9 @@ describe("money and society activities with a keyboard only", () => {
   });
 });
 
-describe("money and society activities on a return to the checked screen", () => {
+describe("money and society activities reopened from their saved answer", () => {
   it("source comparison with a question: the passages to mark show, and nothing is called missed", async () => {
-    openBeforeAnotherScreen({
+    const { reopenSaved } = openActivityToResume({
       ...fixtures.sourceComparison,
       check: choiceCheck("Why do they disagree?", [
         ["Each writer blames the other side", true],
@@ -502,7 +486,7 @@ describe("money and society activities on a return to the checked screen", () =>
     await page.getByRole("radio", { name: /Each writer blames the other side/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     await expect
       .element(page.getByRole("checkbox", { name: "The regulars fired on us" }))
@@ -521,13 +505,13 @@ describe("money and society activities on a return to the checked screen", () =>
   });
 
   it("cause and effect with a question: the whole chain shows as how they connect", async () => {
-    openBeforeAnotherScreen(chainQuestion);
+    const { reopenSaved } = openActivityToResume(chainQuestion);
     await chainNode("1920 Prairie plowed for wheat").click();
     await chainNode("1934 Dust storms").click();
     await page.getByRole("radio", { name: /Plowing and drought together/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     const chain = page.getByRole("list", { name: "How they connect" });
     await expect.element(chain).toBeVisible();
@@ -536,12 +520,12 @@ describe("money and society activities on a return to the checked screen", () =>
   });
 
   it("source comparison: the marked passages are still marked", async () => {
-    openBeforeAnotherScreen(fixtures.sourceComparison);
+    const { reopenSaved } = openActivityToResume(fixtures.sourceComparison);
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
     await page.getByRole("checkbox", { name: "the rebels fired first" }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     await expect
       .element(page.getByRole("checkbox", { name: "The regulars fired on us" }))
@@ -555,26 +539,26 @@ describe("money and society activities on a return to the checked screen", () =>
   });
 
   it("cause and effect: the links made are still there", async () => {
-    openBeforeAnotherScreen(fixtures.causeEffectChain);
+    const { reopenSaved } = openActivityToResume(fixtures.causeEffectChain);
     await chainNode("1920 Prairie plowed for wheat").click();
     await chainNode("1934 Dust storms").click();
     await chainNode("1931 Years of drought").click();
     await chainNode("1934 Dust storms").click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     await expect.element(page.getByText("2 of 2 links")).toBeVisible();
     await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
   });
 
   it("formula model what-ifs: the checked inputs come back, so the right answer sits on the curve", async () => {
-    openBeforeAnotherScreen(scenario);
+    const { reopenSaved } = openActivityToResume(scenario);
     await page.getByRole("button", { name: "Rent goes up $500" }).click();
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     await expect
       .element(page.getByRole("button", { name: "Rent goes up $500" }))
@@ -588,13 +572,13 @@ describe("money and society activities on a return to the checked screen", () =>
   });
 
   it("timeline: events placed in order are still right, with no made-up guesses", async () => {
-    openBeforeAnotherScreen(fixtures.timeline);
+    const { reopenSaved } = openActivityToResume(fixtures.timeline);
     await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();
     await press("End");
     await page.getByRole("button", { name: "Place Cleopatra rules Egypt on the timeline" }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await leaveAndComeBack();
+    await reopenSaved();
 
     await expect
       .element(page.getByRole("slider", { name: "Moon landing" }))
