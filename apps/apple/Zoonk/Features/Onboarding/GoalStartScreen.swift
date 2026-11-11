@@ -299,11 +299,11 @@ private struct GoalStartFlow: View {
     Task { await reread(value, sentHere: sentHere) }
   }
 
-  /// The card stays as it was when the read fails, and a read that lands after the learner left
-  /// it is dropped.
+  /// The card stays as it was when the read fails, and a read that lands after the card changed
+  /// (the learner left it, or saved a correction the read predates) is dropped.
   private func reread(_ shown: OnboardingDraft, sentHere: Bool) async {
     guard let value = try? await onboarding.understanding(id: shown.id),
-      case .draft(let current, _) = draft, current.id == value.id
+      case .draft(let current, _) = draft, current == shown
     else {
       return
     }
