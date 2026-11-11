@@ -69,7 +69,8 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "One big number per block (`BigQuantity`), its unit small and muted.",
       "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, the learner's place as a blue ring, a kind in its hue, the rest on the track.",
-      "At a task's end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small), the facts on one mono line under them.",
+      "The day's blocks are equal parts (`DayMeter`), one per block plus one for time held for lessons not on the list yet, so the meter, the count and the percent say one thing; Today and every block's end inside a session draw the same meter.",
+      'At a task\'s end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small), the facts on one mono line under them. Inside a session, today\'s progress follows: the count that matters ("2 of 8 done today", then "3 left today" past the midpoint) with its percent, and the day\'s meter, where only the block just finished fills.',
       "On a result's tiles (`StatTile`), the icon takes its stat's tone and Brain Power's number its violet, as every Brain Power amount.",
     ],
     id: "readouts",

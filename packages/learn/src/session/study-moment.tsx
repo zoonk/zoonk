@@ -22,6 +22,7 @@ import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { MomentHeader } from "./moment-header";
+import { MomentCatchUp, MomentToday } from "./moment-today";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -45,7 +46,6 @@ function MomentEarned({
 }) {
   const t = useExtracted();
   const format = useFormatter();
-  const formatDuration = useFormatDuration();
   const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
@@ -60,14 +60,13 @@ function MomentEarned({
         }),
       }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
-    moment.deferredLessonsCount > 0 &&
-      t(
-        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
-        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
-      ),
   ];
 
-  return <MomentReadouts brainPower={brainPower} facts={facts} />;
+  return (
+    <MomentReadouts brainPower={brainPower} facts={facts}>
+      <MomentCatchUp catchUp={moment.dayProgress.catchUp} />
+    </MomentReadouts>
+  );
 }
 
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
@@ -219,6 +218,8 @@ export function StudyMoment({
           <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
+        <MomentToday moment={moment} rows={queue.rows} />
+
         <DayMoment
           buddy={buddy}
           ceremony={moment.ceremony}
@@ -265,7 +266,7 @@ export function StudyMoment({
 
   return (
     <SessionFrame aside={aside}>
-      <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
+      <SessionHeader exitHref={exitHref} />
       {content}
     </SessionFrame>
   );

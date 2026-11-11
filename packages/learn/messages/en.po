@@ -396,6 +396,7 @@ msgstr "{done, number} of {total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +455,7 @@ msgstr "This is taking longer than usual. It opens on its own, no need to tap ag
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1874,6 +1875,7 @@ msgstr "Print"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -7152,7 +7154,7 @@ msgid "Couldn't undo. Try again."
 msgstr "Couldn't undo. Try again."
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7164,87 @@ msgstr "We couldn't reach the server. Check your connection."
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "Chapter finished"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Full screen"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Its picture had mistakes, so here's the mind map as text."
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "Mind map"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "Its main ideas in one picture"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Create"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lesson to write} other {# lessons to write}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "As text"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "Mind map ready"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "This takes a few minutes. You can leave; it'll be here."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "Writing the lessons, then the mind map…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "About half a minute. You can leave; it'll be here."
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "Drawing the mind map…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "It couldn't be made this time."
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7265,6 @@ msgstr "Mind map: {title}. {idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "In short:"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, one {# lesson to write} other {# lessons to write}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "Its main ideas in one picture"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "As text"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "Its picture had mistakes, so here's the mind map as text."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "Mind map ready"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "This takes a few minutes. You can leave; it'll be here."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Writing the lessons, then the mind map…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "About half a minute. You can leave; it'll be here."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Drawing the mind map…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "It couldn't be made this time."
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "Mind map"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Create"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7934,17 +7945,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "I don't know yet"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Answer feedback"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "Right answer: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9785,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Your answers for this goal are cleared, and you type a goal again."
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "Skip the rest of the questions about you"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "Skip all"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Skip the rest of the questions about you"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -11469,6 +11486,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, one {One day ahead} other {# days ahead}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
@@ -13336,6 +13354,50 @@ msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "Saving your progress…"
 
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "More as you go"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "No lessons left to catch up."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
 msgid "This lesson is being written for you. It's usually ready in a few minutes."
@@ -13493,11 +13555,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count} right in a row"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Right answer: {answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -13597,11 +13654,6 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
 
 #: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-
-#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-screen.tsx
@@ -13613,11 +13665,6 @@ msgstr "Today's session"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "Net score {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -15014,8 +15061,3 @@ msgstr "Next week"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Right answers on this skill each day of the week"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "Full screen"
