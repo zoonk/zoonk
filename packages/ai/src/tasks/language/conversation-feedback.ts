@@ -25,16 +25,11 @@ const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
 
-const MAX_WENT_WELL = 3;
-const MAX_PRONUNCIATION_WORDS = 2;
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what went well comes before the one fix, and the kind line last. */
 const schema = z.object({
-  wentWell: z.array(z.string()).max(MAX_WENT_WELL),
+  wentWell: z.array(z.string()),
   improve: z.object({ said: z.string(), better: z.string(), why: z.string() }).nullable(),
-  pronunciation: z
-    .array(z.object({ word: z.string(), respelling: z.string(), tip: z.string() }))
-    .max(MAX_PRONUNCIATION_WORDS),
+  pronunciation: z.array(z.object({ word: z.string(), respelling: z.string(), tip: z.string() })),
   encouragement: z.string(),
 });
 /* oxlint-enable eslint/sort-keys */

@@ -27,23 +27,6 @@ import basePrompt from "./language-lesson.prompt.md";
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
-const MIN_WORDS = 3;
-const MAX_WORDS = 5;
-const WORD_DISTRACTORS = 3;
-const MIN_SENTENCES = 3;
-const MAX_SENTENCES = 4;
-const MIN_SENTENCE_DISTRACTORS = 2;
-const MAX_SENTENCE_DISTRACTORS = 3;
-const MIN_TIP_EXAMPLES = 2;
-const MAX_TIP_EXAMPLES = 3;
-const MAX_PRACTICE = 2;
-const MIN_PRACTICE_DISTRACTORS = 2;
-const MAX_PRACTICE_DISTRACTORS = 3;
-const MAX_WRITING_ANSWERS = 4;
-const MAX_KEY_POINTS = 3;
-const MIN_SUMMARY_LINES = 2;
-const MAX_SUMMARY_LINES = 4;
-
 const RESPELLING_RULES: Partial<Record<string, string>> = {
   en: respellingForEnglish,
   es: respellingForSpanish,
@@ -67,11 +50,6 @@ function getSystemPrompt({
   }).replace("{{READER_RESPELLING}}\n", () => respelling);
 }
 
-const sentenceDistractors = z
-  .array(z.string())
-  .min(MIN_SENTENCE_DISTRACTORS)
-  .max(MAX_SENTENCE_DISTRACTORS);
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: words come before the sentences that use them, and the tip before its practice. */
 const schema = z.object({
   words: z
@@ -83,11 +61,10 @@ const schema = z.object({
         romanization: z.string().nullable(),
         tip: z.string().nullable(),
         note: z.string().nullable(),
-        distractors: z.array(z.string()).length(WORD_DISTRACTORS),
+        distractors: z.array(z.string()).min(1),
       }),
     )
-    .min(MIN_WORDS)
-    .max(MAX_WORDS),
+    .min(1),
   sentences: z
     .array(
       z.object({
@@ -95,20 +72,16 @@ const schema = z.object({
         translation: z.string(),
         explanation: z.string(),
         romanization: z.string().nullable(),
-        distractors: sentenceDistractors,
-        translationDistractors: sentenceDistractors,
+        distractors: z.array(z.string()),
+        translationDistractors: z.array(z.string()),
         speakingPrompt: z.string().nullable(),
       }),
     )
-    .min(MIN_SENTENCES)
-    .max(MAX_SENTENCES),
+    .min(1),
   tip: z.object({
     title: z.string(),
     text: z.string(),
-    examples: z
-      .array(z.object({ sentence: z.string(), translation: z.string() }))
-      .min(MIN_TIP_EXAMPLES)
-      .max(MAX_TIP_EXAMPLES),
+    examples: z.array(z.object({ sentence: z.string(), translation: z.string() })),
   }),
   practice: z
     .array(
@@ -116,21 +89,17 @@ const schema = z.object({
         question: z.string().nullable(),
         template: z.string(),
         answer: z.string(),
-        distractors: z
-          .array(z.string())
-          .min(MIN_PRACTICE_DISTRACTORS)
-          .max(MAX_PRACTICE_DISTRACTORS),
+        distractors: z.array(z.string()).min(1),
         feedback: z.string(),
       }),
     )
-    .min(1)
-    .max(MAX_PRACTICE),
+    .min(1),
   writing: z.object({
     prompt: z.string(),
-    answers: z.array(z.string()).min(1).max(MAX_WRITING_ANSWERS),
-    keyPoints: z.array(z.string()).min(1).max(MAX_KEY_POINTS),
+    answers: z.array(z.string()).min(1),
+    keyPoints: z.array(z.string()).min(1),
   }),
-  summary: z.array(z.string()).min(MIN_SUMMARY_LINES).max(MAX_SUMMARY_LINES),
+  summary: z.array(z.string()).min(1),
 });
 /* oxlint-enable eslint/sort-keys */
 

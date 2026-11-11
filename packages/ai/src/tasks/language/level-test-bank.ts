@@ -33,7 +33,7 @@ const fallbackModels = [
 /** C2 isn't placed by a three-minute test. */
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const satisfies readonly CefrLevel[];
 const TEST_SKILLS = ["reading", "listening"] as const;
-const QUESTIONS_PER_SKILL = 2;
+/** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
 const OPTIONS_PER_QUESTION = WRONG_OPTIONS + 1;
 
@@ -115,12 +115,12 @@ function createLevelSchema(level: TestLevel) {
     evidence: z.string(),
     lowerLevelMistake: z.string(),
     correctOption: z.string(),
-    wrongOptions: z.array(z.string()).length(WRONG_OPTIONS),
+    wrongOptions: z.array(z.string()),
   });
 
   return z.object({
-    reading: z.array(questionSchema).length(QUESTIONS_PER_SKILL),
-    listening: z.array(questionSchema).length(QUESTIONS_PER_SKILL),
+    reading: z.array(questionSchema),
+    listening: z.array(questionSchema),
     speaking: z.object({ sentence: z.string(), translation: z.string() }),
   });
 }
@@ -182,7 +182,7 @@ function toTestQuestion({
   return {
     answerIndex,
     level,
-    options: wrongOptions.toSpliced(answerIndex, 0, correctOption),
+    options: wrongOptions.slice(0, WRONG_OPTIONS).toSpliced(answerIndex, 0, correctOption),
     passage,
     question: question.question,
     skill,
@@ -195,7 +195,9 @@ function toLevelTestBank(levels: readonly WrittenLevel[]): GenerateLevelTestBank
   return {
     questions: levels.flatMap(({ level, output }) =>
       TEST_SKILLS.flatMap((skill) =>
-        output[skill].map((question) => toTestQuestion({ level, question, skill })),
+        output[skill]
+          .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
+          .map((question) => toTestQuestion({ level, question, skill })),
       ),
     ),
     speaking: levels.map(({ level, output }) => ({ level, ...output.speaking })),

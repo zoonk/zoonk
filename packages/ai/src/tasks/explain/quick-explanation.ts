@@ -8,10 +8,6 @@ import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../p
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { imageRequestSchema } from "../images/image-request-schema";
-import {
-  QUICK_EXPLANATION_MAX_SCREENS,
-  QUICK_EXPLANATION_MIN_SCREENS,
-} from "./quick-explanation-checks";
 import systemPrompt from "./quick-explanation.prompt.md";
 
 /**
@@ -23,10 +19,7 @@ import systemPrompt from "./quick-explanation.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;
 
-const RECAP_ITEMS = 3;
-const MIN_CHECK_OPTIONS = 3;
-const MAX_CHECK_OPTIONS = 4;
-const MAX_RELATED_QUESTIONS = 3;
+const MIN_OPTIONS = 2;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; the story comes before the check and the ending. */
 export const quickExplanationSchema = z.object({
@@ -34,20 +27,15 @@ export const quickExplanationSchema = z.object({
   description: z.string(),
   screens: z
     .array(z.object({ title: z.string(), text: z.string(), image: imageRequestSchema }))
-    .min(QUICK_EXPLANATION_MIN_SCREENS)
-    .max(QUICK_EXPLANATION_MAX_SCREENS),
+    .min(1),
   check: z.object({
     question: z.string(),
     options: z
       .array(z.object({ text: z.string(), isCorrect: z.boolean(), feedback: z.string() }))
-      .min(MIN_CHECK_OPTIONS)
-      .max(MAX_CHECK_OPTIONS),
+      .min(MIN_OPTIONS),
   }),
-  recap: z.array(z.string()).length(RECAP_ITEMS),
-  goFurther: z.object({
-    overviewCourse: z.string(),
-    relatedQuestions: z.array(z.string()).min(2).max(MAX_RELATED_QUESTIONS),
-  }),
+  recap: z.array(z.string()).min(1),
+  goFurther: z.object({ overviewCourse: z.string(), relatedQuestions: z.array(z.string()) }),
 });
 /* oxlint-enable eslint/sort-keys */
 
