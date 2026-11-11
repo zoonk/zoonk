@@ -1,6 +1,6 @@
 "use client";
 
-import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { getFocusTestActions } from "@/app/[lang]/(app)/(onboarding)/start/focus-test-client-actions";
 import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
@@ -36,7 +36,7 @@ export function FocusTestClient({
           onDone={leave}
           plan={{
             changeFocusHref: "/plan?focus=choose",
-            decide: (input) => decidePlanChangeAction(goalId, input),
+            decide: (input) => answerPlanChangeAction(goalId, input),
           }}
           readWarmUp={readWarmUpAction}
           run={null}

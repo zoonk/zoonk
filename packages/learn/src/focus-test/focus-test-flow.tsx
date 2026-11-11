@@ -8,8 +8,8 @@ import { PlacementUnavailable } from "../onboarding/steps/placement-screens";
 import { PlacementWaiting } from "../onboarding/steps/placement-waiting";
 import { StepLoading } from "../onboarding/steps/step-parts";
 import { type FocusTestActions } from "./focus-test-actions";
-import { type FocusTestPlanActions } from "./focus-test-checkpoint";
 import { type QuestionPhase } from "./focus-test-phase";
+import { type FocusTestPlanActions } from "./focus-test-proposal";
 import {
   FocusTestCheckpoint,
   FocusTestEnded,

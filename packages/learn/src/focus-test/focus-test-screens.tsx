@@ -22,12 +22,9 @@ import {
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
-import {
-  FocusTestEvidence,
-  type FocusTestPlanActions,
-  FocusTestResult,
-} from "./focus-test-checkpoint";
+import { FocusTestEvidence, FocusTestResult } from "./focus-test-checkpoint";
 import { type SittingEnd } from "./focus-test-phase";
+import { type FocusTestPlanActions } from "./focus-test-proposal";
 import { FocusTestSubjectsSheet } from "./focus-test-subjects";
 import { type Pressed } from "./use-focus-test";
 import { useSittingFacts } from "./use-focus-test-texts";
