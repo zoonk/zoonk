@@ -56,7 +56,7 @@ function slip({
   };
 }
 
-/** The slips are the kinds learners met in published lessons (#2506, #2414). */
+/** The slips are the kinds learners met in published lessons (#2506, #2414, #2509). */
 export const TEST_CASES: TestCase<LessonQualityCheckExpected, LanguageLessonCheckInput>[] = [
   clean("pt-it-greetings-clean", italianGreetings),
   clean("en-es-slowly-clean", spanishSlowly),
@@ -144,6 +144,21 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LanguageLessonChec
     })),
     kind: "fillBlank",
     text: "Comple te",
+  }),
+  slip({
+    id: "pt-it-past-weather-learner-line-forces-gender",
+    input: plantSlip(italianPastWeather, (lesson) => ({
+      ...lesson,
+      sentences: patchAt(lesson.sentences, 2, {
+        distractors: ["stanca", "neve"],
+        explanation: "“Ero stanco” é o imperfeito de “essere stanco”, estar cansado.",
+        sentence: "Sabato ero stanco",
+        translation: "No sábado eu estava cansado",
+        translationDistractors: ["cansada", "praia"],
+      }),
+    })),
+    kind: "listening",
+    text: "ero stanco",
   }),
   slip({
     id: "pt-it-past-weather-split-non-word",
