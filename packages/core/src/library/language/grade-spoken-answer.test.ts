@@ -360,6 +360,50 @@ describe(gradeSpokenAnswer, () => {
     );
   });
 
+  it("checks word by word when the transcript writes a number differently from the sentence", async () => {
+    const sentence = "My phone number is 234-555-0123";
+    const said = "My phone number is two three four five five five one, zero one two three.";
+    const user = await userFixture();
+    const step = await createSpokenStep();
+
+    await prisma.step.update({
+      data: {
+        content: {
+          language: "en",
+          prompt: "Diga o seu número de telefone.",
+          targetText: sentence,
+          translation: "Meu número de telefone é 234-555-0123",
+        },
+      },
+      where: { id: step.id },
+    });
+
+    mockSession(user.id);
+    mockTranscript(said);
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: {
+        transcript: said,
+        words: sentence
+          .split(" ")
+          .map((text) => ({ heard: null, issue: null, status: "correct" as const, text })),
+      },
+    } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: { explanation: null, isCorrect: true },
+      status: "graded",
+    });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ expectedText: sentence, language: "en" }),
+    );
+
+    expect(explainSpokenAnswer).not.toHaveBeenCalled();
+  });
+
   it("fails instead of grading when neither check can hear the answer", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
@@ -375,7 +419,7 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("gives each word to practice its native audio, respelling and tip", async () => {
-    const word = `quay${crypto.randomUUID().slice(0, 6)}`;
+    const word = `quay${crypto.randomUUID().replaceAll(/[\d-]/gu, "")}`;
 
     const [organization, learner, skill, lesson] = await Promise.all([
       organizationFixture(),
