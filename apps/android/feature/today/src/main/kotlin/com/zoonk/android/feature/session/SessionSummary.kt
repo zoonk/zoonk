@@ -69,8 +69,6 @@ import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
@@ -88,7 +86,6 @@ import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionSummaryBelt
 import com.zoonk.api.models.StudySessionSummarySkillsMovedInner
 import com.zoonk.api.models.TodayGoal
-import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.max
 
 /** What the summary needs beyond the session's own numbers. [bonus] is the day's missions bonus, from its session. */
@@ -293,15 +290,6 @@ private fun SessionNumbers(
                 if (it.exam) R.string.session_summary_preparation else R.string.session_summary_progress,
             )
         }
-    val backOn =
-        summary.comesBack
-            .takeIf { it.isNotEmpty() }
-            ?.let { days ->
-                stringResource(
-                    R.string.session_summary_back_on,
-                    formatList(days.map { formatDate(it.date.toJavaLocalDate(), locale) }, locale),
-                )
-            }
     val belt =
         summary.belt?.let { change ->
             beltOf(change.after.color)?.let {
@@ -336,7 +324,7 @@ private fun SessionNumbers(
             }
             add { modifier ->
                 val skills = summary.comesBack.sumOf { it.skills }
-                StatTile(reviewLabel, formatNumber(skills.toDouble(), locale), modifier, backOn, icon = summaryIcon(R.drawable.ic_replay))
+                StatTile(reviewLabel, formatNumber(skills.toDouble(), locale), modifier, icon = summaryIcon(R.drawable.ic_replay))
             }
             if (brainPowerTile) {
                 add { modifier -> StatTile(brainLabel, earned, modifier, belt, StatTone.Brain, summaryIcon(R.drawable.ic_psychology)) }

@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "A gente ouviu “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "Ela volta em {date}."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Você já sabe essa palavra. Ela não vai voltar."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Ter sotaque nunca impede seu progresso. Palavras que ainda soam diferentes voltam amanhã."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Seu sotaque nunca é uma barreira."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -13398,12 +13388,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Sua aula ainda não foi salva"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Revisão em {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13603,11 +13587,6 @@ msgid "Saved to your mistakes"
 msgstr "Salvo no seu caderno de erros"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Salvo no seu Caderno de erros · volta amanhã"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Deixou em branco"
@@ -13643,31 +13622,6 @@ msgstr "saldo {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Uma resposta errada anula uma certa. Não tem certeza? Deixe em branco."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Você viu isso em {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Você acertou de novo, como em {date}."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "Você acertou em {date}. Revisar agora ajuda a lembrar."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "Em {date}, você respondeu “{answer}”."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "Em {date}, você errou essa."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13806,12 +13760,6 @@ msgstr "Concluído em menos de um minuto"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Concluído em {time}"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Voltam em {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

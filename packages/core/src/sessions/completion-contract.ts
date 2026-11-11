@@ -14,8 +14,6 @@ import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
 import { type Reached, reachedSchema } from "./reached";
 
-const LOGICAL_DATE_LENGTH = 10;
-
 export type CheckpointResultView = CheckpointOutcome & {
   answers: {
     correctAnswer: QuestionAnswer;
@@ -43,8 +41,6 @@ export type StudyBlockCompletion = StudyCompletionQueue & {
   ceremony: Milestone | null;
   certificates: OwnedCertificateFacts[];
   checkpoint: CheckpointResultView | null;
-  /** For lessons: the day their capsule opens, right when memory would start to fade. */
-  comesBackOn: Date | null;
   completedMissions: Mission["kind"][];
   correct: number;
   finishedChapter: FinishedChapter | null;
@@ -247,10 +243,6 @@ export const studyBlockCompletionSchema = z
     checkpoint: checkpointResultSchema
       .nullable()
       .meta({ description: "A checkpoint's result with each right answer and why" }),
-    comesBackOn: z.iso
-      .date()
-      .nullable()
-      .meta({ description: "The learner-local day a lesson's capsule opens" }),
     completedMissions: z
       .array(z.enum(MISSION_KINDS))
       .meta({ description: "The day's missions this block completed, in the day's order" }),
@@ -325,9 +317,6 @@ export function serializeStudyBlockCompletion(
   return {
     ...completion,
     ceremony: completion.ceremony ? serializeMilestone(completion.ceremony) : null,
-    comesBackOn: completion.comesBackOn
-      ? completion.comesBackOn.toISOString().slice(0, LOGICAL_DATE_LENGTH)
-      : null,
     milestones: completion.milestones.map((milestone) => serializeMilestone(milestone)),
   };
 }

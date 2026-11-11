@@ -32,7 +32,6 @@ const RESULT = {
   brainPower: 0,
   capsulesOpened: 0,
   checkpoint: null,
-  comesBackOn: null,
   correct: 0,
   finishedChapter: null,
   netScore: null,

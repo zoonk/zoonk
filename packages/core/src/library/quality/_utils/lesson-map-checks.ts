@@ -9,15 +9,6 @@ import { type LessonCheckProblem } from "../lesson-code-checks";
 import { findLessonPhrases } from "./lesson-phrases";
 import { findTextFlaws } from "./screen-flaws";
 
-const MAX_SUMMARY_SENTENCES = 2;
-
-/** Japanese and Chinese sentences end on 。！？ with no space, so a pattern of marks misses them. */
-function countSentences({ language, text }: { language: string; text: string }): number {
-  const segments = new Intl.Segmenter(language, { granularity: "sentence" }).segment(text);
-
-  return [...segments].filter(({ segment }) => segment.trim()).length;
-}
-
 type MapFlaw = Pick<LessonCheckProblem, "code" | "problem">;
 
 function hasMath(label: string): boolean {
@@ -72,7 +63,6 @@ function findIdeaFlaws({ language, map }: { language: string; map: LessonMap }):
     ];
   });
 }
-
 export function getLessonMapProblems({
   language,
   map,
@@ -81,8 +71,6 @@ export function getLessonMapProblems({
   map: LessonMap;
 }): LessonCheckProblem[] {
   const parsed = lessonMapSchema.safeParse(map);
-  const summary = map.ideas.map((idea) => idea.text);
-
   const normalized = map.ideas.map((idea) => getLessonMapIdeaKey(idea));
 
   const problems = [
@@ -90,10 +78,6 @@ export function getLessonMapProblems({
     !parsed.success && {
       code: "summary" as const,
       problem: `The summary card is invalid: ${parsed.error?.issues.map((issue) => issue.message).join("; ")}.`,
-    },
-    summary.some((text) => countSentences({ language, text }) > MAX_SUMMARY_SENTENCES) && {
-      code: "summary" as const,
-      problem: "Each summary idea is one sentence.",
     },
     new Set(normalized).size !== normalized.length && {
       code: "summary" as const,

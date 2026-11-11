@@ -70,7 +70,6 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
           feedback: null,
           isCorrect: true,
           keyPoints: null,
-          nextReviewAt: null,
           savedMistake: false,
           score: 1,
           spelling: null,

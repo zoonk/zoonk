@@ -23,11 +23,6 @@
   "practice_progress": "08fa73db955304ed92ba8210656ac208124a90228a708c6a3a09d6ce51ca03bb",
   "practice_save_error": "93fb049ab782f7702b498355f494032d6e634ad383e00d5b1af046c329fc0c3d",
   "practice_save_error_repeat": "9aff8583bd1d46205c6bba294b5b375c2bbd2b94e86ce26e76202a7e7618ecac",
-  "practice_time_machine_answered": "55b5c79d7b1427aeae99929df3f8bb139b65776198c5d8c4a0160f2cf52c99c6",
-  "practice_time_machine_right_again": "46d2b87ce880e3069e8358b12dccbe88eea71d81a8d5860415dc2759b5a81b41",
-  "practice_time_machine_right_before": "a107b3daf8ef19e5938dbf6ba61fc84817c2625fba730659808912002a9d1aa1",
-  "practice_time_machine_seen": "ed9dd12df4c952cb3d36004288ea752d2201730cfa2944b80db78bea6f9bed59",
-  "practice_time_machine_tripped": "9ba937fb2546b03a8d7959d4fca133b21156c307a85bf546c87e0a9c55879eb5",
   "practice_try_again": "5f8fcdce5874ccd9d0649e13dc2ed5b3120620af80a79b0e9af00a2079bf7fa2",
   "practice_undo": "a5c9b6b240f0fece8ff899b45a50de8db01237455a8963513435fc54fa379fd5",
   "practice_undo_failed": "c92602014ff29d295293db1535919f34e18a8233b568be34b4d2913a8873ee09"
@@ -69,13 +64,6 @@
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">Błędna odpowiedź anuluje poprawną. Masz wątpliwości? Zostaw pytanie bez odpowiedzi.</string>
-    <!-- %1$s is a day and month, like October 8. -->
-    <string name="practice_time_machine_seen">Wyświetlono ci to %1$s.</string>
-    <string name="practice_time_machine_right_again">Znów poprawnie, tak jak %1$s.</string>
-    <string name="practice_time_machine_right_before">%1$s udało ci się odpowiedzieć poprawnie. Ta powtórka pomoże ci to utrwalić.</string>
-    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
-    <string name="practice_time_machine_answered">Twoja odpowiedź z %1$s: „%2$s”.</string>
-    <string name="practice_time_machine_tripped">%1$s to pytanie sprawiło ci trudność.</string>
     <string name="practice_pause_text">Kilka pomyłek z rzędu. Krótka przerwa często pomaga, a cała dzisiejsza nauka się liczy.</string>
     <string name="practice_pause_stop">Zakończ na dziś</string>
     <string name="practice_pause_failed">Nie udało się zakończyć nauki. Spróbuj ponownie.</string>
