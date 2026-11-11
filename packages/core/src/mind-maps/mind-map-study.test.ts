@@ -316,10 +316,7 @@ describe("making all of a goal's chapter maps", () => {
     ).resolves.toStrictEqual([{ chapterId: first }]);
 
     await expect(
-      prisma.followUp.findMany({
-        select: { input: true, key: true, kind: true },
-        where: { userId: user.id },
-      }),
+      prisma.followUp.findMany({ select: { input: true, kind: true }, where: { userId: user.id } }),
     ).resolves.toStrictEqual([
       {
         input: {
@@ -331,7 +328,6 @@ describe("making all of a goal's chapter maps", () => {
             lessonIds: [],
           },
         },
-        key: first,
         kind: "makeChapterMindMap",
       },
     ]);

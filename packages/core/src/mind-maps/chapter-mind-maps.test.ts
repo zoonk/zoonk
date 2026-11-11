@@ -28,6 +28,7 @@ import {
   showChapterMindMap,
   writeChapterMindMapStructure,
 } from "./chapter-mind-map-generation";
+import { settleFinishedChapters } from "./finished-chapters";
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap, requestChapterMindMapFor } from "./request-chapter-mind-map";
@@ -253,6 +254,45 @@ describe("chapter mind maps", () => {
         kind: "makeChapterMindMap",
       },
     ]);
+  });
+
+  it("keeps a tapped map's owed run when a finish that read the map before the tap owes it again", async () => {
+    const { finished, goal, user } = await finishedChapter();
+
+    const items = await prisma.planItem.findMany({
+      select: { id: true },
+      where: { chapterId: finished, plan: { goalId: goal.id } },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      const readsBeforeTheTap = new Proxy(tx, {
+        get(target, property, receiver) {
+          if (property !== "$queryRaw") {
+            return Reflect.get(target, property, receiver) as unknown;
+          }
+
+          return async (...query: Parameters<typeof tx.$queryRaw>) => {
+            const rows = await target.$queryRaw(...query);
+            await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+            return rows;
+          };
+        },
+      });
+
+      await settleFinishedChapters(readsBeforeTheTap, {
+        planItemIds: items.map((item) => item.id),
+        userId: user.id,
+      });
+    });
+
+    const owed = await prisma.followUp.findMany({
+      select: { input: true },
+      where: { kind: "makeChapterMindMap", userId: user.id },
+    });
+
+    expect(owed).toContainEqual({
+      input: expect.objectContaining({ chapterId: finished, launch: expect.any(Object) }),
+    });
   });
 
   it("dates a new map's row with the instants the app's own writes store, whatever the database's time zone", async () => {

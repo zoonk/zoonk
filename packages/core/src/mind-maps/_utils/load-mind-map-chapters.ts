@@ -82,7 +82,7 @@ function readChapterRows({
         EXISTS (
           SELECT 1 FROM follow_ups f
           WHERE f.user_id = g.user_id AND f.kind = 'make_chapter_mind_map'
-            AND f.key = pc.chapter_id::text
+            AND f.input->>'chapterId' = pc.chapter_id::text
         ) AS "mapOwed",
         mm.status::text AS "mapStatus",
         mm.structure AS "mapStructure",
