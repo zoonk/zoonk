@@ -82,11 +82,13 @@ private struct SessionContent: View {
     let session = store.session(id: sessionID)
     let playback = router.playback
     let stopped = playback.stoppedSessionID == sessionID
+    let endsSession =
+      playback.moment.map { $0.sessionId == sessionID && $0.sessionCompleted } ?? false
 
     Group {
       switch session.state {
       case .loaded(let day):
-        if stopped || day.nextBlock == nil {
+        if stopped || (day.nextBlock == nil && !endsSession) {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
           NextStopView(day: day, sessionID: sessionID, moment: playback.moment)
@@ -315,31 +317,44 @@ private struct NextStopView: View {
   private func actions(isHeld: Bool) -> some View {
     Section {
       VStack(spacing: 12) {
-        if let alternative, isLessonWorkRunning || isLessonUnavailable {
-          mainButton(alternativeTitle(alternative), block: alternative)
-        } else if let next, !isLessonUnavailable, !isHeld {
-          mainButton(continueTitle, block: next)
-            .disabled(isLessonWorkRunning)
-            .accessibilityFocused($isStartFocused)
-        }
+        if moment?.sessionCompleted == true {
+          BusyButton(isBusy: false, icon: .forward) {
+            router.playback.seeSummary()
+          } label: {
+            Text(
+              "See today's summary", tableName: "Session",
+              comment: "Moves on from the block that completed today's session")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
+        } else {
+          if let alternative, isLessonWorkRunning || isLessonUnavailable {
+            mainButton(alternativeTitle(alternative), block: alternative)
+          } else if let next, !isLessonUnavailable, !isHeld {
+            mainButton(continueTitle, block: next)
+              .disabled(isLessonWorkRunning)
+              .accessibilityFocused($isStartFocused)
+          }
 
-        BusyButton(isBusy: isStopping, icon: .stop) {
-          stop()
-        } label: {
-          Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-        }
-        .buttonStyle(.outline)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
-        .disabled(isOpening)
+          BusyButton(isBusy: isStopping, icon: .stop) {
+            stop()
+          } label: {
+            Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
+          .disabled(isOpening)
 
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't open the next step. Try again.", table: "Session",
-              comment: "Opening or stopping failed")
-          )
-          .typeStyle(.note)
+          if failed {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open the next step. Try again.", table: "Session",
+                comment: "Opening or stopping failed")
+            )
+            .typeStyle(.note)
+          }
         }
       }
     }
