@@ -106,24 +106,16 @@ export async function PatternsContent() {
     return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("patterns").url} />;
   }
 
-  const { dayVerdict, timeVerdict } = patterns;
-
   return (
     <ProgressContent>
       <PatternTiles patterns={patterns} />
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <WeekPatterns
-          best={dayVerdict.kind === "best" ? dayVerdict.best : null}
-          patterns={patterns.weekdays}
-        />
-        <DayPatterns
-          best={timeVerdict.kind === "best" ? timeVerdict.best : null}
-          patterns={patterns.times}
-        />
+        <WeekPatterns patterns={patterns.weekdays} verdict={patterns.dayVerdict} />
+        <DayPatterns patterns={patterns.times} verdict={patterns.timeVerdict} />
       </div>
 
-      <PatternsNote patterns={patterns} />
+      <PatternsNote />
     </ProgressContent>
   );
 }

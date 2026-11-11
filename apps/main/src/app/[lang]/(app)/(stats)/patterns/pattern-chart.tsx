@@ -1,5 +1,10 @@
 import { MIN_PATTERN_ANSWERS, type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
+import {
+  PageSection,
+  PageSectionFooter,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "@zoonk/learn/page";
 import {
   ChartInspector,
   ChartInspectorPoint,
@@ -10,20 +15,26 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CrownIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { PROGRESS_CONTENT_SELECTOR } from "../_components/progress-content";
 
 const PERCENT = 100;
 
-const COLUMN_CLASS = "flex min-w-0 flex-col items-center gap-1.5 px-0.5 pt-1 pb-2";
+/** `--pattern-bar` is how tall a bar at 100% is. */
+const CHART_CLASS = "grid [--pattern-bar:7rem] sm:[--pattern-bar:9rem]";
 
-const VALUE_ROW_CLASS = "flex h-9 flex-col items-center justify-end gap-0.5";
+const COLUMN_CLASS = "flex min-w-0 flex-col items-center gap-2 pt-1 pb-2";
 
-const BAR_CLASS = "h-28 w-full max-w-8 rounded-[3px] sm:h-36";
+/** The 3rem above a full bar hold its value and the best column's crown. */
+const PLOT_CLASS =
+  "border-border flex h-[calc(var(--pattern-bar)+3rem)] w-full flex-col items-center justify-end gap-1 border-b";
 
-const ICON_CLASS = "mt-0.5 flex size-4.5";
+const BAR_CLASS = "w-full max-w-8 shrink-0 rounded-t-[3px]";
 
-const NAME_CLASS = "max-w-full truncate text-xs leading-4";
+const CHIP_CLASS = "flex size-9 items-center justify-center rounded-full";
 
-const CAPTION_CLASS = "-mt-1 text-[0.6875rem] leading-4";
+const NAME_CLASS = "max-w-full truncate px-0.5 text-xs leading-4";
+
+const CAPTION_CLASS = "-mt-1.5 text-[0.6875rem] leading-4";
 
 const DASH = "–";
 
@@ -39,33 +50,36 @@ export type PatternColumnView = {
 
 type PatternState = "best" | "counted" | "few" | "none";
 
-/** A group with too few answers to count is gray, so a lucky answer never reads as a result. */
+/**
+ * A group with too few answers to count is a hollow gray outline and one without answers has no bar,
+ * so neither reads as a result.
+ */
 const PATTERN_STATE = {
   best: {
     bar: "bg-success",
-    icon: "text-success",
+    chip: "bg-success text-background",
     name: "text-foreground font-medium",
     value: "text-foreground font-semibold",
   },
   counted: {
     bar: "bg-success/45",
-    icon: "text-muted-foreground",
+    chip: "bg-surface-3 text-foreground",
     name: "text-muted-foreground",
     value: "text-foreground",
   },
   few: {
-    bar: "bg-foreground/20",
-    icon: "text-muted-foreground",
+    bar: "border-foreground/30 contrast-more:border-foreground border border-b-0 border-dashed",
+    chip: "bg-surface-3 text-muted-foreground",
     name: "text-muted-foreground",
     value: "text-muted-foreground",
   },
   none: {
     bar: "",
-    icon: "text-muted-foreground",
+    chip: "bg-surface-3 text-muted-foreground",
     name: "text-muted-foreground",
     value: "text-muted-foreground",
   },
-} as const satisfies Record<PatternState, Record<"bar" | "icon" | "name" | "value", string>>;
+} as const satisfies Record<PatternState, Record<"bar" | "chip" | "name" | "value", string>>;
 
 function getPatternState({ best, pattern }: Pick<PatternColumnView, "best" | "pattern">) {
   if (pattern.totalAnswers === 0) {
@@ -83,9 +97,9 @@ function getColumnsStyle(count: number): React.CSSProperties {
   return { gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` };
 }
 
-/** Keeps a malformed stored share inside the bar while the number still says what was stored. */
+/** Keeps a malformed stored share inside the plot while the number still says what was stored. */
 function getBarHeight(score: number): string {
-  return `${Math.min(PERCENT, Math.max(0, score))}%`;
+  return `calc(var(--pattern-bar) * ${Math.min(PERCENT, Math.max(0, score)) / PERCENT})`;
 }
 
 async function getPatternTexts(pattern: ScorePerformance) {
@@ -137,62 +151,55 @@ function PatternColumn({
   const state = getPatternState(column);
   const tone = PATTERN_STATE[state];
 
+  const spoken = [state === "best" && bestLabel, column.name, column.caption, value, note]
+    .filter(Boolean)
+    .join(", ");
+
   return (
     <ChartInspectorPoint
       className={cn("data-active:bg-muted rounded-lg", COLUMN_CLASS)}
       index={index}
       render={<li />}
     >
-      <span className={VALUE_ROW_CLASS}>
+      <span className="sr-only">{spoken}</span>
+
+      <span aria-hidden="true" className={PLOT_CLASS}>
         {state === "best" && (
-          <>
-            <CrownIcon aria-hidden="true" className="text-success size-3.5" />
-            <span className="sr-only">{bestLabel}</span>
-          </>
+          <span className="bg-success text-background flex size-6 shrink-0 items-center justify-center rounded-full">
+            <CrownIcon className="size-3.5" />
+          </span>
         )}
+
         <span className={cn("font-mono text-xs leading-4 tabular-nums", tone.value)}>
           {state === "none" ? DASH : value}
         </span>
-      </span>
 
-      <span
-        aria-hidden="true"
-        className={cn("bg-surface-3 flex items-end overflow-hidden", BAR_CLASS)}
-      >
         {state !== "none" && (
           <span
-            className={cn("w-full rounded-[3px]", tone.bar)}
+            className={cn("min-h-0.5", BAR_CLASS, tone.bar)}
             style={{ height: getBarHeight(column.pattern.score) }}
           />
         )}
       </span>
 
       {column.icon && (
-        <span aria-hidden="true" className={cn("[&>svg]:size-full", ICON_CLASS, tone.icon)}>
+        <span aria-hidden="true" className={cn("[&>svg]:size-5", CHIP_CLASS, tone.chip)}>
           {column.icon}
         </span>
       )}
 
-      <span className={cn(NAME_CLASS, tone.name)}>
-        {column.shortName ? (
-          <>
-            <span aria-hidden="true" className="block first-letter:uppercase">
-              {column.shortName}
-            </span>
-            <span className="sr-only">{column.name}</span>
-          </>
-        ) : (
-          <span className="block first-letter:uppercase">{column.name}</span>
-        )}
+      <span aria-hidden="true" className={cn("first-letter:uppercase", NAME_CLASS, tone.name)}>
+        {column.shortName ?? column.name}
       </span>
 
       {column.caption && (
-        <span className={cn("text-faint font-mono whitespace-nowrap tabular-nums", CAPTION_CLASS)}>
+        <span
+          aria-hidden="true"
+          className={cn("text-faint font-mono whitespace-nowrap tabular-nums", CAPTION_CLASS)}
+        >
           {column.caption}
         </span>
       )}
-
-      <span className="sr-only">{state === "none" ? value : note}</span>
     </ChartInspectorPoint>
   );
 }
@@ -200,11 +207,13 @@ function PatternColumn({
 export async function PatternChart({
   bestLabel,
   columns,
+  footer,
   id,
   title,
 }: {
   bestLabel: string;
   columns: PatternColumnView[];
+  footer?: string | null;
   id: string;
   title: string;
 }) {
@@ -223,7 +232,7 @@ export async function PatternChart({
 
       <ChartInspector defaultIndex={Math.max(0, bestIndex)} details={details}>
         <ChartInspectorPoints aria-labelledby={id}>
-          <ul className="grid" style={getColumnsStyle(columns.length)}>
+          <ul className={CHART_CLASS} style={getColumnsStyle(columns.length)}>
             {points.map(({ column, note, value }, index) => (
               <PatternColumn
                 bestLabel={bestLabel}
@@ -237,8 +246,10 @@ export async function PatternChart({
           </ul>
         </ChartInspectorPoints>
 
-        <ChartInspectorTooltip />
+        <ChartInspectorTooltip within={PROGRESS_CONTENT_SELECTOR} />
       </ChartInspector>
+
+      {footer && <PageSectionFooter>{footer}</PageSectionFooter>}
     </PageSection>
   );
 }
@@ -246,9 +257,10 @@ export async function PatternChart({
 function PatternColumnSkeleton({ icons }: { icons: boolean }) {
   return (
     <div className={COLUMN_CLASS}>
-      <span className={VALUE_ROW_CLASS} />
-      <Skeleton className={BAR_CLASS} />
-      {icons && <Skeleton className={ICON_CLASS} />}
+      <span className={PLOT_CLASS}>
+        <Skeleton className={cn("h-[calc(var(--pattern-bar)*0.7)] rounded-b-none", BAR_CLASS)} />
+      </span>
+      {icons && <Skeleton className={CHIP_CLASS} />}
       <Skeleton className={cn("h-4 w-7", icons && "w-12")} />
       {icons && <Skeleton className={cn("h-4 w-10", CAPTION_CLASS)} />}
     </div>
@@ -268,7 +280,7 @@ export function PatternChartSkeleton({
     <div className="flex flex-col gap-3">
       <Skeleton className={cn("my-1 h-4", titleClassName)} />
 
-      <div className="grid" style={getColumnsStyle(columns)}>
+      <div className={CHART_CLASS} style={getColumnsStyle(columns)}>
         {Array.from({ length: columns }, (_, index) => (
           // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
           <PatternColumnSkeleton icons={icons} key={index} />
