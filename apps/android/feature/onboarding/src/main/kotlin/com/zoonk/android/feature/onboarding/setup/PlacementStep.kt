@@ -339,6 +339,7 @@ internal fun ColumnScope.PlacementQuestion(
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
 
     QuestionPages(
+        questionId = item.itemId,
         read = {
             eyebrow?.let { Eyebrow(it) }
             media()
@@ -362,6 +363,27 @@ internal fun ColumnScope.PlacementQuestion(
                 )
             } else {
                 AnswerList(choices, picked, onPick = { picked = it })
+            }
+            stopHint?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            TextButton(
+                onClick = {
+                    sender = PlacementSender.Stop
+                    onStop()
+                },
+                busy = pending && sender == PlacementSender.Stop,
+                enabled = !pending,
+                focusableWhenDisabled = pending,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stopLabel)
             }
         },
     ) {
@@ -395,27 +417,6 @@ internal fun ColumnScope.PlacementQuestion(
                 }
             },
         )
-        stopHint?.let {
-            Text(
-                text = it,
-                modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        TextButton(
-            onClick = {
-                sender = PlacementSender.Stop
-                onStop()
-            },
-            busy = pending && sender == PlacementSender.Stop,
-            enabled = !pending,
-            focusableWhenDisabled = pending,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(stopLabel)
-        }
     }
 }
 

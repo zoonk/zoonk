@@ -3,25 +3,29 @@
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { AnswersSaveError } from "../../_components/save-error";
+import { NotSureButton } from "../../mistakes/drill/drill-controls";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
 import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
+import {
+  QuestionActionsRow,
+  QuestionMainButton,
+} from "../../session/question-block/question-actions";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
   OnboardingColumn,
-  OnboardingFooter,
   OnboardingHeading,
-  OnboardingPrimaryButton,
+  OnboardingScreenTop,
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
+import { PlanStartNoticeSlot } from "./plan-start-notice";
 import { TypedAnswerField } from "./typed-answer-field";
 
 function useQuestionChoices({
@@ -102,76 +106,46 @@ function toAnswer({
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
+/** Pinned to the screen's bottom, as a lesson's are, so answering never needs a scroll. */
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
   failures,
+  onConfirm,
   onDontKnow,
-  onStop,
   pending,
   pressed,
-  stopHint,
-  stopLabel,
 }: {
   canConfirm: boolean;
   dontKnowLabel: string;
   failures: number;
+  onConfirm: () => void;
   onDontKnow: () => void;
-  onStop: () => void;
   pending: boolean;
   pressed: PlacementControl | null;
-  stopHint?: string;
-  stopLabel: string;
 }) {
-  const t = useExtracted();
   const busy = pending ? pressed : null;
 
   return (
-    <OnboardingFooter>
+    <div className="flex flex-col gap-2">
+      <PlanStartNoticeSlot />
       {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
 
-      <div className="flex flex-wrap-reverse gap-2">
-        <Button
+      <QuestionActionsRow ask={null}>
+        <NotSureButton
           busy={busy === "dontKnow"}
-          className="grow"
           disabled={pending}
-          focusableWhenDisabled
-          icon={<CircleHelpIcon aria-hidden="true" />}
+          label={dontKnowLabel}
           onClick={onDontKnow}
-          size="lg"
-          type="button"
-          variant="outline"
-        >
-          {dontKnowLabel}
-        </Button>
-        <OnboardingPrimaryButton
+        />
+        <QuestionMainButton
+          action="confirm"
           busy={busy === "confirm"}
-          className="grow-999 basis-40"
           disabled={!canConfirm || pending}
-          type="submit"
-        >
-          {t("Confirm")}
-        </OnboardingPrimaryButton>
-      </div>
-
-      {stopHint && (
-        <p className="text-muted-foreground pt-2 text-center text-sm text-pretty" role="status">
-          {stopHint}
-        </p>
-      )}
-
-      <Button
-        busy={busy === "stop"}
-        className="self-center"
-        disabled={pending}
-        focusableWhenDisabled
-        onClick={onStop}
-        type="button"
-        variant="ghost"
-      >
-        {stopLabel}
-      </Button>
-    </OnboardingFooter>
+          onPress={onConfirm}
+        />
+      </QuestionActionsRow>
+    </div>
   );
 }
 
@@ -221,6 +195,17 @@ export function PlacementQuestionScreen({
   );
 
   const [pressed, setPressed] = useState<PlacementControl | null>(null);
+  const title = useRef<HTMLDivElement>(null);
+  const isTyped = question.format === "typed";
+
+  // The control that sent the last answer is gone, so focus would fall to the page. A typed answer's
+  // field takes it instead.
+  useEffect(() => {
+    if (!isTyped) {
+      title.current?.focus({ preventScroll: true });
+    }
+  }, [isTyped]);
+
   const canConfirm = value !== null && value.trim().length > 0;
 
   const send = (answer: PlacementAnswer, control: PlacementControl) => {
@@ -243,7 +228,20 @@ export function PlacementQuestionScreen({
 
   return (
     <OnboardingTestQuestion progress={progress}>
-      <OnboardingColumn>
+      <OnboardingScreenTop />
+      <OnboardingColumn
+        bar={
+          <PlacementActions
+            canConfirm={canConfirm}
+            dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
+            failures={failures}
+            onConfirm={confirm}
+            onDontKnow={() => send({ dontKnow: true }, "dontKnow")}
+            pending={pending}
+            pressed={pressed}
+          />
+        }
+      >
         <OnboardingHeading className="gap-5">
           {subject && number !== undefined && (
             <OnboardingSubject
@@ -261,44 +259,46 @@ export function PlacementQuestionScreen({
 
           <ItemSupport context={question.context} image={question.image} visual={question.visual} />
 
-          <div className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty">
+          <div
+            className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none"
+            ref={title}
+            tabIndex={-1}
+          >
             <ItemStem text={question.question} heading="h1" />
           </div>
         </OnboardingHeading>
 
-        <form
-          className="flex flex-1 flex-col gap-5"
-          onSubmit={(event) => {
-            event.preventDefault();
-            confirm();
-          }}
-        >
-          {question.format === "typed" ? (
-            <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
-          ) : (
-            <PlacementOptions
-              choices={choices}
-              label={spoken.blocks(question.question)}
-              onChange={setValue}
-              value={value}
-            />
-          )}
-
-          <PlacementActions
-            canConfirm={canConfirm}
-            dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
-            failures={failures}
-            onDontKnow={() => send({ dontKnow: true }, "dontKnow")}
-            onStop={() => {
-              setPressed("stop");
-              onStop();
-            }}
-            pending={pending}
-            pressed={pressed}
-            stopHint={stopHint}
-            stopLabel={stopLabel ?? t("Stop here and see my plan")}
+        {isTyped ? (
+          <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
+        ) : (
+          <PlacementOptions
+            choices={choices}
+            label={spoken.blocks(question.question)}
+            onChange={setValue}
+            value={value}
           />
-        </form>
+        )}
+
+        {stopHint && (
+          <p className="text-muted-foreground text-center text-sm text-pretty" role="status">
+            {stopHint}
+          </p>
+        )}
+
+        <Button
+          busy={pending && pressed === "stop"}
+          className="self-center"
+          disabled={pending}
+          focusableWhenDisabled
+          onClick={() => {
+            setPressed("stop");
+            onStop();
+          }}
+          type="button"
+          variant="ghost"
+        >
+          {stopLabel ?? t("Stop here and see my plan")}
+        </Button>
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

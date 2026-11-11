@@ -2486,7 +2486,7 @@ msgid "Next"
 msgstr "Próximo"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Confirmar"
