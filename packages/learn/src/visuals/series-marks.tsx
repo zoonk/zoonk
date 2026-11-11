@@ -30,15 +30,16 @@ export function SeriesBar({
   x: number;
   y: number;
 }) {
-  const inset = mark.open ? Math.min(OPEN_STROKE, width, height) / 2 : 0;
+  const outlined = mark.open && Math.min(width, height) > OPEN_STROKE * 2;
+  const inset = outlined ? OPEN_STROKE / 2 : 0;
 
   return (
     <rect
-      className={cn("fill-current", mark.tone, mark.open && "stroke-current")}
-      fillOpacity={mark.open ? OPEN_FILL : undefined}
+      className={cn("fill-current", mark.tone, outlined && "stroke-current")}
+      fillOpacity={outlined ? OPEN_FILL : undefined}
       height={height - inset * 2}
       rx={BAR_RADIUS - inset}
-      strokeWidth={mark.open ? inset * 2 : undefined}
+      strokeWidth={outlined ? OPEN_STROKE : undefined}
       width={width - inset * 2}
       x={x + inset}
       y={y + inset}

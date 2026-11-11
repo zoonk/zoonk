@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.zoonk
-import kotlin.math.min
 
 internal enum class PointShape { Circle, Square, Diamond, Triangle, Cross }
 
@@ -57,12 +56,13 @@ internal fun DrawScope.drawSeriesBar(
     size: Size,
     radius: Dp,
 ) {
-    if (!mark.open) {
+    val stroke = OPEN_STROKE.toPx()
+
+    if (!mark.open || size.minDimension <= stroke * 2) {
         drawRoundRect(mark.color, topLeft, size, CornerRadius(radius.toPx()))
         return
     }
 
-    val stroke = min(OPEN_STROKE.toPx(), min(size.width, size.height))
     val inner = Size(size.width - stroke, size.height - stroke)
     val corner = CornerRadius(radius.toPx() - stroke / 2)
     val start = topLeft + Offset(stroke / 2, stroke / 2)

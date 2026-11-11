@@ -77,8 +77,10 @@ private struct BarOutline: Shape {
 
   func path(in rect: CGRect) -> Path {
     var path = Path(roundedRect: rect, cornerRadius: radius)
+    let inner = rect.insetBy(dx: lineWidth, dy: lineWidth)
+    guard !inner.isEmpty else { return path }
     path.addRoundedRect(
-      in: rect.insetBy(dx: lineWidth, dy: lineWidth),
+      in: inner,
       cornerSize: CGSize(width: radius - lineWidth, height: radius - lineWidth))
     return path
   }
