@@ -96,7 +96,7 @@ class PlanStoreTest {
                     it.copy(
                         goals =
                             it.goals.map { goal ->
-                                goal.copy(targetLanguage = "es", targetRegion = "AR")
+                                goal.copy(targetLanguage = "es", targetRegion = "AR", languageFlag = "ar")
                             },
                     )
                 }
@@ -113,17 +113,24 @@ class PlanStoreTest {
             advanceUntilIdle()
             val store = PlanStore(FakePlanApi(), cache, summary)
 
-            assertTrue(store.setRegion(goalId, "ES") is MutationResult.Done)
-            assertTrue(store.rename(goalId, "Spanish for Madrid") is MutationResult.Done)
-            advanceUntilIdle()
-
-            assertEquals(3, reads)
-            val goal =
+            fun shown() =
                 summary.state.value.value!!
                     .goals
                     .single()
-            assertEquals("ES", goal.targetRegion)
-            assertEquals("Spanish for Madrid", goal.displayName)
+
+            assertTrue(store.setRegion(goalId, null) is MutationResult.Done)
+            advanceUntilIdle()
+            assertEquals(null, shown().targetRegion)
+            assertEquals("es", shown().languageFlag)
+
+            assertTrue(store.setRegion(goalId, "MX") is MutationResult.Done)
+            assertTrue(store.rename(goalId, "Spanish for Mexico City") is MutationResult.Done)
+            advanceUntilIdle()
+
+            assertEquals(4, reads)
+            assertEquals("MX", shown().targetRegion)
+            assertEquals("mx", shown().languageFlag)
+            assertEquals("Spanish for Mexico City", shown().displayName)
             screen.cancel()
         }
 

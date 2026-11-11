@@ -5,6 +5,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
+import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
@@ -138,7 +139,7 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    ) = region
+    ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
 
     override suspend fun change(
         session: AuthenticatedSession,
