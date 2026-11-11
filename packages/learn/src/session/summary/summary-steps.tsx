@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StepDots } from "../../_components/step-dots";
 import { StepsBackButton, focusStepTitle } from "../../_components/steps";
+import { useTaskAsideShown } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
@@ -35,14 +36,18 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(NO_STEP_LEFT);
   const opened = useRef(false);
-  const exists = !stopped && hasRewardsBeyondBrainPower(summary);
+  const asideShown = useTaskAsideShown();
+  const exists = !stopped && !asideShown && hasRewardsBeyondBrainPower(summary);
 
   const close = () => {
     setLeft((steps) => ({ ...steps, rewards: true }));
     setOpen(false);
   };
 
-  useKeyboardCallback("ArrowLeft", () => (open ? close() : false), { mode: "none", screen: true });
+  useKeyboardCallback("ArrowLeft", () => (exists && open ? close() : false), {
+    mode: "none",
+    screen: true,
+  });
 
   useEffect(() => {
     if (opened.current || open) {
