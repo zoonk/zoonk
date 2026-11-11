@@ -1,9 +1,10 @@
 "use client";
 
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
-import { type RegionChoice } from "@zoonk/utils/language-regions";
+import { type RegionChoice, getVarietyNameInSentence } from "@zoonk/utils/language-regions";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { useAppLocale } from "../_utils/locale";
 import { findTaughtRegion, useVarietyNote } from "./use-variety-words";
 
 const NO_COUNTRY = "";
@@ -29,9 +30,11 @@ export function CountryField({
   value: string | null;
 }) {
   const t = useExtracted();
+  const locale = useAppLocale();
   const noteId = useId();
   const varietyNote = useVarietyNote();
-  const note = varietyNote({ language, region: value, taughtRegion: findTaughtRegion(choices) });
+  const taughtRegion = findTaughtRegion(choices);
+  const note = varietyNote({ language, region: value, taughtRegion });
 
   return (
     <>
@@ -50,14 +53,26 @@ export function CountryField({
 
         {choices.map((choice) => (
           <NativeSelectOption key={choice.code} value={choice.code}>
-            {choice.taught ? `${choice.name} · ${t("Lessons use this variety")}` : choice.name}
+            {choice.name}
           </NativeSelectOption>
         ))}
       </NativeSelect>
 
       <p className="text-muted-foreground text-sm text-pretty" id={noteId}>
         {note ??
-          t("Your buddy and practice calls use the country you choose. Lessons stay the same.")}
+          t({
+            description:
+              "{taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.",
+            message:
+              "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}.",
+            values: {
+              taughtVariety: getVarietyNameInSentence({
+                language,
+                region: taughtRegion,
+                userLanguage: locale,
+              }),
+            },
+          })}
       </p>
     </>
   );

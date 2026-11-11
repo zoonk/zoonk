@@ -5424,15 +5424,11 @@ msgctxt "LTldLR"
 msgid "No preference"
 msgstr "상관없어요"
 
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/language-variety/country-field.tsx
-msgctxt "GCoim_"
-msgid "Lessons use this variety"
-msgstr "레슨에서 사용하는 언어"
-
-#: src/language-variety/country-field.tsx
-msgctxt "zN-v2v"
-msgid "Your buddy and practice calls use the country you choose. Lessons stay the same."
-msgstr "짝꿍과 대화 연습에는 선택한 국가의 언어를 사용해요. 레슨은 그대로예요."
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "짝꿍과 연습 대화에는 선택한 국가가 반영돼요. 레슨과 오디오에는 {taughtVariety}을(를) 사용해요."
 
 #. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
 #: src/language-variety/use-variety-words.ts
