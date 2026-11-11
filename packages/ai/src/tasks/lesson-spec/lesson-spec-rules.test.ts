@@ -6,7 +6,6 @@ import {
   type LessonSpec,
   type LessonSpecSkill,
   estimateLessonMinutes,
-  fitsLesson,
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 
@@ -269,20 +268,5 @@ describe(getLessonSpecIssues, () => {
     );
 
     expect(getCodes(spec(screens))).toStrictEqual(["skillReference"]);
-  });
-});
-
-describe(fitsLesson, () => {
-  it("fits up to three skills, sixteen screens and five minutes", () => {
-    expect(fitsLesson({ level: "beginner", spec: spec(validScreens) })).toBe(true);
-
-    const long = spec([
-      ...validScreens.slice(0, -1),
-      ...validScreens.slice(1, -1),
-      ...validScreens.slice(4),
-    ]);
-
-    expect(long.screens).toHaveLength(17);
-    expect(fitsLesson({ level: "beginner", spec: long })).toBe(false);
   });
 });

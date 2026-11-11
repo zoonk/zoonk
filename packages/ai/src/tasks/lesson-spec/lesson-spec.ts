@@ -16,17 +16,11 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
-import {
-  LESSON_SCREEN_KINDS,
-  type LessonSpec,
-  type LessonSpecIssue,
-  getLessonSpecIssues,
-} from "./lesson-spec-rules";
+import { LESSON_SCREEN_KINDS, type LessonSpec, getLessonSpecIssues } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
 import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
-import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
@@ -102,14 +96,14 @@ export type LessonSpecParams = {
   analytics?: AiGenerationContext;
 };
 
-/** Several when the planned lesson didn't fit and was split; a quick one never is. */
+/** Several when the planner split a lesson that didn't fit; a quick one never is. */
 type LessonSpecResult = { lessons: LessonSpec[] };
 
 function formatList(items: readonly string[]): string {
   return items.length === 0 ? "none" : items.map((item) => `\n- ${item}`).join("");
 }
 
-function buildSystemPrompt(params: LessonSpecParams): string {
+function buildSystemPrompt(params: LessonSpecParams, redraft: boolean): string {
   const novice = readsNoviceRules(params);
 
   const prompt = selectPromptVariants({
@@ -120,6 +114,7 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       novice,
       private: Boolean(params.isPrivate || params.material),
       product: Boolean(params.product),
+      redraft,
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -129,7 +124,7 @@ function buildSystemPrompt(params: LessonSpecParams): string {
   return params.quick ? `${prompt}\n${quickLessonPrompt}` : prompt;
 }
 
-function buildUserPrompt(params: LessonSpecParams): string {
+function buildUserPrompt(params: LessonSpecParams, problems: readonly string[]): string {
   const templates = params.activityTemplates.map((template) =>
     template.explore
       ? `${template.id} (explorable): ${template.description}`
@@ -150,11 +145,17 @@ ${formatLocalContext(params.language)}
     ${formatLessonExams(params.exams)}
     OUTLINE_SKILLS: ${formatList(params.skills ?? [])}
     CHAPTER_LESSONS: ${formatChapterLessons(params.chapterLessons)}
-    ACTIVITY_TEMPLATES: ${formatList(templates)}
+    ACTIVITY_TEMPLATES: ${formatList(templates)}${problems.length > 0 ? `\n    PREVIOUS_PLAN_PROBLEMS: ${formatList(problems)}` : ""}
 ${formatLessonDocuments({ material: params.material, sources: params.sources })}  `;
 }
 
-async function planLesson(params: LessonSpecParams) {
+async function planLesson({
+  params,
+  problems,
+}: {
+  params: LessonSpecParams;
+  problems: readonly string[];
+}) {
   const {
     analytics,
     fallbackModels = defaultFallbackModels,
@@ -164,8 +165,8 @@ async function planLesson(params: LessonSpecParams) {
     useFallback = true,
   } = params;
 
-  const instructions = buildSystemPrompt(params);
-  const userPrompt = buildUserPrompt(params);
+  const instructions = buildSystemPrompt(params, problems.length > 0);
+  const userPrompt = buildUserPrompt(params, problems);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
   const templateIds = new Set(params.activityTemplates.map((template) => template.id));
 
@@ -194,33 +195,16 @@ async function planLesson(params: LessonSpecParams) {
   );
 
   // A quick lesson is the one short lesson a learner chose instead of the skill's lessons.
-  const lessons = params.quick
-    ? specs.slice(0, 1)
-    : specs.flatMap((spec) =>
-        splitLessonSpec({ language: params.language, level: params.level, spec }),
-      );
+  const lessons = params.quick ? specs.slice(0, 1) : specs;
 
   const data: LessonSpecResult = { lessons };
 
   return { data, provenance, systemPrompt: instructions, usage: result.usage, userPrompt };
 }
 
-/**
- * Sizes are left to the split rule, which keeps a skill too big for one lesson whole on purpose.
- */
-const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
-  "application",
-  "checkGap",
-  "earlyCheck",
-  "guess",
-  "hook",
-  "skillReference",
-  "unpracticedSkill",
-  "untaughtSkill",
-  "workedExample",
-]);
+type LessonPlan = Awaited<ReturnType<typeof planLesson>>;
 
-function countShapeIssues({
+function findPlanProblems({
   data,
   level,
   novice,
@@ -228,20 +212,25 @@ function countShapeIssues({
   data: LessonSpecResult;
   level: CourseLevel;
   novice: boolean;
-}): number {
-  return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
-    .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
+}): string[] {
+  return data.lessons.flatMap((spec) =>
+    getLessonSpecIssues({ level, novice, spec }).map((issue) => `"${spec.title}": ${issue.detail}`),
+  );
 }
 
 /**
- * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
- * more, and the one with fewer broken rules is kept.
+ * Code can't write a lesson's hook or application, so a plan that breaks a rule, size included, is
+ * planned once more, told what broke, and the one with fewer broken rules is kept.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
-  return draftAgainWhenFlawed({
-    countProblems: ({ data }) =>
-      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
-    draft: () => planLesson(params),
+  const rules = { level: params.level, novice: readsNoviceRules(params) };
+
+  return draftAgainWhenFlawed<LessonPlan>({
+    countProblems: ({ data }) => findPlanProblems({ data, ...rules }).length,
+    draft: (previous) =>
+      planLesson({
+        params,
+        problems: previous ? findPlanProblems({ data: previous.data, ...rules }) : [],
+      }),
   });
 }

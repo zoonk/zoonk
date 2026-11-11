@@ -19,7 +19,6 @@ export type LessonScreenKind = (typeof LESSON_SCREEN_KINDS)[number];
 
 export type LessonSpecSkill = {
   name: string;
-  /** The lesson's title when a split gives this skill its own lesson. */
   topic: string;
   description: string;
   example: string;
@@ -48,8 +47,6 @@ export type LessonSpec = {
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
   estimatedMinutes: number;
-  /** Set on each lesson after the first that the code split off one plan: the plan's guess stays in the first. */
-  laterPart?: boolean;
 };
 
 /** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
@@ -132,14 +129,6 @@ export function getMaxLessonMinutes({
     : LESSON_SIZE.maxMinutes;
 }
 
-export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSpec }): boolean {
-  return (
-    spec.skills.length <= LESSON_SIZE.maxSkills &&
-    spec.screens.length <= LESSON_SIZE.maxScreens &&
-    spec.estimatedMinutes <= getMaxLessonMinutes({ level, skillCount: spec.skills.length })
-  );
-}
-
 /** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
@@ -204,15 +193,11 @@ function getEarlyCheckIssue({
   );
 }
 
-function getGuessIssue({ laterPart, screens }: LessonSpec) {
+function getGuessIssue(screens: readonly LessonScreen[]) {
   const guesses = screens.filter((screen) => screen.kind === "guess").length;
   const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
   const at = screens.findIndex((screen) => screen.kind === "guess");
   const next = screens[at + 1];
-
-  if (laterPart && guesses === 0) {
-    return false;
-  }
 
   return (
     (guesses !== 1 || at !== firstTeaching + 1 || !next || !isTeachingScreen(next.kind)) && {
@@ -247,7 +232,7 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
-    getGuessIssue(spec),
+    getGuessIssue(screens),
   ].filter((issue) => issue !== false);
 }
 

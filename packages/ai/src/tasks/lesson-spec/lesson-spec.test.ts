@@ -30,6 +30,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#product}}",
     "Plan it in the product.",
     "{{/product}}",
+    "{{#redraft}}",
+    "Fix the previous plan.",
+    "{{/redraft}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -76,31 +79,54 @@ describe(generateLessonSpec, () => {
     vi.clearAllMocks();
   });
 
-  it("returns specs with skill indexes, catalog-only activities and oversized lessons split", async () => {
-    vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult({
-        lessons: [
-          {
-            canDo: "Summarize a data set",
-            description: "Center and spread.",
-            screens: [
-              rawScreen("hook", []),
-              rawScreen("explanation", [1]),
-              rawScreen("activity", [1], "madeUpChart"),
-              rawScreen("explanation", [2]),
-              rawScreen("activity", [2], "numberLine"),
-              rawScreen("explanation", [3]),
-              rawScreen("check", [3]),
-              rawScreen("explanation", [4]),
-              rawScreen("check", [4]),
-              rawScreen("application", [1, 2, 3, 4]),
-            ],
-            skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
-            title: "Summarizing a data set",
-          },
+  it("plans a lesson with too many skills again, told why, and keeps the planner's own lessons", async () => {
+    const combined = {
+      canDo: "Summarize a data set",
+      description: "Center and spread.",
+      screens: [
+        rawScreen("hook", []),
+        rawScreen("explanation", [1]),
+        rawScreen("guess", [1]),
+        rawScreen("explanation", [1]),
+        rawScreen("check", [1]),
+        rawScreen("explanation", [2]),
+        rawScreen("check", [2]),
+        rawScreen("explanation", [3]),
+        rawScreen("check", [3]),
+        rawScreen("explanation", [4]),
+        rawScreen("check", [4]),
+        rawScreen("application", [1, 2, 3, 4]),
+      ],
+      skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
+      title: "Summarizing a data set",
+    };
+
+    function twoSkillLesson(topics: [string, string]) {
+      return {
+        canDo: `Find the ${topics[0].toLowerCase()} and the ${topics[1].toLowerCase()}`,
+        description: `${topics[0]} and ${topics[1]}.`,
+        screens: [
+          { ...rawScreen("hook", []), brief: `Ana's bakery scene for ${topics[0]}` },
+          rawScreen("explanation", [1]),
+          rawScreen("guess", [1]),
+          rawScreen("explanation", [1]),
+          rawScreen("check", [1]),
+          rawScreen("explanation", [2]),
+          rawScreen("activity", [2], "madeUpChart"),
+          { ...rawScreen("application", [1, 2]), brief: `Ana decides with ${topics[1]}` },
         ],
-      }),
-    );
+        skills: topics.map((topic) => rawSkill(topic)),
+        title: `${topics[0]} and ${topics[1]}`,
+      };
+    }
+
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [combined] }))
+      .mockResolvedValueOnce(
+        createGenerateTextResult({
+          lessons: [twoSkillLesson(["Mean", "Median"]), twoSkillLesson(["Mode", "Range"])],
+        }),
+      );
 
     const { data } = await generateLessonSpec({
       activityTemplates: [
@@ -114,9 +140,26 @@ describe(generateLessonSpec, () => {
       level: "beginner",
     });
 
+    const [first, second] = vi.mocked(generateText).mock.calls.map(([call]) => call);
+
+    expect(first?.instructions).not.toContain("Fix the previous plan.");
+    expect(first?.prompt).not.toContain("PREVIOUS_PLAN_PROBLEMS");
+    expect(second?.instructions).toContain("Fix the previous plan.");
+
+    expect(second?.prompt).toContain(
+      'PREVIOUS_PLAN_PROBLEMS: \n- "Summarizing a data set": Teaches 4 skills; a lesson teaches 1 to 3.',
+    );
+
     expect(data.lessons.map((lesson) => lesson.title)).toStrictEqual([
       "Mean and Median",
       "Mode and Range",
+    ]);
+
+    expect(
+      data.lessons.map((lesson) => [lesson.screens[0]?.brief, lesson.screens.at(-1)?.brief]),
+    ).toStrictEqual([
+      ["Ana's bakery scene for Mean", "Ana decides with Median"],
+      ["Ana's bakery scene for Mode", "Ana decides with Range"],
     ]);
 
     expect(
@@ -126,13 +169,66 @@ describe(generateLessonSpec, () => {
         screen.activityTemplate,
       ]),
     ).toStrictEqual([
-      ["hook", [0], null],
+      ["hook", [], null],
+      ["explanation", [0], null],
+      ["guess", [0], null],
       ["explanation", [0], null],
       ["check", [0], null],
       ["explanation", [1], null],
-      ["activity", [1], "numberLine"],
+      ["check", [1], null],
       ["application", [0, 1], null],
     ]);
+  });
+
+  it("plans a lesson that runs too long again, even when its one skill can't be split", async () => {
+    const long = oneSkillLesson({
+      kinds: [
+        "hook",
+        "explanation",
+        "guess",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "explanation",
+        "check",
+        "workedExample",
+        "check",
+        "application",
+      ],
+      title: "Long",
+    });
+
+    const fitting = oneSkillLesson({
+      kinds: ["hook", "explanation", "guess", "workedExample", "check", "application"],
+      title: "Fitting",
+    });
+
+    vi.mocked(generateText)
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [long] }))
+      .mockResolvedValueOnce(createGenerateTextResult({ lessons: [fitting] }));
+
+    const { data } = await generateLessonSpec({
+      activityTemplates: [],
+      chapterTitle: "Temperature",
+      courseTitle: "Weather",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Below zero",
+      level: "beginner",
+    });
+
+    expect(generateText).toHaveBeenCalledTimes(2);
+
+    expect(vi.mocked(generateText).mock.calls[1]?.[0].prompt).toContain(
+      '- "Long": Takes about 8 minutes; the limit is 5.',
+    );
+
+    expect(data.lessons.map((spec) => spec.title)).toStrictEqual(["Fitting"]);
   });
 
   it("plans the lesson again when its plan breaks a shape rule, and keeps the better plan", async () => {
