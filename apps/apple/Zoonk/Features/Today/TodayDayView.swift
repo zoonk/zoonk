@@ -321,6 +321,11 @@ struct TodayDayView: View {
   }
 
   private func open(_ block: StudyBlock, next: Bool) {
+    if waitsForStart(block) {
+      showIntro(of: block)
+      return
+    }
+
     let tap: Tap = next ? .main : .block(block.position)
 
     run(tap) {
@@ -329,9 +334,33 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
+    if waitsForStart(block) {
+      showIntro(of: block)
+      return
+    }
+
     run(.mission(block.position)) {
       await store.open(block, as: .mission, in: view)
     }
+  }
+
+  /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
+  /// Start there, so the learner reads what it is before it starts. An unopened day's session shows
+  /// only its next step.
+  private func waitsForStart(_ block: StudyBlock) -> Bool {
+    block.screen == .session && block.kind != .learn && block.status != .active
+      && (block.id != nil || block.position == view.session.nextPosition)
+  }
+
+  /// Opens nothing on the server: the intro's Start does.
+  private func showIntro(of block: StudyBlock) {
+    guard busy == nil else {
+      return
+    }
+
+    failed = nil
+    router.playback.show(blockID: block.id)
+    router.openStudy(.session)
   }
 
   /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is

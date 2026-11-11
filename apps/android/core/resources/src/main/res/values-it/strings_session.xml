@@ -33,6 +33,7 @@
   "session_energy_glowing_brightest": "050ba613c75db87f6dcf918b7599b63a4a3ee7a7df27b253c6b2dae122356090",
   "session_energy_max": "ba4ad8043fea277649b00a92c58d9dfa4603b4fb0ed166518faf8bfcd0773182",
   "session_level_up": "5b65d3c90f2ff7fa8f6e59b3ac8f45ca4e59736d579dd852b3cd6c5ef390eb4a",
+  "session_next_continue": "9d4ac3fc01a84e9ee87083349c1437c1adb2dcbd249b6444b6ba084c6ebb2d95",
   "session_next_eyebrow": "edc39276105547bc7f0fc9adbc9e82e91009b4f33685555c6576f8e0b517241c",
   "session_next_instead": "9a1c96428ec691ab73630cb57cd10b63cd33299d3346ad88ac2179d4bf755b24",
   "session_next_lesson_ready": "5847d644c59487063c2014a636d4ff4ca45ee7dfba1b7e7ff03ac7d54dce1fd1",
@@ -43,6 +44,16 @@
   "session_next_writing_note": "a9f70503af8ecc9d052c4123feff14397f7138097a757f632665fadb7037aaba",
   "session_opening_slow": "9cdf7c9eb11c35fa1e33eacf0aaf9673f27c25756c2fed5d62a07275e4cc5193",
   "session_opening_very_slow": "e1a36c1a9b2d7a16a6a363872bea9f370c69b60e94f2b7ce0eb0aa6e3bd7060d",
+  "session_review_intro_first_week": "e173d9a0006d4fc4258d670ca3c0ba9a1cc138f59dd54fdd993d8584c2bfd2ed",
+  "session_review_intro_forget": "cb406bd5985c2ae4245d26f368a2f2c935ea805b87b08a86e2f81df8f25564ce",
+  "session_review_intro_forget_title": "cc988b55099f560722be1b09104c14cc4ca128088db07578445c2e7eae599b6c",
+  "session_review_intro_short": "dc0f0cf90a3483a7b6e9f58d6c85d8cecb7f3071bf83910be0acd220b1f99ce5",
+  "session_review_intro_short_title": "92b28806313d199c2d4ef600cb9f4b650cad8aa0aeeeedcc18a256b9dfe8b383",
+  "session_review_intro_spacing": "ce54e02486aa25e1856fb377b3c762d3d18a0fbb2c85377779263e25f18abc06",
+  "session_review_intro_spacing_title": "6863273105f9acd3a97b7aac7879d61e0b0056a966a58809f0f1e4f798826bb8",
+  "session_review_intro_title": "a5cc449a60ab6fc3d33e5d20985ce1ed88bfe86faae24ad6c18a749e2a9f0c91",
+  "session_review_intro_weakest": "9a5dd966d2e6d23ffaf327ddbfb47430e00a53426783ef6965f5715298f0d4f0",
+  "session_review_intro_weakest_title": "c2855d3867da3cbe68da9d9d4387afa3b353bea6af57f4f307a93efb73bce404",
   "session_summary_back_on": "ad2c77fdc9f24447fad1fe9c702bb669125f8e646630455f48c079ed86026dd9",
   "session_summary_brain_power": "3fd18fcc08195a809f84dc71149c00fc046454f2795c0ad6c5dd9c86e3442ebd",
   "session_summary_buddy_happy": "693e28515f814676b23eb15389c1ee1222b30a2bf3825dbd5897c44852af0960",
@@ -203,6 +214,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A seguire</string>
     <string name="session_next_start">Inizia</string>
+    <string name="session_next_continue">Continua</string>
+    <string name="session_review_intro_title">Come funzionano i ripassi</string>
+    <string name="session_review_intro_forget_title">Poco prima di dimenticare</string>
+    <string name="session_review_intro_forget">Ogni concetto che studi torna poco prima che inizi a dimenticarlo.</string>
+    <string name="session_review_intro_spacing_title">Se rispondi bene, ripassi più avanti</string>
+    <string name="session_review_intro_spacing">Se rispondi bene, lo rivedi dopo qualche giorno, poi dopo settimane e infine mesi. Se sbagli, lo rivedi prima.</string>
+    <string name="session_review_intro_short_title">All’inizio e sempre brevi</string>
+    <string name="session_review_intro_short">I ripassi aprono la sessione e ne occupano solo una piccola parte, anche dopo giorni di pausa.</string>
+    <string name="session_review_intro_weakest_title">Gli argomenti più difficili per te oggi</string>
+    <string name="session_review_intro_weakest">Non rischi di dimenticare nulla a breve, quindi ti eserciti su ciò che ti ha dato più difficoltà.</string>
+    <string name="session_review_intro_first_week">Qualche domanda veloce per verificare cosa sai già.</string>
     <string name="session_next_writing_note">Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto.</string>
     <string name="session_next_lesson_ready">La tua lezione è pronta.</string>
     <string name="session_next_stop">Fermati per oggi</string>

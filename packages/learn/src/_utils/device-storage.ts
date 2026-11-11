@@ -50,3 +50,9 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
 
 export const deviceStorage = createDeviceStorage("localStorage");
 export const tabStorage = createDeviceStorage("sessionStorage");
+
+/** Another tab changed what this device keeps. */
+export function subscribeToDeviceStorage(onChange: () => void): () => void {
+  globalThis.addEventListener("storage", onChange);
+  return () => globalThis.removeEventListener("storage", onChange);
+}

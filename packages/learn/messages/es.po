@@ -13597,6 +13597,56 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Energía al {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "No hay nada que estés a punto de olvidar, así que practicas lo que más te cuesta."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "Los temas que más te cuestan hoy"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "Cada idea que estudias vuelve justo antes de que empieces a olvidarla."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "Justo antes de olvidar"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "Unas preguntas rápidas para comprobar lo que ya sabes."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "Cómo funcionan los repasos"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "Si aciertas, vuelve en unos días, luego en unas semanas y después en unos meses. Si fallas, vuelve antes."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "Si aciertas, vuelve más tarde"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "Los repasos van al inicio de tu sesión y ocupan una pequeña parte, incluso si llevas días sin entrar."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "Al inicio y siempre breves"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"

@@ -13597,6 +13597,56 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Energia em {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "Você ainda se lembra bem do que estudou, então pratica o que tem sido mais difícil para você."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "Seus tópicos mais difíceis hoje"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "Cada ideia que você estuda volta pouco antes de você começar a esquecer."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "Pouco antes de você esquecer"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "Algumas perguntas rápidas para ver o que você já sabe."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "Como funcionam as revisões"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "Se você acertar, a ideia volta depois de alguns dias, depois de semanas e depois de meses. Se errar, ela volta mais cedo."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "O que você acerta demora mais para voltar"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "As revisões vêm no começo da sessão e ocupam só uma pequena parte dela, mesmo depois de dias sem estudar."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "No começo e sempre curtas"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"

@@ -13597,6 +13597,56 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Énergie à {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "Tu as encore bien en tête ce que tu as appris, alors tu t’entraînes sur ce qui t’a donné le plus de mal."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "Les sujets les plus difficiles pour toi aujourd’hui"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "Chaque notion que tu étudies revient juste avant que tu commences à l’oublier."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "Juste avant d’oublier"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "Quelques questions rapides pour vérifier ce que tu sais déjà."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "Comment fonctionnent les révisions"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "Si tu réponds juste, la notion revient après quelques jours, puis quelques semaines, puis quelques mois. Si tu te trompes, elle revient plus tôt."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "Les bonnes réponses espacent les révisions"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "Les révisions ouvrent ta séance et n’en occupent qu’une petite partie, même après plusieurs jours de pause."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "D’abord, des révisions toujours courtes"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"

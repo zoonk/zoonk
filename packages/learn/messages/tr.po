@@ -13597,6 +13597,56 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Enerji: {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "Şu an unutmak üzere olduğun bir konu yok, bu yüzden en çok zorlandığın konuları çalışıyorsun."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "Bugün en çok zorlandığın konular"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "Çalıştığın her kavram, tam unutmaya başlayacakken tekrar karşına çıkar."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "Unutmadan hemen önce"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "Zaten bildiklerini kontrol etmek için birkaç kısa soru."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "Tekrarlar nasıl işler"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "Doğru cevapladıkça tekrarlar arasındaki süre günlerden haftalara, sonra aylara uzar. Yanlış cevaplarsan daha erken karşına çıkar."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "Doğru cevapladıkların daha geç tekrarlanır"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "Günlerce ara versen bile tekrarlar çalışmanın başında yer alır ve yalnızca küçük bir kısmını kaplar."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "En başta ve her zaman kısa"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"

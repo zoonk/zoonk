@@ -2101,6 +2101,65 @@
         }
       }
     },
+    "A few quick questions to check what you already know." : {
+      "comment" : "Under the first week's warm-up, which checks what the learner knows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein paar kurze Fragen, um zu prüfen, was du schon weißt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unas preguntas rápidas para comprobar lo que ya sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelques questions rapides pour vérifier ce que tu sais déjà."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualche domanda veloce per verificare cosa sai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短い問題をいくつか解いて、すでに知っていることを確かめます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짧은 문제 몇 개로 이미 아는 내용을 확인해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilka krótkich pytań, żeby sprawdzić, co już wiesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas perguntas rápidas para ver o que você já sabe."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten bildiklerini kontrol etmek için birkaç kısa soru."
+          }
+        }
+      }
+    },
     "A monocle!" : {
       "comment" : "Glasses earned",
       "localizations" : {
@@ -3407,6 +3466,65 @@
         }
       }
     },
+    "Each idea you study comes back right before you'd start to forget it." : {
+      "comment" : "How reviews work: when an idea comes back",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles, was du lernst, kommt wieder dran, kurz bevor du anfängst, es zu vergessen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada idea que estudias vuelve justo antes de que empieces a olvidarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque notion que tu étudies revient juste avant que tu commences à l’oublier."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni concetto che studi torna poco prima che inizi a dimenticarlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学んだポイントは、忘れ始める直前にもう一度出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공부한 내용은 잊기 직전에 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każde zagadnienie, którego się uczysz, wraca tuż przed tym, jak zaczniesz je zapominać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada ideia que você estuda volta pouco antes de você começar a esquecer."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalıştığın her kavram, tam unutmaya başlayacakken tekrar karşına çıkar."
+          }
+        }
+      }
+    },
     "Earned today" : {
       "comment" : "What the session earned",
       "localizations" : {
@@ -3639,6 +3757,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitir"
+          }
+        }
+      }
+    },
+    "First, and always short" : {
+      "comment" : "How reviews work: where reviews go in a session",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am Anfang und immer kurz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al inicio y siempre breves"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D’abord, des révisions toujours courtes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All’inizio e sempre brevi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習は最初に、いつも短く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 먼저, 언제나 짧게"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na początek, zawsze krótko"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No começo e sempre curtas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En başta ve her zaman kısa"
           }
         }
       }
@@ -3938,6 +4115,65 @@
         }
       }
     },
+    "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner." : {
+      "comment" : "How reviews work: how answers move an idea's next review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antwortest du richtig, kommt der Inhalt nach Tagen, dann nach Wochen, dann nach Monaten wieder dran. Bei einer falschen Antwort kommt er früher wieder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si aciertas, vuelve en unos días, luego en unas semanas y después en unos meses. Si fallas, vuelve antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si tu réponds juste, la notion revient après quelques jours, puis quelques semaines, puis quelques mois. Si tu te trompes, elle revient plus tôt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se rispondi bene, lo rivedi dopo qualche giorno, poi dopo settimane e infine mesi. Se sbagli, lo rivedi prima."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解すると、次に出てくるまでの間隔が数日、数週間、数か月と延びていきます。間違えると、もっと早く出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맞히면 복습 간격이 며칠에서 몇 주, 몇 달로 늘어나요. 틀리면 더 빨리 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po poprawnej odpowiedzi zagadnienie wraca po kilku dniach, potem po kilku tygodniach, a w końcu po kilku miesiącach. Po pomyłce wraca szybciej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se você acertar, a ideia volta depois de alguns dias, depois de semanas e depois de meses. Se errar, ela volta mais cedo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doğru cevapladıkça tekrarlar arasındaki süre günlerden haftalara, sonra aylara uzar. Yanlış cevaplarsan daha erken karşına çıkar."
+          }
+        }
+      }
+    },
     "Gray belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -4052,6 +4288,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeşil kuşak"
+          }
+        }
+      }
+    },
+    "How reviews work" : {
+      "comment" : "Opens what a review is, on the session's next step when it's a review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So funktionieren Wiederholungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo funcionan los repasos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment fonctionnent les révisions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come funzionano i ripassi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習のしくみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복습 진행 방식"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jak działają powtórki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como funcionam as revisões"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrarlar nasıl işler"
           }
         }
       }
@@ -4229,6 +4524,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Haftanı sayılarla özetler ve en çok gelişen becerini gösterir."
+          }
+        }
+      }
+    },
+    "Just before you forget" : {
+      "comment" : "How reviews work: when an idea comes back",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurz bevor du es vergisst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Justo antes de olvidar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste avant d’oublier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poco prima di dimenticare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘れる直前に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잊기 바로 전에"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tuż przed zapomnieniem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pouco antes de você esquecer"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unutmadan hemen önce"
           }
         }
       }
@@ -5071,6 +5425,65 @@
         }
       }
     },
+    "Nothing is close to being forgotten, so you practice what's been hardest for you." : {
+      "comment" : "How reviews work: a review of the weakest topics when nothing was due",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast noch alles gut im Gedächtnis. Deshalb übst du, was dir bisher am schwersten gefallen ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay nada que estés a punto de olvidar, así que practicas lo que más te cuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as encore bien en tête ce que tu as appris, alors tu t’entraînes sur ce qui t’a donné le plus de mal."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non rischi di dimenticare nulla a breve, quindi ti eserciti su ciò che ti ha dato più difficoltà."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今は忘れそうな内容がないので、これまで特に苦手だった内容を練習します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 기억이 흐려질 만한 내용이 없어서 가장 어려웠던 내용을 연습해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na razie wszystko dobrze pamiętasz, więc ćwiczysz to, co dotąd sprawiało ci najwięcej trudności."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda se lembra bem do que estudou, então pratica o que tem sido mais difícil para você."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu an unutmak üzere olduğun bir konu yok, bu yüzden en çok zorlandığın konuları çalışıyorsun."
+          }
+        }
+      }
+    },
     "Orange belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -5679,6 +6092,65 @@
         }
       }
     },
+    "Reviews open your session and take a small part of it, even after days away." : {
+      "comment" : "How reviews work: where reviews go in a session",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholungen stehen am Anfang deiner Lerneinheit und nehmen nur einen kleinen Teil davon ein, auch nach mehreren Tagen Pause."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los repasos van al inicio de tu sesión y ocupan una pequeña parte, incluso si llevas días sin entrar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les révisions ouvrent ta séance et n’en occupent qu’une petite partie, même après plusieurs jours de pause."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I ripassi aprono la sessione e ne occupano solo una piccola parte, anche dopo giorni di pausa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数日休んだあとも、学習は短い復習から始まります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "며칠 쉬었다 와도 학습은 짧은 복습으로 시작해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powtórki rozpoczynają naukę i zajmują tylko jej niewielką część, nawet po kilku dniach przerwy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As revisões vêm no começo da sessão e ocupam só uma pequena parte dela, mesmo depois de dias sem estudar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günlerce ara versen bile tekrarlar çalışmanın başında yer alır ve yalnızca küçük bir kısmını kaplar."
+          }
+        }
+      }
+    },
     "Rewards" : {
       "comment" : "Title of what the session earned",
       "localizations" : {
@@ -5982,6 +6454,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru cevaplarla artar. Bir gün ara verince biraz azalır."
+          }
+        }
+      }
+    },
+    "Right answers wait longer" : {
+      "comment" : "How reviews work: how answers move an idea's next review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtig beantwortet, später wiederholt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si aciertas, vuelve más tarde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les bonnes réponses espacent les révisions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se rispondi bene, ripassi più avanti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解すると復習の間隔が延びます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맞히면 길어지는 복습 간격"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dłuższa przerwa po poprawnej odpowiedzi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você acerta demora mais para voltar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doğru cevapladıkların daha geç tekrarlanır"
           }
         }
       }
@@ -8297,6 +8828,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk özetin pazar günü hazır olacak"
+          }
+        }
+      }
+    },
+    "Your hardest topics today" : {
+      "comment" : "How reviews work: a review of the weakest topics when nothing was due",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine schwierigsten Themen heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los temas que más te cuestan hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les sujets les plus difficiles pour toi aujourd’hui"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli argomenti più difficili per te oggi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日は特に苦手なトピック"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 가장 어려운 주제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najtrudniejsze dla ciebie tematy na dziś"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus tópicos mais difíceis hoje"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün en çok zorlandığın konular"
           }
         }
       }
