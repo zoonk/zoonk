@@ -12,9 +12,11 @@ import promptTemplate from "./example-lines.prompt.md";
 
 /**
  * Luna scored 9.68 on the example-lines eval at 4.2s p50, ahead of Claude Haiku 5.5 (7 Oct 2026).
+ * On 10 cases (11 Nov 2026), Luna scored 9.66 at $0.22/1k; Muse Ember scored 9.90 at $0.97/1k and
+ * won a blind read 4 to 1 against Flash Lite (9.00), which left lines empty where a fact fit.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+const fallbackModels = ["meta/muse-ember", "google/gemini-3.5-flash-lite"] as const;
 
 const schema = z.object({
   lines: z.array(z.object({ line: z.string().nullable(), screen: z.number().int() })),
