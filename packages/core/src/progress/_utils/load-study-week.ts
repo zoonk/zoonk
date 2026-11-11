@@ -33,13 +33,10 @@ const WEEK_DAYS = 7;
 export async function loadStudyWeek({
   localDate,
   selectedPlan,
-  timeZone: requestZone,
   userId,
 }: {
   localDate: Date;
   selectedPlan?: { goalId: string; settings: unknown };
-  /** The request's zone, for goals that have none stored. */
-  timeZone: string;
   userId: string;
 }): Promise<StudyWeek> {
   const weekStart = getStartOfWeek(localDate);
@@ -79,7 +76,7 @@ export async function loadStudyWeek({
   };
 
   const started = goals.map((goal) => {
-    const timeZone = getAnswerTimeZone({ goal, timeZone: requestZone });
+    const timeZone = getAnswerTimeZone({ goal });
 
     return {
       freeUntil: getFreeWeekEnd({ examPrep, goal, timeZone }),

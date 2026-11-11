@@ -111,7 +111,7 @@ export async function loadStudySessionView({
 }): Promise<StudySessionView> {
   const [basics, week, blockViews] = await Promise.all([
     loadSessionBasics({ initialDay, session: storedSession }),
-    loadStudyWeek({ localDate: weekDate, timeZone, userId }),
+    loadStudyWeek({ localDate: weekDate, userId }),
     loadSessionBlockViews({
       blueprint,
       readLessonStates,
