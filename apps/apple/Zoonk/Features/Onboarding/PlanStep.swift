@@ -833,6 +833,9 @@ private struct PlanReveal: View {
         return
       }
 
+      // As Start does: the step opens over Today, and the session screen reads the day from it.
+      await today.today.refresh()
+
       // A learner who left the reveal while it saved isn't taken anywhere.
       guard !Task.isCancelled, router.shown == shown else {
         return
