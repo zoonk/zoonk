@@ -39,6 +39,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   let displayName: String
   /// What the goal is about, which search also matches; screens show `displayName`.
   let title: String
+  /// Nil for a goal that isn't a language goal with countries to choose from.
+  var variety: LanguageVariety? = nil
 
   enum Kind: String, Sendable {
     case exam
@@ -104,6 +106,8 @@ enum LearnerTier: String, Equatable, Sendable {
 protocol LearnerSummaryAPIClient {
   func getSummary(token: String) async throws -> LearnerSummary
   func switchGoal(token: String, goalID: String) async throws
+  /// False when the goal's language doesn't offer the country.
+  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool
 }
 
 struct LearnerSummaryAPI: LearnerSummaryAPIClient {
@@ -138,6 +142,20 @@ struct LearnerSummaryAPI: LearnerSummaryAPIClient {
       }
     }
   }
+
+  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
+    try await clients.perform(token: token, sendingNull: ["targetRegion"]) { client in
+      switch try await client.updateGoal(
+        path: .init(goalId: goalID), body: .json(.init(targetRegion: region)))
+      {
+      case .ok: return true
+      case .unprocessableContent: return false
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
 }
 
 func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> LearnerSummary {
@@ -167,7 +185,9 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,
-        displayName: goal.displayName, title: goal.title)
+        displayName: goal.displayName, title: goal.title,
+        variety: LanguageVariety(
+          language: goal.targetLanguage, region: goal.targetRegion, choices: goal.regionChoices))
     },
     identity: LearnerIdentity(
       isAnonymous: summary.identity.isAnonymous,

@@ -12,4 +12,10 @@ extension Locale {
     let name = languageName(tag)
     return name.prefix(1).uppercased(with: self) + name.dropFirst()
   }
+
+  /// "Spanish (Argentina)" with the country the learner chose, "Spanish" without: never from a
+  /// goal's flag, so no country shows that they didn't choose.
+  func varietyName(language: String, region: String?) -> String {
+    languageTitle(region.map { "\(language)-\($0)" } ?? language)
+  }
 }

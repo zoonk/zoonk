@@ -63,6 +63,10 @@ final class LearnerSummaryStoreTests: XCTestCase {
 }
 
 private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
+  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
+    true
+  }
+
   private var nextChanges: [Date]
   private let switchError: APIError?
   private(set) var requestCount = 0

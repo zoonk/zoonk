@@ -9,6 +9,7 @@ enum UnderstoodField: String, Equatable, Sendable {
   case targetCourse
   case targetPosition
   case targetScore
+  case targetRegion
   case studyTime
 
   enum Editor {
@@ -67,6 +68,7 @@ struct UnderstoodFacts: Decodable {
   let language: String
   let targetDate: String?
   let targetLanguage: String?
+  let targetRegion: String?
   let details: Details?
 
   struct Details: Decodable {
@@ -119,6 +121,15 @@ enum UnderstoodRows {
     }
 
     rows += languageRows(facts: facts, locale: locale)
+
+    if let target = facts.targetLanguage,
+      let index = rows.firstIndex(where: { $0.id == "targetLanguage" })
+    {
+      rows[index].note = varietyNote(
+        language: target, region: facts.targetRegion,
+        taughtRegion: goal.regionChoices.first(where: \.taught)?.code)
+    }
+
     rows += detailRows(facts: facts, cutoff: goal.cutoff?.value1)
 
     // The card's aim row opens the aims it can change to, never free text that sizes nothing.
@@ -200,17 +211,18 @@ enum UnderstoodRows {
       return []
     }
 
-    let language = locale.languageTitle(target)
+    let language = locale.varietyName(language: target, region: facts.targetRegion)
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
-    if !isSaid(language, in: facts.displayName) {
+    // A country shows even when the title names the language: its row is where it changes.
+    if facts.targetRegion != nil || !isSaid(language, in: facts.displayName) {
       rows.append(
         UnderstoodRow(
           id: "targetLanguage",
           label: LocalizedStringResource(
             "Language", table: "Onboarding", comment: "Row with the language a goal learns"),
-          value: language))
+          value: language, field: facts.targetRegion == nil ? nil : .targetRegion))
     }
 
     rows.append(

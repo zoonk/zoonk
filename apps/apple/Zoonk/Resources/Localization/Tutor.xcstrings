@@ -1208,6 +1208,65 @@
         }
       }
     },
+    "Applied. You can change it anytime on your Plan." : {
+      "comment" : "The learner applied the country the buddy offered; Plan is the Plan tab",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übernommen. Du kannst die Auswahl jederzeit unter „Plan“ ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se aplicó. Puedes cambiarlo cuando quieras en tu Plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est fait. Tu peux modifier ce choix à tout moment dans l’onglet Plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatto. Puoi cambiare questa scelta quando vuoi nella scheda Piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "適用しました。学習計画でいつでも変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "적용했어요. 계획 탭에서 언제든 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Możesz to zmienić w każdej chwili na karcie Plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplicado. Você pode mudar isso quando quiser na aba Plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uygulandı. Bunu Plan sekmesinden istediğin zaman değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Apply" : {
       "comment" : "Applies a plan change the buddy proposed",
       "localizations" : {
@@ -6038,6 +6097,65 @@
         }
       }
     },
+    "That didn't save. Try again." : {
+      "comment" : "Applying the country the buddy offered failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se guardó. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce choix n’a pas été enregistré. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio non riuscito. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存できませんでした。もう一度試してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장되지 않았어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się zapisać. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para salvar. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilemedi. Tekrar dene."
+          }
+        }
+      }
+    },
     "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus." : {
       "comment" : "Why a free learner can't start another goal",
       "localizations" : {
@@ -7987,6 +8105,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü yardım hakkını kullandın. Hakkın yarın yenilenir."
+          }
+        }
+      }
+    },
+    "Your buddy and practice calls use %@." : {
+      "comment" : "The buddy offers the language as the country lessons already teach speaks it; the argument is like 'Spanish (Mexico)'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel und die Übungsgespräche nutzen %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compañero y las llamadas de práctica usan %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les échanges avec ton compagnon et les appels d’entraînement se font en %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo compagno e le conversazioni di allenamento usano %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相棒とのやり取りや会話練習では%@を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짝꿍과 연습 대화에서는 %@을(를) 사용해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Język twojego kumpla i rozmów treningowych: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro e as conversas de prática usam %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %@ kullanılır."
           }
         }
       }

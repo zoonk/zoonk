@@ -50,7 +50,7 @@ final class UnderstoodRowsTests: XCTestCase {
     draft: [String: Any],
     examDates: [[String: Any]] = []
   ) throws -> Components.Schemas.UnderstoodGoal {
-    try decode(["cutoff": NSNull(), "draft": draft, "examDates": examDates])
+    try decode(["cutoff": NSNull(), "draft": draft, "examDates": examDates, "regionChoices": []])
   }
 
   private func decode<Value: Decodable>(_ json: [String: Any]) throws -> Value {
