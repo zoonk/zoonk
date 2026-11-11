@@ -37,7 +37,7 @@ export type AppliedChange =
   | { changeId: string; replaced?: string[]; status: "applied" | "proposed" }
   | PlanChangeRefusal;
 
-type UnchangedPlan = { status: "unchanged" };
+export type UnchangedPlan = { reason: UnchangedFocusReason; status: "unchanged" };
 
 export type UnchangedFocusReason = "alreadyIn" | "cantMove";
 
@@ -297,7 +297,12 @@ export async function proposeChange({
   ]);
 
   if (change.unchanged) {
-    return { status: "unchanged" };
+    const areas = getAskedAreas({ focused: context.state.settings.focusAreas, operations });
+
+    return {
+      reason: hasEveryLesson({ areas, computed: change.computed }) ? "alreadyIn" : "cantMove",
+      status: "unchanged",
+    };
   }
 
   if (approval === "whenLarge" && !officialDate && !needsApproval(change.effect)) {

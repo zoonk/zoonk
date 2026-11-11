@@ -66,9 +66,14 @@ export async function settleFocusTest({
     timeZone,
   });
 
-  // A focus that wouldn't move the plan is already in it; anything else is tried again later.
   if (proposed.status === "proposed" || proposed.status === "unchanged") {
-    await keepHandledSuggestion({ areas, goalId, inPlan: proposed.status === "unchanged", userId });
+    await keepHandledSuggestion({
+      areas,
+      goalId,
+      inputVersion: focusTest.inputVersion,
+      outcome: proposed.status === "unchanged" ? proposed.reason : "proposed",
+      userId,
+    });
   }
 
   return loadPlacementState({ goalId, plan, timeZone, today, userId });

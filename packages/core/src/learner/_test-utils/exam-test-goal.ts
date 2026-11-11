@@ -16,6 +16,7 @@ const CITATION = { passage: "passage", sourceId: "source" };
 
 /** Far enough from the exam that a focus still moves the plan. */
 const SHORT_PLAN_DAYS = 30;
+const SHORT_PLAN_LESSONS = 8;
 
 type TestSubject = {
   /** Questions ready per topic; 2 unless given. */
@@ -207,8 +208,9 @@ const SHORT_PLAN_SUBJECTS = [
  */
 export async function shortPlanExamGoalFixture({
   daysLeft = SHORT_PLAN_DAYS,
+  lessons = SHORT_PLAN_LESSONS,
   goal: goalAttrs = {},
-}: { daysLeft?: number; goal?: Partial<Omit<GoalAttrs, "userId">> } = {}) {
+}: { daysLeft?: number; lessons?: number; goal?: Partial<Omit<GoalAttrs, "userId">> } = {}) {
   const subjects = SHORT_PLAN_SUBJECTS.map((name) => ({ name, questions: 5 }));
 
   const [user, blueprint, library] = await Promise.all([
@@ -243,7 +245,7 @@ export async function shortPlanExamGoalFixture({
     }),
     planLibraryFixture({
       phases: ["Prova"],
-      skills: SHORT_PLAN_SUBJECTS.map((area) => ({ area, lessons: 8 })),
+      skills: SHORT_PLAN_SUBJECTS.map((area) => ({ area, lessons })),
     }),
   ]);
 

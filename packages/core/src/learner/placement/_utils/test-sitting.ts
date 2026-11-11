@@ -15,6 +15,7 @@ import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
+import { type FocusTestRecord } from "../focus-test-state";
 import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
@@ -213,18 +214,19 @@ export async function saveTestSummary({
 export async function keepHandledSuggestion({
   areas,
   goalId,
-  inPlan,
+  inputVersion,
+  outcome,
   userId,
 }: {
   areas: string[];
   goalId: string;
-  /** The plan already follows it: a focus on it changes nothing. */
-  inPlan: boolean;
+  inputVersion: number;
+  outcome: NonNullable<FocusTestRecord["handled"]>["outcome"];
   userId: string;
 }): Promise<void> {
   await writeLearnerChange({ userId }, async (tx) => {
     await changeFocusTestRecord({
-      change: (record) => ({ ...record, handled: { areas, inPlan } }),
+      change: (record) => ({ ...record, handled: { areas, inputVersion, outcome } }),
       goalId,
       tx,
     });

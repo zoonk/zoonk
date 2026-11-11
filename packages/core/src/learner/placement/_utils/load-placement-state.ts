@@ -114,6 +114,7 @@ type PlacementLoad = {
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: {
     dueFocus: string[] | null;
+    inputVersion: number;
     sittingId: string | null;
     summary: FocusTestSummaryRecord;
   } | null;
@@ -291,6 +292,7 @@ export async function loadPlacementWithSummary({
   return {
     focusTest: focusTest && {
       dueFocus: focusTest.dueFocus,
+      inputVersion: focusTest.inputVersion,
       sittingId: focusTest.sittingId,
       summary: focusTest.summary,
     },

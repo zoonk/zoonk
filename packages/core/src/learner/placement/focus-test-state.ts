@@ -42,12 +42,15 @@ const recordSchema = z.object({
    */
   focus: z.array(z.string()).nullable().default(null),
   /**
-   * The suggestion the test last settled with a plan whose time is short: proposed to the
-   * learner, or found already in the plan as it is (`inPlan`), which a focus on it wouldn't move.
-   * The same suggestion isn't settled twice.
+   * A proposed suggestion stays handled after the learner answers it. A planner verdict applies
+   * only to the inputs it checked, so changed inputs can make the same focus worth proposing.
    */
   handled: z
-    .object({ areas: z.array(z.string()), inPlan: z.boolean() })
+    .object({
+      areas: z.array(z.string()),
+      inputVersion: z.int(),
+      outcome: z.enum(["proposed", "alreadyIn", "cantMove"]),
+    })
     .nullable()
     .default(null),
   pausedAt: z.iso.datetime().nullable().default(null),

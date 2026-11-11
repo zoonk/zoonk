@@ -62,7 +62,11 @@ async function loadFocusFacts({
   const proposes = asks && timeSaved && timeShort;
 
   const { focus = null, handled = null } = setup.record ?? {};
-  const settled = handled !== null && isSameFocus(handled.areas, suggested);
+
+  const settled =
+    handled !== null &&
+    isSameFocus(handled.areas, suggested) &&
+    (handled.outcome === "proposed" || handled.inputVersion === setup.plan.inputVersion);
 
   const waiting = proposes
     ? await tx.planChange.findFirst({
@@ -83,7 +87,7 @@ async function loadFocusFacts({
     isSameFocus(focusAreas, focus ?? []);
 
   return {
-    covered: settled && handled.inPlan,
+    covered: settled && handled.outcome === "alreadyIn",
     due: due ? suggested : null,
     focusAreas,
     proposal: waiting ? await loadPlanChangeView(waiting.id, { timeZone }) : null,
@@ -93,6 +97,7 @@ async function loadFocusFacts({
 }
 
 type FocusTestLoad = {
+  inputVersion: number;
   sittingId: string | null;
   /** The focus to propose now; null when none is due. */
   dueFocus: string[] | null;
@@ -158,6 +163,7 @@ async function loadTurnFocusTest({
 
   return {
     dueFocus: focusPlan.due,
+    inputVersion: setup.plan.inputVersion,
     sittingId: progress.sitting?.id ?? null,
     summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
     view: toFocusTestView({
