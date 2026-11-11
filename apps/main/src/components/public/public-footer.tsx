@@ -1,7 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
-import { FooterExploreLinks } from "./footer-explore-links";
 import { FooterLanguages } from "./footer-languages";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PUBLIC_FOOTER_ID } from "./public-ids";
@@ -12,20 +11,12 @@ const COPYRIGHT_YEAR = String(new Date().getFullYear());
 const FOOTER_LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px]";
 
-export async function PublicFooter({
-  exploreLinks = true,
-  pathname,
-}: {
-  exploreLinks?: boolean;
-  pathname?: string;
-}) {
+export async function PublicFooter({ pathname }: { pathname?: string }) {
   const t = await getExtracted();
 
   return (
     <footer className="border-t" id={PUBLIC_FOOTER_ID}>
       <div className={PUBLIC_CONTAINER_CLASS}>
-        {exploreLinks && <FooterExploreLinks />}
-
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-7 gap-y-3 py-8 text-sm">
           <ZoonkLogo className="text-foreground size-6" />
 
