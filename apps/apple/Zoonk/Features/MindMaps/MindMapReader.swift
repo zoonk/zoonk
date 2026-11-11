@@ -15,8 +15,6 @@ struct MindMapReader: View {
 
   @State private var maps: GoalMindMaps?
   @State private var current: MindMapCard?
-  /// A lesson map to open at once its chapter is read.
-  @State private var wanted: MindMapPosition?
   @State private var zoomed: ZoomedMap?
 
   var body: some View {
@@ -67,39 +65,14 @@ struct MindMapReader: View {
 
   private func open(_ value: GoalMindMaps, goalId: String) {
     maps = value
-    let wanted = start ?? store.position(goalId: goalId, tab: tab)
-    let cards = cards(value, goalId: goalId)
-    current = MindMapDeck.start(in: cards, at: wanted)
-
-    if current?.mapKey != wanted?.key {
-      self.wanted = wanted
-    }
-  }
-
-  private func cards(_ maps: GoalMindMaps, goalId: String) -> [MindMapCard] {
-    MindMapDeck.cards(tab: tab, maps: maps, lessons: lessonsRead(maps, goalId: goalId))
-  }
-
-  /// The chapters whose lesson maps were read, which the deck counts on instead of the list.
-  private func lessonsRead(_ maps: GoalMindMaps, goalId: String) -> [String: ChapterLessonMaps] {
-    guard tab != .chapters else {
-      return [:]
-    }
-
-    let chapters =
-      tab == .lessons
-      ? maps.lessonGroups.map(\.chapterId)
-      : maps.saved.filter { $0.kind == .lesson }.compactMap(\.chapterId)
-
-    return Dictionary(
-      Set(chapters).compactMap { chapterId in
-        store.lessonMaps(goalId: goalId, chapterId: chapterId).value.map { (chapterId, $0) }
-      }, uniquingKeysWith: { first, _ in first })
+    current = MindMapDeck.start(
+      in: MindMapDeck.cards(tab: tab, maps: value),
+      at: start ?? store.position(goalId: goalId, tab: tab))
   }
 
   @ViewBuilder
   private func deck(_ maps: GoalMindMaps, goalId: String) -> some View {
-    let cards = cards(maps, goalId: goalId)
+    let cards = MindMapDeck.cards(tab: tab, maps: maps)
     let index = current.flatMap { cards.firstIndex(of: $0) }
 
     if cards.isEmpty {
@@ -128,11 +101,8 @@ struct MindMapReader: View {
       .scrollIndicators(.hidden)
       // The chapter of the map shown and the next one, read ahead.
       .loads(lessonResources(cards, around: index, goalId: goalId), refreshable: false)
-      .onChange(of: cards) { _, cards in
-        follow(cards)
-      }
       .onChange(of: current) { _, card in
-        if let card, card.mapKey != nil {
+        if let card {
           store.remember(MindMapPosition(card), goalId: goalId, tab: tab)
         }
       }
@@ -145,25 +115,6 @@ struct MindMapReader: View {
 
         bottomBar(cards, index: index ?? 0, maps: maps, goalId: goalId)
       }
-    }
-  }
-
-  /// A chapter's lesson maps not read yet become their maps once they are, and the reader stays on
-  /// the one it showed, or goes to the one it opened for.
-  private func follow(_ cards: [MindMapCard]) {
-    if let wanted, let key = wanted.key, let card = cards.first(where: { $0.mapKey == key }) {
-      current = card
-      self.wanted = nil
-      return
-    }
-
-    if let card = current, !cards.contains(card) {
-      current = MindMapDeck.resolve(card, in: cards) ?? cards.first
-    }
-
-    if let wanted, !cards.contains(where: { $0.chapterId == wanted.chapterId && $0.mapKey == nil })
-    {
-      self.wanted = nil
     }
   }
 
@@ -226,8 +177,6 @@ struct MindMapReader: View {
       } else {
         waiting(lessons)
       }
-    case .pendingLesson(let chapterId, _):
-      waiting(store.lessonMaps(goalId: goalId, chapterId: chapterId))
     }
   }
 
@@ -398,8 +347,6 @@ struct MindMapReader: View {
           key: MindMapKey(kind: .lesson, targetId: lessonId), title: lesson.title,
           chapterId: chapterId), lesson.saved
       )
-    case .pendingLesson:
-      return nil
     }
   }
 

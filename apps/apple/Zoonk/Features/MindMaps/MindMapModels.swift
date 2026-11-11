@@ -69,8 +69,10 @@ struct LessonMapGroup: Decodable, Equatable, Sendable {
   let count: Int
   /// How many of them a free exam plan past its first week keeps for Plus.
   let locked: Int
+  /// The ones that open, in chapter order: a reader opened with this list keeps these.
+  let lessonIds: [String]
 
-  var opens: Int { count - locked }
+  var opens: Int { lessonIds.count }
 }
 
 enum SavedMindMapKind: String, Codable, Hashable, Sendable {
@@ -184,11 +186,6 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
 
   let chapter: Chapter
   let lessons: [Lesson]
-
-  /// The ones a deck shows.
-  var opening: [Lesson] {
-    lessons.filter { !$0.locked && $0.map != nil }
-  }
 }
 
 /// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first, or the day's
