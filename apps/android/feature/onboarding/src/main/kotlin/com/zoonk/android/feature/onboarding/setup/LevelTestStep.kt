@@ -473,14 +473,15 @@ private fun ColumnScope.LevelTestSpeaking(
                 Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             }
         },
-        answer = {},
+        answer = {
+            VoiceAnswerRecorder(
+                grade = { store.speakLevelTest(goalId, it) },
+                onGraded = {},
+                navigator = navigator,
+                key = recorderKey,
+            )
+        },
     ) {
-        VoiceAnswerRecorder(
-            grade = { store.speakLevelTest(goalId, it) },
-            onGraded = {},
-            navigator = navigator,
-            key = recorderKey,
-        )
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip_part))
         }
