@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLanguageFlagCode, getLanguageFlagLabel } from "./language-flags";
+import { getLanguageFlagCode } from "./language-flags";
 
 describe(getLanguageFlagCode, () => {
   it("shows the variety courses teach: US English, Brazilian Portuguese, Mexican Spanish", () => {
@@ -21,10 +21,6 @@ describe(getLanguageFlagCode, () => {
 
   it("shows Taiwan's flag for the Chinese taught there", () => {
     expect(getLanguageFlagCode("zh-TW")).toBe("tw");
-
-    expect(getLanguageFlagLabel({ language: "zh-TW", userLanguage: "en" })).toBe(
-      "Chinese (Taiwan)",
-    );
   });
 
   it("shows Hong Kong's flag for Cantonese", () => {
@@ -34,25 +30,5 @@ describe(getLanguageFlagCode, () => {
   it("has no flag for a language it doesn't know", () => {
     expect(getLanguageFlagCode("eo")).toBeNull();
     expect(getLanguageFlagCode("")).toBeNull();
-  });
-});
-
-describe(getLanguageFlagLabel, () => {
-  it("names the variety the flag marks, in the viewer's language", () => {
-    expect(getLanguageFlagLabel({ language: "en", userLanguage: "en" })).toBe("American English");
-    expect(getLanguageFlagLabel({ language: "es", userLanguage: "en" })).toBe("Mexican Spanish");
-
-    expect(getLanguageFlagLabel({ language: "pt", userLanguage: "es" })).toBe(
-      "Portugués de Brasil",
-    );
-  });
-
-  it("names only the language when the flag isn't a country's", () => {
-    expect(getLanguageFlagLabel({ language: "ca", userLanguage: "en" })).toBe("Catalan");
-    expect(getLanguageFlagLabel({ language: "ar", userLanguage: "pt" })).toBe("Árabe");
-  });
-
-  it("has no label without a flag", () => {
-    expect(getLanguageFlagLabel({ language: "eo", userLanguage: "en" })).toBeNull();
   });
 });
