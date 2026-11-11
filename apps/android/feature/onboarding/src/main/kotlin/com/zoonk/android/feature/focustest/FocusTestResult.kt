@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.focustest
 
+import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -307,7 +309,7 @@ internal fun SubjectsButton(
     answered: Boolean,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
-    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LINK_INSET)) {
+    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) {
         Text(stringResource(if (answered) R.string.focustest_view_all_subjects else R.string.focustest_view_subjects))
     }
     if (!open) return
@@ -341,6 +343,3 @@ internal fun SubjectsButton(
 }
 
 private val SHEET_MARGIN = 24.dp
-
-/** A text button's own padding, so its words line up with the text around it. */
-private val LINK_INSET = 12.dp

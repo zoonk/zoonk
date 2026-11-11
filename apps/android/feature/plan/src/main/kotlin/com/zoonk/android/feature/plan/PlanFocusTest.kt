@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -130,7 +132,7 @@ private fun TestQuestionsSwitch(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
         )
-        TextButton(onClick = { model.setQuestions(on = paused) }, busy = model.saving, modifier = Modifier.bleed(LINK_INSET)) {
+        TextButton(onClick = { model.setQuestions(on = paused) }, busy = model.saving, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) {
             Text(stringResource(if (paused) R.string.focustest_ask_again else R.string.focustest_pause_questions))
         }
         if (model.failed) {
@@ -143,6 +145,3 @@ private fun TestQuestionsSwitch(
         }
     }
 }
-
-/** A text button's own padding, so its words line up with the text above it. */
-private val LINK_INSET = 12.dp

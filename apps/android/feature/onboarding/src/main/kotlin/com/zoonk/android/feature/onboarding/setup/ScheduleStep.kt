@@ -1,17 +1,17 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -394,8 +393,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val inset = ButtonDefaults.TextButtonContentPadding.calculateStartPadding(LocalLayoutDirection.current)
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset), enabled = enabled) {
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.textInset), enabled = enabled) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }

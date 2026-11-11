@@ -306,6 +306,9 @@ private fun ButtonSize.sidePadding(icon: Boolean): Dp =
 
 val ButtonSize.leadingIconInset: Dp get() = sidePadding(icon = true)
 
+/** How far a text button is pulled out so its words line up with the text above it. */
+val ButtonSize.textInset: Dp get() = sidePadding(icon = false)
+
 private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 
 // A minimum height overrides Material's 40dp; it grows with the words at larger font sizes.

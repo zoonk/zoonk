@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.LocalButtonSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -825,7 +827,7 @@ private fun RevealLink(
     text: String,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LINK_INSET)) { Text(text) }
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.textInset)) { Text(text) }
 }
 
 @Composable
@@ -955,6 +957,3 @@ private val TODAY_PROGRESS_DELAY = 400.milliseconds
 
 /** The plan's `?focus=choose`: its focus sheet open. */
 private const val CHOOSE_FOCUS = "choose"
-
-/** A text button's own padding, so its words line up with the text above it. */
-private val LINK_INSET = 12.dp
