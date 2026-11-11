@@ -222,6 +222,10 @@ describe(toArticleNumber, () => {
         hints: ["12 bis", "12bis", "Artículo 12 bis"],
         text: "Artículo 12. A.\nArtículo 12 bis. B.",
       },
+      {
+        hints: ["三十二の二", "32の2", "第三十二条の二", "三十二条之二"],
+        text: "第三十二条 A。\n第三十二条の二 B。\n第三十三条 C。",
+      },
     ];
 
     for (const { hints, text } of cases) {

@@ -1,8 +1,9 @@
 const LINE_START = String.raw`(?:^|[\n\f])[^\S\n\f]*`;
 const ORDINAL = String.raw`(?:\.?[º°ª]|o\b|er\b)?`;
 const SUFFIX = String.raw`(?:-[A-Z]{1,2}\b|[^\S\n]+(?:bis|ter|quater)\b)?`;
-const HINT_SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
+const CJK_SUFFIX = String.raw`[の之][\d${CJK_NUMERALS}]+`;
+const HINT_SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
 const DIGITS = String.raw`\d+(?:\.\d+)*`;
 
 /**
@@ -11,13 +12,13 @@ const DIGITS = String.raw`\d+(?:\.\d+)*`;
  */
 const HEADING_FAMILIES = [
   String.raw`(?:Art\.|Artigo|Artículo|Articulo|Article|Articolo|Artikel)[^\S\n]*(?<number>${DIGITS})${ORDINAL}(?<suffix>${SUFFIX})\.?`,
-  String.raw`第(?<number>[\d${CJK_NUMERALS}]+)条(?<suffix>[の之][${CJK_NUMERALS}]+)?`,
+  String.raw`第(?<number>[\d${CJK_NUMERALS}]+)条(?<suffix>${CJK_SUFFIX})?`,
   String.raw`(?:Section|SECTION|Sec\.|SEC\.)[^\S\n]*(?<number>${DIGITS})(?<suffix>[A-Za-z]?)\.?`,
   String.raw`§[^\S\n]*(?<number>${DIGITS})(?<suffix>[a-z]?)\.?`,
 ].map((heading) => new RegExp(`${LINE_START}(?<heading>${heading})`, "gu"));
 
 const ARTICLE_NUMBER = new RegExp(
-  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)${ORDINAL}(?<suffix>${HINT_SUFFIX})`,
+  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)条?${ORDINAL}(?<suffix>${HINT_SUFFIX})`,
   "u",
 );
 
@@ -64,12 +65,23 @@ function parseCjkNumber(numeral: string): number {
   return total + digit;
 }
 
+/** "-a", " bis" and "之二" are written "A", "BIS" and "の2", however a heading or hint spells them. */
+function toSuffix(suffix: string): string {
+  const cjk = /^[の之](?<numeral>.+)$/u.exec(suffix)?.groups?.numeral;
+
+  if (cjk) {
+    return `の${/^\d+$/u.test(cjk) ? Number(cjk) : parseCjkNumber(cjk)}`;
+  }
+
+  return suffix.replaceAll(/[\s-]+/gu, "").toUpperCase();
+}
+
 /** "107.51" is section 51 of part 107, so numbering goes on within the part. */
 function toNumber(groups: Record<string, string | undefined>): { number: string; value: number } {
   const numeral = groups.number ?? "";
   const parts = /^\d/u.test(numeral) ? numeral.split(".").map((part) => Number(part)) : null;
   const value = parts?.[0] ?? parseCjkNumber(numeral);
-  const suffix = (groups.suffix ?? "").replaceAll(/[\s-]+/gu, "").toUpperCase();
+  const suffix = toSuffix(groups.suffix ?? "");
 
   return { number: `${parts?.join(".") ?? value}${suffix}`, value };
 }
