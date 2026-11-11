@@ -173,12 +173,6 @@ For each lesson:
 - `canDo`: what the learner can do afterwards, as a short action worded in `VERB_FORM`, up to 12 words.
 - `skills` and `screens` as described above.
 
-{{#redraft}}
-# Your last plan
-
-`PREVIOUS_PLAN_PROBLEMS` lists the rules your last plan for this lesson broke, by lesson title. Plan it again so every lesson keeps them.
-
-{{/redraft}}
 # Final check
 
 Before answering, check each lesson: 1 to 3 skills, 5 to 16 screens, a hook first that opens on an everyday moment in a tweet's length and asks nothing, exactly one guess right after the first explanation or worked example, a prediction on the idea taught next that nobody could answer from its question alone, neither containing its answer nor repeating the screen before's calculation, with no option but the tempting one right under another reading and the tempting one's reasoning answered by the screens after, every explanation teaching one idea through one concrete case, briefed as the idea in a plain sentence and its case, short enough to read at a glance, no more than 4 teaching screens in a row, a worked example for every hard skill, at most one new term per screen, checks that apply only what earlier screens taught, each decided by something an earlier screen states and each asking something new, statements to judge right or wrong with a verdict each and both verdicts when there are two or more, every skill explained and practiced, one application last, every case the skill meets, counterintuitive ones included, taught on its own screen rather than left out, every screen naming its `visualKind`, a visual only on screens the learner would otherwise have to picture in their head, questions included, and the best one for it among every template, table, chart, timeline and picture, a picture only for what has to be seen and kept across the screens that explain it, no decorative visual, no table that restates its sentence, no picture of two scenes, no table or template repeated on the next screen{{#private}}, what the app draws wherever it can show the idea{{/private}}{{#novice}}, at least two explanations or worked examples before the first check{{/novice}}{{#product}}, a hook that is a task wanted in the product and an application that has the learner do it in the real product and say what they see, a feature only some releases or models have saying which ones, and no other release named{{/product}}, and with `EXAMS`, nothing planned below the depth those exams ask. If a lesson breaks a size rule, split it.

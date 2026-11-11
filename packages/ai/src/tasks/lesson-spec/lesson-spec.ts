@@ -103,7 +103,7 @@ function formatList(items: readonly string[]): string {
   return items.length === 0 ? "none" : items.map((item) => `\n- ${item}`).join("");
 }
 
-function buildSystemPrompt(params: LessonSpecParams, redraft: boolean): string {
+function buildSystemPrompt(params: LessonSpecParams): string {
   const novice = readsNoviceRules(params);
 
   const prompt = selectPromptVariants({
@@ -114,7 +114,6 @@ function buildSystemPrompt(params: LessonSpecParams, redraft: boolean): string {
       novice,
       private: Boolean(params.isPrivate || params.material),
       product: Boolean(params.product),
-      redraft,
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -124,7 +123,7 @@ function buildSystemPrompt(params: LessonSpecParams, redraft: boolean): string {
   return params.quick ? `${prompt}\n${quickLessonPrompt}` : prompt;
 }
 
-function buildUserPrompt(params: LessonSpecParams, problems: readonly string[]): string {
+function buildUserPrompt(params: LessonSpecParams): string {
   const templates = params.activityTemplates.map((template) =>
     template.explore
       ? `${template.id} (explorable): ${template.description}`
@@ -145,17 +144,11 @@ ${formatLocalContext(params.language)}
     ${formatLessonExams(params.exams)}
     OUTLINE_SKILLS: ${formatList(params.skills ?? [])}
     CHAPTER_LESSONS: ${formatChapterLessons(params.chapterLessons)}
-    ACTIVITY_TEMPLATES: ${formatList(templates)}${problems.length > 0 ? `\n    PREVIOUS_PLAN_PROBLEMS: ${formatList(problems)}` : ""}
+    ACTIVITY_TEMPLATES: ${formatList(templates)}
 ${formatLessonDocuments({ material: params.material, sources: params.sources })}  `;
 }
 
-async function planLesson({
-  params,
-  problems,
-}: {
-  params: LessonSpecParams;
-  problems: readonly string[];
-}) {
+async function planLesson(params: LessonSpecParams) {
   const {
     analytics,
     fallbackModels = defaultFallbackModels,
@@ -165,8 +158,8 @@ async function planLesson({
     useFallback = true,
   } = params;
 
-  const instructions = buildSystemPrompt(params, problems.length > 0);
-  const userPrompt = buildUserPrompt(params, problems);
+  const instructions = buildSystemPrompt(params);
+  const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
   const templateIds = new Set(params.activityTemplates.map((template) => template.id));
 
@@ -202,28 +195,18 @@ async function planLesson({
   return { data, provenance, systemPrompt: instructions, usage: result.usage, userPrompt };
 }
 
-type LessonPlan = Awaited<ReturnType<typeof planLesson>>;
-
-function findPlanProblems({ data, novice }: { data: LessonSpecResult; novice: boolean }): string[] {
-  return data.lessons.flatMap((spec) =>
-    getLessonSpecIssues({ novice, spec }).map((issue) => `"${spec.title}": ${issue.detail}`),
-  );
-}
-
 /**
- * A plan that breaks a shape rule is planned once more, told what broke, and the one with fewer
- * broken rules is kept. The planner splits a lesson that doesn't fit; code never does, since it
- * can't write the new lessons' hooks and applications.
+ * A plan that breaks a shape rule is planned once more, and the one with fewer broken rules is
+ * kept. Size is a target the prompt asks for, never checked here: a lesson a little long beats a
+ * second plan, and code can't split one, since it can't write the new lessons' hooks and
+ * applications.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
   const novice = readsNoviceRules(params);
 
-  return draftAgainWhenFlawed<LessonPlan>({
-    countProblems: ({ data }) => findPlanProblems({ data, novice }).length,
-    draft: (previous) =>
-      planLesson({
-        params,
-        problems: previous ? findPlanProblems({ data: previous.data, novice }) : [],
-      }),
+  return draftAgainWhenFlawed({
+    countProblems: ({ data }) =>
+      data.lessons.flatMap((spec) => getLessonSpecIssues({ novice, spec })).length,
+    draft: () => planLesson(params),
   });
 }

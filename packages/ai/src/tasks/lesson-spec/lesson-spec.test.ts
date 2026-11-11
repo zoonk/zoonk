@@ -30,9 +30,6 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#product}}",
     "Plan it in the product.",
     "{{/product}}",
-    "{{#redraft}}",
-    "Fix the previous plan.",
-    "{{/redraft}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -236,17 +233,9 @@ describe(generateLessonSpec, () => {
     } satisfies Parameters<typeof generateLessonSpec>[0];
 
     const replanned = await generateLessonSpec(params);
-    const [first, second] = vi.mocked(generateText).mock.calls.map(([call]) => call);
 
     expect(generateText).toHaveBeenCalledTimes(2);
     expect(replanned.data.lessons.map((spec) => spec.title)).toStrictEqual(["Fixed"]);
-    expect(first?.instructions).not.toContain("Fix the previous plan.");
-    expect(first?.prompt).not.toContain("PREVIOUS_PLAN_PROBLEMS");
-    expect(second?.instructions).toContain("Fix the previous plan.");
-
-    expect(second?.prompt).toContain(
-      'PREVIOUS_PLAN_PROBLEMS: \n- "Long run": Has 5 teaching screens in a row; a check comes after at most 4.',
-    );
 
     // A second plan that's no better leaves the first one, and a good plan is planned once.
     vi.mocked(generateText)
