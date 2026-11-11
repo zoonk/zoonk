@@ -80,11 +80,13 @@ function countSites(documents: FoundOutput["documents"]): number {
 async function readCopy(url: string): Promise<string | null> {
   try {
     const fetched = await fetchDocument(url);
+
     const parsed = await parseDocument({
       bytes: fetched.bytes,
       charset: fetched.charset,
       contentType: fetched.contentType,
     });
+
     return parsed.text;
   } catch {
     return null;

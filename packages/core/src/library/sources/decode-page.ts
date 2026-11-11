@@ -11,7 +11,7 @@ const PRESCAN_BYTES = 1024;
 /** A page that declares nothing is UTF-8, unless its bytes aren't: Planalto serves its laws that way. */
 function decodeUndeclared(bytes: Uint8Array): string {
   try {
-    return new TextDecoder("utf8", { fatal: true }).decode(bytes);
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
   } catch {
     return new TextDecoder("windows-1252").decode(bytes);
   }
@@ -32,6 +32,7 @@ export function decodePage({
   const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, PRESCAN_BYTES));
   const bom = BYTE_ORDER_MARKS.find(({ marks }) => head.startsWith(marks));
   const meta = META_CHARSET.exec(head)?.groups?.charset?.toLowerCase();
+
   const label =
     bom?.label ?? charset?.toLowerCase() ?? (meta?.startsWith("utf-16") ? "utf8" : meta);
 

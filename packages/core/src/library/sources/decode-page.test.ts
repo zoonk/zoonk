@@ -35,7 +35,8 @@ describe(decodePage, () => {
 
   it("keeps a declared UTF-8 page whole when one of its bytes is broken", () => {
     const html = `<meta charset="utf-8"><p>ação 日本語</p>`;
-    const bytes = new Uint8Array([...new TextEncoder().encode(html), 0x3c, 0x21, 0x2d, 0x2d, 0xff]);
+    const notUtf8 = 255;
+    const bytes = new Uint8Array([...new TextEncoder().encode(`${html}<!--`), notUtf8]);
 
     expect(decodePage({ bytes })).toBe(`${html}<!--�`);
   });
