@@ -97,8 +97,8 @@ struct ReadDraftView: View {
       } catch {
         self.error = GoalError.creating(error)
 
-        // The card's room comes from the draft, so a refusal for it reads the draft again.
-        if self.error?.limit == .activeGoals,
+        // The card's room comes from the draft, so any refusal reads the draft again.
+        if self.error?.limit != nil,
           let fresh = try? await onboarding.understanding(id: draft.id)
         {
           onDraft(fresh)
