@@ -16,7 +16,6 @@
   "focustest_end_no_questions": "83b5beff8af488dd618f9041005d8a163fed712708c8e7a50e5b0e66c2d2b91b",
   "focustest_end_settled": "210c9508d91006c60d6d0862140f9072ee402622dda7fec68124a9978accc30a",
   "focustest_evidence": "70b6d58b3bd77a379471db2b0ed808e91c0fa47d33bace952a652a1e3c306f99",
-  "focustest_focus_already_fits": "a8c6289fdbdc57e5a3e273380842ee0c92f45b768e16857ff88a6f64bae47ccf",
   "focustest_focus_current": "d67bb1f0f2a41afcb39ca8c428aed6de3e0f4fdc6bd836ffeca503799d3e234d",
   "focustest_focus_declined": "adb756b38c38cf1e5602fb664dd127a02117f7478bbd507abb80fa671ce27b4f",
   "focustest_focus_hand_picked": "439098491d3908f819a54289587c787a3f21aec4845d4cc966659d5ba3a2fe66",
@@ -172,8 +171,6 @@
     <string name="focustest_focus_if_short">Se não der tempo de estudar tudo, seu plano dedica mais tempo a essas matérias.</string>
     <string name="focustest_focus_proposed">Não dá tempo de estudar tudo. Seu plano pode dedicar mais tempo a essas matérias.</string>
     <string name="focustest_focus_current">Seu plano dedica mais tempo a essas matérias.</string>
-    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
-    <string name="focustest_focus_already_fits">Seu plano já reserva tempo para essas matérias, então não precisa dar mais foco a elas.</string>
     <string name="focustest_focus_hand_picked">Você escolheu seu próprio foco, e seu plano mantém essa escolha. Esta é a sugestão do teste.</string>
     <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
     <string name="focustest_focus_declined">Você manteve seu plano como está.</string>

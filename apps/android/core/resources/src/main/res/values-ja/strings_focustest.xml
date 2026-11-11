@@ -16,7 +16,6 @@
   "focustest_end_no_questions": "b54bf7be44c8f2fbe1234570fcc52273468aa594305621cae915987521e7a92f",
   "focustest_end_settled": "cb19a5bc16b66cb34cd5f7adf8be1c27db10359e04acdcb0ef73063e5a7bb534",
   "focustest_evidence": "6460d3e8ef8048e7c307920c9caf3d16590647ad1a1edefe3ae6cc1281f97c11",
-  "focustest_focus_already_fits": "b590f755f63fb2c0db41814b97702a069002cdf3bfe8b025f7bdeb74db222238",
   "focustest_focus_current": "112de74c33c47331adf534e5e736d1f9299eb393a4cb9bbe7e5cc17cabb488fa",
   "focustest_focus_declined": "f3bbeb13bb275aaad3b60b022789f9463e0533b73f6b87562aae21dc25c30e78",
   "focustest_focus_hand_picked": "b59fd9ad292719f5c874405d6efbd3570419628341bde2bb710a5b5c79d29f80",
@@ -156,8 +155,6 @@
     <string name="focustest_focus_if_short">すべてを学ぶ時間が足りない場合、学習計画ではこれらの科目に多くの時間を割きます。</string>
     <string name="focustest_focus_proposed">すべてを学ぶには時間が足りません。これらの科目に多くの時間を割く計画にできます。</string>
     <string name="focustest_focus_current">学習計画では、これらの科目に多くの時間を割きます。</string>
-    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
-    <string name="focustest_focus_already_fits">これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。</string>
     <string name="focustest_focus_hand_picked">学習計画では、自分で選んだ重点科目を引き続き優先します。こちらはテスト結果からの提案です。</string>
     <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
     <string name="focustest_focus_declined">学習計画をそのままにしました。</string>

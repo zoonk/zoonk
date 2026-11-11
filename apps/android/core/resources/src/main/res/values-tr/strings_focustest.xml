@@ -16,7 +16,6 @@
   "focustest_end_no_questions": "8226408c83d6d0b6766361fead16264766f749612630286089dfe45a20129c9c",
   "focustest_end_settled": "33b0d9875324f153c5d285cf59d5e0e425177eaca86fdb29eab1c82b75b8335f",
   "focustest_evidence": "bec147c34f3b64b7ac34db67a113ed1d8307b9b8a6df60d7daf7b21c4c87cf40",
-  "focustest_focus_already_fits": "7117d09ae4e0043d3211f900a16cda4e17cf0bbda7f90a492d80be3ca639b9c3",
   "focustest_focus_current": "f4feee08b94a974c4f938f4f2473e3c5138052e107ad30a9ca75cae3411a3471",
   "focustest_focus_declined": "11451b1a923477a25d0255d74b345f21ac6ada7e5799041fa6df94b14166798b",
   "focustest_focus_hand_picked": "3561a5b30a44e6c8d25e919fa651666c20befb4970d999f7957b09c20e16de19",
@@ -164,8 +163,6 @@
     <string name="focustest_focus_if_short">Zamanın tüm konulara yetmezse planın bu branşlara daha fazla süre ayırır.</string>
     <string name="focustest_focus_proposed">Zamanın tüm konulara yetmiyor. Planın bu branşlara daha fazla süre ayırabilir.</string>
     <string name="focustest_focus_current">Planın bu branşlara daha fazla süre ayırıyor.</string>
-    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
-    <string name="focustest_focus_already_fits">Planında bunlar için zaten zaman var, bu yüzden ek süreye gerek yok.</string>
     <string name="focustest_focus_hand_picked">Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor. Testin önerisi bu.</string>
     <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
     <string name="focustest_focus_declined">Planını olduğu gibi bıraktın.</string>

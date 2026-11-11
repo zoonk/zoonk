@@ -123,18 +123,17 @@ private fun Section(
     }
 }
 
+/** A suggestion with no claim about the plan has no intro: the heading and its rows say it. */
 @Composable
-private fun focusIntro(state: FocusTestFocus.State): String =
-    stringResource(
-        when (state) {
-            FocusTestFocus.State.IF_TIME_SHORT -> R.string.focustest_focus_if_short
-            FocusTestFocus.State.PROPOSED -> R.string.focustest_focus_proposed
-            FocusTestFocus.State.CURRENT -> R.string.focustest_focus_current
-            FocusTestFocus.State.ALREADY_FITS -> R.string.focustest_focus_already_fits
-            FocusTestFocus.State.HAND_PICKED -> R.string.focustest_focus_hand_picked
-            FocusTestFocus.State.DECLINED -> R.string.focustest_focus_declined
-        },
-    )
+private fun focusIntro(state: FocusTestFocus.State): String? =
+    when (state) {
+        FocusTestFocus.State.IF_TIME_SHORT -> R.string.focustest_focus_if_short
+        FocusTestFocus.State.PROPOSED -> R.string.focustest_focus_proposed
+        FocusTestFocus.State.CURRENT -> R.string.focustest_focus_current
+        FocusTestFocus.State.HAND_PICKED -> R.string.focustest_focus_hand_picked
+        FocusTestFocus.State.DECLINED -> R.string.focustest_focus_declined
+        FocusTestFocus.State.SUGGESTED -> null
+    }?.let { stringResource(it) }
 
 /** The row's title already names the subject, so no reason says it again. */
 @Composable
@@ -159,11 +158,12 @@ private fun SuggestedFocus(
     val changesFocus =
         focus.state == FocusTestFocus.State.CURRENT ||
             focus.state == FocusTestFocus.State.HAND_PICKED ||
-            focus.state == FocusTestFocus.State.DECLINED
+            focus.state == FocusTestFocus.State.DECLINED ||
+            focus.state == FocusTestFocus.State.SUGGESTED
 
     // Once the proposal is answered in any way, the answer's line says what happened instead.
     val answered = proposal != null && plan?.answer?.change?.id == proposal.id
-    val intro = listOfNotNull(focusIntro(focus.state).takeUnless { answered }, importance)
+    val intro = listOfNotNull(focusIntro(focus.state)?.takeUnless { answered }, importance)
 
     Section(stringResource(R.string.focustest_suggested_focus)) {
         if (intro.isNotEmpty()) {

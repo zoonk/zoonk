@@ -16,7 +16,6 @@
   "focustest_end_no_questions": "8f9672f5240b9705db95b41a804fb6f090c31772477cd83a8112c30e3fde552c",
   "focustest_end_settled": "9ef880a99fd35ac5e6ebd024a0232c187d47e697afb1eb7cb0d27851519c76b2",
   "focustest_evidence": "eeaa9b88f566936c66058f3f665ccbdb2eedb48155eeaeadd7497476f2f34dc1",
-  "focustest_focus_already_fits": "a5d7b08b81ad53d5bc75b6f08f5c9cf49c523a02682f4fe12a94687ac8fc053d",
   "focustest_focus_current": "351dfe1e5467cb46c36b770bf78f18fca46ce158d590830203da60f600612e78",
   "focustest_focus_declined": "2bdca787abe53e44f5425173df5f4abc4787f63159f0abdea22b6d01bcd04238",
   "focustest_focus_hand_picked": "b217480ac75023d2091917a4ce15e6b250cffdf1ea5678f3bc947508bcbbc056",
@@ -156,8 +155,6 @@
     <string name="focustest_focus_if_short">모든 내용을 공부하기에 시간이 부족하면 이 과목들에 학습 시간을 더 배정해요.</string>
     <string name="focustest_focus_proposed">모든 내용을 공부하기에는 시간이 부족해요. 이 과목들에 시간을 더 배정하도록 계획을 바꿀 수 있어요.</string>
     <string name="focustest_focus_current">이 과목들에 학습 시간을 더 배정해요.</string>
-    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
-    <string name="focustest_focus_already_fits">이미 계획에 이 과목들을 공부할 시간이 잡혀 있어서 추가로 배정할 필요가 없어요.</string>
     <string name="focustest_focus_hand_picked">계획에는 직접 고른 집중 과목을 그대로 반영해요. 아래는 테스트에서 추천하는 과목이에요.</string>
     <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
     <string name="focustest_focus_declined">계획을 그대로 유지했어요.</string>
