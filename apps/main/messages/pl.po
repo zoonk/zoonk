@@ -48,7 +48,6 @@ msgstr "Strona główna"
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/footer-explore-links.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Przeglądaj kursy"
@@ -3533,16 +3532,6 @@ msgstr "Nie udało się rozpocząć tego kursu."
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# z {total, number} ukończono} other {Ukończono # z {total, number}}}"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "3snD6d"
-msgid "Popular courses"
-msgstr "Popularne kursy"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "VKb1MS"
-msgid "Categories"
-msgstr "Kategorie"
 
 #: src/components/public/goal-example.ts
 msgctxt "IWESF6"

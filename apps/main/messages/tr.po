@@ -48,7 +48,6 @@ msgstr "Ana sayfaya git"
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/footer-explore-links.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Kursları keşfet"
@@ -3533,16 +3532,6 @@ msgstr "Bu kursu başlatamadık."
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, number} tamamlandı}}"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "3snD6d"
-msgid "Popular courses"
-msgstr "Popüler kurslar"
-
-#: src/components/public/footer-explore-links.tsx
-msgctxt "VKb1MS"
-msgid "Categories"
-msgstr "Kategoriler"
 
 #: src/components/public/goal-example.ts
 msgctxt "IWESF6"
