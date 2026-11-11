@@ -9,12 +9,7 @@ import {
 } from "@zoonk/ai/tasks/identity/subject";
 import { prisma, sql } from "@zoonk/db";
 import { SOURCE_DOCUMENT } from "../identity/_utils/search-documents";
-import {
-  type TextSearch,
-  findRankedIds,
-  orderByIds,
-  toTextSearch,
-} from "../identity/_utils/text-search-sql";
+import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { type SourceTopic } from "./source-contract";
 
@@ -44,55 +39,60 @@ function describeWantedDocument({ country, topic }: StoredSourcesRequest): strin
   return `${WANTED_DOCUMENTS[topic]}${place}.`;
 }
 
-async function searchStoredSources({
-  search,
-  topic,
-}: {
-  search: TextSearch;
-  topic: ResearchSourceTopic;
-}): Promise<LibraryIdentityCandidate[]> {
-  const ids = await findRankedIds({
-    document: SOURCE_DOCUMENT,
-    filters: sql`s.language = ${search.language}
-      AND s.visibility = 'public'
-      AND s.kind = 'official'
-      AND s.structure->>'topic' = ${topic}
-      AND s.valid_until > ${new Date()}
-      AND ${READABLE_SOURCE_FILTER}`,
-    search,
-  });
+/** Enough for the judge to tell a law's text from an index page, an older edition or another law. */
+const OPENING_CHARACTERS = 1500;
 
-  const sources = await prisma.source.findMany({
-    omit: { extractedText: true, structure: true },
-    where: { id: { in: ids } },
-  });
+/** `length` is null for a document that stored no text, such as a PDF models read as a file. */
+export type ResearchSourceCandidate = LibraryIdentityCandidate & {
+  length: number | null;
+  url: string | null;
+};
 
-  return orderByIds(ids, sources).map((source) => ({
-    id: source.id,
-    item: { publisher: source.publisher, title: source.title, url: source.url },
+type CandidateRow = {
+  id: string;
+  length: number | null;
+  opening: string | null;
+  publisher: string | null;
+  title: string;
+  url: string | null;
+};
+
+function toOpening(text: string | null): string | null {
+  return text?.replaceAll(/\s+/gu, " ").trim() || null;
+}
+
+/** Internal workflow bridge: the sources are public research documents. */
+export async function loadResearchSourceCandidates(
+  ids: readonly string[],
+): Promise<ResearchSourceCandidate[]> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const rows = await prisma.$queryRaw<CandidateRow[]>`
+    SELECT s.id, s.title, s.publisher, s.url,
+      char_length(s.extracted_text)::int AS length,
+      left(s.extracted_text, ${OPENING_CHARACTERS}) AS opening
+    FROM sources s
+    WHERE s.id = ANY(${[...ids]}::uuid[])`;
+
+  return orderByIds(ids, rows).map((row) => ({
+    id: row.id,
+    item: {
+      opening: toOpening(row.opening),
+      publisher: row.publisher,
+      title: row.title,
+      url: row.url,
+    },
+    length: row.length,
+    url: row.url,
   }));
 }
 
-async function findReusable({
-  candidates,
-  subject,
-}: {
-  candidates: LibraryIdentityCandidate[];
-  subject: LibraryIdentitySubject;
-}): Promise<LibraryIdentityCandidate[]> {
-  const { verdicts } = await decideLibraryIdentity({ candidates, subject });
-
-  const reusable = new Set(
-    verdicts
-      .filter((verdict) => verdict.probability >= LIBRARY_IDENTITY_MIN_PROBABILITY)
-      .map((verdict) => verdict.id),
-  );
-
-  return candidates.filter((candidate) => reusable.has(candidate.id));
-}
-
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
-export async function findStoredResearchSources(request: StoredSourcesRequest): Promise<string[]> {
+export async function searchStoredResearchSources(
+  request: StoredSourcesRequest,
+): Promise<string[]> {
   const search = toTextSearch({
     language: request.language,
     terms: [request.name, ...request.searchTerms],
@@ -102,8 +102,26 @@ export async function findStoredResearchSources(request: StoredSourcesRequest): 
     return [];
   }
 
-  const candidates = await searchStoredSources({ search, topic: request.topic });
+  return findRankedIds({
+    document: SOURCE_DOCUMENT,
+    filters: sql`s.language = ${search.language}
+      AND s.visibility = 'public'
+      AND s.kind = 'official'
+      AND s.structure->>'topic' = ${request.topic}
+      AND s.valid_until > ${new Date()}
+      AND ${READABLE_SOURCE_FILTER}`,
+    search,
+  });
+}
 
+/** The candidates the judge reuses for the request, in their order; no call for none. */
+export async function judgeResearchSources({
+  candidates,
+  request,
+}: {
+  candidates: readonly LibraryIdentityCandidate[];
+  request: StoredSourcesRequest;
+}): Promise<string[]> {
   if (candidates.length === 0) {
     return [];
   }
@@ -119,7 +137,24 @@ export async function findStoredResearchSources(request: StoredSourcesRequest): 
     language: request.language,
   };
 
-  const reusable = await findReusable({ candidates, subject });
+  const { verdicts } = await decideLibraryIdentity({
+    candidates: candidates.map(({ id, item }) => ({ id, item })),
+    subject,
+  });
 
-  return reusable.slice(0, MAX_REUSED_SOURCES).map((candidate) => candidate.id);
+  const reusable = new Set(
+    verdicts
+      .filter((verdict) => verdict.probability >= LIBRARY_IDENTITY_MIN_PROBABILITY)
+      .map((verdict) => verdict.id),
+  );
+
+  return candidates.filter((candidate) => reusable.has(candidate.id)).map(({ id }) => id);
+}
+
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
+export async function findStoredResearchSources(request: StoredSourcesRequest): Promise<string[]> {
+  const candidates = await loadResearchSourceCandidates(await searchStoredResearchSources(request));
+  const reusable = await judgeResearchSources({ candidates, request });
+
+  return reusable.slice(0, MAX_REUSED_SOURCES);
 }
