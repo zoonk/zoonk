@@ -52,6 +52,8 @@ export type LearnerSummaryWaitingGoal = {
   id: string;
   /** The POST /goals body that starts it. */
   input: GoalCreateInput;
+  /** As a goal's: the flag it will show once started. */
+  languageFlag: string | null;
   locked: boolean;
 };
 

@@ -546,6 +546,7 @@ describe("every feature the buddy can suggest", () => {
       offer: {
         goalId: spanish.id,
         kind: "variety",
+        languageFlag: "ar",
         targetLanguage: "es",
         targetRegion: "AR",
         taughtRegion: "MX",

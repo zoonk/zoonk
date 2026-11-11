@@ -129,6 +129,7 @@ test.describe("Buddy tab", () => {
             toolOffer: {
               goalId: user.goalId,
               kind: "variety",
+              languageFlag: "ca",
               targetLanguage: "en",
               targetRegion: "CA",
               taughtRegion: "US",

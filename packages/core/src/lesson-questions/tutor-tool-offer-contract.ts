@@ -137,6 +137,13 @@ export const tutorToolOfferSchema = z
             description:
               "The goal's language as one country speaks it, for the buddy and practice calls: Apply is `PATCH /goals/{goalId}` with this `targetRegion`, and nothing changes before it",
           }),
+        languageFlag: z
+          .string()
+          .nullable()
+          .meta({
+            description:
+              "The offered country's flag, as flag-icons names it: what the goal's `languageFlag` becomes once applied",
+          }),
         targetLanguage: z.string(),
         targetRegion: z.string().meta({ description: "The country offered, a two-letter code" }),
         taughtRegion: z

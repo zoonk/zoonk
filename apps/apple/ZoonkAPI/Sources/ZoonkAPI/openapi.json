@@ -45418,6 +45418,11 @@
               }
             ]
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "The flag the goal shows once started, as a goal's `languageFlag`: a language goal's country when its `input` names one, else its language's; null for other goals",
+            "type": "string"
+          },
           "locked": {
             "type": "boolean",
             "description": "The plan follows no more goals at once: show it with the Plus lock, opening Plus"
@@ -45427,6 +45432,7 @@
           "displayName",
           "id",
           "input",
+          "languageFlag",
           "locked"
         ],
         "additionalProperties": false
@@ -76979,6 +76985,11 @@
                 ],
                 "description": "The goal's language as one country speaks it, for the buddy and practice calls: Apply is `PATCH /goals/{goalId}` with this `targetRegion`, and nothing changes before it"
               },
+              "languageFlag": {
+                "nullable": true,
+                "description": "The offered country's flag, as flag-icons names it: what the goal's `languageFlag` becomes once applied",
+                "type": "string"
+              },
               "targetLanguage": {
                 "type": "string"
               },
@@ -76994,6 +77005,7 @@
             "required": [
               "goalId",
               "kind",
+              "languageFlag",
               "targetLanguage",
               "targetRegion",
               "taughtRegion"

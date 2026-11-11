@@ -192,6 +192,13 @@ const learnerSummarySchema = z
               description:
                 "POST /goals as it is to start it. It shares the day with the goals typed with it, and its setup asks the day's time again",
             }),
+            languageFlag: z
+              .string()
+              .nullable()
+              .meta({
+                description:
+                  "The flag the goal shows once started, as a goal's `languageFlag`: a language goal's country when its `input` names one, else its language's; null for other goals",
+              }),
             locked: z
               .boolean()
               .meta({

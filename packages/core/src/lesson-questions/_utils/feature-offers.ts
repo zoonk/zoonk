@@ -1,6 +1,10 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { getTaughtRegion, isLanguageRegion } from "@zoonk/utils/language-regions";
+import {
+  getTaughtRegion,
+  getVarietyFlagCode,
+  isLanguageRegion,
+} from "@zoonk/utils/language-regions";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { type Allowance } from "../../entitlements/contract";
@@ -172,7 +176,14 @@ export function offerVariety({
   }
 
   return {
-    offer: { goalId: goal.id, kind: "variety", targetLanguage, targetRegion: region, taughtRegion },
+    offer: {
+      goalId: goal.id,
+      kind: "variety",
+      languageFlag: getVarietyFlagCode({ language: targetLanguage, region }),
+      targetLanguage,
+      targetRegion: region,
+      taughtRegion,
+    },
     status: "offered",
   };
 }
