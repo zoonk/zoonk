@@ -39,7 +39,10 @@ struct SessionScreen: View {
               // A day not opened yet shows its next step as Today read it; Start opens the day.
               NextStopView(
                 day: view.session, sessionID: nil, goalID: view.session.goalId ?? view.goal.id,
-                moment: nil)
+                moment: nil
+              )
+              // Covering Today, it holds Today's read itself, so a Start the day refused reads it again.
+              .loads(today.today)
             } else {
               ContentUnavailableView {
                 Label {
