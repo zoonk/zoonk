@@ -50,11 +50,12 @@ async function findWordDetails({
     const current = details.get(surface) ?? NO_DETAILS;
     const [pronunciation] = row.pronunciations;
 
-    return details.set(surface, {
-      audioUrl: current.audioUrl ?? row.audioUrl,
-      respelling: current.respelling ?? pronunciation?.pronunciation ?? null,
-      tip: current.tip ?? pronunciation?.tip ?? null,
-    });
+    const guide =
+      current.respelling === null && pronunciation
+        ? { respelling: pronunciation.pronunciation, tip: pronunciation.tip }
+        : { respelling: current.respelling, tip: current.tip };
+
+    return details.set(surface, { ...guide, audioUrl: current.audioUrl ?? row.audioUrl });
   }, new Map<string, WordDetails>());
 }
 
