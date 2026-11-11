@@ -224,6 +224,7 @@ describe("goals typed together beyond the goals a plan follows at once", () => {
       title: "Learn French",
     };
 
+    await follow(user.id, 2);
     await confirm(await readCard(user.id, [STATISTICS, spanish, french]));
 
     await expect(readWaitingGoals()).resolves.toMatchObject([
