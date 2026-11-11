@@ -80,7 +80,7 @@
     <string name="focustest_focus_hand_picked">You chose your own focus, and your plan keeps it. This is what the test suggests.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">For now, this follows mainly what counts most in your exam.</string>
-    <string name="focustest_reason_answers">Your answers suggest reviewing this subject.</string>
+    <string name="focustest_reason_answers">Your answers suggest giving this subject more time.</string>
     <string name="focustest_reason_minimum_score">This part has a minimum score.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">This part counts heavily; it isn\'t checked here.</string>
