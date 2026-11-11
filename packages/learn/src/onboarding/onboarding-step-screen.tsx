@@ -18,6 +18,7 @@ import {
 } from "./onboarding-actions";
 import { OnboardingScreenTop } from "./onboarding-frame";
 import { BuddyStep } from "./steps/buddy-step";
+import { CountryStep } from "./steps/country-step";
 import { DateStep } from "./steps/date-step";
 import { ExamChoiceStep } from "./steps/exam-choice-step";
 import { readLevelChoice } from "./steps/level-choices";
@@ -60,6 +61,7 @@ function getExamTarget(details: Record<string, unknown>): ExamTarget {
 }
 
 const QUESTION_STEPS = [
+  "contentCountry",
   "purpose",
   "role",
   "reason",
@@ -92,6 +94,8 @@ function QuestionStepScreen({
   const props = { onAnswer, pending };
 
   switch (step) {
+    case "contentCountry":
+      return <CountryStep {...props} {...view.contentCountry} subject={subject} />;
     case "purpose":
       return <PurposeStep {...props} subject={subject} />;
     case "role":
