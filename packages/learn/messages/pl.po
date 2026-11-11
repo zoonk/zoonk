@@ -4207,11 +4207,11 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {Pisanie: nie jest tu sprawdzane} listening {Słuchanie: nie jest tu sprawdzane} speaking {Mówienie: nie jest tu sprawdzane} other {Część praktyczna: nie jest tu sprawdzana}}"
 
-#. A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.”
+#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "KUQKBu"
-msgid "Your answers suggest giving this subject more time."
-msgstr "Twoje odpowiedzi wskazują, że warto poświęcić temu przedmiotowi więcej czasu."
+msgctxt "kCg3aW"
+msgid "Your answers suggest focusing here."
+msgstr "Twoje odpowiedzi wskazują, że warto nadać temu priorytet."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"

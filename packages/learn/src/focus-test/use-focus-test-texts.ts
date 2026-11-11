@@ -63,8 +63,8 @@ export function useFocusReasonText() {
       case "answers":
         return t({
           description:
-            "A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.”",
-          message: "Your answers suggest giving this subject more time.",
+            "A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.",
+          message: "Your answers suggest focusing here.",
         });
       case "minimumScore":
         return t("This part has a minimum score.");
