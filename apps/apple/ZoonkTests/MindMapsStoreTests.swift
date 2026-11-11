@@ -281,6 +281,20 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(list.value?.chapters.first?.status, .available)
   }
 
+  func testCreatingAllWhoseReadFailsSaysTheServerWasntReached() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failLists(1)
+
+    await store.createAll(goalId: "goal")
+
+    let calls = await api.calls
+    XCTAssertEqual(store.createAllFailures["goal"], .unreachable)
+    XCTAssertEqual(calls.createAll, 1)
+  }
+
   func testTheListIsFollowedUntilNothingIsOnItsWay() async throws {
     let api = MindMapsAPIStub(server: .drawing, statuses: [.success(.ready)])
     let store = makeStore(api: api)

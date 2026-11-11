@@ -188,7 +188,9 @@ final class MindMapsStore {
 
     switch started {
     case .done:
-      await lists[goalId]?.refresh()
+      if await !Self.reread(lists[goalId]) {
+        createAllFailures[goalId] = .unreachable
+      }
     case .failed:
       createAllFailures[goalId] = .unreachable
     case .obsolete:
