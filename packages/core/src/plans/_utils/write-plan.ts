@@ -186,7 +186,12 @@ export async function writePlan({
 
   await saveProposalPreviews({ previews: plan.previews, tx });
 
-  await keepPlanTestSummary({ after: plan.state, before: context.state, goal: context.goal, tx });
+  await keepPlanTestSummary({
+    after: plan.state,
+    before: context.state,
+    goalId: context.goal.id,
+    tx,
+  });
 }
 
 /** Keeps the plan's version, so a learner's open plan editor isn't in conflict. */

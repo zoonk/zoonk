@@ -67,13 +67,7 @@ export async function startPlacementSitting({
 
   await openTestSitting({ goal, now, offer, planId: open.focusTest.planId });
 
-  const opened = await saveTestSummary({
-    goalId,
-    plan: sitting ? await loadPlacementPlan(goalId) : plan,
-    timeZone,
-    today,
-    userId,
-  });
+  const opened = await saveTestSummary({ goalId, timeZone, today, userId });
 
   return { placement: opened.state, status: "ready" };
 }

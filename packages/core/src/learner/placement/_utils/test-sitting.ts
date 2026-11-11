@@ -12,7 +12,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { type PlanState } from "../../../plans/planner/plan-state";
 import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
-import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
+import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
@@ -163,19 +163,19 @@ type SummaryRead = {
   goalId: string;
   onlyFirst?: boolean;
   ownLevel?: OwnLevel | null;
-  plan: GoalPlan;
   today?: Date;
   timeZone?: string;
   userId: string;
 };
 
-/** Call inside a transaction that holds the learner's lock. */
+/** Call inside a transaction that holds the learner's lock, so the plan it counts is the committed one. */
 async function keepTestSummary({
   onlyFirst = false,
   tx,
   ...read
 }: SummaryRead & { tx: TransactionClient }) {
-  const saved = await loadPlacementWithSummary({ ...read, tx });
+  const plan = await loadPlacementPlan(read.goalId, tx);
+  const saved = await loadPlacementWithSummary({ ...read, plan, tx });
   const { focusTest, state } = saved;
 
   if (focusTest) {
@@ -207,28 +207,42 @@ export async function saveTestSummary(read: SummaryRead) {
 }
 
 /**
- * Keeps a saved summary in step with a plan write that changes the test's subjects, such as a
- * skipped or restored subject or an Undo. Plan writes hold the learner's lock and expire the goals tag.
+ * Keeps a saved summary current in a write that changed what the test counts: the plan's subjects,
+ * the learner's picks or the notice the goal follows. Call after that write, in its transaction,
+ * which holds the learner's lock.
  */
+export async function refreshTestSummary({
+  goalId,
+  tx,
+}: {
+  goalId: string;
+  tx: TransactionClient;
+}): Promise<void> {
+  const goal = await tx.goal.findUnique({
+    select: { details: true, userId: true },
+    where: { id: goalId },
+  });
+
+  if (!goal || !readFocusTestRecord(goal)?.summary) {
+    return;
+  }
+
+  await keepTestSummary({ goalId, tx, userId: goal.userId });
+}
+
+/** `refreshTestSummary` for a plan write, which only a change to the test's subjects needs. */
 export async function keepPlanTestSummary({
   after,
   before,
-  goal,
+  goalId,
   tx,
 }: {
   after: PlanState;
   before: PlanState;
-  goal: Pick<Goal, "details" | "id" | "userId">;
+  goalId: string;
   tx: TransactionClient;
 }): Promise<void> {
-  if (!readFocusTestRecord(goal)?.summary || !changesTestSubjects({ after, before })) {
-    return;
+  if (changesTestSubjects({ after, before })) {
+    await refreshTestSummary({ goalId, tx });
   }
-
-  await keepTestSummary({
-    goalId: goal.id,
-    plan: await loadPlacementPlan(goal.id, tx),
-    tx,
-    userId: goal.userId,
-  });
 }

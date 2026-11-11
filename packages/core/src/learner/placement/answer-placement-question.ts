@@ -146,7 +146,7 @@ export async function answerPlacementQuestion({
   }
 
   const [plan, item] = await Promise.all([
-    loadPlacementPlan(goalId),
+    owned.goal.kind === "exam" ? null : loadPlacementPlan(goalId),
     findGoalItem({
       examBlueprintId: owned.goal.examBlueprintId,
       itemId: input.itemId,
@@ -183,16 +183,17 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   });
 
-  const readPlacement = owned.goal.kind === "exam" ? saveTestSummary : loadPlacementWithSummary;
-
-  const { state: placement } = await readPlacement({
+  const read = {
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
-    plan,
     timeZone,
     today: getDateInTimeZone({ date: new Date(), timeZone }),
     userId: owned.userId,
-  });
+  };
+
+  const { state: placement } = plan
+    ? await loadPlacementWithSummary({ ...read, plan })
+    : await saveTestSummary(read);
 
   const answer = isCorrect ? "correct" : "incorrect";
 

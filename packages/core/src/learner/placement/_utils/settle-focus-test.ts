@@ -24,8 +24,7 @@ export async function startFocusTestSummary(goalId: string): Promise<void> {
     return;
   }
 
-  const plan = await loadPlacementPlan(goalId);
-  await saveTestSummary({ goalId, onlyFirst: true, plan, userId: goal.userId });
+  await saveTestSummary({ goalId, onlyFirst: true, userId: goal.userId });
 }
 
 /**
@@ -44,8 +43,7 @@ export async function settleFocusTest({
   timeZone: string;
   userId: string;
 }): Promise<PlacementState> {
-  const plan = await loadPlacementPlan(goalId);
-  const { focusTest, state } = await saveTestSummary({ goalId, plan, timeZone, today, userId });
+  const { focusTest, state } = await saveTestSummary({ goalId, timeZone, today, userId });
 
   const checkpoint = state.focusTest?.checkpoint;
 
