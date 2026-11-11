@@ -20,9 +20,25 @@ import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-libra
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
 import { languageLessonDraft } from "./_test-utils/language-lesson-draft";
-import { writeLanguageLessonContent } from "./write-language-lesson-content";
+import {
+  publishLanguageLessonDraft,
+  writeLanguageLessonDraft,
+} from "./write-language-lesson-content";
 
 type Draft = ReturnType<typeof languageLessonDraft>;
+
+async function writeAndPublishLanguageLesson(
+  input: Parameters<typeof writeLanguageLessonDraft>[0],
+) {
+  const written = await writeLanguageLessonDraft(input);
+
+  if (written.status !== "drafted") {
+    return written;
+  }
+
+  const published = await publishLanguageLessonDraft({ ...input, draft: written.draft });
+  return { status: published ? "published" : "notClaimed" };
+}
 
 function linksOf(lessonId: string) {
   return prisma.lessonWord.findMany({ orderBy: { position: "asc" }, where: { lessonId } });
@@ -110,12 +126,12 @@ async function claimLanguageLesson(attrs: {
   return { lesson, workflowRunId };
 }
 
-describe(writeLanguageLessonContent, () => {
+describe(writeLanguageLessonDraft, () => {
   it("writes nothing for a run that doesn't hold the claim", async () => {
     const lesson = await libraryLessonFixture({ language: "pt", targetLanguage: "en" });
 
     await expect(
-      writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId: crypto.randomUUID() }),
+      writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId: crypto.randomUUID() }),
     ).resolves.toStrictEqual({ status: "notClaimed" });
 
     expect(generateLanguageLesson).not.toHaveBeenCalled();
@@ -146,18 +162,13 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(uniqueDraft(key), writerRunId);
     mockAudio();
 
-    const result = await writeLanguageLessonContent({
+    const result = await writeAndPublishLanguageLesson({
       lessonId: lesson.id,
       speed: "fast",
       workflowRunId,
     });
 
-    expect(result).toStrictEqual({
-      sentenceCount: 3,
-      status: "published",
-      stepCount: 15,
-      wordCount: 3,
-    });
+    expect(result).toStrictEqual({ status: "published" });
 
     expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({
       learnerLanguage: "pt",
@@ -232,6 +243,7 @@ describe(writeLanguageLessonContent, () => {
       [`Utilities are included ${key}`, "As contas estão incluídas"],
     ]);
 
+    expect(saved.steps).toHaveLength(15);
     expect(saved.steps.every((step) => step.skillId === skill.id)).toBe(true);
 
     for (const { content, contractVersion, kind } of saved.steps) {
@@ -268,7 +280,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(uniqueDraft(crypto.randomUUID()));
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({ level: "A1" });
   });
@@ -297,7 +309,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(uniqueDraft(crypto.randomUUID()));
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({ level: "A2–B1" });
   });
@@ -327,7 +339,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(draft);
     mockAudio();
 
-    await writeLanguageLessonContent({
+    await writeAndPublishLanguageLesson({
       lessonId: forPortuguese.lesson.id,
       workflowRunId: forPortuguese.workflowRunId,
     });
@@ -339,7 +351,7 @@ describe(writeLanguageLessonContent, () => {
       words: draft.words.map((word) => ({ ...word, pronunciation: `es ${word.pronunciation}` })),
     });
 
-    await writeLanguageLessonContent({
+    await writeAndPublishLanguageLesson({
       lessonId: forSpanish.lesson.id,
       workflowRunId: forSpanish.workflowRunId,
     });
@@ -495,7 +507,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(draft);
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     const voiced = vi
       .mocked(generateLanguageAudio)
@@ -574,7 +586,7 @@ describe(writeLanguageLessonContent, () => {
 
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     const voiced = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
     expect(voiced.filter((text) => [key, taught].includes(text))).toStrictEqual([taught]);
@@ -630,7 +642,7 @@ describe(writeLanguageLessonContent, () => {
 
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     mockSession(crypto.randomUUID());
     const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
@@ -685,7 +697,7 @@ describe(writeLanguageLessonContent, () => {
 
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     const voicedTexts = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
     expect(voicedTexts).not.toContain(tile);
@@ -714,7 +726,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft({ ...draft, words: draft.words.slice(0, 1) });
     mockAudio();
 
-    await writeLanguageLessonContent({
+    await writeAndPublishLanguageLesson({
       lessonId: earlier.lesson.id,
       workflowRunId: earlier.workflowRunId,
     });
@@ -723,7 +735,7 @@ describe(writeLanguageLessonContent, () => {
     await chapterLessonFixture({ chapterId: chapter.id, lessonId: later.lesson.id, position: 1 });
     mockDraft(draft);
 
-    await writeLanguageLessonContent({
+    await writeAndPublishLanguageLesson({
       lessonId: later.lesson.id,
       workflowRunId: later.workflowRunId,
     });
@@ -748,7 +760,7 @@ describe(writeLanguageLessonContent, () => {
     mockDraft({ ...draft, sentences: draft.sentences.slice(0, 1) });
 
     await expect(
-      writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId }),
+      writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId }),
     ).resolves.toStrictEqual({ status: "heldBack" });
 
     const saved = await prisma.lesson.findUniqueOrThrow({
