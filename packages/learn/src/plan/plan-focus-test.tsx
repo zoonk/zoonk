@@ -83,10 +83,9 @@ export function PlanFocusTest({ onSetTestQuestions }: { onSetTestQuestions?: Set
   const t = useExtracted();
   const stateFacts = useFocusTestStateFacts();
   const { focusTestHref, plan } = usePlanScreen();
-  const [switched, setSwitched] = useState<FocusTestSummary | null>(null);
   const [failed, setFailed] = useState(false);
   const [, startTransition] = useTransition();
-  const focusTest = switched ?? plan.focusTest;
+  const { focusTest } = plan;
 
   if (!focusTest || !focusTestHref) {
     return null;
@@ -94,12 +93,8 @@ export function PlanFocusTest({ onSetTestQuestions }: { onSetTestQuestions?: Set
 
   const setTestQuestions = (sessionQuestions: "on" | "paused") =>
     startTransition(async () => {
-      const saved = (await onSetTestQuestions?.(sessionQuestions).catch(() => null)) ?? null;
+      const saved = await onSetTestQuestions?.(sessionQuestions).catch(() => null);
       setFailed(!saved);
-
-      if (saved) {
-        setSwitched(saved);
-      }
     });
 
   return (
