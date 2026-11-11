@@ -128,7 +128,6 @@ struct PlanAllowance: Equatable, Sendable {
     case plus
   }
 
-  /// A nil limit is no cap.
   struct Cap: Equatable, Sendable {
     var limit: Int?
     var used = 0
