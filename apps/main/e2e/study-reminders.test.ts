@@ -50,13 +50,13 @@ test.describe("Study reminders", () => {
   test("turns email reminders on from the offer under a finished plan lesson", async ({
     browser,
   }) => {
-    const { user } = await createStudyDay({ reviewDone: true });
+    const { lesson, user } = await createStudyDay({ reviewDone: true });
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const start = page.getByRole("button", { name: /^(?:Start|Continue)/u });
-    await expectHydrated(start);
-    await start.press("Enter");
+    const row = page.getByRole("link", { exact: true, name: lesson.title });
+    await expectHydrated(row);
+    await row.click();
 
     await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
     await page.keyboard.press("2");
