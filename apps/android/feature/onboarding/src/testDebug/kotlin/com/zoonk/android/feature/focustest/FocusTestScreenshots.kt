@@ -106,7 +106,7 @@ class FocusTestScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun checkpoint() = shoot("focus-test-checkpoint", closing(focusOf())) { tap("Use my answers") }
+    fun checkpoint() = shoot("focus-test-checkpoint", closing(focusOf(), sessionQuestions = "on")) { tap("Use my answers") }
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
@@ -256,6 +256,7 @@ class FocusTestScreenshots {
         fun closing(
             focus: String,
             lessonsSkipped: Int = 14,
+            sessionQuestions: String = "off",
         ) = FakeOnboardingApi().apply {
             placement = RESUMING
             completion =
@@ -264,6 +265,7 @@ class FocusTestScreenshots {
                         asked = 6,
                         offer = focusOfferOf(kind = "continuation", questions = 10),
                         checkpoint = focusCheckpointOf(lessonsSkipped, focus),
+                        sessionQuestions = sessionQuestions,
                     ),
                 )
         }
