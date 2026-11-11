@@ -6,12 +6,12 @@
   "goal_switcher_explore_courses": "e8e7eb866134c1764f0239481cd1d9a870505de8431454cba13e7263a65f9b5d",
   "goal_switcher_failed": "35b8b7b5eb0403df6631f4557848ebeb3f8eebbe5c88356702076d9fb89ed610",
   "goal_switcher_finished": "a4975bfd831f6ec0cfff927cf2daf13b807e013ecf61ac8ce1e2d3cceed1511c",
-  "goal_switcher_make_room_description": "695ef0938c85df898adb00c6159e14e656baaca6e450bdaf6e8038216624e130",
+  "goal_switcher_make_room_description": "e4c3ec563b548973f86d51e172f67c69a128917e80f029a297644969080ee142",
   "goal_switcher_make_room_title": "010df4274e5d3e40e64d0edae0ae08190fae2b565fd931f48df0e8e03a627dc6",
   "goal_switcher_new_goal": "a5209bf492acdaf56c077a03bec5522ccaa32846ad87d15e0c22354c43b413bb",
-  "goal_switcher_pause": "49e248ada52a9639c8a26fcbd3baa6cf289c183986f763db8c9f553249e2f27b",
-  "goal_switcher_pause_goal": "dfec931c238f6d1bbd5efa00302eb40bc0677ffe92aaf1ebd24687c5bbb97cca",
-  "goal_switcher_pause_or_plus": "4475ee691d2cbb9874bedf8efcc6823961562fd520784d68918009e87b2a4056",
+  "goal_switcher_pause": "f51acec5fdea104301c50bc3927f6b3653a1eb586daf5b3b80f6855b76067b41",
+  "goal_switcher_pause_goal": "6b0e10aa05f1f2ac978e9d508be5abfc5bd67310ed119ce6b1a17cb577335939",
+  "goal_switcher_pause_or_plus": "18b463520741be0db9412773120dc32400fe179c729b7a9e539dba44cd3105ee",
   "goal_switcher_paused": "d652798bbcb1b22361ad8a10187f49a4172ba096129303b441bbde06483b6488",
   "goal_switcher_quick_explanations": "d8615c6ab8afd1d26588b16125c4fde0e14514097b848701a48f7cbefa69cc6b",
   "goal_switcher_ready_to_start": "d9a390cb49631755bb2b1aace580fa5745bd611642e2cbe791452fcea78d4b39",
@@ -40,13 +40,13 @@
     <string name="goal_switcher_ready_to_start">바로 시작 가능</string>
     <string name="goal_switcher_start_failed">이 목표를 시작하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">목표를 일시 중지하거나 Plus 구독하기</string>
+    <string name="goal_switcher_pause_or_plus">목표 일시 중지 또는 Plus 구독하기</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s 목표를 위한 자리 만들기</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. %1$s 목표를 시작하려면 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 다시 이어갈 수 있어요.</string>
+    <string name="goal_switcher_make_room_description">무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. %1$s 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
-    <string name="goal_switcher_pause">일시 중지</string>
+    <string name="goal_switcher_pause">일시 정지</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->
-    <string name="goal_switcher_pause_goal">%1$s 목표 일시 중지</string>
+    <string name="goal_switcher_pause_goal">%1$s 목표 일시 정지</string>
 </resources>

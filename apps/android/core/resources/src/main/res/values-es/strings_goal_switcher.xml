@@ -6,12 +6,12 @@
   "goal_switcher_explore_courses": "564073b74c7ede48cf28252815e4621a8b30eef1fe5ab83999e941379e59241d",
   "goal_switcher_failed": "aa2af97d6a278c8670141c140173c5c3a78a94b88ff81dbe554b3ec87ee22257",
   "goal_switcher_finished": "ed7b54c512cebf4759a6c4767ebeb10799a59a63065f5bcc590abfc3b28c7397",
-  "goal_switcher_make_room_description": "73903c1e988e6b8b0bb6244bcdad3c3eb19c5cfb2b29d817fc913d0dbce1493d",
+  "goal_switcher_make_room_description": "2a5d06c5072cc570db0a3e1c9e578646f2209c44a00da6dbdf5a406311341d36",
   "goal_switcher_make_room_title": "120faf0e3ab4644cc7bc8dd487ad300806f9cd0a29e17682d5d3770eda3cd5b2",
   "goal_switcher_new_goal": "ba9cda1997221ce841a26408813c5efcb3dc7c5ff7234de75a73f525a09063b7",
   "goal_switcher_pause": "f135b71f4b41ae0aa67b28744c26f94f31efe57544b7c36d32c94242759fee3e",
   "goal_switcher_pause_goal": "d67c4a4cbc7a3d3b0287b258aee625082ac29b6133a6cd1234e2a02be10658a6",
-  "goal_switcher_pause_or_plus": "504d2ae2df56a0025dc222e1d04146122de6d8813b77a88925be8431c2ad253c",
+  "goal_switcher_pause_or_plus": "eddbb946f50dfe5574f4a23c9080702a1c222f58ea78a9fa7ae5b7d8a407c3b8",
   "goal_switcher_paused": "49bd9e230004f44b0e7cb95a17a8b6c1d025ff0fc92da8f60196ac37405da6ec",
   "goal_switcher_quick_explanations": "35574eae1b0ddefb4762b8b394f486034f0c1b3cce42699ec3104d318d0acaaa",
   "goal_switcher_ready_to_start": "8eaee8c823bbb432cb87e307d718a494f80f46f88a943cfde0007d2af4b300df",
@@ -40,11 +40,11 @@
     <string name="goal_switcher_ready_to_start">Ya puedes crearlo</string>
     <string name="goal_switcher_start_failed">No pudimos crear este objetivo. Inténtalo de nuevo.</string>
     <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">Pausa un objetivo u obtén Plus</string>
+    <string name="goal_switcher_pause_or_plus">Pausar un objetivo u obtener Plus</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Haz espacio para %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">Ya sigues el máximo de objetivos que permite el plan gratis. Pausa uno para crear %1$s. Puedes reanudarlo más adelante.</string>
+    <string name="goal_switcher_make_room_description">Ya estás siguiendo el máximo de objetivos que permite el plan gratis. Pausa uno para activar %1$s. Puedes reanudarlo más adelante.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pausar</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

@@ -9,7 +9,7 @@
   "goal_switcher_make_room_description": "6e2285380757b9376a7e235db7c7f372f5f386fb5f6e2a90952f0bebbf4f53fd",
   "goal_switcher_make_room_title": "a8fc8faf1ed7057325242d2b27a6c146ac4080110dc408557c90678990599377",
   "goal_switcher_new_goal": "0ec81881b019c5f6c88684abd71c69f9d394f28f1d08bd7935ab5d0474487546",
-  "goal_switcher_pause": "730b25327228191a18595971b402f4ce26507ee5bc01317300bdd94c8c228c20",
+  "goal_switcher_pause": "5b64e495a3506e6d4bac8a0002a387fe68fda9bbd698ee9abb9a67f8daefbcb5",
   "goal_switcher_pause_goal": "ca55fcfabf87f39f2aa0f14d3ea1dacb002cde78cf3eceedaf44bdac91d695f2",
   "goal_switcher_pause_or_plus": "49a528868489414b23ba2faff6681ef5fa9fc6a6b9fc34aa7f69898ccb46b2e7",
   "goal_switcher_paused": "55d3964a6c486a77c77eff3045c72d3a1c78d3cfce95cfd2c65972df748c89ad",
@@ -46,7 +46,7 @@
     <!-- %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_description">Tu as atteint la limite d’objectifs de la formule gratuite. Mets-en un en pause pour commencer %1$s. Tu pourras le reprendre plus tard.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
-    <string name="goal_switcher_pause">Mettre en pause</string>
+    <string name="goal_switcher_pause">Pause</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->
     <string name="goal_switcher_pause_goal">Mettre %1$s en pause</string>
 </resources>
