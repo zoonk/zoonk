@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -234,6 +237,20 @@ internal fun rememberSavePicture(
 }
 
 private const val PICTURE_TYPE = "image/webp"
+
+/** A map's bookmark in its top bar, wherever the map shows: outlined, then filled once saved. */
+@Composable
+internal fun MapBookmark(
+    saved: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconToggleButton(checked = saved, onCheckedChange = { onToggle() }) {
+        Icon(
+            painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
+            contentDescription = stringResource(R.string.mindmaps_save),
+        )
+    }
+}
 
 /** A map that can't be made now: why, worded by what ran out, with Create a free account or See Plus where they help. */
 @Composable
