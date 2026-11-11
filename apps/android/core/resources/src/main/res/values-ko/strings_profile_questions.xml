@@ -5,6 +5,8 @@
   "profile_questions_activities_placeholder": "76572fa9e5acc0ba5069605db3003dea72e47f00e0bb9496d3232c735f79e7d2",
   "profile_questions_activities_title": "98bafbf978de934c2f01913fea46e1c9d7d8b63d7b848064418655b157599685",
   "profile_questions_add": "84a9dfa8332523c01f1228b875fa9c1e6ba5b65ca9c46756c7bfb1be0526a133",
+  "profile_questions_address_description": "2a51eb17893325670d291e022b2851e1554c7d286670274f72b9d1f3e23fadb3",
+  "profile_questions_address_title": "618aebe3788d8c734e107d63129be001670cdf52e6da5964a90a5db7eba967a6",
   "profile_questions_cap": "fa71a9486bd5782b82710874fd3ac914ce7b7296c0b02ab048a34052c1eaff7e",
   "profile_questions_condition_note": "94b84b91fcb7ffb267f80babf4b30638946c1d7d1c6c57ffb5fc9496c937baef",
   "profile_questions_conditions_description": "21f66bec888cb2f977a6626776d0d2192939d809c6eb90c62f498f93c38c185a",
@@ -41,6 +43,7 @@
   "profile_questions_read_placeholder": "b345c2ba10f80164903a883a34159f24a7e8a63f7849249d3d732b691f55ae46",
   "profile_questions_read_title": "f2f11e45600e24225e42b55ba5d018fd4d476b7290725b47202e87df03d65e42",
   "profile_questions_row_activities": "a926821d66e4cf8dc9d6e743b4b0e06f613ba07a3d0dd2b0d5971c87c011c220",
+  "profile_questions_row_address": "1730de624f369dbf30ffff039ede0a0b707e695e182bf0f72ba3a8b6f7aa61e5",
   "profile_questions_row_conditions": "292ac61ff33ec3583ba322e01e2619ce64faaeb5653140b0748535ebec204f5b",
   "profile_questions_row_listen": "e20880a9b798590b3c6638d90b8af8fa7f7a8f74714d2c8b05adf07193ffff7b",
   "profile_questions_row_play": "629cfb08d958e74acd00b8258a9a18da04d96e7f8405f098bd3cc7a2f0101ffd",
@@ -51,6 +54,7 @@
   "profile_questions_row_watch": "fed525b90d769866cd28f260feecc1e63b4ed38851a19d27041a5086f3eb3a06",
   "profile_questions_row_work": "a83839fcff89255a74280ca87a17d63ab9c7b86703098e59eaf3f6495c8fc2fb",
   "profile_questions_save_start_lesson": "f211eef82c22805b784cbbda4be995c7b1760ddccdc594e9507aad833e347b8f",
+  "profile_questions_saved": "33cdb0b6e655f36b4cf0a3b6a0e6f2ba28ea4c45c4d15fe6296018ff4ef36289",
   "profile_questions_skip_all": "8af4869f68403606c4ae5f24eec49d4b74e9cd8fed286343594b39b39c4b3af8",
   "profile_questions_skip_all_label": "bff88f2b854d2f10825ae28f4412e72c19cf05bc89f7fbbb794a0271aaa4cb3a",
   "profile_questions_something_else": "be3b65775842b4142db63ebd0047b75d7061f15d6414e4d8e6fb95df7aeb5400",
@@ -130,6 +134,8 @@
     <string name="profile_questions_consent_help">Zoonk는 이 내용을 바탕으로 지금부터 꾸준히 학습 방식을 맞춰 가요. 다른 사람에게 알려 주거나 레슨 예시에 쓰지 않아요. 설정에서 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_support_title">어떤 방법이 공부에 도움이 되나요?</string>
     <string name="profile_questions_support_description">도움이 되는 건 모두 고르세요. 특정 유형에 해당하지 않아도, 진단을 받지 않았어도 괜찮아요.</string>
+    <string name="profile_questions_address_title">여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?</string>
+    <string name="profile_questions_address_description">짝꿍의 말과 피드백에 이 표현을 써요. 레슨은 그대로예요.</string>
     <string name="profile_questions_suggested">고른 항목에 보통 어떤 방법이 도움이 되는지 알아봤어요. 원하는 대로 바꿔 보세요.</string>
     <string name="profile_questions_nothing_particular">특별히 없어요</string>
     <string name="profile_questions_something_else">+ 그 밖에 도움이 되는 방법</string>
@@ -157,8 +163,10 @@
     <string name="profile_questions_row_activities">즐기는 활동</string>
     <string name="profile_questions_row_conditions">건강 상태</string>
     <string name="profile_questions_row_support">학습에 도움이 되는 것</string>
+    <string name="profile_questions_row_address">성별에 따른 표현</string>
     <string name="profile_questions_not_answered">답변 없음</string>
     <string name="profile_questions_not_shared">알려 주지 않음</string>
+    <string name="profile_questions_saved">저장됨</string>
     <string name="profile_questions_add">추가</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="other">%1$d개 저장됨</item>
