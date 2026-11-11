@@ -238,9 +238,24 @@ describe(validateActivity, () => {
 
     expect(kept.ok ? [] : kept.issues).toStrictEqual([]);
 
-    expect(unanswerable.ok ? [] : unanswerable.issues).toContainEqual(
-      expect.objectContaining({ code: "invalidSchema", path: "fields.steps" }),
-    );
+    expect(unanswerable.ok ? [] : unanswerable.issues).toStrictEqual([
+      expect.objectContaining({ code: "invalidSchema", path: "fields" }),
+    ]);
+  });
+
+  it("keeps a list the learner never sends back, however long", () => {
+    const manyPlaces = structuredClone(fixtures.mapExplorer);
+    const [first] = manyPlaces.fields.places;
+
+    manyPlaces.fields.places = Array.from({ length: 201 }, (_, index) => ({
+      ...first!,
+      id: `place-${index}`,
+      label: `Place ${index + 1}`,
+    }));
+
+    const result = validateActivity(manyPlaces);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([]);
   });
 
   it("rejects inconsistent template data", () => {

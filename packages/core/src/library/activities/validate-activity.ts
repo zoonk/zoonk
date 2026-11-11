@@ -1,6 +1,7 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type z } from "zod";
 import { MAX_ANSWER_ITEMS } from "./activity-answer-schema";
+import { type ActivityExpectedAnswer } from "./activity-expected-answer";
 import { type ActivityCheck } from "./activity-schemas";
 import {
   type ActivityStepContent,
@@ -135,9 +136,54 @@ function checkIssues(template: ActivityTemplate, content: ActivityStepContent): 
     return choiceIssues(template, content, check);
   }
 
-  return template.computeExpected(content.fields)
-    ? []
-    : [issue("answerMismatch", "fields", "Code can't compute the answer this interaction expects")];
+  const expected = template.computeExpected(content.fields);
+
+  if (!expected) {
+    return [
+      issue("answerMismatch", "fields", "Code can't compute the answer this interaction expects"),
+    ];
+  }
+
+  return sentLists(expected).some((list) => list.length > MAX_ANSWER_ITEMS)
+    ? [
+        issue(
+          "invalidSchema",
+          "fields",
+          `The answer would list more than ${MAX_ANSWER_ITEMS} items`,
+        ),
+      ]
+    : [];
+}
+
+/**
+ * The lists a learner's answer sends back. Their counts are targets, but an answer can list only
+ * so many items, so an activity whose right answer lists more could never be finished.
+ */
+function sentLists(expected: ActivityExpectedAnswer): readonly (readonly unknown[])[] {
+  switch (expected.kind) {
+    case "grid":
+      return [expected.cells];
+    case "links":
+      return [expected.links];
+    case "order":
+    case "selection":
+      return [expected.ids];
+    case "pitchClasses":
+      return [expected.pitchClasses];
+    case "rhythm":
+      return [expected.tapTimesMs];
+    case "rows":
+      return [expected.rows, ...expected.rows];
+    case "assignment":
+    case "curveShift":
+    case "formula":
+    case "molecule":
+    case "output":
+    case "regex":
+      return [];
+    default:
+      return expected satisfies never;
+  }
 }
 
 function formulaIssues(template: ActivityTemplate, fields: unknown): ActivityIssue[] {
@@ -166,22 +212,6 @@ function fieldIssues(
   ];
 }
 
-/** A list's count is a target, but an answer that lists its items can send back only so many. */
-function oversizedListIssues(value: unknown, path: string): ActivityIssue[] {
-  if (Array.isArray(value)) {
-    return [
-      ...(value.length > MAX_ANSWER_ITEMS
-        ? [issue("invalidSchema", path, `A list holds more than ${MAX_ANSWER_ITEMS} items`)]
-        : []),
-      ...value.flatMap((item, index) => oversizedListIssues(item, `${path}.${index}`)),
-    ];
-  }
-
-  return isJsonObject(value)
-    ? Object.entries(value).flatMap(([key, item]) => oversizedListIssues(item, `${path}.${key}`))
-    : [];
-}
-
 function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
   const template = getActivityTemplate(content.template);
 
@@ -189,11 +219,7 @@ function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
     return [issue("unknownTemplate", "template", `Unknown template "${content.template}"`)];
   }
 
-  return [
-    ...oversizedListIssues(content.fields, "fields"),
-    ...fieldIssues(template, content),
-    ...checkIssues(template, content),
-  ];
+  return [...fieldIssues(template, content), ...checkIssues(template, content)];
 }
 
 export function validateActivity(input: unknown): ActivityValidationResult {
