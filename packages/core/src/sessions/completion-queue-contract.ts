@@ -7,7 +7,7 @@ import { type SessionMinutes, sessionMinutesSchema } from "./session-minutes";
 
 const countSchema = z.number().int().nonnegative();
 
-export const studyDayProgressSchema = z
+const studyDayProgressSchema = z
   .object({
     catchUp: z
       .object({
