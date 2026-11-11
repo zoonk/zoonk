@@ -415,7 +415,7 @@ describe(writeLanguageLessonDraft, () => {
     mockDraft(draft, writerRunId);
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     const pronunciations = await prisma.wordPronunciation.findMany({
       where: { wordId: { in: [savedRent!.id, savedDeposit!.id] } },
@@ -470,7 +470,7 @@ describe(writeLanguageLessonDraft, () => {
     mockDraft(draft);
     mockAudio();
 
-    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
 
     const [words, sentence] = await Promise.all([
       prisma.word.findMany({ where: { id: { in: [savedRent.id, savedDeposit.id] } } }),
