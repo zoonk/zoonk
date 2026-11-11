@@ -287,10 +287,11 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   const done = page.getByRole("button", { exact: true, name: "Done" });
 
   const intro = page.getByText(/Your plan can give these more time\./u);
+  const effect = page.getByText(/gets 1 more lesson.+You start Portuguese on/u);
 
   await expect(update).toBeVisible();
   await expect(intro).toBeVisible();
-  await expect(page.getByText(/gets 1 more lesson.+You start Portuguese on/u)).toBeVisible();
+  await expect(effect).toBeVisible();
   await expect(done).not.toHaveAttribute("aria-keyshortcuts", "Enter");
 
   await update.click();
@@ -301,6 +302,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
+  await expect(effect).toBeHidden();
   expect(await readChangeStatus(change.id)).toBe("undone");
 });
 
