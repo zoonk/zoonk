@@ -157,6 +157,8 @@ export function useMindMapsLibrary({
 
     if (status === "drawing" || status === "writingLessons") {
       setPage((current) => withStatus({ chapterIds: [chapterId], page: current, status }));
+      // The create offer still counts this chapter until the list is read again.
+      void refresh().catch(() => null);
       return;
     }
 

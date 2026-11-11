@@ -7446,54 +7446,29 @@ msgid "Saved"
 msgstr "Enregistrées"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "kd6gwg"
-msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
-msgstr "{total, plural, one {{ready, number} carte mentale de chapitre prête sur #} other {{ready, number} cartes mentales de chapitres prêtes sur #}}"
+msgctxt "ifrM2C"
+msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
+msgstr "{count, plural, other {# en préparation. Tu peux quitter la page en attendant.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "aC-1Ma"
-msgid "{count, number} on the way"
-msgstr "{count, number} en préparation"
+msgctxt "CHNbiu"
+msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
+msgstr "{count, plural, other {Tu peux en créer # de plus dès maintenant.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "EXfK_x"
-msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
-msgstr "{count, plural, one {Il reste # carte mentale à créer. Tu peux quitter cet écran pendant sa création.} other {Il reste # cartes mentales à créer. Tu peux quitter cet écran pendant leur création.}}"
+msgctxt "wnIf2i"
+msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
+msgstr "{count, plural, one {Il faut d’abord préparer les leçons de # chapitre.} other {Il faut d’abord préparer les leçons de # chapitres.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "hK9T6W"
-msgid "Starts in course order, within your current allowance."
-msgstr "La création suit l’ordre du cours, dans la limite de ton quota actuel."
+msgctxt "w3kQHy"
+msgid "Not made yet"
+msgstr "Pas encore créées"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "HYc-rI"
-msgid "Create all chapter maps"
-msgstr "Créer les cartes mentales de tous les chapitres"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "f1Qds2"
-msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
-msgstr "{count, plural, one {Créer jusqu’à # carte mentale de chapitre} other {Créer jusqu’à # cartes mentales de chapitres}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "wsjJxR"
-msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
-msgstr "{count, plural, one {Il faut d’abord préparer les leçons de # chapitre. Crée chaque carte mentale séparément ci-dessous.} other {Il faut d’abord préparer les leçons de # chapitres. Crée chaque carte mentale séparément ci-dessous.}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "S9DX3H"
-msgid "Writing lessons takes a few minutes."
-msgstr "La préparation des leçons prend quelques minutes."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "Les leçons préparées comptent dans ton quota de leçons gratuites."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "sCyF8_"
-msgid "Hide chapters"
-msgstr "Masquer les chapitres"
+msgctxt "duK7Tu"
+msgid "{count, plural, one {Create # chapter map} other {Create # chapter maps}}"
+msgstr "{count, plural, one {Créer # carte mentale de chapitre} other {Créer # cartes mentales de chapitre}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
@@ -7501,9 +7476,9 @@ msgid "Show chapters"
 msgstr "Afficher les chapitres"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "w3kQHy"
-msgid "Not made yet"
-msgstr "Pas encore créées"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Les leçons préparées comptent dans ton quota de leçons gratuites."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"

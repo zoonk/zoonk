@@ -7446,54 +7446,29 @@ msgid "Saved"
 msgstr "Kaydedilenler"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "kd6gwg"
-msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
-msgstr "{total, plural, one {{ready, number} / # ünite haritası hazır} other {{ready, number} / # ünite haritası hazır}}"
+msgctxt "ifrM2C"
+msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
+msgstr "{count, plural, other {# harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "aC-1Ma"
-msgid "{count, number} on the way"
-msgstr "{count, number} harita hazırlıyoruz"
+msgctxt "CHNbiu"
+msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
+msgstr "{count, plural, other {Şu an # harita daha oluşturabilirsin.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "EXfK_x"
-msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
-msgstr "{count, plural, one {# harita kaldı. Biz hazırlarken sayfadan ayrılabilirsin.} other {# harita kaldı. Biz hazırlarken sayfadan ayrılabilirsin.}}"
+msgctxt "wnIf2i"
+msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
+msgstr "{count, plural, other {Önce # ünitenin dersleri hazırlanmalı.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "hK9T6W"
-msgid "Starts in course order, within your current allowance."
-msgstr "Mevcut hakkın kadar haritayı kurstaki sırayla hazırlamaya başlarız."
+msgctxt "w3kQHy"
+msgid "Not made yet"
+msgstr "Henüz hazırlanmadı"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "HYc-rI"
-msgid "Create all chapter maps"
-msgstr "Tüm ünite haritalarını oluştur"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "f1Qds2"
-msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
-msgstr "{count, plural, one {En fazla # ünite haritası oluştur} other {En fazla # ünite haritası oluştur}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "wsjJxR"
-msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
-msgstr "{count, plural, one {Önce # ünitenin dersleri hazırlanmalı. Haritasını aşağıdan ayrı olarak oluştur.} other {Önce # ünitenin dersleri hazırlanmalı. Her birinin haritasını aşağıdan tek tek oluştur.}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "S9DX3H"
-msgid "Writing lessons takes a few minutes."
-msgstr "Dersleri hazırlamamız birkaç dakika sürer."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "Hazırladığımız dersler ücretsiz ders hakkından düşülür."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "sCyF8_"
-msgid "Hide chapters"
-msgstr "Üniteleri gizle"
+msgctxt "duK7Tu"
+msgid "{count, plural, one {Create # chapter map} other {Create # chapter maps}}"
+msgstr "{count, plural, other {# ünite haritası oluştur}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
@@ -7501,9 +7476,9 @@ msgid "Show chapters"
 msgstr "Üniteleri göster"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "w3kQHy"
-msgid "Not made yet"
-msgstr "Henüz hazırlanmadı"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Hazırladığımız dersler ücretsiz ders hakkından düşülür."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"

@@ -183,7 +183,7 @@ test.describe("Mind maps", () => {
 
     try {
       await page.goto("/mind-maps");
-      await page.getByRole("button", { name: "Create all chapter maps" }).click();
+      await page.getByRole("button", { name: "Create 2 chapter maps" }).click();
       await expect(page.getByText(/2 on the way/u)).toBeVisible();
 
       await drawMap(first.chapter.id);
@@ -214,9 +214,13 @@ test.describe("Mind maps", () => {
       await row(first.chapter.title).getByRole("button", { name: "Create" }).click();
       await expect(page.getByText(/1 on the way/u)).toBeVisible();
 
+      // The button counts only what's left to start once the first map is on its way.
+      const createRest = page.getByRole("button", { name: "Create 1 chapter map" });
+      await expect(createRest).toBeVisible();
+
       await page.route("**/generations", (route) => route.abort());
       await secondRow.getByRole("button", { name: "Create" }).click();
-      await page.getByRole("button", { name: "Create all chapter maps" }).click();
+      await createRest.click();
 
       await expect(secondRow.getByRole("button", { name: "Try again" })).toBeVisible();
       await expect(unreachable).toBeVisible();

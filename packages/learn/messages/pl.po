@@ -7446,54 +7446,29 @@ msgid "Saved"
 msgstr "Zapisane"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "kd6gwg"
-msgid "{total, plural, one {{ready, number} of # chapter map ready} other {{ready, number} of # chapter maps ready}}"
-msgstr "{total, plural, one {Gotowych map rozdziałów jest {ready, number} z #} few {Gotowych map rozdziałów jest {ready, number} z #} many {Gotowych map rozdziałów jest {ready, number} z #} other {Gotowych map rozdziałów jest {ready, number} z #}}"
+msgctxt "ifrM2C"
+msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
+msgstr "{count, plural, one {Przygotowujemy # mapę. Możesz w tym czasie opuścić stronę.} few {Przygotowujemy # mapy. Możesz w tym czasie opuścić stronę.} other {Przygotowujemy # map. Możesz w tym czasie opuścić stronę.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "aC-1Ma"
-msgid "{count, number} on the way"
-msgstr "{count, number} w przygotowaniu"
+msgctxt "CHNbiu"
+msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
+msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} few {Możesz teraz utworzyć jeszcze # mapy.} other {Możesz teraz utworzyć jeszcze # map.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "EXfK_x"
-msgid "{count, plural, one {# map remains. You can leave while it's made.} other {# maps remain. You can leave while they're made.}}"
-msgstr "{count, plural, one {Pozostała # mapa. Możesz wyjść, a my ją przygotujemy.} few {Pozostały # mapy. Możesz wyjść, a my je przygotujemy.} many {Pozostało # map. Możesz wyjść, a my je przygotujemy.} other {Pozostało # map. Możesz wyjść, a my je przygotujemy.}}"
+msgctxt "wnIf2i"
+msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
+msgstr "{count, plural, one {Najpierw trzeba przygotować lekcje do # rozdziału.} other {Najpierw trzeba przygotować lekcje do # rozdziałów.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "hK9T6W"
-msgid "Starts in course order, within your current allowance."
-msgstr "Przygotowujemy mapy w kolejności rozdziałów, w ramach twojego obecnego limitu."
+msgctxt "w3kQHy"
+msgid "Not made yet"
+msgstr "Jeszcze niegotowe"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "HYc-rI"
-msgid "Create all chapter maps"
-msgstr "Utwórz wszystkie mapy rozdziałów"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "f1Qds2"
-msgid "{count, plural, one {Create up to # chapter map} other {Create up to # chapter maps}}"
-msgstr "{count, plural, one {Utwórz do # mapy rozdziału} few {Utwórz do # map rozdziałów} many {Utwórz do # map rozdziałów} other {Utwórz do # map rozdziałów}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "wsjJxR"
-msgid "{count, plural, one {# chapter needs its lessons written first. Create its map on its own below.} other {# chapters need their lessons written first. Create each map on its own below.}}"
-msgstr "{count, plural, one {Najpierw trzeba przygotować lekcje do # rozdziału. Utwórz jego mapę osobno poniżej.} few {Najpierw trzeba przygotować lekcje do # rozdziałów. Utwórz każdą mapę osobno poniżej.} many {Najpierw trzeba przygotować lekcje do # rozdziałów. Utwórz każdą mapę osobno poniżej.} other {Najpierw trzeba przygotować lekcje do # rozdziałów. Utwórz każdą mapę osobno poniżej.}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "S9DX3H"
-msgid "Writing lessons takes a few minutes."
-msgstr "Przygotowanie lekcji zajmuje kilka minut."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "sCyF8_"
-msgid "Hide chapters"
-msgstr "Ukryj rozdziały"
+msgctxt "duK7Tu"
+msgid "{count, plural, one {Create # chapter map} other {Create # chapter maps}}"
+msgstr "{count, plural, one {Utwórz # mapę rozdziału} few {Utwórz # mapy rozdziałów} other {Utwórz # map rozdziałów}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
@@ -7501,9 +7476,9 @@ msgid "Show chapters"
 msgstr "Pokaż rozdziały"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "w3kQHy"
-msgid "Not made yet"
-msgstr "Jeszcze niegotowe"
+msgctxt "9Vf09f"
+msgid "Writing lessons counts toward your free lessons."
+msgstr "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
