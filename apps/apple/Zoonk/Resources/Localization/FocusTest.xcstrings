@@ -3200,7 +3200,7 @@
       }
     },
     "This sitting has up to %lld questions, so some subjects may not be checked." : {
-      "comment" : "The Focus test's invitation, when its sitting can't reach every subject",
+      "comment" : "The Focus test's invitation, when its sitting can't reach every subject. A sitting is one go at the test, not a study session: say \"this test\" or \"this time\"",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -3280,13 +3280,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Questa sessione prevede al massimo %lld domanda, quindi alcune materie potrebbero non essere valutate."
+                  "value" : "Questo test prevede al massimo %lld domanda, quindi alcune materie potrebbero non essere valutate."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Questa sessione prevede al massimo %lld domande, quindi alcune materie potrebbero non essere valutate."
+                  "value" : "Questo test prevede al massimo %lld domande, quindi alcune materie potrebbero non essere valutate."
                 }
               }
             }

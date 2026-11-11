@@ -87,8 +87,10 @@ struct FocusTestInvitation: View {
                     localized:
                       "This sitting has up to \(next.questions) questions, so some subjects may not be checked.",
                     table: "FocusTest",
-                    comment:
-                      "The Focus test's invitation, when its sitting can't reach every subject"),
+                    comment: """
+                      The Focus test's invitation, when its sitting can't reach every subject. A \
+                      sitting is one go at the test, not a study session: say "this test" or "this time"
+                      """),
                 ].joined(separator: " "))
 
               Button {
