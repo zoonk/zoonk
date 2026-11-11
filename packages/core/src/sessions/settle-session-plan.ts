@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { settleFocusTestAfterSession } from "../learner/placement/_utils/settle-focus-test";
 import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
 
@@ -12,6 +13,14 @@ export async function settleSessionPlan(session: {
   timeZone: string;
   userId: string;
 }): Promise<void> {
+  const goal = await prisma.goal.findFirst({
+    where: { id: session.goalId, userId: session.userId },
+  });
+
+  if (goal?.status !== "active") {
+    return;
+  }
+
   await settleFocusTestAfterSession(session);
   await rebalancePlanAfterSession(session);
 }

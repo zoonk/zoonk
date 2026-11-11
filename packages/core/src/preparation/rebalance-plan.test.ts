@@ -3,6 +3,7 @@ import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/lea
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { updateGoal } from "../goals/update-goal";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
@@ -177,6 +178,26 @@ describe(rebalancePlanAfterSession, () => {
     expect(change).toMatchObject({
       payload: { operations: [{ areas: ["Science"], kind: "focusAreas" }] },
     });
+  });
+
+  it("leaves a paused goal's plan alone when its session stops", async () => {
+    const { goal, plan, user } = await setup();
+    mockSession(user.id);
+
+    const today = await getTodayStudySession({ goalId: goal.id });
+
+    if (today.status !== "ready") {
+      throw new Error("Expected today's session");
+    }
+
+    const { blocks, id: sessionId } = today.session;
+    await startStudyBlock({ blockId: blocks[0]?.id ?? "", input: {}, sessionId });
+    await updateGoal({ goalId: goal.id, input: { status: "paused" } });
+    await stopStudySession({ input: {}, sessionId });
+
+    await settleSessionPlan({ goalId: goal.id, sessionId, timeZone: "UTC", userId: user.id });
+
+    await expect(rebalances(plan.id)).resolves.toHaveLength(0);
   });
 
   it("leaves a plan without a graph alone", async () => {

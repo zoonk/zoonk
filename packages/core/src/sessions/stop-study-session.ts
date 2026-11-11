@@ -64,7 +64,7 @@ async function markFirstStop({ session, timeZone, userId }: StopContext) {
               },
             ]
           : []),
-        ...(stopped.endedAt ? [] : followUps),
+        ...followUps,
       ],
       userId,
     });

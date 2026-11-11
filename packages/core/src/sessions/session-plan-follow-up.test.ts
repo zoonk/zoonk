@@ -11,6 +11,53 @@ import { settleSessionDay } from "./_utils/settle-session-day";
 import { stopStudySession } from "./stop-study-session";
 
 describe("the plan work a session's first end owes", () => {
+  it("keeps owing memory when a completed session is reopened and stopped", async () => {
+    const user = await userFixture();
+    const { goal } = await unplannedGoalFixture({ timezone: "UTC", userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      plannedMinutes: 0,
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "practice",
+      sessionId: session.id,
+      status: "completed",
+    });
+
+    mockSession(user.id);
+
+    await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
+    const memoryKinds = ["rememberSession", "checkDailyInsight"] as const;
+
+    await prisma.followUp.deleteMany({
+      where: { kind: { in: [...memoryKinds] }, userId: user.id },
+    });
+
+    await prisma.studySession.update({ data: { status: "active" }, where: { id: session.id } });
+    await prisma.studySessionBlock.update({ data: { status: "pending" }, where: { id: block.id } });
+
+    await stopStudySession({ input: {}, sessionId: session.id });
+
+    const owed = await prisma.followUp.findMany({
+      orderBy: { kind: "asc" },
+      where: { kind: { in: [...memoryKinds] }, userId: user.id },
+    });
+
+    expect(owed.map(({ kind }) => kind)).toStrictEqual(memoryKinds);
+
+    await stopStudySession({ input: {}, sessionId: session.id });
+
+    await expect(
+      prisma.followUp.findMany({
+        orderBy: { kind: "asc" },
+        where: { kind: { in: [...memoryKinds] }, userId: user.id },
+      }),
+    ).resolves.toStrictEqual(owed);
+  });
+
   it.each(["complete", "stop"] as const)(
     "owes it once across concurrent %s requests and later completion",
     async (ending) => {
