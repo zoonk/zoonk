@@ -107,7 +107,7 @@ function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
 
 function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
   return (
-    <TaskAsideContent className="flex flex-col gap-3 max-lg:hidden" data-slot="lesson-recap">
+    <TaskAsideContent className="without-aside:hidden flex flex-col gap-3" data-slot="lesson-recap">
       <RecapBody mark={mark} step={step} />
     </TaskAsideContent>
   );
@@ -134,7 +134,7 @@ export function LessonRecapRow() {
   const { title } = recap.step.content;
 
   return (
-    <PlayerContentFrame className="pb-6 lg:hidden" data-slot="lesson-recap-row">
+    <PlayerContentFrame className="with-aside:hidden pb-6" data-slot="lesson-recap-row">
       <Disclosure
         description={title ? <LessonRichText text={title} /> : undefined}
         icon={

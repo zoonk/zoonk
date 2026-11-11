@@ -98,7 +98,7 @@ export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
       {!stopped && extraTime.available && (
         <ExtraTimeButton
           action={actions.addExtraTime}
-          className={cn("lg:w-auto lg:self-end", !lastStep && "max-lg:hidden")}
+          className={cn("lg:w-auto lg:self-end", !lastStep && "without-aside:hidden")}
           label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
           minutes={extraTime.minutes}
         />

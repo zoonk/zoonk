@@ -120,7 +120,7 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
       <DuelDayMoment />
 
       {hasResultRows(rows) && (
-        <div className="flex w-full flex-col gap-6 lg:hidden">
+        <div className="with-aside:hidden flex w-full flex-col gap-6">
           <CheckpointResultDetails rows={rows} />
         </div>
       )}

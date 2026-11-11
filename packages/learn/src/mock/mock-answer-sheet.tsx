@@ -253,7 +253,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger
         aria-label={t("Answer sheet")}
-        render={<Button className="shrink-0 lg:hidden" size="sm" variant="outline" />}
+        render={<Button className="with-aside:hidden shrink-0" size="sm" variant="outline" />}
       >
         {t({
           description: "Short label of a small button that opens the mock exam's answer sheet.",

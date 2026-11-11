@@ -48,7 +48,7 @@ export function StepsBackButton({ onClick }: { onClick: () => void }) {
 }
 
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
-  return when ? <div className="contents max-lg:hidden">{children}</div> : children;
+  return when ? <div className="without-aside:hidden contents">{children}</div> : children;
 }
 
 function useStepMoment(item: StepsItem | undefined) {
@@ -114,7 +114,7 @@ export function Steps({
   const phone = getStepMoves({ current, steps: items, wide: false });
   const wide = getStepMoves({ current, steps: items, wide: true });
   // The server can't know the width, so each arrangement's dots and last-step actions are drawn and
-  // CSS shows one (`lg:hidden`, `max-lg:hidden`).
+  // CSS shows one (`with-aside:hidden`, `without-aside:hidden`).
   const split = items.some((step) => step.beside);
   const isLastHere = phone.next === -1;
   const isLastWide = wide.next === -1;
@@ -170,7 +170,7 @@ export function Steps({
               {item.action}
               {!isLastHere && (
                 <TaskMainButton
-                  className={cn(isLastWide && "lg:hidden")}
+                  className={cn(isLastWide && "with-aside:hidden")}
                   onClick={() => move("next")}
                 >
                   {t("Continue")}
@@ -189,13 +189,17 @@ export function Steps({
           <>
             {phone.total > 1 && (
               <StepDots
-                className={cn(split && "lg:hidden")}
+                className={cn(split && "with-aside:hidden")}
                 current={phone.position}
                 total={phone.total}
               />
             )}
             {split && wide.total > 1 && (
-              <StepDots className="max-lg:hidden" current={wide.position} total={wide.total} />
+              <StepDots
+                className="without-aside:hidden"
+                current={wide.position}
+                total={wide.total}
+              />
             )}
           </>
         ) : null

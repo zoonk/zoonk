@@ -306,13 +306,13 @@ export function CheckpointDuelView() {
     <>
       <TricksterShield
         broken={score.correct}
-        className="lg:hidden"
+        className="with-aside:hidden"
         held={score.decision === "lost"}
         label={label}
         segments={checkpoint.passMark}
         value={value}
       />
-      <div className="max-lg:hidden">
+      <div className="without-aside:hidden">
         <TaskHeaderSegments label={label} segments={segments} value={value} />
       </div>
     </>
