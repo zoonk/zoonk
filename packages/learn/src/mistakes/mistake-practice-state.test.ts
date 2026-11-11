@@ -5,7 +5,6 @@ import {
   type PracticeEntry,
   createPracticeState,
   getPracticeSegments,
-  isMistakeQuestion,
   practiceReducer,
 } from "./mistake-practice-state";
 
@@ -351,48 +350,5 @@ describe(getPracticeSegments, () => {
       segment,
       "current",
     ]);
-  });
-});
-
-describe(isMistakeQuestion, () => {
-  const mistake = entry("lesson");
-
-  function stepOn(question: { context: string | null; question: string }, saved: string) {
-    const original = mistake.questions[0]!;
-
-    if (original.format !== "multipleChoice") {
-      throw new Error("Expected the choice fixture");
-    }
-
-    return {
-      entry: { ...mistake, snapshot: { ...mistake.snapshot, question: saved } },
-      firstOfEntry: true,
-      lesson: null,
-      question: { ...original, ...question },
-    };
-  }
-
-  it("knows a bank question saved as it's asked", () => {
-    expect(isMistakeQuestion(stepOn({ context: null, question: "How much?" }, "How much?"))).toBe(
-      true,
-    );
-  });
-
-  it("knows a lesson's question saved with its context before it, on any line break", () => {
-    const question = { context: "A shirt costs R$ 120.", question: "How much?" };
-
-    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120.\n\nHow much?"))).toBe(true);
-    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120. How much?"))).toBe(true);
-  });
-
-  it("tells another question on the same skill apart", () => {
-    expect(
-      isMistakeQuestion(
-        stepOn(
-          { context: "A bike costs R$ 250.", question: "How much?" },
-          "A shirt costs R$ 120.\n\nHow much?",
-        ),
-      ),
-    ).toBe(false);
   });
 });

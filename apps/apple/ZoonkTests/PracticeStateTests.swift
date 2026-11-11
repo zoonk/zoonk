@@ -83,17 +83,6 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testTheOriginalQuestionMatchesWithItsContext() {
-    var question = PracticeQuestion(itemId: "a", format: .multipleChoice, question: "What  is it?")
-    question.context = "A case."
-    let entry = MistakePracticeEntry(
-      cause: nil, drill: .init(kind: .retry, lesson: nil, timeLimitSeconds: nil), mistakeId: "m",
-      questions: [question], snapshotQuestion: "A case. What is it?", snapshotAnswer: nil)
-
-    XCTAssertTrue(
-      MistakePracticeStep(entry: entry, isFirstOfEntry: true, question: question).isMistakeQuestion)
-  }
-
   private func answer(
     _ state: inout MistakePracticeState, _ answer: PracticeAnswer = .choice(0),
     by sender: AnswerSender = .check,
@@ -186,8 +175,7 @@ private func makeEntry(
     cause: nil, drill: drill, mistakeId: mistakeId,
     questions: questions.map {
       PracticeQuestion(itemId: $0, format: .multipleChoice, question: $0, options: ["x", "y"])
-    },
-    snapshotQuestion: "saved", snapshotAnswer: nil)
+    })
 }
 
 private func makeGrade(

@@ -396,6 +396,7 @@ msgstr "{done, number}/{total, number}"
 #: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -454,7 +455,7 @@ msgstr "いつもより時間がかかっています。自動で開くので、
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1874,6 +1875,7 @@ msgstr "印刷する"
 
 #: src/certificates/certificate-page.tsx
 #: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "5q3qC0"
 msgid "Download"
@@ -7152,7 +7154,7 @@ msgid "Couldn't undo. Try again."
 msgstr "取り消せませんでした。もう一度お試しください。"
 
 #: src/mind-maps/finished-chapter-map.tsx
-#: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/mind-map-copy.ts
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7162,6 +7164,87 @@ msgstr "サーバーに接続できませんでした。インターネット接
 msgctxt "2DLM14"
 msgid "Chapter finished"
 msgstr "章の学習が完了"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "全画面表示"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "RIuQL5"
+msgid "Mind map"
+msgstr "マインドマップ"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "AAKHvt"
+msgid "Its main ideas in one picture"
+msgstr "この章のポイントを1枚の図に"
+
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-row.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "作成する"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {#レッスンの作成が必要}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, other {まず#レッスンを作成するため、数分かかります。}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {まず#レッスンを作成します。作成分は無料レッスンの利用数に含まれます。}}"
+
+#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "テキストで見る"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lY6tDJ"
+msgid "Mind map ready"
+msgstr "マインドマップができました"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "1dO0rM"
+msgid "This takes a few minutes. You can leave; it'll be here."
+msgstr "数分かかります。画面を離れても、後でここから確認できます。"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
+msgstr "レッスン、マインドマップの順に作成しています…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "cdPOua"
+msgid "About half a minute. You can leave; it'll be here."
+msgstr "30秒ほどかかります。画面を離れても、後でここから確認できます。"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr "マインドマップを作成しています…"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "lZl8_B"
+msgid "It couldn't be made this time."
+msgstr "今回は作成できませんでした。"
 
 #: src/mind-maps/mind-map-description.tsx
 msgctxt "v3MXM4"
@@ -7182,78 +7265,6 @@ msgstr "マインドマップ：{title}。{idea}"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "まとめ："
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, other {#レッスンの作成が必要}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, other {まず#レッスンを作成するため、数分かかります。}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, other {まず#レッスンを作成します。作成分は無料レッスンの利用数に含まれます。}}"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "AAKHvt"
-msgid "Its main ideas in one picture"
-msgstr "この章のポイントを1枚の図に"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "テキストで見る"
-
-#: src/mind-maps/mind-map-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "Vxnu0A"
-msgid "Its picture had mistakes, so here's the mind map as text."
-msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lY6tDJ"
-msgid "Mind map ready"
-msgstr "マインドマップができました"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "1dO0rM"
-msgid "This takes a few minutes. You can leave; it'll be here."
-msgstr "数分かかります。画面を離れても、後でここから確認できます。"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "レッスン、マインドマップの順に作成しています…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "cdPOua"
-msgid "About half a minute. You can leave; it'll be here."
-msgstr "30秒ほどかかります。画面を離れても、後でここから確認できます。"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "マインドマップを作成しています…"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "lZl8_B"
-msgid "It couldn't be made this time."
-msgstr "今回は作成できませんでした。"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "RIuQL5"
-msgid "Mind map"
-msgstr "マインドマップ"
-
-#: src/mind-maps/mind-map-row.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "作成する"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7740,25 +7751,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "問題を始める"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "前回の答え：{answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "まずポイントを学んでから、実際に使ってみます。"
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "つまずいたポイントに戻ります。"
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "一語一語よく読んでから答えましょう。"
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7774,11 +7770,6 @@ msgstr "本番と同じく、1問{seconds, number}秒で答えます。"
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "もう一度やってみましょう。"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
@@ -7934,17 +7925,23 @@ msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "まだわからない"
 
+#. "Your notebook" is the learner's Mistakes notebook.
+#: src/mistakes/practice-step.tsx
+msgctxt "HJwk2o"
+msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
+msgstr "{count, plural, =0 {克服した間違いはありません} other {#個の間違いを克服しました。間違いノートから外れます。}}"
+
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "回答へのフィードバック"
 
-#. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
-msgctxt "HJwk2o"
-msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
-msgstr "{count, plural, =0 {克服した間違いはありません} other {#個の間違いを克服しました。間違いノートから外れます。}}"
+#: src/session/question-block/question-feedback.tsx
+msgctxt "amJs-w"
+msgid "Right answer: {answer}"
+msgstr "正解：{answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -9768,16 +9765,16 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "この目標への回答が消去され、目標の入力からやり直します。"
 
-#: src/onboarding/start-over-menu.tsx
-msgctxt "Y_OSFo"
-msgid "Skip the rest of the questions about you"
-msgstr "プロフィールに関する残りの質問をスキップする"
-
 #. Skips every remaining question about the learner in this setup.
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kIHftM"
 msgid "Skip all"
 msgstr "すべてスキップする"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "プロフィールに関する残りの質問をスキップする"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -13493,11 +13490,6 @@ msgctxt "GVY4V5"
 msgid "{count} right in a row"
 msgstr "{count}問連続正解"
 
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "正解：{answer}"
-
 #: src/session/question-block/quoted-source.tsx
 msgctxt "cLxgIi"
 msgid "Past exam question · {source}"
@@ -15014,8 +15006,3 @@ msgstr "来週"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "このスキルの曜日ごとの正解状況"
-
-#: src/mind-maps/mind-map-aside.tsx
-msgctxt "FZBGji"
-msgid "Full screen"
-msgstr "全画面表示"

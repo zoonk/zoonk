@@ -3,15 +3,11 @@
 {
   "questions_correct": "f932ea7104c25d637c6be3ea1952b2dd0a82b701472e985248076c1caccda6a4",
   "questions_dont_know_yet": "6dd8ea28c71908155c0fb40bbe7ef7062258aeebda8e0c9935d8f06b808ada64",
-  "questions_drill_last_answer": "b6e5a9b530725b6783ae9e914aa90d4416755e1da9c1bfd9340872d3de168f5c",
   "questions_drill_no_guessing": "6483d9302afe7da6abcb0559d332db189b51fcee575c22cefd8b38d4920c4744",
   "questions_drill_not_sure": "72a16d8cbcee2f75a36ef61495dbae08e73a27967f7eecf4306d20ce8985b2b0",
   "questions_drill_not_sure_praise": "a1817a538cab84782ed293ccaa4ca982b625c7abef363a1dea1ea25e4bf7b492",
   "questions_drill_open_lesson": "3f349b3fec1344e5d428e02e746f8de27a32171022dd43da11846b952e5409a1",
-  "questions_drill_read_carefully": "4443ce7357c2b0b188eb7e694bd12d96189ab8972c0d0fb3bbb90133b893991c",
-  "questions_drill_reteach": "44345ac9eadf756c28b0415f7cd2f164c7c2e133ee9e38ce161cd9d22a40f2af",
   "questions_drill_reteach_ideas": "8269cb30bd9ee2088c96399916d4d812540cdd080442015e4d4d6c06e3580928",
-  "questions_drill_retry": "64dc3ffd5dea69a2f43709ef700aef116a39a66f7451347a5c902d917f5298c7",
   "questions_drill_seconds_left": "7579d05979e953e1de6ecdf07851cbc21da058fb4eeab116f1c31a39118208c0",
   "questions_drill_spot_the_trap": "87685a98a12777df8f5ef6a20a218dec0a5209613118f212f6218ccc1c68ff41",
   "questions_drill_start": "c4eb2dd5aa0dc21f9a14d81db8ddc6858db5fbd988deec0e9fa39bfa1b4a4310",
@@ -123,17 +119,12 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">기출문제 · %1$s</string>
     <string name="questions_drill_reteach_ideas">먼저 개념을 익힌 뒤 활용해 보세요.</string>
-    <string name="questions_drill_reteach">놓쳤던 개념을 다시 살펴보세요.</string>
-    <string name="questions_drill_read_carefully">답하기 전에 단어 하나하나 꼼꼼히 읽어 보세요.</string>
     <string name="questions_drill_spot_the_trap">함정이 숨어 있어요. 답하기 전에 찾아보세요.</string>
     <plurals name="questions_drill_timed">
         <item quantity="other">실제 시험처럼 문제당 %d초예요.</item>
     </plurals>
     <string name="questions_drill_no_guessing">확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요.</string>
-    <string name="questions_drill_retry">다시 풀어 보세요.</string>
     <string name="questions_drill_start">문제 풀기</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">지난번 답: %1$s</string>
     <string name="questions_drill_timed_out">시간이 다 됐어요. 이 문제는 오답으로 처리돼서 나중에 다시 나와요.</string>
     <string name="questions_drill_not_sure_praise">좋은 판단이에요. 찍기보다는 잘 모르겠다고 말하는 게 나아요.</string>
     <string name="questions_drill_trap">함정:</string>

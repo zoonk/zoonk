@@ -4105,65 +4105,6 @@
         }
       }
     },
-    "Back to an idea you missed." : {
-      "comment" : "How a content-gap drill goes, without ideas to show.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zurück zu einem Konzept, das du noch nicht verstanden hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volvamos a una idea que no te quedó clara."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revenons sur une notion qui t’a échappé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Torniamo a un concetto che ti è sfuggito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "つまずいたポイントに戻ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "놓쳤던 개념을 다시 살펴보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróćmy do zagadnienia, które ci umknęło."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vamos rever uma ideia que não ficou clara."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gözden kaçırdığın bir kavrama geri dönelim."
-          }
-        }
-      }
-    },
     "Back to the notebook" : {
       "comment" : "VoiceOver label: leaves mistake practice.",
       "localizations" : {
@@ -7167,65 +7108,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kuralı bilmek ilk adım. Uyguladıkça kolaylaşır."
-          }
-        }
-      }
-    },
-    "Last time you answered: %@" : {
-      "comment" : "A mistake drill's note: what the learner answered when they got it wrong.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine letzte Antwort: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La última vez respondiste: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La dernière fois, tu as répondu : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’ultima volta hai risposto: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前回の回答：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지난번 답변: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprzednia odpowiedź: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Da última vez, você respondeu: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önceki cevabın: %@"
           }
         }
       }
@@ -11435,65 +11317,6 @@
         }
       }
     },
-    "Read every word before you answer." : {
-      "comment" : "How a misread drill goes.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lies jedes Wort, bevor du antwortest."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lee cada palabra antes de responder."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lis bien chaque mot avant de répondre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leggi ogni parola prima di rispondere."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答える前に、一語ずつ最後まで読んでください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답하기 전에 한 단어도 빠짐없이 읽으세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przeczytaj każde słowo, zanim odpowiesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leia cada palavra antes de responder."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevaplamadan önce her kelimeyi oku."
-          }
-        }
-      }
-    },
     "Read it all again" : {
       "comment" : "Unfolds a shared text read before.",
       "localizations" : {
@@ -15085,65 +14908,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene"
-          }
-        }
-      }
-    },
-    "Try it again." : {
-      "comment" : "How a plain retry drill goes.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versuch es noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essaie encore une fois."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riprova."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度やってみましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다시 해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj jeszcze raz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tente de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar dene."
           }
         }
       }

@@ -9,7 +9,6 @@ import {
   FeedbackVerdict,
 } from "../_components/feedback-panel";
 import { ItemText } from "../questions/item-text";
-import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { QuestionMainButton } from "../session/question-block/question-actions";
 import {
   WorkedSteps,
@@ -27,7 +26,6 @@ import {
   type PracticeAnswer,
   type PracticeStep as Step,
   getPracticeAnswer,
-  isMistakeQuestion,
 } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
@@ -209,39 +207,20 @@ export function PracticeStepView({
   trueFalseLabels: TrueFalseLabels;
   renderLesson: LessonPracticeRenderer;
 }) {
-  const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { phase } = run.state;
   const { drill } = step.entry;
   const { question } = step;
 
-  // The earlier answer belongs to the mistake's own question; next to another one it misleads.
-  const lastAnswer = isMistakeQuestion(step) ? answerText(step.entry.snapshot.answer) : null;
-
   if (phase.kind === "idea") {
-    return (
-      <DrillIntro
-        drill={drill}
-        lastAnswer={lastAnswer}
-        lessonHref={lessonHref}
-        onStart={run.start}
-      />
-    );
+    return <DrillIntro drill={drill} lessonHref={lessonHref} onStart={run.start} />;
   }
 
   const graded = phase.kind === "feedback" ? phase : null;
-  const ideaFirst = isIdeaFirst(drill);
-
-  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry;
 
   return (
     <>
-      {showsNote && (
-        <DrillIntro
-          answered={graded !== null || ideaFirst}
-          drill={drill}
-          lastAnswer={lastAnswer}
-          lessonHref={lessonHref}
-        />
+      {step.firstOfEntry && !isIdeaFirst(drill) && (
+        <DrillIntro answered={graded !== null} drill={drill} lessonHref={lessonHref} />
       )}
 
       {drill.timeLimitSeconds !== null && phase.kind === "answering" && (

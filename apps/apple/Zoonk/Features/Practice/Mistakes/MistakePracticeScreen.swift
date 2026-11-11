@@ -111,15 +111,8 @@ struct MistakePracticeScreen: View {
     if state.phase == .idea, let lesson = drill.lesson {
       DrillIdeaView(drill: drill, lesson: lesson)
     } else {
-      let lastAnswer =
-        step.isMistakeQuestion
-        ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil
-
-      if drill.isIdeaFirst ? lastAnswer != nil : step.isFirstOfEntry {
-        DrillNoteView(
-          drill: drill,
-          lastAnswer: lastAnswer,
-          isAnswered: graded != nil || drill.isIdeaFirst)
+      if step.isFirstOfEntry && !drill.isIdeaFirst {
+        DrillNoteView(drill: drill, isAnswered: graded != nil)
       }
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {

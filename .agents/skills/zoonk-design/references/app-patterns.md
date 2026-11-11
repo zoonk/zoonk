@@ -109,7 +109,7 @@ Every page is one of these, built from the kit in `packages/learn/src/_component
 ## Mistakes
 
 - The notebook lists mistakes by skill, its tabs "To fix" and "Fixed": on a phone each skill's row opens in place to its mistakes; from `lg` it's an inbox, the skills on the left and the selected one's mistakes beside them. Each entry ends with "Practice this skill" (that skill's open mistakes) and "Open the lesson": the lesson it was made in or, for a question answered outside a lesson, a lesson the learner finished on that skill, else one already written, else the first that teaches it. A fixed entry keeps only "Open the lesson".
-- Practice plays each mistake's drill as a session's block does: its note right above the question at every size (the drill's rule, the earlier answer when the question in view is the one it was made on, "Go over the lesson" for a gap; after a gap's idea screen, which says how the drill goes, only the earlier answer), never the right answer; the notebook keeps the mistake as it was made. From `lg` its aside holds only the buddy, at its foot.
+- Practice plays each mistake's drill as a session's block does: a note right above the question at every size only when the drill asks something of the learner (a trap to find, a clock, saying they're not sure) or has a lesson to go over for a gap, and nothing after a gap's idea screen. It never shows the learner's earlier answer or the right answer: either would give the question away. The notebook keeps the mistake as it was made. From `lg` its aside holds only the buddy, at its foot.
 
 ## Lesson content
 

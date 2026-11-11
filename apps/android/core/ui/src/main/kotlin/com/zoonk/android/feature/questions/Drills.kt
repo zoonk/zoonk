@@ -50,18 +50,16 @@ import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.delay
 import kotlin.math.ceil
 
-/** What a drill asks of the learner, in one line. */
+/** What a drill asks of the learner, in one line; null when it plays like any question. */
 @Composable
-fun drillLine(drill: Drill): String =
+fun drillLine(drill: Drill): String? =
     when (drill.kind) {
         Drill.Kind.Reteach -> {
-            stringResource(
-                if (drill.isIdeaFirst) R.string.questions_drill_reteach_ideas else R.string.questions_drill_reteach,
-            )
+            if (drill.isIdeaFirst) stringResource(R.string.questions_drill_reteach_ideas) else null
         }
 
-        Drill.Kind.ReadCarefully -> {
-            stringResource(R.string.questions_drill_read_carefully)
+        Drill.Kind.ReadCarefully, Drill.Kind.Retry -> {
+            null
         }
 
         Drill.Kind.SpotTheTrap -> {
@@ -74,10 +72,6 @@ fun drillLine(drill: Drill): String =
 
         Drill.Kind.NoGuessing -> {
             stringResource(R.string.questions_drill_no_guessing)
-        }
-
-        Drill.Kind.Retry -> {
-            stringResource(R.string.questions_drill_retry)
         }
     }
 
@@ -96,7 +90,9 @@ fun DrillIdeas(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(text = lesson.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-            Text(text = drillLine(drill), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            drillLine(drill)?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            }
         }
 
         Column {
@@ -126,42 +122,29 @@ fun DrillStartButton(
     Button(onClick = onStart, modifier = modifier) { Text(stringResource(R.string.questions_drill_start)) }
 }
 
-/**
- * A drill's line over its question (main's `DrillNote`): what it asks until it's answered, what
- * the learner answered last time, and the lesson behind a content gap.
- */
+/** A drill's line over its question (main's `DrillNote`): what it asks until it's answered, or the lesson behind a content gap. */
 @Composable
 fun DrillNote(
     drill: Drill,
     onOpenLesson: ((lessonId: String) -> Unit)?,
     modifier: Modifier = Modifier,
     answered: Boolean = false,
-    lastAnswer: String? = null,
 ) {
-    val lesson = drill.lesson.takeIf { drill.kind == Drill.Kind.Reteach && onOpenLesson != null }
-    if (drill.kind == Drill.Kind.Retry && lastAnswer == null) return
-    if (answered && lastAnswer == null && lesson == null) return
+    val lesson = drill.lesson.takeIf { drill.kind == Drill.Kind.Reteach }
+    if (lesson != null && onOpenLesson != null) {
+        LessonLink(lesson, onOpenLesson, modifier)
+        return
+    }
+    val line = (if (answered) null else drillLine(drill)) ?: return
 
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         NoteIcon(drill.kind.icon)
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (!answered) {
-                Text(
-                    text = drillLine(drill),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-            lastAnswer?.let {
-                Text(
-                    text = stringResource(R.string.questions_drill_last_answer, it),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            if (lesson != null && onOpenLesson != null) LessonLink(lesson, onOpenLesson)
-        }
+        Text(
+            text = line,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+        )
     }
 }
 
@@ -309,8 +292,9 @@ fun NotSureButton(
 private fun LessonLink(
     lesson: Drill.Lesson,
     onOpenLesson: (lessonId: String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    OutlinedButton(onClick = { onOpenLesson(lesson.id) }) {
+    OutlinedButton(onClick = { onOpenLesson(lesson.id) }, modifier = modifier) {
         Text(stringResource(R.string.questions_drill_open_lesson))
     }
 }

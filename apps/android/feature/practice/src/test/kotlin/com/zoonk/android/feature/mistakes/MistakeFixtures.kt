@@ -38,13 +38,11 @@ internal fun practiceEntry(
     mistakeId: String,
     vararg questions: JsonObject,
     drill: JsonObject = drill("retry"),
-    snapshot: Pair<String, String> = "Which is a planet?" to "Moon",
 ) = fixture(
     "mistake-practice-entry",
     "mistakeId" to mistakeId,
     "questions" to JsonArray(questions.toList()),
     "drill" to drill,
-    "snapshot" to JsonObject(mapOf("question" to JsonPrimitive(snapshot.first), "answer" to JsonPrimitive(snapshot.second))),
 )
 
 internal fun practice(vararg entries: JsonObject): MistakePractice =
