@@ -26,9 +26,11 @@ export async function readOnboardingLeft(goalId: string): Promise<OnboardingLeft
 }
 
 export async function TodayOnboardingLeft({
+  banner,
   goal,
   left,
 }: {
+  banner: React.ReactNode;
   goal: { displayName: string; id: string; title: string };
   left: OnboardingLeft;
 }) {
@@ -38,6 +40,7 @@ export async function TodayOnboardingLeft({
   if (left === "reveal") {
     return (
       <TodayAtRest
+        banner={banner}
         actions={
           <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
             {t("See your plan")}
@@ -54,6 +57,7 @@ export async function TodayOnboardingLeft({
 
   return (
     <TodayAtRest
+      banner={banner}
       actions={
         <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
           {t("Continue setting up")}

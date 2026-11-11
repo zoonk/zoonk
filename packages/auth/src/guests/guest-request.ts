@@ -21,5 +21,5 @@ export async function findRequestGuest(context: GenericEndpointContext) {
     return null;
   }
 
-  return session.user;
+  return session;
 }

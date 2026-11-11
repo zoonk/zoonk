@@ -13,12 +13,14 @@ import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
+import { type ReminderGoal, ReminderGoalNotice } from "./reminder-goal-notice";
 import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { TodayOnboardingLeft, readOnboardingLeft } from "./today-onboarding-left";
@@ -130,8 +132,29 @@ async function TodaySessionEnded() {
   );
 }
 
-async function TodayContent() {
-  const result = await loadTodayScreen();
+/**
+ * A reminder's link names the goal with learning left; Today stays on the active goal and offers
+ * that one only while it's another of the learner's active goals. Switching is their click.
+ */
+async function findReminderGoal(goalParam: unknown): Promise<ReminderGoal | null> {
+  const goalId = uuidSchema().safeParse(goalParam).data;
+
+  if (!goalId) {
+    return null;
+  }
+
+  const list = await listCurrentUserGoals();
+  const goal = list?.goals.find((candidate) => candidate.id === goalId);
+
+  return goal?.status === "active" && !goal.isActive
+    ? { id: goal.id, title: goal.displayName }
+    : null;
+}
+
+async function TodayContent({ searchParams }: Pick<PageProps<"/[lang]/today">, "searchParams">) {
+  const { goal } = await searchParams;
+  const [result, reminderGoal] = await Promise.all([loadTodayScreen(), findReminderGoal(goal)]);
+  const banner = reminderGoal && <ReminderGoalNotice goal={reminderGoal} />;
 
   if (result.status === "noGoal") {
     return result.suggestedGoal ? (
@@ -151,11 +174,11 @@ async function TodayContent() {
   }
 
   if (result.status === "goalNotActive") {
-    return <TodayGoalPaused />;
+    return <TodayGoalPaused banner={banner} />;
   }
 
   if (result.status === "preparing") {
-    return <TodayPreparingState goal={result.goal} />;
+    return <TodayPreparingState banner={banner} goal={result.goal} />;
   }
 
   if (result.status !== "ready") {
@@ -170,6 +193,7 @@ async function TodayContent() {
     <TodayClient
       data={result.data}
       key={result.day}
+      banner={banner}
       readAt={result.readAt}
       userId={result.userId}
     />
@@ -177,8 +201,10 @@ async function TodayContent() {
 }
 
 async function TodayPreparingState({
+  banner,
   goal,
 }: {
+  banner: React.ReactNode;
   goal: { displayName: string; id: string; title: string };
 }) {
   // A goal left halfway through its questions has no plan coming until they're answered, and a
@@ -186,16 +212,16 @@ async function TodayPreparingState({
   const left = await readOnboardingLeft(goal.id);
 
   if (left) {
-    return <TodayOnboardingLeft goal={goal} left={left} />;
+    return <TodayOnboardingLeft banner={banner} goal={goal} left={left} />;
   }
 
-  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.displayName} />;
+  return <TodayPreparingClient banner={banner} goalId={goal.id} goalTitle={goal.displayName} />;
 }
 
-export default function TodayPage() {
+export default function TodayPage({ searchParams }: PageProps<"/[lang]/today">) {
   return (
     <Suspense fallback={<TodayShell />}>
-      <TodayContent />
+      <TodayContent searchParams={searchParams} />
     </Suspense>
   );
 }

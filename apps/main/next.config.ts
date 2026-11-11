@@ -42,6 +42,15 @@ const movedPageRedirects = localePrefixes.flatMap((prefix) => [
   { destination: `${prefix}/support`, permanent: true, source: `${prefix}/help` },
 ]);
 
+/** Its URL carries a token that turns a learner's email reminders off. */
+const unsubscribePageHeaders = localePrefixes.map((prefix) => ({
+  headers: [
+    { key: "Cache-Control", value: "no-store" },
+    { key: "Referrer-Policy", value: "no-referrer" },
+  ],
+  source: `${prefix}/study-reminders/unsubscribe`,
+}));
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
@@ -54,7 +63,7 @@ const nextConfig: NextConfig = {
     turbopackRustReactCompiler: true,
     typedEnv: true,
   },
-  headers: getPublicAppSecurityHeaders,
+  headers: async () => [...(await getPublicAppSecurityHeaders()), ...unsubscribePageHeaders],
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

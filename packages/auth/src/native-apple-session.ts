@@ -138,9 +138,11 @@ export function signInWithExistingAppleAccount(credentials: NativeAppleCredentia
 /** Call only once the sign-in can't roll back: deleting a new account would delete what moved. A failed move changes nothing. */
 export async function linkNativeAppleGuest({
   headers,
+  sessionToken,
   userId,
 }: {
   headers: Headers;
+  sessionToken: string;
   userId: string;
 }) {
   const current = await nativeAppleAuth.api.getSession({
@@ -148,14 +150,25 @@ export async function linkNativeAppleGuest({
     query: { disableCookieCache: true, disableRefresh: true },
   });
 
-  const guest = current
-    ? await prisma.user.findUnique({
-        select: { id: true },
-        where: { id: current.user.id, isAnonymous: true },
-      })
-    : null;
+  if (!current) {
+    return;
+  }
+
+  const guest = await prisma.user.findUnique({
+    select: { id: true },
+    where: { id: current.user.id, isAnonymous: true },
+  });
 
   if (guest) {
-    await linkGuestAccount({ account: { id: userId }, guestUserId: guest.id });
+    const session = await prisma.session.findUniqueOrThrow({
+      where: { token: sessionToken, userId },
+    });
+
+    await linkGuestAccount({
+      account: { id: userId },
+      guestSessionId: current.session.id,
+      guestUserId: guest.id,
+      sessionId: session.id,
+    });
   }
 }

@@ -152,6 +152,7 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.LearnerSummaryBuddy
+import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -239,6 +240,7 @@ fun LessonPlayer(
     certificatesMoment: CertificatesMoment? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
+    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -477,6 +479,7 @@ fun LessonPlayer(
                             ceremony,
                             certificatesMoment,
                             finishedChapter,
+                            reminderOffer,
                             offer,
                             help,
                             touches,
@@ -588,6 +591,7 @@ private fun Content(
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
     finishedChapter: FinishedChapterSlot?,
+    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
@@ -606,7 +610,11 @@ private fun Content(
         state.phase == LessonPhase.Completed -> {
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
-                if (ownEnd == null) LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure) else ownEnd.body(state)
+                if (ownEnd == null) {
+                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure, reminderOffer)
+                } else {
+                    ownEnd.body(state)
+                }
             }
         }
 
