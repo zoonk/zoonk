@@ -12,6 +12,7 @@ import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
+import com.zoonk.android.feature.plan.setsFocus
 import com.zoonk.android.feature.plan.topicsMoved
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
@@ -76,7 +77,7 @@ private fun ChangeNotice(
     val title = if (change.source == NOTICE_SOURCE) null else stringResource(R.string.today_plan_suggestion)
     val result = answer?.let { answeredText(it) }
     val byDate = change.status == PlanChange.Status.PROPOSED || countsByDate(change.effect, dateAhead)
-    val effect = planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate)
+    val effect = planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate, setsFocus = change.setsFocus)
     val officialDate = planChangeOfficialDateLine(change)
     val saving = viewModel.isSavingPlanChange
     val next = today.planChange?.takeIf { answer != null && it.status == PlanChange.Status.PROPOSED && it.id != change.id }

@@ -129,6 +129,18 @@ class FocusTestScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanProposalApplied() =
+        shoot(
+            "focus-test-checkpoint-plan-proposal-applied",
+            closing(focusOf(state = "proposed", proposal = PROPOSAL)),
+            host = FocusTestHost.Plan,
+        ) {
+            tap("Use my answers")
+            tap("Update my plan")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun checkpointOnPlanHandPicked() =
         shoot("focus-test-checkpoint-plan-hand-picked", closing(focusOf(state = "handPicked")), host = FocusTestHost.Plan) {
             tap("Use my answers")
@@ -270,11 +282,17 @@ class FocusTestScreenshots {
                 )
         }
 
+        /** A focus on two subjects: the second gains a lesson but starts later, since the first takes its slot. */
         const val PROPOSAL =
             """
-            {"behind":null,"canApply":true,"canUndo":false,"createdAt":"2026-11-11T12:00:00.000Z","days":null,"effect":null,
-             "examDocument":"guide","id":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","kind":"focusAreas","lessonsSkipped":0,"officialDate":null,
-             "operations":[],"reason":null,"seen":false,"source":"focusTest","status":"proposed","todaySession":null}
+            {"behind":null,"canApply":true,"canUndo":true,"createdAt":"2026-11-11T12:00:00.000Z","days":null,
+             "effect":{"endDateAfter":"2026-12-10","endDateBefore":"2026-12-10","lessonsAdded":0,"lessonsRemoved":2,
+              "areaStarts":[{"area":"Mathematics","after":"2026-11-20","before":"2026-11-17"}],
+              "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
+               {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}]},
+             "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,
+             "operations":[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}],"reason":null,"seen":false,
+             "source":"focusTest","status":"proposed","todaySession":null}
             """
     }
 }

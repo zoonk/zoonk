@@ -85,17 +85,24 @@ fun planChangeAppliedEffect(
     fullCourse: Boolean,
 ): String? = effectSentences(change.effect, appliedEndText(change, targetDate, fullCourse))
 
-/** Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan without a date. */
+/**
+ * Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan
+ * without a date. A focus change ([setsFocus]) says what each focused subject gains before when it starts, since a start
+ * moved later reads like a loss when it leads.
+ */
 @Composable
 fun planChangeProposalEffect(
     effect: PlanEffect?,
     current: PlanEnd? = null,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
+    setsFocus: Boolean = false,
 ): String? {
     val end = if (current != null) planEndEffect(effect, current) else changeEffectText(effect)
-    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate)
+    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate, gainsFirst = setsFocus)
 }
+
+val PlanChange.setsFocus: Boolean get() = operations.any { it.op is PlanOp.FocusAreas }
 
 /** The plan's date and estimated end, as shown before a change. */
 data class PlanEnd(
@@ -798,12 +805,13 @@ private fun effectSentences(
     endText: String?,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
+    gainsFirst: Boolean = false,
 ): String? {
+    val starts = areaStartTexts(effect)
+    val gains = areaEndTexts(effect?.areaEnds.orEmpty(), effect?.lessonsAddedEstimated == true) + areaLessonTexts(effect)
     val sentences =
         listOfNotNull(
-            *areaStartTexts(effect).toTypedArray(),
-            *areaEndTexts(effect?.areaEnds.orEmpty(), effect?.lessonsAddedEstimated == true).toTypedArray(),
-            *areaLessonTexts(effect).toTypedArray(),
+            *(if (gainsFirst) gains + starts else starts + gains).toTypedArray(),
             reviewFirstText(effect),
             weeklyEventsText(effect),
             nextMockText(effect),
