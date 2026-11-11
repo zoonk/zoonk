@@ -1,4 +1,5 @@
 import "server-only";
+import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -8,8 +9,14 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { normalizeResearchPlan } from "../research/research-plan";
 import systemPrompt from "./lesson-laws.prompt.md";
 
+/**
+ * On 16 lessons from 7 countries and the EU (11 Nov 2026), Luna scored 10.00 at $0.23/1k (p50 5.1 s)
+ * and hinted art. 4 of Lei 12.813/2013 on 3 of 4 runs; Terra also scored 10.00, at $1.97/1k. Haiku
+ * 5.5 scored 9.98 at $0.44/1k, missing that article. Flash Lite (9.94, $0.57/1k) filed Lei
+ * 9.784's impedimento articles under Lei 8.112 on both runs, which would fetch the wrong law.
+ */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const MAX_LAWS = 3;
 const MAX_ARTICLES = 8;
@@ -65,14 +72,46 @@ function buildUserPrompt(params: LessonLawsParams): string {
   ].join("\n");
 }
 
-function normalizeLaw(law: LessonLaw): LessonLaw {
-  const articles = [...new Set(law.articles.map((article) => article.trim()).filter(Boolean))];
+const ARTICLE_WORD = /^(?:art(?:igo|ículo|icle|ikel)?s?|sec(?:tion)?s?|s|§+)\.?\s*/iu;
+const ORDINAL_MARK = /\.?[º°ª]$/u;
 
+/** "Art. 5º, LXVIII", "§ 622" and "s. 4" read as articles "5", "622" and "4". */
+export function toArticleNumber(article: string): string {
+  const [number = ""] = article.trim().replace(ARTICLE_WORD, "").split(",");
+
+  return number.trim().replace(ORDINAL_MARK, "");
+}
+
+function toArticleNumbers(articles: readonly string[]): string[] {
+  const numbers = articles.map((article) => toArticleNumber(article)).filter(Boolean);
+
+  return [...new Set(numbers)].slice(0, MAX_ARTICLES);
+}
+
+function normalizeLaw(law: LessonLaw): LessonLaw {
   return normalizeResearchPlan({
     ...law,
-    articles: articles.slice(0, MAX_ARTICLES),
+    articles: toArticleNumbers(law.articles),
     name: law.name.trim(),
   });
+}
+
+function getLawKey(law: LessonLaw): string {
+  return [law.country, law.language, normalizeString(law.name)].join(":");
+}
+
+/** A law written twice, each time with other articles, is one law with all of them. */
+function mergeRepeatedLaws(laws: readonly LessonLaw[]): LessonLaw[] {
+  return [...Map.groupBy(laws, (law) => getLawKey(law)).values()].flatMap(([first, ...repeats]) =>
+    first
+      ? [
+          {
+            ...first,
+            articles: toArticleNumbers([first, ...repeats].flatMap((law) => law.articles)),
+          },
+        ]
+      : [],
+  );
 }
 
 /** Empty when the lesson teaches no law's numbered provisions or its jurisdiction is unclear. */
@@ -103,10 +142,9 @@ export async function generateLessonLaws(params: LessonLawsParams) {
     task: "lesson-laws",
   });
 
-  const laws = result.output.laws
-    .map((law) => normalizeLaw(law))
-    .filter((law) => law.name)
-    .slice(0, MAX_LAWS);
+  const laws = mergeRepeatedLaws(
+    result.output.laws.map((law) => normalizeLaw(law)).filter((law) => law.name),
+  ).slice(0, MAX_LAWS);
 
   return { data: { laws }, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

@@ -16,13 +16,13 @@ An exam, its notice (edital) or its syllabus is never a law, even when the lesso
 
 ## What to return for each law
 
-- `name`: the law's short official citation as its publisher cites it, in the document's language: its kind, number and year when it has them ("Lei nº 8.112/1990", "Data Protection Act 2018", "Real Decreto 1/2015"), or its official title when it has no number ("Code civil", "Strafgesetzbuch"). Never a nickname alone or the lesson's topic.
+- `name`: the law's short official citation as its publisher cites it, in the document's language: only its kind, number and year when it has them ("Lei nº 8.078/1990", "Real Decreto 1/2015", "Data Protection Act 2018"), without its date of signing, subject or acronym; its official title when it has no number ("Code civil", "Strafgesetzbuch"). Never a nickname alone or the lesson's topic. Every lesson that teaches the same law should get the same name.
 - `country`: the ISO 3166-1 alpha-2 code of the country that enacted it ("GB" for the United Kingdom), or "EU" for European Union law.
 - `language`: the ISO 639-1 code of the language its official text is written in, which can differ from the lesson's: a lesson in English about a French law gets "fr". When the law is official in several languages, the one closest to the lesson's.
-- `officialDomains`: up to 5 domains where the government publishes its official text, most official first, without `https://` or `www.` (for example `legislation.gov.uk`). Only domains you're confident are the government's.
+- `officialDomains`: up to 5 domains where the government publishes its official text, most official first, without `https://` or `www.` (for example `legifrance.gouv.fr`). Only domains you're confident are the government's.
 - `queries`: 2 to 4 search queries, in `language`, that find its current consolidated text.
 - `searchTerms`: 2 to 5 short phrases in `language` people use for this law, including its full citation and its acronym or common name, so an existing record can be found.
-- `articles`: the articles or sections whose text the lesson needs, at most 8, as the law numbers them, without the word for article or section ("4", "5-A", "622", "107.51"). They only choose which parts of the text to read, so name only those you're sure the lesson's rules come from, and none when you're not sure.
+- `articles`: the articles or sections whose text the lesson needs, at most 8: those stating the rules it teaches, with the definitions and general duties those rules rest on. Write each as the law numbers it, the number alone, without the word for article or section and without its paragraphs or items ("12", not "art. 12, § 1º"; "5-A", "622", "107.51"). They only choose which parts of the official text the lesson reads, never what it cites. None when you can't tell which articles.
 
 ## Rules
 
