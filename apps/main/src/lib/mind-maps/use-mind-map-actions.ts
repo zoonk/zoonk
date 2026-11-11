@@ -15,12 +15,14 @@ import {
   goalMindMapsSchema,
   savedMindMapStateSchema,
 } from "@zoonk/core/mind-maps/contract";
+import { type ChapterLessonMapsView } from "@zoonk/core/mind-maps/lesson-maps-contract";
 import {
   type MindMapActions,
   type MindMapLibraryActions,
   type MindMapLimit,
   type MindMapRequestOutcome,
 } from "@zoonk/learn/mind-maps";
+import { type MindMapReaderActions } from "@zoonk/player/mind-maps/reader";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { useMemo } from "react";
 
@@ -151,14 +153,34 @@ async function saveMindMap({
   return savedMindMapStateSchema.safeParse(json).data?.saved ?? null;
 }
 
+async function readLessonMaps(target: {
+  chapterId: string;
+  goalId: string;
+}): Promise<ChapterLessonMapsView["lessons"] | null> {
+  const chapter = encodeURIComponent(target.chapterId);
+  const path = `${goalPath(target.goalId)}/chapters/${chapter}/lesson-maps` as const;
+  const response = await getFromBrowser(path);
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The API checks this answer against `ChapterLessonMaps`; that schema would bring every lesson schema into the browser.
+  const body = (await response.json().catch(() => null)) as ChapterLessonMapsView | null;
+  return body?.lessons ?? null;
+}
+
 /**
  * From the browser: making a map takes a minute, which would hold up the page's Server Actions, and
  * a save's Server Action would expire the learner's tags and render again the screen it's on, a
  * lesson's end included.
  */
-export function useMindMapActions(goalId: string): MindMapActions & MindMapLibraryActions {
+export function useMindMapActions(
+  goalId: string,
+): MindMapActions & MindMapLibraryActions & MindMapReaderActions {
   return useMemo(
     () => ({
+      lessonMaps: (chapterId) => readLessonMaps({ chapterId, goalId }),
       list: () => listMindMaps(goalId),
       read: (chapterId) => readMindMap({ chapterId, goalId }),
       readStatus: (chapterId) => readMindMapStatus({ chapterId, goalId }),

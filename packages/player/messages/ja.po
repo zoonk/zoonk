@@ -348,6 +348,7 @@ msgstr "{runtime}を読み込めませんでした。接続を確認して、も
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3393,6 +3394,7 @@ msgid "I don't know yet"
 msgstr "まだわからない"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "次へ"
@@ -3774,6 +3776,81 @@ msgstr "<strong>{answer}</strong>と書いて「<question></question>」に答�
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "<strong>{answer}</strong>を選んで「<question></question>」に答えました"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "aIl44R"
+msgid "Map options"
+msgstr "マップのメニュー"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "最初のマップから始める"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "章を開く"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "レッスンを開く"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "sIR8OK"
+msgid "Chapter {number, number}"
+msgstr "第{number, number}章"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "w0NNz1"
+msgid "Lesson {number, number}"
+msgstr "レッスン{number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "完了"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "マインドマップ"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "ここにはまだ学習できるマップがありません。"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "前のマップ"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}／{total, number}"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "全画面表示"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "サーバーに接続できませんでした。インターネット接続を確認してください。"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "OauMXX"
+msgid "This map is no longer available."
+msgstr "このマップは利用できなくなりました。"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

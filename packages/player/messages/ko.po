@@ -348,6 +348,7 @@ msgstr "{runtime}을(를) 불러오지 못했어요. 인터넷 연결을 확인�
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3393,6 +3394,7 @@ msgid "I don't know yet"
 msgstr "아직 모르겠어요"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "다음"
@@ -3774,6 +3776,81 @@ msgstr "쓴 답: <strong>{answer}</strong> · 문제: “<question></question>�
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "고른 답: <strong>{answer}</strong> · 문제: “<question></question>”"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "aIl44R"
+msgid "Map options"
+msgstr "마인드맵 옵션"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "첫 마인드맵부터 시작하기"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "챕터 열기"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "레슨 열기"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "sIR8OK"
+msgid "Chapter {number, number}"
+msgstr "챕터 {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "w0NNz1"
+msgid "Lesson {number, number}"
+msgstr "레슨 {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "완료"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "마인드맵"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "여기에는 아직 학습할 마인드맵이 없어요."
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "이전 마인드맵"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}/{total, number}단계"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "전체 화면"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "OauMXX"
+msgid "This map is no longer available."
+msgstr "이 마인드맵은 더 이상 볼 수 없어요."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

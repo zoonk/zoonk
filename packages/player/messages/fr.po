@@ -348,6 +348,7 @@ msgstr "{runtime} n’a pas pu se charger. Vérifie ta connexion et réessaie."
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3393,6 +3394,7 @@ msgid "I don't know yet"
 msgstr "Je ne sais pas encore"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Suivant"
@@ -3774,6 +3776,81 @@ msgstr "Tu as écrit <strong>{answer}</strong> pour « <question></question> �
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "Tu as choisi <strong>{answer}</strong> pour « <question></question> »"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "aIl44R"
+msgid "Map options"
+msgstr "Options de la carte mentale"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "Repartir de la première carte mentale"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "Ouvrir le chapitre"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "Ouvrir la leçon"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "sIR8OK"
+msgid "Chapter {number, number}"
+msgstr "Chapitre {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "w0NNz1"
+msgid "Lesson {number, number}"
+msgstr "Leçon {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "Terminé"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Cartes mentales"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "Il n’y a pas encore de cartes mentales à étudier ici."
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "Carte mentale précédente"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} sur {total, number}"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Plein écran"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "Impossible de joindre le serveur. Vérifie ta connexion."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "OauMXX"
+msgid "This map is no longer available."
+msgstr "Cette carte mentale n’est plus disponible."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"
