@@ -76,13 +76,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dobbiamo prima preparare le lezioni di %lld capitolo."
+                  "value" : "Per %lld capitolo dobbiamo prima preparare le lezioni."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dobbiamo prima preparare le lezioni di %lld capitoli."
+                  "value" : "Per %lld capitoli dobbiamo prima preparare le lezioni."
                 }
               }
             }
@@ -106,7 +106,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "챕터 %lld개의 레슨을 먼저 만들어야 해요."
+                  "value" : "챕터 %lld개는 레슨을 먼저 만들어야 해요."
                 }
               }
             }
@@ -115,16 +115,22 @@
         "pl" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw trzeba przygotować lekcje do %lld rozdziałów."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Najpierw trzeba przygotować lekcje dla %lld rozdziału."
+                  "value" : "Najpierw trzeba przygotować lekcje do %lld rozdziału."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Najpierw trzeba przygotować lekcje dla %lld rozdziałów."
+                  "value" : "Najpierw trzeba przygotować lekcje do %lld rozdziałów."
                 }
               }
             }
@@ -136,13 +142,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld capítulo precisa ter as aulas criadas primeiro."
+                  "value" : "Primeiro, é preciso criar as aulas de %lld capítulo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld capítulos precisam ter as aulas criadas primeiro."
+                  "value" : "Primeiro, é preciso criar as aulas de %lld capítulos."
                 }
               }
             }
@@ -1030,13 +1036,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen gerade %lld Kapitel-Mindmap. Du kannst die Seite währenddessen verlassen."
+                  "value" : "Wir erstellen %lld Mindmap. Du kannst die Seite währenddessen verlassen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen gerade %lld Kapitel-Mindmaps. Du kannst die Seite währenddessen verlassen."
+                  "value" : "Wir erstellen %lld Mindmaps. Du kannst die Seite währenddessen verlassen."
                 }
               }
             }
@@ -1066,13 +1072,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld en proceso. Puedes salir mientras se crea."
+                  "value" : "Se está creando %lld mapa. Puedes salir mientras se termina."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld en proceso. Puedes salir mientras se crean."
+                  "value" : "Se están creando %lld mapas. Puedes salir mientras se terminan."
                 }
               }
             }
@@ -1084,7 +1090,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld en cours de création. Tu peux quitter la page en attendant."
+                  "value" : "%lld en préparation. Tu peux quitter la page en attendant."
                 }
               }
             }
@@ -1093,10 +1099,16 @@
         "it" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld in arrivo. Puoi uscire mentre la prepariamo."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ne stiamo preparando %lld. Nel frattempo puoi uscire."
+                  "value" : "%lld in arrivo. Puoi uscire mentre le prepariamo."
                 }
               }
             }
@@ -1120,7 +1132,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개를 만들고 있어요. 만드는 동안 다른 화면으로 이동해도 돼요."
+                  "value" : "%lld개를 만들고 있어요. 만드는 동안 나가도 괜찮아요."
                 }
               }
             }
@@ -1132,19 +1144,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Przygotowujemy %lld mapy. Możesz w tym czasie wyjść."
+                  "value" : "Przygotowujemy %lld mapy. Możesz w tym czasie opuścić stronę."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przygotowujemy %lld map. Możesz w tym czasie opuścić stronę."
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Przygotowujemy %lld mapę. Możesz w tym czasie wyjść."
+                  "value" : "Przygotowujemy %lld mapę. Możesz w tym czasie opuścić stronę."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Przygotowujemy %lld map. Możesz w tym czasie wyjść."
+                  "value" : "Przygotowujemy %lld map. Możesz w tym czasie opuścić stronę."
                 }
               }
             }
@@ -1153,10 +1171,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld a caminho. Você pode sair enquanto ele é criado."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Criando %lld. Você pode sair enquanto isso."
+                  "value" : "%lld a caminho. Você pode sair enquanto eles são criados."
                 }
               }
             }
@@ -1168,7 +1192,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld harita hazırlıyoruz. Bu sırada ekrandan ayrılabilirsin."
+                  "value" : "%lld harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin."
                 }
               }
             }
@@ -1711,13 +1735,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Créer la carte mentale de %lld chapitre"
+                  "value" : "Créer %lld carte mentale de chapitre"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Créer les cartes mentales de %lld chapitres"
+                  "value" : "Créer %lld cartes mentales de chapitre"
                 }
               }
             }
@@ -1729,13 +1753,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Crea la mappa di %lld capitolo"
+                  "value" : "Crea %lld mappa del capitolo"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Crea le mappe di %lld capitoli"
+                  "value" : "Crea %lld mappe dei capitoli"
                 }
               }
             }
@@ -1772,6 +1796,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Utwórz %lld mapy rozdziałów"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Utwórz %lld map rozdziałów"
                 }
               },
               "one" : {
@@ -4901,7 +4931,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstellte Lektionen werden auf deine kostenlosen Lektionen angerechnet."
+            "value" : "Erstellte Lektionen werden auf dein Kontingent an kostenlosen Lektionen angerechnet."
           }
         },
         "es" : {
@@ -4913,43 +4943,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La préparation des leçons compte dans ton quota de leçons gratuites."
+            "value" : "Les leçons préparées comptent dans ton quota de leçons gratuites."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le lezioni che prepariamo vengono conteggiate nella tua quota gratuita."
+            "value" : "Le lezioni preparate vengono conteggiate nel tuo limite di lezioni gratuite."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスンの作成は、無料レッスンの利用数に含まれます。"
+            "value" : "レッスンの作成には、無料で利用できるレッスン枠を使います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨을 만들면 남은 무료 레슨 수가 줄어요."
+            "value" : "레슨을 만들면 무료 레슨 한도에서 차감돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowanie lekcji wlicza się do limitu bezpłatnych lekcji."
+            "value" : "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criar aulas conta no seu limite de aulas grátis."
+            "value" : "Criar aulas conta para o seu limite de aulas grátis."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hazırlanan dersler ücretsiz ders hakkından düşülür."
+            "value" : "Hazırladığımız dersler ücretsiz ders hakkından düşülür."
           }
         }
       }
@@ -5019,10 +5049,16 @@
         "de" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Du kannst jetzt noch %lld Mindmap erstellen."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du kannst jetzt noch %lld erstellen."
+                  "value" : "Du kannst jetzt noch %lld Mindmaps erstellen."
                 }
               }
             }
@@ -5052,7 +5088,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Puedes crear %lld más ahora mismo."
+                  "value" : "Puedes crear %lld más ahora."
                 }
               }
             }
@@ -5064,7 +5100,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu peux encore en créer %lld maintenant."
+                  "value" : "Tu peux en créer %lld de plus dès maintenant."
                 }
               }
             }
@@ -5076,7 +5112,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Puoi crearne ancora %lld ora."
+                  "value" : "Puoi crearne ancora %lld adesso."
                 }
               }
             }
@@ -5088,7 +5124,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "今はあと%lld章分のマップを作成できます。"
+                  "value" : "今すぐあと%lld章分のマップを作成できます。"
                 }
               }
             }
@@ -5100,7 +5136,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "지금 %lld개 더 만들 수 있어요."
+                  "value" : "지금 %lld개를 더 만들 수 있어요."
                 }
               }
             }
@@ -5109,10 +5145,28 @@
         "pl" : {
           "variations" : {
             "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Możesz teraz utworzyć jeszcze %lld mapy."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Możesz teraz utworzyć jeszcze %lld map."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Możesz teraz utworzyć jeszcze %lld mapę."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Możesz teraz utworzyć jeszcze %lld."
+                  "value" : "Możesz teraz utworzyć jeszcze %lld map."
                 }
               }
             }
@@ -5136,7 +5190,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Şu anda %lld harita daha oluşturabilirsin."
+                  "value" : "Şu an %lld harita daha oluşturabilirsin."
                 }
               }
             }
