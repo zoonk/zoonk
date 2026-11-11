@@ -754,19 +754,106 @@ private struct PlanReveal: View {
 
     PlanSuggestionSection(context: context, answer: $slotAnswer)
 
-    if let structure {
+    if let tradeOff = focusTradeOff {
+      focusTradeOffSection(tradeOff, structure: structure)
+    } else if structure != nil || skipperOffer != nil {
       Section {
-        Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
-          .foregroundStyle(.mutedForeground)
+        if let structure {
+          Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
+            .foregroundStyle(.mutedForeground)
 
+          Button {
+            showsTopics = true
+          } label: {
+            Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
+          }
+        }
+
+        if let offer = skipperOffer {
+          Button {
+            router.open(.focusTest(goalId: view.goal.id))
+          } label: {
+            Text(FocusTestCopy.checkWhereToFocus(minutes: offer.minutes))
+          }
+        }
+      }
+    }
+
+    if structure == nil, plan.roadPhases.count > 1 {
+      PlanPathSection(context: context)
+    }
+  }
+
+  /// The time doesn't cover everything by the goal's date.
+  private var isShort: Bool {
+    plan.feasibility?.deadline != nil && plan.feasibility?.fits == false
+  }
+
+  /// A learner who skipped the Focus test, short on time, is offered it here.
+  private var skipperOffer: FocusTestSummary.Size? {
+    isShort ? plan.focusTest?.notStartedOffer : nil
+  }
+
+  /// What a short plan trades: nil unless the time doesn't cover everything and the plan has a
+  /// focus.
+  private var focusTradeOff: String? {
+    let focused = plan.areas.filter { $0.focused && $0.partOf == nil }.map(\.name)
+
+    guard isShort, let targetDate = plan.schedule.targetDate, !focused.isEmpty else {
+      return nil
+    }
+
+    let date = PlanDate.text(
+      targetDate, today: plan.today, month: plan.schedule.targetDateNamedMonth)
+    let time = studyDuration(minutes: plan.schedule.dailyMinutes)
+    let areas = focused.formatted(.list(type: .and))
+
+    return String(
+      localized:
+        "At \(time) a day, some topics won't fit before \(date). This plan gives \(areas) more time.",
+      table: "Onboarding",
+      comment:
+        "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time")
+  }
+
+  /// The focus the plan follows, with what it leaves out, how to change it and where it came from.
+  private func focusTradeOffSection(_ text: String, structure: GoalSyllabus?) -> some View {
+    let choices = plan.areas.filter { !$0.skipped && $0.partOf == nil }
+    let tested = plan.focusTest.map { $0.state != .notStarted } ?? false
+
+    return Section {
+      Text(text)
+        .foregroundStyle(.mutedForeground)
+
+      if structure != nil {
         Button {
           showsTopics = true
         } label: {
-          Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
+          Text(
+            "See what fits", tableName: "Onboarding",
+            comment: "Opens what a short plan studies, from the line saying what it leaves out")
         }
       }
-    } else if plan.roadPhases.count > 1 {
-      PlanPathSection(context: context)
+
+      if choices.count > 1 {
+        Button {
+          adjusting = .focus
+        } label: {
+          Text(
+            "Change focus", tableName: "Onboarding",
+            comment: "Opens the choice of the subjects the plan gives more time")
+        }
+      }
+
+      if tested {
+        Button {
+          router.open(.focusTest(goalId: view.goal.id))
+        } label: {
+          Text(
+            "What your test changed", tableName: "Onboarding",
+            comment: "Opens the Focus test's result from the plan's reveal")
+        }
+      }
     }
   }
 
