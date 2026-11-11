@@ -55,6 +55,18 @@ final class MindMapDeckTests: XCTestCase {
     XCTAssertEqual(MindMapDeck.start(in: cards, at: nil), .chapter(chapterId: "c1"))
   }
 
+  func testALessonInTwoChaptersOpensInTheChapterItWasReadIn() {
+    let maps = Self.maps(groups: [
+      LessonMapGroup(chapterId: "c1", count: 1, locked: 0, lessonIds: ["l1"]),
+      LessonMapGroup(chapterId: "c2", count: 1, locked: 0, lessonIds: ["l1"]),
+    ])
+    let cards = MindMapDeck.cards(tab: .lessons, maps: maps)
+    let second = MindMapCard.lesson(chapterId: "c2", lessonId: "l1")
+
+    XCTAssertEqual(Set(cards).count, 2)
+    XCTAssertEqual(MindMapDeck.start(in: cards, at: MindMapPosition(second)), second)
+  }
+
   private static func maps(
     chapters: [ChapterMindMap] = [], groups: [LessonMapGroup] = [], saved: [SavedMindMap] = []
   ) -> GoalMindMaps {

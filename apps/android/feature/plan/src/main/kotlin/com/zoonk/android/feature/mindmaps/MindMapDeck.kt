@@ -106,6 +106,14 @@ val DeckSlot.place: MapPlace
             is DeckSlot.Lesson -> MapPlace(chapterId, lessonId)
         }
 
+/** The slide's identity in the reader's pager. One lesson can sit in two chapters, each its own slide. */
+internal val DeckSlot.key: String
+    get() =
+        when (this) {
+            is DeckSlot.Chapter -> "chapter-$chapterId"
+            is DeckSlot.Lesson -> "lesson-$chapterId-$lessonId"
+        }
+
 /** Where this device stopped in a goal's tab, kept with the learner's other work on the device. */
 fun studyPlaceKey(
     goalId: UUID,

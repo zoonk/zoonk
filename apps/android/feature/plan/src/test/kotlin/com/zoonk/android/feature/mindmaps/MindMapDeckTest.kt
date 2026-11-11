@@ -46,6 +46,17 @@ class MindMapDeckTest {
     }
 
     @Test
+    fun aLessonPlacedInTwoChaptersIsTwoSlidesEachResumingInItsOwnChapter() {
+        val deck =
+            goalMindMaps(
+                lessonGroups = listOf(lessonGroupJson(3, lessons = listOf(2)), lessonGroupJson(6, lessons = listOf(2))),
+            ).deck(StudyTab.Lessons)
+
+        assertEquals(deck.size, deck.map { it.key }.toSet().size)
+        assertEquals(1, deck.indexOfPlace(MapPlace(mapChapter(6), mapLesson(2))))
+    }
+
+    @Test
     fun aPlaceTravelsInTheRoutesStart() {
         val place = MapPlace(mapChapter(3), mapLesson(2))
 

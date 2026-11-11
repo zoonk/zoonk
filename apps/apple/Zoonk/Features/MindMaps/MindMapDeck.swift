@@ -51,12 +51,16 @@ enum MindMapDeck {
   }
 
   /// Where a deck opens: the tapped map, else the last one read on this device, else the first. A
-  /// chapter opens at its first map.
+  /// chapter opens at its first map. A lesson in two chapters opens in the one it was read in.
   static func start(
     in cards: [MindMapCard], at wanted: MindMapPosition?
   ) -> MindMapCard? {
     guard let wanted else {
       return cards.first
+    }
+
+    if let card = cards.first(where: { MindMapPosition($0) == wanted }) {
+      return card
     }
 
     if let key = wanted.key, let card = cards.first(where: { $0.mapKey == key }) {

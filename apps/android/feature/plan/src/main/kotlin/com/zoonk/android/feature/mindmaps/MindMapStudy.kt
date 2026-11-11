@@ -355,13 +355,6 @@ internal fun MindMapStudy(
     }
 }
 
-private val DeckSlot.key: String
-    get() =
-        when (this) {
-            is DeckSlot.Chapter -> "chapter-$chapterId"
-            is DeckSlot.Lesson -> "lesson-$lessonId"
-        }
-
 private fun chapterOf(slide: Slide): UUID? =
     when (slide) {
         is Slide.Chapter -> slide.chapterId
