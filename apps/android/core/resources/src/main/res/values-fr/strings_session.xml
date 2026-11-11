@@ -43,7 +43,6 @@
   "session_next_writing_note": "2ec9722d0fbb57d8c32c3a2aa7d47cb4d60f0a25fe05aaa0f9d494eac6bb483a",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
-  "session_summary_back_on": "5bad32a470696aaf3c05c8795ca38fc769c494c3f4d255789101825ab5432e0e",
   "session_summary_brain_power": "2eb9b12d19b6a4f6437292a2b1be8c4749ecf9ece67fbc912950ff30f089fb3a",
   "session_summary_buddy_happy": "cc6fc44b85fe7cb9fe94e4615cc592929d89b0e48cfed551a20a9c6bebb1824e",
   "session_summary_create_account": "f4611665adcb8e99ff93cc78f9f7ba99a76b56dd23694aec60641e6978941df1",
@@ -171,7 +170,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">À revoir</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">De retour le %1$s</string>
     <string name="session_summary_brain_power">Puissance Mentale</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

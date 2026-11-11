@@ -43,7 +43,6 @@
   "session_next_writing_note": "db700f6aecf98d26ba018fa447bf415a94b24415e6f66c347e4f78c4afd4e5e6",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
-  "session_summary_back_on": "7dd438ecebf23d1dbfd1c66c195cf8aac7690d3c5399ddeb60013b234b40460c",
   "session_summary_brain_power": "6443ff68d21a1da19547ce8f3b6a48319ba12471d5f6519d7e3067eb9c8bf10d",
   "session_summary_buddy_happy": "696fe993fb0c6d397ee892703f736ff6423cf8bd96622972b519d712b91d9819",
   "session_summary_create_account": "d5cd639343e0c61fb789a72f2459814d06d0dc1049cde576243024a258452eb7",
@@ -163,7 +162,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Zum Wiederholen</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Am %1$s geht es weiter</string>
     <string name="session_summary_brain_power">Brain Power</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

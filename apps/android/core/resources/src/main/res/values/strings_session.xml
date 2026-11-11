@@ -88,7 +88,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">To review</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Back on %1$s</string>
     <string name="session_summary_brain_power">Brain Power</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

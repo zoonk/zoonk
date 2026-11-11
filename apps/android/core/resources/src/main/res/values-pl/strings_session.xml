@@ -43,7 +43,6 @@
   "session_next_writing_note": "1dbdadc18c38c750f31ca23da6bc6e75dd8d3b73c39b7ea575b44c136581e64d",
   "session_opening_slow": "4b6f50356710d35c756a2a9ce21d829ff9330da21f1cc01b9d011c83b67c0a40",
   "session_opening_very_slow": "e5426a44182d4879e9e8a8fc1e1d3166698eb68cf2c79947aceb2213d4fd576c",
-  "session_summary_back_on": "e0f481d238e32e2f91109b99da03ddef45772d2877459be6b5430f24bf072155",
   "session_summary_brain_power": "46ea1462e8e8e2363c23061978f70c3299fa0b67b79566d37e36500c94f1d151",
   "session_summary_buddy_happy": "5872f893b2f2c5e555c7bc18cb3c79136a736563587b649c3f4ce0d466e75a7e",
   "session_summary_create_account": "03800ee0ab9eda10bb738dd4afc61f3f445498bbb27e4221f5523c584b6544d3",
@@ -179,7 +178,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Do powtórki</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Wrócą do powtórki %1$s</string>
     <string name="session_summary_brain_power">Moc Umysłu</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

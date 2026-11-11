@@ -43,7 +43,6 @@
   "session_next_writing_note": "a9f70503af8ecc9d052c4123feff14397f7138097a757f632665fadb7037aaba",
   "session_opening_slow": "9cdf7c9eb11c35fa1e33eacf0aaf9673f27c25756c2fed5d62a07275e4cc5193",
   "session_opening_very_slow": "e1a36c1a9b2d7a16a6a363872bea9f370c69b60e94f2b7ce0eb0aa6e3bd7060d",
-  "session_summary_back_on": "ad2c77fdc9f24447fad1fe9c702bb669125f8e646630455f48c079ed86026dd9",
   "session_summary_brain_power": "3fd18fcc08195a809f84dc71149c00fc046454f2795c0ad6c5dd9c86e3442ebd",
   "session_summary_buddy_happy": "693e28515f814676b23eb15389c1ee1222b30a2bf3825dbd5897c44852af0960",
   "session_summary_create_account": "c9b6f4ccb199598fea3a2f628d367de3f977d62e36519a9f3fb045437c8a219b",
@@ -171,7 +170,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Da ripassare</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">Di nuovo in programma: %1$s</string>
     <string name="session_summary_brain_power">Potenza Mentale</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
