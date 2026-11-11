@@ -36,7 +36,7 @@ export type ItemSolution =
 export type SolveItemsParams = {
   items: readonly SolvableItem[];
   select?: OptionSelect;
-  /** The text every item is about: a passage, a transcript or a law's articles. */
+  /** What every item is about: a passage, a case, a chart's data, a recording's script or a law's articles. */
   stimulus?: string | null;
   model?: string;
   serviceTier?: ServiceTier;

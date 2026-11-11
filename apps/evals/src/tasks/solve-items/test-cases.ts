@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type SolveItemsParams } from "@zoonk/ai/tasks/items/solve";
 import { formatStatuteSource } from "@zoonk/core/exams/statutes/articles";
 import { TEST_CASES as STATUTE_CASES } from "../statute-drills/test-cases";
+import { ITEM_SET_CASES } from "./item-set-cases";
 
 export type SolveItemsInput = Pick<SolveItemsParams, "items" | "select" | "stimulus">;
 
@@ -1816,4 +1817,5 @@ export const TEST_CASES: TestCase<SolveItemsExpected, SolveItemsInput>[] = [
       ],
     },
   },
+  ...ITEM_SET_CASES,
 ];
