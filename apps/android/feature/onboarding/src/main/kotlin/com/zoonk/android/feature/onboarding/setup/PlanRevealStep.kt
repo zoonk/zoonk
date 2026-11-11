@@ -188,12 +188,17 @@ internal fun ColumnScope.PlanRevealStep(
                             }
                         },
                     openingStep = openingStep,
-                    failedStep = failedStep,
+                    failedStep = failedStep.takeUnless { startingStep },
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
                     starting = starting || (saving && (openingStep == null || startingStep)),
-                    saveFailed = saveFailed || (startingStep && failedStep != null),
+                    startError =
+                        when {
+                            saveFailed -> R.string.onboarding_save_failed
+                            startingStep && failedStep != null -> R.string.today_step_open_failed
+                            else -> null
+                        },
                     playMoment = !planRevealed && remember { playMoment() },
                     onStart = {
                         val step = day?.steps?.firstOrNull { it.position == day.nextPosition && it.canOpen }
@@ -370,7 +375,7 @@ private fun ColumnScope.RevealBody(
     syllabus: Syllabus?,
     isGuest: Boolean,
     starting: Boolean,
-    saveFailed: Boolean,
+    startError: Int?,
     playMoment: Boolean,
     onOpenStep: ((DayView, DayStep) -> Unit)? = null,
     openingStep: Long? = null,
@@ -395,9 +400,9 @@ private fun ColumnScope.RevealBody(
 
         val started = studyDay?.steps?.any { it.isFinished } == true
         PageActions {
-            if (saveFailed) {
+            if (startError != null) {
                 Text(
-                    stringResource(R.string.onboarding_save_failed),
+                    stringResource(startError),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
                 )
