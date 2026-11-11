@@ -82,7 +82,7 @@ class TodayViewModel(
         step: DayStep,
     ) {
         val blockId = step.id
-        if (blockId == null && showIntro(read, step)) return
+        if (showIntro(read, step)) return
         run(read, TodayTap.Mission(step.position)) {
             if (blockId == null) opener.open(read.day, step, false, read.today.goal.id) else opener.openMission(blockId)
         }

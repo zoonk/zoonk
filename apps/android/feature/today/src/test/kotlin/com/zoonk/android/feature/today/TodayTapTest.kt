@@ -166,6 +166,22 @@ class TodayTapTest {
         }
 
     @Test
+    fun pendingSavedMissionWaitsForStartWithoutOpening() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val review = step(0, StudyBlock.Status.PENDING, StudyBlock.Kind.REVIEW, StudyBlock.Screen.SESSION, lessonId = null)
+            val pending = TodayRead.Day(read.today, day(listOf(review, step(1))))
+            val routes = shownRoutes(viewModel)
+
+            viewModel.openMission(pending, pending.day.steps[0])
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
+            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), routes.single().route)
+        }
+
+    @Test
     fun aTapAnsweredAfterTheLearnerLeftTodayOpensNothingWhenTheyComeBack() =
         runTest(dispatcher) {
             val viewModel = today()
