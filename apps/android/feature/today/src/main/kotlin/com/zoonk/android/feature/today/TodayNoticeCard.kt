@@ -122,6 +122,7 @@ internal fun TodayNotice(
                     viewModel.visit,
                     layout,
                     modifier,
+                    onAnswering = { viewModel.holdNotice(read, Today.Notice.UPLOAD_REQUEST, opens = true) },
                 )
             }
         }

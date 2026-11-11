@@ -6,6 +6,7 @@ struct MemoryInsightCard: View {
   @Environment(BuddyStore.self) private var store
 
   let insight: MemoryInsight
+  var onAnswering: () -> Void = {}
 
   @State private var answer: Bool?
   @State private var failed = false
@@ -151,6 +152,7 @@ struct MemoryInsightCard: View {
   }
 
   private func save(accepted: Bool) {
+    onAnswering()
     isSaving = true
     failed = false
 

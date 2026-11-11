@@ -22,6 +22,8 @@ struct TodayDayView: View {
   @State private var examChoiceDraft: [String] = []
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var answeredUpload: TodayView.UploadRequest?
+  /// Today stops carrying an insight once it's answered, so its card keeps it to show the answer.
+  @State private var answeredInsight: MemoryInsight?
   @State private var uploadDraft = MaterialDraft()
 
   enum Tap: Equatable {
@@ -233,9 +235,12 @@ struct TodayDayView: View {
     case .planChange:
       planChange
     case .insight:
-      if let insight = view.insight {
+      if let insight = view.insight ?? answeredInsight {
         Section {
-          MemoryInsightCard(insight: insight)
+          MemoryInsightCard(insight: insight) {
+            holdShownNotice()
+            answeredInsight = insight
+          }
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
@@ -483,6 +488,7 @@ struct TodayDayView: View {
     examChoice = nil
     examChoiceDraft = []
     answeredUpload = nil
+    answeredInsight = nil
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
     countNotice()
