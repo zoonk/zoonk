@@ -218,7 +218,7 @@ internal fun MistakeLessonQuestion(
             StepView(task.step, lesson, screen, actions, navigator, language, part, writingOptions = false)
             if (part.showsTurn) {
                 lesson.results[task.step.id]?.let {
-                    LessonStepResultView(task.step, it, ResultNext(null, false, false), null)
+                    LessonStepResultView(task.step, it, ResultNext(savedMistake = false, willReturn = false), null)
                     DrillAnswerNotes(
                         task.drill,
                         notSure = state.run.answers[state.run.index]?.blank == true,

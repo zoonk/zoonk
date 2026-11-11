@@ -79,14 +79,6 @@
     <string name="player_comes_back_at_end">This question comes back at the end of the lesson</string>
     <string name="player_saved_to_mistakes">Saved to your mistakes</string>
     <string name="player_saved_to_mistakes_back_at_end">Saved to your mistakes · back at the end of this lesson</string>
-    <string name="player_saved_to_mistakes_back_today">Saved to your mistakes · back in a review later today</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">Saved to your mistakes · back in tomorrow\'s review</string>
-    <string name="player_saved_to_mistakes_back_weekday">Saved to your mistakes · back in %1$s\'s review</string>
-    <string name="player_saved_to_mistakes_back_date">Saved to your mistakes · back in a review on %1$s</string>
-    <string name="player_comes_back_today">This idea comes back in a review later today</string>
-    <string name="player_comes_back_tomorrow">This idea comes back in tomorrow\'s review</string>
-    <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
-    <string name="player_comes_back_date">This idea comes back in a review on %1$s</string>
 
     <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">Just a guess, it doesn\'t count</string>
@@ -226,8 +218,6 @@
     <string name="player_lesson_not_saved">Your lesson isn\'t saved yet</string>
     <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
     <string name="player_time_studied">%1$s studied</string>
-    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
-    <string name="player_review_on">Review on %1$s</string>
     <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
     <plurals name="player_lessons_deferred">
         <item quantity="one">%1$s lesson moved to another day to fit your %2$s today.</item>

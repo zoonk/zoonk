@@ -869,9 +869,8 @@ class LessonPlayerReducerTest {
         val back = resumed.then(LessonAction.GoBack)
         assertEquals(LessonAnswer.Check("right") to held.result, back.answers["q1"] to back.results["q1"])
 
-        val confirmedAt = Instant.parse("2026-10-06T00:00:00Z")
-        val confirmed = back.then(LessonAction.CheckConfirmed("q1", "held", confirmedAt, savedMistake = false))
-        assertEquals(confirmedAt, confirmed.results["q1"]?.nextReviewAt)
+        val confirmed = back.then(LessonAction.CheckConfirmed("q1", "held", savedMistake = true))
+        assertTrue(confirmed.results["q1"]?.savedMistake == true)
     }
 
     @Test
@@ -963,15 +962,14 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun addsTheServersReviewDateToAVerdictGivenOnTheDevice() {
-        val reviewAt = Instant.parse("2026-10-02T00:00:00Z")
+    fun addsTheServersSavedMistakeToAVerdictGivenOnTheDevice() {
         val confirmed =
             play(
                 listOf(checkStep("quiz")),
-                *answerCheck("quiz", true),
-                LessonAction.CheckConfirmed("quiz", "quiz-attempt", reviewAt, false),
+                *answerCheck("quiz", false),
+                LessonAction.CheckConfirmed("quiz", "quiz-attempt", savedMistake = true),
             )
-        assertEquals(reviewAt, confirmed.results["quiz"]?.nextReviewAt)
+        assertTrue(confirmed.results["quiz"]?.savedMistake == true)
     }
 
     @Test
@@ -979,7 +977,7 @@ class LessonPlayerReducerTest {
         val again = play(listOf(checkStep("quiz")), *answerCheck("quiz", true, "first"), *answerCheck("quiz", true, "second"))
         assertEquals("second", again.results["quiz"]?.attemptId)
 
-        val late = again.then(LessonAction.CheckConfirmed("quiz", "first", Instant.parse("2026-10-02T00:00:00Z"), true))
+        val late = again.then(LessonAction.CheckConfirmed("quiz", "first", savedMistake = true))
         assertEquals(again.results["quiz"], late.results["quiz"])
     }
 
