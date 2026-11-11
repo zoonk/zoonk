@@ -3,7 +3,14 @@ import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
 import { credentialsPath } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { HELP } from "./help.ts";
-import { FORBIDDEN, type HttpResult, UNAUTHORIZED, isRecord, unexpectedResponse } from "./http.ts";
+import {
+  BAD_REQUEST,
+  FORBIDDEN,
+  type HttpResult,
+  UNAUTHORIZED,
+  isRecord,
+  unexpectedResponse,
+} from "./http.ts";
 import { logIn, logOut } from "./login.ts";
 import { type OutputShape, shapeOutput } from "./output.ts";
 import { notLoggedIn, sendAuthorized } from "./session.ts";
@@ -27,7 +34,11 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
   }
 
   const details = error.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
-  return new CliError(`${error.message} (HTTP ${result.status})${details}`);
+
+  return new CliError(
+    `${error.message} (HTTP ${result.status})${details}`,
+    result.status === BAD_REQUEST ? EXIT_CODES.usage : EXIT_CODES.failed,
+  );
 }
 
 async function runRequest({
