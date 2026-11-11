@@ -61,12 +61,15 @@ export function isPlanReady(context: Pick<PlanContext, "state">): boolean {
 
 type ChangeRequest = {
   context: PlanContext;
+  /** Writes owed because the plan changed, such as its lessons; a save that only stores the plan's settings skips them. */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   followToday?: boolean;
   operations: readonly PlanOperation[];
   provenance?: Provenance | null;
   reason: string;
   source: PlanChangeSource;
+  /** Writes that commit with the change however it's saved, such as the goal fields asked with it. */
+  writesWithSave?: (tx: TransactionClient) => Promise<unknown>;
 };
 
 async function commitEdit({
@@ -78,6 +81,7 @@ async function commitEdit({
   provenance = null,
   reason,
   source,
+  writesWithSave,
 }: ChangeRequest & { change: ComputedChange }): Promise<AppliedChange> {
   let replaced: string[] = [];
 
@@ -92,6 +96,7 @@ async function commitEdit({
     computed,
     context,
     extraWrites: async (tx) => {
+      await writesWithSave?.(tx);
       await extraWrites?.(tx);
 
       replaced = await replaceWaitingProposals({
@@ -121,15 +126,15 @@ async function commitEdit({
   return { changeId: changeId ?? "", replaced, status: "applied" };
 }
 
+type SaveRequest = Pick<ChangeRequest, "context" | "operations" | "source" | "writesWithSave">;
+
 async function savePlanState({
   context,
-  extraWrites,
   operations,
   source,
   state,
-}: Pick<ChangeRequest, "context" | "extraWrites" | "operations" | "source"> & {
-  state: PlanState;
-}) {
+  writesWithSave,
+}: SaveRequest & { state: PlanState }) {
   await writePlanMetadata({
     context,
     write: async (tx) => {
@@ -151,19 +156,17 @@ async function savePlanState({
         tx,
       });
 
-      await extraWrites?.(tx);
+      await writesWithSave?.(tx);
     },
   });
 }
 
-async function computeRequest({
-  context,
-  extraWrites,
-  operations,
-  source,
-}: Pick<ChangeRequest, "context" | "extraWrites" | "operations" | "source">): Promise<
+async function computeRequest(
+  request: SaveRequest,
+): Promise<
   { change: ComputedChange; status: "computed" } | PlanChangeRefusal | { status: "saved" }
 > {
+  const { context, operations } = request;
   const result = await applyChangeOperations({ context, operations });
 
   if ("error" in result) {
@@ -171,7 +174,7 @@ async function computeRequest({
   }
 
   if (!isPlanReady(context)) {
-    await savePlanState({ context, extraWrites, operations, source, state: result.state });
+    await savePlanState({ ...request, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
@@ -197,7 +200,7 @@ async function computeRequest({
   }
 
   if (change.unchanged && operations.every((operation) => operation.kind === "setBaseChoices")) {
-    await savePlanState({ context, extraWrites, operations, source, state: result.state });
+    await savePlanState({ ...request, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
@@ -280,7 +283,7 @@ export async function proposeChange({
   provenance = null,
   reason,
   source,
-}: ChangeRequest & {
+}: Omit<ChangeRequest, "writesWithSave"> & {
   approval?: "always" | "whenLarge";
   notice?: NoticeChange | null;
   payload?: Pick<PlanChangePayload, "releaseId">;

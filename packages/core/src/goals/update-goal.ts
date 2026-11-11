@@ -99,7 +99,7 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
       metadata: null,
     };
 
-    const extraWrites = async (tx: TransactionClient) => {
+    const saveGoalFields = async (tx: TransactionClient) => {
       writes.metadata = await saveMetadataInTransaction(tx, { goal, input, userId: goal.userId });
     };
 
@@ -124,7 +124,7 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
 
       const changeId =
         context && isResuming && isPlanReady(context)
-          ? await resumePlan(context, extraWrites)
+          ? await resumePlan(context, saveGoalFields)
           : null;
 
       return { changeId, metadata: writes.metadata };
@@ -132,11 +132,11 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
 
     const result = await applyChangeNow({
       context,
-      extraWrites,
       followToday: true,
       operations,
       reason: SETTINGS_NOTE,
       source: "learner",
+      writesWithSave: saveGoalFields,
     });
 
     if (result.status === "invalid") {
