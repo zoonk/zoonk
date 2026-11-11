@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "af553ffbe50f2f9f6dce45a8def06fc08ce8044bbf01b8fe58bad3fd2ed78712",
+  "pronunciation_accent": "1d892ffb8dabfbbea56549f80923f5b7a1b21ca88da9cf23928b5d6d0e90e86f",
   "pronunciation_continue": "437d63fa59b4ddecbdac606d02dd349ee94c080191ebfcad99f5ed699ce72461",
   "pronunciation_done": "64d3a09fbe9a62fd707b3342cd7c23545698be1d360aa6e260d0c4014a891cb9",
   "pronunciation_failed": "17b6eb594d07140ddc2af43fdee2551a1d41fa2b3b129ac14a2aa5442e2f5537",
@@ -59,7 +59,7 @@
     <string name="pronunciation_no_words">Nenhuma palavra para repetir hoje.</string>
     <string name="pronunciation_practice_done">Prática concluída</string>
     <string name="pronunciation_nothing_said">Nenhuma palavra falada desta vez</string>
-    <string name="pronunciation_accent">Seu sotaque nunca impede seu progresso. As palavras que ainda soam diferentes voltam amanhã.</string>
+    <string name="pronunciation_accent">Seu sotaque nunca é uma barreira.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Concluído</string>
 </resources>

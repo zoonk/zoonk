@@ -30,7 +30,7 @@
     <string name="pronunciation_no_words">No words to say again today.</string>
     <string name="pronunciation_practice_done">Practice done</string>
     <string name="pronunciation_nothing_said">Nothing said this time</string>
-    <string name="pronunciation_accent">An accent never blocks you. Words that still sound different come back tomorrow.</string>
+    <string name="pronunciation_accent">An accent never blocks you.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Done</string>
 </resources>

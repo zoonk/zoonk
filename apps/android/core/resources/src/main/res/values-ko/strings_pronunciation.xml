@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "44ca10c777552b2081529f6a8911f1f202daa210e85deaf2a35c77bcd1d4869d",
+  "pronunciation_accent": "2e3363e8e200757a6d8cd9e0632ab0d44b0657fff08ca449d13af18e6f10b627",
   "pronunciation_continue": "675a5075e56bcc471f5b282815d4f8798888424c46eea0ec5b1b356ac0f834f9",
   "pronunciation_done": "2ef3402a4d866f88bad16206619edfaaaa207ab3b06f8a3018b88f2609aab9e5",
   "pronunciation_failed": "ac1ef3bee8a84efa3dc6714e2995bac7345a926ca2a086cb2fbed350b6cd2b00",
@@ -59,7 +59,7 @@
     <string name="pronunciation_no_words">오늘은 다시 소리 내어 말할 단어가 없어요.</string>
     <string name="pronunciation_practice_done">연습 완료</string>
     <string name="pronunciation_nothing_said">이번에는 말한 단어가 없어요</string>
-    <string name="pronunciation_accent">억양이 달라도 계속할 수 있어요. 발음이 아직 다른 단어는 내일 다시 나와요.</string>
+    <string name="pronunciation_accent">억양은 걸림돌이 되지 않아요.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">완료</string>
 </resources>

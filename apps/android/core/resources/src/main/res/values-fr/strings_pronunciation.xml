@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "943e4b448f57a4825315a27ea4051d485fe549ee9cc53dd54d0dd8f9dc2f533c",
+  "pronunciation_accent": "3cb27b15728c860fb2550906fcf728a372952b6f9978cc774c7e0becb0350195",
   "pronunciation_continue": "5762591155750dda0e71f71361d18c68169097e9ff88fbf042e52ce24cf904b1",
   "pronunciation_done": "5e7563819b0feeda1bd9a67f1e0cf33a4c2ea3d3d032680e4880d1f76177dfc3",
   "pronunciation_failed": "6e417f6536e4902fe1343f995375a043d3601525dc40b49e41b493d770cba9ea",
@@ -59,7 +59,7 @@
     <string name="pronunciation_no_words">Aucun mot à redire aujourd’hui.</string>
     <string name="pronunciation_practice_done">Entraînement terminé</string>
     <string name="pronunciation_nothing_said">Tu n’as rien dit cette fois</string>
-    <string name="pronunciation_accent">Un accent ne te bloque jamais. Les mots qui sonnent encore différemment reviendront demain.</string>
+    <string name="pronunciation_accent">Ton accent n’est jamais un obstacle.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Terminé</string>
 </resources>
