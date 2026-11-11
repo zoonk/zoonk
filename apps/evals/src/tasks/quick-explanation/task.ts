@@ -7,6 +7,7 @@ import {
   quickExplanationSchema,
 } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { checkQuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation-checks";
+import { z } from "zod";
 import { QUICK_EXPLANATION_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
@@ -17,7 +18,7 @@ function checkOutput(output: string): CodeCheckResult {
 
   const problems = parsed.success
     ? checkQuickExplanation(parsed.data)
-    : [`The output doesn't match the task's schema: ${parsed.error.message}`];
+    : [`The output doesn't match the task's schema: ${z.prettifyError(parsed.error)}`];
 
   return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
 }
