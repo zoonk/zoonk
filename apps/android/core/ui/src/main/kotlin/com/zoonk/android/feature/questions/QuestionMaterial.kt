@@ -33,17 +33,21 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.IconNote
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SourcesChip
+import com.zoonk.android.ui.components.TextButton
 import java.time.Instant
 
 /** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
@@ -156,10 +160,45 @@ fun SetPlace(
     Text(text = text, modifier = modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
 }
 
-/** Over a placement question, so a miss feels safe. */
+/** "Not today" on a session's Focus test question: today's test questions go, and another day asks them. */
+class NotToday(
+    val busy: Boolean,
+    val failed: Boolean,
+    val onSkip: () -> Unit,
+)
+
+/** Over a placement question, so a miss feels safe; a session's test question can be put off with [notToday]. */
 @Composable
-fun PlacementNote(modifier: Modifier = Modifier) {
-    IconNote(R.drawable.ic_explore, stringResource(R.string.questions_placement_note), modifier)
+fun PlacementNote(
+    modifier: Modifier = Modifier,
+    notToday: NotToday? = null,
+) {
+    val note = stringResource(R.string.questions_placement_note)
+    if (notToday == null) {
+        IconNote(R.drawable.ic_explore, note, modifier)
+        return
+    }
+
+    Column(modifier) {
+        FlowRow(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            itemVerticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconNote(R.drawable.ic_explore, note, Modifier.padding(end = 12.dp))
+            TextButton(onClick = notToday.onSkip, busy = notToday.busy, size = ButtonSize.Small) {
+                Text(stringResource(R.string.focustest_not_today))
+            }
+        }
+        if (notToday.failed && !notToday.busy) {
+            Text(
+                stringResource(R.string.focustest_not_today_failed),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
 /** Past exam questions are only copied where their organizer allows it with the source cited. */
