@@ -532,7 +532,9 @@ private struct NextStopView: View {
     }
   }
 
-  /// A day not opened yet opens with its next step, as Today's Start session does.
+  /// A day not opened yet opens with its next step, as Today's Start session does. A saved day opens
+  /// the block shown, which may be drawn from Today's older read: a block finished elsewhere comes
+  /// back to this screen instead of starting the one after it unseen.
   private func opening(_ block: StudyBlock) async -> MutationResult<StudyDestination> {
     guard let sessionID else {
       guard let view = today.day else {
@@ -542,8 +544,7 @@ private struct NextStopView: View {
       return await today.open(block, as: .next, in: view)
     }
 
-    return await today.open(
-      block, as: block.id == day.nextBlock?.id ? .next : .block, sessionID: sessionID)
+    return await today.open(block, as: .block, sessionID: sessionID)
   }
 
   /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner

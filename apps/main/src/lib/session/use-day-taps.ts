@@ -165,7 +165,9 @@ function useShowIntro(day: TapDay) {
         focusMain,
         here: stayingHere(shown.userId),
         href,
-        next,
+        // A saved day's Start opens the block shown, as the session screen's own Start does: a block
+        // finished elsewhere since Today's read never starts the one after it unseen.
+        next: next && day.sessionId === null,
         step,
         tappedAt: Date.now(),
         waiting: true,
