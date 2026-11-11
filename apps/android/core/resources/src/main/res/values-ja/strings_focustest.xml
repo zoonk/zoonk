@@ -33,6 +33,7 @@
   "focustest_more_questions": "43310fbd83134a812a6f9fb9957eadbeb95cd772102be0c8a34ce96fd2b2a5e5",
   "focustest_no_grade": "c14c59a70c5b6155f7c253e2f32b345197e3bb12117c0532728024b6274ee2ad",
   "focustest_not_asked_yet": "c7e5a36ba898c2f14887bca6de7d03a7604812bfefc0943590585b6ed6afe7a9",
+  "focustest_not_known_yet": "67e0bfc22973d70dc646853714c1d74f8af62af0ba47e07f23e3a0c50041accc",
   "focustest_not_now": "91fa0367de0893045fff508eb45d230f82a98817c00075bcfcf4cefc5e8b58fa",
   "focustest_not_started": "a12328aa05fdeecca5a79c565292dff5c74dcb3be261990af7a3906d15e63139",
   "focustest_not_today": "75a55e618cfe2b96dca8d2b83b713f44c923eb1839562770b4b6cdb9f3127e6b",
@@ -47,7 +48,7 @@
   "focustest_proposal_undone": "a73afcd4807c178f40f981631a2b9f22bbedd53cb632a467090d23cec9f8a791",
   "focustest_question_number": "94b98b270889ba2813b51a974e5c7dac5b4d75b5893e4f18f46f34cd590b4409",
   "focustest_questions_left": "5036104e1563cabf490c4e1407c18af20a1244ba2031f1cb3260fcd23b0be7de",
-  "focustest_reason_answers": "59cefdcbcd6e9a0c5bfa3d44ea9f9e448d48c3dab8d0398726a759fa46055340",
+  "focustest_reason_answers": "af5a7bdebb10c934b4ec0b82f034cb4e5191e8c5541d3ac6e20e79ca1657ee40",
   "focustest_reason_minimum_score": "5f26573b233f7b896ce84f9103a1081a8f92cec7bcee35baea9bd331c1687739",
   "focustest_reason_not_asked": "2f221d7662bdb53bfebea2ff4d2a77fcd05b9d81a68738b2dbaa66b05047bf24",
   "focustest_reason_not_checked": "ec8e19e70a49b4ff369c7e6b2164877be764cfacd69555ab58767e3cf171d891",
@@ -159,7 +160,8 @@
     <string name="focustest_focus_hand_picked">学習計画では、自分で選んだ重点科目を引き続き優先します。こちらはテスト結果からの提案です。</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">今のところ、主に試験での配点が高い科目を優先しています。</string>
-    <string name="focustest_reason_answers">回答を見ると、この科目は復習したほうがよさそうです。</string>
+    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
+    <string name="focustest_reason_answers">回答内容から、この科目にはもう少し時間をかけるとよさそうです。</string>
     <string name="focustest_reason_minimum_score">このパートには最低スコアが設定されています。</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">このパートは配点が高いですが、ここでは診断できません。</string>
@@ -177,6 +179,8 @@
     <string name="focustest_done">達成</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">テストを続ける・約%1$s</string>
+    <!-- A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade. -->
+    <string name="focustest_not_known_yet">まだわからない</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
         <item quantity="other">%1$d問正解（全%2$d問）</item>

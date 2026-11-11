@@ -33,6 +33,7 @@
   "focustest_more_questions": "b15f8400097cf2870eb3380ce7f6aea5d921a309733854faa971420a046582d4",
   "focustest_no_grade": "8bb1a8321fb63544ce722b9a1c780278ecf07eaf18568ee3bcfd3ad4f1f9cda2",
   "focustest_not_asked_yet": "29fb358882299b7005fcb9afea6e1831ef46125dd63b922b737383cd042be120",
+  "focustest_not_known_yet": "a6e8248a91c1f7c878bcf0bdbd792fde96a9da8ec6f7173be389b4c1a7c90d55",
   "focustest_not_now": "93a19b9a5c0a98311503b5193b34a86f39004141819d37f6fa392d3d1c5bd523",
   "focustest_not_started": "a51a130658e56f9036af4319194957481d9c7cb4fa83517076ad666f22525eeb",
   "focustest_not_today": "ee3556d6a89a9892db1b328f838b7caa338d435ee5f8cb1affc6bcadedbb8245",
@@ -47,7 +48,7 @@
   "focustest_proposal_undone": "7f701c924b195149e7e1cae631f7145f3f8e2c1e2014d42bbb45cdbafc10ff6a",
   "focustest_question_number": "a27d122a6a21ef0290629928cf17ae120ff4c807b984210902f8f947f5547e57",
   "focustest_questions_left": "d579ee5dcccf0ae96ddb26a9d321d658e053b82a95d16ad1dd190a8617606e49",
-  "focustest_reason_answers": "3501719b50254468d546245bc8a3128ecb0e6fa374586f36fe71eea4003903cf",
+  "focustest_reason_answers": "d03a5a093ba29976c64790379edce908d050277c38b56f62c6c6c1e98d52f405",
   "focustest_reason_minimum_score": "f97e8812e9f63d33e1d3667425e6c6b9ad0c90d74d88793576ee8354c4927a78",
   "focustest_reason_not_asked": "eab0eac958729b0623de40a46f85a6d558582964ba885b9d4efb3c48586e5a1f",
   "focustest_reason_not_checked": "fa02d3f68db85f4840d082ada6e7514a37cb5b980590ad7c9ddeaf53e0b72f08",
@@ -175,7 +176,8 @@
     <string name="focustest_focus_hand_picked">Hai scelto le tue priorità e il tuo piano le mantiene. Ecco cosa suggerisce il test.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">Per ora, il piano si basa soprattutto su ciò che conta di più nel tuo esame.</string>
-    <string name="focustest_reason_answers">Le tue risposte suggeriscono di ripassare questa materia.</string>
+    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
+    <string name="focustest_reason_answers">Le tue risposte suggeriscono di dedicare più tempo a questa materia.</string>
     <string name="focustest_reason_minimum_score">Questa parte richiede un punteggio minimo.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">Questa parte pesa molto sul punteggio; qui non viene valutata.</string>
@@ -193,6 +195,8 @@
     <string name="focustest_done">Raggiunto</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">Continua il test · Circa %1$s</string>
+    <!-- A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade. -->
+    <string name="focustest_not_known_yet">Ancora da imparare</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
         <item quantity="one">Le risposte corrette sono %1$d su %2$d</item>

@@ -33,6 +33,7 @@
   "focustest_more_questions": "af96d73bfad18d4910537def7d970681d5b51c9ac2e003f64f9f367f23a0a621",
   "focustest_no_grade": "829c62c22fa1287ff418e7251fa7d35ccc89fd6317d83b037694d33e84c7b23d",
   "focustest_not_asked_yet": "d30a2926fa2638d69195e5e6471fa03e8deec33c1a2e12c63f255b7d799ae6ec",
+  "focustest_not_known_yet": "1b6525239d4953d7b11bf8852c8bf920781a86b92ae847e84f8aadfe53d344eb",
   "focustest_not_now": "3afdfb59d213354fea1c2d983369693f807ce0cf6346fb05e7fef04bd7dd6528",
   "focustest_not_started": "ccb5ed9b1e8ebcbce1d67fcec1cf0f80c0767fdaed1f94460476420b9644d11f",
   "focustest_not_today": "89561209651687d9195eb5feeae19f7ce0c3b6d23024e491d2cbdd1784eb950c",
@@ -47,7 +48,7 @@
   "focustest_proposal_undone": "e5c8103393cf54a9420b398dd3949e4bd5c2befe8ff7530028c33914ec529811",
   "focustest_question_number": "96636433dd29419fb0e1d9acfad4c4b8cbe808066327072231b34db193382401",
   "focustest_questions_left": "d0f976d9b8f2f3112bd95b559e01c4d46155ca650dba065d2956dc2c7483dbfb",
-  "focustest_reason_answers": "3333d88e401e592cfd775fa91bed33273261d638dae4c31c9b16e4f50079fdc3",
+  "focustest_reason_answers": "0b9648139393323b6adb47439722d2e3c601822f992427a780eb1b4f22bef461",
   "focustest_reason_minimum_score": "ab1008c8506f3fb18e8c62a0a635ab4e9b3e31c8bdeb0d2ee20510651ecf7505",
   "focustest_reason_not_asked": "e458be49f9061fc909ff77a69e0abf556a333571d6996bbe5944727450818bf9",
   "focustest_reason_not_checked": "9f685ff26e172ea53898c52ece6cd41fa333306ae7aa1c168daf92f521034be9",
@@ -159,7 +160,8 @@
     <string name="focustest_focus_hand_picked">계획에는 직접 고른 집중 과목을 그대로 반영해요. 아래는 테스트에서 추천하는 과목이에요.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">지금은 주로 시험에서 비중이 큰 부분에 맞춰져 있어요.</string>
-    <string name="focustest_reason_answers">답안을 보니 이 과목을 복습하면 좋겠어요.</string>
+    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
+    <string name="focustest_reason_answers">답변을 보면 이 과목에 시간을 더 들이는 게 좋겠어요.</string>
     <string name="focustest_reason_minimum_score">이 파트에는 최소 점수 기준이 있어요.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요.</string>
@@ -177,6 +179,8 @@
     <string name="focustest_done">완료</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">진단 계속하기 · 약 %1$s</string>
+    <!-- A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade. -->
+    <string name="focustest_not_known_yet">아직 모름</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
         <item quantity="other">정답 %1$d개 / 총 %2$d문제</item>

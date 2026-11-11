@@ -33,6 +33,7 @@
   "focustest_more_questions": "83b1a47a220e7567ae620968dc6a7686db316e755253f8fe2f1b1773e98d99c4",
   "focustest_no_grade": "ac92d42f878a39c6a59b32ade47c43f30743d211b4d67195757635dda39276f7",
   "focustest_not_asked_yet": "ef2b8997365df918fddcc524dc2f4e2e894a8f7c820296acdc6697ea9effaf05",
+  "focustest_not_known_yet": "004f73400d2279699da23f5e0aef2544712fcb1f9165cb85fee3a2369414ad13",
   "focustest_not_now": "af4c8034fb27dc411d987bd00473df897b1ae0c336d71ef9328511c3a26f539c",
   "focustest_not_started": "c2e68fdfa96b01f34354ffd1e65a056bf1264159b0a3de268f8f72d2937dead6",
   "focustest_not_today": "3fc78286effb52d39b49ff35083f477ad2b54f20bdac9734b700153640a00a81",
@@ -47,7 +48,7 @@
   "focustest_proposal_undone": "aeb4a9de4e06a6428e1fee3d485a11c2fa511c1ef58c20895dc6bd1d7aa9ee69",
   "focustest_question_number": "81de4b331c785dd940dc08df886b97f9e91187a5ee113952bca639c41dac1ac4",
   "focustest_questions_left": "f93c7d2ed0e9a249426171373b01f2a61e35127aacf07c4b787852a030fe1b3a",
-  "focustest_reason_answers": "32841e00ed38b93895ad92cfb732fbbb39ceba539575b89767f8cabc31f87e7c",
+  "focustest_reason_answers": "47c779570170955374b86f16a72b1838d2e9e175d7b72ceaf900f1db5b834059",
   "focustest_reason_minimum_score": "d131efe18948cba9e01f0669dcf9327dcb0dbf747a2d62c04b2f0493bf0e5a7a",
   "focustest_reason_not_asked": "dd41c4ba3f6be190a545073ae191dbf3813630ba89def06bd24be1d085c39b4e",
   "focustest_reason_not_checked": "5b7be7d76d7d663c641cd9bedc5954814ef070ea22299c31c1c3522bff87a95a",
@@ -167,7 +168,8 @@
     <string name="focustest_focus_hand_picked">Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor. Testin önerisi bu.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">Şimdilik bu öneri, daha çok sınavında ağırlığı en yüksek olan alanlara dayanıyor.</string>
-    <string name="focustest_reason_answers">Cevaplarına göre bu branşı tekrar etmen iyi olur.</string>
+    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
+    <string name="focustest_reason_answers">Cevaplarına göre bu branşa daha fazla zaman ayırman iyi olur.</string>
     <string name="focustest_reason_minimum_score">Bu bölümde minimum puan şartı var.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">Bu bölümün puana etkisi büyük; burada değerlendirilmiyor.</string>
@@ -185,6 +187,8 @@
     <string name="focustest_done">Tamamlandı</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">Teste devam et · Yaklaşık %1$s</string>
+    <!-- A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade. -->
+    <string name="focustest_not_known_yet">Henüz bilinmiyor</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
         <item quantity="one">%1$d / %2$d doğru</item>

@@ -80,6 +80,7 @@
     <string name="focustest_focus_hand_picked">You chose your own focus, and your plan keeps it. This is what the test suggests.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">For now, this follows mainly what counts most in your exam.</string>
+    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
     <string name="focustest_reason_answers">Your answers suggest giving this subject more time.</string>
     <string name="focustest_reason_minimum_score">This part has a minimum score.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
@@ -98,7 +99,7 @@
     <string name="focustest_done">Done</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">Continue the test · About %1$s</string>
-    <!-- A subject whose test answers were all "I don't know yet": nothing is graded yet. -->
+    <!-- A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade. -->
     <string name="focustest_not_known_yet">Not known yet</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
