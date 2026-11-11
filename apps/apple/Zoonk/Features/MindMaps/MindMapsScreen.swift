@@ -24,7 +24,7 @@ struct MindMapsScreen: View {
         .loads(list)
         .mindMapSaveFailureAlert(goalId: goal.id)
         // One follower for every map on its way, each at its own pace.
-        .task(id: Following(list.value)) {
+        .task(id: Following(goalId: goal.id, maps: list.value)) {
           await store.followList(goalId: goal.id)
         }
     }
@@ -164,10 +164,12 @@ struct MindMapsScreen: View {
 
 /// What the follower's pace depends on: it starts again when that changes.
 private struct Following: Hashable {
+  let goalId: String
   let drawing: Bool
   let writing: Bool
 
-  init(_ maps: GoalMindMaps?) {
+  init(goalId: String, maps: GoalMindMaps?) {
+    self.goalId = goalId
     drawing = maps?.chapters.contains { $0.status == .drawing } ?? false
     writing = maps?.chapters.contains { $0.status == .writingLessons } ?? false
   }
