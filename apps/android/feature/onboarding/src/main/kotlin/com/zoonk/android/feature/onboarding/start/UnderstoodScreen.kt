@@ -45,13 +45,13 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.feature.country.CountrySheet
+import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
-import com.zoonk.android.feature.country.CountrySheet
-import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.plan.Variety
 import com.zoonk.android.feature.plan.VarietySheet
 import com.zoonk.android.feature.subscription.PlusNotice

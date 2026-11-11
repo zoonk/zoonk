@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.settings
 
-import java.util.Locale
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -47,16 +46,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
-import com.zoonk.android.feature.country.CountryChoice
-import com.zoonk.android.feature.country.CountrySheet
-import com.zoonk.android.feature.country.choices
-import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.country.CountryChoice
+import com.zoonk.android.feature.country.CountrySheet
+import com.zoonk.android.feature.country.choices
+import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyGlasses
@@ -79,6 +78,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.launch
+import java.util.Locale
 import com.zoonk.api.models.Buddy as ProfileBuddy
 
 class PreferencesViewModel(
@@ -310,7 +310,7 @@ private fun SettingValue(text: String) {
  * right under it.
  */
 @Composable
-private fun LanguageSection(
+internal fun LanguageSection(
     profile: LearningProfile?,
     preferences: PreferencesViewModel,
 ) {
@@ -325,7 +325,11 @@ private fun LanguageSection(
                     headline = { Text(stringResource(R.string.settings_preferences_app_language)) },
                     supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
                     trailing = { SettingValue(appLanguageName(currentLocale())) },
-                    onClick = { context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri())) },
+                    onClick = {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri()),
+                        )
+                    },
                     chevron = true,
                 )
             }

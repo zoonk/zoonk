@@ -71,8 +71,8 @@ import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.ExamChoicePick
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf1
-import com.zoonk.api.models.OnboardingAnswerInputOneOf2
 import com.zoonk.api.models.OnboardingAnswerInputOneOf11
+import com.zoonk.api.models.OnboardingAnswerInputOneOf2
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingAnswerInputOneOf4
 import com.zoonk.api.models.OnboardingAnswerInputOneOf5

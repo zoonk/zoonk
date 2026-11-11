@@ -44,8 +44,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -160,7 +160,9 @@ fun CountrySheet(
 
                     else -> {
                         items(count = SKELETON_ROWS, key = { "skeleton-$it" }, contentType = { "skeleton" }) {
-                            MediaPending(Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET, vertical = 6.dp).heightIn(min = 40.dp)) {}
+                            MediaPending(
+                                Modifier.fillMaxWidth().padding(horizontal = LIST_ITEM_INSET, vertical = 6.dp).heightIn(min = 40.dp),
+                            ) {}
                         }
                     }
                 }
@@ -190,7 +192,7 @@ private fun CountryRow(
     ListRow(
         headline = { Text(choice.name, Modifier.semantics { if (choice.home) contentDescription = spoken }) },
         busy = busy,
-        meta = if (choice.home) ({ Text(home, Modifier.clearAndSetSemantics {}) }) else null,
+        supporting = if (choice.home) ({ Text(home, Modifier.clearAndSetSemantics {}) }) else null,
         modifier =
             Modifier
                 .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
@@ -215,7 +217,12 @@ private fun Quiet(text: String) {
 private fun ResultCount(count: Int) {
     val words =
         if (count == 0) stringResource(R.string.country_no_match) else pluralStringResource(R.plurals.country_result_count, count, count)
-    Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite; contentDescription = words })
+    Box(
+        Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = words
+        },
+    )
 }
 
 /** Main's search: case and accents don't matter, and any word may start the match ("uni" finds "Reino Unido"). */

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -35,7 +36,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.varietyName
-import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -297,7 +297,15 @@ private fun CountryRows(
     goal.contentCountry?.let { country ->
         val editable = goal.editableCountry != null
         PropertyRow(
-            stringResource(if (country.kind == GoalContentCountry.Kind.EXAM) R.string.country_exam_label else R.string.country_content_label),
+            stringResource(
+                if (country.kind ==
+                    GoalContentCountry.Kind.EXAM
+                ) {
+                    R.string.country_exam_label
+                } else {
+                    R.string.country_content_label
+                },
+            ),
             country.name,
             onOpen.takeIf { editable },
             onClickLabel = adjust,

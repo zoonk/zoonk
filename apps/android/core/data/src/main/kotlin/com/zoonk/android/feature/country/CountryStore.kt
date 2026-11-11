@@ -9,9 +9,9 @@ import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.shownLocale
 import com.zoonk.api.apis.GoalsApi.LanguageListCountries
-import com.zoonk.api.models.CountryCatalogCountriesInner
-import com.zoonk.api.models.GoalContentCountryLessonVariety
+import com.zoonk.api.models.CountryPickerChoice
 import com.zoonk.api.models.LearningProfileSuggestedInner
+import com.zoonk.api.models.LearningProfileSuggestedInnerLessonVariety
 import kotlin.time.Duration.Companion.days
 
 /** A country a picker offers: [lessonVariety] is the language lessons would use for it, when core discloses one; [home] marks where the learner lives. */
@@ -19,15 +19,15 @@ import kotlin.time.Duration.Companion.days
 data class CountryChoice(
     val code: String,
     val name: String,
-    val lessonVariety: GoalContentCountryLessonVariety? = null,
+    val lessonVariety: LearningProfileSuggestedInnerLessonVariety? = null,
     val home: Boolean = false,
 )
 
-fun LearningProfileSuggestedInner.choice() = CountryChoice(code, name, home = tag == LearningProfileSuggestedInner.Tag.HOME)
+fun LearningProfileSuggestedInner.choice() = CountryChoice(code, name, lessonVariety, home = tag == LearningProfileSuggestedInner.Tag.HOME)
 
 fun List<LearningProfileSuggestedInner>.choices() = map { it.choice() }
 
-fun CountryCatalogCountriesInner.choice() = CountryChoice(code, name)
+fun CountryPickerChoice.choice() = CountryChoice(code, name, lessonVariety)
 
 fun interface CountryApi {
     /** Every country, named and sorted in [language]. */
@@ -38,8 +38,13 @@ class LiveCountryApi(
     private val api: ApiClients,
 ) : CountryApi {
     override suspend fun catalog(language: String) =
-        perform { api.clients(null).goals.listCountries(LanguageListCountries.entries.firstOrNull { it.value == language } ?: LanguageListCountries.EN) }
-            .countries
+        perform {
+            api
+                .clients(
+                    null,
+                ).goals
+                .listCountries(LanguageListCountries.entries.firstOrNull { it.value == language } ?: LanguageListCountries.EN)
+        }.countries
             .map { it.choice() }
 }
 

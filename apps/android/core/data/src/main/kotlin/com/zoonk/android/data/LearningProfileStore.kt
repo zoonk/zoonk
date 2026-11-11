@@ -32,7 +32,8 @@ class LiveLearningProfileApi(
     override suspend fun profile(session: AuthenticatedSession): LearningProfile =
         perform {
             api.clients(session).account.getCurrentUserLearningProfile(
-                LanguageGetCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() } ?: LanguageGetCurrentUserLearningProfile.EN,
+                LanguageGetCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() }
+                    ?: LanguageGetCurrentUserLearningProfile.EN,
             )
         }.profile
 
@@ -43,7 +44,8 @@ class LiveLearningProfileApi(
         perform {
             api.clients(session).account.updateCurrentUserLearningProfile(
                 change,
-                LanguageUpdateCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() } ?: LanguageUpdateCurrentUserLearningProfile.EN,
+                LanguageUpdateCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() }
+                    ?: LanguageUpdateCurrentUserLearningProfile.EN,
             )
         }.profile
 }

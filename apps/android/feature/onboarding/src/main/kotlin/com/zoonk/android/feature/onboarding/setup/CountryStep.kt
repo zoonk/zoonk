@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,7 +18,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.padding
 import com.zoonk.android.R
 import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.country.CountrySheet
@@ -28,7 +28,7 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.api.models.GoalContentCountryLessonVariety
+import com.zoonk.api.models.LearningProfileSuggestedInnerLessonVariety
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf
 import com.zoonk.api.models.OnboardingContentCountry
@@ -88,7 +88,7 @@ internal fun ColumnScope.CountryStep(
     ) {
         Column {
             ChoiceList(
-                choices = shown.map { Choice(it.code, it.name, meta = home.takeIf { _ -> it.home }) },
+                choices = shown.map { Choice(it.code, it.name, home.takeIf { _ -> it.home }) },
                 value = picked?.code,
                 label = title,
                 onChange = { code -> picked = shown.first { it.code == code } },
@@ -129,7 +129,7 @@ private val ChoiceSaver =
                 CountryChoice(
                     code,
                     name,
-                    if (language != null && region != null) GoalContentCountryLessonVariety(language, region) else null,
+                    if (language != null && region != null) LearningProfileSuggestedInnerLessonVariety(language, region) else null,
                     home == "true",
                 )
             }

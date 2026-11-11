@@ -44,8 +44,6 @@ import com.zoonk.android.feature.buddy.EarlierQuestionsStore
 import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
-import com.zoonk.android.feature.country.CountryStore
-import com.zoonk.android.feature.country.LiveCountryApi
 import com.zoonk.android.feature.ceremonies.MilestoneViews
 import com.zoonk.android.feature.certificates.CertificateFiles
 import com.zoonk.android.feature.certificates.CertificateStore
@@ -58,6 +56,8 @@ import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
 import com.zoonk.android.feature.completedlessons.LiveCompletedLessonsApi
 import com.zoonk.android.feature.conversation.ConversationStore
 import com.zoonk.android.feature.conversation.LiveConversationApi
+import com.zoonk.android.feature.country.CountryStore
+import com.zoonk.android.feature.country.LiveCountryApi
 import com.zoonk.android.feature.essay.EssayStore
 import com.zoonk.android.feature.essay.LiveEssayApi
 import com.zoonk.android.feature.exam.ExamStore

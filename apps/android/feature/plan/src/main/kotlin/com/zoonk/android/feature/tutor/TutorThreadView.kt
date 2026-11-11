@@ -51,12 +51,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.catalog.toUuidOrNull
 import com.zoonk.android.feature.conversation.CallStarter
+import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.feature.missions.MissionMoment
@@ -687,7 +687,8 @@ private fun settingOffer(
         is TutorToolOffer.TutorToolOfferOneOf9Value -> {
             val country = offer.value
             if (country.kind == TutorToolOfferOneOf9.Kind.HOME_COUNTRY) {
-                vm.homeCountrySave(turnId, country.country) to { vm.applyHomeCountry(turnId, CountryChoice(country.country, country.countryName)) }
+                vm.homeCountrySave(turnId, country.country) to
+                    { vm.applyHomeCountry(turnId, CountryChoice(country.country, country.countryName)) }
             } else {
                 vm.contentCountrySave(turnId, country.goalId, country.country) to
                     { vm.applyContentCountry(turnId, country.goalId, country.country) }

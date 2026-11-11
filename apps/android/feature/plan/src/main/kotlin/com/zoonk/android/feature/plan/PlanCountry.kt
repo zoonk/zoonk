@@ -199,9 +199,21 @@ internal fun CountryRebuildNotice(
     OutlinedCard(modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             when (rebuild) {
-                CountryRebuild.Preparing -> CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                CountryRebuild.Ready -> Icon(painterResource(R.drawable.ic_check), contentDescription = null)
-                CountryRebuild.Failed -> Icon(painterResource(R.drawable.ic_warning), contentDescription = null, tint = MaterialTheme.zoonk.warning)
+                CountryRebuild.Preparing -> {
+                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                }
+
+                CountryRebuild.Ready -> {
+                    Icon(painterResource(R.drawable.ic_check), contentDescription = null)
+                }
+
+                CountryRebuild.Failed -> {
+                    Icon(
+                        painterResource(R.drawable.ic_warning),
+                        contentDescription = null,
+                        tint = MaterialTheme.zoonk.warning,
+                    )
+                }
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 val title =
@@ -218,7 +230,11 @@ internal fun CountryRebuildNotice(
                         CountryRebuild.Failed -> R.string.country_rebuild_failed_body
                     }
                 body?.let {
-                    Text(stringResource(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        stringResource(it),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                 }
                 if (rebuild == CountryRebuild.Failed) {
                     Button(onClick = onRetry, busy = retrying, enabled = !retrying, modifier = Modifier.padding(top = 8.dp)) {

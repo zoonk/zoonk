@@ -12,6 +12,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
@@ -67,6 +68,7 @@ class TutorViewModelTest {
         cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
         saved: SavedStateHandle = SavedStateHandle(),
         openMission: suspend (UUID) -> MutationResult<AppRoute?> = { MutationResult.Obsolete },
+        setHomeCountry: suspend (CountryChoice) -> Boolean = { true },
     ): TutorViewModel =
         TutorViewModel(
             scope,
@@ -76,6 +78,8 @@ class TutorViewModelTest {
                 session,
                 { MutationResult.Done(Unit) },
                 { _, _ -> MutationResult.Done(Unit) },
+                { _, _ -> MutationResult.Done(Unit) },
+                setHomeCountry,
             ) { _, _, status -> decision(status) },
             saved,
             openMission,
@@ -377,6 +381,8 @@ class TutorViewModelTest {
                     session,
                     { MutationResult.Done(Unit) },
                     { _, _ -> MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                    { true },
                 ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
@@ -401,6 +407,8 @@ class TutorViewModelTest {
                     session,
                     { MutationResult.Done(Unit) },
                     { _, _ -> MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                    { true },
                 ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
@@ -426,6 +434,8 @@ class TutorViewModelTest {
                     session,
                     { MutationResult.Done(Unit) },
                     { _, _ -> MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                    { true },
                 ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
@@ -819,6 +829,28 @@ class TutorViewModelTest {
             advanceUntilIdle()
             assertNull("the earlier card offers its country again", vm.varietySave("q1", goal, "CA"))
             assertEquals(OfferSave.Saved, vm.varietySave("q2", goal, "AU"))
+        }
+
+    @Test
+    fun countryCardsShowSavedOnlyWhileTheirSettingHolds() =
+        runTest(dispatcher) {
+            val goal = UUID.fromString(GOAL)
+            var homeSaves = false
+            val vm = conversation(setHomeCountry = { homeSaves })
+
+            vm.applyContentCountry("q1", goal, "PT")
+            advanceUntilIdle()
+            assertEquals(OfferSave.Saved, vm.contentCountrySave("q1", goal, "PT"))
+            vm.goalCountries = mapOf(goal to "BR")
+            assertNull("a later country takes over", vm.contentCountrySave("q1", goal, "PT"))
+
+            vm.applyHomeCountry("q2", CountryChoice("PT", "Portugal"))
+            advanceUntilIdle()
+            assertEquals(OfferSave.Failed, vm.homeCountrySave("q2", "PT"))
+            homeSaves = true
+            vm.applyHomeCountry("q2", CountryChoice("PT", "Portugal"))
+            advanceUntilIdle()
+            assertEquals(OfferSave.Saved, vm.homeCountrySave("q2", "PT"))
         }
 
     private val proposed = planChange(status = "proposed").copy(id = UUID.fromString(OTHER_CHANGE))
