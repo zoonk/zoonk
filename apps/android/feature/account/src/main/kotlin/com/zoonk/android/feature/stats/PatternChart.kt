@@ -99,6 +99,7 @@ internal fun PatternChart(
                     IntRect(left = it * width, top = 0, right = (it + 1) * width, bottom = area.height)
                 }
             },
+            inspector = inspector,
             riseAbove = true,
         ) {
             Row(Modifier.fillMaxWidth()) {

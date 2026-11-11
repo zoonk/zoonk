@@ -17,12 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
@@ -34,11 +38,15 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /** The one chart point a page shows a tooltip for, so opening another point's closes the last. */
 @Stable
 class ChartInspector {
     private var point by mutableStateOf<Pair<Any, Int>?>(null)
+
+    internal var area: LayoutCoordinates? = null
 
     /** The inspected point's index when it is one of [chart]'s. */
     fun indexIn(chart: Any): Int? = point?.takeIf { it.first === chart }?.second
@@ -56,12 +64,12 @@ class ChartInspector {
 }
 
 /**
- * Closes [inspector]'s tooltip on a tap anywhere in this layout. It sees the tap before the point
- * under the finger does, so a tap on another point moves the tooltip there, and a drag is left to
- * scrolling.
+ * The part of the page [inspector]'s tooltips stay inside, such as the page under its top app bar.
+ * A tap anywhere in it closes the tooltip. It sees the tap before the point under the finger does, so
+ * a tap on another point moves the tooltip there, and a drag is left to scrolling.
  */
-fun Modifier.closesChartTooltip(inspector: ChartInspector): Modifier =
-    pointerInput(inspector) {
+fun Modifier.holdsChartTooltips(inspector: ChartInspector): Modifier =
+    onPlaced { inspector.area = it }.pointerInput(inspector) {
         awaitEachGesture {
             awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
             if (waitForUpOrCancellation(PointerEventPass.Initial) != null) inspector.close()
@@ -102,24 +110,28 @@ fun ChartTooltip(
 /**
  * [tooltip] beside the chart point whose bounds [anchor] gives from this layout's start edge, hidden
  * while it gives `null` for a point scrolled out of view: above the point, below it when that doesn't
- * fit, beside it when neither does, and never past the layout's sides. With [riseAbove] it may cover
- * what comes before the chart. It takes no touches and TalkBack skips it, since the points say their
+ * fit, beside it when neither does, and never past the layout's sides or out of the part of the page
+ * [inspector]'s [holdsChartTooltips] area shows. With [riseAbove] it may cover what comes before the
+ * chart, which draws under it. It takes no touches and TalkBack skips it, since the points say their
  * own detail.
  */
 @Composable
 fun ChartTooltipArea(
     tooltip: (@Composable () -> Unit)?,
     anchor: Density.(area: IntSize) -> IntRect?,
+    inspector: ChartInspector,
     modifier: Modifier = Modifier,
     riseAbove: Boolean = false,
     content: @Composable () -> Unit,
 ) {
+    var shown by remember { mutableStateOf<IntRange?>(null) }
+
     Layout(
         content = {
             Box { content() }
             tooltip?.let { Box(Modifier.clearAndSetSemantics {}) { it() } }
         },
-        modifier = modifier,
+        modifier = modifier.onGloballyPositioned { shown = inspector.shownRows(it) },
     ) { measurables, constraints ->
         val chart = measurables.first().measure(constraints)
         val area = IntSize(chart.width, chart.height)
@@ -129,43 +141,42 @@ fun ChartTooltipArea(
         layout(area.width, area.height) {
             chart.place(0, 0)
             val point = card?.let { anchor(area) } ?: return@layout
-            card.placeRelative(tooltipOffset(point, IntSize(card.width, card.height), area, gap, riseAbove), zIndex = 1f)
+            val top = if (riseAbove) Int.MIN_VALUE else 0
+            val room = shown?.let { maxOf(top, it.first)..minOf(area.height, it.last) } ?: 0..area.height
+            card.placeRelative(tooltipOffset(point, IntSize(card.width, card.height), area.width, room, gap), zIndex = 1f)
         }
     }
 }
 
-private fun tooltipOffset(
+/** The rows of [layout] that [ChartInspector.area] shows, in [layout]'s own coordinates. */
+private fun ChartInspector.shownRows(layout: LayoutCoordinates): IntRange? {
+    val page = area?.takeIf { it.isAttached } ?: return null
+    val shown = layout.localBoundingBoxOf(page, clipBounds = false)
+    return ceil(shown.top).toInt()..floor(shown.bottom).toInt()
+}
+
+/** Where a [card] goes beside [point] in a layout [width] wide, kept within the rows of [room]. */
+internal fun tooltipOffset(
     point: IntRect,
     card: IntSize,
-    area: IntSize,
+    width: Int,
+    room: IntRange,
     gap: Int,
-    riseAbove: Boolean,
 ): IntOffset {
-    val centered = (point.center.x - card.width / 2).coerceIn(0, (area.width - card.width).coerceAtLeast(0))
+    val centered = (point.center.x - card.width / 2).coerceIn(0, (width - card.width).coerceAtLeast(0))
+    val lowest = (room.last - card.height).coerceAtLeast(room.first)
     val above = point.top - gap - card.height
     val below = point.bottom + gap
     val after = point.right + gap
     val before = point.left - gap - card.width
+    val beside = (point.center.y - card.height / 2).coerceIn(room.first, lowest)
 
     return when {
-        riseAbove || above >= 0 -> {
-            IntOffset(centered, above)
-        }
-
-        below + card.height <= area.height -> {
-            IntOffset(centered, below)
-        }
-
-        after + card.width <= area.width || before >= 0 -> {
-            IntOffset(
-                x = if (after + card.width <= area.width) after else before,
-                y = (point.center.y - card.height / 2).coerceIn(0, (area.height - card.height).coerceAtLeast(0)),
-            )
-        }
-
-        else -> {
-            IntOffset(centered, above)
-        }
+        above >= room.first -> IntOffset(centered, above)
+        below + card.height <= room.last -> IntOffset(centered, below)
+        after + card.width <= width -> IntOffset(after, beside)
+        before >= 0 -> IntOffset(before, beside)
+        else -> IntOffset(centered, above.coerceIn(room.first, lowest))
     }
 }
 

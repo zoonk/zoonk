@@ -98,6 +98,7 @@ internal fun YearCalendar(
             ChartTooltipArea(
                 tooltip = active?.let { { ChartTooltip(days[it].label, days[it].value) } },
                 anchor = { area -> active?.let { dayBounds(it, list, size.cell, area) } },
+                inspector = inspector,
                 modifier = Modifier.width(size.width).align(Alignment.TopEnd),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(GAP)) {

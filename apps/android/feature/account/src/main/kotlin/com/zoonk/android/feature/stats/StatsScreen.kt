@@ -52,7 +52,7 @@ import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageTitleRow
-import com.zoonk.android.ui.components.closesChartTooltip
+import com.zoonk.android.ui.components.holdsChartTooltips
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageDirective
 import kotlinx.coroutines.flow.combine
@@ -100,7 +100,7 @@ fun StatsScreen(
     val inspector = remember { ChartInspector() }
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(page.title)) }) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).closesChartTooltip(inspector)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).holdsChartTooltips(inspector)) {
             val directive = pageDirective(maxWidth, panesTouch = true)
             val listBeside = directive.maxHorizontalPartitions > 1
 
