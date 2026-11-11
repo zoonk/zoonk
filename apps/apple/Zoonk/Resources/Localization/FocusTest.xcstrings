@@ -4723,61 +4723,61 @@
         }
       }
     },
-    "Your answers suggest giving this subject more time." : {
+    "Your answers suggest focusing here." : {
       "comment" : "Why the plan gives a subject more time: a miss or an \"I don't know yet\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antworten sprechen dafür, mehr Zeit für dieses Fach einzuplanen."
+            "value" : "Deine Antworten sprechen für diesen Schwerpunkt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus respuestas sugieren dedicarle más tiempo a esta materia."
+            "value" : "Tus respuestas sugieren enfocarte aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes réponses suggèrent de consacrer plus de temps à cette matière."
+            "value" : "Tes réponses suggèrent d’en faire une priorité."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tue risposte suggeriscono di dedicare più tempo a questa materia."
+            "value" : "Le tue risposte suggeriscono di dare priorità a questa materia."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回答内容から、この科目にはもう少し時間をかけるとよさそうです。"
+            "value" : "回答から、この科目を重点的に学ぶことをおすすめします。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "답변을 보면 이 과목에 시간을 더 들이는 게 좋겠어요."
+            "value" : "답변을 보면 이 과목에 집중하는 게 좋아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje odpowiedzi wskazują, że warto poświęcić temu przedmiotowi więcej czasu."
+            "value" : "Twoje odpowiedzi wskazują, że warto nadać temu priorytet."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas sugerem dedicar mais tempo a essa matéria."
+            "value" : "Suas respostas sugerem mais foco aqui."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cevaplarına göre bu branşa daha fazla zaman ayırman iyi olur."
+            "value" : "Cevaplarına göre bu branşa odaklanman iyi olur."
           }
         }
       }
