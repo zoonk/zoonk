@@ -44,6 +44,18 @@ function hashContent(content: Uint8Array | string): string {
   return createHash("sha256").update(content).digest("hex");
 }
 
+/**
+ * Pages that declare no charset and aren't UTF-8 are windows-1252, as browsers read them: Planalto
+ * serves its laws that way.
+ */
+function decodeText(bytes: Uint8Array): string {
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return new TextDecoder("windows-1252").decode(bytes);
+  }
+}
+
 export function hashDocument({ bytes, text }: { bytes: Uint8Array; text: string | null }): string {
   return hashContent(text || bytes);
 }
@@ -160,12 +172,16 @@ export async function parseDocument({
   const type = normalizeContentType(contentType);
   const fileType = OFFICE_FILE_TYPES[type];
 
+  if (fileType === "html") {
+    return parseOfficeDocument({ bytes: Buffer.from(decodeText(bytes)), fileType, topic });
+  }
+
   if (fileType) {
     return parseOfficeDocument({ bytes, fileType, topic });
   }
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
-    const text = new TextDecoder().decode(bytes);
+    const text = decodeText(bytes);
 
     return {
       images: [],

@@ -134,6 +134,18 @@ describe(parseDocument, () => {
     expect(notice.text).toContain("Configura conflito de interesses");
   });
 
+  it("reads a page sent in windows-1252 with no declared charset, as Planalto sends laws", async () => {
+    const page = "<p>Presidência da República</p><p>LEI Nº 12.813, DE 16 DE MAIO DE 2013</p>";
+    const text = "Presidência da República\nLEI Nº 12.813, DE 16 DE MAIO DE 2013";
+
+    const [html, plain] = await Promise.all([
+      parseDocument({ bytes: Buffer.from(page, "latin1"), contentType: "text/html" }),
+      parseDocument({ bytes: Buffer.from(text, "latin1"), contentType: "text/plain" }),
+    ]);
+
+    expect([html.text, plain.text]).toStrictEqual([text, text]);
+  });
+
   it("rejects types it can't read", async () => {
     await expect(
       parseDocument({ bytes: new Uint8Array([1, 2]), contentType: "application/zip" }),
