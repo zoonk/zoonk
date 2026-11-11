@@ -51,7 +51,7 @@ export async function settleFocusTest({
 
   const checkpoint = state.focusTest?.checkpoint;
 
-  if (!focusTest?.dueFocus || !checkpoint?.focus || !state.focusTest) {
+  if (!focusTest?.dueFocus || !checkpoint || !state.focusTest) {
     return state;
   }
 
@@ -70,8 +70,8 @@ export async function settleFocusTest({
     await keepHandledSuggestion({
       areas,
       goalId,
-      inputVersion: focusTest.inputVersion,
       outcome: proposed.status === "unchanged" ? proposed.reason : "proposed",
+      planVersion: focusTest.planVersion,
       userId,
     });
 
@@ -90,7 +90,7 @@ export async function settleFocusTest({
                   ? await loadPlanChangeView(proposed.changeId, { timeZone })
                   : null,
             },
-            rows: checkpoint.focus.rows,
+            rows: focusTest.rows,
           }),
         },
       },

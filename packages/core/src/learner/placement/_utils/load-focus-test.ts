@@ -7,7 +7,7 @@ import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { getAnsweredQuestions } from "../../../view-models/onboarding/onboarding-steps";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
-import { FOCUS_TEST_SOURCE, type FocusTestView } from "../focus-test-contract";
+import { FOCUS_TEST_SOURCE, type FocusRow, type FocusTestView } from "../focus-test-contract";
 import { getSessionQuestions } from "../focus-test-rules";
 import {
   type FocusTestSummaryRecord,
@@ -37,6 +37,18 @@ function isTimeSaved(goal: TestSetup["goal"]): boolean {
   return goal.planRevealedAt !== null || getAnsweredQuestions(details).includes("schedule");
 }
 
+function getHandledSuggestion({ setup, suggested }: { setup: TestSetup; suggested: string[] }) {
+  const handled = setup.record?.handled;
+
+  if (!handled || !isSameFocus(handled.areas, suggested)) {
+    return null;
+  }
+
+  return handled.outcome === "proposed" || handled.planVersion === setup.plan.version
+    ? handled
+    : null;
+}
+
 /**
  * The test proposes once the daily time is saved and doesn't cover everything, only while the
  * plan's focus is none or the one the test put there, and never a suggestion it already settled:
@@ -61,36 +73,31 @@ async function loadFocusFacts({
   const timeShort = coveredShare !== null && coveredShare < 1;
   const proposes = asks && timeSaved && timeShort;
 
-  const { focus = null, handled = null } = setup.record ?? {};
+  const focus = setup.record?.focus ?? [];
+  const handled = getHandledSuggestion({ setup, suggested });
 
-  const settled =
-    handled !== null &&
-    isSameFocus(handled.areas, suggested) &&
-    (handled.outcome === "proposed" || handled.inputVersion === setup.plan.inputVersion);
-
-  const waiting = proposes
+  const suggestion = proposes
     ? await tx.planChange.findFirst({
         orderBy: { createdAt: "desc" },
-        select: { id: true },
-        where: {
-          payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] },
-          planId: id,
-          status: "proposed",
-        },
+        select: { id: true, status: true },
+        where: { payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] }, planId: id },
       })
     : null;
 
   const due =
-    proposes &&
-    !settled &&
-    !isSameFocus(focusAreas, suggested) &&
-    isSameFocus(focusAreas, focus ?? []);
+    proposes && !handled && !isSameFocus(focusAreas, suggested) && isSameFocus(focusAreas, focus);
 
   return {
-    covered: settled && handled.outcome === "alreadyIn",
+    covered: handled?.outcome === "alreadyIn",
     due: due ? suggested : null,
     focusAreas,
-    proposal: waiting ? await loadPlanChangeView(waiting.id, { timeZone }) : null,
+    handPicked:
+      (focusAreas.length > 0 && !isSameFocus(focusAreas, focus)) ||
+      (handled?.outcome === "proposed" && suggestion?.status === "declined"),
+    proposal:
+      suggestion?.status === "proposed"
+        ? await loadPlanChangeView(suggestion.id, { timeZone })
+        : null,
     timeSaved,
     timeShort,
   };
@@ -99,10 +106,11 @@ async function loadFocusFacts({
 type FocusTestLoad = {
   planId: string;
   plan: FocusPlan;
-  inputVersion: number;
+  planVersion: number;
   sittingId: string | null;
   /** The focus to propose now; null when none is due. */
   dueFocus: string[] | null;
+  rows: FocusRow[];
   summary: FocusTestSummaryRecord;
   view: FocusTestView;
 };
@@ -165,9 +173,10 @@ async function loadTurnFocusTest({
 
   return {
     dueFocus: focusPlan.due,
-    inputVersion: setup.plan.inputVersion,
     plan: focusPlan,
     planId: setup.plan.id,
+    planVersion: setup.plan.version,
+    rows,
     sittingId: progress.sitting?.id ?? null,
     summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
     view: toFocusTestView({

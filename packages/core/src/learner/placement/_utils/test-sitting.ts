@@ -214,19 +214,19 @@ export async function saveTestSummary({
 export async function keepHandledSuggestion({
   areas,
   goalId,
-  inputVersion,
+  planVersion,
   outcome,
   userId,
 }: {
   areas: string[];
   goalId: string;
-  inputVersion: number;
+  planVersion: number;
   outcome: NonNullable<FocusTestRecord["handled"]>["outcome"];
   userId: string;
 }): Promise<void> {
   await writeLearnerChange({ userId }, async (tx) => {
     await changeFocusTestRecord({
-      change: (record) => ({ ...record, handled: { areas, inputVersion, outcome } }),
+      change: (record) => ({ ...record, handled: { areas, outcome, planVersion } }),
       goalId,
       tx,
     });

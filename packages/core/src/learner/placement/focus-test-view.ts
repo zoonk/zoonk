@@ -95,6 +95,7 @@ export type FocusPlan = {
   /** The plan already gives the suggested subjects their time, so a focus on them changes nothing. */
   covered: boolean;
   focusAreas: readonly string[];
+  handPicked: boolean;
   /** The test's waiting proposal on this plan. */
   proposal: PlanChangeView | null;
   /** The daily time is saved, so the test proposes its focus; before that, saving the time sets it. */
@@ -126,7 +127,11 @@ function getFocusState({
     return "current";
   }
 
-  return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : "handPicked";
+  if (plan.handPicked) {
+    return "handPicked";
+  }
+
+  return plan.covered && plan.focusAreas.length === 0 ? "alreadyFits" : null;
 }
 
 export function toFocus({

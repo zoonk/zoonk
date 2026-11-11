@@ -39,7 +39,7 @@ export async function loadGoalExam(goalId: string, tx: TransactionClient) {
     () => tx.goal.findUnique({ include: { examBlueprint: true }, where: { id: goalId } }),
     () =>
       tx.plan.findUnique({
-        select: { coveredShare: true, graph: true, id: true, inputVersion: true, settings: true },
+        select: { coveredShare: true, graph: true, id: true, settings: true, version: true },
         where: { goalId },
       }),
   );

@@ -16,7 +16,7 @@ export type TestSetup = {
   /** Each graph skill's plan area, which a skill with no area of its own takes from its phase. */
   areaOf: ReadonlyMap<string, string>;
   goal: TestGoal;
-  plan: { coveredShare: number | null; focusAreas: string[]; id: string; inputVersion: number };
+  plan: { coveredShare: number | null; focusAreas: string[]; id: string; version: number };
   record: FocusTestRecord | null;
   subjects: TestSubject[];
 };
@@ -31,7 +31,7 @@ export function toTestSetup({
 }: {
   goal: TestGoal;
   graph: PlanGraph;
-  plan: { coveredShare: number | null; id: string; inputVersion: number };
+  plan: { coveredShare: number | null; id: string; version: number };
   settings: PlanSettings;
   structure: ExamStructure | null;
 }): TestSetup | null {
@@ -46,7 +46,7 @@ export function toTestSetup({
       coveredShare: plan.coveredShare,
       focusAreas: settings.focusAreas,
       id: plan.id,
-      inputVersion: plan.inputVersion,
+      version: plan.version,
     },
     record: readFocusTestRecord(goal),
     subjects: listTestSubjects({

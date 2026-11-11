@@ -12,6 +12,7 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
+import { writeLearnerChange } from "../_utils/write-learner-change";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { readFocusTestRecord } from "./focus-test-state";
@@ -268,10 +269,10 @@ describe("the Focus test on a plan whose time is short", () => {
     const { goal, plan } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: PLAN_SHOWN });
     const completion = await sit(goal.id, [DONT_KNOW]);
 
-    expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
-      proposal: null,
-      rows: [{ areas: ["Direito"] }, { areas: ["Português"] }],
-      state: "handPicked",
+    expect(completion.focusTest?.checkpoint?.focus).toBeNull();
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { focusTest: { checkpoint: { focus: null } } },
     });
 
     await expect(
@@ -279,6 +280,23 @@ describe("the Focus test on a plan whose time is short", () => {
     ).resolves.toBe(0);
 
     await expect(readFocus(goal.id)).resolves.toMatchObject({ planFocus: [], testFocus: null });
+  });
+
+  it("keeps alreadyFits after an unrelated answer bumps plan inputs", async () => {
+    const { goal, user } = await shortPlanExamGoalFixture({
+      daysLeft: 10,
+      goal: PLAN_SHOWN,
+      lessons: 1,
+    });
+
+    const completion = await sit(goal.id, [DONT_KNOW]);
+    expect(completion.focusTest?.checkpoint?.focus?.state).toBe("alreadyFits");
+
+    await writeLearnerChange({ planInputs: true, userId: user.id }, async () => null);
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { focusTest: { checkpoint: { focus: { state: "alreadyFits" } } } },
+    });
   });
 
   it("calls an unchanged focus already covered only when every suggested lesson is in the plan", async () => {
@@ -332,7 +350,7 @@ describe("the Focus test on a plan whose time is short", () => {
               focus:
                 changed === "date"
                   ? { proposal: { source: "focusTest" }, state: "proposed" }
-                  : { proposal: null, state: "handPicked" },
+                  : null,
             },
           },
         },
@@ -342,9 +360,7 @@ describe("the Focus test on a plan whose time is short", () => {
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-      expect(readFocusTestRecord(stored)?.handled).toMatchObject({
-        inputVersion: plan.inputVersion,
-      });
+      expect(readFocusTestRecord(stored)?.handled).toMatchObject({ planVersion: plan.version });
     },
   );
 

@@ -43,13 +43,13 @@ const recordSchema = z.object({
   focus: z.array(z.string()).nullable().default(null),
   /**
    * A proposed suggestion stays handled after the learner answers it. A planner verdict applies
-   * only to the inputs it checked, so changed inputs can make the same focus worth proposing.
+   * to the saved plan version, so unrelated answers don't change it and a replan reconsiders it.
    */
   handled: z
     .object({
       areas: z.array(z.string()),
-      inputVersion: z.int(),
       outcome: z.enum(["proposed", "alreadyIn", "cantMove"]),
+      planVersion: z.int(),
     })
     .nullable()
     .default(null),
