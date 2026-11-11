@@ -110,7 +110,7 @@ export async function logIn({ file, origin }: LoginPlace) {
 
 /** Revokes under the file's lock: revoking a token another command just rotated ends every login. */
 export async function logOut({ file, origin }: LoginPlace) {
-  const revoked = await changeLogin({
+  const revocation = await changeLogin({
     change: async (stored) => {
       if (!stored) {
         return { result: null };
@@ -125,17 +125,18 @@ export async function logOut({ file, origin }: LoginPlace) {
     origin,
   });
 
-  if (revoked === null) {
+  if (revocation === null) {
     process.stderr.write(`Not logged in to ${origin}.\n`);
     return;
   }
 
-  if (!revoked) {
+  if (revocation === "unconfirmed") {
     throw new CliError(
       `Logged out on this machine, but ${origin} didn't confirm it revoked the login. ` +
         "You can revoke it on Admin's CLI logins page.",
     );
   }
 
-  process.stderr.write(`Logged out of ${origin}.\n`);
+  const alreadyRevoked = revocation === "alreadyRevoked" ? " The login was already revoked." : "";
+  process.stderr.write(`Logged out of ${origin}.${alreadyRevoked}\n`);
 }

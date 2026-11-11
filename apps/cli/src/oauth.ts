@@ -10,6 +10,12 @@ const DEFAULT_POLL_SECONDS = 5;
 const OAUTH_ERROR_PATTERN = /^[a-z_]{1,64}$/u;
 const USER_CODE_PATTERN = /^[\w-]{1,64}$/u;
 
+/**
+ * Better Auth's oauth-provider answers 400 with these, not RFC 7009's 200, when the refresh token
+ * was already deleted or revoked, such as from Admin.
+ */
+const ALREADY_REVOKED_DESCRIPTIONS = new Set(["token not found", "refresh token revoked"]);
+
 const ENDPOINTS = {
   deviceCode: "/v1/auth/device/code",
   revoke: "/v1/auth/oauth2/revoke",
@@ -26,11 +32,23 @@ export type DeviceCode = {
 };
 
 /** `error` is the OAuth error code, or the HTTP status when the answer names none. */
+type Revocation = "alreadyRevoked" | "revoked" | "unconfirmed";
+
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
 
 function oauthError(result: HttpResult): string | null {
   const error = isRecord(result.body) ? result.body.error : null;
   return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
+}
+
+function isAlreadyRevoked(result: HttpResult): boolean {
+  const body = isRecord(result.body) ? result.body : {};
+
+  return (
+    body.error === "invalid_request" &&
+    typeof body.error_description === "string" &&
+    ALREADY_REVOKED_DESCRIPTIONS.has(body.error_description)
+  );
 }
 
 function toLogin(result: HttpResult): StoredLogin {
@@ -134,12 +152,16 @@ export async function revokeLogin({
 }: {
   origin: string;
   refreshToken: string;
-}): Promise<boolean> {
+}): Promise<Revocation> {
   const result = await postForm(new URL(ENDPOINTS.revoke, origin), {
     client_id: CLIENT_ID,
     token: refreshToken,
     token_type_hint: "refresh_token",
   }).catch(() => null);
 
-  return result?.ok === true;
+  if (result?.ok) {
+    return "revoked";
+  }
+
+  return result && isAlreadyRevoked(result) ? "alreadyRevoked" : "unconfirmed";
 }
