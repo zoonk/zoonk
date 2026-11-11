@@ -46,14 +46,15 @@ export function findStaffUser(input: unknown) {
     call: { model: "User", verb: "users.find" },
     run: async () => {
       const { query } = parseStaffInput(staffFindUserSchema, input);
+      const normalized = query.toLowerCase();
       const id = uuidSchema().safeParse(query);
 
       const user = await staffTransaction(async (client) => {
         const found = await client.user.findFirst({
           where: {
             OR: [
-              { email: { equals: query, mode: "insensitive" } },
-              { username: { equals: query, mode: "insensitive" } },
+              { email: normalized },
+              { username: normalized },
               ...(id.success ? [{ id: id.data }] : []),
             ],
           },
