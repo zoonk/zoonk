@@ -5,91 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The calculations are correct, the example states its fixed-rate and annual-crediting assumptions, and the debt explanation appropriately makes capitalization conditional. There is no investment recommendation or misleading claim about a specific product.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The five short screens begin with a familiar situation and build toward a complete answer. However, the final screen introduces both debt compounding and the separate determinants of growth—rate, duration and contract conditions. The multiple-new-ideas cap therefore limits this category to 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The explanation avoids formulas and is mostly accessible Brazilian Portuguese. However, expressions such as “os juros também incidem”, “juros creditados” and “incorporados ao saldo” could be replaced with everyday language without losing precision.",
-          "score": 8,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The reais amounts and arithmetic provide a concrete numerical example, but the financial setting remains generic: unspecified money earning interest and an unspecified debt. No example uses the explicitly requested Brazilian everyday context. The generic-example cap limits the score to 7.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check applies the main idea to new amounts and a new rate, has one clearly correct answer, and explains every option. Its main weakness is that the correct option is noticeably longer and more explanatory than the alternatives.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The title is short, neutral and recognizable. The recap contains three short bullets following the teaching order, and the broad beginner course and three follow-up questions are appropriate.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2291,
-          "outputTokens": 1114,
-          "reasoningTokens": 433
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The examples use correctly formatted reais, but never place compound interest in a recognizable Brazilian financial situation, such as poupança or cartão de crédito rotativo. This leaves an explicit localization requirement unmet. The final screen also combines debt compounding with new factors governing its growth, weakening the required one-idea-per-screen structure.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Some wording is unnecessarily formal for a curious 12-year-old, particularly “incidem”, “creditados” and “incorporados ao saldo”. The correct check option is noticeably longer and more explanatory than the distractors.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the acceleration explicit by comparing the annual interest amounts: R$ 100,00, R$ 110,00 and R$ 121,00. This would connect the numerical example more directly to the opening claim that growth can speed up.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese of compound interest (juros sobre juros), so growth speeds up over time. Examples MUST be Brazilian: amounts in reais written the Brazilian way (R$ 1.000,00 or R$ 1.000), everyday Brazilian situations such as a poupança, the cartão de crédito rotativo or parcelamento; penalize dollars, US products (401(k), Venmo) or US-style number formats. No formula; must not recommend a specific investment.",
-        "id": "pt-juros-compostos-contexto-local-1",
-        "userInput": { "language": "pt", "question": "como funcionam os juros compostos?" }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "The stated facts are broadly correct and appropriately qualified: scores vary by model and bureau, payment history matters, and high card utilization can hurt. The explanation stays in the United States, uses dollars and does not substitute Serasa or give individualized financial advice. However, it omits the expected FICO range and the names of the three major bureaus. The spending-versus-reported-balance distinction could also be clearer.",
           "score": 7,
           "label": "Accuracy",
@@ -178,91 +93,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The statements provided are generally accurate and appropriately qualified, and the result avoids personal tax advice. However, the required W-4 explanation and year-end refund-or-bill reconciliation are absent. Social Security and Medicare are correctly named, though identifying them together as FICA would connect the explanation to common pay-stub labels.",
-          "score": 7,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "There are five short screens, a familiar opening, and a logical progression toward reading a pay stub. However, screen 2 teaches both gross pay and pay frequency, while screen 4 introduces both benefit deductions and their tax treatment. The multiple-new-ideas rule caps this category at 7.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "Most sentences are accessible and there are no unrequested formulas. However, deductions and gross pay appear before their plain-language explanations, and 401(k) is never explained. The rule for two or more terms used before explanation caps the score at 7.",
-          "score": 7,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "The $60,000 job offer, workplace health insurance, and pay-stub review are recognizable situations. Nevertheless, the only dollar figure is an annual salary; the result never illustrates a paycheck deduction or take-home amount in dollars. The paycheck examples remain generic, triggering the cap of 7.",
-          "score": 7,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "The single check asks readers to apply the deduction concept to a new situation involving Olivia's health insurance. It has one clearly correct answer, similarly sized options, and feedback explaining why each answer is right or wrong.",
-          "score": 9,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The three short recap bullets accurately follow the story's order. Personal Finance is a sensible broad beginner course, the three follow-up questions are natural extensions, and the title is neutral and immediately recognizable.",
-          "score": 10,
-          "label": "Recap, go further and title",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2141,
-          "outputTokens": 1004,
-          "reasoningTokens": 258
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The explanation omits two required parts of paycheck taxation: federal income tax withholding depends on the W-4, and a refund or bill at tax time settles the difference between income tax withheld and income tax owed. These omissions leave the required tax explanation materially incomplete.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Some screens introduce multiple ideas: screen 2 combines gross pay with annual salary being divided among paychecks, and screen 4 combines benefit deductions with their before-tax or after-tax treatment. Several terms appear before explanation, including deductions, gross pay, and 401(k). The $60,000 salary is concrete, but no dollar example shows what actually comes out of a paycheck.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Use an illustrative paycheck with dollar amounts for earnings, taxes, and take-home pay. Keep each screen focused on one step, explain unfamiliar terms before naming them, and explicitly say that state income tax applies in most states rather than all states.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in US English of how taxes come out of a paycheck: federal income tax withheld based on the W-4, Social Security and Medicare (FICA), and state income tax in most states; the refund or bill at tax time settles the difference. Examples in dollars with US situations. Must not give personal tax advice; suggesting a tax professional for a specific case is fine.",
-        "id": "en-paycheck-taxes-local-1",
-        "userInput": { "language": "en", "question": "why is my paycheck smaller than my salary?" }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "The explanation correctly connects microwave energy, water-molecule motion, and heating. It accurately recommends stirring and standing for uneven heating and makes neither the inside-out nor the radioactivity claim. “Can happen throughout a meal” is qualified rather than asserting uniform or unlimited penetration.",
           "score": 9,
           "label": "Accuracy",
@@ -322,7 +152,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Screen 3 uses both “electric field” and “molecules” without first explaining them in everyday language. This makes the central mechanism less accessible to a curious 12-year-old.",
           "kind": "minorErrors",
@@ -337,7 +171,10 @@
       "testCase": {
         "expectations": "Microwaves make water molecules in food jiggle, and that motion is heat. Penalize the common myth that microwaves cook \"from the inside out\" and any claim that they make food radioactive. A good practical example: why a cup of water heats but an empty plate barely warms, or why food heats unevenly.",
         "id": "en-microwave-1",
-        "userInput": { "language": "en", "question": "How does a microwave heat food?" }
+        "userInput": {
+          "language": "en",
+          "question": "How does a microwave heat food?"
+        }
       }
     },
     {
@@ -403,7 +240,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Screens 1 and 2 substantially repeat the distinction between widespread price increases and an isolated increase, limiting progression. Screen 4 introduces IBGE without explaining what the organization is.",
           "kind": "minorErrors",
@@ -418,7 +259,10 @@
       "testCase": {
         "expectations": "Explanation in Brazilian Portuguese: inflation is a general, continuous rise in prices that makes money buy less. A good story uses everyday Brazilian examples (supermarket, bus fare) and can mention that a little inflation is normal. No formulas.",
         "id": "pt-inflacao-1",
-        "userInput": { "language": "pt", "question": "o que é inflação?" }
+        "userInput": {
+          "language": "pt",
+          "question": "o que é inflação?"
+        }
       }
     },
     {
@@ -484,7 +328,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The check repeats the sunset situation already explained rather than testing application in a new situation. Some vocabulary is introduced without a plain-language explanation, notably “molecules” and “wavelengths.” The final screen also combines two new explanatory ideas: the amount of violet in sunlight and the eye’s sensitivity to violet.",
           "kind": "minorErrors",
@@ -499,7 +347,10 @@
       "testCase": {
         "expectations": "Sunlight scatters off air molecules, and blue light scatters much more than red (Rayleigh scattering); our eyes and the sun's spectrum explain why it looks blue and not violet. Sunsets are red because light crosses more air. Penalize \"the sky reflects the ocean\".",
         "id": "en-sky-blue-1",
-        "userInput": { "language": "en", "question": "why is the sky blue" }
+        "userInput": {
+          "language": "en",
+          "question": "why is the sky blue"
+        }
       }
     },
     {
@@ -565,7 +416,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Screen 3 introduces both the immune response and side effects, weakening the one-idea-per-screen structure. Technical words such as “inativado” and “anticorpos” appear without prior plain-language explanations. The explanation also leaves the central distinction between safe training material and the disease-causing germ largely implicit.",
           "kind": "minorErrors",
@@ -580,7 +435,10 @@
       "testCase": {
         "expectations": "Explanation in Brazilian Portuguese of how a vaccine trains the immune system with a harmless piece or version of a germ, so the body recognizes it later. Must be accurate and must not give personal medical advice; saying to talk to a health professional about a specific case is fine. Penalize claims that vaccines give the disease or are 100% effective.",
         "id": "pt-vacina-1",
-        "userInput": { "language": "pt", "question": "Como funciona uma vacina?" }
+        "userInput": {
+          "language": "pt",
+          "question": "Como funciona uma vacina?"
+        }
       }
     },
     {
@@ -646,7 +504,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The check largely repeats the savings-account explanation with a person's name added. It tests recognition of the explanation rather than applying compounding in a genuinely new situation.",
           "kind": "minorErrors",
@@ -749,7 +611,538 @@
       "testCase": {
         "expectations": "Explanation in Brazilian Portuguese. The question asks for the quadratic formula (fórmula de Bhaskara), so showing it is allowed and expected, but each part must be explained in words, with what the discriminant (delta) tells you about the number of solutions and one worked example with small numbers.",
         "id": "pt-bhaskara-formula-pedida-1",
-        "userInput": { "language": "pt", "question": "me explica a fórmula de Bhaskara" }
+        "userInput": {
+          "language": "pt",
+          "question": "me explica a fórmula de Bhaskara"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanation correctly describes interest being added to the balance and earning further interest. The numerical example is correct, and the debt discussion appropriately makes compounding conditional and acknowledges differing rules and costs. It gives no investment recommendation.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens progress from a familiar growing balance to the mechanism, a numerical example, the effect of time, and debt. Each has one central teaching point, and the final screen completes the explanation. The growth-over-time point could be made more immediate by explicitly comparing the annual gains.",
+          "score": 8,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Brazilian Portuguese is accessible, and the explanation translates compounding into gains joining the balance. The amounts and percentages support a verbal example rather than introducing a formula or equation. There is no unexplained technical vocabulary cluster.",
+          "score": 10,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The R$ 1.000 savings example is concrete and uses Brazilian number formatting. The opening balance, numerical example, snowball comparison, and debt discussion provide concrete anchors across most screens. However, the worked example remains a hypothetical savings balance rather than a clearly situated everyday Brazilian financial example; the card reference is only brief.",
+          "score": 8,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one check with one clearly correct answer, comparably phrased options, and explanatory feedback for every option. Its weakness is transfer: it repeats the same savings setup, rate, and second-year reasoning as the worked example, changing mainly the amounts.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short bullets that follow the explanation's progression. Educação financeira is an appropriate broad beginner course, the three follow-up questions are natural, and the title is short, neutral, and directly recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2329,
+          "outputTokens": 1189,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The check closely reproduces the worked savings example with different amounts, so it provides limited evidence that the reader can transfer the idea to a genuinely new situation. The practical example uses correctly formatted reais, but its connection to everyday Brazilian financial situations could be stronger.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly contrast the first year's R$ 100 gain with the second year's R$ 110 gain to make accelerating growth unmistakable. Ground an example in a familiar Brazilian situation, clearly distinguishing any hypothetical rate from actual product conditions. Use a different context, such as a debt accumulating interest, for the check.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of compound interest (juros sobre juros), so growth speeds up over time. Examples MUST be Brazilian: amounts in reais written the Brazilian way (R$ 1.000,00 or R$ 1.000), everyday Brazilian situations such as a poupança, the cartão de crédito rotativo or parcelamento; penalize dollars, US products (401(k), Venmo) or US-style number formats. No formula; must not recommend a specific investment.",
+        "id": "pt-juros-compostos-contexto-local-1",
+        "userInput": {
+          "language": "pt",
+          "question": "como funcionam os juros compostos?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The factual claims about salary, withholding, Social Security, Medicare, and benefit deductions are generally correct and appropriately qualified. There is no personal tax advice. However, the required account of taxes is incomplete: the W-4 and refund-or-bill reconciliation are absent, and state income-tax prevalence is left vague.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens start with a familiar offer-letter amount and progress logically toward reading a pay stub. However, the story ends without completing the required tax explanation, particularly how withholding connects to the W-4 and the eventual refund or bill. The incomplete-answer cap of 7 applies.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most sentences are short and accessible, and there are no unrequested formulas. However, multiple technical terms appear without prior plain-language explanations, notably 'premiums' and '401(k)'; 'deductions' is also introduced without a direct explanation. The cap of 7 applies.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The $60,000 offer, payday schedules, insurance enrollment, and pay-stub review provide practical US contexts. However, comparing gross salary with a price before sales tax risks reversing the relationship being taught: one total grows while the other shrinks. The misleading-comparison cap of 7 applies. A worked paycheck example would be more useful.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies the deduction idea to Jordan's changed benefits, has one clearly correct option, and explains each answer. Options are similar in length. However, the claim that salary automatically becomes a tax bill is nonsensical, and the all-at-once salary option is also readily dismissed, so the check provides limited evidence of understanding.",
+          "score": 8,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap contains three short points matching the teaching sequence. Personal Finance is a suitable broad beginner course, and all three follow-up questions are natural extensions. The title is neutral, recognizable, and directly matches the user's question.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2253,
+          "outputTokens": 1237,
+          "reasoningTokens": 462
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required tax explanation is incomplete: it never explains that federal income-tax withholding is based on the W-4 or that a refund or bill at tax time settles the difference between payments and actual tax owed. It also says state income taxes are 'possible' without explaining that most states impose them.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The sales-tax comparison can mislead because sales tax increases a purchase total, whereas paycheck deductions reduce take-home pay. Terms such as 'premiums' and '401(k)' appear without plain-language explanations. The check has one correct answer, but its incorrect options are implausible enough to make guessing easy.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a simple dollar-denominated pay-stub example showing a pay period's earnings, tax withholding, benefit deductions, and resulting deposit. Make the check's distractors plausible alternative explanations for a smaller paycheck.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in US English of how taxes come out of a paycheck: federal income tax withheld based on the W-4, Social Security and Medicare (FICA), and state income tax in most states; the refund or bill at tax time settles the difference. Examples in dollars with US situations. Must not give personal tax advice; suggesting a tax professional for a specific case is fine.",
+        "id": "en-paycheck-taxes-local-1",
+        "userInput": {
+          "language": "en",
+          "question": "why is my paycheck smaller than my salary?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The claims made are accurate: the 730 concerns the previous year's income and expenses, compares tax owed with tax withheld, and can produce either a credit or an amount payable. Refund timing is appropriately qualified by filing time and checks. It gives no personal tax advice or misleading foreign-tax information.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar payslip opening, and a logical explanation of the summer refund. However, screen 5 introduces both additional tax payable and alternative refund arrangements without a sostituto d’imposta. These are distinct new ideas, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Italian is generally natural and addresses the reader as tu, with no formulas. However, conguaglio is introduced without an everyday explanation, sostituto d’imposta remains unexplained, and spese detraibili is named before its effect is described. At least two unexplained technical terms trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The summer payslip is relatable, but the explanation never works through an actual expense or tax comparison. 'Alcune spese detraibili' and the Giulia scenario remain generic. The image prompts do not supply a concrete worked example either. This triggers the generic-examples cap of 7; the requested Italian expense details and euro amounts are also absent.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one clearly correct answer, the options have reasonably similar lengths and tone, and each has explanatory feedback. However, Giulia's situation restates the exact comparison taught immediately beforehand, so it tests recognition more than transfer to a new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral and recognizable. The recap contains exactly three short bullets following the teaching order. 'Fisco e finanze personali' is a sensible broad beginner course, and the three follow-up questions naturally extend the explanation.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2570,
+          "outputTokens": 1326,
+          "reasoningTokens": 471
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation captures the basic refund mechanism but omits substantial requested content: pensioners and pension refunds, medical expenses and the scontrino parlante with codice fiscale, mortgage interest or school costs, the Agenzia delle Entrate's 730 precompilato, and a CAF or commercialista. There is no concrete euro example. It also says that additional tax may be payable without explaining the corresponding withholding from pay or pension.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several technical terms precede their plain-language explanations or remain unexplained, especially conguaglio, spese detraibili and sostituto d’imposta. Screen 5 combines two distinct ideas: owing additional tax and receiving a refund without a withholding agent. The check largely repeats the refund rule with a named person rather than testing its application in a genuinely new situation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a running example comparing 2.000 € already withheld with 1.800 € actually owed, producing a 200 € refund, expressed entirely in words. Connect it to a recognizable eligible expense and explain that the employer withheld IRPEF throughout the previous year. Make the check transfer this reasoning to a pension payment or an underpayment, and keep the no-withholding-agent exception outside the screen about additional tax.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Italian, speaking to the reader as \"tu\", of the 730: the dichiarazione dei redditi for employees and pensioners, which compares the IRPEF the employer withheld from each busta paga during the year with the tax actually owed after detrazioni such as spese mediche (the scontrino parlante with the codice fiscale), interest on a mutuo or school costs. The difference comes back as a rimborso in the busta paga or pension, usually in summer depending on when it's filed, or is withheld if more is owed. Examples MUST be Italian: amounts in euro written the Italian way (1.000 €, 150,50 €), the Agenzia delle Entrate and its 730 precompilato, a CAF or a commercialista. Penalize dollars, US forms and dates (W-4, Tax Day, IRS), Brazil's Imposto de Renda or US-style number formats. Must not give personal tax advice; suggesting a CAF or a commercialista for a specific case is fine.",
+        "id": "it-730-rimborso-busta-paga-1",
+        "userInput": {
+          "language": "it",
+          "question": "ma il 730 a cosa serve di preciso? perché d'estate mi arriva un rimborso in busta paga"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The central tax mechanism is correct: estimated withholding, recalculation using deduction information, and refund or additional collection. The answer appropriately qualifies whether a separate return is necessary and refers specific cases to professionals rather than giving personal tax advice. It contains no incorrect foreign-tax framing or claim that the tax office refunds the adjustment in spring.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens progress coherently from a familiar December payslip to withholding, submitted information, reconciliation, and exceptions. Each screen has a clear central idea, and the explanation answers what the employer is doing. The opening preview does not amount to problematic repetition.",
+          "score": 9,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Japanese is natural, polite without stiff honorifics, and avoids あなた, romaji, and formulas. 控除 is introduced after a plain explanation. However, 扶養 and 確定申告 appear without accessible explanations of their meanings, triggering the cap of 7 for multiple unexplained terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The payslip opening and references to family and insurance information are relevant Japanese everyday anchors. However, the screens describe the process generically rather than showing a concrete employee example with actual withholding, final tax, and a yen refund or shortfall. The generic-example cap of 7 applies.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one clearly correct option, the options are reasonably similar in length and tone, and each has explanatory feedback. However, the question essentially restates the condition and outcome already taught on screen four; it does not make the learner apply the idea in a meaningfully new situation.",
+          "score": 7,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap has exactly three short bullets following the instructional sequence. The suggested course is broad and appropriate for beginners, the three follow-up questions are natural, and the title is short, neutral, and recognizable.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2655,
+          "outputTokens": 1045,
+          "reasoningTokens": 325
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The explanation omits useful expected specifics: the name 源泉徴収, recognizable submission forms such as 扶養控除等申告書 and 保険料控除申告書, the usual December or January payroll timing, and concrete exceptions such as 医療費控除 and the first year of 住宅ローン控除. The check closely repeats the refund rule rather than testing its application in a new situation.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add a worked example using Japanese yen, connect the explanation to the 源泉徴収票 and the company's 総務 or 経理, and explain unfamiliar terms in everyday language before naming them.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Japanese (kanji and kana, no romaji), です・ます without stiff keigo and without あなた, of 年末調整: during the year the employer withholds income tax from each paycheck (源泉徴収) as an estimate; at the end of the year it recalculates the year's tax with the forms the employee hands in (扶養控除等申告書, 保険料控除申告書 and the like, for deductions such as 生命保険料控除 or 配偶者控除) and refunds the excess or collects the shortfall, usually in the December or January paycheck. A good answer adds that some cases still need a 確定申告, such as 医療費控除 or the first year of 住宅ローン控除. Examples MUST be Japanese: amounts in yen written the Japanese way (3万円, 30,000円), the 源泉徴収票, the company's 総務 or 経理. Penalize dollars, US forms and dates (W-4, Tax Day, IRS), Brazil's Imposto de Renda, or saying the refund comes from the 税務署 in spring. Must not give personal tax advice; suggesting the company's 担当者, the 税務署 or a 税理士 for a specific case is fine.",
+        "id": "ja-nenmatsu-chosei-1",
+        "userInput": {
+          "language": "ja",
+          "question": "年末調整って結局なにしてるの？毎年会社に書類出してるけどよくわかってない"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The comparison between prepaid and actual tax, numerical calculations, and conditional wording about eligible expenses are correct. However, ‘연말에는’ falsely places settlement at year-end in both the story and recap, triggering the maximum score of 6 for a false simplification. Required details about the withholding table, deduction types, documentation service, and payroll timing are missing. No personal tax advice is given.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, beginning with the familiar experience of tax being deducted from pay and ending with a worked example that answers the question. However, screen 2 introduces both recalculation and eligible tax-reducing expenses, triggering the maximum score of 7 for multiple new ideas on one screen.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Korean is natural 해요체, avoids 당신 and romanization, and explains 원천징수 after describing it plainly. There are no formulas. However, 상여금 and 공제 대상 가족 are used without explanation, triggering the maximum score of 7 for two or more unexplained terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The named employees and Korean-formatted won amounts provide a concrete, correctly calculated example. Paychecks, card spending, and family circumstances also ground most screens in everyday life. Practical usefulness is reduced by the absence of the requested Korean institutional workflow involving 홈택스, 국세청, and the company's payroll 담당자.",
+          "score": 8,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies the main comparison to a new employee and new amounts. Exactly one option is correct, the options are reasonably similar in length and tone, and each has feedback explaining the relevant comparison.",
+          "score": 10,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The recap has three short bullets matching the story's teaching order. The suggested course is a sensible broad introduction, the three follow-up questions are natural, and the title is short, neutral, and recognizable. The recap's timing error is assessed under accuracy.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2633,
+          "outputTokens": 1123,
+          "reasoningTokens": 268
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation incorrectly places recalculation at year-end, repeating this in the recap. Employees' year-end tax settlement occurs early the following year, with refunds or additional withholding usually reflected in February or March pay. It also omits substantial required Korean process details: the 간이세액표, 소득공제 and 세액공제, and 홈택스의 연말정산 간소화 서비스. The central explanation of why some people receive refunds and others owe more is correct.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 2 introduces both annual recalculation and tax-reducing expenses. 상여금 and 공제 대상 가족 appear without plain-language explanations. The result also omits the requested company 인사팀 or 회계팀, 국세청 context, and the familiar expression ‘13월의 월급’. In the numerical example, the text should explicitly state that Minjun's actual tax is also 160만 원 rather than leaving that assumption to the illustration.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use the available sixth screen to explain the practical workflow: employees gather records through 홈택스, submit or confirm them with the company's 담당자, and see the resulting refund or additional deduction in their pay. Keep the annual recalculation and the explanation of deductions on separate screens.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Korean (Hangul, no romanization), 해요체 without 당신, of 연말정산: during the year the company withholds income tax from each month's pay (원천징수) using the 간이세액표, and early the next year it recalculates the year's actual tax with the employee's 소득공제 and 세액공제 (신용카드 사용액, 의료비, 교육비, 월세, 연금저축 and the like), mostly gathered through 홈택스's 연말정산 간소화 서비스. When more was withheld than owed the difference comes back (\"13월의 월급\"); when less, the rest is taken from the pay, usually with the February or March pay. Examples MUST be Korean: amounts in won written the Korean way (30만 원, 300,000원), the company's 인사팀 or 회계팀, 국세청. Penalize dollars, US forms and dates (W-4, Tax Day, IRS), a December settlement, Brazil's Imposto de Renda or US-style number formats. Must not give personal tax advice; suggesting the company's 담당자, 국세청 상담 or a 세무사 for a specific case is fine.",
+        "id": "ko-yeonmal-jeongsan-1",
+        "userInput": {
+          "language": "ko",
+          "question": "연말정산 하면 왜 누구는 돈 돌려받고 누구는 토해내요?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The stated rates and the 120 TL example are correct, and the answer correctly identifies the final consumer as bearing the tax. However, it does not explicitly explain net remittance or taxation of added value. The seller-transfer and 'not all from its own pocket' wording leaves the collection-versus-burden distinction less precise than required. Shelf-price inclusion is also inadequately established.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar receipt-based opening, and an ending that answers who bears KDV. However, screen 2 introduces both the definition and the rate structure, triggering the maximum score of 7 for multiple new ideas in one screen.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Turkish is generally accessible, addresses the reader as 'sen', and uses Turkish characters correctly. There are no unsolicited formulas; the percentages and currency notation satisfy the task's explicit requirements. Administrative language such as 'vergi dairesine beyan' could be replaced with everyday wording, and deducting KDV could be explained more concretely.",
+          "score": 8,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The market receipt and correctly calculated 120 TL purchase provide concrete Turkish examples, with appropriate lira and percentage formatting. Several screens remain anchored in shopping. The main weakness is that the numerical example illustrates only the consumer's tax share, not the purchase-credit and net-payment mechanism central to understanding KDV.",
+          "score": 8,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check transfers the main idea to a pastane purchase, has one clearly correct option, and uses options of comparable length and tone. Every option has explanatory feedback distinguishing the final burden from the business's collection role.",
+          "score": 9,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and recognizable. The three recap bullets follow the teaching sequence, and the suggested beginner course and three follow-up questions are relevant and natural.",
+          "score": 9,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2659,
+          "outputTokens": 1231,
+          "reasoningTokens": 437
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The central chain mechanism is incomplete: the learner-facing text mentions deducting purchase KDV but never explicitly says the business pays the difference to the state, taxing only the value it adds. That difference appears only in an image prompt. Saying the seller transfers KDV and does not pay 'all' of it from its own pocket also leaves unnecessary ambiguity about who bears the tax.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Screen 2 combines defining KDV with teaching its rates, rather than introducing one idea. The answer does not clearly establish that Turkish shelf prices already include KDV; 'çoğunlukla fiyata dâhil' is weaker than the required explanation. Some administrative wording, especially 'beyan', is unexplained.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a short Turkish shop example showing purchase KDV, sales KDV, and the difference remitted, expressed entirely in words. Explicitly connect that difference to the business's added value. State that the shelf price includes KDV and briefly contrast this with US checkout-added sales tax without replacing the Turkish example.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Turkish, speaking to the reader as \"sen\", of KDV (katma değer vergisi): every business in the chain adds KDV to what it sells and deducts the KDV it paid on its own purchases, paying the difference to the state, so each step is taxed only on the value it adds and the final customer carries the whole tax through the price. Shelf prices in Türkiye already include KDV (\"KDV dahil\"), unlike US sales tax added at the register; the general rate is 20%, with lower rates for some goods, and the answer writes percentages the Turkish way (%20). The question was typed without Turkish letters, but the answer MUST use them (ç, ğ, ı, İ, ö, ş, ü). Examples MUST be Turkish: amounts in lira written the Turkish way (1.250,50 TL or ₺1.250,50), a market fişi, bread from the fırın or a purchase in taksit. Penalize dollars, US sales tax at the register, Brazil's ICMS, US-style number formats, or claims that the market pays KDV out of its own pocket or that the customer pays it separately to the state.",
+        "id": "tr-kdv-market-fisi-1",
+        "userInput": {
+          "language": "tr",
+          "question": "kdv tam olarak ne? market fisinde yazan kdvyi aslinda kim oduyor"
+        }
       }
     }
   ],

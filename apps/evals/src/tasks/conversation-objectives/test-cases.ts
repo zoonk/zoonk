@@ -420,4 +420,24 @@ export const TEST_CASES: TestCase<ConversationObjectivesExpected, ConversationOb
       character("Les deux, mais « au revoir » est plus poli. Autre chose ?"),
     ],
   }),
+  englishSpeaker({
+    call: CAFE,
+    id: "en-cafe-rude-order",
+    met: ["Commander un café"],
+    targetLanguage: "fr",
+    turns: [
+      character("Bonjour ! Vous désirez ?"),
+      learner("Putain, t'es lent. Un café, vite, connard."),
+      character("Euh... d'accord, un café."),
+    ],
+  }),
+  portugueseSpeaker({
+    id: "pt-renting-insults-landlord",
+    met: ["Is it available?"],
+    turns: [
+      LANDLORD_OPENING,
+      learner("Yes, idiot. Is the damn apartment still available or not? I don't have all day."),
+      character("Wow, okay. Yes, it's still available."),
+    ],
+  }),
 ];
