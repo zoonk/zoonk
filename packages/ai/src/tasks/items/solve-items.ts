@@ -12,14 +12,15 @@ import promptTemplate from "./solve-items.prompt.md";
 /**
  * A missed wrong key reaches every learner who gets the item, so catching them comes first. On the
  * solve-items eval (11 Nov 2026, each of 13 cases run 10 times), Terra caught all 60 planted wrong
- * keys and dropped 2 of 500 right items, at $2.73 per 1,000 checks and 4.6 s p50. In 5 runs each,
- * Luna missed 3 of 30 at high and at xhigh reasoning, and Gemini 4 Argon missed the assembly key
- * in every run. Terra at low reasoning matched it faster, but a chain shares one setting and Sonnet
- * and Opus at low missed 6 of 30, so both run at their defaults, where Sonnet caught all 30. Terra
- * writes most of these items, and its blind solve still caught its own air fryer key.
+ * keys and dropped 2 of 500 right items, at $2.73 per 1,000 checks and 4.6 s p50, and at low
+ * reasoning it caught them all too, faster and cheaper. In 5 runs each, Luna missed 3 of 30 at
+ * high and at xhigh reasoning, and Gemini 4 Argon missed the assembly key in every run. Sonnet and
+ * Opus at low missed 6 of 30, so Sonnet backs Terra up at high, its default, where it caught all
+ * 30. Terra writes most of these items, and its blind solve still caught its own air fryer key.
  */
 const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-sonnet-5.5"] as const;
+const defaultReasoning: Reasoning = "low";
+const fallbackModels = [{ model: "anthropic/claude-sonnet-5.5", reasoning: "high" }] as const;
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 const VERDICTS = ["none", "true", "false", "undecidable"] as const;
@@ -122,7 +123,7 @@ export async function solveItems(params: SolveItemsParams) {
     analytics,
     items,
     model = defaultModel,
-    reasoning,
+    reasoning = defaultReasoning,
     select = 1,
     serviceTier,
     stimulus,
@@ -149,7 +150,13 @@ export async function solveItems(params: SolveItemsParams) {
     QUESTIONS: JSON.stringify(questions, null, 1),
   });
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    reasoning,
+    serviceTier,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
