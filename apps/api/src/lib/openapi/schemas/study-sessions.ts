@@ -39,11 +39,11 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["dayOver", "nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });

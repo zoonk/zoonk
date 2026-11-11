@@ -24496,6 +24496,16 @@
             "description": "Study session ID"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudySessionTimeZone"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "The first block added, where the learner goes on",
@@ -24538,7 +24548,7 @@
             }
           },
           "409": {
-            "description": "Not available now; details.reason says why. Error code: EXTRA_TIME_UNAVAILABLE.",
+            "description": "Not available now; details.reason says why. `dayOver` means the session's day is over (a screen left open past midnight): go to Today, where the learner can add time to today. Error code: EXTRA_TIME_UNAVAILABLE.",
             "content": {
               "application/json": {
                 "schema": {
@@ -91454,9 +91464,10 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
             "type": "string",
             "enum": [
+              "dayOver",
               "nothingToStudy",
               "plusRequired",
               "sessionNotFinished"

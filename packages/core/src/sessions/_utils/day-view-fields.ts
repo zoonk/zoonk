@@ -92,7 +92,7 @@ export function toDayViewFields({
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({ blocks: session.blocks }),
+    extraTime: getExtraTime({ blocks: session.blocks, current }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),
