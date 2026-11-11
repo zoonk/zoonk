@@ -169,6 +169,13 @@ class FocusTestScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanDeclined() =
+        shoot("focus-test-checkpoint-plan-declined", closing(focusOf(state = "declined")), host = FocusTestHost.Plan) {
+            tap("Use my answers")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun checkpointOnPlanAlreadyFits() =
         shoot("focus-test-checkpoint-plan-already-fits", closing(focusOf(state = "alreadyFits")), host = FocusTestHost.Plan) {
             tap("Use my answers")

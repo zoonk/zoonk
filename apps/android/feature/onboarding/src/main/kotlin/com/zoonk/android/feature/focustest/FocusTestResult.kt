@@ -132,6 +132,7 @@ private fun focusIntro(state: FocusTestFocus.State): String =
             FocusTestFocus.State.CURRENT -> R.string.focustest_focus_current
             FocusTestFocus.State.ALREADY_FITS -> R.string.focustest_focus_already_fits
             FocusTestFocus.State.HAND_PICKED -> R.string.focustest_focus_hand_picked
+            FocusTestFocus.State.DECLINED -> R.string.focustest_focus_declined
         },
     )
 
@@ -155,7 +156,10 @@ private fun SuggestedFocus(
 ) {
     val importance = stringResource(R.string.focustest_focus_importance).takeIf { focus.basis == FocusTestFocus.Basis.IMPORTANCE }
     val proposal = focus.proposal?.takeIf { focus.state == FocusTestFocus.State.PROPOSED }
-    val changesFocus = focus.state == FocusTestFocus.State.CURRENT || focus.state == FocusTestFocus.State.HAND_PICKED
+    val changesFocus =
+        focus.state == FocusTestFocus.State.CURRENT ||
+            focus.state == FocusTestFocus.State.HAND_PICKED ||
+            focus.state == FocusTestFocus.State.DECLINED
 
     // Once "Update my plan" saved, its result line says what the plan now does instead.
     val applied = plan?.answer?.takeIf { it.change.id == proposal?.id }?.status == PlanChangeDecisionInput.Status.APPLIED
