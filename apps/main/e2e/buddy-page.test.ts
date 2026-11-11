@@ -4,6 +4,7 @@ import {
   type LessonQuestionResource,
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
@@ -16,7 +17,7 @@ function readChangeStatus(changeId: string) {
     .then((change) => change.status);
 }
 
-type BuddyAnswer = { answer: string; planChange?: PlanChangeView };
+type BuddyAnswer = { answer: string; planChange?: PlanChangeView; toolOffer?: TutorToolOffer };
 
 async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
   const asked: { question: string }[] = [];
@@ -52,9 +53,10 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
   await page.route("**/v1/questions/*/answers", async (route) => {
     const next = queue.shift() ?? { answer: "Okay." };
 
-    const parts = next.planChange
-      ? [{ data: next.planChange, type: "data-plan-change" as const }]
-      : [];
+    const parts = [
+      next.planChange && { data: next.planChange, type: "data-plan-change" as const },
+      next.toolOffer && { data: next.toolOffer, type: "data-tool-offer" as const },
+    ].filter((part) => part !== undefined);
 
     await fulfillTutorAnswer(route, next.answer, parts);
   });
@@ -108,6 +110,52 @@ test.describe("Buddy tab", () => {
       await card.getByRole("button", { name: "Undo" }).click();
       await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
+    });
+  });
+
+  test("the buddy offers the country a learner asked for, which saves only on their tap", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const readCountry = async () => {
+        const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+        return goal.targetRegion;
+      };
+
+      await stubBuddy({
+        answers: [
+          {
+            answer: "Your lessons stay the same. Tap Apply and I'll use Canadian English.",
+            toolOffer: {
+              goalId: user.goalId,
+              kind: "variety",
+              targetLanguage: "en",
+              targetRegion: "CA",
+              taughtRegion: "US",
+            },
+          },
+        ],
+        page,
+      });
+
+      await page.goto("/buddy");
+
+      const conversation = page.getByRole("region", { name: /^Conversation with /u });
+      const composer = conversation.getByRole("textbox", { name: /^Message /u });
+
+      await composer.fill("Can I practice Canadian English?");
+      await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
+      await composer.press("Enter");
+
+      const card = conversation.getByRole("region", { name: "English (Canada)" });
+      const apply = card.getByRole("button", { name: "Apply" });
+      await expect(apply).toBeVisible();
+      expect(await readCountry()).toBeNull();
+
+      await apply.click();
+      await expect(card.getByRole("status")).toBeVisible();
+      await expect(apply).toBeHidden();
+      await expect.poll(readCountry).toBe("CA");
     });
   });
 });

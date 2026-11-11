@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
+import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
 import { usePlanScreen } from "./plan-context";
@@ -170,6 +171,7 @@ export function PlanProperties({
   const t = useExtracted();
   const activityName = useActivityName();
   const studyDaysText = useStudyDaysText();
+  const varietyName = useVarietyName();
   const { goal, plan } = usePlanScreen();
   const skipped = new Set(plan.steering.skippedActivities);
   const practiced = LANGUAGE_ACTIVITY_TYPES.filter((activity) => !skipped.has(activity));
@@ -201,6 +203,12 @@ export function PlanProperties({
         {plan.examChoices.map((choice) => (
           <ExamChoiceRow choice={choice} key={choice.group} onOpen={() => onOpen("choices")} />
         ))}
+
+        {goal.country && (
+          <PropertyRow label={t("Language")} onOpen={() => onOpen("language")}>
+            {varietyName(goal.country)}
+          </PropertyRow>
+        )}
 
         {goal.kind === "language" && practiced.length > 0 && (
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>

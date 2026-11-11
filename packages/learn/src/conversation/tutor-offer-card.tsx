@@ -14,12 +14,15 @@ export function OfferCard({
   children,
   description,
   locked = false,
+  ref,
   tile,
   title,
 }: {
   children: React.ReactNode;
   description: React.ReactNode;
   locked?: boolean;
+  /** For a card whose button leaves once it's used, so focus can stay on the card. */
+  ref?: React.Ref<HTMLElement>;
   tile: React.ReactNode;
   title: string;
 }) {
@@ -28,7 +31,13 @@ export function OfferCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(SURFACE_CLASS, TUTOR_CARD_WIDTH_CLASS, "flex flex-col gap-3 p-3")}
+      className={cn(
+        SURFACE_CLASS,
+        TUTOR_CARD_WIDTH_CLASS,
+        "focus-visible:ring-ring/50 flex flex-col gap-3 p-3 outline-none focus-visible:ring-[3px]",
+      )}
+      ref={ref}
+      tabIndex={-1}
     >
       <div className="flex items-start gap-3">
         <span className="flex h-5 shrink-0 items-center">{tile}</span>

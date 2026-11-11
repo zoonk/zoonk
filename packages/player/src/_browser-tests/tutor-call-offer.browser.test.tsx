@@ -41,6 +41,7 @@ function renderOffer(
   );
 
   const tools: TutorCardActions["tools"] = {
+    getGoalRegion: () => null,
     hrefs: {
       chooseFocus: "/focus",
       chooseMock: "/mock",
@@ -53,6 +54,7 @@ function renderOffer(
       stats: "/stats",
       subject: () => "/subject",
     },
+    setGoalRegion: vi.fn(),
     startConversation,
     startTestOut: vi.fn(),
   };

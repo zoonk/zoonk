@@ -23,8 +23,11 @@ import {
   StartGoalOffer,
 } from "./tutor-feature-offers";
 import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
+import { VarietyOffer } from "./tutor-variety-offer";
 
 export type TutorToolActions = {
+  /** The goal's saved country; null for none, or for a goal this screen hasn't loaded. */
+  getGoalRegion: (goalId: string) => string | null;
   hrefs: {
     chooseFocus: string;
     chooseMock: string;
@@ -42,6 +45,8 @@ export type TutorToolActions = {
     goalId: string;
     minutes: number;
   }) => Promise<CallStartOutcome>;
+  /** Resolves to whether the country saved on the goal. */
+  setGoalRegion: (input: { goalId: string; region: string }) => Promise<boolean>;
   startTestOut: (input: { chapterId: string; goalId: string }) => Promise<TestOutStart>;
 };
 
@@ -233,7 +238,15 @@ export function TutorToolOfferCard({
     case "plus":
       return <PlusOffer offer={offer} />;
     case "variety":
-      return null;
+      return (
+        <VarietyOffer
+          offer={offer}
+          onApply={() =>
+            actions.setGoalRegion({ goalId: offer.goalId, region: offer.targetRegion })
+          }
+          saved={actions.getGoalRegion(offer.goalId) === offer.targetRegion}
+        />
+      );
     default:
       return offer satisfies never;
   }
