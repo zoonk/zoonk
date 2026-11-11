@@ -93,7 +93,6 @@ export function listFocusRows({
 }
 
 export type FocusPlan = {
-  /** The learner dismissed a proposal of the suggested subjects. */
   declined: boolean;
   focusAreas: readonly string[];
   handPicked: boolean;
