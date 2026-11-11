@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -17,6 +18,9 @@ import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileSkipAll
 import com.zoonk.android.feature.profile.suggestedSupports
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingStep
@@ -171,17 +175,71 @@ internal class GoalSetupViewModel(
         }
     }
 
-    fun reveal(onSaved: () -> Unit) {
+    fun reveal(onSaved: () -> Unit) =
+        reveal(null) {
+            onSaved()
+            true
+        }
+
+    var openingStep by mutableStateOf<Long?>(null)
+        private set
+
+    var failedStep by mutableStateOf<Long?>(null)
+        private set
+
+    fun openRevealStep(
+        day: DayView,
+        step: DayStep,
+        open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
+        isCurrent: () -> Boolean = { true },
+        onOpened: (AppRoute) -> Unit,
+    ) {
+        if (step.isFinished || step.waitReason != null) return
+        val tappedGoal = java.util.UUID.fromString(goalId)
+        reveal(step.position) {
+            if (!isCurrent()) return@reveal true
+            when (val result = open(day, step, tappedGoal)) {
+                is MutationResult.Done -> {
+                    result.value?.let(onOpened)
+                    true
+                }
+
+                MutationResult.Obsolete -> {
+                    true
+                }
+
+                is MutationResult.Failed -> {
+                    false
+                }
+            }
+        }
+    }
+
+    private fun reveal(
+        position: Long?,
+        onSaved: suspend () -> Boolean,
+    ) {
         if (isSaving) return
         isSaving = true
+        openingStep = position
+        failedStep = null
         clearFailure()
+        val revealingGoal = goalId
         viewModelScope.launch {
-            when (store.markPlanRevealed(goalId)) {
-                is WriteOutcome.Done -> onSaved()
-                WriteOutcome.Obsolete -> Unit
-                else -> saveFailed = true
+            try {
+                val failed =
+                    when (store.markPlanRevealed(revealingGoal)) {
+                        is WriteOutcome.Done -> !onSaved()
+                        WriteOutcome.Obsolete -> false
+                        else -> true
+                    }
+                if (failed) {
+                    if (position == null) saveFailed = true else failedStep = position
+                }
+            } finally {
+                openingStep = null
+                isSaving = false
             }
-            isSaving = false
         }
     }
 

@@ -48,6 +48,8 @@ import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
@@ -92,7 +94,7 @@ import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-/** Reading the plan starts no work; only Start and Adjust leave. */
+/** Reading the plan starts no work; opening a step is a learner tap. */
 @Composable
 internal fun ColumnScope.PlanRevealStep(
     goal: Goal,
@@ -108,6 +110,9 @@ internal fun ColumnScope.PlanRevealStep(
     saveFailed: Boolean = false,
     playMoment: () -> Boolean = { false },
     planRevealed: Boolean = false,
+    onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+    openingStep: Long? = null,
+    failedStep: Long? = null,
     today: com.zoonk.android.data.Resource<com.zoonk.api.models.PlanRevealToday>? = null,
 ) {
     val resource = plans.plan[goal.id]
@@ -177,10 +182,13 @@ internal fun ColumnScope.PlanRevealStep(
                 RevealBody(
                     plan = plan,
                     reveal = preview,
+                    onOpenStep = onOpenStep,
+                    openingStep = openingStep,
+                    failedStep = failedStep,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
-                    starting = starting || saving,
+                    starting = starting || (saving && openingStep == null),
                     saveFailed = saveFailed,
                     playMoment = !planRevealed && remember { playMoment() },
                     onStart = { if (onReveal != null) onReveal { opening = true } else opening = true },
@@ -337,6 +345,9 @@ private fun ColumnScope.RevealBody(
     starting: Boolean,
     saveFailed: Boolean,
     playMoment: Boolean,
+    onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+    openingStep: Long? = null,
+    failedStep: Long? = null,
     onStart: () -> Unit,
     onAdjust: () -> Unit,
     onChangeChoice: () -> Unit,
@@ -352,7 +363,7 @@ private fun ColumnScope.RevealBody(
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-        studyDay?.let { RevealToday(it, reveal.minutes, playMoment) }
+        studyDay?.let { RevealToday(it, reveal.minutes, playMoment, onOpenStep, openingStep, failedStep) }
         reveal?.let { RevealWeek(it) }
 
         val started = studyDay?.steps?.any { it.isFinished } == true

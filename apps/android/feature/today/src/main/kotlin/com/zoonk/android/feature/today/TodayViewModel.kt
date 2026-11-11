@@ -70,9 +70,8 @@ class TodayViewModel(
         step: DayStep,
         next: Boolean,
     ) {
-        if (showIntro(read, step)) return
         run(read, if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
-            opener.open(read.day, step, next, read.today.goal.id)
+            opener.openRow(read.day, step, read.today.goal.id, next)
         }
     }
 

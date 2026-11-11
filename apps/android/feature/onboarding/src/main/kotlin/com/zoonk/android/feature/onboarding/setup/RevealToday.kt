@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.ceremonies.MomentBuddy
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.ui.characters.ActReaction
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
@@ -168,9 +170,12 @@ private fun RevealReadout(
 
 @Composable
 internal fun RevealToday(
-    day: com.zoonk.android.feature.session.DayView,
+    day: DayView,
     minutes: Long,
     play: Boolean,
+    onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+    openingStep: Long? = null,
+    failedStep: Long? = null,
 ) {
     val started = day.steps.any { it.isFinished }
     val ordered = day.steps.filter { it.isFinished } + day.steps.filterNot { it.isFinished }
@@ -189,6 +194,9 @@ internal fun RevealToday(
                 day,
                 step,
                 tagged,
+                onOpen = onOpenStep?.takeIf { !step.isFinished && step.waitReason == null }?.let { { it(day, step) } },
+                busy = openingStep == step.position,
+                openFailed = failedStep == step.position,
                 divider = index != ordered.lastIndex,
                 tag =
                     if (tagged) {
