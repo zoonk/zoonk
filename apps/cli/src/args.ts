@@ -87,11 +87,13 @@ function parseWholeNumber(name: OptionName, value: string | undefined) {
     return;
   }
 
-  if (!WHOLE_NUMBER_PATTERN.test(value)) {
+  const number = Number(value);
+
+  if (!WHOLE_NUMBER_PATTERN.test(value) || !Number.isSafeInteger(number)) {
     throw usageError(`--${name} needs a whole number, not "${value}".`);
   }
 
-  return Number(value);
+  return number;
 }
 
 function get(path: string): Command {

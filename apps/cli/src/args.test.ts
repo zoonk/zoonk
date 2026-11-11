@@ -106,6 +106,7 @@ describe(parseInvocation, () => {
     [["staff", "list", "Goal", "--where", "archivedAt isNull yes"]],
     [["staff", "list", "Goal", "--where", "status eq"]],
     [["staff", "list", "Goal", "--limit", "ten"]],
+    [["staff", "list", "Goal", "--offset", "9007199254740993"]],
     [["staff", "list", "Goal", "--order", "createdAt:newest"]],
     [["staff", "get", "Goal", "abc", "--where", "id eq abc"]],
     [["staff", "get", "Goal"]],
