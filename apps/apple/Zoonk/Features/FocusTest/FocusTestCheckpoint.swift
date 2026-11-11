@@ -135,7 +135,7 @@ private struct FocusTestSuggestedFocus: View {
         FocusTestProposal(proposal: proposal, goalID: goalID)
       }
 
-      if let changeFocus, focus.state == .current || focus.state == .handPicked {
+      if let changeFocus, [.current, .alreadyFits, .handPicked].contains(focus.state) {
         Button(action: changeFocus) {
           Text(
             "Change focus", tableName: "FocusTest",
@@ -172,6 +172,11 @@ private struct FocusTestSuggestedFocus: View {
         String(
           localized: "Your plan gives these more time.", table: "FocusTest",
           comment: "Suggested focus the plan already follows")
+      case .alreadyFits:
+        String(
+          localized: "Your plan already has time for these, so it doesn't need a focus.",
+          table: "FocusTest",
+          comment: "Suggested focus the plan's time already covers without a focus")
       case .handPicked:
         String(
           localized:

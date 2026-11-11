@@ -4900,6 +4900,65 @@
         }
       }
     },
+    "Your plan already has time for these, so it doesn't need a focus." : {
+      "comment" : "Suggested focus the plan's time already covers without a focus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan sieht dafür schon genug Zeit vor, deshalb braucht er keinen Schwerpunkt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan ya tiene tiempo para todo esto, así que no necesita un enfoque."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan prévoit déjà du temps pour tout ça, pas besoin de définir une priorité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano prevede già tempo per questi argomenti, quindi non serve dare loro la priorità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画にはこれらを学ぶ時間がすでにあるので、重点項目を設定する必要はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에 이미 이 내용을 공부할 시간이 있어서 따로 집중 학습을 설정할 필요는 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W twoim planie jest już na nie czas, więc nie trzeba ustalać priorytetów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano já tem tempo para tudo isso, então não precisa de um foco."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planında bunlara zaten zaman ayrılmış, bu yüzden ayrıca bir odak seçmene gerek yok."
+          }
+        }
+      }
+    },
     "Your plan considers all %lld subjects." : {
       "comment" : "The Focus test's invitation, when its sitting can't reach every subject",
       "localizations" : {

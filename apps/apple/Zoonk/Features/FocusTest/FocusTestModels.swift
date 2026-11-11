@@ -113,6 +113,8 @@ struct FocusTest: Decodable, Equatable, Sendable {
       case ifTimeShort
       case proposed
       case current
+      /// The plan has no focus, and its time already covers these.
+      case alreadyFits
       case handPicked
     }
 
