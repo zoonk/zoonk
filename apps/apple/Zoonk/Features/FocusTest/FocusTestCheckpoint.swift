@@ -228,7 +228,7 @@ private struct FocusTestProposal: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      if decision != .applied {
+      if decision == nil {
         let today = PlanDate.isoDate(.now)
         let effect =
           (proposal.setsFocus ? planAreaEndTexts(proposal.effect, today: today) : [])
