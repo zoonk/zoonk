@@ -18,14 +18,14 @@ function firstSitting(quickSubjects: number, paceMs = MINUTE) {
 
 describe("a sitting's promised count", () => {
   it("fits a first sitting into about fifteen minutes at the starting pace", () => {
-    expect(firstSitting(24)).toEqual({ minutes: 15, questions: 15 });
-    expect(firstSitting(40)).toEqual({ minutes: 15, questions: 15 });
+    expect(firstSitting(24)).toStrictEqual({ minutes: 15, questions: 15 });
+    expect(firstSitting(40)).toStrictEqual({ minutes: 15, questions: 15 });
   });
 
   it("asks at most four questions a subject when the exam has few", () => {
-    expect(firstSitting(3)).toEqual({ minutes: 12, questions: 12 });
-    expect(firstSitting(2)).toEqual({ minutes: 8, questions: 8 });
-    expect(firstSitting(1)).toEqual({ minutes: 4, questions: 4 });
+    expect(firstSitting(3)).toStrictEqual({ minutes: 12, questions: 12 });
+    expect(firstSitting(2)).toStrictEqual({ minutes: 8, questions: 8 });
+    expect(firstSitting(1)).toStrictEqual({ minutes: 4, questions: 4 });
   });
 
   it("sizes a first sitting to the exam once the pace leaves room", () => {
@@ -97,6 +97,10 @@ function candidate(overrides: Partial<FocusCandidate> & { key: string }): FocusC
   };
 }
 
+function subjects(count: number): FocusCandidate[] {
+  return Array.from({ length: count }, (_, index) => candidate({ key: `subject-${index}` }));
+}
+
 describe("the suggested focus", () => {
   it("ranks by the exam's share times what the answers leave unknown", () => {
     const ranked = rankFocus([
@@ -108,7 +112,7 @@ describe("the suggested focus", () => {
       candidate({ key: "heavy", share: 0.3 }),
     ]);
 
-    expect(ranked).toEqual([
+    expect(ranked).toStrictEqual([
       { key: "heavy", reason: "notAsked" },
       { key: "missed", reason: "answers" },
     ]);
@@ -124,7 +128,7 @@ describe("the suggested focus", () => {
       candidate({ asked: true, belief: 0.9, key: "d" }),
     ]);
 
-    expect(ranked).toEqual([
+    expect(ranked).toStrictEqual([
       { key: "essay", reason: "notChecked" },
       { key: "qualifying", reason: "minimumScore" },
     ]);
@@ -136,13 +140,10 @@ describe("the suggested focus", () => {
       candidate({ key: "light", share: 0.05 }),
     ]);
 
-    expect(ranked).toEqual([{ key: "heavy", reason: "weight" }]);
+    expect(ranked).toStrictEqual([{ key: "heavy", reason: "weight" }]);
   });
 
   it("suggests one subject in three, three at most, and none for a single subject", () => {
-    const subjects = (count: number) =>
-      Array.from({ length: count }, (_, index) => candidate({ key: `subject-${index}` }));
-
     expect(rankFocus(subjects(1))).toHaveLength(0);
     expect(rankFocus(subjects(2))).toHaveLength(1);
     expect(rankFocus(subjects(5))).toHaveLength(1);
@@ -153,7 +154,7 @@ describe("the suggested focus", () => {
   it("leaves out a subject the learner fully knows", () => {
     expect(
       rankFocus([candidate({ asked: true, belief: 1, key: "known" }), candidate({ key: "other" })]),
-    ).toEqual([{ key: "other", reason: "notAsked" }]);
+    ).toStrictEqual([{ key: "other", reason: "notAsked" }]);
   });
 });
 
