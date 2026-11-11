@@ -44,11 +44,6 @@ export async function decideCliLogin({
     return { failure: getCheckFailure(checked.error) };
   }
 
-  // Another person's claim, or a code already approved or denied, leaves nothing for this one to decide.
-  if (checked.data.status !== "pending" || !checked.data.client_id) {
-    return { failure: "used" };
-  }
-
   const decided = await decideCliLoginAction({ decision, userCode });
 
   if (decided.status === "notFound") {
