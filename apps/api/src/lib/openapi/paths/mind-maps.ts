@@ -31,7 +31,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/chapters/{chapterId}/lesson-maps": {
     get: {
       description:
-        "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, with its ideas and their icons as the lesson player draws them, whether the learner saved it, and whether a free exam plan past its first week keeps it for Plus (`locked`, with no `map`). Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
+        "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, except its challenge, whose summary recaps a case rather than mapping a lesson, with its ideas and their icons as the lesson player draws them, whether the learner saved it, and whether a free exam plan past its first week keeps it for Plus (`locked`, with no `map`). Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
       operationId: "listChapterLessonMaps",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {

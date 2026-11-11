@@ -161,6 +161,38 @@ describe("mind maps study page", () => {
     await expect(readyList(goal.id)).resolves.toMatchObject({ firstTab: "chapters" });
   });
 
+  it("leaves a chapter's written challenge out of its lesson maps", async () => {
+    const { beginner, extra, goal } = await writtenCourseGoal();
+
+    const challenge = await libraryLessonFixture({
+      identityKey: `challenge:${beginner.id}`,
+      title: "Challenge: Waves at the beach",
+    });
+
+    await chapterLessonFixture({ chapterId: beginner.id, lessonId: challenge.id, position: 1 });
+    await writeLessons([challenge.id]);
+
+    const list = await readyList(goal.id);
+
+    expect(list.lessonGroups).toContainEqual({
+      chapterId: beginner.id,
+      count: 1,
+      lessonIds: [extra.id],
+      locked: 0,
+    });
+
+    await expect(
+      listChapterLessonMaps({ chapterId: beginner.id, goalId: goal.id }),
+    ).resolves.toMatchObject({
+      lessonMaps: { lessons: [{ lessonId: extra.id }] },
+      status: "ready",
+    });
+
+    await expect(
+      saveMindMap({ goalId: goal.id, kind: "lesson", saved: true, targetId: challenge.id }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+  });
+
   it("saves a map once, lists saves in syllabus order, and removes them", async () => {
     const { extra, first, goal, lessons } = await writtenCourseGoal();
     const lessonId = lessons[0]?.id ?? "";

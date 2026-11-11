@@ -29,7 +29,7 @@ export const chapterLessonMapsSchema = z
       .array(lessonMindMapSchema)
       .meta({
         description:
-          "Every lesson of the chapter with a written map, studied or not, in chapter order",
+          "Every lesson of the chapter with a written map, studied or not, in chapter order; its challenge isn't one",
       }),
   })
   .meta({ id: "ChapterLessonMaps" });

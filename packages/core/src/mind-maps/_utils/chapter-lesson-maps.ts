@@ -3,6 +3,7 @@ import { type LibraryVisibility, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getLibraryChapterCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
 import { loadLessonIcons } from "../../lesson-player/_utils/lesson-marks";
+import { isChallengeIdentityKey } from "../../library/challenges/challenge-lesson-spec";
 import {
   type LessonMap,
   readPlayableLessonMap,
@@ -22,7 +23,9 @@ export type ChapterLessonMap = {
 /**
  * Shared content, before any viewer's filter: the chapter's written lessons whose published map
  * reads (never a staged one), in chapter order, with their icons. Maps written before ideas had
- * labels are included. The lesson-map counts read this too, so they match what opens.
+ * labels are included. A challenge is left out: its summary recaps a case, not a map the lesson
+ * writer drew. The lesson-map counts, saves and the Saved tab read this too, so they match what
+ * opens.
  */
 export async function getChapterLessonMaps(chapterId: string): Promise<ChapterLessonMap[]> {
   "use cache";
@@ -35,6 +38,7 @@ export async function getChapterLessonMaps(chapterId: string): Promise<ChapterLe
         select: {
           contentStatus: true,
           id: true,
+          identityKey: true,
           ownerId: true,
           summary: true,
           title: true,
@@ -49,7 +53,10 @@ export async function getChapterLessonMaps(chapterId: string): Promise<ChapterLe
 
   const written = placements
     .map(({ lesson }, index) => ({ lesson, position: index + 1 }))
-    .filter(({ lesson }) => lesson.contentStatus === "completed");
+    .filter(
+      ({ lesson }) =>
+        lesson.contentStatus === "completed" && !isChallengeIdentityKey(lesson.identityKey),
+    );
 
   const icons = await loadLessonIcons(
     written.flatMap(({ lesson }) =>
