@@ -813,7 +813,8 @@ private struct PlanReveal: View {
         "At \(time) a day, some topics won't fit before \(date). This plan gives \(areas) more time.",
       table: "Onboarding",
       comment:
-        "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time")
+        "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time"
+    )
   }
 
   /// The focus the plan follows, with what it leaves out, how to change it and where it came from.

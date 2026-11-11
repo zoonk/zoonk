@@ -540,7 +540,8 @@ private struct MockChooser: View {
     defer { busy = false }
 
     switch await exam.startMock(
-      goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer, onWriting: { status = .writing })
+      goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
+      onWriting: { status = .writing })
     {
     case .done(.started(let id)):
       status = .choosing

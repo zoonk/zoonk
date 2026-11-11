@@ -26,7 +26,9 @@ enum FocusTestCopy {
     String(
       localized: "Check where to focus\u{00A0}· About \(studyDuration(minutes: minutes))",
       table: "FocusTest",
-      comment: "Opens the Focus test for a learner whose time doesn't cover the exam; then how long it takes")
+      comment:
+        "Opens the Focus test for a learner whose time doesn't cover the exam; then how long it takes"
+    )
   }
 
   static func evidence(asked: Int, total: Int) -> String {
@@ -101,19 +103,27 @@ enum FocusTestCopy {
       case .written:
         String(
           localized: "Writing counts heavily; it isn't checked here.", table: "FocusTest",
-          comment: "Why the plan gives the written part more time: it weighs a lot, and the Focus test can't ask about it")
+          comment:
+            "Why the plan gives the written part more time: it weighs a lot, and the Focus test can't ask about it"
+        )
       case .listening:
         String(
           localized: "Listening counts heavily; it isn't checked here.", table: "FocusTest",
-          comment: "Why the plan gives the listening part more time: it weighs a lot, and the Focus test can't ask about it")
+          comment:
+            "Why the plan gives the listening part more time: it weighs a lot, and the Focus test can't ask about it"
+        )
       case .speaking:
         String(
           localized: "Speaking counts heavily; it isn't checked here.", table: "FocusTest",
-          comment: "Why the plan gives the speaking part more time: it weighs a lot, and the Focus test can't ask about it")
+          comment:
+            "Why the plan gives the speaking part more time: it weighs a lot, and the Focus test can't ask about it"
+        )
       case .practical, nil:
         String(
           localized: "This part counts heavily; it isn't checked here.", table: "FocusTest",
-          comment: "Why the plan gives a part of the exam more time: it weighs a lot, and the Focus test can't ask about it")
+          comment:
+            "Why the plan gives a part of the exam more time: it weighs a lot, and the Focus test can't ask about it"
+        )
       }
     case .notAsked:
       String(
@@ -154,7 +164,8 @@ enum FocusTestCopy {
         }
         ?? String(
           localized: "Your answers are in your plan", table: "FocusTest",
-          comment: "The Focus test's result on the plan, for a goal placed before it counted subjects")
+          comment:
+            "The Focus test's result on the plan, for a goal placed before it counted subjects")
 
       return [result]
         + (summary.offer.map {

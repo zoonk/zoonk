@@ -151,7 +151,8 @@ struct FocusTest: Decodable, Equatable, Sendable {
   /// offered again with its own numbers.
   var nextSitting: NextSitting? {
     if let offer {
-      return NextSitting(questions: offer.questions, minutes: offer.minutes, pastCeiling: offer.pastCeiling)
+      return NextSitting(
+        questions: offer.questions, minutes: offer.minutes, pastCeiling: offer.pastCeiling)
     }
 
     guard let sitting, sitting.answered == 0, sitting.left > 0 else {

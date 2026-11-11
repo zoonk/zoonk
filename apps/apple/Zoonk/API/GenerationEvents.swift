@@ -85,7 +85,8 @@ extension APIClientFactory {
   ]
 
   private static let joinSteps: Set<String> = [
-    "joinChallengeQuestions", "joinLevelTestBank", "joinMockQuestions", "joinRunningCall", "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
+    "joinChallengeQuestions", "joinLevelTestBank", "joinMockQuestions", "joinRunningCall",
+    "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
 

@@ -482,10 +482,11 @@ struct ScheduleQuestion: View {
       Text(
         "With this time, we suggest giving \(shown.focusSubjects.formatted(.list(type: .and))) more attention.",
         tableName: "Onboarding",
-        comment: "Under the daily time: up to three subjects the plan would give more time")
-        .foregroundStyle(.mutedForeground)
-        .opacity(shown.updating ? 0.5 : 1)
-        .padding(.top, 8)
+        comment: "Under the daily time: up to three subjects the plan would give more time"
+      )
+      .foregroundStyle(.mutedForeground)
+      .opacity(shown.updating ? 0.5 : 1)
+      .padding(.top, 8)
     }
   }
 

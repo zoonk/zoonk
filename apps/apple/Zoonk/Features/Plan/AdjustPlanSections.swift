@@ -211,10 +211,11 @@ private struct PlanFocusSection: View {
 
           Text(
             "Or choose them yourself", tableName: "Plan",
-            comment: "Above the subjects to focus on, under the Focus test that suggests them")
-            .typeStyle(.note.weight(.medium))
-            .foregroundStyle(.mutedForeground)
-            .listRowSeparator(.hidden, edges: .bottom)
+            comment: "Above the subjects to focus on, under the Focus test that suggests them"
+          )
+          .typeStyle(.note.weight(.medium))
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden, edges: .bottom)
         }
 
         ForEach(choices) { area in

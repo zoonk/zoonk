@@ -81,12 +81,14 @@ struct FocusTestInvitation: View {
                   String(
                     localized: "Your plan considers all \(focusTest.counts.total) subjects.",
                     table: "FocusTest",
-                    comment: "The Focus test's invitation, when its sitting can't reach every subject"),
+                    comment:
+                      "The Focus test's invitation, when its sitting can't reach every subject"),
                   String(
                     localized:
                       "This sitting has up to \(next.questions) questions, so some subjects may not be checked.",
                     table: "FocusTest",
-                    comment: "The Focus test's invitation, when its sitting can't reach every subject"),
+                    comment:
+                      "The Focus test's invitation, when its sitting can't reach every subject"),
                 ].joined(separator: " "))
 
               Button {

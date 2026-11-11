@@ -492,8 +492,10 @@ struct TodayFocusTestSection: View {
       BusyButton(isBusy: isDismissing) {
         dismiss()
       } label: {
-        Text("Not now", tableName: "Today", comment: "Dismisses Today's suggestion of the Focus test")
-          .frame(maxWidth: .infinity)
+        Text(
+          "Not now", tableName: "Today", comment: "Dismisses Today's suggestion of the Focus test"
+        )
+        .frame(maxWidth: .infinity)
       }
       .buttonStyle(.outline)
     }
@@ -515,7 +517,8 @@ struct TodayFocusTestSection: View {
     Task {
       defer { isDismissing = false }
 
-      switch await plans.updateFocusTest(goalId: goalID, FocusTestControls(suggestion: .dismissed)) {
+      switch await plans.updateFocusTest(goalId: goalID, FocusTestControls(suggestion: .dismissed))
+      {
       case .done:
         dismissed = true
         isOpen = false
