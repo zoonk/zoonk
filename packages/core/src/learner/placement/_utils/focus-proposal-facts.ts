@@ -17,7 +17,7 @@ function isTimeSaved(goal: Pick<Goal, "details" | "planRevealedAt">): boolean {
   return goal.planRevealedAt !== null || getAnsweredQuestions(details).includes("schedule");
 }
 
-function getProposedAreas(payload: unknown): string[] {
+export function getProposedAreas(payload: unknown): string[] {
   return parsePlanChangePayload(payload).operations.flatMap((operation) =>
     operation.kind === "focusAreas" ? operation.areas : [],
   );

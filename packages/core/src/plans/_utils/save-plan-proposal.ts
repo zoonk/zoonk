@@ -1,6 +1,9 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { loadFocusProposalFacts } from "../../learner/placement/_utils/focus-proposal-facts";
+import {
+  getProposedAreas,
+  loadFocusProposalFacts,
+} from "../../learner/placement/_utils/focus-proposal-facts";
 import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { type PlanOperation } from "../plan-contract";
@@ -9,7 +12,6 @@ import { type PlanContext } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type PlanChangeRecord } from "./replan";
-import { getAskedAreas } from "./steered-areas";
 
 export async function savePlanProposal({
   context,
@@ -33,7 +35,7 @@ export async function savePlanProposal({
     write: async (tx) => {
       if (source === FOCUS_TEST_SOURCE) {
         const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
-        const areas = getAskedAreas({ focused: context.state.settings.focusAreas, operations });
+        const areas = getProposedAreas(payload);
 
         const { due } = await loadFocusProposalFacts({
           asks: goal.targetDate !== null && areas.length > 0,

@@ -3,6 +3,7 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { isJsonObject } from "@zoonk/utils/json";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -143,14 +144,33 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
   );
 
   it("allows an empty plan focus despite stored ownership left by an earlier writer", async () => {
-    const { goal } = await shortPlanExamGoalFixture({
-      goal: {
-        ...SHOWN,
-        details: { ...SHOWN.details, focusTest: { ...NEW_FOCUS_TEST_RECORD, focus: ["Ética"] } },
-      },
+    const { goal, plan } = await shortPlanExamGoalFixture({ goal: SHOWN });
+    const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    const details = isJsonObject(current.details) ? current.details : {};
+    const record = readFocusTestRecord(current) ?? NEW_FOCUS_TEST_RECORD;
+
+    await prisma.goal.update({
+      data: { details: { ...details, focusTest: { ...record, focus: ["Ética"] } } },
+      where: { id: goal.id },
     });
 
-    await expect(sit(goal.id, 1)).resolves.toMatchObject({ state: "proposed" });
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      settings: { focusAreas: [] },
+    });
+
+    await expect(
+      proposals.proposePlanChange({
+        approval: "always",
+        goalId: goal.id,
+        operations: [{ areas: ["Direito", "Português"], kind: "focusAreas" }],
+        reason: "",
+        source: "focusTest",
+      }),
+    ).resolves.toMatchObject({ status: "proposed" });
+
+    const admitted = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    expect(readFocusTestRecord(admitted)?.focus).toStrictEqual(["Ética"]);
   });
 
   it("proposes with no focus after the test's earlier applied focus was replaced and removed", async () => {
