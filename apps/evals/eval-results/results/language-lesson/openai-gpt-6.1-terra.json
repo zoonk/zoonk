@@ -1312,6 +1312,627 @@
           "unitTitle": "Uma casa nova"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Italian is grammatical and natural, the translations preserve meaning, and the explanations are factually correct. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The pronunciation guidance addresses Brazilian Portuguese speakers directly through the contrasts between Italian and Portuguese r, “già” and “já,” and the longer Italian sound corresponding to “lh.” Respellings use accessible letters and marked stress without adding syllables. Explanations connect the tense to Portuguese “tinha” constructions.",
+          "score": 10,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and sentences directly support recounting earlier events during travel mishaps at B1. Known words are reused in context rather than retaught. Learner-facing lines avoid speaker-gender agreement, while “arrivata” refers to the explicitly named Giulia.",
+          "score": 10,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blanks have one correct option, distractors are distinct from the answers, and speaking prompts establish relevant moments in Portuguese. Writing correctly includes both gendered arrival forms. However, the answer list misses common “alla stazione” variants, and the formation tip could better equip learners to choose between the two auxiliaries tested.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Portuguese instructions and feedback are natural and gender-neutral. Target-language fields remain in Italian, tile sentences and translations omit final periods, and each summary line describes one expression the learner can now use.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3614,
+          "outputTokens": 1077,
+          "reasoningTokens": 485
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The writing answers omit the common equivalent with “alla stazione,” including “Quando sono arrivato/arrivata alla stazione, il treno era già partito.” These should be accepted alongside the listed versions with “in stazione.”",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the formation tip more actionable by naming the imperfect of “avere” or “essere” plus the past participle, and explaining the auxiliary choice in the examples. The current explanation is true but leaves learners to infer why the lesson uses “era partito” versus “aveva chiuso.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian, B1, telling what had already happened when they got somewhere on a trip (the trapassato prossimo). The lesson is shared by learners of every gender, which the app never knows. No sentence the learner builds, translates or says as themselves, and no practice template, has a word that agrees with the speaker's gender: \"Quando sono arrivato alla stazione, il treno era già partito\" as the learner's line fails (a woman can't build \"arrivata\" from the tiles, and saying it is marked wrong); forms with \"essere\" that agree go on someone the sentence names (\"Quando Luca è arrivato…\"), or the learner's line uses \"avere\" or a form that agrees with nothing. The writing answers list both genders' forms when the sentence agrees with the writer's. Portuguese instructions, notes and feedback never assume the learner's gender (\"Conte que você chegou\", not \"você estava cansado\").",
+        "id": "pt-it-b1-trapassato-no-gender-1",
+        "userInput": {
+          "knownWords": [
+            "il treno",
+            "la stazione",
+            "il biglietto"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Contar o que já tinha acontecido quando você chegou a algum lugar",
+          "lessonDescription": "Use o trapassato prossimo para contar um imprevisto de viagem",
+          "lessonTitle": "O que já tinha acontecido",
+          "level": "B1",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Contar um imprevisto de viagem",
+            "Explicar o que deu errado e por quê"
+          ],
+          "unitTitle": "Imprevistos de viagem"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Italian sentences are grammatical and the translations preserve their meanings. Auxiliary choice and participle agreement are correctly illustrated. However, the formation explanation is underspecified: the trapassato prossimo requires the imperfetto auxiliary, not just an unspecified past form. This is an instructional omission rather than an explicitly false rule.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson directly addresses the Portuguese-to-Italian trap of translating every “tinha” as “aveva”, explains the travel meaning of “coincidenza”, and uses Portuguese-readable respellings without added syllables. Some pronunciation guidance remains generic; the note on “chiuso” misses the particularly useful contrast between Italian and Portuguese “ch”.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and sentences directly support recounting earlier travel mishaps at B1. The known words are reused contextually rather than retaught. Learner-facing lines and templates avoid speaker-gender agreement, while agreeing arrival forms refer to the named character Giulia.",
+          "score": 10,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both auxiliary blanks have exactly one correct option, and the speaking prompts establish relevant travel moments in Portuguese. However, “alla” is a valid alternative wrongly supplied as a sentence distractor. Writing answers correctly include both speaker genders but do not cover the common “Quando sono arrivato/arrivata alla stazione” variants.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Brazilian Portuguese is natural, concise, and gender-neutral toward the learner. Target-language fields remain in Italian, tile sentences and translations omit decorative final punctuation, and the summary lines identify useful expressions and what they communicate.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3549,
+          "outputTokens": 1562,
+          "reasoningTokens": 880
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first sentence includes “alla” as a distractor, but “Al mio arrivo alla stazione, il treno era già partito” is a correct equivalent of the requested sentence. The writing answers explicitly accept that same construction, making its treatment as a wrong tile inconsistent.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The grammar tip should specify the imperfetto of essere or avere, rather than merely a form “no passado”. The writing answers also omit the common variants “Quando sono arrivato alla stazione…” and “Quando sono arrivata alla stazione…”, despite accepting both arrival constructions separately.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the pronunciation guidance more specifically useful to Brazilian learners by explaining that Italian “chi”, as in “chiuso”, uses the sound represented by Portuguese “qu”, rather than the sound of Portuguese “ch”.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning Italian, B1, telling what had already happened when they got somewhere on a trip (the trapassato prossimo). The lesson is shared by learners of every gender, which the app never knows. No sentence the learner builds, translates or says as themselves, and no practice template, has a word that agrees with the speaker's gender: \"Quando sono arrivato alla stazione, il treno era già partito\" as the learner's line fails (a woman can't build \"arrivata\" from the tiles, and saying it is marked wrong); forms with \"essere\" that agree go on someone the sentence names (\"Quando Luca è arrivato…\"), or the learner's line uses \"avere\" or a form that agrees with nothing. The writing answers list both genders' forms when the sentence agrees with the writer's. Portuguese instructions, notes and feedback never assume the learner's gender (\"Conte que você chegou\", not \"você estava cansado\").",
+        "id": "pt-it-b1-trapassato-no-gender-2",
+        "userInput": {
+          "knownWords": [
+            "il treno",
+            "la stazione",
+            "il biglietto"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Contar o que já tinha acontecido quando você chegou a algum lugar",
+          "lessonDescription": "Use o trapassato prossimo para contar um imprevisto de viagem",
+          "lessonTitle": "O que já tinha acontecido",
+          "level": "B1",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Contar um imprevisto de viagem",
+            "Explicar o que deu errado e por quê"
+          ],
+          "unitTitle": "Imprevistos de viagem"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Spanish sentences and translations are grammatical and appropriate for Mexico. However, the tip’s claim that verb endings change for the subject unlike in English is false: “work” becomes “works” in the exact comparison being taught. The explicit false-rule cap applies.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The English h comparison for Spanish j, the explanation of omitted subject pronouns, and the contrast concerning articles before professions are useful for English speakers. Respellings are readable and do not add syllables. However, the central verb-ending comparison misrepresents English rather than accurately explaining the language pair.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short sentences, polite occupational question, and lack of repeated known vocabulary suit the level and situation. All learner-owned lines avoid forced gender. Coverage is nevertheless narrow: self-employment is the only modeled first-person answer, and the relatively formal “docente” is less useful as a first conversational job term than a common workplace-based answer.",
+          "score": 7,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blanks have one correct option and test the trabajo/trabaja pattern demonstrated in the tip. The writing answers correctly cover several common polite alternatives. However, “una” is not clearly wrong as a sentence distractor because “Sofía es una docente” is grammatical. Speaking prompts also lack a concrete real-world setup.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "English instructions are concise and natural, target-language fields remain in Spanish, and sentence punctuation follows the tile requirements. The final summary item explains verb selection instead of stating one thing the learner can now say.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3179,
+          "outputTokens": 898,
+          "reasoningTokens": 189
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The tip falsely contrasts Spanish with English by saying that, unlike English, Spanish changes the verb ending to show who works. English also distinguishes “I work” from “Sofía works.” This directly misteaches the comparison illustrated by the examples.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The lesson offers limited support for describing the learner’s actual occupation: its only practiced first-person answer is self-employment, and “docente” is relatively formal for an introductory conversation. The sentence distractor “una” can produce the grammatical “Sofía es una docente.” Speaking prompts give instructions rather than concrete social situations, and the final summary item describes grammar rather than something the learner can now say.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add a broadly useful, gender-neutral workplace answer such as “Trabajo en una oficina,” and contextualize speaking practice as meeting someone new. Preserve the successful gender-neutral learner lines; the current writing task asks a question rather than the learner’s own occupation, so it does not require paired gender forms.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish, A1, saying what they do for a living. The lesson is shared by learners of every gender, which the app never knows. The learner's own lines never force one gender: \"Soy doctor\" or \"Yo soy maestra\" as what the learner says, builds or completes fails, since a woman's \"Soy doctora\" or a man's \"Soy maestro\" would be marked wrong. Job nouns that agree go on someone the sentence names (\"Mi hermana es doctora\", \"Carlos es maestro\"), or the learner's line agrees with nothing (\"Trabajo en un hospital\", \"¿A qué te dedicas?\"). The writing answers list both forms when the learner writes their own job. The tip may teach how job nouns change for women and men.",
+        "id": "en-es-a1-occupations-no-gender-1",
+        "userInput": {
+          "knownWords": [
+            "Hola",
+            "Me llamo",
+            "¿Cómo te llamas?"
+          ],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Say what you do for a living and ask someone else",
+          "lessonDescription": "Talk about jobs when you meet someone new",
+          "lessonTitle": "What do you do?",
+          "level": "A1",
+          "targetLanguage": "es",
+          "unitCanDos": [
+            "Introduce yourself",
+            "Talk about your job",
+            "Ask about someone's job"
+          ],
+          "unitTitle": "Meeting new people"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Spanish is grammatical and acceptable in Mexico, translations preserve the intended meanings, and the explanations about formal address and normally omitting articles before occupations are accurate. “Soy docente” does not force the learner's gender. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson explicitly contrasts Spanish occupation statements with English article use, explains omitted subject pronouns, and addresses English speakers' likely pronunciation of j. Respellings use English-readable letters, mark stress, and add no syllables.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short questions and statements fit A1 introductions, and none of the known expressions is retaught. However, the lesson emphasizes asking and describing other people more than saying what the learner does, and its sole occupation noun, “docente,” is relatively formal for this everyday situation.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The blank has one correct answer, the tip and its practice share the occupation-with-ser pattern, and speaking prompts are in English. However, “una” can form a correct occupation sentence, and “at” is a correct alternative in the office translation, so these distractors are not clearly wrong. Personal job production also receives little practice.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "English instructions are natural and concise. Target-language fields remain Spanish, sentence and translation tiles omit decorative final punctuation while retaining question marks, and each summary line identifies one usable ability.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3083,
+          "outputTokens": 1002,
+          "reasoningTokens": 382
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Some distractors are legitimate alternatives: adding “una” produces the grammatical “Sofía es una docente,” and “at” produces the valid translation “Luis works at an office.” Treating these as wrong undermines practice reliability.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The lesson gives limited practice saying the learner's own occupation: sentence activities focus on other people and questions, and writing only practices asking. “Docente” is valid and gender-inclusive, but relatively formal for an introductory conversation about jobs.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a speaking or writing activity in which learners describe their own work using a gender-neutral line such as “Trabajo en una oficina.” If introducing gender-changing job nouns for personal writing, accept both forms.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish, A1, saying what they do for a living. The lesson is shared by learners of every gender, which the app never knows. The learner's own lines never force one gender: \"Soy doctor\" or \"Yo soy maestra\" as what the learner says, builds or completes fails, since a woman's \"Soy doctora\" or a man's \"Soy maestro\" would be marked wrong. Job nouns that agree go on someone the sentence names (\"Mi hermana es doctora\", \"Carlos es maestro\"), or the learner's line agrees with nothing (\"Trabajo en un hospital\", \"¿A qué te dedicas?\"). The writing answers list both forms when the learner writes their own job. The tip may teach how job nouns change for women and men.",
+        "id": "en-es-a1-occupations-no-gender-2",
+        "userInput": {
+          "knownWords": [
+            "Hola",
+            "Me llamo",
+            "¿Cómo te llamas?"
+          ],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Say what you do for a living and ask someone else",
+          "lessonDescription": "Talk about jobs when you meet someone new",
+          "lessonTitle": "What do you do?",
+          "level": "A1",
+          "targetLanguage": "es",
+          "unitCanDos": [
+            "Introduce yourself",
+            "Talk about your job",
+            "Ask about someone's job"
+          ],
+          "unitTitle": "Meeting new people"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The sentences are grammatical, translations preserve their contextual meanings, and the explanations of “do,” “call me,” and “Ms.” are accurate. However, the vocabulary forms “Mr” and “Ms” omit the periods conventionally required in US usage. This triggers the wrong-variant cap of 7; correct spellings in later notes and sentences do not remove that inconsistency.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson includes useful Brazilian-Portuguese-specific support: avoiding a vowel after the final sound in “Ms.,” explaining the English r, and contrasting “call me Alex” with Portuguese “me chame de Alex.” Respellings do not add syllables or use doubled r or IPA. Null tips are used appropriately where no particular difficulty needs explanation.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The preferred-name expressions are short, useful, and suitable for A1, and none of the known expressions is retaught. However, “Ms. Lee and Mr. Park are here” practices reporting presence rather than addressing someone formally. The lesson would serve its exact situation better with direct practice choosing or using a form of address.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blanks have exactly one correct answer, and their distractors plausibly test beginner verb-form mistakes. However, the tip combines “I go by” with a separate do-question pattern instead of teaching one pattern that all examples and practice test. The writing answers are valid but omit common correct formulations, and the speaking prompts give translation-like instructions rather than establishing a concrete interaction.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The learner-facing phrase “você prefere ser chamado ou chamada” violates the explicit gender-neutral wording requirement. Most other Portuguese text is natural and avoids gender agreement, including the learner's translated lines. Target sentences and translations have appropriate tile punctuation, but the last summary line gives a multi-part explanation about titles rather than one thing the learner can now say.",
+          "score": 6,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3230,
+          "outputTokens": 1279,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The note for “I go by” addresses the learner as “você prefere ser chamado ou chamada.” Offering both gendered forms still violates the explicit requirement to avoid gender agreement with the learner. Use “o nome que você prefere usar” instead.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The vocabulary entries use “Mr” and “Ms” rather than the standard US spellings “Mr.” and “Ms.” shown correctly elsewhere. The tip teaches two separate constructions rather than one pattern consistently tested across its examples and practice. The final summary line explains titles instead of stating something the learner can now say.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the sentence reporting that Ms. Lee and Mr. Park are present with a short exchange that actually practices formal address or a preferred name. Add a concrete first-meeting context to speaking prompts and include common writing variants such as “You can call me Alex” and “Call me Alex.”",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A1, saying which name they go by and how formally to address someone. The lesson is shared by learners of every gender, which the app never knows. Portuguese text written to the learner (instructions, notes, feedback, the summary) never agrees with their gender: \"como você prefere ser chamado\" or \"Diga que prefere ser chamado pelo primeiro nome\" fails; \"o nome que você prefere usar\" or \"Diga por qual nome prefere que te chamem\" passes. The Portuguese translations of the learner's own lines don't force a gender either (\"I go by Alex\" as \"Sou chamado de Alex\" fails; \"Pode me chamar de Alex\" passes; \"Thanks\" as \"Obrigado\" in a line the learner builds fails).",
+        "id": "pt-en-a1-names-no-gender-1",
+        "userInput": {
+          "knownWords": [
+            "Hi",
+            "My name is",
+            "Nice to meet you"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer o nome que prefere usar e perguntar o da outra pessoa",
+          "lessonDescription": "Diga seu nome preferido e entenda quando usar Mr. e Ms.",
+          "lessonTitle": "Nomes e formalidade",
+          "level": "A1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Apresentar-se",
+            "Perguntar e soletrar nomes",
+            "Cumprimentar com formalidade"
+          ],
+          "unitTitle": "Primeiros contatos"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The English sentences are grammatical and natural, the translations preserve their meanings, and the explanations of “should,” “Mr.” and “Ms.” are accurate. No wrong-translation, false-rule, or wrong-variant cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The “Ms.” tip usefully references the voiced sound in Portuguese “casa” and warns against adding a final vowel. The article comparison for “Mr. Lee” is also useful. However, “CÓU” reinforces vocalizing the final l in “call,” and the English r in “Mr.” receives no production guidance. No respelling clearly adds a syllable, so the explicit syllable-addition cap does not apply.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The small vocabulary set directly supports giving a preferred name, asking what to call someone, and recognizing formal titles. Sentences are short and suitable for A1, and none of the known expressions is retaught.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip and practice consistently teach the “What should I call …?” construction. Each blank has one correct option, distractors are clearly incorrect in context, and writing answers include natural alternatives. The speaking prompts are in Portuguese but mostly restate the requested utterance rather than establishing a real conversational moment.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "“Prefere ser chamado” explicitly violates the requirement not to assign the learner a gender. The last summary item also explains a fact about titles instead of stating something the learner can now say. Otherwise, Portuguese is concise and natural, target-language fields remain in English, and sentence punctuation follows the tile requirements.",
+          "score": 5,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3149,
+          "outputTokens": 1418,
+          "reasoningTokens": 751
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The note for “I go by” addresses the learner with “prefere ser chamado,” imposing masculine agreement. This directly violates the explicit gender-neutrality requirement. Replace it with “Use essa expressão antes do nome que você prefere usar.”",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The respelling “CÓU” for “call” encourages Brazilian Portuguese-style vocalization of final l instead of the English consonant, and “MÍS-ter” lacks guidance on the English r. The final summary line describes titles rather than stating something the learner can now say.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short exchange contrasting formal address with a preferred name, and give speaking prompts a concrete setting, such as meeting someone for the first time.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A1, saying which name they go by and how formally to address someone. The lesson is shared by learners of every gender, which the app never knows. Portuguese text written to the learner (instructions, notes, feedback, the summary) never agrees with their gender: \"como você prefere ser chamado\" or \"Diga que prefere ser chamado pelo primeiro nome\" fails; \"o nome que você prefere usar\" or \"Diga por qual nome prefere que te chamem\" passes. The Portuguese translations of the learner's own lines don't force a gender either (\"I go by Alex\" as \"Sou chamado de Alex\" fails; \"Pode me chamar de Alex\" passes; \"Thanks\" as \"Obrigado\" in a line the learner builds fails).",
+        "id": "pt-en-a1-names-no-gender-2",
+        "userInput": {
+          "knownWords": [
+            "Hi",
+            "My name is",
+            "Nice to meet you"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer o nome que prefere usar e perguntar o da outra pessoa",
+          "lessonDescription": "Diga seu nome preferido e entenda quando usar Mr. e Ms.",
+          "lessonTitle": "Nomes e formalidade",
+          "level": "A1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Apresentar-se",
+            "Perguntar e soletrar nomes",
+            "Cumprimentar com formalidade"
+          ],
+          "unitTitle": "Primeiros contatos"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The English sentences are grammatical and natural, the Portuguese translations preserve their meanings, and the explanations about “call me,” question order, and titles are accurate. No wrong-translation, false-rule, or variant cap is triggered.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The contrast between Portuguese “chame de” and English “call me” is useful and specific. The “Ms.” tip correctly addresses voicing and avoiding an added final vowel. However, “MÍS-ter” provides no guidance on producing the English r rather than a Brazilian Portuguese realization. No respelling clearly adds a syllable, so the syllable-addition cap does not apply.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The small vocabulary set and short sentences fit A1, directly support asking and giving a preferred name, and do not reteach the known words. The title examples explain placement before surnames but provide limited help choosing formal address versus a first name in an actual encounter.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip, examples, and blank consistently practice “call me + name,” and the blank has exactly one correct option. Distractors are clearly wrong in their respective sentences, and speaking prompts are in Portuguese. The writing answers are correct but omit the common acceptable alternative “What can I call you?”",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Portuguese instructions and learner-line translations consistently avoid assigning the learner a gender. The text is concise and natural, and the sentence tiles preserve question marks without decorative final punctuation. However, the last summary item describes title usage rather than stating one thing the learner can now say.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3065,
+          "outputTokens": 1058,
+          "reasoningTokens": 431
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The final summary item states a usage rule rather than something the learner can now say. The writing answer list omits the common, appropriate alternative “What can I call you?” The pronunciation guide for “Mr.” includes an English r without explaining how Brazilian learners should produce it.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a brief real-life contrast between initially addressing someone as “Mr./Ms. + surname” and switching to their preferred name after an invitation such as “Please call me Alex.” This would make the formality component more actionable.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A1, saying which name they go by and how formally to address someone. The lesson is shared by learners of every gender, which the app never knows. Portuguese text written to the learner (instructions, notes, feedback, the summary) never agrees with their gender: \"como você prefere ser chamado\" or \"Diga que prefere ser chamado pelo primeiro nome\" fails; \"o nome que você prefere usar\" or \"Diga por qual nome prefere que te chamem\" passes. The Portuguese translations of the learner's own lines don't force a gender either (\"I go by Alex\" as \"Sou chamado de Alex\" fails; \"Pode me chamar de Alex\" passes; \"Thanks\" as \"Obrigado\" in a line the learner builds fails).",
+        "id": "pt-en-a1-names-no-gender-3",
+        "userInput": {
+          "knownWords": [
+            "Hi",
+            "My name is",
+            "Nice to meet you"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Dizer o nome que prefere usar e perguntar o da outra pessoa",
+          "lessonDescription": "Diga seu nome preferido e entenda quando usar Mr. e Ms.",
+          "lessonTitle": "Nomes e formalidade",
+          "level": "A1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Apresentar-se",
+            "Perguntar e soletrar nomes",
+            "Cumprimentar com formalidade"
+          ],
+          "unitTitle": "Primeiros contatos"
+        }
+      }
     }
   ],
   "taskId": "language-lesson"
