@@ -1,5 +1,11 @@
 import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/items/schemas";
-import { evaluateFormula } from "../activities/expression/evaluate-expression";
+import { evaluateExpression, evaluateFormula } from "../activities/expression/evaluate-expression";
+import {
+  type ExpressionNode,
+  type ParsedExpression,
+  getSubexpressions,
+  parseExpression,
+} from "../activities/expression/parse-expression";
 import { withinTolerance } from "../activities/templates/_utils/pattern-checks";
 import { type MathValues, fillMathStep, fillMathText, getValues } from "./_utils/math-values";
 import { ANY_NUMBER, fitsEntry, isWholeNumber, matchesEntry } from "./_utils/numeric-entry";
@@ -30,37 +36,60 @@ function drawValues(math: GeneratedMathProblem, random: () => number): MathValue
 
 type AnswerRules = { entry?: NumericEntry; otherSolutions?: readonly string[] };
 
-type ShownResult = { expression: string; written: number };
+type Computed = { expression: ParsedExpression; keepsWhole: boolean; written: number };
 
-function getShownResults(math: GeneratedMathProblem): ShownResult[] {
-  const values = getValues(math);
+const ROUNDING = new Set(["ceil", "floor", "round"]);
 
-  return [math.solution, ...math.steps.flatMap((step) => step.expression ?? [])].flatMap(
-    (expression) => {
-      const result = evaluateFormula(expression, values);
-      return result.ok ? [{ expression, written: result.value }] : [];
-    },
+/** What a rounding call rounds may be fractional: rounding it is how the writer said so. */
+function getRounded(expressions: readonly ParsedExpression[]): Set<ExpressionNode> {
+  return new Set(
+    expressions.flatMap(({ ast }) =>
+      ast.kind === "call" && ROUNDING.has(ast.name) && ast.args[0] ? [ast.args[0]] : [],
+    ),
   );
 }
 
+function getComputed(math: GeneratedMathProblem): Computed[] {
+  const values = getValues(math);
+
+  const expressions = [
+    math.solution,
+    ...math.steps.flatMap((step) => step.expression ?? []),
+  ].flatMap((source) => {
+    const parsed = parseExpression(source);
+    return parsed.ok ? getSubexpressions(parsed.expression) : [];
+  });
+
+  const rounded = getRounded(expressions);
+
+  return expressions.flatMap((expression) => {
+    const result = evaluateExpression(expression, values);
+
+    return result.ok
+      ? [{ expression, keepsWhole: !rounded.has(expression.ast), written: result.value }]
+      : [];
+  });
+}
+
 /**
- * Code can't tell a count (customers) from a measure (money), so a result the written question
- * shows whole stays whole, and every result keeps its sign (a net yield never turns negative).
+ * Code can't tell a count (customers) from a measure (money), so every value the solution or a
+ * step computes, shown or not, keeps its sign (a net yield never turns negative) and stays whole
+ * when it's whole in the written question.
  */
 function keepsWrittenForm({
-  shown,
+  computed,
   values,
 }: {
-  shown: readonly ShownResult[];
+  computed: readonly Computed[];
   values: MathValues;
 }): boolean {
-  return shown.every(({ expression, written }) => {
-    const result = evaluateFormula(expression, values);
+  return computed.every(({ expression, keepsWhole, written }) => {
+    const result = evaluateExpression(expression, values);
 
     return (
       result.ok &&
       Math.sign(toDecimal(result.value)) === Math.sign(toDecimal(written)) &&
-      (!isWholeNumber(written) || isWholeNumber(result.value))
+      (!keepsWhole || !isWholeNumber(written) || isWholeNumber(result.value))
     );
   });
 }
@@ -107,16 +136,16 @@ function isMistakeIndistinct({
 }
 
 function isUsableDraw({
+  computed,
   entry,
   math,
   otherSolutions,
-  shown,
   values,
 }: {
+  computed: readonly Computed[];
   entry: NumericEntry;
   math: GeneratedMathProblem;
   otherSolutions?: readonly string[];
-  shown: readonly ShownResult[];
   values: MathValues;
 }): boolean {
   const accepted = getAcceptedValues({ math, otherSolutions, values });
@@ -124,7 +153,7 @@ function isUsableDraw({
   return (
     accepted !== null &&
     accepted.every((value) => fitsEntry({ entry, value })) &&
-    keepsWrittenForm({ shown, values }) &&
+    keepsWrittenForm({ computed, values }) &&
     !isMistakeIndistinct({ accepted, entry, math, values })
   );
 }
@@ -179,14 +208,15 @@ export function withNewNumbers({
   ...text
 }: MathText & AnswerRules & { random?: () => number }): MathVersion {
   const { math } = text;
-  const shown = getShownResults(math);
+  const computed = getComputed(math);
   const draws = Array.from({ length: MAX_NEW_NUMBER_TRIES }, () => drawValues(math, random));
 
   const found = draws
     .map((values) => ({ result: evaluateFormula(math.solution, values), values }))
     .find(
       (draw) =>
-        draw.result.ok && isUsableDraw({ entry, math, otherSolutions, shown, values: draw.values }),
+        draw.result.ok &&
+        isUsableDraw({ computed, entry, math, otherSolutions, values: draw.values }),
     );
 
   if (!found?.result.ok) {

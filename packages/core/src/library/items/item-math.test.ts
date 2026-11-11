@@ -141,34 +141,60 @@ describe(withNewNumbers, () => {
       context: "{weekday} weekday and {weekend} weekend customers; +{increase}% and -{decrease}%.",
       math,
       question: "Percent change?",
-      random: sequence(0.25, 0.25, 0.25, 0.25, 0.3, 0.3, 0.3, 0.3),
+      random: sequence(0.25, 0.25, 0.25, 0.25),
     });
 
-    expect(result.steps).toStrictEqual(["90 more weekday customers."]);
+    expect(result.steps).toStrictEqual(["60 more weekday customers."]);
   });
 
-  it("skips draws that flip the sign of the written answer", () => {
+  it("skips draws that flip the sign of a computed value", () => {
     const math: GeneratedMathProblem = {
       ...discountMath,
       answer: 2,
-      commonMistakes: [{ expression: "made / glucose", misconception: "No cost", reason: "No." }],
-      solution: "(made - spent) / glucose",
+      commonMistakes: [{ expression: "income / months", misconception: "No costs", reason: "No." }],
+      solution: "(income - costs) / months",
       steps: [],
       tolerance: { kind: "absolute", value: 0 },
       variables: [
-        { max: 6, min: 2, name: "glucose", step: 1, unit: null, value: 2 },
-        { max: 12, min: 4, name: "spent", step: 2, unit: "ATP", value: 4 },
-        { max: 24, min: 8, name: "made", step: 4, unit: "ATP", value: 8 },
+        { max: 6, min: 2, name: "months", step: 1, unit: null, value: 2 },
+        { max: 12, min: 4, name: "costs", step: 2, unit: "R$", value: 4 },
+        { max: 24, min: 8, name: "income", step: 4, unit: "R$", value: 8 },
       ],
     };
 
     const result = withNewNumbers({
       math,
-      question: "{glucose} glucose, {spent} ATP spent, {made} ATP made. Net per glucose?",
+      question: "{income} earned and {costs} spent over {months} months. Profit per month?",
       random: sequence(0, 0.999, 0, 0, 0, 0.5),
     });
 
-    expect(result.answer).toBe(6);
+    expect(result.values).toStrictEqual({ costs: 4, income: 16, months: 2 });
+  });
+
+  it("skips draws that make a count fractional even when no step shows it", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 15,
+      commonMistakes: [{ expression: "increase", misconception: "Ignores losses", reason: "No." }],
+      solution: "round((weekday * increase / 100 - weekend * decrease / 100) / weekday * 100)",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0.5 },
+      variables: [
+        { max: 500, min: 400, name: "weekday", step: 100, unit: "customers", value: 400 },
+        { max: 200, min: 180, name: "weekend", step: 10, unit: "customers", value: 200 },
+        { max: 20, min: 20, name: "increase", step: 5, unit: "%", value: 20 },
+        { max: 10, min: 5, name: "decrease", step: 5, unit: "%", value: 10 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      context: "{weekday} weekday and {weekend} weekend customers; +{increase}% and -{decrease}%.",
+      math,
+      question: "Percent change against weekdays?",
+      random: sequence(0, 0.5, 0, 0, 0, 0, 0, 0.999),
+    });
+
+    expect(result.values).toStrictEqual({ decrease: 10, increase: 20, weekday: 400, weekend: 180 });
   });
 
   it("keeps the checked numbers when no new draw works", () => {
