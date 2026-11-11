@@ -473,7 +473,11 @@ describe(gradeSpokenAnswer, () => {
     });
 
     await Promise.all([
-      wordPronunciationFixture({ pronunciation: "FENKS", userLanguage: "pt", wordId: lowercase.id }),
+      wordPronunciationFixture({
+        pronunciation: "FENKS",
+        userLanguage: "pt",
+        wordId: lowercase.id,
+      }),
       wordPronunciationFixture({
         pronunciation: "THENKS",
         tip: "Use o 'th', não o 'f'.",
