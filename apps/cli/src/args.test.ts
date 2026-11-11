@@ -1,3 +1,6 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseInvocation } from "./args.ts";
 import { EXIT_CODES } from "./errors.ts";
@@ -53,6 +56,44 @@ describe(parseInvocation, () => {
       method: "POST",
       path: "/staff/records/list",
     });
+  });
+
+  it("sends a fix file's proposal and a revert's reason to their staff routes", () => {
+    const folder = mkdtempSync(join(tmpdir(), "zoonk-cli-fix-"));
+    const file = join(folder, "fix.json");
+
+    const proposal = {
+      changes: [{ id: "x", model: "Lesson", set: { title: "Fractions" } }],
+      reason: "Typo.",
+    };
+
+    writeFileSync(file, JSON.stringify(proposal));
+
+    expect(sentRequest(["staff", "fixes", "propose", file])).toStrictEqual({
+      body: proposal,
+      method: "POST",
+      path: "/staff/content-fixes",
+    });
+
+    expect(
+      sentRequest(["staff", "fixes", "revert", "fix-1", "--reason", "Wrong fix."]),
+    ).toStrictEqual({
+      body: { fixId: "fix-1", reason: "Wrong fix." },
+      method: "POST",
+      path: "/staff/content-fixes/revert",
+    });
+  });
+
+  it.each([
+    [["staff", "fixes", "propose", "/no/such/fix.json"], "Can't read"],
+    [["staff", "fixes", "revert", "fix-1"], "--reason"],
+  ])("refuses %j before sending anything", (argv, message) => {
+    expect(() => parseInvocation(argv)).toThrow(
+      expect.objectContaining({
+        exitCode: EXIT_CODES.usage,
+        message: expect.stringContaining(message),
+      }),
+    );
   });
 
   it("maps each command to its staff route", () => {
