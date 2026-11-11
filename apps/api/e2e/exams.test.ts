@@ -55,8 +55,12 @@ test.describe("Exams API", () => {
       api.post(`/v1/mocks/${id}/break-ends`),
       api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
       api.get(`/v1/goals/${id}/mocks`),
-      api.post(`/v1/goals/${id}/mocks`, { data: {} }),
-      api.post(`/v1/goals/${id}/mocks/generations`, { data: {} }),
+      api.post(`/v1/goals/${id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "full" } },
+      }),
+      api.post(`/v1/goals/${id}/mocks/generations`, {
+        data: { shape: { area: null, day: null, kind: "full" } },
+      }),
       api.get(`/v1/essays/${id}`),
     ]);
 
