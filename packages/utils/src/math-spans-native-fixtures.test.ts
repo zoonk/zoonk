@@ -35,10 +35,6 @@ const CASES = [
   String.raw`Compare $a$, $$b$$, \(c\) and \[d\] at once`,
 ] as const;
 
-/**
- * The Apple and Android lesson players port `findMath`; their unit tests read these cases and must
- * split each text the same way.
- */
 describe("lesson math as native players must split it", () => {
   it("splits each case at the math the TypeScript finder finds", async () => {
     const cases = CASES.map((text) => ({

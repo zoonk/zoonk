@@ -52,7 +52,7 @@ function quote(text: string): string {
 
 /**
  * Players pair emphasis only within the text between formulas, so a `**` opening before a formula
- * and closing after it shows as raw marks. Positions point into the line.
+ * and closing after it shows as raw marks. Positions point into the whole line.
  */
 export function findStrayEmphasis(line: string): Set<number> {
   const list = LIST_MARK.exec(line)?.[0].length ?? 0;

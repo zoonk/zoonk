@@ -3,7 +3,7 @@ import XCTest
 @testable import Zoonk
 
 final class LessonMathSegmentTests: XCTestCase {
-  /// Main's own splits: `math-spans-native-fixtures.test.ts` writes them.
+  /// Written by `math-spans-native-fixtures.test.ts` from the TypeScript finder.
   private struct Fixtures: Decodable {
     struct Case: Decodable {
       struct Segment: Decodable {

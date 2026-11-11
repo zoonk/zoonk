@@ -224,7 +224,7 @@ struct TutorAnswerText: View {
 
   let text: String
   let linksEnabled: Bool
-  /// Said before the answer, except where every answer is the buddy's.
+  /// VoiceOver says it before the answer; nil where every answer is the buddy's.
   let buddyName: String?
 
   var body: some View {
@@ -290,7 +290,6 @@ struct TutorAnswerText: View {
     }
   }
 
-  /// A list item's text after its formula lines up past the item's marker.
   private func continuationIndent(_ block: TutorAnswerBlock) -> CGFloat {
     block.listID == nil ? 0 : CGFloat(block.depth + 1) * listIndent
   }
@@ -370,7 +369,6 @@ struct TutorAnswerBlock: Identifiable {
     case heading
     case code
     case listItem(marker: String)
-    /// A formula on its own lines.
     case formula
   }
 
@@ -433,7 +431,7 @@ struct TutorAnswerBlock: Identifiable {
       }
 
       let listID = lists.last?.identity
-      let pieces = kind == .code ? [Piece(text: RichInline(text: text))] : pieces(text, formulas)
+      let pieces = kind == .code ? [Piece(text: RichInline(text: text))] : split(text, at: formulas)
 
       for (index, piece) in pieces.enumerated() {
         blocks.append(
@@ -453,8 +451,7 @@ struct TutorAnswerBlock: Identifiable {
     let text: RichInline
   }
 
-  /// A formula on its own lines leaves the text around it as blocks of their own.
-  private static func pieces(_ text: AttributedString, _ formulas: [TutorFormula]) -> [Piece] {
+  private static func split(_ text: AttributedString, at formulas: [TutorFormula]) -> [Piece] {
     var pieces: [Piece] = []
     var line = RichInline(text: AttributedString())
     var rest = text[text.startIndex...]
@@ -480,8 +477,8 @@ struct TutorAnswerBlock: Identifiable {
       line = RichInline(text: AttributedString())
     }
 
-    while let open = rest.characters.firstIndex(of: TutorFormula.open),
-      let close = rest.characters[open...].firstIndex(of: TutorFormula.close),
+    while let open = rest.characters.firstIndex(of: TutorFormula.placeholderStart),
+      let close = rest.characters[open...].firstIndex(of: TutorFormula.placeholderEnd),
       let index = Int(String(rest.characters[rest.characters.index(after: open)..<close])),
       formulas.indices.contains(index)
     {

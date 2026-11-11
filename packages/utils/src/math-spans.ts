@@ -26,8 +26,8 @@ function isDelimiter(text: string, index: number): boolean {
 }
 
 /**
- * Inline math never holds an unescaped `$`: the first one closes it only by Pandoc's rule (text
- * right before it, no digit right after), so in "$5 and the gap is $10^{-5}$" the price stays text.
+ * Inline math never holds an unescaped `$`: if the first one can't close it by Pandoc's rule, the
+ * opener isn't math, so in "$5 and the gap is $10^{-5}$" the price stays text.
  */
 function findInlineMathClose(text: string, from: number): number | null {
   const index = text.indexOf("$", from);
@@ -143,7 +143,7 @@ export type MathSegment = {
   text: string;
 };
 
-/** A line as the players read it: its formulas and the text between them, none of it empty. */
+/** Leaves out empty text between formulas. */
 export function splitAtMath(line: string): MathSegment[] {
   const spans = findMathSpans(line);
 
@@ -169,7 +169,6 @@ export function toOneLine(text: string): string {
   return text.replaceAll(/\s*\n\s*/gu, " ");
 }
 
-/** Each formula in text the players read line by line and cell by cell, as `replace` writes it. */
 export function replaceMath(text: string, replace: (formula: MathSegment) => string): string {
   return splitLinesAndCells(text)
     .map((cells) =>

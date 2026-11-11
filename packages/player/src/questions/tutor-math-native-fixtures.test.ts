@@ -32,16 +32,12 @@ function collectFormulas(node: MarkdownNode): { display: boolean; latex: string 
   return (node.children ?? []).flatMap((child) => collectFormulas(child));
 }
 
-/** Streamdown's static mode: its default remark plugins, then the math plugin's, as `TutorMarkdown` sets it up. */
+/** The remark plugins `TutorMarkdown`'s Streamdown runs, in its order. */
 const parser = unified()
   .use(remarkParse)
   .use(Object.values(defaultRemarkPlugins))
   .use([math.remarkPlugin]);
 
-/**
- * The Apple and Android buddies port the web's `$$…$$` reading; their unit tests read these cases and
- * must typeset the same formulas.
- */
 describe("buddy math as native apps must find it", () => {
   it("lists the formulas the web typesets in each answer", async () => {
     const cases = CASES.map((text) => ({

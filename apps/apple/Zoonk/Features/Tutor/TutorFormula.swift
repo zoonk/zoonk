@@ -1,18 +1,16 @@
 import Foundation
 
-/// A formula in a buddy answer, found as main's `TutorMarkdown` finds it (remark-math with single
-/// dollars off): only `$$…$$` is math, never inside code, and a `$$` fence on its own line opens a
-/// block. `TutorAnswerBlockTests` holds it to the cases remark-math writes.
+/// A port of how the web's `TutorMarkdown` finds math (remark-math, single dollars off): only
+/// `$$…$$`, never inside code. `TutorAnswerBlockTests` holds it to `tutor-math-native-fixtures.json`.
 struct TutorFormula: Equatable {
-  /// A block on its own lines, not a formula inside a paragraph.
   let display: Bool
   let latex: String
 
-  /// Around a formula's index where it was taken out.
-  static let open: Character = "\u{E000}"
-  static let close: Character = "\u{E001}"
+  static let placeholderStart: Character = "\u{E000}"
+  static let placeholderEnd: Character = "\u{E001}"
 
-  /// The answer with a placeholder where each formula was, so its LaTeX never reads as Markdown.
+  /// Formulas come out before Apple's Markdown parser runs, which would read their `_` and `*`
+  /// as emphasis.
   static func takeOut(_ markdown: String) -> (markdown: String, formulas: [TutorFormula]) {
     let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     var formulas: [TutorFormula] = []
@@ -56,10 +54,11 @@ struct TutorFormula: Equatable {
   }
 
   private static func placeholder(_ index: Int) -> String {
-    "\(open)\(index)\(close)"
+    "\(placeholderStart)\(index)\(placeholderEnd)"
   }
 
-  /// `$$…$$` closes on a run of as many dollars, within its paragraph, the way a code span closes.
+  /// remark-math closes `$$` like a code span: on a run of exactly as many dollars, before a blank
+  /// line ends the paragraph.
   private static func takeOutInline(_ text: String, into formulas: inout [TutorFormula]) -> String {
     let characters = Array(text)
     var output = ""
@@ -100,7 +99,6 @@ struct TutorFormula: Equatable {
     return output
   }
 
-  /// A blank line ends the paragraph, and with it any formula or code span left open.
   private static func closingRun(
     _ characters: [Character], of character: Character, length: Int, from start: Int
   ) -> Int? {
@@ -163,8 +161,7 @@ private struct Fence {
   }
 }
 
-/// remark-math's math flow: a fence of two or more dollars and nothing else but words without a
-/// dollar, its lines up to a fence at least as long, or to the end when none closes it.
+/// remark-math's math flow: its block runs to a fence at least as long, or to the end.
 private struct MathBlock {
   /// Inside a list item, the fence lines up with the item's text.
   let indent: String

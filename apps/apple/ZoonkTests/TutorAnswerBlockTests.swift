@@ -47,7 +47,7 @@ final class TutorAnswerBlockTests: XCTestCase {
     XCTAssertTrue(streaming.runs.allSatisfy { $0.link == nil })
   }
 
-  /// The web's own formulas: `tutor-math-native-fixtures.test.ts` writes them with remark-math.
+  /// Written by `tutor-math-native-fixtures.test.ts` from the web's remark-math setup.
   private struct Fixtures: Decodable {
     struct Case: Decodable {
       struct Formula: Decodable {

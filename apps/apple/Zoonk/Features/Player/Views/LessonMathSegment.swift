@@ -1,15 +1,13 @@
 import Foundation
 
-/// Main's `splitAtMath` (`@zoonk/utils/math-spans`), which every player and lesson check follows:
-/// a line of lesson text as its text and its formulas. `LessonMathSegmentTests` holds it to the
-/// cases main's finder writes.
+/// A port of `splitAtMath` in `packages/utils/src/math-spans.ts`, which the lesson checks and every
+/// player follow; `LessonMathSegmentTests` holds it to that file's fixture.
 struct LessonMathSegment: Equatable {
   enum Kind: String {
     case text, math, displayMath
   }
 
   let kind: Kind
-  /// A formula's LaTeX, or the line exactly as written between formulas.
   let text: String
 
   static func split(_ line: String) -> [LessonMathSegment] {
@@ -98,8 +96,8 @@ private struct MathSpan {
       content: String(text[(start + 1)..<close]), display: false, start: start, end: close + 1)
   }
 
-  /// Inline math never holds an unescaped `$`: the first one closes it only with text right before
-  /// it and no digit right after, so in "$5 and the gap is $10^{-5}$" the price stays text.
+  /// Inline math never holds an unescaped `$`: if the first one can't close it, the opener isn't
+  /// math, so in "$5 and the gap is $10^{-5}$" the price stays text.
   private static func inlineClose(_ text: [Character], from: Int) -> Int? {
     guard from < text.count, let index = text[from...].firstIndex(of: "$") else {
       return nil
@@ -124,7 +122,6 @@ private struct MathSpan {
     index > 0 && text[index - 1] == "\\"
   }
 
-  /// `R$ 80`, `US$5`.
   private static func isCurrencySign(_ text: [Character], _ index: Int) -> Bool {
     let before = index > 0 ? text[index - 1].unicodeScalars.first : nil
     let isAfterCapital = before?.properties.generalCategory == .uppercaseLetter
@@ -132,7 +129,6 @@ private struct MathSpan {
     return isAfterCapital && isDigit(text, priceStart)
   }
 
-  /// Outside the text counts as whitespace, as a line's edges do.
   private static func isWhitespace(_ text: [Character], _ index: Int) -> Bool {
     !text.indices.contains(index) || text[index].isWhitespace
   }
