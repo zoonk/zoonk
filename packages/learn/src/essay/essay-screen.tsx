@@ -27,19 +27,15 @@ import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./e
 import { RewriteGuide } from "./essay-rewrite-guide";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "./essay-status-line";
 import { EssayWordCount } from "./essay-word-count";
+import { subscribeToDeviceStorage } from "../_utils/device-storage";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
 import { useFinishEssay } from "./use-finish-essay";
 
 export type { EssayActions } from "./essay-context";
 
-function subscribeToStorage(onChange: () => void) {
-  globalThis.addEventListener("storage", onChange);
-  return () => globalThis.removeEventListener("storage", onChange);
-}
-
 function useKeptText(blockId: string): string | null {
   return useSyncExternalStore(
-    subscribeToStorage,
+    subscribeToDeviceStorage,
     () => readUnsentText(blockId),
     () => null,
   );

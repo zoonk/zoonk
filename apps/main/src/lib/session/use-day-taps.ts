@@ -32,6 +32,16 @@ function isFocusOnControl(): boolean {
   return active instanceof HTMLElement && active !== document.body;
 }
 
+function isUnderWay({
+  blocks,
+  step,
+}: {
+  blocks: TapDay["shown"]["day"]["blocks"];
+  step: TapStep;
+}): boolean {
+  return blocks.some((block) => block.position === step.position && block.status === "active");
+}
+
 type TapRequest = {
   next: boolean;
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
@@ -167,8 +177,10 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const answer = request({ next, step, stillHere });
 
       if (href) {
+        const onSessionScreen = origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`);
+
         // Within the session screen the step replaces the one shown; Back still leads to Today.
-        if (href !== origin && (origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`))) {
+        if (href !== origin && onSessionScreen) {
           router.replace(href);
         } else if (href !== origin) {
           router.push(href);
@@ -180,6 +192,9 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           here: stayingHere(shown.userId),
           href,
           next,
+          // A step tapped elsewhere opens to its screen and waits there for Start, so the learner
+          // reads what it is first; one already under way goes on.
+          startAsked: onSessionScreen || isUnderWay({ blocks: shown.day.blocks, step }),
           step,
           tappedAt: Date.now(),
         });

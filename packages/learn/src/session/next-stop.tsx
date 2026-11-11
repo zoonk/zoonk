@@ -26,6 +26,7 @@ import { useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
+import { ReviewIntro, noteReviewStart } from "./review-intro";
 import { useSessionAction } from "./use-session-action";
 
 export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
@@ -42,7 +43,8 @@ export type NextStopActions = {
 
 export type NextStopTap = {
   focus: boolean;
-  state: "failed" | "opening";
+  /** Held, a tap from another screen opened the step and waits for the learner's Start. */
+  state: "failed" | "held" | "opening";
   /** `Date.now()` of the tap. */
   tappedAt: number;
 };
@@ -115,7 +117,10 @@ function useStartState({
   const opening = tap?.state === "opening";
 
   const start = useSessionAction({
-    action: () => actions.start(block),
+    action: () => {
+      noteReviewStart(block);
+      return actions.start(block);
+    },
     enterKey: isReady && !opening,
   });
 
@@ -310,6 +315,8 @@ export function NextStop({
             {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
             <TaskMeta facts={facts} />
           </div>
+
+          <ReviewIntro block={block} />
 
           <StatusRegion className="text-sm text-pretty">
             {written && t("Your lesson is ready.")}

@@ -36,6 +36,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
     next: true,
     result: null,
     shown: false,
+    startAsked: true,
     step: {
       blockId: null,
       position: 0,
@@ -92,6 +93,18 @@ describe(findDayTap, () => {
     expect(findDayTap({ ...scope, day, entry: settled })?.tap.state).toBe("opening");
 
     expect(findDayTap({ ...scope, day, entry: { ...settled, applied: true } })?.tap.state).toBe(
+      "opening",
+    );
+  });
+
+  it("draws a step tapped on another screen at rest until the learner starts it there", () => {
+    const tapped = entry({ startAsked: false });
+    const settled = { ...tapped, result: { kind: "refresh" as const } };
+
+    expect(findDayTap({ ...scope, day, entry: tapped })?.tap.state).toBe("held");
+    expect(findDayTap({ ...scope, day, entry: settled })?.tap.state).toBe("held");
+
+    expect(findDayTap({ ...scope, day, entry: { ...settled, startAsked: true } })?.tap.state).toBe(
       "opening",
     );
   });

@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { type DayEntry } from "@/lib/session/day-entry";
+import { askDayEntryStart } from "@/lib/session/day-entry-registry";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
@@ -34,7 +35,14 @@ function HeldStep({ entry }: { entry: DayEntry }) {
       goalId={shown.goalId}
       actions={{
         refresh,
-        start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),
+        start: () => {
+          if (held.tap.state === "held") {
+            askDayEntryStart(entry.id);
+            return Promise.resolve(true);
+          }
+
+          return entry.next ? taps.next(entry.step) : taps.open(entry.step);
+        },
         stop: navigation.stop,
       }}
       alternative={null}
