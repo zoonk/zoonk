@@ -9,6 +9,7 @@ import {
   CircleXIcon,
   ClockIcon,
   EyeIcon,
+  FilePenLineIcon,
   PencilOffIcon,
   ShieldAlertIcon,
   XIcon,
@@ -85,11 +86,20 @@ function Grant({ email }: { email: string }) {
           })}
         </li>
         <li className="flex gap-3">
+          <FilePenLineIcon
+            aria-hidden="true"
+            className="text-muted-foreground mt-0.5 size-4 shrink-0"
+          />
+          {t(
+            "It can propose fixes to course content. Each one waits until a person approves it in Admin with a passkey.",
+          )}
+        </li>
+        <li className="flex gap-3">
           <PencilOffIcon
             aria-hidden="true"
             className="text-muted-foreground mt-0.5 size-4 shrink-0"
           />
-          {t("It can't change anything.")}
+          {t("It can't change anything by itself.")}
         </li>
         <li className="flex gap-3">
           <ClockIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
