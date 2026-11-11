@@ -447,8 +447,11 @@
   "onboarding_understanding_title": "82d2ec7ee65659994f0df07c4596ec58939145a8f559e008df5f6f3cf1b1188a",
   "onboarding_understood_description": "c95ed50831f3f2f786221223932d5ec46773d70b6cf6eb300cb2ee29fa273501",
   "onboarding_understood_description_shared": "8add3c711bf1633097f5869d819be71bf2d3e5002166f63d3d7f268cccee2706",
+  "onboarding_understood_free_account_title": "8b1dcbe157245128191b59ca63ec8fc023bcb2c4222263add92514742af833b4",
   "onboarding_understood_locked_goal": "9ae441754b582fd731363b0a05f12b2f5866da179c151930de6bf9d861112093",
+  "onboarding_understood_locked_goal_guest": "f50a2e7e3c82cbb504ade548c57dd069173446380f2ab98772864d689208b38e",
   "onboarding_understood_locked_goals": "501236edabc6bffbe0f2461c5da20c8e4851e00fc46f1519851c0932e167e864",
+  "onboarding_understood_locked_goals_guest": "d9349f31ab8389cea9ca9f9753d754400485d5990f356e240ab7ee4bd4b2111c",
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
@@ -1091,4 +1094,10 @@
     </plurals>
     <string name="onboarding_reason_choices">学ぶ理由</string>
     <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">無料アカウントで利用できます</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
 </resources>

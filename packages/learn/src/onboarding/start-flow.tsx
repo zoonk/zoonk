@@ -319,6 +319,7 @@ function GoalStartFlow({
             draft={state.draft}
             draftActions={draftActions}
             goalLimit={goalLimit}
+            hasAccount={canAttach}
             intent={intent}
             onBack={() => backToEntry(state.draft.prompt)}
             onRewrite={(goal) => void submission.send(goal)}

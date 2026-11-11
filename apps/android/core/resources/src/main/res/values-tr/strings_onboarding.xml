@@ -447,8 +447,11 @@
   "onboarding_understanding_title": "7a443eac87fdb4132426e7789491dacc00626511aa968361860e9a62d6e9e5ce",
   "onboarding_understood_description": "1e46c5f0c3159604f95781af70b30a52f70d65b8386f913c492e2d1289ea0a5b",
   "onboarding_understood_description_shared": "8e97611806e8c6d2c317f08aecf89e60d53051599370296eb5271647144be2cb",
+  "onboarding_understood_free_account_title": "e0ab2d5c12edac67285472e8e8cce2ecea65ae42dca14d583b445a6d32469e04",
   "onboarding_understood_locked_goal": "abca02ea3d009315161e77db9ca0ce77ada4682fa316c0d2fb50c469ed45c19a",
+  "onboarding_understood_locked_goal_guest": "3b36152367d4c08b4876e9cb6acff729c19676d20f11467321543bb5eea81e62",
   "onboarding_understood_locked_goals": "3c5c8d219a142ee5079282f6bbb3dcfe95f91588dabe413d0f32288f8730816d",
+  "onboarding_understood_locked_goals_guest": "d4db9411b5cf7bcd12fbf4008db61a4a0c84a3a6d6c659029e2a1144e8f555c9",
   "onboarding_understood_title": "90a292c49ee6b99ee0b658bdc5f500482ffc010b49f74fce10f835af49a790f1",
   "onboarding_upload_file": "2bc2c500d0c0ccac3b411d6192fa6225dc7f0c4eba31b0fbd7b713b2f73bb6ea",
   "onboarding_use_this_date": "9b759ece8f7f4875dca78eb1211091a6b26911e6478af7d06ad65d7532f612ad",
@@ -1116,4 +1119,10 @@
     </plurals>
     <string name="onboarding_reason_choices">Bu dili öğrenme nedenin</string>
     <string name="onboarding_aim_description">Kursunun hedef seviyesi, planının süresini belirler.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Ücretsiz hesapla kullanılabilir</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedef şimdilik hedef listende bekliyor.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedefler şimdilik hedef listende bekliyor.</string>
 </resources>

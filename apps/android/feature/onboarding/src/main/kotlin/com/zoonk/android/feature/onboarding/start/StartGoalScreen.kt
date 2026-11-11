@@ -192,7 +192,7 @@ fun StartGoalScreen(
                     }
 
                     screen is StartScreen.Draft -> {
-                        Draft(vm, store, screen.id, hasSession, upFront, language, actions)
+                        Draft(vm, store, screen.id, hasSession, canAttach, upFront, language, actions)
                     }
                 }
             }
@@ -314,6 +314,7 @@ private fun ColumnScope.Draft(
     store: OnboardingStore,
     id: String,
     hasSession: Boolean,
+    hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
@@ -323,7 +324,7 @@ private fun ColumnScope.Draft(
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            DraftContent(vm, shown.value, upFront, language, actions)
+            DraftContent(vm, shown.value, hasAccount, upFront, language, actions)
         }
 
         is LoadState.Failed -> {
@@ -357,6 +358,7 @@ private fun ColumnScope.Draft(
 private fun ColumnScope.DraftContent(
     vm: StartGoalViewModel,
     draft: OnboardingDraft,
+    hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
@@ -451,6 +453,7 @@ private fun ColumnScope.DraftContent(
                 activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
+                hasAccount = hasAccount,
                 isCreating = vm.isCreating,
                 error = vm.creationError,
                 goalLimit = upFront,

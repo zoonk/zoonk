@@ -10737,6 +10737,24 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Źródło: {source}"
 
+#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "Hs12te"
+msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów.} other {W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów.}}"
+
+#. Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "INXjEw"
+msgid "Available with a free account"
+msgstr "Dostępne z bezpłatnym kontem"
+
+#. Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "uRiE4s"
+msgid "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów.} other {Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów.}}"
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10751,12 +10769,6 @@ msgstr "Twój dzienny czas nauki jest podzielony między te cele. Wszystko może
 msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "Wszystko możesz później zmienić."
-
-#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "Hs12te"
-msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów.} other {W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"

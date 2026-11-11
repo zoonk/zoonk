@@ -447,8 +447,11 @@
   "onboarding_understanding_title": "db578fe0851a0541051a1c52ac672801a7edd551371effd7d157c64cf02008af",
   "onboarding_understood_description": "e3ab4e927c51b117f87f80ad0e9dc32544cfd0f33164d45a57f817ef74ff7dc9",
   "onboarding_understood_description_shared": "d0f1c4c994912cd0d3850837d12faa831387cc2f55a27a10d8765c7158825399",
+  "onboarding_understood_free_account_title": "64e63798ecb9876885bbcdab30ed4928f9f306b234083804194702cb4652d0d2",
   "onboarding_understood_locked_goal": "9ae4a767f9df1be541a7e0514e8642eb65a27a40bae073d3f3d0ddc2eb27914b",
+  "onboarding_understood_locked_goal_guest": "68561f68e9a2d484a9324575914bb46b955f0ea7c34de5c816655777711649a8",
   "onboarding_understood_locked_goals": "c56bbf9147b4f9908b5a987bcc9988831681c0c62b5a6fc55c2ebbc230e62706",
+  "onboarding_understood_locked_goals_guest": "bb48106b5e0e1fd9f31f740137250861b75bd84044dd381aa9f7d24e54f793aa",
   "onboarding_understood_title": "9362ba7355e7f60229b8b2e47d250ab335a6b00cc833c1ba93e62f257c6a3b97",
   "onboarding_upload_file": "e6c7609943a0fa9aead409bb4deecc6f6e34fcf0fd17d8192cd291d6d16afda6",
   "onboarding_use_this_date": "bf9e4939558bc15e0c02136a5bd33b06ab8bf369f5ad3b06a96c3f8c3bae317a",
@@ -1141,4 +1144,10 @@
     </plurals>
     <string name="onboarding_reason_choices">Por que você está aprendendo esse idioma</string>
     <string name="onboarding_aim_description">Até onde seu curso vai, o que define a duração do seu plano.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Disponível com uma conta grátis</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos.</string>
 </resources>

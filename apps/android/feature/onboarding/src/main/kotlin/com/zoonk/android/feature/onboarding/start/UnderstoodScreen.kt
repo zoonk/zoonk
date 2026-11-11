@@ -83,6 +83,7 @@ internal fun ColumnScope.UnderstoodScreen(
     activeGoalsLeft: Long?,
     timeZone: String,
     material: List<String>,
+    hasAccount: Boolean,
     isCreating: Boolean,
     error: GoalError?,
     goalLimit: GoalLimitReason?,
@@ -151,7 +152,8 @@ internal fun ColumnScope.UnderstoodScreen(
     }
 
     if (locked.isNotEmpty()) {
-        LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), onSeePlus.takeIf { plusLimit == null })
+        val remedy = (if (hasAccount) onSeePlus else onCreateAccount).takeIf { plusLimit == null && error?.needsAccount != true }
+        LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), hasAccount, remedy)
     }
 
     if (plusLimit != null) {
@@ -176,7 +178,8 @@ internal fun ColumnScope.UnderstoodScreen(
 
 /**
  * Read as the card read them, with no fixes: they start later from the goal switcher, as they are. They wait in the
- * learner's goals only when a goal on the card starts ([waiting]); otherwise the plan's limit below explains them.
+ * learner's goals only when a goal on the card starts ([waiting]); otherwise the plan's limit below explains them. A
+ * guest's next step is a free account, which follows more goals at once; an account's is Plus.
  */
 @Composable
 private fun LockedGoals(
@@ -184,7 +187,8 @@ private fun LockedGoals(
     rows: UnderstoodRows,
     timeZone: String,
     waiting: Boolean,
-    onSeePlus: (() -> Unit)?,
+    hasAccount: Boolean,
+    onRemedy: (() -> Unit)?,
 ) {
     goals.forEach { goal ->
         Column {
@@ -204,13 +208,27 @@ private fun LockedGoals(
         }
     }
     if (!waiting) return
-    PlusNotice(
-        onSeePlus = onSeePlus,
-        description =
-            stringResource(
-                if (goals.size == 1) R.string.onboarding_understood_locked_goal else R.string.onboarding_understood_locked_goals,
-            ),
-    )
+    val one = goals.size == 1
+    if (hasAccount) {
+        PlusNotice(
+            onSeePlus = onRemedy,
+            description =
+                stringResource(if (one) R.string.onboarding_understood_locked_goal else R.string.onboarding_understood_locked_goals),
+        )
+    } else {
+        PlusNotice(
+            onSeePlus = null,
+            title = stringResource(R.string.onboarding_understood_free_account_title),
+            description =
+                stringResource(
+                    if (one) R.string.onboarding_understood_locked_goal_guest else R.string.onboarding_understood_locked_goals_guest,
+                ),
+            action =
+                onRemedy?.let { createAccount ->
+                    { OutlinedButton(onClick = createAccount) { Text(stringResource(R.string.onboarding_create_account)) } }
+                },
+        )
+    }
 }
 
 @Composable

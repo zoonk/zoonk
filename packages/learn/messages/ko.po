@@ -10737,6 +10737,24 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "출처: {source}"
 
+#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "Hs12te"
+msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, other {더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.}}"
+
+#. Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "INXjEw"
+msgid "Available with a free account"
+msgstr "무료 계정으로 이용 가능"
+
+#. Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "uRiE4s"
+msgid "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, other {더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.}}"
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10751,12 +10769,6 @@ msgstr "하루 학습 시간을 여러 목표에 나눠 써요. 나중에 모두
 msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "나중에 모두 바꿀 수 있어요."
-
-#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "Hs12te"
-msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, other {더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"

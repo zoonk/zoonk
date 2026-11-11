@@ -447,8 +447,11 @@
   "onboarding_understanding_title": "d7adb4154f726d5ea3eecfe0d535013d68664bc1b2002b89ccad3341dcd95a1f",
   "onboarding_understood_description": "9bdcdabbd16a8d775575dcbfd53c628c0ba0faa18748d75807e6591ae6445ff3",
   "onboarding_understood_description_shared": "76dc4b611d51f473e8ceb24927f202702a9ac68fcd99a32b4afaa5a98892d8d9",
+  "onboarding_understood_free_account_title": "947e52702fabcc631d6f9aa53404414a37b947742df300297ac468ea95e3e193",
   "onboarding_understood_locked_goal": "3c8c344b80501c09aa944009b29b376b9e219d1c69d2d8123f4e0d5cc8a1a4a1",
+  "onboarding_understood_locked_goal_guest": "da84cc95a34a1bd2465192722d1d2cd82764a9e171444db335c69348e3bb218f",
   "onboarding_understood_locked_goals": "0eb0e59cdd6f444244e71768a9d15ffbe23fef4fd19ff1f14a17c0fd484f8037",
+  "onboarding_understood_locked_goals_guest": "441658fb75b9d58f9f53735d32b529d529ed2179a4672cfde72c11d617a0fec1",
   "onboarding_understood_title": "afbb4bea56134a1a5a91c824c1591b15daf073956170fd3cf80ba8b2f0fce60f",
   "onboarding_upload_file": "d2d52367d480fbb119d1abcd9e2199c560bd75085940a316d3fa597eca0eaf09",
   "onboarding_use_this_date": "e594cc95859d175246e34b9dc7436892c9410b9e862acdd8262b77ff0373414e",
@@ -1091,4 +1094,10 @@
     </plurals>
     <string name="onboarding_reason_choices">배우는 이유</string>
     <string name="onboarding_aim_description">코스에서 어디까지 배울지에 따라 계획 기간이 정해져요.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">무료 계정으로 이용 가능</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.</string>
 </resources>

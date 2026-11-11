@@ -5197,6 +5197,65 @@
         }
       }
     },
+    "Available with a free account" : {
+      "comment" : "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit kostenlosem Konto verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible con una cuenta gratis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible avec un compte gratuit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponibile con un account gratuito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無料アカウントで利用できます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무료 계정으로 이용 가능"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostępne z bezpłatnym kontem"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponível com uma conta grátis"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ücretsiz hesapla kullanılabilir"
+          }
+        }
+      }
+    },
     "Back" : {
       "comment" : "Goes back to the previous question",
       "localizations" : {
@@ -10584,6 +10643,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Düzeltme yap"
+          }
+        }
+      }
+    },
+    "Following more goals at once comes with a free account. Until then, these goals wait in your goals." : {
+      "comment" : "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, estos objetivos esperan en tu lista de objetivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec un compte gratuit, tu peux suivre plus d’objectifs en même temps. D’ici là, ces objectifs restent en attente dans ta liste d’objectifs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per seguire più obiettivi alla volta serve un account gratuito. Nel frattempo, questi obiettivi restano in attesa nel tuo elenco di obiettivi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedefler şimdilik hedef listende bekliyor."
+          }
+        }
+      }
+    },
+    "Following more goals at once comes with a free account. Until then, this goal waits in your goals." : {
+      "comment" : "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, este objetivo espera en tu lista de objetivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec un compte gratuit, tu peux suivre plus d’objectifs en même temps. D’ici là, cet objectif reste en attente dans ta liste d’objectifs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per seguire più obiettivi alla volta serve un account gratuito. Nel frattempo, questo obiettivo resta in attesa nel tuo elenco di obiettivi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedef şimdilik hedef listende bekliyor."
           }
         }
       }

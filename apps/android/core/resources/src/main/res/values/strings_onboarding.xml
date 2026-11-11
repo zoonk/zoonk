@@ -71,6 +71,12 @@
     <string name="onboarding_understood_locked_goal">Following more goals at once comes with Plus. Until then, this goal waits in your goals.</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Following more goals at once comes with Plus. Until then, these goals wait in your goals.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Available with a free account</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Following more goals at once comes with a free account. Until then, this goal waits in your goals.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Following more goals at once comes with a free account. Until then, these goals wait in your goals.</string>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_fix_something">Fix something</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->

@@ -26,7 +26,7 @@ struct PlusMark: View {
 /// - `title` replaces "Available with Plus" where something the free plan had ends (a free exam
 ///   plan's first week).
 /// - `showsSeePlus: false` drops the button where the screen's main action already is
-///   `SeePlusButton`.
+///   `SeePlusButton`, or where `action` is the only way forward (a guest's free account).
 /// - `isInset` drops the panel inside a card that already has one (a tutor's offer).
 /// - `seePlus` replaces opening Plus where the screen must close first (a full-screen moment).
 /// - `action` is the free way, after "See Plus" (a goal past the free plan's active goals: their Plan).
@@ -70,9 +70,11 @@ struct PlusNotice<Action: View>: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        if showsSeePlus {
+        if showsSeePlus || Action.self != EmptyView.self {
           HStack {
-            SeePlusButton(action: seePlus)
+            if showsSeePlus {
+              SeePlusButton(action: seePlus)
+            }
             action
           }
           .buttonStyle(.outline)

@@ -81,6 +81,7 @@ function ReadDraft({
   draft,
   draftActions,
   goalLimit,
+  hasAccount,
   intent,
   onBack,
   onRewrite,
@@ -93,6 +94,7 @@ function ReadDraft({
   draft: OnboardingDraftView;
   draftActions: DraftActions;
   goalLimit: GoalLimitReason | null;
+  hasAccount: boolean;
   intent: MaterialIntent | null;
   onBack: () => void;
   onRewrite: (words: string) => void;
@@ -113,6 +115,7 @@ function ReadDraft({
           error={creation.error}
           goal={draft.prompt}
           goalLimit={goalLimit}
+          hasAccount={hasAccount}
           isCreating={creation.isCreating}
           material={attached}
           onConfirm={() =>
@@ -174,6 +177,7 @@ export function DraftScreen({
   draft: OnboardingDraftView;
   draftActions: DraftActions;
   goalLimit: GoalLimitReason | null;
+  hasAccount: boolean;
   intent: MaterialIntent | null;
   onBack: () => void;
   onRewrite: (words: string) => void;
