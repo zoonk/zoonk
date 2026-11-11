@@ -1,5 +1,4 @@
 import AVFoundation
-import Charts
 import Combine
 import SwiftUI
 
@@ -162,38 +161,7 @@ struct PracticeVisualView: View {
   var body: some View {
     switch visual {
     case .chart(let chart):
-      VStack(alignment: .leading, spacing: 8) {
-        Text(chart.title).typeStyle(.body.weight(.semibold))
-
-        Chart {
-          ForEach(chart.series, id: \.name) { series in
-            ForEach(Array(zip(chart.categories, series.values)), id: \.0) { category, value in
-              if chart.chart == .bar {
-                BarMark(
-                  x: .value(chart.categoryLabel, category), y: .value(chart.valueLabel, value)
-                )
-                .foregroundStyle(by: .value(verbatim: "Series", series.name))
-                .position(by: .value(verbatim: "Series", series.name))
-              } else {
-                LineMark(
-                  x: .value(chart.categoryLabel, category), y: .value(chart.valueLabel, value)
-                )
-                .foregroundStyle(by: .value(verbatim: "Series", series.name))
-                .symbol(by: .value(verbatim: "Series", series.name))
-              }
-            }
-          }
-        }
-        .chartLegend(chart.series.count > 1 ? .visible : .hidden)
-        .lessonValueAxis()
-        .chartYAxisLabel(chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel)
-        .chartXAxisLabel(chart.categoryLabel)
-        .frame(minHeight: 200)
-
-        if let source = chart.source {
-          Text(source).typeStyle(.meta).foregroundStyle(.mutedForeground)
-        }
-      }
+      LessonChartView(chart: chart)
     case .timeline(let timeline):
       VStack(alignment: .leading, spacing: 8) {
         Text(timeline.title).typeStyle(.body.weight(.semibold))

@@ -140,7 +140,7 @@ struct PracticeImage: Hashable, Sendable, Decodable {
 }
 
 enum PracticeVisual: Hashable, Sendable, Decodable {
-  case chart(PracticeChart)
+  case chart(LessonChart)
   case timeline(PracticeTimeline)
 
   private enum CodingKeys: String, CodingKey { case kind }
@@ -149,27 +149,8 @@ enum PracticeVisual: Hashable, Sendable, Decodable {
     let kind = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .kind)
     self =
       kind == "timeline"
-      ? .timeline(try PracticeTimeline(from: decoder)) : .chart(try PracticeChart(from: decoder))
+      ? .timeline(try PracticeTimeline(from: decoder)) : .chart(try LessonChart(from: decoder))
   }
-}
-
-struct PracticeChart: Hashable, Sendable, Decodable {
-  enum Kind: String, Decodable, Sendable { case bar, line }
-
-  struct Series: Hashable, Sendable, Decodable {
-    let name: String
-    let values: [Double]
-  }
-
-  let axisStart: Double?
-  let categories: [String]
-  let categoryLabel: String
-  let chart: Kind
-  let series: [Series]
-  let source: String?
-  let title: String
-  let unit: String?
-  let valueLabel: String
 }
 
 struct PracticeTimeline: Hashable, Sendable, Decodable {
