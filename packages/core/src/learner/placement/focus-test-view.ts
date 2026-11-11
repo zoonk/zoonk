@@ -92,6 +92,8 @@ export function listFocusRows({
 }
 
 export type FocusPlan = {
+  /** The plan already gives the suggested subjects their time, so a focus on them changes nothing. */
+  covered: boolean;
   focusAreas: readonly string[];
   /** The test's waiting proposal on this plan. */
   proposal: PlanChangeView | null;
@@ -120,7 +122,7 @@ function getFocusState({
     return "proposed";
   }
 
-  return isSameFocus(plan.focusAreas, suggested) ? "current" : "handPicked";
+  return plan.covered || isSameFocus(plan.focusAreas, suggested) ? "current" : "handPicked";
 }
 
 function toFocus({ plan, rows }: { plan: FocusPlan; rows: FocusRow[] }): FocusTestFocus | null {

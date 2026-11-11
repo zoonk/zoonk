@@ -187,3 +187,27 @@ export async function saveTestSummary({
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
 }
+
+/** Notes the suggestion the test settled with the plan, so it isn't settled again. */
+export async function keepHandledSuggestion({
+  areas,
+  goalId,
+  inPlan,
+  userId,
+}: {
+  areas: string[];
+  goalId: string;
+  /** The plan already follows it: a focus on it changes nothing. */
+  inPlan: boolean;
+  userId: string;
+}): Promise<void> {
+  await writeLearnerChange({ userId }, async (tx) => {
+    await changeFocusTestRecord({
+      change: (record) => ({ ...record, handled: { areas, inPlan } }),
+      goalId,
+      tx,
+    });
+  });
+
+  revalidateCacheTags([getGoalsCacheTag(userId)]);
+}

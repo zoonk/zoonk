@@ -1,10 +1,9 @@
 import "server-only";
-import { after } from "next/server";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSessionMemoryFollowUps } from "../memory/memory-follow-ups";
-import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
+import { proposeAfterSession } from "./_utils/after-session-plan";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -88,7 +87,7 @@ export async function stopStudySession({
     const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
     if (refreshed) {
-      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
+      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, userId });
     }
   }
 

@@ -1,16 +1,15 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { after } from "next/server";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
-import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
+import { proposeAfterSession } from "./after-session-plan";
 import { measureSessionState } from "./capture-snapshot";
 import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
@@ -175,7 +174,7 @@ async function completeIfFinished({
     const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
     if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
-      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
+      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, userId });
     }
   }
 

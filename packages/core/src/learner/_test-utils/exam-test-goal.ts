@@ -1,14 +1,21 @@
-import { type Item, type Skill } from "@zoonk/db";
+import { type Item, type Skill, prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mockSession } from "../../_test-utils/mock-session";
+import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../../plans/create-goal-plan";
+import { runPlanSetupTask } from "../../plans/plan-setup";
 import { type answerPlacementQuestion } from "../placement/answer-placement-question";
 import { getGoalPlacement } from "../placement/get-goal-placement";
 import { startPlacementSitting } from "../placement/start-placement-sitting";
 
 const CITATION = { passage: "passage", sourceId: "source" };
+
+/** Far enough from the exam that a focus still moves the plan. */
+const SHORT_PLAN_DAYS = 30;
 
 type TestSubject = {
   /** Questions ready per topic; 2 unless given. */
@@ -182,4 +189,93 @@ export async function startSitting(goalId: string): Promise<TestPlacement> {
   }
 
   return result.placement;
+}
+
+const SHORT_PLAN_SUBJECTS = [
+  "Direito",
+  "Português",
+  "Informática",
+  "Raciocínio",
+  "Atualidades",
+  "Ética",
+];
+
+/**
+ * An exam goal with a plan the planner laid out whose time doesn't cover everything by its date:
+ * six subjects that weigh the same, each with ready questions. Pass `PLAN_SHOWN` as `goal` for
+ * one past its setup; it is at the Focus test's step of onboarding otherwise.
+ */
+export async function shortPlanExamGoalFixture({
+  daysLeft = SHORT_PLAN_DAYS,
+  goal: goalAttrs = {},
+}: { daysLeft?: number; goal?: Partial<Omit<GoalAttrs, "userId">> } = {}) {
+  const subjects = SHORT_PLAN_SUBJECTS.map((name) => ({ name, questions: 5 }));
+
+  const [user, blueprint, library] = await Promise.all([
+    userFixture(),
+    examBlueprintFixture({
+      name: "Concurso",
+      structure: {
+        formats: [
+          {
+            citation: CITATION,
+            description: "Múltipla escolha",
+            kind: "multipleChoice",
+            options: null,
+          },
+        ],
+        mock: null,
+        pastQuestions: {
+          checkedAt: new Date().toISOString(),
+          edition: null,
+          source: { title: null, url: "https://example.com/exam" },
+          subjects,
+        },
+        rules: [],
+        subjects: subjects.map(({ name }) => ({
+          citation: CITATION,
+          name,
+          questions: null,
+          topics: [],
+          weight: null,
+        })),
+      },
+    }),
+    planLibraryFixture({
+      phases: ["Prova"],
+      skills: SHORT_PLAN_SUBJECTS.map((area) => ({ area, lessons: 8 })),
+    }),
+  ]);
+
+  const { goal } = await unplannedGoalFixture({
+    dailyMinutes: 5,
+    details: { answered: AT_THE_TEST },
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    planRevealedAt: null,
+    targetDate: new Date(Date.now() + daysLeft * MS_PER_DAY),
+    ...goalAttrs,
+    userId: user.id,
+  });
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+  const [placed] = await Promise.all([
+    prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
+    ...library.skills.flatMap((skill) =>
+      [0, 1].map(() =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          skillId: skill.id,
+        }),
+      ),
+    ),
+  ]);
+
+  // As the run that built the plan does: its row is read only once this ran.
+  await runPlanSetupTask({ goalId: goal.id, task: "placement" });
+
+  mockSession(user.id);
+  return { goal, plan: placed, user };
 }

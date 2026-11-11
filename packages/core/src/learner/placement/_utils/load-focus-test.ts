@@ -3,7 +3,6 @@ import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlanChangeView } from "../../../plans/_utils/owned-plan";
-import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { getAnsweredQuestions } from "../../../view-models/onboarding/onboarding-steps";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
@@ -32,12 +31,6 @@ type FocusFacts = FocusPlan & {
   due: string[] | null;
 };
 
-function readProposedAreas(payload: unknown): string[] {
-  return parsePlanChangePayload(payload).operations.flatMap((operation) =>
-    operation.kind === "focusAreas" ? operation.areas : [],
-  );
-}
-
 /** Before the daily time is saved, saving it sets the focus; from then on the test proposes. */
 function isTimeSaved(goal: TestSetup["goal"]): boolean {
   const details = isJsonObject(goal.details) ? goal.details : {};
@@ -46,8 +39,8 @@ function isTimeSaved(goal: TestSetup["goal"]): boolean {
 
 /**
  * The test proposes once the daily time is saved and doesn't cover everything, only while the
- * plan's focus is none or the one the test put there, and never the focus it proposed last, which
- * the learner already answered.
+ * plan's focus is none or the one the test put there, and never a suggestion it already settled:
+ * one the learner answered, or one the plan already follows.
  */
 async function loadFocusFacts({
   asks,
@@ -66,24 +59,32 @@ async function loadFocusFacts({
   const timeShort = coveredShare !== null && coveredShare < 1;
   const proposes = asks && timeSaved && timeShort;
 
-  const last = proposes
+  const { focus = null, handled = null } = setup.record ?? {};
+  const settled = handled !== null && isSameFocus(handled.areas, suggested);
+
+  const waiting = proposes
     ? await tx.planChange.findFirst({
         orderBy: { createdAt: "desc" },
-        select: { id: true, payload: true, status: true },
-        where: { payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] }, planId: id },
+        select: { id: true },
+        where: {
+          payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] },
+          planId: id,
+          status: "proposed",
+        },
       })
     : null;
 
   const due =
     proposes &&
+    !settled &&
     !isSameFocus(focusAreas, suggested) &&
-    isSameFocus(focusAreas, setup.record?.focus ?? []) &&
-    !(last && isSameFocus(readProposedAreas(last.payload), suggested));
+    isSameFocus(focusAreas, focus ?? []);
 
   return {
+    covered: settled && handled.inPlan,
     due: due ? suggested : null,
     focusAreas,
-    proposal: last?.status === "proposed" ? await loadPlanChangeView(last.id) : null,
+    proposal: waiting ? await loadPlanChangeView(waiting.id) : null,
     timeSaved,
     timeShort,
   };

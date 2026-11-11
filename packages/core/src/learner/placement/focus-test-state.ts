@@ -41,6 +41,15 @@ const recordSchema = z.object({
    * applied. A plan whose focus is anything else has the learner's own choice.
    */
   focus: z.array(z.string()).nullable().default(null),
+  /**
+   * The suggestion the test last settled with a plan whose time is short: proposed to the
+   * learner, or found already in the plan as it is (`inPlan`), which a focus on it wouldn't move.
+   * The same suggestion isn't settled twice.
+   */
+  handled: z
+    .object({ areas: z.array(z.string()), inPlan: z.boolean() })
+    .nullable()
+    .default(null),
   pausedAt: z.iso.datetime().nullable().default(null),
   sitting: sittingSchema.nullable().default(null),
   skippedOn: z.iso.date().nullable().default(null),

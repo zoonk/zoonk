@@ -12,7 +12,7 @@ import {
   loadPlacementState,
   loadPlacementWithSummary,
 } from "./load-placement-state";
-import { saveTestSummary } from "./test-sitting";
+import { keepHandledSuggestion, saveTestSummary } from "./test-sitting";
 
 /**
  * A new plan's first summary, so the plan's row, its reveal and Today can offer the test before
@@ -68,13 +68,20 @@ export async function settleFocusTest({
     return state;
   }
 
-  await proposePlanChange({
+  const areas = focusTest.dueFocus;
+
+  const proposed = await proposePlanChange({
     approval: "always",
     goalId,
-    operations: [{ areas: focusTest.dueFocus, kind: "focusAreas" }],
+    operations: [{ areas, kind: "focusAreas" }],
     reason: "",
     source: FOCUS_TEST_SOURCE,
   });
+
+  // A focus that wouldn't move the plan is already in it; anything else is tried again later.
+  if (proposed.status === "proposed" || proposed.status === "unchanged") {
+    await keepHandledSuggestion({ areas, goalId, inPlan: proposed.status === "unchanged", userId });
+  }
 
   return loadPlacementState({ goalId, plan, today, userId });
 }
