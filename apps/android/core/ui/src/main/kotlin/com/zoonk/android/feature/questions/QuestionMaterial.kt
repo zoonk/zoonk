@@ -1,5 +1,8 @@
 package com.zoonk.android.feature.questions
 
+import androidx.compose.ui.text.buildAnnotatedString
+import com.zoonk.android.ui.format.spaceAfterSentence
+import com.zoonk.android.ui.components.statusLink
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,14 +43,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.IconNote
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SourcesChip
-import com.zoonk.android.ui.components.TextButton
 import java.time.Instant
 
 /** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
@@ -162,12 +163,11 @@ fun SetPlace(
 
 /** "Not today" on a session's Focus test question: today's test questions go, and another day asks them. */
 class NotToday(
-    val busy: Boolean,
     val failed: Boolean,
     val onSkip: () -> Unit,
 )
 
-/** Over a placement question, so a miss feels safe; a session's test question can be put off with [notToday]. */
+/** Over a placement question, so a miss feels safe; a session's test question can be put off with [notToday], which ends the note's sentence. */
 @Composable
 fun PlacementNote(
     modifier: Modifier = Modifier,
@@ -179,18 +179,16 @@ fun PlacementNote(
         return
     }
 
-    Column(modifier) {
-        FlowRow(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconNote(R.drawable.ic_explore, note, Modifier.padding(end = 12.dp))
-            TextButton(onClick = notToday.onSkip, busy = notToday.busy, size = ButtonSize.Small) {
-                Text(stringResource(R.string.focustest_not_today))
-            }
-        }
-        if (notToday.failed && !notToday.busy) {
+    val skip = statusLink(stringResource(R.string.focustest_not_today), notToday.onSkip)
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        IconNote(
+            R.drawable.ic_explore,
+            buildAnnotatedString {
+                append(note + spaceAfterSentence(note))
+                append(skip)
+            },
+        )
+        if (notToday.failed) {
             Text(
                 stringResource(R.string.focustest_not_today_failed),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

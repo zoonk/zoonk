@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.ui.text.AnnotatedString
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -113,6 +114,14 @@ fun materialCitationLabel(
 fun IconNote(
     @DrawableRes icon: Int,
     text: String,
+    modifier: Modifier = Modifier,
+) = IconNote(icon, AnnotatedString(text), modifier)
+
+/** The same note with a link in its words, such as an action that ends its sentence. */
+@Composable
+fun IconNote(
+    @DrawableRes icon: Int,
+    text: AnnotatedString,
     modifier: Modifier = Modifier,
 ) {
     val style = MaterialTheme.typography.labelMedium

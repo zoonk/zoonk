@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.focustest
 
-import com.zoonk.android.feature.questions.PlacementNote
-import com.zoonk.android.feature.questions.NotToday
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
@@ -33,10 +31,10 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.focusCheckpointOf
 import com.zoonk.android.feature.onboarding.focusOf
@@ -46,6 +44,8 @@ import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.questions.NotToday
+import com.zoonk.android.feature.questions.PlacementNote
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
@@ -141,8 +141,8 @@ class FocusTestScreenshots {
             ZoonkTheme {
                 Surface {
                     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(48.dp)) {
-                        PlacementNote(notToday = NotToday(busy = false, failed = false) {})
-                        PlacementNote(notToday = NotToday(busy = false, failed = true) {})
+                        PlacementNote(notToday = NotToday(failed = false) {})
+                        PlacementNote(notToday = NotToday(failed = true) {})
                         PlacementNote()
                     }
                 }

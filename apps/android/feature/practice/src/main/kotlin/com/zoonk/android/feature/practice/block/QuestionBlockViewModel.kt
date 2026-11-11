@@ -189,10 +189,10 @@ class QuestionBlockViewModel(
 
     /** Only an exam's placement questions are its Focus test's, which "Not today" can skip. */
     private var examGoal by mutableStateOf<UUID?>(null)
-    private var skipping by mutableStateOf(false)
+    private var skipping = false
     private var skipFailed by mutableStateOf(false)
 
-    override val notToday get() = examGoal?.let { NotToday(skipping, skipFailed) { skipTestQuestions(it) } }
+    override val notToday get() = examGoal?.let { NotToday(skipFailed) { skipTestQuestions(it) } }
 
     /** Today's test questions leave the session; the block read again goes on without them, or closes once it has none. */
     private fun skipTestQuestions(goalId: UUID) {
