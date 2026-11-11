@@ -2,6 +2,7 @@ import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPageLanguage } from "@/i18n/page-language";
 import { switchLanguage } from "@/i18n/switch-language";
+import { getGoalFocusTestHref } from "@/lib/focus-test/focus-test-href";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
@@ -96,7 +97,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
 
 const WEB_ONBOARDING_ROUTES = {
   course: getCourseHref,
-  focusTest: (goalId) => `/focus-test?goal=${goalId}`,
+  focusTest: getGoalFocusTestHref,
   lesson: (lessonId) => `/learn/${lessonId}`,
   planLink: (planId) => `/plan-link/${planId}`,
   today: "/today",

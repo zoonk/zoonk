@@ -1,8 +1,10 @@
 import { LearnNoGoal } from "@/app/[lang]/(app)/(learn)/_components/learn-no-goal";
 import { redirect } from "@/i18n/navigation";
+import { FOCUS_TEST_GOAL_PARAM } from "@/lib/focus-test/focus-test-href";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { OnboardingPage } from "@zoonk/learn/onboarding/frame";
+import { getGoalSubject } from "@zoonk/learn/onboarding/goal-subject";
 import { FocusTestSkeleton } from "@zoonk/learn/onboarding/skeletons";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -10,8 +12,6 @@ import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { FocusTestClient } from "./focus-test-client";
-
-const GOAL_PARAM = "goal";
 
 type Props = PageProps<"/[lang]/focus-test">;
 
@@ -31,14 +31,9 @@ function findGoal({
   return goals.find((goal) => (named ? goal.id === named : goal.isActive)) ?? null;
 }
 
-function getSubject(goal: GoalView): string {
-  const subject = goal.details.subject;
-  return typeof subject === "string" && subject.trim() ? subject : goal.displayName;
-}
-
 async function FocusTestContent({ searchParams }: Props) {
   const [locale, query, list] = await Promise.all([lang(), searchParams, listCurrentUserGoals()]);
-  const param = query[GOAL_PARAM];
+  const param = query[FOCUS_TEST_GOAL_PARAM];
   const named = typeof param === "string" && isUuid(param) ? param : null;
   const goal = findGoal({ goals: list?.goals ?? [], named });
 
@@ -65,7 +60,7 @@ async function FocusTestContent({ searchParams }: Props) {
 
   return (
     <OnboardingPage backHref={backHref}>
-      <FocusTestClient backHref={backHref} goalId={goal.id} subject={getSubject(goal)} />
+      <FocusTestClient backHref={backHref} goalId={goal.id} subject={getGoalSubject(goal)} />
     </OnboardingPage>
   );
 }

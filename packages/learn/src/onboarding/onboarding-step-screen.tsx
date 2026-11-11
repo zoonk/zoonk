@@ -10,6 +10,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
+import { getGoalSubject } from "./goal-subject";
 import {
   type OnboardingActions,
   type OnboardingRoutes,
@@ -36,11 +37,6 @@ import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
 import { getFirstLesson } from "./steps/wait-run";
-
-function getSubject(view: OnboardingView): string {
-  const subject = view.goal.details.subject;
-  return typeof subject === "string" && subject.trim() ? subject : view.goal.displayName;
-}
 
 function readKnownSubjects(details: Record<string, unknown>): string[] {
   const known = details.knownSubjects;
@@ -188,7 +184,7 @@ function StepScreen({
   toToday: () => void;
   view: OnboardingView;
 }) {
-  const subject = getSubject(view);
+  const subject = getGoalSubject(view.goal);
   const props = { onAnswer, pending };
 
   usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });

@@ -107,6 +107,7 @@
     "./onboarding/frame": "./src/onboarding/onboarding-frame.tsx",
     "./onboarding/goal-errors": "./src/onboarding/goal-errors.ts",
     "./onboarding/goal-field": "./src/onboarding/entry/goal-field.tsx",
+    "./onboarding/goal-subject": "./src/onboarding/goal-subject.ts",
     "./onboarding/level-choices": "./src/onboarding/steps/level-choices.tsx",
     "./onboarding/skeletons": "./src/onboarding/onboarding-skeletons.tsx",
     "./onboarding/steps": "./src/onboarding/steps-flow.tsx",
