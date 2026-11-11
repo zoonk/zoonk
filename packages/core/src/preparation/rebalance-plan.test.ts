@@ -2,7 +2,6 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
@@ -10,6 +9,7 @@ import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { settleSessionPlan } from "../sessions/settle-session-plan";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { stopStudySession } from "../sessions/stop-study-session";
 import { rebalancePlanAfterSession } from "./rebalance-plan";
@@ -158,9 +158,15 @@ describe(rebalancePlanAfterSession, () => {
     const { blocks, id: sessionId } = today.session;
 
     await startStudyBlock({ blockId: blocks[0]?.id ?? "", input: {}, sessionId });
-    const finishDeferred = runDeferredWork();
     await stopStudySession({ input: {}, sessionId });
-    await finishDeferred();
+
+    const owed = await prisma.followUp.findFirstOrThrow({
+      where: { key: sessionId, kind: "settleSessionPlan", userId: user.id },
+    });
+
+    expect(owed.input).toStrictEqual({ goalId: goal.id, sessionId, timeZone: "UTC" });
+    await expect(rebalances(plan.id)).resolves.toHaveLength(0);
+    await settleSessionPlan({ goalId: goal.id, sessionId, timeZone: "UTC", userId: user.id });
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),

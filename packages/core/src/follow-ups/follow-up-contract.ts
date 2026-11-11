@@ -19,6 +19,10 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ input: z.object({ sessionId: uuidSchema() }), kind: z.literal("prepareSession") }),
   z.object({
+    input: z.object({ goalId: uuidSchema(), sessionId: uuidSchema(), timeZone: z.string() }),
+    kind: z.literal("settleSessionPlan"),
+  }),
+  z.object({
     input: z.object({
       /** The block whose finish owes it. */
       blockId: uuidSchema().optional(),

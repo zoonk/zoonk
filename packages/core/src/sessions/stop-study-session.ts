@@ -3,7 +3,6 @@ import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSessionMemoryFollowUps } from "../memory/memory-follow-ups";
-import { proposeAfterSession } from "./_utils/after-session-plan";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -43,18 +42,30 @@ async function markFirstStop({ session, timeZone, userId }: StopContext) {
   });
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const { count } = await tx.studySession.updateMany({
+    const [stopped] = await tx.studySession.updateManyAndReturn({
       data: { stoppedAt },
+      select: { endedAt: true },
       where: { id: session.id, stoppedAt: null },
     });
 
-    if (count === 0) {
+    if (!stopped) {
       return unchanged(false);
     }
 
     await oweFollowUps({
       db: tx,
-      followUps: [{ input: { sessionId: session.id }, kind: "prepareSession" }, ...followUps],
+      followUps: [
+        { input: { sessionId: session.id }, kind: "prepareSession" },
+        ...(session.goalId && !stopped.endedAt
+          ? [
+              {
+                input: { goalId: session.goalId, sessionId: session.id, timeZone },
+                kind: "settleSessionPlan" as const,
+              },
+            ]
+          : []),
+        ...(stopped.endedAt ? [] : followUps),
+      ],
       userId,
     });
 
@@ -84,11 +95,7 @@ export async function stopStudySession({
 
   // Completion already owes memory; repeated stops must not run another model.
   if (!settled.sessionCompleted && (await markFirstStop({ session, timeZone, userId }))) {
-    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
-
-    if (refreshed) {
-      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
-    }
+    await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
   return getStudySessionSummary({ input, sessionId });

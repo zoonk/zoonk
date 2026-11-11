@@ -9,7 +9,6 @@ import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
-import { proposeAfterSession } from "./after-session-plan";
 import { measureSessionState } from "./capture-snapshot";
 import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
@@ -140,6 +139,14 @@ async function completeIfFinished({
         db: tx,
         followUps: [
           { input: { sessionId: session.id }, kind: "prepareSession" },
+          ...(firstEnd && session.goalId
+            ? [
+                {
+                  input: { goalId: session.goalId, sessionId: session.id, timeZone },
+                  kind: "settleSessionPlan" as const,
+                },
+              ]
+            : []),
           ...(firstEnd ? memoryFollowUps : []),
         ],
         userId,
@@ -171,11 +178,7 @@ async function completeIfFinished({
   }
 
   if (session.goalId) {
-    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
-
-    if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
-      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
-    }
+    await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
   return true;

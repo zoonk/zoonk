@@ -1,7 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlanChangeView } from "../../../plans/_utils/owned-plan";
 import { proposePlanChange } from "../../../plans/propose-plan-change";
@@ -94,17 +92,22 @@ export async function settleFocusTest({
   };
 }
 
-async function settleAfterSession({
+/** A session that asked the test's questions settles the test when it ends, never while it asks. */
+export async function settleFocusTestAfterSession({
   goalId,
   sessionId,
   timeZone: requestedTimeZone,
   userId,
 }: {
-  goalId: string;
+  goalId: string | null;
   sessionId: string;
   timeZone?: string;
   userId: string;
 }): Promise<void> {
+  if (!goalId) {
+    return;
+  }
+
   const [goal, answers] = await Promise.all([
     prisma.goal.findUnique({ select: { kind: true, timezone: true }, where: { id: goalId } }),
     prisma.attempt.count({ where: { isPlacement: true, studySessionId: sessionId, userId } }),
@@ -117,27 +120,4 @@ async function settleAfterSession({
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestedTimeZone });
   const today = getDateInTimeZone({ date: new Date(), timeZone });
   await settleFocusTest({ goalId, timeZone, today, userId });
-}
-
-/**
- * A session that asked the test's questions settles the test when it ends, never while it asks.
- * Never throws: a failure is logged, and the next test answer or session settles it.
- */
-export async function settleFocusTestAfterSession(input: {
-  goalId: string | null;
-  sessionId: string;
-  timeZone?: string;
-  userId: string;
-}): Promise<void> {
-  const { goalId } = input;
-
-  if (!goalId) {
-    return;
-  }
-
-  const { error } = await safeAsync(() => settleAfterSession({ ...input, goalId }));
-
-  if (error) {
-    logError(`Could not settle the Focus test of goal ${goalId}.`, error);
-  }
 }
