@@ -7,7 +7,6 @@ const SCOPE = "staff:read offline_access";
 const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 /** RFC 8628 section 3.2: clients poll every 5 seconds when the server names no interval. */
 const DEFAULT_POLL_SECONDS = 5;
-const FIRST_SERVER_ERROR = 500;
 const OAUTH_ERROR_PATTERN = /^[a-z_]{1,64}$/u;
 const USER_CODE_PATTERN = /^[\w-]{1,64}$/u;
 
@@ -135,14 +134,12 @@ export async function revokeLogin({
 }: {
   origin: string;
   refreshToken: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const result = await postForm(new URL(ENDPOINTS.revoke, origin), {
     client_id: CLIENT_ID,
     token: refreshToken,
     token_type_hint: "refresh_token",
-  });
+  }).catch(() => null);
 
-  if (result.status >= FIRST_SERVER_ERROR) {
-    throw unexpectedResponse(result);
-  }
+  return result?.ok === true;
 }
