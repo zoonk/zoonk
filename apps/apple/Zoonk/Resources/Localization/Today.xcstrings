@@ -5328,6 +5328,9 @@
         }
       }
     },
+    "A quick test can suggest where your study time should go." : {
+      "comment" : "Today's suggestion of the Focus test, in one line"
+    },
     "Add your class material" : {
       "comment" : "Asks for a class's material, since the teacher's test isn't published",
       "localizations" : {
@@ -8189,6 +8192,9 @@
           }
         }
       }
+    },
+    "Find where your study time should go" : {
+      "comment" : "Title of Today's suggestion of the Focus test"
     },
     "Finish “%@”" : {
       "comment" : "Mission: finish a chapter",
@@ -11132,6 +11138,9 @@
           }
         }
       }
+    },
+    "Noted. You can take the test from your plan." : {
+      "comment" : "After the learner dismissed Today's suggestion of the Focus test"
     },
     "Noted. You keep your time, with less depth where it counts least." : {
       "comment" : "The learner kept their daily time after falling behind",
@@ -16471,6 +16480,9 @@
         }
       }
     },
+    "Update my plan" : {
+      "comment" : "Applies the focus a learner's Focus test answers propose"
+    },
     "Upload a document" : {
       "comment" : "Opens the ways to add the goal's official source",
       "localizations" : {
@@ -19344,6 +19356,9 @@
           }
         }
       }
+    },
+    "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus." : {
+      "comment" : "Why Today suggests the Focus test"
     },
     "Your teacher's test isn't published anywhere. Upload the slides, notes or list of topics so your plan follows your class." : {
       "comment" : "Why a class's material is asked for",

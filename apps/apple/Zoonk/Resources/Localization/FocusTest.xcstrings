@@ -1,7 +1,444 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-
+    "%lld answers saved" : {
+      "comment" : "How many answers an open Focus test sitting has saved",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld answer saved"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld answers saved"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld of %lld right" : {
+      "comment" : "How many of a subject's Focus test answers were right",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld right"
+          }
+        }
+      }
+    },
+    "%lld questions left" : {
+      "comment" : "How many questions an open Focus test sitting has left",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld question left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld questions left"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld subjects" : {
+      "comment" : "How many subjects the exam has, written and listening parts included",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld subject"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld subjects"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "About %@" : {
+      "comment" : "About how long a Focus test sitting takes, such as \"About 15 min\""
+    },
+    "Ask them again" : {
+      "comment" : "Turns the Focus test's questions in sessions back on"
+    },
+    "Change focus" : {
+      "comment" : "Opens the choice of the subjects the plan gives more time"
+    },
+    "Check where to focus · About %@" : {
+      "comment" : "Opens the Focus test for a learner whose time doesn't cover the exam; then how long it takes"
+    },
+    "Continue" : {
+      "comment" : "Goes on with an open Focus test sitting\nThe Focus test's state on the plan: a sitting is open with questions left"
+    },
+    "Continue the test · %@" : {
+      "comment" : "Opens another Focus test sitting; then about how long it takes"
+    },
+    "Continue to daily time" : {
+      "comment" : "Leaves the Focus test's result for onboarding's daily time question"
+    },
+    "Continue your test" : {
+      "comment" : "Title of an open Focus test sitting the learner came back to"
+    },
+    "Done" : {
+      "comment" : "Leaves the Focus test's result for the plan"
+    },
+    "Done. Your plan now gives these more time." : {
+      "comment" : "After applying the focus the Focus test proposed"
+    },
+    "Find where to start" : {
+      "comment" : "Title of the Focus test's invitation, for an exam without a date"
+    },
+    "Focus test" : {
+      "comment" : "Title of an exam goal's Focus test"
+    },
+    "For now, this follows mainly what counts most in your exam." : {
+      "comment" : "Suggested focus with no answer behind it yet: it follows the exam's weights"
+    },
+    "Haven't studied most of this yet? That's fine. You can stop here and start learning." : {
+      "comment" : "Above Stop, after five \"I don't know yet\" in a row in the Focus test"
+    },
+    "If your time can't cover everything, your plan gives these more time." : {
+      "comment" : "Suggested focus before the plan is shown"
+    },
+    "Let's find where your study time should go" : {
+      "comment" : "Title of the Focus test's invitation, for an exam with a date"
+    },
+    "Listening counts heavily; it isn't checked here." : {
+      "comment" : "Why the plan gives the listening part more time: it weighs a lot, and the Focus test can't ask about it"
+    },
+    "Listening: not checked here" : {
+      "comment" : "A listening part of the exam that the Focus test can't check"
+    },
+    "Not asked yet" : {
+      "comment" : "A subject the Focus test hasn't asked a question about yet"
+    },
+    "Not now" : {
+      "comment" : "Declines the focus the Focus test proposes\nLeaves the Focus test without taking it, back to the plan"
+    },
+    "Not started" : {
+      "comment" : "The Focus test's state on the plan: the learner hasn't taken it"
+    },
+    "Not today" : {
+      "comment" : "Takes today's Focus test questions out of the session"
+    },
+    "Optional" : {
+      "comment" : "The Focus test can be skipped"
+    },
+    "Pause test questions" : {
+      "comment" : "Stops sessions from asking the Focus test's questions"
+    },
+    "Practical part: not checked here" : {
+      "comment" : "A practical part of the exam that the Focus test can't check"
+    },
+    "Questions on %lld of %lld subjects" : {
+      "comment" : "The Focus test's last result on the plan: subjects it asked about",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Questions on %1$lld of %2$lld subjects"
+          }
+        }
+      }
+    },
+    "Questions on %lld of %lld subjects so far" : {
+      "comment" : "How many of the exam's subjects the Focus test has asked about",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Questions on %1$lld of %2$lld subjects so far"
+          }
+        }
+      }
+    },
+    "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus." : {
+      "comment" : "What the Focus test is, for an exam with a date"
+    },
+    "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know." : {
+      "comment" : "What the Focus test is, for an exam without a date or with one subject"
+    },
+    "See your starting plan" : {
+      "comment" : "Shows what the Focus test's answers set in the plan"
+    },
+    "Skip for now" : {
+      "comment" : "Postpones the Focus test; it can be taken later from the plan"
+    },
+    "Speaking counts heavily; it isn't checked here." : {
+      "comment" : "Why the plan gives the speaking part more time: it weighs a lot, and the Focus test can't ask about it"
+    },
+    "Speaking: not checked here" : {
+      "comment" : "A speaking part of the exam that the Focus test can't check"
+    },
+    "Start the test" : {
+      "comment" : "Starts the Focus test"
+    },
+    "Stop and use my answers" : {
+      "comment" : "Ends a Focus test sitting early; its answers count at once"
+    },
+    "Stop whenever you need to. We save each answer." : {
+      "comment" : "On the Focus test's invitation"
+    },
+    "Subjects" : {
+      "comment" : "Title of the Focus test's subject list"
+    },
+    "Suggested focus" : {
+      "comment" : "Section of the Focus test's result: subjects the plan could give more time"
+    },
+    "Test questions in your sessions are paused." : {
+      "comment" : "Under the plan's Focus test row while its session questions are paused"
+    },
+    "That didn't save. Try again." : {
+      "comment" : "A Focus test switch couldn't be saved"
+    },
+    "That's all the questions ready for now. Your next sessions ask the rest." : {
+      "comment" : "A Focus test sitting ended early: no more questions are ready yet"
+    },
+    "There's no grade. “I don't know yet” is a useful answer." : {
+      "comment" : "On the Focus test's invitation"
+    },
+    "This part counts heavily; it isn't checked here." : {
+      "comment" : "Why the plan gives a part of the exam more time: it weighs a lot, and the Focus test can't ask about it"
+    },
+    "This part has a minimum score." : {
+      "comment" : "Why the plan gives a part of the exam more time"
+    },
+    "This sitting has up to %lld questions, so some subjects may not be checked." : {
+      "comment" : "The Focus test's invitation, when its sitting can't reach every subject",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This sitting has up to %lld question, so some subjects may not be checked."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This sitting has up to %lld questions, so some subjects may not be checked."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "This subject counts heavily." : {
+      "comment" : "Why the plan gives a subject more time: it weighs a lot in the exam"
+    },
+    "This subject counts heavily. Its starting point hasn't been checked yet." : {
+      "comment" : "Why the plan gives a subject the Focus test hasn't asked about more time"
+    },
+    "Undo" : {
+      "comment" : "Undoes the focus the learner just applied from the Focus test"
+    },
+    "Undone. Your plan is back as it was." : {
+      "comment" : "After undoing the focus the Focus test proposed"
+    },
+    "Up to %lld more questions" : {
+      "comment" : "How many more questions the Focus test can ask now",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld more question"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld more questions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Up to %lld questions" : {
+      "comment" : "The most questions a Focus test sitting asks",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld question"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld questions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Up to %lld questions left" : {
+      "comment" : "How many questions an open Focus test sitting can still ask",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld question left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Up to %lld questions left"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Update my plan" : {
+      "comment" : "Applies the focus the Focus test proposes to the plan"
+    },
+    "Use my answers" : {
+      "comment" : "Leaves the Focus test with the answers given so far"
+    },
+    "View all subjects" : {
+      "comment" : "Opens every subject with how its Focus test answers went"
+    },
+    "View subjects" : {
+      "comment" : "Opens the exam's subjects from the Focus test's invitation"
+    },
+    "Where you'll start" : {
+      "comment" : "Section of the Focus test's result: the plan's starting points"
+    },
+    "Writing counts heavily; it isn't checked here." : {
+      "comment" : "Why the plan gives the written part more time: it weighs a lot, and the Focus test can't ask about it"
+    },
+    "Writing: not checked here" : {
+      "comment" : "A written part of the exam, such as the essay, that the Focus test can't check"
+    },
+    "You can take the test later, from your plan." : {
+      "comment" : "Under Skip for now while the Focus test's questions are written"
+    },
+    "You chose your own focus, and your plan keeps it. This is what the test suggests." : {
+      "comment" : "Suggested focus beside a focus the learner chose"
+    },
+    "Your answers are in your plan" : {
+      "comment" : "The Focus test's result on the plan, for a goal placed before it counted subjects"
+    },
+    "Your answers are saved" : {
+      "comment" : "Title once a Focus test sitting has nothing more to ask"
+    },
+    "Your answers suggest reviewing this subject." : {
+      "comment" : "Why the plan gives a subject more time: a miss or an \"I don't know yet\""
+    },
+    "Your next sessions ask a few more questions, starting with subjects not asked yet." : {
+      "comment" : "Under the Focus test's result: sessions keep asking a few test questions"
+    },
+    "Your plan considers all %lld subjects." : {
+      "comment" : "The Focus test's invitation, when its sitting can't reach every subject",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan considers all %lld subject."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan considers all %lld subjects."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your plan gives these more time." : {
+      "comment" : "Suggested focus the plan already follows"
+    },
+    "Your plan skips %lld lessons you already know." : {
+      "comment" : "Where the plan starts after the Focus test",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan skips %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan skips %lld lessons you already know."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your plan stays as it was." : {
+      "comment" : "After declining the focus the Focus test proposed"
+    },
+    "Your sessions ask a few test questions until every subject has an answer." : {
+      "comment" : "Under the plan's Focus test row while sessions ask its questions"
+    },
+    "Your starting plan" : {
+      "comment" : "Title of what the Focus test's answers set in the plan"
+    },
+    "Your starting points are set." : {
+      "comment" : "A Focus test sitting ended early: every subject's starting point is set"
+    },
+    "Your subjects start from the basics for now." : {
+      "comment" : "Where the plan starts after the Focus test, with nothing to skip yet"
+    },
+    "Your time can't cover everything. Your plan can give these more time." : {
+      "comment" : "Suggested focus the learner can apply to their plan"
+    }
   },
   "version" : "1.0"
 }

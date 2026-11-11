@@ -3476,179 +3476,6 @@
         }
       }
     },
-    "A few quick questions about the %lld areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer." : {
-      "comment" : "What placement is for an exam with several areas",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ein paar kurze Fragen zu dem %lld Bereich, damit dein Plan auslässt, was du schon weißt. Es gibt keinen Score, und „Ich weiß es noch nicht“ ist eine gute Antwort."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ein paar kurze Fragen zu den %lld Bereichen, damit dein Plan auslässt, was du schon weißt. Es gibt keinen Score, und „Ich weiß es noch nicht“ ist eine gute Antwort."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "A few quick questions about the %lld area, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "A few quick questions about the %lld areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Unas preguntas rápidas sobre %lld área para que tu plan se salte lo que ya sabes. No hay puntaje y está bien responder “Aún no lo sé”."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Unas preguntas rápidas sobre %lld áreas para que tu plan se salte lo que ya sabes. No hay puntaje y está bien responder “Aún no lo sé”."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Quelques questions rapides sur %lld domaine pour que ton plan saute ce que tu sais déjà. Il n’y a pas de score, et tu peux tout à fait répondre « Je ne sais pas encore »."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Quelques questions rapides sur %lld domaines pour que ton plan saute ce que tu sais déjà. Il n’y a pas de score, et tu peux tout à fait répondre « Je ne sais pas encore »."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Qualche breve domanda su %lld area, così il tuo piano salta ciò che sai già. Non ci sono punteggi e va benissimo rispondere “Non lo so ancora”."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Qualche breve domanda su %lld aree, così il tuo piano salta ciò che sai già. Non ci sono punteggi e va benissimo rispondere “Non lo so ancora”."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld分野について短い問題をいくつか出し、すでに知っている内容を学習計画でスキップできるようにします。点数はつきません。「まだわかりません」と答えても大丈夫です。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "간단한 문제 몇 개로 %lld개 영역에서 이미 아는 내용을 확인하고, 계획에서 건너뛰어요. 점수는 매기지 않고, “아직 모르겠어요”라고 답해도 괜찮아요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Kilka krótkich pytań o %lld obszary, żeby twój plan pomijał to, co już znasz. Nie ma punktacji, a „Jeszcze nie wiem” to dobra odpowiedź."
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Kilka krótkich pytań o %lld obszar, żeby twój plan pomijał to, co już znasz. Nie ma punktacji, a „Jeszcze nie wiem” to dobra odpowiedź."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Kilka krótkich pytań o %lld obszarów, żeby twój plan pomijał to, co już znasz. Nie ma punktacji, a „Jeszcze nie wiem” to dobra odpowiedź."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre %lld área, para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre as %lld áreas, para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Planın zaten bildiklerini atlayabilsin diye %lld alan hakkında birkaç kısa soru soracağız. Puanlama yok, “Henüz bilmiyorum” da gayet iyi bir cevap."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer." : {
       "comment" : "What placement is",
       "localizations" : {
@@ -5002,6 +4829,17 @@
         }
       }
     },
+    "At %@ a day, some topics won't fit before %@. This plan gives %@ more time." : {
+      "comment" : "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@ a day, some topics won't fit before %2$@. This plan gives %3$@ more time."
+          }
+        }
+      }
+    },
     "At %@ a day, you finish in %@, after the exam in %@." : {
       "comment" : "When an exam plan that studies everything ends; the second and third arguments are months like 'May 2027'",
       "localizations" : {
@@ -5492,167 +5330,6 @@
         }
       }
     },
-    "Based on your %lld answers. It gets more accurate every day." : {
-      "comment" : "Under placement ended with a mock exam",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Basiert auf deiner %lld Antwort. Es wird jeden Tag genauer."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Basiert auf deinen %lld Antworten. Es wird jeden Tag genauer."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Based on your %lld answer. It gets more accurate every day."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Based on your %lld answers. It gets more accurate every day."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Basado en tu %lld respuesta. La precisión mejora cada día."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Basado en tus %lld respuestas. La precisión mejora cada día."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "À partir de %lld réponse. La précision s’améliore chaque jour."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "À partir de %lld réponses. La précision s’améliore chaque jour."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Si basa su %lld risposta. La precisione migliora ogni giorno."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Si basa su %lld risposte. La precisione migliora ogni giorno."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld問の回答をもとにしています。毎日、より正確になります。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "답변 %lld개를 바탕으로 한 결과예요. 매일 더 정확해져요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Na podstawie %lld odpowiedzi. Z każdym dniem wynik jest dokładniejszy."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Com base na sua %lld resposta. Fica mais preciso a cada dia."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Com base nas suas %lld respostas. Fica mais preciso a cada dia."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Verdiğin %lld cevaba dayanıyor. Her gün daha doğru hale geliyor."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "Build my plan" : {
       "comment" : "Ends the level test to build the plan\nSends the typed goal to start building a plan\nStarts a course as the learner's goal",
       "localizations" : {
@@ -6124,6 +5801,9 @@
           }
         }
       }
+    },
+    "Change focus" : {
+      "comment" : "Opens the choice of the subjects the plan gives more time"
     },
     "Chapters" : {
       "comment" : "Header over a new plan's chapters",
@@ -11599,65 +11279,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir tarih belirt, o güne kadarki çalışmanı planlayalım"
-          }
-        }
-      }
-    },
-    "Go on where you left it, or stop now: your plan starts from the questions you answered." : {
-      "comment" : "Under a placement mock left running",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mach dort weiter, wo du aufgehört hast, oder hör jetzt auf: Dein Plan basiert auf den Fragen, die du beantwortet hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sigue donde te quedaste o termina ahora: tu plan se basa en las preguntas que respondiste."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reprends où tu en étais ou arrête-toi maintenant : ton plan se basera sur les questions auxquelles tu as répondu."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riprendi da dove avevi lasciato o fermati ora: il tuo piano si basa sulle domande a cui hai risposto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "続きから再開することも、ここで終えることもできます。回答した問題をもとに学習計画を立てます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이어서 풀거나 지금 마쳐도 돼요. 지금까지 답한 문제를 바탕으로 계획을 세워요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontynuuj od miejsca przerwania lub zakończ teraz: twój plan oprzemy na dotychczasowych odpowiedziach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue de onde parou ou encerre agora: seu plano vai partir das perguntas que você respondeu."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaldığın yerden devam et ya da şimdi dur: planın cevapladığın sorulara göre hazırlanır."
           }
         }
       }
@@ -18138,6 +17759,17 @@
         }
       }
     },
+    "Question %lld of %lld" : {
+      "comment" : "Which question of a test with a promised count this is",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "Quick explanation · %@" : {
       "comment" : "The kind of an example goal: a short explanation of one question, and its length",
       "localizations" : {
@@ -19855,6 +19487,9 @@
         }
       }
     },
+    "See what fits" : {
+      "comment" : "Opens what a short plan studies, from the line saying what it leaves out"
+    },
     "See your plan" : {
       "comment" : "Leaves the plan's wait, once the plan is ready, for the plan",
       "localizations" : {
@@ -21527,65 +21162,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adım %1$lld / %2$lld"
-          }
-        }
-      }
-    },
-    "Stop and see my plan" : {
-      "comment" : "Stops a placement mock; its answers set the starting point",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beenden und meinen Plan ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminar y ver mi plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrêter et voir mon plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Interrompi e vedi il piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "終了して学習計画を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "중단하고 내 계획 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przerwij i zobacz swój plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parar e ver meu plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Durdur ve planını gör"
           }
         }
       }
@@ -28333,6 +27909,9 @@
         }
       }
     },
+    "What your test changed" : {
+      "comment" : "Opens the Focus test's result from the plan's reveal"
+    },
     "When you study" : {
       "comment" : "Row with when the learner studies",
       "localizations" : {
@@ -28981,6 +28560,9 @@
           }
         }
       }
+    },
+    "With this time, we suggest giving %@ more attention." : {
+      "comment" : "Under the daily time: up to three subjects the plan would give more time"
     },
     "Without a date, you study everything at your own pace, and we show when you reach each milestone." : {
       "comment" : "Under the date question",
@@ -32701,124 +32283,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Materyalin"
-          }
-        }
-      }
-    },
-    "Your mock exam is waiting" : {
-      "comment" : "A placement mock left running",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Probeprüfung wartet auf dich"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu simulacro te espera"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton examen blanc t’attend"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua simulazione ti aspetta"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "途中の模試があります"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사가 기다리고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój egzamin próbny czeka"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu simulado está esperando por você"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavın seni bekliyor"
-          }
-        }
-      }
-    },
-    "Your mock exam set your starting point" : {
-      "comment" : "Placement ended with a mock exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Probeprüfung hat deinen Ausgangspunkt bestimmt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu simulacro definió tu punto de partida"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton examen blanc a défini ton point de départ"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La simulazione ha stabilito il tuo punto di partenza"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試で学習のスタート地点が決まりました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사로 학습 시작점을 정했어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzamin próbny wskazał, od czego zacząć"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu simulado definiu seu ponto de partida"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavınla başlangıç noktan belirlendi"
           }
         }
       }

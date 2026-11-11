@@ -24387,6 +24387,9 @@
         }
       }
     },
+    "Or choose them yourself" : {
+      "comment" : "Above the subjects to focus on, under the Focus test that suggests them"
+    },
     "Overview" : {
       "comment" : "A course level",
       "localizations" : {
@@ -26511,6 +26514,9 @@
         }
       }
     },
+    "Remove focus" : {
+      "comment" : "Saves no subject to focus on, so the plan has no focus"
+    },
     "Rename goal" : {
       "comment" : "Opens the dialog that renames the goal\nTitle of the dialog that renames the goal",
       "localizations" : {
@@ -28403,65 +28409,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Branşlar"
-          }
-        }
-      }
-    },
-    "Take a short test" : {
-      "comment" : "Opens the focus test",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einen kurzen Test machen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hacer una prueba breve"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faire un petit test"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fai un breve test"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短いテストを受ける"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짧은 테스트 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zrób krótki test"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer um teste rápido"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa bir test çöz"
           }
         }
       }
@@ -34001,65 +33948,6 @@
         }
       }
     },
-    "Your answers choose for you" : {
-      "comment" : "What the focus test does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Antworten entscheiden für dich"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus respuestas deciden por ti"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes réponses choisissent pour toi"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sono le tue risposte a scegliere per te"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答えに合わせて選びます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답에 따라 정해져요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O wyborze decydują twoje odpowiedzi"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas respostas escolhem por você"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senin yerine seçimi cevapların yapar"
-          }
-        }
-      }
-    },
     "Your call opens as soon as it's ready." : {
       "comment" : "A practice call opens by itself once it's written",
       "localizations" : {
@@ -35176,6 +35064,9 @@
           }
         }
       }
+    },
+    "Your plan has no focus." : {
+      "comment" : "Says the plan no longer gives any subject more time"
     },
     "Your plan is still being built. Try again in a moment." : {
       "comment" : "Advice asked while the plan was being built",
