@@ -1,5 +1,6 @@
 import { type GoalKind } from "@zoonk/db/enums";
 import { CEFR_LEVELS, MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { speechClipSchema } from "../../audio/speech-clip-contract";
 import { answerDurationSchema } from "../../learner/contract";
@@ -32,7 +33,7 @@ export const levelTestBankSchema = z.object({
 export type LevelTestQuestion = z.infer<typeof levelTestQuestionSchema>;
 export type LevelTestBank = z.infer<typeof levelTestBankSchema>;
 
-const levelTestAnswerSchema = z.object({
+export const levelTestAnswerSchema = z.object({
   answerIndex: z
     .int()
     .min(0)
@@ -53,6 +54,8 @@ export const levelTestProgressSchema = z.object({
       unannounced: z.array(z.string()).default([]),
     })
     .optional(),
+  /** The test's row in `anonymous_level_tests`, made on its first answer. */
+  recordId: uuidSchema().optional(),
   /** The levels a finish set. A bank check can later remove an answered question; they stay. */
   scores: z
     .object({ listening: z.number(), reading: z.number(), speaking: z.number().optional() })

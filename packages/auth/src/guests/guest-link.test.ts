@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   createExistingAccount,
   createTestEmail,
@@ -10,9 +10,6 @@ import {
   signUp,
 } from "./_test-utils/guest-auth";
 import { countLearnerRows, createSkill, seedLearnerData } from "./_test-utils/learner-data";
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
 
 const THIRTY_DAYS_MS = 2_592_000_000;
 

@@ -9,18 +9,18 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { slugSchema } from "../activity-schemas";
+import { aimForItems, slugSchema } from "../activity-schemas";
 import { describeBaseMaps, getActivityBaseMap, isOnBaseMap } from "../base-maps";
 import { type ActivityIssue, defineActivityTemplate } from "../define-activity-template";
 import { hasOverlappingPassages } from "../excerpt-passages";
-import { duplicateIssues, issue } from "./_utils/template-helpers";
+import { answerCapacityIssues, duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_ANCHORS = 4;
-const MAX_EVENTS = 6;
-const MAX_PLACES = 8;
-const MAX_NODES = 8;
-const MAX_LINKS = 8;
-const MAX_PASSAGES = 4;
+const ANCHORS_TARGET = 4;
+const EVENTS_TARGET = 6;
+const PLACES_TARGET = 8;
+const NODES_TARGET = 8;
+const LINKS_TARGET = 8;
+const PASSAGES_TARGET = 4;
 const EXCERPT_TARGET = 600;
 const MAX_LATITUDE = 90;
 const MAX_LONGITUDE = 180;
@@ -34,9 +34,9 @@ const timelineFields = z
     anchors: z
       .array(z.object({ label: optionTextSchema, year: z.number().int() }).strict())
       .min(1)
-      .max(MAX_ANCHORS),
+      .describe(aimForItems(ANCHORS_TARGET)),
     end: z.number().int(),
-    events: uniqueIdsSchema(datedSchema, { max: MAX_EVENTS, min: 2 }),
+    events: uniqueIdsSchema(datedSchema, { min: 2 }).describe(aimForItems(EVENTS_TARGET)),
     start: z.number().int(),
   })
   .strict();
@@ -111,7 +111,7 @@ export const mapExplorerTemplate = defineActivityTemplate({
   fields: z
     .object({
       baseMapId: slugSchema,
-      places: uniqueIdsSchema(placeSchema, { max: MAX_PLACES, min: 2 }),
+      places: uniqueIdsSchema(placeSchema, { min: 2 }).describe(aimForItems(PLACES_TARGET)),
     })
     .strict(),
   id: "mapExplorer",
@@ -124,13 +124,13 @@ const causeEffectFields = z
     links: z
       .array(z.object({ from: idSchema, to: idSchema, why: explanationSchema }).strict())
       .min(1)
-      .max(MAX_LINKS),
+      .describe(aimForItems(LINKS_TARGET)),
     nodes: uniqueIdsSchema(
       z
         .object({ id: idSchema, label: optionTextSchema, year: z.number().int().optional() })
         .strict(),
-      { max: MAX_NODES, min: 3 },
-    ),
+      { min: 3 },
+    ).describe(aimForItems(NODES_TARGET)),
   })
   .strict();
 
@@ -158,6 +158,11 @@ function causeEffectIssues(fields: CauseEffectFields) {
   const linked = new Set(fields.links.flatMap((link) => [link.from, link.to]));
 
   return [
+    ...answerCapacityIssues({
+      count: nodes.size * (nodes.size - 1),
+      path: "fields.nodes",
+      what: "links",
+    }),
     fields.links.some(
       (link) => !nodes.has(link.from) || !nodes.has(link.to) || link.from === link.to,
     ) && issue("inconsistentFields", "fields.links", "A link must join two different listed nodes"),
@@ -209,7 +214,7 @@ const sourceSchema = z
     passages: z
       .array(z.object({ id: idSchema, isTarget: z.boolean(), text: optionTextSchema }).strict())
       .min(1)
-      .max(MAX_PASSAGES),
+      .describe(aimForItems(PASSAGES_TARGET)),
   })
   .strict();
 
@@ -219,6 +224,7 @@ function passageIssues(fields: SourceComparisonFields) {
   const passages = fields.sources.flatMap((source) => source.passages);
 
   return [
+    ...answerCapacityIssues({ count: passages.length, path: "fields.sources", what: "passages" }),
     ...duplicateIssues(
       passages.map((passage) => passage.id),
       "fields.sources",

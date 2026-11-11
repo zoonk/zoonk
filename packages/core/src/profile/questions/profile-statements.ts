@@ -4,6 +4,11 @@ import { splitProfileFavorites } from "./profile-favorites";
 import { PROFILE_CONTENT } from "./profile-options";
 import { type ProfileAnswerInput } from "./profile-question-contract";
 
+type ListAnswerInput = Extract<
+  ProfileAnswerInput,
+  { question: "activities" | "listen" | "play" | "read" | "tools" | "watch" }
+>;
+
 type ProfileFact = {
   statement: string;
   category: MemoryCategory;
@@ -16,7 +21,7 @@ export function toProfileFacts(
 ): ProfileFact[] {
   const { question, answer, locale } = input;
 
-  if (answer.declined || question === "conditions") {
+  if (answer.declined || question === "conditions" || question === "addressForm") {
     return [];
   }
 
@@ -74,32 +79,45 @@ export function toProfileFacts(
     case "play":
     case "read":
     case "tools":
-    case "watch": {
-      const { picks, favorites: text } = input.answer;
-      const favorites = splitProfileFavorites(text);
-      const picked = picks.map((id) => fragment(id));
-      const combined = list(question === "tools" ? [...picked, ...favorites] : picked);
-
-      const capitalized =
-        question === "activities"
-          ? combined.charAt(0).toLocaleUpperCase(locale) + combined.slice(1)
-          : combined;
-
-      return [
-        {
-          category: question === "tools" ? "background" : "context",
-          profileAnswer: { favorites, picks },
-          sensitive: favorites.length > 0,
-          statement: render(
-            getListTemplate({ hasFavorites: favorites.length > 0, hasPicks: picks.length > 0 }),
-            { favorites: list(favorites), picks: capitalized },
-          ),
-        },
-      ];
-    }
+    case "watch":
+      return [toListFact({ fragment, input, list, locale, render })];
     default:
       return [];
   }
+}
+
+function toListFact({
+  input: { question, answer },
+  locale,
+  fragment,
+  list,
+  render,
+}: {
+  input: ListAnswerInput;
+  locale: SupportedLocale;
+  fragment: (id: string) => string;
+  list: (items: string[]) => string;
+  render: (key: string, values: Record<string, string>) => string;
+}): ProfileFact {
+  const { picks, favorites: text } = answer;
+  const favorites = splitProfileFavorites(text);
+  const picked = picks.map((id) => fragment(id));
+  const combined = list(question === "tools" ? [...picked, ...favorites] : picked);
+
+  const capitalized =
+    question === "activities"
+      ? combined.charAt(0).toLocaleUpperCase(locale) + combined.slice(1)
+      : combined;
+
+  return {
+    category: question === "tools" ? "background" : "context",
+    profileAnswer: { favorites, picks },
+    sensitive: favorites.length > 0,
+    statement: render(
+      getListTemplate({ hasFavorites: favorites.length > 0, hasPicks: picks.length > 0 }),
+      { favorites: list(favorites), picks: capitalized },
+    ),
+  };
 }
 
 function getListTemplate({

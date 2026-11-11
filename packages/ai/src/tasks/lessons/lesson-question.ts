@@ -4,6 +4,11 @@ import { generateText, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
+import {
+  type AddressForm,
+  addressFormTemplate,
+  getAddressFormPrompt,
+} from "../_utils/address-form";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
@@ -47,10 +52,15 @@ const SCOPE_PROMPTS = {
   step: lessonScopePrompt,
 } satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
 
-function getSystemPrompt(
-  contextSnapshot: LessonTutorContextSnapshot,
-  learnerNeeds?: LearnerNeeds,
-): string {
+function getSystemPrompt({
+  addressForm,
+  contextSnapshot,
+  learnerNeeds,
+}: {
+  addressForm?: AddressForm;
+  contextSnapshot: LessonTutorContextSnapshot;
+  learnerNeeds?: LearnerNeeds;
+}): string {
   const scopePrompt = selectPromptVariants({
     template: SCOPE_PROMPTS[contextSnapshot.scope.kind],
     variants: getLessonScreenVariants(contextSnapshot),
@@ -65,10 +75,16 @@ function getSystemPrompt(
       systemPrompt,
       scopePrompt,
       getLearnerNeedsPrompt({ needs: learnerNeeds, template: learnerNeedsPrompt }),
+      getAddressFormPrompt(addressForm),
     ]
       .filter(Boolean)
       .join("\n"),
   });
+}
+
+/** Every variant's rules, so editing any of them changes the prompt version. */
+function getPromptVersionText(contextSnapshot: LessonTutorContextSnapshot): string {
+  return [getSystemPrompt({ contextSnapshot }), learnerNeedsPrompt, addressFormTemplate].join("\n");
 }
 
 export type LessonQuestionAnswerCompletion = {
@@ -82,6 +98,8 @@ export type LessonQuestionAnswerCompletion = {
 };
 
 type StreamLessonQuestionAnswerParams = {
+  /** Left out for an answer shared across learners, which stays neutral. */
+  addressForm?: AddressForm;
   analytics?: AiGenerationContext;
   contextSnapshot: LessonTutorContextSnapshot;
   /** Only when memory is on. */
@@ -92,6 +110,7 @@ type StreamLessonQuestionAnswerParams = {
 };
 
 export type GenerateLessonQuestionAnswerParams = {
+  addressForm?: AddressForm;
   analytics?: AiGenerationContext;
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
@@ -166,6 +185,7 @@ function createLessonQuestionMessages({
 }
 
 function createLessonQuestionGenerationOptions({
+  addressForm,
   contextSnapshot,
   learnerMemory = [],
   learnerNeeds,
@@ -175,6 +195,7 @@ function createLessonQuestionGenerationOptions({
   reasoning,
   useFallback,
 }: {
+  addressForm?: AddressForm;
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
   learnerNeeds?: LearnerNeeds;
@@ -185,7 +206,7 @@ function createLessonQuestionGenerationOptions({
   useFallback: boolean;
 }) {
   return {
-    instructions: getSystemPrompt(contextSnapshot, learnerNeeds),
+    instructions: getSystemPrompt({ addressForm, contextSnapshot, learnerNeeds }),
     messages: createLessonQuestionMessages({
       contextSnapshot,
       learnerMemory,
@@ -211,6 +232,7 @@ function suppressLessonQuestionProviderError() {
 }
 
 export async function generateLessonQuestionAnswer({
+  addressForm,
   analytics,
   contextSnapshot,
   learnerMemory,
@@ -222,6 +244,7 @@ export async function generateLessonQuestionAnswer({
   useFallback = true,
 }: GenerateLessonQuestionAnswerParams) {
   const generationOptions = createLessonQuestionGenerationOptions({
+    addressForm,
     contextSnapshot,
     learnerMemory,
     learnerNeeds,
@@ -235,7 +258,7 @@ export async function generateLessonQuestionAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
     generate: () => generateText(generationOptions),
-    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
+    systemPrompt: getPromptVersionText(contextSnapshot),
     task: LESSON_QUESTION_TASK,
   });
 
@@ -257,6 +280,7 @@ export async function generateLessonQuestionAnswer({
  * reads from the stream itself.
  */
 export function streamLessonQuestionAnswer({
+  addressForm,
   analytics,
   contextSnapshot,
   learnerMemory,
@@ -272,6 +296,7 @@ export function streamLessonQuestionAnswer({
     stream: () =>
       streamText({
         ...createLessonQuestionGenerationOptions({
+          addressForm,
           contextSnapshot,
           learnerMemory,
           learnerNeeds,
@@ -282,7 +307,7 @@ export function streamLessonQuestionAnswer({
         }),
         onError: suppressLessonQuestionProviderError,
       }),
-    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
+    systemPrompt: getPromptVersionText(contextSnapshot),
     task: LESSON_QUESTION_TASK,
   });
 

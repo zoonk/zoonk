@@ -29,6 +29,9 @@ type SplitContext = {
   workflowRunId: string;
 };
 
+/** Marks a plan that names numbered provisions only from the official text it was given. */
+export const SOURCED_PLAN_KEY = "sourcedProvisions";
+
 /**
  * A plan keeps when it was planned, so a one-time reset after a planner change can plan again only
  * the lessons planned before it.
@@ -37,7 +40,7 @@ function toSpecData(spec: LessonSpec) {
   return {
     canDo: spec.canDo,
     estimatedMinutes: spec.estimatedMinutes,
-    spec: { ...spec, plannedAt: new Date().toISOString() },
+    spec: { ...spec, [SOURCED_PLAN_KEY]: true, plannedAt: new Date().toISOString() },
   };
 }
 
@@ -102,6 +105,26 @@ async function placeAfter({
   }
 }
 
+/** A lesson split from another reads the laws it was planned from; a reused lesson keeps its own. */
+async function copyLessonSources(
+  tx: TransactionClient,
+  { lessonId, splitIds }: { lessonId: string; splitIds: readonly string[] },
+): Promise<void> {
+  if (splitIds.length === 0) {
+    return;
+  }
+
+  const links = await tx.lessonSource.findMany({
+    select: { articles: true, sourceId: true },
+    where: { lessonId },
+  });
+
+  await tx.lessonSource.createMany({
+    data: splitIds.flatMap((splitId) => links.map((link) => ({ ...link, lessonId: splitId }))),
+    skipDuplicates: true,
+  });
+}
+
 /** Internal workflow bridge: the caller must hold the lesson's spec claim. */
 export async function saveLessonSpecs({
   analytics,
@@ -159,10 +182,19 @@ export async function saveLessonSpecs({
         lessonIds: [lessonId, ...placedIds],
       });
 
-      await tx.lesson.updateMany({
-        data: { specStatus: "completed" },
-        where: { id: { in: placedIds }, specRunId: workflowRunId, specStatus: "pending" },
-      });
+      const created = {
+        id: { in: placedIds },
+        specRunId: workflowRunId,
+        specStatus: "pending" as const,
+      };
+
+      const createdSplits =
+        placedIds.length > 0
+          ? await tx.lesson.findMany({ select: { id: true }, where: created })
+          : [];
+
+      await copyLessonSources(tx, { lessonId, splitIds: createdSplits.map((split) => split.id) });
+      await tx.lesson.updateMany({ data: { specStatus: "completed" }, where: created });
 
       if (splitChapterId) {
         await placeAfter({ chapterId: splitChapterId, lessonId, splitIds: placedIds, tx });

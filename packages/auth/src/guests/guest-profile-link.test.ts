@@ -82,6 +82,40 @@ describe("guest profile linking", () => {
     });
   });
 
+  it.each([
+    { account: "answered", expected: "masculine", profileRow: true },
+    { account: "declined", expected: null, profileRow: true },
+    { account: "declined", expected: null, profileRow: false },
+    { account: null, expected: "feminine", profileRow: true },
+    { account: null, expected: "feminine", profileRow: false },
+  ] as const)(
+    "keeps the account's address answer or decline, else takes the guest's: $account, profile row $profileRow",
+    async ({ account, expected, profileRow }) => {
+      const { userId, guestUserId } = await learners();
+
+      await Promise.all([
+        profileRow
+          ? prisma.userLearningProfile.update({
+              data: { addressForm: account === "answered" ? "masculine" : null },
+              where: { userId },
+            })
+          : prisma.userLearningProfile.delete({ where: { userId } }),
+        prisma.userLearningProfile.update({
+          data: { addressForm: "feminine" },
+          where: { userId: guestUserId },
+        }),
+        answer(guestUserId, "addressForm"),
+        ...(account ? [answer(userId, "addressForm", account)] : []),
+      ]);
+
+      await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+      ).resolves.toMatchObject({ addressForm: expected });
+    },
+  );
+
   it("honors an account decline before moving conditions, facts and question rows", async () => {
     const { userId, guestUserId } = await learners();
 

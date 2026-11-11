@@ -21,6 +21,6 @@ export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
       return startUnderstandingAction({ ...input, timeZone: getLocalTimeZone() });
     }
 
-    return { status: guest.status === "blocked" ? "browserBlocked" : "failed" };
+    return { status: "failed" };
   },
 };

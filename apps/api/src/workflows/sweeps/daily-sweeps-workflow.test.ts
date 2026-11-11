@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { LEVEL_TEST_LEVELS } from "@zoonk/ai/tasks/language/level-test-levels";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -11,6 +12,10 @@ import {
 } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import {
+  levelTestBankFixture,
+  recordedLevelTestsFixture,
+} from "@zoonk/testing/fixtures/level-tests";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -280,6 +285,35 @@ describe(dailySweepsWorkflow, () => {
       [{ pair: { language: owed.language, targetLanguage: "es" } }],
       { experimental_hook: { token: `level-test-bank-check:${owed.language}:es` } },
     ]);
+  });
+
+  it("removes the placement questions learners' answers show to be wrong", async () => {
+    const { pair, runId } = await levelTestBankFixture({ levels: LEVEL_TEST_LEVELS });
+
+    await recordedLevelTestsFixture({
+      count: 20,
+      pair,
+      picks: {
+        "listening-B1-1": null,
+        "listening-B2-0": 0,
+        "listening-C1-0": 0,
+        "reading-B1-0": 1,
+        "reading-B2-0": 0,
+        "reading-C1-0": 0,
+      },
+      runId,
+      startScore: 4,
+    });
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const bank = await prisma.languageLevelTest.findUniqueOrThrow({
+      where: { languagePair: pair },
+    });
+
+    expect(result.levelTestQuestionsRemoved).toBeGreaterThanOrEqual(1);
+    expect(JSON.stringify(bank.content)).not.toContain('"reading-B1-0"');
   });
 
   it("starts a separate token-owned run for each lesson still owing word orders", async () => {

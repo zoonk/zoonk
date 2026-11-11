@@ -68,6 +68,9 @@ const ANSWERS = [
     answer: { declined: true, needs: [], note: null, soundEffects: true },
     question: "learningSupport",
   },
+  { answer: { declined: false, form: "feminine" }, question: "addressForm" },
+  { answer: { declined: false, form: "neutral" }, locale: "pt", question: "addressForm" },
+  { answer: { declined: true, form: null }, question: "addressForm" },
 ] as const;
 
 /**

@@ -25,6 +25,7 @@ import {
   listLevelTestLevels,
 } from "../level-test-rules";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
+import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
 
 const DEFAULT_START = 1;
 
@@ -36,6 +37,7 @@ export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: s
 export type LevelTestContext =
   | {
       bank: LevelTestBank | null;
+      bankRunId: string | null;
       bankStartedAt: Date | null;
       bankWrittenAt: Date | null;
       owned: LevelTestGoal;
@@ -79,10 +81,12 @@ export async function saveLevelTestProgress({
   from,
   goal,
   progress,
+  record,
 }: {
   from: LevelTestProgress;
   goal: Pick<Goal, "id" | "userId">;
   progress: LevelTestProgress;
+  record?: LevelTestAnswerRecord;
 }): Promise<boolean> {
   return writeLearnerChange({ userId: goal.userId }, async (tx) => {
     const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
@@ -95,6 +99,10 @@ export async function saveLevelTestProgress({
       data: { details: { ...readGoalDetails(current), levelTest: progress } },
       where: { id: goal.id },
     });
+
+    if (record) {
+      await recordLevelTestAnswer(tx, record);
+    }
 
     return true;
   });
@@ -121,6 +129,7 @@ export async function loadLevelTestContext(goalId: string): Promise<LevelTestCon
 
   return {
     bank: state.status === "ready" ? state.bank : null,
+    bankRunId: state.status === "ready" ? state.runId : null,
     bankStartedAt: state.status === "preparing" ? state.startedAt : null,
     bankWrittenAt: state.status === "ready" ? state.writtenAt : null,
     owned: { goal: { ...goal, targetLanguage }, userId },

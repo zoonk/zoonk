@@ -3,6 +3,7 @@ import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
 import { getKnownReusePolicy } from "./reuse-policy";
+import { SOURCE_READ_VERSION } from "./source-contract";
 import { deleteUploadedBlob } from "./upload-blob";
 import { fetchAndParse } from "./web-sources";
 
@@ -114,6 +115,7 @@ async function publishCopy({
         mimeType: copy.contentType,
         ownerId: null,
         publisher: input.publisher,
+        readVersion: SOURCE_READ_VERSION,
         reusePolicy:
           getKnownReusePolicy({ publisher: input.publisher, url: copy.url }) ?? undefined,
         structure: { images: copy.parsed.images.length, pages: copy.parsed.pages, topic: null },

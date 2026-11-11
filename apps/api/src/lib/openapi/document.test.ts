@@ -349,10 +349,7 @@ describe("OpenAPI document", () => {
   it("documents native session endpoint security", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
-    expect(document.paths["/email-sign-in-codes"]?.post?.security).toStrictEqual([
-      {},
-      { bearerAuth: [] },
-    ]);
+    expect(document.paths["/email-sign-in-codes"]?.post?.security).toStrictEqual([]);
 
     expect(document.paths["/email-sign-in-codes"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/sessions/apple"]?.post?.security).toStrictEqual([]);

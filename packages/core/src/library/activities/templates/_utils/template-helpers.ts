@@ -1,4 +1,5 @@
 import { type ActivityVariable } from "../../activity-schemas";
+import { MAX_ANSWER_ITEMS } from "../../answer-limits";
 import {
   type ActivityCheckTarget,
   type ActivityIssue,
@@ -14,6 +15,30 @@ const MAX_SLIDER_POSITIONS = 1000;
 
 export function issue(code: ActivityIssueCode, path: string, message: string): ActivityIssue {
   return { code, message, path };
+}
+
+/**
+ * List counts are targets, but a learner's answer lists at most `MAX_ANSWER_ITEMS` items, so an
+ * activity must not let a learner make an answer, right or wrong, longer than that.
+ */
+export function answerCapacityIssues({
+  count,
+  path,
+  what,
+}: {
+  count: number;
+  path: string;
+  what: string;
+}): ActivityIssue[] {
+  return count > MAX_ANSWER_ITEMS
+    ? [
+        issue(
+          "inconsistentFields",
+          path,
+          `An answer here could list ${count} ${what}, past ${MAX_ANSWER_ITEMS}`,
+        ),
+      ]
+    : [];
 }
 
 export function isClose(value: number, expected: number, slack = FLOAT_SLACK): boolean {

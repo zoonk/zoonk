@@ -351,6 +351,93 @@ ${SHARED_EXPECTATIONS}
   },
   {
     expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- Same guess screen; the learner has seen its revealed answer, checks their own division and asks whether they did it right, without saying anything about themselves.
+- The app never knows the learner's gender, so no word written to them agrees with it. Confirming with "Você está certo", "Você está certa", "Você tem razão, está correto" about the learner, "Você foi preciso" or any other word that agrees with the learner: 6.5 or lower. "Isso mesmo", "Você acertou a conta", "Sua divisão está certa" are fine.
+- Confirm their division (5 and 3), then explain the odds the lesson uses (9 in both periods), as in the case before.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-confirms-reasoning-without-gender",
+    userInput: {
+      contextSnapshot: MOBILITY_GUESS_SCREEN,
+      priorTurns: [],
+      question:
+        "O app diz que permanece igual, mas dividi 50 por 10 e deu 5, depois 75 por 25 e deu 3. Fiz certo?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- Same question as the case before, from a learner who asked to be addressed in the feminine.
+- Words about the learner take feminine forms when any come up ("Você está certa"); wording that doesn't mark gender ("Isso mesmo", "Você acertou a conta") is fine too. Any masculine ("certo", "correto", "preciso") form about the learner: 6.5 or lower.
+- Confirm their division (5 and 3), then explain the odds the lesson uses (9 in both periods), as in the case before.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-confirms-reasoning-feminine",
+    userInput: {
+      addressForm: "feminine",
+      contextSnapshot: MOBILITY_GUESS_SCREEN,
+      priorTurns: [],
+      question:
+        "O app diz que permanece igual, mas dividi 50 por 10 e deu 5, depois 75 por 25 e deu 3. Fiz certo?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- Same question as the case before, from a learner who asked to be addressed in the masculine.
+- Words about the learner take masculine forms when any come up ("Você está certo"); wording that doesn't mark gender ("Isso mesmo", "Você acertou a conta") is fine too. Any feminine ("certa", "correta", "precisa") form about the learner: 6.5 or lower.
+- Confirm their division (5 and 3), then explain the odds the lesson uses (9 in both periods), as in the case before.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-confirms-reasoning-masculine",
+    userInput: {
+      addressForm: "masculine",
+      contextSnapshot: MOBILITY_GUESS_SCREEN,
+      priorTurns: [],
+      question:
+        "O app diz que permanece igual, mas dividi 50 por 10 e deu 5, depois 75 por 25 e deu 3. Fiz certo?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Polish.
+
+CASE-SPECIFIC GUIDANCE:
+- The learner writes in Polish about their own wrong answer, using masculine past forms about themselves ("Wybrałem", "myślałem"). Their own sentences never tell the app how to address them, and no form is saved.
+- Polish past tense agrees in the second person, so no word written to the learner agrees with a gender: "Wybrałeś", "pomyliłeś się", "Wybrałaś" or any other gendered form about the learner: 6.5 or lower. "Ta odpowiedź nie jest poprawna", "To częsty błąd", "Udało ci się zauważyć" are fine.
+- Explain that gravity still acts in orbit and continuously bends the satellite's forward motion, without shaming the learner.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pl-wrong-answer-without-gender",
+    userInput: {
+      contextSnapshot: {
+        ...ORBIT_CONTEXT,
+        answer: {
+          correctAnswer: "Gravity bends the satellite's forward motion",
+          feedback: "Orbit is continuous free fall under gravity.",
+          isCorrect: false,
+          selectedAnswer: "There is no gravity in orbit",
+        },
+        scope: { kind: "answer" },
+      },
+      priorTurns: [],
+      question:
+        "Wybrałem, że w kosmosie nie ma grawitacji, bo myślałem, że satelita po prostu tam unosi się. Gdzie jest błąd?",
+    },
+  },
+  {
+    expectations: `
 CASE-SPECIFIC GUIDANCE:
 - Explain that gravity still acts in orbit and continuously changes the direction of the satellite's forward motion.
 - Contrast the selected answer with the validated correct reasoning without shaming the learner.

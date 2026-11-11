@@ -7,11 +7,11 @@ import {
 } from "@zoonk/ai/tasks/language/check-level-test-questions";
 import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { logError, logInfo } from "@zoonk/utils/logger";
+import { logInfo } from "@zoonk/utils/logger";
 import {
   type LanguagePair,
   type LevelTestBankAnalytics,
-  findBankRow,
+  keepBankQuestions,
   readBank,
 } from "./_utils/level-test-bank";
 import { type LevelTestQuestion } from "./level-test-contract";
@@ -106,23 +106,6 @@ export async function keepCheckedLevelTestQuestions({
   keptIds: readonly string[];
   pair: LanguagePair;
 }): Promise<{ removed: number }> {
-  const bank = readBank(await findBankRow(pair));
   const kept = new Set(keptIds);
-  const questions = bank?.questions.filter((question) => kept.has(question.id)) ?? [];
-
-  if (!bank || questions.length === bank.questions.length) {
-    return { removed: 0 };
-  }
-
-  if (questions.length === 0) {
-    logError("[level-test] Every question of a stored bank failed its check", pair);
-    return { removed: 0 };
-  }
-
-  await prisma.languageLevelTest.update({
-    data: { content: { ...bank, questions } },
-    where: { languagePair: pair },
-  });
-
-  return { removed: bank.questions.length - questions.length };
+  return keepBankQuestions({ keep: (question) => kept.has(question.id), pair });
 }

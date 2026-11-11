@@ -153,7 +153,6 @@
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
-  "onboarding_limit_guest_blocked": "fd33f4ba4430cd629a269b7be9e0d0ebe7ddbee397257cf702ed6cd860b08ca0",
   "onboarding_limit_monthly_explanations": "ddb33b219c6de18a63c48f1bbeb2d135c92ba917d16dc80a26effa933d63d9b7",
   "onboarding_limit_monthly_goals": "6d69741c7e9fe04eb0c022e8b91bf5251bda41fc804126d9b5519c0e03e55e50",
   "onboarding_limit_sign_up_required": "536e537ec53aeb02218c5fb948c96ea6db3fb5d9ea544aaf37db0b78ca13555e",
@@ -501,7 +500,6 @@
     <string name="onboarding_limit_daily_goals">今日始めた新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
     <string name="onboarding_limit_guest">アカウントなしで取り組める目標は1つです。続けるには、無料アカウントを作成してください。</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">セキュリティチェックにより、アカウントなしでは始められません。無料アカウントを作成して続けてください。</string>
     <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->

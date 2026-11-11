@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { owesSourceNotice } from "../sources/unnoticed-changes";
 import { type FreshnessTarget } from "./check-freshness";
@@ -10,9 +10,11 @@ const MAX_DUE_TARGETS = 200;
 
 /** Internal bridge for the research workflow that found the goal's sources. */
 export async function scheduleFreshnessChecks({
+  db = prisma,
   now = new Date(),
   targets,
 }: {
+  db?: TransactionClient;
   now?: Date;
   targets: FreshnessTarget[];
 }): Promise<void> {
@@ -26,13 +28,13 @@ export async function scheduleFreshnessChecks({
 
   await Promise.all([
     examIds.length > 0
-      ? prisma.examBlueprint.updateMany({
+      ? db.examBlueprint.updateMany({
           data: { nextCheckAt: now },
           where: { id: { in: examIds }, nextCheckAt: null },
         })
       : null,
     sourceIds.length > 0
-      ? prisma.source.updateMany({
+      ? db.source.updateMany({
           data: { nextCheckAt: now },
           where: { id: { in: sourceIds }, nextCheckAt: null },
         })

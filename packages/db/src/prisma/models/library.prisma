@@ -175,6 +175,7 @@ model Lesson {
   questionThreads        LessonQuestionThread[]
   reviewFlags            ContentReviewFlag[]
   anonymousPaces         AnonymousLessonPace[]
+  sources                LessonSource[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@unique([homeChapterId, slug], name: "homeChapterSlug")
@@ -280,6 +281,22 @@ model StepSource {
   @@id([stepId, sourceId])
   @@index([sourceId])
   @@map("library_step_sources")
+}
+
+/// A law's official text a lesson is planned and written from. `articles` labels the parts of the
+/// text picked for the lesson, read again from the current text, so its planner, writer, reviewer
+/// and fixer read the same ones.
+model LessonSource {
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sourceId  String   @map("source_id") @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  articles  String[]
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([lessonId, sourceId])
+  @@index([sourceId])
+  @@map("library_lesson_sources")
 }
 
 /// When a picture is taken out of use its row goes with it, and the option shows its description.

@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { idSchema, labelSchema, uniqueIdsSchema } from "../../steps/contract/content-schemas";
-import { unitSchema } from "../activity-schemas";
+import { aimForItems, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { normalCdf } from "./_utils/probability";
 import { issue } from "./_utils/template-helpers";
 
-const MAX_POINTS = 200;
-const MAX_SPANS = 6;
+const POINTS_TARGET = 200;
+const SPANS_TARGET = 6;
 const PERCENT = 100;
 
 const intervalSchema = z.object({ from: z.number(), to: z.number() }).strict();
@@ -66,11 +66,11 @@ const chartPointSchema = z.object({ x: z.number(), y: z.number() }).strict();
 
 const chartReaderFields = z
   .object({
-    points: z.array(chartPointSchema).min(3).max(MAX_POINTS),
+    points: z.array(chartPointSchema).min(3).describe(aimForItems(POINTS_TARGET)),
     spans: uniqueIdsSchema(
       z.object({ from: z.number(), id: idSchema, label: labelSchema, to: z.number() }).strict(),
-      { max: MAX_SPANS, min: 1 },
-    ),
+      { min: 1 },
+    ).describe(aimForItems(SPANS_TARGET)),
     statistic: z.enum(["change", "percentChange", "ratePerUnit"]),
     xLabel: labelSchema,
     yLabel: labelSchema,

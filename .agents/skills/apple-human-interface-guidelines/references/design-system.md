@@ -2,7 +2,7 @@
 
 Main's design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`) says what each thing means and how the content looks. On Apple platforms the content layer takes the same values and anatomy through the app's own roles and pieces, and the chrome stays the system's, so iOS still handles Dynamic Type, Bold Text, Dark Mode, Increase Contrast, Reduce Motion, Liquid Glass and new devices. Screens never spell a value: no hex colors, no fixed font sizes, no radius numbers, no custom controls where a native one exists.
 
-The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`: the generated colors and radii, the type roles, and main's shared pieces drawn with native building blocks. A Debug build launched with `ZOONK_DEBUG_GALLERY=1` (or a section's name: `colors`, `text`, `buttons`, `busy`, `chips`, `lists`, `panels`, `meters`, `marks`, `options`, `fields`) shows every role and piece in one scroll, the native side of main's `/design` and Android's gallery. When you change a piece or add one, add it there and look at it in light, dark, Increase Contrast, an accessibility size, Bold Text and right to left.
+The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`: the generated colors and radii, the type roles, and main's shared pieces drawn with native building blocks. A Debug build launched with `ZOONK_DEBUG_GALLERY=1` (or a section's name: `colors`, `text`, `buttons`, `busy`, `chips`, `lists`, `panels`, `meters`, `marks`, `options`, `fields`, `charts`) shows every role and piece in one scroll, the native side of main's `/design` and Android's gallery. When you change a piece or add one, add it there and look at it in light, dark, Increase Contrast, an accessibility size, Bold Text and right to left.
 
 ## Ground rules
 
@@ -35,6 +35,7 @@ The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`: the generated
 | `kind-*`                                                          | `LearnKind.color` (`dotColor` for a dot), drawn by `KindMark` / `KindDot`                                                                                                |
 | `belt-*`                                                          | `ProgressBelt.color`: full strength in every mode, with a faint outline so white and black never vanish                                                                  |
 | `viz-accent`, `viz-highlight`, `viz-secondary`, `viz-grid`        | `.vizAccent`, `.vizHighlight`, `.vizSecondary`, `.vizGrid`                                                                                                               |
+| `viz-series-4` to `-6`                                            | `.vizSeries4` to `.vizSeries6`: a chart's fourth to sixth series, through `LessonSeriesMark`                                                                             |
 | `[data-subject]`: `subject`, `subject-text`, `subject-tint`       | `SubjectColors` (`mark`, `text`, `tint`), drawn by `SubjectGlyph` and `CourseSubjectLabel` (main's `SubjectLabel`: the subject's words in its `-text` color on its tint) |
 
 SwiftUI's own `.primary`, `.foreground` and `.background` styles are the system's, so main's roles with those names are written `Color(.primary)`, `Color(.foreground)` and `Color(.background)`.

@@ -48,9 +48,7 @@ async function createAsGuest(
     return create();
   }
 
-  return guest.status === "blocked"
-    ? { reason: "browserBlocked", status: "limitReached" }
-    : { status: "failed" };
+  return { status: "failed" };
 }
 
 /**

@@ -9607,12 +9607,6 @@ msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
 msgstr "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "Un controllo di sicurezza ha bloccato questo browser. Prova con un altro browser o crea un account gratuito."
-
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -12726,6 +12720,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "Cosa ti aiuta a imparare"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "Come ci rivolgiamo a te"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12746,6 +12746,12 @@ msgstr "Senza risposta"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, one {# salvata} other {# salvate}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Salvata"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -12924,6 +12930,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "Cosa ti aiuta a imparare?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "Come preferisci che ci rivolgiamo a te?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -12953,6 +12965,11 @@ msgstr "Facoltativo. Salveremo queste informazioni solo se lo scegli tu."
 msgctxt "310Na4"
 msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "Scegli tutto ciò che ti aiuta. Non servono etichette né diagnosi."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Il tuo compagno e i commenti che ricevi useranno queste forme. Le lezioni restano uguali."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"

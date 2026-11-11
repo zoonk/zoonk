@@ -9,6 +9,11 @@ import { formatGoalTutorPageGuide } from "./goal-tutor-pages";
 import { SEARCH_DEADLINE_MS } from "./goal-tutor-web-search";
 import type * as Ai from "ai";
 
+vi.mock("../_utils/address-form.prompt.md", () => ({
+  default:
+    "{{#neutral}}Neutral address.{{/neutral}}{{#feminine}}Feminine address.{{/feminine}}{{#masculine}}Masculine address.{{/masculine}}",
+}));
+
 vi.mock("server-only", () => ({}));
 vi.mock("./learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./goal-tutor.prompt.md", () => ({ default: "Tutor every goal." }));
@@ -42,7 +47,7 @@ vi.mock("ai", async (importOriginal) => {
 const PAGES = `## The app's pages\n\n${formatGoalTutorPageGuide({ pages: TEST_TUTOR_LINKS.pages, selectedGoal: false })}\n`;
 
 function instructions(goal: string[], screen?: string) {
-  return [...goal, PAGES, ...(screen ? [screen] : [])].join("\n");
+  return [...goal, PAGES, ...(screen ? [screen] : []), "Neutral address."].join("\n");
 }
 
 function planContext(kind: string): PlanScopeContext {
@@ -127,6 +132,7 @@ describe(generateGoalTutorAnswer, () => {
 
     const personal = await generateGoalTutorAnswer({
       ...input,
+      addressForm: "feminine",
       learnerNeeds: { note: null, variants: ["adhd"] },
     });
 
@@ -156,6 +162,7 @@ describe(generateGoalTutorAnswer, () => {
 
     const personal = streamGoalTutorAnswer({
       ...input,
+      addressForm: "feminine",
       learnerNeeds: { note: null, variants: ["adhd"] },
     });
 

@@ -23,6 +23,13 @@ const REGIONS = ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"];
 const NARROW = 254;
 const WIDE = 324;
 
+function seriesOf(count: number) {
+  return Array.from({ length: count }, (_, index) => ({
+    name: `Series ${String(index + 1)}`,
+    values: [35, 36, 40],
+  }));
+}
+
 function layoutFor(chart: ChartVisual, width: number) {
   return getLayout({ formatTick: String, formatValue: String, visual: chart, width });
 }
@@ -53,6 +60,14 @@ function valueLabelEdges({ layout, value }: { layout: RowLayout; value: number }
 }
 
 describe(getLayout, () => {
+  it("lays bars on their side once too many series would thin them to slivers", () => {
+    const lines: ChartVisual = { ...visual, chart: "line", series: seriesOf(12) };
+
+    expect(layoutFor({ ...visual, series: seriesOf(8) }, WIDE).orientation).toBe("vertical");
+    expect(layoutFor({ ...visual, series: seriesOf(12) }, WIDE).orientation).toBe("horizontal");
+    expect(layoutFor(lines, WIDE).orientation).toBe("vertical");
+  });
+
   it("keeps the axis width for short tick labels", () => {
     expect(columns(layoutFor(visual, 320)).left).toBe(PADDING.left);
   });

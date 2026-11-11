@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.components
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -48,6 +49,12 @@ class LessonVisualTest {
     fun barsLieOnTheirSideWhenANameDoesntFitUnderItsBar() {
         assertNull(uprightBarLabels(30f, listOf("Brazilian", "Argentinian", "Chilean"), width))
         assertNull(uprightBarLabels(60f, listOf("North America", "South-East Asia"), width))
+    }
+
+    @Test
+    fun barsLieOnTheirSideOnceTooManySeriesWouldThinThemToSlivers() {
+        assertTrue(barsFitSideBySide(band = 70f, series = 7, dp = 1f))
+        assertFalse(barsFitSideBySide(band = 70f, series = 8, dp = 1f))
     }
 
     @Test

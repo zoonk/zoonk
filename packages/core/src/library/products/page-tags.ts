@@ -108,30 +108,3 @@ export function readPageTags({ html, url }: { html: string; url: string }): Page
     links: [...new Set(links)],
   };
 }
-
-/** Byte-order marks as their bytes read in windows-1252, the prescan's decoding. */
-const BYTE_ORDER_MARKS = [
-  { label: "utf8", marks: "\u00EF\u00BB\u00BF" },
-  { label: "utf-16le", marks: "\u00FF\u00FE" },
-  { label: "utf-16be", marks: "\u00FE\u00FF" },
-];
-
-const META_CHARSET = /<meta\b[^>]*charset\s*=\s*["']?\s*(?<charset>[\w.:-]+)/iu;
-const PRESCAN_BYTES = 1024;
-
-/**
- * As a browser decodes a page: its byte-order mark, else the charset its `<meta>` declares in the
- * first kilobyte, else UTF-8. A declared UTF-16 can't be, since the bytes read as ASCII.
- */
-export function decodeHtml(bytes: Uint8Array): string {
-  const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, PRESCAN_BYTES));
-  const bom = BYTE_ORDER_MARKS.find(({ marks }) => head.startsWith(marks));
-  const declared = META_CHARSET.exec(head)?.groups?.charset?.toLowerCase();
-  const label = bom?.label ?? (declared?.startsWith("utf-16") ? "utf8" : declared) ?? "utf8";
-
-  try {
-    return new TextDecoder(label).decode(bytes);
-  } catch {
-    return new TextDecoder().decode(bytes);
-  }
-}

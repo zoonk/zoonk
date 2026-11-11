@@ -83,16 +83,14 @@ export function savedProfileAnswer({
   return normalizeProfileAnswer(parsed);
 }
 
-function questionAnswer({
+function settingsAnswer({
   state,
   question,
-  facts,
   first,
   declined,
 }: {
   state: ProfileQuestionState;
-  question: ProfileQuestion;
-  facts: MemoryFact[];
+  question: "conditions" | "learningSupport" | "addressForm";
   first: Record<string, unknown>;
   declined: boolean;
 }): Record<string, unknown> {
@@ -110,6 +108,31 @@ function questionAnswer({
         note: typeof first.note === "string" ? first.note : null,
         soundEffects: state.profile?.soundsEnabled ?? true,
       };
+    case "addressForm":
+      return { declined, form: state.profile?.addressForm ?? null };
+    default:
+      return question satisfies never;
+  }
+}
+
+function questionAnswer({
+  state,
+  question,
+  facts,
+  first,
+  declined,
+}: {
+  state: ProfileQuestionState;
+  question: ProfileQuestion;
+  facts: MemoryFact[];
+  first: Record<string, unknown>;
+  declined: boolean;
+}): Record<string, unknown> {
+  switch (question) {
+    case "conditions":
+    case "learningSupport":
+    case "addressForm":
+      return settingsAnswer({ declined, first, question, state });
     case "studies":
       return {
         declined,
@@ -205,6 +228,8 @@ function toSavedView(input: ProfileAnswerInput): ProfileQuestionView["saved"] {
         studies: [],
         text: input.answer.note ?? "",
       };
+    case "addressForm":
+      return { picks: input.answer.form ? [input.answer.form] : [], studies: [], text: "" };
     case "activities":
     case "listen":
     case "play":

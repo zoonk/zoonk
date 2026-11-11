@@ -17,7 +17,15 @@ export class PermanentDocumentError extends Error {
   override name = "PermanentDocumentError";
 }
 
-export type FetchedDocument = { bytes: Uint8Array; contentType: string; url: string };
+export type FetchedDocument = {
+  bytes: Uint8Array;
+  /** The charset the response declares, which outranks one the page declares itself. */
+  charset: string | null;
+  contentType: string;
+  url: string;
+};
+
+const CHARSET = /charset\s*=\s*["']?(?<charset>[\w.:-]+)/iu;
 
 export function toSourceUrl(value: string): string | null {
   if (!URL.canParse(value)) {
@@ -99,9 +107,12 @@ export async function fetchDocument(url: string): Promise<FetchedDocument> {
     throw new Failure(`Fetching ${fetched.url} failed with status ${status}`);
   }
 
+  const contentType = fetched.response.headers.get("content-type") ?? "";
+
   return {
     bytes: await readLimitedBody({ maxBytes: MAX_SOURCE_UPLOAD_BYTES, response: fetched.response }),
-    contentType: normalizeContentType(fetched.response.headers.get("content-type") ?? ""),
+    charset: CHARSET.exec(contentType)?.groups?.charset ?? null,
+    contentType: normalizeContentType(contentType),
     url: fetched.url,
   };
 }
