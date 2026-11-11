@@ -53,10 +53,11 @@ class StartGoalFlowTest {
     private val api = FakeOnboardingApi()
     private lateinit var store: OnboardingStore
     private lateinit var cache: AppCache
+    private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
     private var sessionKey by mutableStateOf<String?>("local-a")
+    private var hasAccount by mutableStateOf(true)
 
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
-        val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
@@ -66,7 +67,7 @@ class StartGoalFlowTest {
                     store,
                     cache.noAllowance(),
                     sessionKey = sessionKey,
-                    canAttach = sessionKey != null,
+                    canAttach = sessionKey != null && hasAccount,
                     rememberAppNavigator(),
                 )
             }
@@ -98,6 +99,29 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
         rule.onNodeWithText("pass the bar exam").assertDoesNotExist()
+    }
+
+    @Test
+    fun aGuestWhoSignsUpFromTheCardComesBackToItWithTheAccountsRoom() {
+        fun card(left: Int) = understoodDraft(understanding = twoGoals(), activeGoalsLeft = left)
+        hasAccount = false
+        api.draft = card(left = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Create a free account").assertIsDisplayed()
+
+        api.draft = card(left = 2)
+        session.session = AuthenticatedSession("bia", "token-b", "local-b")
+        cache.followSession()
+        sessionKey = "local-b"
+        hasAccount = true
+
+        rule.onNodeWithText("Create a free account").assertDoesNotExist()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(
+            listOf(listOf("Pass the bar exam", "Learn statistics")),
+            api.created.map { input -> input.goals.map { it.title } },
+        )
     }
 
     @Test

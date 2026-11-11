@@ -113,7 +113,7 @@ fun StartGoalScreen(
     val analytics = LocalEventTracker.current
     val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId, analytics) }
     val hasSession = sessionKey != null
-    LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
+    LaunchedEffect(sessionKey) { vm.followSession(sessionKey, hasAccount = canAttach) }
     val caps by allowance.collectShown()
     val upFront = caps.value?.goalStartLimit()
     val language = currentLocale().language
