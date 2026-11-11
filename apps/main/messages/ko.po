@@ -2544,9 +2544,19 @@ msgid "No login is waiting for this code. Check it against your terminal, or run
 msgstr "이 코드를 기다리는 로그인이 없어요. 터미널의 코드와 비교하거나 {command} 명령을 다시 실행해 보세요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "터미널로 돌아가세요. 이제 CLI를 사용할 수 있어요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
 msgstr "로그인되었어요"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLI에 접근 권한이 주어지지 않았어요. 이 페이지를 닫아도 돼요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2554,14 +2564,14 @@ msgid "Login denied"
 msgstr "로그인을 거부했어요"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "4SuH6v"
-msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "터미널로 돌아가세요. 이제 CLI를 사용할 수 있어요."
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "{email} 계정은 팀 계정이 아니어서 CLI에 접근 권한이 주어지지 않았어요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "NHsIWj"
-msgid "The CLI got no access. You can close this page."
-msgstr "CLI에 접근 권한이 주어지지 않았어요. 이 페이지를 닫아도 돼요."
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "이 로그인에는 Zoonk 팀 계정이 필요해요"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
@@ -2577,11 +2587,6 @@ msgstr "Zoonk CLI에 로그인"
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
 msgstr "먼저 Zoonk 팀 계정으로 로그인하세요. 그런 다음 여기로 돌아와 승인할 수 있어요."
-
-#: src/app/[lang]/device/page.tsx
-msgctxt "Prq8uY"
-msgid "Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access."
-msgstr "CLI 로그인은 Zoonk 팀만 승인할 수 있어요. {email} 계정에는 팀 권한이 없어요."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

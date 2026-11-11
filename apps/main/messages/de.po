@@ -2544,9 +2544,19 @@ msgid "No login is waiting for this code. Check it against your terminal, or run
 msgstr "Für diesen Code wartet keine Anmeldung. Vergleich ihn mit deinem Terminal oder führ {command} noch einmal aus."
 
 #: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Geh zurück zu deinem Terminal. Die CLI ist bereit."
+
+#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
 msgstr "Du bist angemeldet"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "Die CLI hat keinen Zugriff bekommen. Du kannst diese Seite schließen."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2554,14 +2564,14 @@ msgid "Login denied"
 msgstr "Anmeldung abgelehnt"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "4SuH6v"
-msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Geh zurück zu deinem Terminal. Die CLI ist bereit."
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "Die CLI hat keinen Zugriff bekommen, weil {email} kein Teamkonto ist."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "NHsIWj"
-msgid "The CLI got no access. You can close this page."
-msgstr "Die CLI hat keinen Zugriff bekommen. Du kannst diese Seite schließen."
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Diese Anmeldung braucht ein Zoonk-Teamkonto"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
@@ -2577,11 +2587,6 @@ msgstr "Bei der Zoonk-CLI anmelden"
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
 msgstr "Melde dich zuerst mit deinem Zoonk-Teamkonto an. Danach kommst du hierher zurück, um die Anmeldung zuzulassen."
-
-#: src/app/[lang]/device/page.tsx
-msgctxt "Prq8uY"
-msgid "Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access."
-msgstr "Nur das Zoonk-Team kann eine CLI-Anmeldung zulassen, und {email} hat keinen Teamzugang."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

@@ -1,16 +1,18 @@
 import { authClient } from "@zoonk/auth/client";
+import { decideCliLoginAction } from "./decide-cli-login-action";
 
 export type CliLoginDecision = "approve" | "deny";
 
 export type CliLoginFailure = "expired" | "failed" | "tooMany" | "used" | "wrong";
 
-export type CliLoginState = { decided: CliLoginDecision } | { failure: CliLoginFailure } | null;
+export type CliLoginOutcome = "approved" | "denied" | "needsStaff";
+
+export type CliLoginState = { outcome: CliLoginOutcome } | { failure: CliLoginFailure } | null;
 
 type AuthError = { error?: unknown; status: number };
 
 const TOO_MANY_REQUESTS = 429;
 const BAD_REQUEST = 400;
-const FORBIDDEN = 403;
 
 function getCheckFailure(error: AuthError): CliLoginFailure {
   if (error.status === TOO_MANY_REQUESTS) {
@@ -24,17 +26,10 @@ function getCheckFailure(error: AuthError): CliLoginFailure {
   return error.status === BAD_REQUEST ? "wrong" : "failed";
 }
 
-function getDecisionFailure(error: AuthError): CliLoginFailure {
-  if (error.error === "expired_token") {
-    return "expired";
-  }
-
-  return error.status === BAD_REQUEST || error.status === FORBIDDEN ? "used" : "failed";
-}
-
 /**
- * Claims the code for the signed-in person, then approves or denies it. The claim is the provider's
- * rate-limited check (5 per 30 minutes from one address), so it runs only on a press.
+ * Claims the code for the signed-in person with the provider's check, then lets core decide it. The
+ * check is rate limited (5 per 30 minutes from one address) only over HTTP, so the browser makes it,
+ * and only on a press.
  */
 export async function decideCliLogin({
   decision,
@@ -54,14 +49,11 @@ export async function decideCliLogin({
     return { failure: "used" };
   }
 
-  const decided =
-    decision === "approve"
-      ? await authClient.device.approve({ userCode })
-      : await authClient.device.deny({ userCode });
+  const decided = await decideCliLoginAction({ decision, userCode });
 
-  if (decided.error) {
-    return { failure: getDecisionFailure(decided.error) };
+  if (decided.status === "notFound") {
+    return { failure: "used" };
   }
 
-  return { decided: decision };
+  return decided.status === "unauthorized" ? { failure: "failed" } : { outcome: decided.status };
 }

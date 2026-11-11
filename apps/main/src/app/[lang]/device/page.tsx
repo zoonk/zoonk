@@ -1,7 +1,6 @@
 import { PublicTopBar } from "@/components/public/public-top-bar";
 import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
-import { getAdminAccess } from "@zoonk/core/users/admin-access";
 import { getSession } from "@zoonk/core/users/session";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -44,9 +43,8 @@ function CliLoginSkeleton() {
 async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
   const t = await getExtracted();
 
-  const [{ user_code: userCodeParam }, access, session, locale] = await Promise.all([
+  const [{ user_code: userCodeParam }, session, locale] = await Promise.all([
     searchParams,
-    getAdminAccess(),
     getSession(),
     getAppLocale(),
   ]);
@@ -72,16 +70,6 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
           {t("Log in")}
         </PendingLink>
       </div>
-    );
-  }
-
-  if (access !== "ready") {
-    return (
-      <p className="text-muted-foreground text-pretty">
-        {t("Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access.", {
-          email: session.user.email,
-        })}
-      </p>
     );
   }
 

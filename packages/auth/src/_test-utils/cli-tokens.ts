@@ -36,13 +36,49 @@ export async function otherCliClientFixture(): Promise<string> {
 }
 
 /**
+ * A login `pnpm zoonk login` started and `user` claimed on the approval page, as its rate-limited
+ * check does, still waiting for Approve or Deny. `browser` carries that person's session cookie.
+ */
+export async function claimedCliLoginFixture({
+  clientId = CLI_CLIENT_ID,
+  scopes = [STAFF_READ_SCOPE, "offline_access"],
+  user,
+}: {
+  clientId?: string;
+  scopes?: string[];
+  user: CliUser;
+}): Promise<{ browser: Headers; deviceCode: string; userCode: string }> {
+  const code = await auth.api.deviceCode({
+    body: { client_id: clientId, scope: scopes.join(" ") },
+  });
+
+  const browser = await signIn(user);
+  await auth.api.deviceVerify({ headers: browser, query: { user_code: code.user_code } });
+
+  return { browser, deviceCode: code.device_code, userCode: code.user_code };
+}
+
+/** What the CLI does while it waits: exchange the device code once the login is approved. */
+export function redeemCliLogin({
+  clientId = CLI_CLIENT_ID,
+  deviceCode,
+}: {
+  clientId?: string;
+  deviceCode: string;
+}) {
+  return auth.api.oauth2Token({
+    body: { client_id: clientId, device_code: deviceCode, grant_type: DEVICE_CODE_GRANT_TYPE },
+  });
+}
+
+/**
  * Logs `user` in through the real device flow, as `pnpm zoonk login` does: the CLI asks for a code,
  * the user approves it signed in, and the CLI exchanges it. `state` then expires or revokes the
  * access token the way time or `pnpm zoonk logout` would. Each call is another machine's login.
  */
 export async function cliTokenFixture({
   clientId = CLI_CLIENT_ID,
-  scopes = [STAFF_READ_SCOPE, "offline_access"],
+  scopes,
   state = "active",
   user,
 }: {
@@ -51,22 +87,11 @@ export async function cliTokenFixture({
   state?: "active" | "expired" | "revoked";
   user: CliUser;
 }): Promise<{ accessToken: string; refreshToken?: string }> {
-  const code = await auth.api.deviceCode({
-    body: { client_id: clientId, scope: scopes.join(" ") },
-  });
+  const claimed = await claimedCliLoginFixture({ clientId, scopes, user });
 
-  const browser = await signIn(user);
+  await auth.api.deviceApprove({ body: { userCode: claimed.userCode }, headers: claimed.browser });
 
-  await auth.api.deviceVerify({ headers: browser, query: { user_code: code.user_code } });
-  await auth.api.deviceApprove({ body: { userCode: code.user_code }, headers: browser });
-
-  const tokens = await auth.api.oauth2Token({
-    body: {
-      client_id: clientId,
-      device_code: code.device_code,
-      grant_type: DEVICE_CODE_GRANT_TYPE,
-    },
-  });
+  const tokens = await redeemCliLogin({ clientId, deviceCode: claimed.deviceCode });
 
   if (state === "expired") {
     await prisma.oauthAccessToken.updateMany({

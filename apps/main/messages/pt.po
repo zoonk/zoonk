@@ -2544,9 +2544,19 @@ msgid "No login is waiting for this code. Check it against your terminal, or run
 msgstr "Nenhum login está esperando este código. Compare com o código do seu terminal ou rode {command} de novo."
 
 #: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Volte para o seu terminal. A CLI já está pronta para usar."
+
+#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
 msgstr "Login concluído"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "A CLI não recebeu acesso. Você pode fechar esta página."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2554,14 +2564,14 @@ msgid "Login denied"
 msgstr "Login recusado"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "4SuH6v"
-msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Volte para o seu terminal. A CLI já está pronta para usar."
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "A CLI não recebeu acesso, porque {email} não é uma conta da equipe."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "NHsIWj"
-msgid "The CLI got no access. You can close this page."
-msgstr "A CLI não recebeu acesso. Você pode fechar esta página."
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Este login precisa de uma conta da equipe do Zoonk"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
@@ -2577,11 +2587,6 @@ msgstr "Entrar na CLI do Zoonk"
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
 msgstr "Primeiro, entre com sua conta da equipe do Zoonk. Depois você volta aqui para aprovar."
-
-#: src/app/[lang]/device/page.tsx
-msgctxt "Prq8uY"
-msgid "Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access."
-msgstr "Só a equipe do Zoonk pode aprovar um login na CLI, e {email} não tem acesso de equipe."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

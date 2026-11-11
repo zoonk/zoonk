@@ -2544,9 +2544,19 @@ msgid "No login is waiting for this code. Check it against your terminal, or run
 msgstr "Nessun accesso è in attesa di questo codice. Confrontalo con quello del tuo terminale o esegui di nuovo {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Torna al tuo terminale. La CLI è pronta."
+
+#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
 msgstr "Accesso effettuato"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "La CLI non ha ricevuto alcun accesso. Puoi chiudere questa pagina."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2554,14 +2564,14 @@ msgid "Login denied"
 msgstr "Accesso rifiutato"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "4SuH6v"
-msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Torna al tuo terminale. La CLI è pronta."
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "La CLI non ha ricevuto alcun accesso, perché {email} non è un account del team."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "NHsIWj"
-msgid "The CLI got no access. You can close this page."
-msgstr "La CLI non ha ricevuto alcun accesso. Puoi chiudere questa pagina."
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Questo accesso richiede un account del team di Zoonk"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
@@ -2577,11 +2587,6 @@ msgstr "Accedi alla CLI di Zoonk"
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
 msgstr "Prima accedi con il tuo account del team di Zoonk. Poi tornerai qui per approvarlo."
-
-#: src/app/[lang]/device/page.tsx
-msgctxt "Prq8uY"
-msgid "Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access."
-msgstr "Solo il team di Zoonk può approvare un accesso alla CLI, e {email} non ha l’accesso del team."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

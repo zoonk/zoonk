@@ -19,8 +19,8 @@ import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
 import { useFormStatus } from "react-dom";
 import {
-  type CliLoginDecision,
   type CliLoginFailure,
+  type CliLoginOutcome,
   type CliLoginState,
   decideCliLogin,
 } from "./decide-cli-login";
@@ -157,26 +157,35 @@ function FailureNote({ failure }: { failure: CliLoginFailure }) {
   );
 }
 
-function Decided({ decision }: { decision: CliLoginDecision }) {
+function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }) {
   const t = useExtracted();
+  const approved = outcome === "approved";
+
+  const text: Record<CliLoginOutcome, { body: string; title: string }> = {
+    approved: {
+      body: t("Go back to your terminal. The CLI is ready to use."),
+      title: t("You're logged in"),
+    },
+    denied: {
+      body: t("The CLI got no access. You can close this page."),
+      title: t("Login denied"),
+    },
+    needsStaff: {
+      body: t("The CLI got no access, because {email} isn't a staff account.", { email }),
+      title: t("This login needs a Zoonk staff account"),
+    },
+  };
 
   return (
     <div className="flex flex-col items-start gap-2" role="status">
-      {decision === "approve" ? (
+      {approved ? (
         <CircleCheckIcon aria-hidden="true" className="text-success mb-2 size-6" />
       ) : (
         <CircleXIcon aria-hidden="true" className="text-muted-foreground mb-2 size-6" />
       )}
 
-      <h2 className="text-section">
-        {decision === "approve" ? t("You're logged in") : t("Login denied")}
-      </h2>
-
-      <p className="text-muted-foreground text-pretty">
-        {decision === "approve"
-          ? t("Go back to your terminal. The CLI is ready to use.")
-          : t("The CLI got no access. You can close this page.")}
-      </p>
+      <h2 className="text-section">{text[outcome].title}</h2>
+      <p className="text-muted-foreground text-pretty">{text[outcome].body}</p>
     </div>
   );
 }
@@ -197,8 +206,8 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
     null,
   );
 
-  if (state && "decided" in state) {
-    return <Decided decision={state.decided} />;
+  if (state && "outcome" in state) {
+    return <Outcome email={email} outcome={state.outcome} />;
   }
 
   return (
