@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -2476,6 +2477,112 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "チャレンジ"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "ターミナルに表示されたコードと同じか確認してください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "ターミナルに表示されたコード"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "承認すると"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "CLIは{email}として、アカウント、学習計画、回答などの本番データを読み取ります。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "データを変更することはできません。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "そのパソコンでログアウトするか、30日間使わないかぎり、ログインしたままになります。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "承認"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "拒否"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "このコードは期限切れです。{command}をもう一度実行して、新しいコードを取得してください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "DaD53k"
+msgid "Too many tries from this network. Wait 30 minutes, then try again."
+msgstr "このネットワークからの試行回数が多すぎます。30分待ってから、もう一度お試しください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "このコードはすでに使われています。{command}をもう一度実行して、新しいコードを取得してください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "このコードを待っているログインはありません。ターミナルのコードと見比べるか、{command}をもう一度実行してください。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "ログインしました"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "ログインを拒否しました"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "ターミナルに戻ってください。CLIを使えるようになりました。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLIにアクセス権は与えられていません。このページは閉じてかまいません。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "自分で開始したログインだけを承認してください。誰かからこのリンクが送られてきた場合は、拒否してください。"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Zoonk CLIにログイン"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "まずZoonkのチームアカウントでログインしてください。そのあと、このページに戻って承認できます。"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "Prq8uY"
+msgid "Only Zoonk staff can approve a CLI login, and {email} doesn't have staff access."
+msgstr "CLIのログインを承認できるのはZoonkのチームだけです。{email}にはチームの権限がありません。"
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2632,11 +2739,6 @@ msgstr "1日にどのくらい学習しますか？"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "今は別の目標を始められません。まず、取り組み中の目標を1つ終えるか、一時停止してください。"
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
