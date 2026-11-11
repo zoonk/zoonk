@@ -42,7 +42,10 @@ function checkWriteListeningSetOutput(
     return {
       itemLocator: `set.questions[${index}]`,
       problems: checkItem({ item, language, optionCount }),
-      question: { ...question, ...item },
+      question:
+        item.format === "typed"
+          ? { ...question, acceptedAnswers: item.acceptedAnswers, sampleAnswer: item.sampleAnswer }
+          : question,
     };
   });
 
