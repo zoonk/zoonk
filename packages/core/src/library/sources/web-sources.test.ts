@@ -12,6 +12,7 @@ import {
   mockSearchTerms,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
+import { splitLawArticles } from "./law-articles";
 import { recordSourceChangeNotice } from "./source-change-notices";
 import { getOwedSourceChange } from "./unnoticed-changes";
 import {
@@ -198,6 +199,32 @@ describe(storeWebSource, () => {
 
     expect(again.id).toBe(source.id);
     expect(again.contentHash).toBe(source.contentHash);
+  });
+
+  it("keeps a law longer than an upload whole, down to its last article", async () => {
+    const articles = Array.from(
+      { length: 4000 },
+      (_, index) =>
+        `<p>Art. ${index + 1}. ${"O servidor público responde pelos seus atos. ".repeat(4)}</p>`,
+    );
+
+    servePage(`<html><body>${articles.join("")}</body></html>`);
+
+    const [law, notice] = await Promise.all([
+      storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() }),
+      storeWebSource({ ...EDITAL, topic: "exam", url: newUrl() }),
+    ]);
+
+    const [lawText, noticeText] = await Promise.all(
+      [law.id, notice.id].map(async (id) => {
+        const stored = await prisma.source.findUniqueOrThrow({ where: { id } });
+        return stored.extractedText ?? "";
+      }),
+    );
+
+    expect(lawText.length).toBeGreaterThan(700_000);
+    expect(splitLawArticles(lawText).at(-1)?.heading).toBe("Art. 4000");
+    expect(noticeText).toHaveLength(500_000);
   });
 });
 

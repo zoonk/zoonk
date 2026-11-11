@@ -7,7 +7,7 @@ import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
-import { hashDocument, parseDocument } from "./parse-document";
+import { getMaxTextLength, hashDocument, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
 import { type SourceStructure, type SourceTopic, sourceStructureSchema } from "./source-contract";
 import { oweSourceChangeNotice } from "./unnoticed-changes";
@@ -25,9 +25,14 @@ export type StoreWebSourceInput = {
   acceptUrl?: (url: string) => boolean;
 };
 
-export async function fetchAndParse(url: string) {
+export async function fetchAndParse(url: string, topic?: SourceTopic) {
   const document = await fetchDocument(url);
-  const parsed = await parseDocument({ bytes: document.bytes, contentType: document.contentType });
+
+  const parsed = await parseDocument({
+    bytes: document.bytes,
+    contentType: document.contentType,
+    maxLength: getMaxTextLength(topic),
+  });
 
   return {
     contentHash: hashDocument({ bytes: document.bytes, text: parsed.text }),
@@ -89,7 +94,7 @@ function saveChangedContent({
 }
 
 export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
-  const fetched = await fetchAndParse(input.url);
+  const fetched = await fetchAndParse(input.url, input.topic);
 
   if (input.acceptUrl && !input.acceptUrl(fetched.url)) {
     throw new PermanentDocumentError(
@@ -187,9 +192,9 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
     return null;
   }
 
-  const fetched = await fetchAndParse(source.url);
-  const now = new Date();
   const topic = getTopic(source);
+  const fetched = await fetchAndParse(source.url, topic);
+  const now = new Date();
 
   // A product page was official where research found it; another site's page never replaces it.
   if (topic === "product" && toRegistrableDomain(fetched.url) !== toRegistrableDomain(source.url)) {

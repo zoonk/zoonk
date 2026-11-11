@@ -9,10 +9,14 @@ import {
   PAGE_BREAK,
   PDF_CONTENT_TYPE,
   PPTX_CONTENT_TYPE,
+  type SourceTopic,
   TEXT_CONTENT_TYPES,
 } from "./source-contract";
 
 const MAX_EXTRACTED_TEXT_LENGTH = 500_000;
+
+/** The consolidated Brazilian Constitution is about 1.06 million characters. */
+const MAX_LAW_TEXT_LENGTH = 2_000_000;
 
 const OFFICE_FILE_TYPES: Readonly<Record<string, SupportedFileType>> = {
   [DOCX_CONTENT_TYPE]: "docx",
@@ -39,16 +43,24 @@ export function hashDocument({ bytes, text }: { bytes: Uint8Array; text: string 
   return hashContent(text || bytes);
 }
 
+/** A law is read whole, so its text keeps more than an upload's. */
+export function getMaxTextLength(topic?: SourceTopic | null): number {
+  return topic === "regulation" ? MAX_LAW_TEXT_LENGTH : MAX_EXTRACTED_TEXT_LENGTH;
+}
+
 /** PostgreSQL text cannot store NUL; preserve page breaks so citations retain their page numbers. */
-function limitText(text: string): string {
+function limitText({ maxLength, text }: { maxLength: number; text: string }): string {
   return text
     .replaceAll("\u0000", "")
     .replaceAll(/^[^\S\f]+|[^\S\f]+$/gu, "")
-    .slice(0, MAX_EXTRACTED_TEXT_LENGTH);
+    .slice(0, maxLength);
 }
 
-export function isCutText(text: string | null): boolean {
-  return text !== null && text.length >= MAX_EXTRACTED_TEXT_LENGTH;
+export function isCutText(
+  text: string | null,
+  maxLength: number = MAX_EXTRACTED_TEXT_LENGTH,
+): boolean {
+  return text !== null && text.length >= maxLength;
 }
 
 function getPageNumber(node: OfficeParserAST["content"][number], position: number): number {
@@ -99,9 +111,11 @@ async function readPagedText({
 async function parseOfficeDocument({
   bytes,
   fileType,
+  maxLength,
 }: {
   bytes: Uint8Array;
   fileType: SupportedFileType;
+  maxLength: number;
 }): Promise<ParsedDocument> {
   const ast = await parseOffice(Buffer.from(bytes), {
     extractAttachments: fileType === "docx" || fileType === "pptx",
@@ -120,26 +134,29 @@ async function parseOfficeDocument({
       .filter((attachment) => MODEL_IMAGE_TYPES.has(attachment.mimeType))
       .map((attachment) => ({ data: attachment.data, mediaType: attachment.mimeType })),
     pages: countPages(ast),
-    text: limitText(text),
+    text: limitText({ maxLength, text }),
   };
 }
 
 export async function parseDocument({
   bytes,
   contentType,
+  maxLength = MAX_EXTRACTED_TEXT_LENGTH,
 }: {
   bytes: Uint8Array;
   contentType: string;
+  maxLength?: number;
 }): Promise<ParsedDocument> {
   const type = normalizeContentType(contentType);
   const fileType = OFFICE_FILE_TYPES[type];
 
   if (fileType) {
-    return parseOfficeDocument({ bytes, fileType });
+    return parseOfficeDocument({ bytes, fileType, maxLength });
   }
 
   if (TEXT_CONTENT_TYPES.some((textType) => textType === type)) {
-    return { images: [], pages: null, text: limitText(new TextDecoder().decode(bytes)) };
+    const text = new TextDecoder().decode(bytes);
+    return { images: [], pages: null, text: limitText({ maxLength, text }) };
   }
 
   if (MODEL_IMAGE_TYPES.has(type)) {
