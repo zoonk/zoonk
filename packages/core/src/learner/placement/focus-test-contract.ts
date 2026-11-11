@@ -27,14 +27,20 @@ const subjectNameShape = {
 const focusTestSubjectSchema = z
   .object({
     ...subjectNameShape,
-    asked: countSchema.meta({ description: "Test answers on the subject" }),
+    asked: countSchema.meta({
+      description: "All test responses on the subject, including `dontKnow`",
+    }),
+    dontKnow: countSchema.meta({
+      description:
+        "Responses marked dontKnow: true; excluded from grading. Chosen answers = asked - dontKnow. All responses are unknown when asked > 0 and dontKnow = asked",
+    }),
     part: uncheckedPartSchema.nullable().meta({ description: "Set only for `notChecked`" }),
-    right: countSchema.meta({ description: "How many of `asked` were right" }),
+    right: countSchema.meta({ description: "Correct chosen answers, out of `asked - dontKnow`" }),
     state: z
       .enum(["answered", "notAsked", "notChecked"])
       .meta({
         description:
-          "`answered`: say `right` of `asked` right. `notAsked`: no test answer yet, or no question is ready for it. `notChecked`: a part this test can't ask about (`part`)",
+          "`answered`: at least one response; grade only chosen answers (`asked - dontKnow`), distinguishing all-unknown responses (`dontKnow = asked`). `notAsked`: no test answer yet, or no question is ready for it. `notChecked`: a part this test can't ask about (`part`)",
       }),
   })
   .meta({ id: "FocusTestSubject" });

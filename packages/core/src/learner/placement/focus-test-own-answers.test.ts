@@ -9,6 +9,48 @@ import { readFocusTestRecord } from "./focus-test-state";
 import { getGoalPlacement } from "./get-goal-placement";
 
 describe("test progress while a sitting stays open", () => {
+  it("separates chosen answers from don't-know answers on each subject", async () => {
+    const { goal, items, skills, user } = await examTestGoalFixture({
+      subjects: [
+        { items: 4, name: "Math", questions: 10 },
+        { items: 4, name: "Physics", questions: 8 },
+        { name: "History", questions: 6 },
+      ],
+    });
+
+    const answers = [
+      { answer: { selectedIndex: 0 }, isCorrect: true, skillId: skills[0]!.id },
+      { answer: { selectedIndex: 1 }, isCorrect: false, skillId: skills[0]!.id },
+      { answer: { dontKnow: true }, isCorrect: false, skillId: skills[0]!.id },
+      { answer: { dontKnow: true }, isCorrect: false, skillId: skills[1]!.id },
+      { answer: { dontKnow: true }, isCorrect: false, skillId: skills[1]!.id },
+    ];
+
+    await Promise.all(
+      answers.map((answer, index) =>
+        attemptFixture({
+          ...answer,
+          itemId: items.filter((item) => item.skillId === answer.skillId)[index % 3]!.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const subjects = [
+      { asked: 3, dontKnow: 1, name: "Math", right: 1, state: "answered" },
+      { asked: 2, dontKnow: 2, name: "Physics", right: 0, state: "answered" },
+      { asked: 0, dontKnow: 0, name: "History", right: 0, state: "notAsked" },
+    ];
+
+    await expect(getGoalPlacement({ goalId: goal.id })).resolves.toMatchObject({
+      placement: { focusTest: { subjects } },
+    });
+
+    await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      completion: { focusTest: { subjects } },
+    });
+  });
+
   it("keeps legacy standalone Focus test answers as coverage and starting-point evidence", async () => {
     const { goal, items, user } = await examTestGoalFixture({
       subjects: [

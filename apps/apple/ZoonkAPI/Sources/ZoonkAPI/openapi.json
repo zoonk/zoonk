@@ -80979,7 +80979,13 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Test answers on the subject"
+            "description": "All test responses on the subject, including `dontKnow`"
+          },
+          "dontKnow": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Responses marked dontKnow: true; excluded from grading. Chosen answers = asked - dontKnow. All responses are unknown when asked > 0 and dontKnow = asked"
           },
           "part": {
             "nullable": true,
@@ -80996,7 +81002,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "How many of `asked` were right"
+            "description": "Correct chosen answers, out of `asked - dontKnow`"
           },
           "state": {
             "type": "string",
@@ -81005,7 +81011,7 @@
               "notAsked",
               "notChecked"
             ],
-            "description": "`answered`: say `right` of `asked` right. `notAsked`: no test answer yet, or no question is ready for it. `notChecked`: a part this test can't ask about (`part`)"
+            "description": "`answered`: at least one response; grade only chosen answers (`asked - dontKnow`), distinguishing all-unknown responses (`dontKnow = asked`). `notAsked`: no test answer yet, or no question is ready for it. `notChecked`: a part this test can't ask about (`part`)"
           }
         },
         "required": [
@@ -81013,6 +81019,7 @@
           "name",
           "shortName",
           "asked",
+          "dontKnow",
           "part",
           "right",
           "state"

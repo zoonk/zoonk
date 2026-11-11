@@ -30,6 +30,7 @@ function toSubjectView(subject: SubjectProgress): FocusTestSubject {
   return {
     ...toSubjectName(subject),
     asked: subject.asked,
+    dontKnow: subject.dontKnow,
     part: subject.part,
     right: subject.right,
     state: getSubjectState(subject),

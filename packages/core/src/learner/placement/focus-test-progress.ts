@@ -13,6 +13,7 @@ export type SubjectProgress = TestSubject & {
   /** Test answers on each of its plan areas, in the order of `areas`. */
   areaAnswers: number[];
   asked: number;
+  dontKnow: number;
   /** One of its test answers was wrong or "I don't know yet". */
   missed: boolean;
   right: number;
@@ -58,6 +59,7 @@ function toSubjectProgress({
         .reduce((sum, answer) => sum + answer.answered, 0),
     ),
     asked: own.reduce((sum, answer) => sum + answer.answered, 0),
+    dontKnow: own.reduce((sum, answer) => sum + answer.answered - answer.paceAnswers, 0),
     missed: own.some((answer) => answer.right < answer.answered),
     right: own.reduce((sum, answer) => sum + answer.right, 0),
     sittingAnswers: own.reduce((sum, answer) => sum + answer.sittingAnswers, 0),
