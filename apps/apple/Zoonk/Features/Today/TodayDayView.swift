@@ -323,7 +323,7 @@ struct TodayDayView: View {
   }
 
   private func open(_ block: StudyBlock, next: Bool) {
-    if waitsForStart(block) {
+    if view.session.waitsForStart(block) {
       showIntro(of: block)
       return
     }
@@ -336,7 +336,7 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
-    if waitsForStart(block) {
+    if view.session.waitsForStart(block) {
       showIntro(of: block)
       return
     }
@@ -346,23 +346,13 @@ struct TodayDayView: View {
     }
   }
 
-  /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
-  /// Start there, so the learner reads what it is before it starts. An unopened day's session shows
-  /// only its next step.
-  private func waitsForStart(_ block: StudyBlock) -> Bool {
-    block.screen == .session && block.kind != .learn && block.status != .active
-      && (block.id != nil || block.position == view.session.nextPosition)
-  }
-
-  /// Opens nothing on the server: the intro's Start does.
   private func showIntro(of block: StudyBlock) {
     guard busy == nil else {
       return
     }
 
     failed = nil
-    router.playback.show(blockID: block.id)
-    router.openStudy(.session)
+    router.showIntro(of: block)
   }
 
   /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
@@ -493,6 +483,12 @@ extension AppRouter {
 
       return result
     }
+  }
+
+  /// Opens nothing on the server: the intro's Start does.
+  func showIntro(of block: StudyBlock) {
+    playback.show(blockID: block.id)
+    openStudy(.session)
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with

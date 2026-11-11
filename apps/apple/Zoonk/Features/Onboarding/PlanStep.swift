@@ -571,7 +571,10 @@ private struct PlanReveal: View {
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var sheet: PlanSheet?
   @State private var showsTopics = false
-  @State private var openingToday: Task<Void, Never>?
+  /// Start's, or a row's while `openingRow` names it.
+  @State private var opening: Task<Void, Never>?
+  @State private var openingRow: Int?
+  @State private var failedRow: Int?
   @State private var startFailed = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
@@ -627,7 +630,7 @@ private struct PlanReveal: View {
         UserDefaults.standard.set(true, forKey: Self.momentKey(view))
       }
     }
-    .onDisappear { openingToday?.cancel() }
+    .onDisappear { opening?.cancel() }
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
@@ -658,7 +661,9 @@ private struct PlanReveal: View {
 
     switch day.state {
     case .loaded(let reveal):
-      RevealToday(day: reveal.today, minutes: reveal.minutes)
+      RevealToday(
+        day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
+        open: opening != nil && openingRow == nil ? nil : { open($0, on: reveal.today) })
       RevealWeek(days: reveal.nextDays, week: reveal.week)
     case .idle, .loading:
       // Today's rows hold their place, so the week doesn't move as they come.
@@ -688,7 +693,7 @@ private struct PlanReveal: View {
         .buttonStyle(.outline)
         .fixedSize()
 
-        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
+        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play, action: openToday) {
           if day?.blocks.contains(where: \.isFinished) == true {
             Text(
               "Continue", tableName: "Onboarding",
@@ -700,6 +705,7 @@ private struct PlanReveal: View {
         .buttonStyle(.mainAction)
         .buttonSizing(.flexible)
         .keyboardShortcut(.defaultAction)
+        .disabled(openingRow != nil)
       }
 
       if learner.summary.value?.identity.isAnonymous == true {
@@ -773,14 +779,15 @@ private struct PlanReveal: View {
   /// Today waits for the reveal to be seen: until it's saved, Today brings the learner back here,
   /// so a failed save stays here to try again.
   private func openToday() {
-    guard openingToday == nil else {
+    guard opening == nil else {
       return
     }
 
     startFailed = false
+    failedRow = nil
 
-    openingToday = Task {
-      defer { openingToday = nil }
+    opening = Task {
+      defer { opening = nil }
 
       do {
         try await onboarding.markPlanRevealed(goalID: view.goal.id)
@@ -795,6 +802,59 @@ private struct PlanReveal: View {
 
       if !Task.isCancelled {
         router.showRoot(of: .today)
+      }
+    }
+  }
+
+  /// A row ends the reveal as Start does, then opens its step the way Today's row does, so the
+  /// learner comes back from it to Today.
+  private func open(_ block: StudyBlock, on day: StudyDay) {
+    guard opening == nil else {
+      return
+    }
+
+    startFailed = false
+    failedRow = nil
+    openingRow = block.position
+    let shown = router.shown
+
+    opening = Task {
+      defer {
+        opening = nil
+        openingRow = nil
+      }
+
+      do {
+        try await onboarding.markPlanRevealed(goalID: view.goal.id)
+      } catch is CancellationError {
+        return
+      } catch {
+        failedRow = block.position
+        return
+      }
+
+      // A learner who left the reveal while it saved isn't taken anywhere.
+      guard !Task.isCancelled, router.shown == shown else {
+        return
+      }
+
+      if day.waitsForStart(block) {
+        router.showRoot(of: .today)
+        router.showIntro(of: block)
+        return
+      }
+
+      switch await today.open(block, as: .block, on: day, goalID: view.goal.id) {
+      // The day changed under the row: the reveal reads it again, as Today would.
+      case .done(.changed):
+        break
+      case .done(let destination) where !Task.isCancelled && router.shown == shown:
+        router.showRoot(of: .today)
+        router.openStudy(destination)
+      case .failed:
+        failedRow = block.position
+      case .done, .obsolete:
+        break
       }
     }
   }
