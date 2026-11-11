@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
@@ -16,6 +17,7 @@ import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
+import com.zoonk.api.models.TodayFocusTest
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -52,6 +54,7 @@ class TodayViewModel(
     private val opener: StudyOpener,
     private val store: TodayStore,
     private val plans: PlanStore,
+    private val focusTests: FocusTestStore,
 ) : ViewModel() {
     private val opened = Channel<TodayRoute>(Channel.BUFFERED)
 
@@ -244,6 +247,42 @@ class TodayViewModel(
     var examChoiceMade by mutableStateOf<ExamChoiceMade?>(null)
         private set
 
+    var isDismissingFocusTest by mutableStateOf(false)
+        private set
+
+    var focusTestFailedOn by mutableStateOf<NoticeVisit?>(null)
+        private set
+
+    /** The suggestion just dismissed, so its card says what "Not now" did after Today stops carrying it. */
+    var focusTestDismissed by mutableStateOf<FocusTestDismissed?>(null)
+        private set
+
+    /** "Not now" on the Focus test's suggestion: Today stops suggesting it for this goal. */
+    fun dismissFocusTest(
+        read: TodayRead.Day,
+        test: TodayFocusTest,
+    ) {
+        if (isDismissingFocusTest) return
+        isDismissingFocusTest = true
+        val on = read.noticeVisit()
+        focusTestFailedOn = null
+
+        viewModelScope.launch {
+            when (focusTests.dismissSuggestion(on.goalId)) {
+                is MutationResult.Done -> {
+                    focusTestDismissed = FocusTestDismissed(on, test)
+                }
+
+                is MutationResult.Failed -> {
+                    focusTestFailedOn = on
+                }
+
+                MutationResult.Obsolete -> {}
+            }
+            isDismissingFocusTest = false
+        }
+    }
+
     /** The goal and day whose exam choice didn't save, so the error shows on that notice only. */
     var examChoiceFailedOn by mutableStateOf<NoticeVisit?>(null)
         private set
@@ -418,6 +457,11 @@ data class PlanChangeAnswer(
     val visit: NoticeVisit,
     val status: PlanChangeDecisionInput.Status,
     val change: PlanChange,
+)
+
+data class FocusTestDismissed(
+    val visit: NoticeVisit,
+    val test: TodayFocusTest,
 )
 
 data class ExamChoiceMade(

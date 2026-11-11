@@ -21,6 +21,7 @@ import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.checkFocusLabel
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
@@ -45,6 +46,7 @@ import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
+import com.zoonk.api.models.TodayFocusTest
 import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
@@ -96,6 +98,11 @@ internal fun TodayNotice(
 
         Today.Notice.SUGGESTED_GOAL -> {
             read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
+        }
+
+        Today.Notice.FOCUS_TEST -> {
+            val dismissed = viewModel.focusTestDismissed?.takeIf { it.visit == read.noticeVisit() }
+            (read.today.focusTest ?: dismissed?.test)?.let { FocusTestNotice(it, dismissed != null, state, layout, modifier) }
         }
 
         Today.Notice.PRACTICE -> {
@@ -316,6 +323,53 @@ private fun SuggestedGoalNotice(
             )
         }
         if (viewModel.answerFailed) SuggestionSaveError()
+    }
+}
+
+/** The Focus test in a short plan's first week, once: "Not now" stops the suggestion for this goal. */
+@Composable
+private fun FocusTestNotice(
+    test: TodayFocusTest,
+    dismissed: Boolean,
+    state: TodayNoticeState,
+    layout: SuggestionLayout,
+    modifier: Modifier,
+) {
+    val viewModel = state.viewModel
+    val result = if (dismissed) stringResource(R.string.focustest_suggestion_dismissed) else null
+    val goalId = state.read.today.goal.id
+
+    Suggestion(
+        label = stringResource(R.string.focustest_title),
+        summary = result ?: stringResource(R.string.focustest_suggestion_summary),
+        layout = layout,
+        modifier = modifier,
+        mark = SuggestionMark.Symbol(R.drawable.ic_my_location),
+        answered = result != null,
+        lineAction = if (result != null) null else ({ SuggestionOpen() }),
+    ) {
+        SuggestionHeader(stringResource(R.string.focustest_suggestion_title))
+        if (result != null) {
+            SuggestionResult(result)
+        } else {
+            SuggestionDescription(stringResource(R.string.focustest_suggestion_description))
+            SuggestionActions {
+                SuggestionAction(
+                    text = checkFocusLabel(test.minutes.toInt()),
+                    onClick = {
+                        close()
+                        state.navigate(AppRoute.FocusTest(goalId.toString()))
+                    },
+                )
+                SuggestionAction(
+                    text = stringResource(R.string.focustest_not_now),
+                    onClick = { viewModel.dismissFocusTest(state.read, test) },
+                    busy = viewModel.isDismissingFocusTest,
+                    secondary = true,
+                )
+            }
+        }
+        if (viewModel.focusTestFailedOn == state.read.noticeVisit()) SuggestionSaveError()
     }
 }
 

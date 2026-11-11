@@ -149,7 +149,7 @@ class TodayScreenshots {
         val context = LocalContext.current
         val app = remember { AppContainer.preview(context) }
         val navigator = rememberAppNavigator()
-        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans) }
+        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans, app.focusTests) }
 
         WithTabRootBar(app, navigator) {
             TabRootScaffold { padding ->

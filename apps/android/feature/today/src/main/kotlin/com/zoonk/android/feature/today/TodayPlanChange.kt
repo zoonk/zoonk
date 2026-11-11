@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.FOCUS_TEST_SOURCE
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.countsByDate
 import com.zoonk.android.feature.plan.planChangeAppliedLine
@@ -151,7 +152,14 @@ private fun ChangeActions(
     SuggestionActions {
         if (change.canApply) {
             SuggestionAction(
-                text = stringResource(if (overridesNotice) R.string.today_plan_use_my_date else R.string.today_plan_apply),
+                text =
+                    stringResource(
+                        when {
+                            overridesNotice -> R.string.today_plan_use_my_date
+                            change.source == FOCUS_TEST_SOURCE -> R.string.focustest_update_plan
+                            else -> R.string.today_plan_apply
+                        },
+                    ),
                 onClick = { onAnswer(PlanChangeDecisionInput.Status.APPLIED) },
                 enabled = enabled,
             )
