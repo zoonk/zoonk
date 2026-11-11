@@ -5,10 +5,10 @@ import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { MAX_PACED_ANSWER_MS, UNKNOWN_STREAK } from "../focus-test-rules";
 import { type PlacementEvidence } from "../placement-beliefs";
 import {
+  COVERAGE_ANSWER_FILTER,
+  COVERAGE_ANSWER_SQL,
   SITTING_ANSWER_FILTER,
   SITTING_ANSWER_SQL,
-  TEST_ANSWER_FILTER,
-  TEST_ANSWER_SQL,
   isPlacementAnswer,
 } from "./placement-answers";
 
@@ -23,6 +23,7 @@ type AttemptRow = {
   item: { format: ItemFormat } | null;
   itemId: string | null;
   localDate: Date;
+  mockExamId: string | null;
   skillId: string | null;
   stepId: string | null;
   studySessionId: string | null;
@@ -83,7 +84,7 @@ async function loadTestSkills({
       COUNT(*) FILTER (WHERE ${SITTING_ANSWER_SQL} AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
     FROM attempts
     WHERE user_id = ${userId}::uuid AND skill_id = ANY(${skillIds}::uuid[])
-      AND ${TEST_ANSWER_SQL}
+      AND ${COVERAGE_ANSWER_SQL}
     GROUP BY skill_id
   `;
 }
@@ -99,7 +100,7 @@ export async function loadAnsweredTestItems({
 }): Promise<Set<string | null>> {
   const answered = await tx.attempt.groupBy({
     by: ["itemId"],
-    where: { ...TEST_ANSWER_FILTER, itemId: { in: itemIds }, userId },
+    where: { ...COVERAGE_ANSWER_FILTER, itemId: { in: itemIds }, userId },
   });
 
   return new Set(answered.map((attempt) => attempt.itemId));
@@ -131,6 +132,7 @@ export async function loadEvidence({
           item: { select: { format: true } },
           itemId: true,
           localDate: true,
+          mockExamId: true,
           skillId: true,
           stepId: true,
           studySessionId: true,
