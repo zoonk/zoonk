@@ -94,36 +94,37 @@ export function readMarkdownTable(
   };
 }
 
-export function findMarkdownTables(text: string): MarkdownTable[] {
-  const lines = text.split(/\r?\n/u);
+type FoundTable = { end: number; start: number; table: MarkdownTable };
 
-  return lines.flatMap((_, index) => {
-    const read = isRow(lines[index - 1]) ? null : readMarkdownTable(lines, index);
-    return read ? [read.table] : [];
-  });
+/** Like the players: after a table, the search carries on from its last row, so a body row is never read as a new header. */
+function readMarkdownTables(lines: readonly string[]): FoundTable[] {
+  return lines.reduce<FoundTable[]>((found, _, index) => {
+    if (index < (found.at(-1)?.end ?? 0)) {
+      return found;
+    }
+
+    const read = readMarkdownTable(lines, index);
+    return read ? [...found, { ...read, start: index }] : found;
+  }, []);
+}
+
+export function findMarkdownTables(text: string): MarkdownTable[] {
+  return readMarkdownTables(text.split(/\r?\n/u)).map(({ table }) => table);
 }
 
 export function findRaggedTableRows(text: string): string[] {
   const lines = text.split(/\r?\n/u);
 
-  return lines.flatMap((_, index) => {
-    const read = isRow(lines[index - 1]) ? null : readMarkdownTable(lines, index);
-
-    if (!read) {
-      return [];
-    }
-
-    const count = read.table.align.length;
-    return lines.slice(index + 2, read.end).filter((row) => splitRow(row).length !== count);
-  });
+  return readMarkdownTables(lines).flatMap(({ end, start, table }) =>
+    lines.slice(start + 2, end).filter((row) => splitRow(row).length !== table.align.length),
+  );
 }
 
 export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<number> {
   return new Set(
-    lines.flatMap((_, index) => {
-      const read = isRow(lines[index - 1]) ? null : readMarkdownTable(lines, index);
-      return read ? Array.from({ length: read.end - index }, (__, offset) => index + offset) : [];
-    }),
+    readMarkdownTables(lines).flatMap(({ end, start }) =>
+      Array.from({ length: end - start }, (_, offset) => start + offset),
+    ),
   );
 }
 
