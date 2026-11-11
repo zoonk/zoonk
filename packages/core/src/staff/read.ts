@@ -131,7 +131,7 @@ export async function staffRead<T extends object, Input extends object>(
   }
 
   if (actorError || !actor || actor.status !== "ready") {
-    const result = actorError || !actor ? { status: "error" as const } : { status: actor.status };
+    const result = toActorFailure(actor);
     logCall({ actor: actor ?? undefined, call, result, rows: 0, started });
     return result;
   }
@@ -144,6 +144,14 @@ export async function staffRead<T extends object, Input extends object>(
   const result: StaffResult<T> = error ? failedRead(error) : readResult(data);
   logCall({ actor, call: data?.call ?? call, result, rows: data?.data?.rows ?? 0, started });
   return result;
+}
+
+function toActorFailure(actor: Awaited<ReturnType<typeof getStaffActor>> | null): ReadFailure {
+  if (!actor) {
+    return { status: "error" };
+  }
+
+  return { status: actor.status === "unauthorized" ? "unauthorized" : "forbidden" };
 }
 
 async function prepareRead<T, Input extends object>(options: ReadOptions<T, Input>) {

@@ -1,4 +1,5 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { type StepKind } from "@zoonk/db";
 import { explanationSchema } from "./contract/content-schemas";
 import { normalizeStepContentValue } from "./contract/normalize-step-content";
 import { safeParseStepContent } from "./contract/step-contract";
@@ -40,8 +41,11 @@ export function getQuotableTexts(screen: WrittenScreen | undefined): string[] {
     : [];
 }
 
-function getReadingTexts(screen: ConvertedScreen | undefined): string[] | null {
-  if (!screen?.ok) {
+/** The texts a question's basis may quote from a stored screen; null for a screen nothing quotes. */
+export function getScreenReadingTexts(
+  screen: { content: unknown; kind: StepKind } | undefined,
+): string[] | null {
+  if (!screen) {
     return null;
   }
 
@@ -100,7 +104,12 @@ function checkBasis({
   }
 
   const reading = basis.screen - 1;
-  const texts = reading >= 0 && reading < index ? getReadingTexts(screens[reading]) : null;
+  const readingScreen = screens[reading];
+
+  const texts =
+    reading >= 0 && reading < index && readingScreen?.ok
+      ? getScreenReadingTexts(readingScreen)
+      : null;
 
   if (!texts) {
     return {

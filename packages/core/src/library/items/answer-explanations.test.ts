@@ -1,4 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { generatedProvenance } from "./_test-utils/generated-items";
@@ -21,6 +23,7 @@ describe("shared answer explanations", () => {
       language: "en",
       provenance,
       target,
+      targetContent: item.content,
     });
 
     expect(saved).toMatchObject({
@@ -46,6 +49,7 @@ describe("shared answer explanations", () => {
       language: "en",
       provenance: generatedProvenance(),
       target: { itemId: item.id },
+      targetContent: item.content,
     });
 
     const lookups = await Promise.all([
@@ -74,6 +78,7 @@ describe("shared answer explanations", () => {
           language: "en",
           provenance: generatedProvenance(),
           target,
+          targetContent: item.content,
         }),
       ),
     );
@@ -92,7 +97,43 @@ describe("shared answer explanations", () => {
         language: "en",
         provenance: generatedProvenance(),
         target: { itemId: item.id },
+        targetContent: item.content,
       }),
     ).rejects.toThrow("A blank answer has no explanation to store.");
+  });
+
+  it("doesn't store an explanation written for a screen that changed while it was written", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const asked = {
+      basis: null,
+      keyPoints: ["Names the chloroplast"],
+      question: "Where?",
+      sampleAnswer: "In the chloroplast.",
+    };
+
+    const step = await libraryStepFixture({
+      content: asked,
+      kind: "typedAnswer",
+      lessonId: lesson.id,
+    });
+
+    await prisma.step.update({
+      data: { content: { ...asked, keyPoints: ["Names the chloroplast or its membranes"] } },
+      where: { id: step.id },
+    });
+
+    await expect(
+      saveAnswerExplanation({
+        answer: "mitochondria",
+        explanation: "Written from the old key points.",
+        language: "en",
+        provenance: generatedProvenance(),
+        target: { stepId: step.id },
+        targetContent: step.content,
+      }),
+    ).resolves.toBeNull();
+
+    await expect(prisma.answerExplanation.count({ where: { stepId: step.id } })).resolves.toBe(0);
   });
 });
