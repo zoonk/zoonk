@@ -70,7 +70,7 @@ async function createMindMapGeneration(
 
   const generationId = await startOnce(
     chapterMindMapWorkflow,
-    [toChapterMindMapInput({ chapterId: path.chapterId, request: result })],
+    [toChapterMindMapInput({ chapterId: path.chapterId, launch: result })],
     getChapterMindMapToken(path.chapterId),
   );
 

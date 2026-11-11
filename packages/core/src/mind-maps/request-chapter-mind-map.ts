@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getRequestPlatform } from "../analytics/request-platform";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
@@ -10,41 +10,42 @@ import {
   getEntitlementViewer,
   getEntitlementViewerFor,
 } from "../entitlements/_utils/entitlement-viewer";
-import { claimUsagesInWrite } from "../entitlements/claim-usage";
-import { type RefusedUsage, isRefusedUsage } from "../entitlements/contract";
+import { openUsageLedgerInWrite } from "../entitlements/bundle-claims";
+import { type RefusedUsage } from "../entitlements/contract";
 import { findGoalFor, findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getLessonGenerationStates } from "../library/generation/lesson-generation-state";
+import {
+  type ChapterMapAdmission,
+  admitChapterMap,
+  lockMindMapRows,
+} from "./_utils/admit-chapter-map";
+import { chapterMapClaims } from "./_utils/bulk-chapters";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
-import { type MindMapRow, getMindMapStatus } from "./_utils/mind-map-view";
+import { getMindMapStatus } from "./_utils/mind-map-view";
 
 type OnItsWay = "drawing" | "writingLessons";
 
+/** What an admitted map's run starts from: it writes `lessonIds` first, which the claim charged. */
+export type MindMapLaunch = {
+  analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
+  forExam: boolean;
+  lessonIds: string[];
+};
+
 /**
- * On start, the caller must start the claimed run, which writes `lessonIds` first; an on-its-way
- * result may lack generationId until the run records it.
+ * On start, the caller must start the claimed run; an on-its-way result may lack generationId
+ * until the run records it.
  */
 export type ChapterMindMapRequest =
   | { status: "ready" }
   | { generationId: string | null; status: OnItsWay }
-  | {
-      analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
-      forExam: boolean;
-      lessonIds: string[];
-      status: "start";
-    }
+  | (MindMapLaunch & { status: "start" })
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
   | { status: "plusRequired" }
   | { status: "unauthorized" }
   | { status: "unavailable" };
-
-type Admission =
-  | { decision: RefusedUsage; status: "refused" }
-  | { status: "claimed" }
-  | { status: "joined" }
-  | { status: "ready" }
-  | { status: "unauthorized" };
 
 async function findRunId(chapterId: string): Promise<string | null> {
   const row = await prisma.chapterMindMap.findUnique({
@@ -53,39 +54,6 @@ async function findRunId(chapterId: string): Promise<string | null> {
   });
 
   return row?.runId ?? null;
-}
-
-/** Waits for any request deciding on the map, then reads the map as it is now. */
-async function lockMindMapRow(
-  transaction: TransactionClient,
-  { chapterId, now }: { chapterId: string; now: Date },
-): Promise<MindMapRow> {
-  await transaction.$executeRaw`
-    INSERT INTO chapter_mind_maps (chapter_id, language, status, created_at, updated_at)
-    VALUES (
-      ${chapterId}::uuid,
-      (SELECT language FROM library_chapters WHERE id = ${chapterId}::uuid),
-      'pending',
-      ${now}::timestamp,
-      ${now}::timestamp
-    )
-    ON CONFLICT (chapter_id) DO NOTHING`;
-
-  await transaction.$queryRaw`
-    SELECT id FROM chapter_mind_maps WHERE chapter_id = ${chapterId}::uuid FOR UPDATE`;
-
-  return transaction.chapterMindMap.findUniqueOrThrow({
-    select: {
-      imageHeight: true,
-      imageUrl: true,
-      imageWidth: true,
-      status: true,
-      structure: true,
-      thumbnailUrl: true,
-      updatedAt: true,
-    },
-    where: { chapterId },
-  });
 }
 
 /** The chapter's lessons the run writes or joins first: every one not written and not set aside. */
@@ -102,11 +70,7 @@ async function findLessonsToWrite(chapterId: string): Promise<string[]> {
   );
 }
 
-/**
- * Decides from the map as it is once this learner's turn comes: a map that's ready or being made by
- * then is returned or joined and claims nothing. Otherwise the map and each lesson it writes first
- * are claimed together with the map's row, or not at all.
- */
+/** One chapter's admission, in its own learner write. */
 async function admitMindMap({
   chapterId,
   lessonIds,
@@ -117,54 +81,29 @@ async function admitMindMap({
   lessonIds: readonly string[];
   now: Date;
   viewer: EntitlementViewer;
-}): Promise<Admission> {
-  const claims = [
-    { generated: true, kind: "mindMap" as const, targetId: chapterId },
-    ...lessonIds.map((lessonId) => ({
-      generated: true,
-      kind: "lessonStart" as const,
-      targetId: lessonId,
-    })),
-  ];
-
-  const admission = await writeLearnerChange<Admission>(
+}): Promise<ChapterMapAdmission> {
+  const admission = await writeLearnerChange<ChapterMapAdmission>(
     { userId: viewer.userId },
     async (transaction) => {
-      const row = await lockMindMapRow(transaction, { chapterId, now });
+      const rows = await lockMindMapRows(transaction, { chapterIds: [chapterId], now });
+      const row = rows.get(chapterId);
 
-      const current = getMindMapStatus({
-        canHaveMap: true,
-        lessonsToWrite: lessonIds.length,
+      if (!row) {
+        throw new Error(`Chapter ${chapterId} has no mind map row to decide on.`);
+      }
+
+      const ledger = await openUsageLedgerInWrite({
+        claims: chapterMapClaims({ chapterId, lessonIds }),
         now,
-        owed: false,
-        plusRequired: false,
-        row,
+        transaction,
+        viewer,
       });
 
-      if (current === "ready") {
-        return unchanged({ status: "ready" as const });
-      }
+      const decided = await admitChapterMap(transaction, { chapterId, ledger, lessonIds, row });
 
-      if (current === "drawing" || current === "writingLessons") {
-        return unchanged({ status: "joined" as const });
-      }
-
-      const decision = await claimUsagesInWrite({ claims, transaction, viewer });
-
-      if (isRefusedUsage(decision)) {
-        return unchanged({ decision, status: "refused" as const });
-      }
-
-      if (decision.status !== "allowed") {
-        return unchanged({ status: "unauthorized" as const });
-      }
-
-      await transaction.chapterMindMap.update({
-        data: { runId: null, status: "running", updatedAt: now },
-        where: { chapterId },
-      });
-
-      return { status: "claimed" };
+      return decided.admission.status === "claimed"
+        ? decided.admission
+        : unchanged(decided.admission);
     },
   );
 
@@ -217,11 +156,7 @@ async function requestFor({
   const lessonIds = await findLessonsToWrite(chapterId);
   const admission = await admitMindMap({ chapterId, lessonIds, now, viewer });
 
-  if (
-    admission.status === "ready" ||
-    admission.status === "refused" ||
-    admission.status === "unauthorized"
-  ) {
+  if (admission.status === "ready" || admission.status === "refused") {
     return admission;
   }
 

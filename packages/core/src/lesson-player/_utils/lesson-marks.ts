@@ -12,7 +12,7 @@ import { type PlayableLibraryStep } from "../playable-lesson";
 
 type MarkedRow = { id: string; marks: unknown };
 
-async function loadLessonIcons(ids: readonly string[]): Promise<Map<string, LessonIcon>> {
+export async function loadLessonIcons(ids: readonly string[]): Promise<Map<string, LessonIcon>> {
   const rows =
     ids.length === 0
       ? []

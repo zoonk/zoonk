@@ -1,14 +1,21 @@
 import "server-only";
 import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { readUsageLedger } from "../entitlements/bundle-claims";
 import { getRequestInstant } from "../learner/facts/request-instant";
+import { readSavedMindMaps } from "../learner/facts/saved-mind-maps";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
-import {
-  type ChapterNumbering,
-  loadChapterNumbering,
-} from "../view-models/syllabus/_utils/chapter-numbers";
+import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
+import { chapterMapClaims, offerChapterMaps, sortBulkChapters } from "./_utils/bulk-chapters";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { toChapterMindMapView } from "./_utils/mind-map-view";
-import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
+import { toSavedKey, toSavedKeys, toSavedMindMaps } from "./_utils/saved-mind-map-views";
+import { type ScopeLessonMap, loadScopeLessonMaps } from "./_utils/scope-lesson-maps";
+import { sortBySyllabus } from "./_utils/syllabus-order";
+import {
+  type GoalMindMapView,
+  type GoalMindMapsView,
+  type LessonMapGroup,
+} from "./mind-map-contract";
 
 export type GoalMindMapsResult =
   | { mindMaps: GoalMindMapsView; status: "ready" }
@@ -20,23 +27,41 @@ function isListed(
   return view.status !== "unavailable";
 }
 
-type ListedRow = { number: ReturnType<ChapterNumbering>; planPosition: number };
+function toLessonGroups({
+  chapters,
+  lessonMaps,
+}: {
+  chapters: readonly GoalMindMapView[];
+  lessonMaps: ReadonlyMap<string, ScopeLessonMap[]>;
+}): LessonMapGroup[] {
+  return chapters.flatMap(({ chapterId }) => {
+    const maps = lessonMaps.get(chapterId) ?? [];
 
-/** As the syllabus numbers chapters, each subject's or the course's by number; the rest last. */
-function toSyllabusPlace({ number, planPosition }: ListedRow): [number, number] {
-  return number.syllabusOrder === null
-    ? [Number.MAX_SAFE_INTEGER, planPosition]
-    : [number.syllabusOrder, number.position];
+    return maps.length > 0
+      ? [{ chapterId, count: maps.length, locked: maps.filter((map) => map.locked).length }]
+      : [];
+  });
 }
 
-function compareBySyllabus(first: ListedRow, second: ListedRow): number {
-  const [firstSubject, firstChapter] = toSyllabusPlace(first);
-  const [secondSubject, secondChapter] = toSyllabusPlace(second);
+function chooseFirstTab({
+  chapters,
+  lessonGroups,
+}: {
+  chapters: readonly GoalMindMapView[];
+  lessonGroups: readonly LessonMapGroup[];
+}): GoalMindMapsView["firstTab"] {
+  if (chapters.some((chapter) => chapter.status === "ready")) {
+    return "chapters";
+  }
 
-  return firstSubject - secondSubject || firstChapter - secondChapter;
+  return lessonGroups.some((group) => group.count > group.locked) ? "lessons" : "chapters";
 }
 
-/** Read-only saved-plan list, defaulting to the active goal: every chapter that can have a map. */
+/**
+ * Read-only list for the goal's Mind maps page, defaulting to the active goal: every chapter of its
+ * scope that can have a map, its lesson maps by chapter, its saved maps, and what making all the
+ * chapter maps at once would start.
+ */
 export async function listGoalMindMaps(
   input: { goalId?: string } = {},
 ): Promise<GoalMindMapsResult> {
@@ -50,21 +75,28 @@ export async function listGoalMindMaps(
 
   const { goal } = resolved;
 
-  const [facts, numbering, now] = await Promise.all([
+  const [facts, numbering, now, savedRows, viewer] = await Promise.all([
     loadMindMapChapters({ goal, readViewer: readEntitlementViewer }),
     loadChapterNumbering(goal),
     getRequestInstant(),
+    readSavedMindMaps(goal.userId),
+    readEntitlementViewer(),
   ]);
 
-  const listed = facts.flatMap((chapter) => {
-    const number = numbering({ chapterId: chapter.chapterId, planPosition: chapter.position });
-    const view = toChapterMindMapView({ facts: chapter, now, position: number.position });
+  const savedKeys = toSavedKeys(savedRows);
+
+  const listed = sortBySyllabus({ chapters: facts, numbering }).flatMap(({ chapter, number }) => {
+    const view = toChapterMindMapView({
+      facts: chapter,
+      now,
+      position: number.position,
+      saved: savedKeys.has(toSavedKey({ kind: "chapter", targetId: chapter.chapterId })),
+    });
 
     return isListed(view)
       ? [
           {
-            number,
-            planPosition: chapter.position,
+            facts: chapter,
             view: {
               ...view,
               subject: number.subject && { key: number.subject.key, name: number.subject.name },
@@ -74,10 +106,32 @@ export async function listGoalMindMaps(
       : [];
   });
 
-  const chapters = listed.toSorted(compareBySyllabus).map((row) => row.view);
+  const chapters = listed.map((row) => row.view);
+  const bulk = sortBulkChapters(chapters);
+
+  const [lessonMaps, ledger] = await Promise.all([
+    loadScopeLessonMaps({ chapters: listed.map((row) => row.facts), userId: goal.userId }),
+    viewer &&
+      readUsageLedger({
+        claims: bulk.eligible.flatMap((chapterId) =>
+          chapterMapClaims({ chapterId, lessonIds: [] }),
+        ),
+        now,
+        viewer,
+      }),
+  ]);
+
+  const lessonGroups = toLessonGroups({ chapters, lessonMaps });
 
   return {
-    mindMaps: { chapters, goal: { displayName: goal.displayName, id: goal.id, title: goal.title } },
+    mindMaps: {
+      chapters,
+      createOffer: offerChapterMaps({ chapters, ledger }),
+      firstTab: chooseFirstTab({ chapters, lessonGroups }),
+      goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
+      lessonGroups,
+      saved: toSavedMindMaps({ chapters, facts, goalId: goal.id, lessonMaps, savedRows }),
+    },
     status: "ready",
   };
 }

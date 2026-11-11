@@ -165,6 +165,7 @@ describe("chapter mind maps", () => {
         lessonsToWrite: 0,
         outline: null,
         position: 1,
+        saved: false,
         status: "available",
         title: "The very small world",
       },

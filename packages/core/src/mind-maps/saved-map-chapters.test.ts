@@ -352,6 +352,7 @@ describe("mind maps read from the saved plan", () => {
           titleSnapshot: lesson.title,
         }),
         writeLessons(lessons.slice(0, 2).map((row) => row.id)),
+        prisma.courseChapter.deleteMany({ where: { chapterId: beginner.id } }),
       ]);
 
       await expect(getChapterMindMap({ chapterId: beginner.id })).resolves.toStrictEqual({

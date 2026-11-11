@@ -68,5 +68,5 @@ export async function requestOwedMindMapStep({
 
   const request = await requestChapterMindMapFor({ chapterId, goalId, userId });
 
-  return request.status === "start" ? toChapterMindMapInput({ chapterId, request }) : null;
+  return request.status === "start" ? toChapterMindMapInput({ chapterId, launch: request }) : null;
 }

@@ -11,7 +11,7 @@ import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { getChapterMindMapToken } from "../mind-maps/chapter-mind-map-input";
+import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
@@ -84,7 +84,13 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     }
     case "makeChapterMindMap": {
-      const making = await requestOwedMindMapStep({ ...followUp.input, userId });
+      const { chapterId, goalId, launch } = followUp.input;
+
+      // A map the owing write already admitted starts as admitted; asking again would join the
+      // running row it marked and start nothing.
+      const making = launch
+        ? toChapterMindMapInput({ chapterId, launch })
+        : await requestOwedMindMapStep({ chapterId, goalId, userId });
 
       if (making) {
         await startOnce(chapterMindMapWorkflow, [making], getChapterMindMapToken(making.chapterId));

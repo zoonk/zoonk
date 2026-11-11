@@ -1,5 +1,6 @@
 import { courseExamDaysSchema } from "@zoonk/core/catalog/course-exam-days-contract";
 import { coursePlanExampleSchema } from "@zoonk/core/catalog/course-plan-example-contract";
+import { lessonMapSchema } from "@zoonk/core/library/lessons/map";
 import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -9,7 +10,6 @@ import {
   catalogTryLessonSchema,
   firstQuestionSchema,
 } from "./catalog-try-lesson";
-import { lessonMapResponseSchema } from "./lesson-map";
 
 const generationStatusSchema = z.enum(["completed", "failed", "pending", "running"]);
 
@@ -284,7 +284,7 @@ export const catalogLessonSchema = z
       .meta({ description: "What the lesson opens with; null until its content is written" }),
     id: uuidSchema(),
     language: z.string(),
-    summary: lessonMapResponseSchema
+    summary: lessonMapSchema
       .nullable()
       .meta({
         description: `What the lesson teaches; null until it's written. Each idea's \`text\` is ${LESSON_RICH_TEXT}`,

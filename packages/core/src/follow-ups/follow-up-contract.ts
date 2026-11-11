@@ -12,6 +12,16 @@ const mistakeCauseInputSchema = z.object({
   recentAccuracy: z.string(),
 });
 
+const mindMapLaunchSchema = z.object({
+  analytics: z.object({
+    distinctId: z.string(),
+    goalId: uuidSchema(),
+    platform: z.enum(["android", "ios", "web"]).nullable(),
+  }),
+  forExam: z.boolean(),
+  lessonIds: z.array(uuidSchema()),
+});
+
 export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({ sessionId: uuidSchema(), timeZone: z.string() }),
@@ -42,7 +52,12 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("preparePlacementItems"),
   }),
   z.object({
-    input: z.object({ chapterId: uuidSchema(), goalId: uuidSchema() }),
+    input: z.object({
+      chapterId: uuidSchema(),
+      goalId: uuidSchema(),
+      /** Set by the write that already admitted the map, which the run starts from as is. */
+      launch: mindMapLaunchSchema.optional(),
+    }),
     kind: z.literal("makeChapterMindMap"),
   }),
   z.object({
