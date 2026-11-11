@@ -15,10 +15,16 @@ function getOpening(content: unknown, fields: readonly string[]): string | null 
   return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
 }
 
+/** A chart set may have no text or title around it, so its chart's title names the case. */
+function getSetSituation(content: unknown): string | null {
+  const visual = isJsonObject(content) ? content.visual : null;
+  return getOpening(content, ["text", "title"]) ?? getOpening(visual, ["title"]);
+}
+
 /** A set's questions share its stimulus, which is their case. */
 function getItemSituation(item: { content: unknown; set: { content: unknown } | null }) {
   return item.set
-    ? getOpening(item.set.content, ["text", "title"])
+    ? getSetSituation(item.set.content)
     : getOpening(item.content, ["context", "question", "statement"]);
 }
 

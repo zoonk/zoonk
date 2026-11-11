@@ -67,6 +67,26 @@ describe(loadUsedSituations, () => {
     expect(situations.get(skill.id)).toStrictEqual(["The town's library opened on Sundays."]);
   });
 
+  it("takes a chart set's case from its chart's title when the set has no text or title", async () => {
+    const skill = await skillFixture();
+
+    const set = await itemSetFixture({
+      content: {
+        source: null,
+        text: null,
+        title: null,
+        visual: { kind: "chart", title: "Library visits by month" },
+      },
+      kind: "chart",
+    });
+
+    await itemFixture({ content: choiceItemContent(), setId: set.id, skillId: skill.id });
+
+    const situations = await loadUsedSituations({ skillIds: [skill.id] });
+
+    expect(situations.get(skill.id)).toStrictEqual(["Library visits by month"]);
+  });
+
   it("lists every case a skill's bank holds, and none for a skill without questions", async () => {
     const [skill, empty] = await Promise.all([skillFixture(), skillFixture()]);
     const cases = Array.from({ length: 12 }, (_, index) => `Case ${index}.`);
