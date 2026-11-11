@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
@@ -8,8 +9,13 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mockAccountSession } from "../_test-utils/mock-session";
+import { freezeClock } from "../_test-utils/frozen-clock";
+import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
+import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
+import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../plans/create-goal-plan";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { turnOffStudyReminderEmail } from "./email-unsubscribe";
 import {
   claimStudyReminder,
@@ -402,5 +408,66 @@ describe("before a plan's first day", () => {
     const claim = await claimStudyReminder({ now: new Date(), userId: user.id });
 
     expect({ claim, delivery }).toStrictEqual({ claim: { status: "skipped" }, delivery: null });
+  });
+});
+
+describe("a day holding time for lessons not written yet", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("still reminds with the time Today shows left", async () => {
+    const now = new Date("2026-09-30T12:10:00Z");
+    const anHourAgo = new Date(now.getTime() - 60 * MINUTE_MS);
+    freezeClock();
+    vi.setSystemTime(now);
+    await keepPaceOwn();
+
+    const [user, course, library] = await Promise.all([
+      userFixture(),
+      courseFixture({ outlineStatus: "running" }),
+      planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 0, size: 20 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 30,
+      details: { placementDeclined: true },
+      primaryCourseId: course.id,
+      settings: { startDate: "2026-09-30" },
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    await Promise.all([
+      prisma.studySessionBlock.updateMany({
+        data: { completedAt: anHourAgo, status: "completed" },
+        where: { sessionId: opened.today.session.id },
+      }),
+      prisma.planItem.updateMany({
+        data: { completedAt: anHourAgo, status: "done" },
+        where: {
+          lessonId: { not: null },
+          plan: { goalId: goal.id },
+          scheduledFor: { lte: new Date("2026-09-30") },
+        },
+      }),
+      prisma.studyReminder.create({
+        data: { emailOn: true, locale: "en", time: "12:00", userId: user.id },
+      }),
+    ]);
+
+    await expect(
+      readStudyReminderDelivery({
+        channel: "email",
+        claim: { endsAt: new Date("2026-09-30T13:00:00Z"), localDate: new Date("2026-09-30") },
+        now,
+        userId: user.id,
+      }),
+    ).resolves.toMatchObject({ message: { goalId: goal.id, minutesLeft: 24 } });
   });
 });

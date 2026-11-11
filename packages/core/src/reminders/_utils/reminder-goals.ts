@@ -3,9 +3,10 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadSessionTime } from "../../sessions/_utils/completion-queue";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { getPlanStart } from "../../sessions/_utils/day-plan";
-import { getSessionMinutes } from "../../sessions/session-minutes";
+import { STUDY_SESSION_INCLUDE } from "../../sessions/_utils/study-session-access";
 
 export type GoalWithWork = {
   goalId: string;
@@ -51,10 +52,19 @@ export async function findGoalsWithWork({
     return [];
   }
 
-  const sessions = await prisma.studySession.findMany({
-    include: { blocks: { select: { estimatedMinutes: true, payload: true, status: true } } },
+  const stored = await prisma.studySession.findMany({
+    include: STUDY_SESSION_INCLUDE,
     where: { OR: days.map((day) => ({ goalId: day.goal.id, localDate: day.localDate })), userId },
   });
+
+  const sessions = await Promise.all(
+    stored.map(async (session) => {
+      const goal = days.find((day) => day.goal.id === session.goalId)?.goal;
+      const timeZone = goal ? getAnswerTimeZone({ goal }) : "UTC";
+      const { minutes } = await loadSessionTime({ stored: session, timeZone, userId });
+      return { ...session, minutes };
+    }),
+  );
 
   const open = days.flatMap(({ goal, localDate, planStart }) => {
     const dayMinutes = getGoalDayMinutes({
@@ -67,13 +77,7 @@ export async function findGoalsWithWork({
     const ended = session?.status === "completed" || Boolean(session?.stoppedAt);
 
     // Today's own count of the day's time, so a reminder never says less or more is left.
-    const minutes = session
-      ? getSessionMinutes({
-          blocks: session.blocks,
-          dailyGoal: dayMinutes,
-          planned: session.plannedMinutes,
-        })
-      : { done: 0, left: dayMinutes };
+    const minutes = session?.minutes ?? { done: 0, left: dayMinutes };
 
     if (localDate < planStart || dayMinutes <= 0 || ended || minutes.left <= 0) {
       return [];
