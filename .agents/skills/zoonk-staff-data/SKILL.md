@@ -19,7 +19,7 @@ Run `pnpm zoonk whoami` from the repository root first.
 - Exit code 3, not logged in: ask the user to run `pnpm zoonk login` in their terminal and approve the code in the browser it opens. One login per machine renews itself while it's used and ends after 30 days unused. If they'd rather you start it, run it in the background, give them the URL and code it prints, and wait for it to finish.
 - HTTP 403: the account isn't a platform admin. Tell the user; don't look for another way in.
 
-Never read, print or copy `~/.config/zoonk/credentials.json` or any token.
+Never read, print or copy `~/.config/zoonk/credentials.db` or any token.
 
 ## Query
 
