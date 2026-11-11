@@ -152,7 +152,6 @@
   "onboarding_limit_daily_explanations": "5816b821420171c9d9339bf258172995731382218fed4ac7deb96a71aa1b43da",
   "onboarding_limit_daily_goals": "0e7dfe96f08a4e40267c29758ef8f0d918e1ba5ac04d19b02f44ef4e01fda376",
   "onboarding_limit_guest": "458eaeefe36dc5857a860ccff673e2557cf9a35af8063e7db49c72020244f7b5",
-  "onboarding_limit_guest_blocked": "245bd1043fe063e7a6e11617d14daef491b6e938d4166e7a76f02d141c1b959f",
   "onboarding_limit_monthly_explanations": "4f565960077da8b724faf668a9408a5d4e7fd0b0b3eba0cb58eba6f2bcff5686",
   "onboarding_limit_monthly_goals": "9b0efe2d5cb63103170e012906aa4f3066084526fc0df602345e179da89ed5c7",
   "onboarding_limit_sign_up_required": "dfa140afe7a893f83eb2b103692c36425257674c8eef70b706505835d01dbf3f",
@@ -500,7 +499,6 @@
     <string name="onboarding_limit_daily_goals">Alcanzaste el límite de objetivos nuevos que puedes crear hoy con tu plan. Inténtalo de nuevo mañana.</string>
     <string name="onboarding_limit_guest">Sin una cuenta, puedes seguir un solo objetivo. Crea una cuenta gratis para seguir avanzando.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Una verificación de seguridad impidió empezar sin una cuenta. Crea una cuenta gratis para seguir.</string>
     <string name="onboarding_limit_monthly_explanations">Alcanzaste el límite mensual de preguntas nuevas del plan gratis. Inténtalo de nuevo el próximo mes u obtén Plus para seguir ahora.</string>
     <string name="onboarding_limit_monthly_goals">Alcanzaste el límite de objetivos nuevos que puedes crear este mes con el plan gratis. Inténtalo de nuevo el próximo mes u obtén Plus para seguir ahora.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->

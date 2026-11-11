@@ -152,7 +152,6 @@
   "onboarding_limit_daily_explanations": "0d74b6967782fe80d07102d4f4841db8d2d3ecf783a77a5bba85dca514adf54e",
   "onboarding_limit_daily_goals": "9393f11b9c7dacc189cff9ab62ace1590aa6d871bd3cc8b5d8e973d0d136f128",
   "onboarding_limit_guest": "fb6d074dac1248ad841778ece9bef3f66b977643549479a384f906dd9eae169d",
-  "onboarding_limit_guest_blocked": "7f3f67d769f2c834e1ec94017d85266c8901476c86a87ff0b08bef31c59eb3ca",
   "onboarding_limit_monthly_explanations": "c134bbc71f06ca898a93aeed22cde24b737f9890d21a55ab386a4e222fa83ff0",
   "onboarding_limit_monthly_goals": "218eff9c4abc6607ab643914c34ca74a9c7d3fcfd29e3841771931b53a7a81e3",
   "onboarding_limit_sign_up_required": "be0df5e7346178026bffb1d87c76721b216019abae5935bda72487dd8990b2ea",
@@ -500,7 +499,6 @@
     <string name="onboarding_limit_daily_goals">Hai raggiunto il limite di nuovi obiettivi che puoi iniziare oggi con la tua formula. Riprova domani.</string>
     <string name="onboarding_limit_guest">Senza un account puoi seguire un solo obiettivo. Crea un account gratuito per continuare.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Un controllo di sicurezza impedisce di iniziare senza un account. Crea un account gratuito per continuare.</string>
     <string name="onboarding_limit_monthly_explanations">Hai raggiunto il limite di nuove domande previsto per questo mese dalla formula Free. Riprova il mese prossimo o passa a Plus per continuare subito.</string>
     <string name="onboarding_limit_monthly_goals">Hai raggiunto il limite di nuovi obiettivi che puoi iniziare questo mese con la formula Free. Riprova il mese prossimo o passa a Plus per continuare subito.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->

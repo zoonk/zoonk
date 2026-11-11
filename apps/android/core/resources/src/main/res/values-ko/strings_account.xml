@@ -14,7 +14,6 @@
   "account_did_not_get_it": "b35d4b1de089949d8db908bc282fdd22cabedbd286f58a286202982d92a2e60b",
   "account_email": "a1e990df5e52cb502643c9de8615f54089c676dfb7c103e67498df482501e373",
   "account_email_placeholder": "eca32f5788576116aa1805ecc0477efe43b3ae5ca53450916d8d4c3fe452a03a",
-  "account_failure_bot_detected": "bb94e251b44a50ebab644cb9a5d436ed9dbd54969a3c0adbba18c17d82f6495a",
   "account_failure_code_expired": "66b43d80a67d6c97522b4e5880b7dcb57f35fc492855e4959b0e80583dd3749b",
   "account_failure_code_locked": "13a1e7abd0973512ae087452d47ef2a1c8f41a0c2cd6e53ebfba3f8ee1715a4b",
   "account_failure_disposable_email": "90e971ec551a526d343bb46b130a3e92ff02410b4001cdfa90b80538736ef80c",
@@ -89,7 +88,6 @@
     <string name="account_new_code_failed">새 코드를 보내지 못했어요. 다시 시도해 보세요.</string>
     <string name="account_failure_invalid_email">올바른 이메일 주소를 입력하세요</string>
     <string name="account_failure_disposable_email">임시 이메일 주소는 사용할 수 없어요. 다른 이메일 주소나 개인정보 보호용 별칭 주소를 사용하세요.</string>
-    <string name="account_failure_bot_detected">보안 검사로 요청이 차단됐어요. Google로 계속하기를 이용하거나 hello@zoonk.com으로 문의하세요.</string>
     <string name="account_failure_network">Zoonk가 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="account_failure_rate_limited">시도 횟수가 너무 많아요. 1분 후에 다시 시도해 보세요.</string>
     <string name="account_failure_wrong_code">코드가 맞지 않아요. 이메일을 확인하고 다시 시도해 보세요.</string>

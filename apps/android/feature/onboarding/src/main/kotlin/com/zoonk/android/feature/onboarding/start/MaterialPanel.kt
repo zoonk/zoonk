@@ -101,7 +101,7 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
                 R.string.onboarding_attach_already_read
             }
 
-            is Refusal.DayTooShort, Refusal.GuestBlocked, null -> {
+            is Refusal.DayTooShort, null -> {
                 R.string.onboarding_attach_failed
             }
         },

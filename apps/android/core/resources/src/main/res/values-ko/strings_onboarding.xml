@@ -152,7 +152,6 @@
   "onboarding_limit_daily_explanations": "380cbc02ac0237eec5fdf3ac3a77d32ee8bd43b76eae35ea6c37662c11097242",
   "onboarding_limit_daily_goals": "b4e99cf3e9bc5a665415cfb7ba8f26872961893fd65e86a4124cd292788cfcc9",
   "onboarding_limit_guest": "609a5efc12907487641bda0aa43648aa7d5a9990cc40d670983b83c6691fc49c",
-  "onboarding_limit_guest_blocked": "56287b4907c683d1933185edaa603b1aeef0271782b600e8957516d996f17281",
   "onboarding_limit_monthly_explanations": "d3e6bc6e7afaf5a6d0a84841f1764268e2185e6eeea023dc79eff0a38f636bf0",
   "onboarding_limit_monthly_goals": "6685cf451113b255715af26ee6515dbbeade466d950105a71b4b41b8261ed238",
   "onboarding_limit_sign_up_required": "7a9e8d014c9eccbc139be7847a4019fc8d6e191e44430b8a9a798490bbcb68bb",
@@ -500,7 +499,6 @@
     <string name="onboarding_limit_daily_goals">현재 요금제에서는 오늘 새 목표를 더 시작할 수 없어요. 내일 다시 시도해 보세요.</string>
     <string name="onboarding_limit_guest">계정이 없으면 목표 하나만 진행할 수 있어요. 계속하려면 무료 계정을 만드세요.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">보안 검사로 계정 없이 시작할 수 없어요. 계속하려면 무료 계정을 만드세요.</string>
     <string name="onboarding_limit_monthly_explanations">무료 요금제에서는 이번 달에 새 질문을 더 할 수 없어요. 다음 달에 다시 시도해 보세요. 지금 계속하려면 Plus를 구독해 주세요.</string>
     <string name="onboarding_limit_monthly_goals">무료 요금제에서는 이번 달에 새 목표를 더 시작할 수 없어요. 다음 달에 다시 시도해 보세요. 지금 계속하려면 Plus를 구독해 주세요.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
