@@ -11,6 +11,7 @@ import { prisma, sql } from "@zoonk/db";
 import { SOURCE_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
+import { splitLawArticles } from "./law-articles";
 import { type SourceTopic } from "./source-contract";
 
 export type ResearchSourceTopic = Exclude<SourceTopic, "exam" | "product" | "software">;
@@ -42,6 +43,12 @@ function describeWantedDocument({ country, topic }: StoredSourcesRequest): strin
 /** Enough for the judge to tell a law's text from an index page, an older edition or another law. */
 const OPENING_CHARACTERS = 1500;
 
+/** A law's title and preamble come just before its first article; site menus come before them. */
+const BEFORE_FIRST_ARTICLE = 1000;
+
+/** Where a page's first article is looked for: past any site's menus, short of a whole law. */
+const LEAD_CHARACTERS = 20_000;
+
 /** `length` is null for a document that stored no text, such as a PDF models read as a file. */
 export type ResearchSourceCandidate = LibraryIdentityCandidate & {
   length: number | null;
@@ -51,14 +58,27 @@ export type ResearchSourceCandidate = LibraryIdentityCandidate & {
 type CandidateRow = {
   id: string;
   length: number | null;
-  opening: string | null;
+  lead: string | null;
   publisher: string | null;
   title: string;
   url: string | null;
 };
 
-function toOpening(text: string | null): string | null {
-  return text?.replaceAll(/\s+/gu, " ").trim() || null;
+function toOpening(lead: string | null): string | null {
+  if (!lead) {
+    return null;
+  }
+
+  const [firstArticle] = splitLawArticles(lead);
+  const articleStart = firstArticle ? lead.indexOf(firstArticle.text) : 0;
+  const start = Math.max(0, articleStart - BEFORE_FIRST_ARTICLE);
+
+  return (
+    lead
+      .slice(start, start + OPENING_CHARACTERS)
+      .replaceAll(/\s+/gu, " ")
+      .trim() || null
+  );
 }
 
 /** Internal workflow bridge: the sources are public research documents. */
@@ -72,14 +92,14 @@ export async function loadResearchSourceCandidates(
   const rows = await prisma.$queryRaw<CandidateRow[]>`
     SELECT s.id, s.title, s.publisher, s.url,
       char_length(s.extracted_text)::int AS length,
-      left(s.extracted_text, ${OPENING_CHARACTERS}) AS opening
+      left(s.extracted_text, ${LEAD_CHARACTERS}) AS lead
     FROM sources s
     WHERE s.id = ANY(${[...ids]}::uuid[])`;
 
   return orderByIds(ids, rows).map((row) => ({
     id: row.id,
     item: {
-      opening: toOpening(row.opening),
+      opening: toOpening(row.lead),
       publisher: row.publisher,
       title: row.title,
       url: row.url,
