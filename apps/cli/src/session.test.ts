@@ -14,7 +14,10 @@ import { sendAuthorized } from "./session.ts";
 type FakeApiOptions = {
   acceptedToken: string;
   beforeRejecting?: () => Promise<unknown>;
-  refresh: { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number };
+  /** `lost`: the server takes the refresh, then the connection drops before the answer. */
+  refresh:
+    | { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number }
+    | "lost";
 };
 
 const HOUR_MS = 3_600_000;
@@ -87,6 +90,12 @@ async function startFakeApi(options: FakeApiOptions) {
   const server = createServer(async (request, response) => {
     if (request.url === "/v1/auth/oauth2/token") {
       refreshRequests.push(await readForm(request));
+
+      if (options.refresh === "lost") {
+        request.socket.destroy();
+        return;
+      }
+
       await delay(options.refresh.delayMs ?? 0);
       reply({ response, ...options.refresh });
       return;
@@ -290,9 +299,56 @@ describe(sendAuthorized, () => {
       (error: unknown) => error,
     );
 
-    expect(failure).toMatchObject({ exitCode: EXIT_CODES.failed });
+    expect(failure).toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
     expect(String(failure)).not.toContain("SECRET");
     expect(api.staffCalls).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("forgets the login when a refresh's answer is lost, so the rotated token is never sent again", async () => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: "lost" });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({
+      exitCode: EXIT_CODES.notLoggedIn,
+      message:
+        `Couldn't confirm the login renewal with ${api.origin}. ` +
+        `Run \`pnpm zoonk login --api ${api.origin}\` to log in again.`,
+    });
+
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+
+    expect(api.refreshRequests).toHaveLength(1);
+    expect(api.staffCalls).toStrictEqual([]);
+  });
+
+  it("keeps the login when the API can't be reached", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    await new Promise((resolve) => {
+      servers.pop()?.close(resolve);
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 
   it.each([

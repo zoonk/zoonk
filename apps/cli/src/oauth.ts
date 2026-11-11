@@ -1,6 +1,6 @@
 import { secureUrl } from "./api-origin.ts";
 import { type StoredLogin, isPlainToken } from "./credentials.ts";
-import { type HttpResult, isRecord, postForm, unexpectedResponse } from "./http.ts";
+import { type HttpResult, RequestError, isRecord, postForm, unexpectedResponse } from "./http.ts";
 
 const CLIENT_ID = "zoonk-cli";
 const SCOPE = "staff:read offline_access";
@@ -36,6 +36,9 @@ type Revocation = "alreadyRevoked" | "revoked" | "unconfirmed";
 
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
 
+/** The server may have rotated the refresh token, but no usable new pair arrived. */
+type RefreshResult = TokenResult | "unconfirmed";
+
 function oauthError(result: HttpResult): string | null {
   const error = isRecord(result.body) ? result.body.error : null;
   return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
@@ -51,16 +54,14 @@ function isAlreadyRevoked(result: HttpResult): boolean {
   );
 }
 
-function toLogin(result: HttpResult): StoredLogin {
-  const body = result.body;
-
+function parseLogin(body: unknown): StoredLogin | null {
   if (
     !isRecord(body) ||
     !isPlainToken(body.access_token) ||
     !isPlainToken(body.refresh_token) ||
     typeof body.expires_in !== "number"
   ) {
-    throw unexpectedResponse(result);
+    return null;
   }
 
   return {
@@ -70,11 +71,7 @@ function toLogin(result: HttpResult): StoredLogin {
   };
 }
 
-function toTokenResult(result: HttpResult): TokenResult {
-  if (result.ok) {
-    return { login: toLogin(result), ok: true };
-  }
-
+function tokenError(result: HttpResult): TokenResult {
   return { error: oauthError(result) ?? `HTTP ${result.status}`, ok: false };
 }
 
@@ -126,7 +123,17 @@ export async function exchangeDeviceCode({
     grant_type: DEVICE_CODE_GRANT,
   });
 
-  return toTokenResult(result);
+  if (!result.ok) {
+    return tokenError(result);
+  }
+
+  const login = parseLogin(result.body);
+
+  if (!login) {
+    throw unexpectedResponse(result);
+  }
+
+  return { login, ok: true };
 }
 
 export async function refreshLogin({
@@ -135,14 +142,29 @@ export async function refreshLogin({
 }: {
   origin: string;
   refreshToken: string;
-}): Promise<TokenResult> {
+}): Promise<RefreshResult> {
   const result = await postForm(new URL(ENDPOINTS.token, origin), {
     client_id: CLIENT_ID,
     grant_type: "refresh_token",
     refresh_token: refreshToken,
+  }).catch((error: unknown) => {
+    if (error instanceof RequestError && !error.maybeSent) {
+      throw error;
+    }
+
+    return null;
   });
 
-  return toTokenResult(result);
+  if (!result) {
+    return "unconfirmed";
+  }
+
+  if (!result.ok) {
+    return tokenError(result);
+  }
+
+  const login = parseLogin(result.body);
+  return login ? { login, ok: true } : "unconfirmed";
 }
 
 /** Revoking the refresh token also ends the access tokens issued with it. */

@@ -24,7 +24,7 @@ function isExpiring(login: StoredLogin): boolean {
  * that person.
  */
 async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLogin }) {
-  const renewed = await changeLogin({
+  const renewed = await changeLogin<StoredLogin | "unconfirmed" | null>({
     change: async (stored) => {
       if (!stored) {
         return { result: null };
@@ -35,6 +35,11 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
       }
 
       const refresh = await refreshLogin({ origin, refreshToken: stored.refreshToken });
+
+      // Keeping the old token would send it again after the reuse window, or revoke it at logout.
+      if (refresh === "unconfirmed") {
+        return { result: refresh, save: null };
+      }
 
       if (refresh.ok) {
         return { result: refresh.login, save: refresh.login };
@@ -51,6 +56,14 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
     file,
     origin,
   });
+
+  if (renewed === "unconfirmed") {
+    throw new CliError(
+      `Couldn't confirm the login renewal with ${origin}. ` +
+        `Run \`${loginCommand(origin)}\` to log in again.`,
+      EXIT_CODES.notLoggedIn,
+    );
+  }
 
   if (!renewed) {
     throw notLoggedIn(origin);
