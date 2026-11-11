@@ -4,7 +4,7 @@ import { trackPlanEdited } from "../../analytics/track-plan-edited";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
-import { applyChangeNow } from "../../plans/_utils/apply-plan-change";
+import { applyChangeNow, isPlanReady } from "../../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../../plans/_utils/owned-plan";
 import { type PlanContext } from "../../plans/_utils/plan-context";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
@@ -67,7 +67,9 @@ async function applyChoices({
 
   const result = await applyChangeNow({
     context,
-    extraWrites: (tx) => oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId }),
+    extraWrites: isPlanReady(context)
+      ? (tx) => oweGoalLessons({ db: tx, goalId: goal.id, userId: goal.userId })
+      : undefined,
     followToday: true,
     operations: changed.map((choice) => ({ kind: "setExamChoice" as const, ...choice })),
     reason: EXAM_CHOICE_NOTE,

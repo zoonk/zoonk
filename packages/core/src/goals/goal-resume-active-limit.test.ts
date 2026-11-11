@@ -7,6 +7,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { createOnboardingGoals } from "../view-models/onboarding/create-onboarding-goals";
+import { type GoalUpdateInput } from "./goal-contract";
 import { updateGoal } from "./update-goal";
 
 const MONDAY = new Date("2020-09-28T12:00:00Z");
@@ -50,6 +51,18 @@ async function pausedGoals({ count, ready }: { count: number; ready: boolean }) 
 
 function countActive(userId: string) {
   return prisma.goal.count({ where: { kind: { not: "explain" }, status: "active", userId } });
+}
+
+/** What a refused update must leave as it was; marks from other writes may move `inputVersion`. */
+async function readGoalAndPlan(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+  const { inputVersion: _, ...plan } = await prisma.plan.findUniqueOrThrow({
+    include: { changes: true, items: true },
+    where: { goalId },
+  });
+
+  return { goal, plan };
 }
 
 /** Each writer passes any check made before the lock, then waits on it behind the ones before. */
@@ -119,5 +132,38 @@ describe("resuming a goal claims the active slot under the learner lock", () => 
     expect(created).toMatchObject({ status: "created" });
     expect(resumed).toMatchObject({ status: "limitReached" });
     await expect(countActive(user.id)).resolves.toBe(1);
+  });
+
+  it.each<{ input: GoalUpdateInput; ready: boolean }>([
+    { input: { dailyMinutes: 30, displayName: "Changed" }, ready: false },
+    { input: { targetDate: "2021-06-01" }, ready: false },
+    { input: { details: { reason: "Travel" }, timeZone: "America/Sao_Paulo" }, ready: false },
+    { input: { dailyMinutes: 30, displayName: "Changed" }, ready: true },
+    { input: { targetDate: "2021-06-01" }, ready: true },
+    { input: { details: { reason: "Travel" }, timeZone: "America/Sao_Paulo" }, ready: true },
+  ])(
+    "changes nothing when a resume with $input is refused (ready plan: $ready)",
+    async ({ input, ready }) => {
+      const { goals, user } = await pausedGoals({ count: 2, ready });
+      const [first, second] = goals;
+      const before = await readGoalAndPlan(second?.id ?? "");
+
+      const [resumed, refused] = await queueBehindLearnerLock(user.id, [
+        () => updateGoal({ goalId: first?.id ?? "", input: { status: "active" } }),
+        () => updateGoal({ goalId: second?.id ?? "", input: { ...input, status: "active" } }),
+      ]);
+
+      expect(resumed).toMatchObject({ status: "updated" });
+      expect(refused).toMatchObject({ status: "limitReached" });
+      await expect(readGoalAndPlan(second?.id ?? "")).resolves.toStrictEqual(before);
+    },
+  );
+
+  it("returns the goal with its new schedule when a resume with a plan still in setup is saved", async () => {
+    const { goals } = await pausedGoals({ count: 1, ready: false });
+
+    await expect(
+      updateGoal({ goalId: goals[0]?.id ?? "", input: { dailyMinutes: 30, status: "active" } }),
+    ).resolves.toMatchObject({ goal: { dailyMinutes: 30, status: "active" }, status: "updated" });
   });
 });

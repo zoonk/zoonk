@@ -123,10 +123,13 @@ async function commitEdit({
 
 async function savePlanState({
   context,
+  extraWrites,
   operations,
   source,
   state,
-}: Pick<ChangeRequest, "context" | "operations" | "source"> & { state: PlanState }) {
+}: Pick<ChangeRequest, "context" | "extraWrites" | "operations" | "source"> & {
+  state: PlanState;
+}) {
   await writePlanMetadata({
     context,
     write: async (tx) => {
@@ -147,15 +150,18 @@ async function savePlanState({
         source,
         tx,
       });
+
+      await extraWrites?.(tx);
     },
   });
 }
 
 async function computeRequest({
   context,
+  extraWrites,
   operations,
   source,
-}: Pick<ChangeRequest, "context" | "operations" | "source">): Promise<
+}: Pick<ChangeRequest, "context" | "extraWrites" | "operations" | "source">): Promise<
   { change: ComputedChange; status: "computed" } | PlanChangeRefusal | { status: "saved" }
 > {
   const result = await applyChangeOperations({ context, operations });
@@ -165,7 +171,7 @@ async function computeRequest({
   }
 
   if (!isPlanReady(context)) {
-    await savePlanState({ context, operations, source, state: result.state });
+    await savePlanState({ context, extraWrites, operations, source, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
@@ -191,7 +197,7 @@ async function computeRequest({
   }
 
   if (change.unchanged && operations.every((operation) => operation.kind === "setBaseChoices")) {
-    await savePlanState({ context, operations, source, state: result.state });
+    await savePlanState({ context, extraWrites, operations, source, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
