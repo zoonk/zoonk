@@ -2,7 +2,7 @@ import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
-import { keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
+import { findOldTestFocus, keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
@@ -113,7 +113,10 @@ export async function undoChange({
 
     if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({
-        areas: snapshot.testFocus,
+        areas:
+          snapshot.testFocus === undefined
+            ? await findOldTestFocus({ goalId: context.goal.id, tx })
+            : snapshot.testFocus,
         goalId: context.goal.id,
         tx,
         userId: context.goal.userId,

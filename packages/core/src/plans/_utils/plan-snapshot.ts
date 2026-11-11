@@ -47,7 +47,7 @@ const planSnapshotSchema = z.object({
   sourceSkillIds: z.array(z.string()),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
   summary: planSummarySchema.nullable(),
-  testFocus: z.array(z.string()).nullable().default(null),
+  testFocus: z.array(z.string()).nullable().optional(),
   todaySession: daySessionSnapshotSchema.nullable(),
 });
 
@@ -60,7 +60,7 @@ export type PlanSnapshot = {
   sourceSkillIds: string[];
   state: PlanState;
   summary: PlanSummary | null;
-  testFocus: string[] | null;
+  testFocus?: string[] | null;
   todaySession: DaySessionSnapshot | null;
 };
 
@@ -96,7 +96,9 @@ function toPlanSnapshot({
     sourceSkillIds: context.plan.sourceSkillIds,
     state: context.state,
     summary: planSummarySchema.safeParse(context.plan.summary).data ?? null,
-    testFocus: focus && isSameFocus(focus, context.state.settings.focusAreas) ? focus : null,
+    ...(focus !== undefined && {
+      testFocus: focus && isSameFocus(focus, context.state.settings.focusAreas) ? focus : null,
+    }),
     todaySession,
   };
 }

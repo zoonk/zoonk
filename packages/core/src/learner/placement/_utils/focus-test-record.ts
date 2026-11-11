@@ -20,7 +20,7 @@ const oldResultSchema = z.object({ focusAreas: z.array(z.string()) });
  * The standalone Focus test this one replaced kept its result in the activity ledger. A focus it
  * chose that the plan still has counts as the test's, so a later result may propose changing it.
  */
-async function findOldTestFocus({
+export async function findOldTestFocus({
   goalId,
   tx,
 }: {
