@@ -112,6 +112,7 @@
     "./tasks/lesson-spec/rules": "./src/tasks/lesson-spec/lesson-spec-rules.ts",
     "./tasks/lesson-spec/visuals": "./src/tasks/lesson-spec/lesson-visuals.ts",
     "./tasks/novice-rules": "./src/tasks/_utils/novice-rules.ts",
+    "./tasks/lesson-laws": "./src/tasks/lesson-laws/lesson-laws.ts",
     "./tasks/lesson-marks": "./src/tasks/lesson-marks/lesson-marks.ts",
     "./tasks/lesson-marks/quotes": "./src/tasks/lesson-marks/mark-quotes.ts",
     "./tasks/lesson-marks/schema": "./src/tasks/lesson-marks/lesson-marks-schema.ts",
