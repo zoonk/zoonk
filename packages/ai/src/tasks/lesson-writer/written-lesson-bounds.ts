@@ -1,8 +1,6 @@
 import { fitOptions } from "../_utils/fit-options";
+import { MAX_PICTURE_OPTIONS } from "../images/image-request-schema";
 import { MAX_CHECK_OPTIONS, MAX_GUESS_OPTIONS } from "./written-lesson-schema";
-
-/** The app lays picture options out two by two. */
-const MAX_PICTURE_OPTIONS = 4;
 
 const MAX_OPTIONS_BY_KIND: Readonly<Partial<Record<string, number>>> = {
   check: MAX_CHECK_OPTIONS,

@@ -1,3 +1,4 @@
+import { MAX_PICTURE_OPTIONS } from "@zoonk/ai/tasks/images/request";
 import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
@@ -71,8 +72,6 @@ export const workedExampleContentSchema = z
 const questionBasisSchema = z
   .object({ position: z.number().int().min(0), quote: explanationSchema })
   .strict();
-
-const MAX_PICTURE_OPTIONS = 4;
 
 const checkOptionSchema = choiceOptionSchema
   .extend({ picture: pictureRequestSchema.optional() })

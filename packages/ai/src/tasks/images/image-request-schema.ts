@@ -6,6 +6,9 @@ const IMAGE_PROMPT_TARGET = 400;
 const IMAGE_ALT_TARGET = 160;
 const MIN_NUMBERED_PARTS = 2;
 
+/** The app lays a question's picture options out two by two. */
+export const MAX_PICTURE_OPTIONS = 4;
+
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what to draw, then how to describe it. */
 
 const pictureRequest = z.object({
