@@ -30,7 +30,7 @@ export function ChartTooltipLabel({ className, ...props }: ComponentProps<"p">) 
 export function ChartTooltipValue({ className, ...props }: ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-mono text-sm font-medium whitespace-nowrap tabular-nums", className)}
+      className={cn("text-sm font-medium whitespace-nowrap tabular-nums", className)}
       data-slot="chart-tooltip-value"
       {...props}
     />

@@ -219,10 +219,15 @@ function ChartPointTooltipContent({ detail }: { detail: ChartPointDetail }) {
   );
 }
 
-/** Screen readers get the point's detail from the live region, so the popup is hidden from them. */
-export function ChartInspectorTooltip() {
+/**
+ * Screen readers get the point's detail from the live region, so the popup is hidden from them.
+ * `within` is a selector for the ancestor of the points the tooltip stays inside; without one it stays
+ * inside the window.
+ */
+export function ChartInspectorTooltip({ within }: { within?: string }) {
   const { activeIndex, anchor, close, details, groupRef, liveRegionId, open } = useChartInspector();
   const detail = details.at(activeIndex);
+  const boundary = within ? anchor?.closest(within) : null;
 
   return (
     <>
@@ -248,7 +253,8 @@ export function ChartInspectorTooltip() {
           <TooltipPrimitive.Positioner
             anchor={anchor}
             className="isolate z-50 data-anchor-hidden:invisible"
-            collisionPadding={TOOLTIP_GAP}
+            collisionBoundary={boundary ?? "clipping-ancestors"}
+            collisionPadding={boundary ? 0 : TOOLTIP_GAP}
             side="top"
             sideOffset={TOOLTIP_GAP}
           >

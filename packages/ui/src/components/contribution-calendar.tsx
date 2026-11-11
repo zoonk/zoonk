@@ -15,10 +15,15 @@ import { getContributionCalendarTargetIndex } from "./_utils/contribution-calend
 
 const NO_DETAILS: readonly ChartPointDetail[] = [];
 
-/** The viewport's scroller clips a ring around the grid, so keyboard focus rings the day itself. */
+const VIEWPORT_SLOT = "contribution-calendar-viewport";
+
+/**
+ * The viewport's scroller clips what's drawn outside the grid, so the ring sits inside the day and
+ * keyboard focus rings the day itself. Its inner line keeps it readable on every level's color.
+ */
 const DAY_RING_CLASS = cn(
-  "data-active:ring-foreground data-active:ring-offset-background data-active:ring-2 data-active:ring-offset-1",
-  "in-focus-visible:data-current:ring-foreground in-focus-visible:data-current:ring-offset-background in-focus-visible:data-current:ring-2 in-focus-visible:data-current:ring-offset-1",
+  "data-active:inset-ring-foreground data-active:ring-background data-active:ring-3 data-active:inset-ring-2 data-active:ring-inset",
+  "in-focus-visible:data-current:inset-ring-foreground in-focus-visible:data-current:ring-background in-focus-visible:data-current:ring-3 in-focus-visible:data-current:inset-ring-2 in-focus-visible:data-current:ring-inset",
 );
 
 const CALENDAR_SIZE_CLASS = cn(
@@ -27,7 +32,10 @@ const CALENDAR_SIZE_CLASS = cn(
   "pointer-coarse:[--calendar-cell:1.25rem]",
 );
 
-/** `details` say each day's date and value, in the days' index order. */
+/**
+ * `details` say each day's date and value, in the days' index order. A day's tooltip stays inside the
+ * viewport: above the day, or below it where that would cover the caption.
+ */
 export function ContributionCalendar({
   children,
   className,
@@ -52,7 +60,7 @@ export function ContributionCalendar({
         {...props}
       >
         {children}
-        <ChartInspectorTooltip />
+        <ChartInspectorTooltip within={`[data-slot="${VIEWPORT_SLOT}"]`} />
       </figure>
     </ChartInspector>
   );
@@ -98,7 +106,7 @@ export function ContributionCalendarViewport({
         "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))]",
         className,
       )}
-      data-slot="contribution-calendar-viewport"
+      data-slot={VIEWPORT_SLOT}
       dir="rtl"
       {...props}
     >
