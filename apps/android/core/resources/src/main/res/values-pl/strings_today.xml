@@ -131,10 +131,20 @@
   "today_see_plan": "e245905c61b38d1619252a69e2fde14c753f017978b7a960520ec36f456e04f6",
   "today_see_summary": "14a042697f619861c628db642e78e1891eed438df0914918c96b31349505e953",
   "today_see_your_plan": "13744567e99de7b2c54a9fc21ed0131b7304d952a82e839af13df4e5d24251ea",
+  "today_segment_challenge_note": "314058198539602900c0ea87d8520ab9b1f5412abf0473bd6d707867282d14d4",
+  "today_segment_essay_note": "ec3078604369e7dfe5cb40454d3ddf00b392733d1564978ee88212a13bbfc6d3",
+  "today_segment_label": "f60bbaca67dd3686fac2ec23018001a9d31e83695a695ef81495d1b5ae05e825",
+  "today_segment_mistakes_note": "69e3e547ae98e62451bc49fb7f15557ebd4246d5f54d86a1bde070a8874d045c",
+  "today_segment_mock_note": "2256a56f13a550f5db67e47744675bc3de37fd6db1c5de1c2cb770bdc3728903",
+  "today_segment_practice_note": "1537959dfb3d23ab54408ed2e4790b74690589e6b86e5aca47dec42b49c4604a",
+  "today_segment_questions": "f19e7e5b37175effb43859a4eeef071427f2506865bea6b2b770177857de9ee9",
+  "today_segment_review_note": "a30529def84aae6f2b9488697bae3f5c5007b743ff48c49d37aee9320da8b3c5",
+  "today_segment_up_next": "2860a9afd3115b2b33204d2984c61fbe920f4bb2b8fe7052cc4760d7546dbb2a",
   "today_setting_up": "2a548ed1e8cc895ffa3d54f0aa2571c530261bd6afc608cd8314d420b8c9fd3e",
   "today_setting_up_detail": "60e2e415fbc917943ea011ae3709e276edba2cdb8e62f0c73a5a254789bd19b2",
   "today_setting_up_goal": "99ada9ba8632250be7ea916efa14bc93f621317aa145bc720c6eb2f867568d0c",
   "today_show_less": "9cec010259de41f5be4c351629f905915938ebed7ef24b1dc4978fd76f72c592",
+  "today_skipped_count": "1872289658b6406a2181c1e7842e3bca80b4e31f462dfaabf3142c469dab03c9",
   "today_start_new_goal": "4f155c0d0914e184553145ad11c081417326ce784e6dd7bebd2cd117da0ae531",
   "today_start_session": "2edf05c2ac6beed83b471f990730d7b1dbdff93b058edead4f9722eea3d61270",
   "today_step_after_lessons": "a9605b904efdb032fa630fcadd6fad426fd762a621402724493bc206016332a4",
@@ -174,7 +184,8 @@
   "today_week_challenge_day": "bd2e74a29d74ff908c1af39ae42d2702ee9b44646f95529ef0d3a7b2e2290551",
   "today_week_challenge_name": "e9657dfbdd5d84a1ed6e16fccc576ae902b25d070f22aa94fdbe63b62f538920",
   "today_week_day": "07cb4580fddb251554ac06653adad6e06a1338f0b3df4c31280f7266f1639a26",
-  "today_week_days": "461ab3ee479a28d1467a4a433c7cdfd3b170c65f2da57f5eaeef2a1f65b2febf",
+  "today_week_day_planned": "c2d4271a406ebaf9312482f6800e5772639ed16a4fac0c4ce6a4c1ab8d37e1b1",
+  "today_week_day_studied_of": "a2e365c8aa96f12153baf7451ee7a968e07b265ecc8d1a3f10ebd905b1cf80af",
   "today_week_deadline": "e577415ca7f5ddecb7771df3b41dc3925857affef7d42feb59b953c65c77d388",
   "today_week_exam_day": "5cd8711c81b1346b6c3967f00108a1c87d59caee990c8f2525f0fa00ea42eb98",
   "today_week_full_review_detail": "d7621129491b6410ebcd979fed00b80144f71c5393c0997ba1d3427f3094553e",
@@ -187,7 +198,6 @@
   "today_week_planned": "404f2b7a41ae65f48fe6169275f55ffef85f6d31d6e711647b1c1eff0b9560d8",
   "today_week_rest_day": "165d3bc7c7bb69550e9f51959394b03bd7854f13640ebc9bdfe15676c555ef0c",
   "today_week_studied": "043c7ae15e2217cd30fdae9efa747ae97e7b585af36388cac595d1b3363f7bdc",
-  "today_week_time": "c8ce4613b716674eb9f564bdf42e1fd92f6597ea42e2ddcb8a7f6639f0583521",
   "today_week_title": "4bd06d97edaca527869b96565709b74ac199dd7ab54b4c65cf9e67a08635e964",
   "today_week_today": "1cb132c6224ec1f80eb4a5068d6f35bae083f00ebf7c32f59d8eedec3753a069",
   "today_welcome_back": "69ce3615e04782deb3a5ccfd6e3ac8fb823455d660df0b515528ff6f2e91f16f"
@@ -258,6 +268,13 @@
         <item quantity="few">Ukończono %d</item>
         <item quantity="many">Ukończono %d</item>
         <item quantity="other">Ukończono %d</item>
+    </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">Pominięto %d</item>
+        <item quantity="few">Pominięto %d</item>
+        <item quantity="many">Pominięto %d</item>
+        <item quantity="other">Pominięto %d</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d więcej</item>
@@ -352,15 +369,6 @@
     <string name="today_quick_explanation">Szybkie wyjaśnienie</string>
     <string name="today_continue_explanation">Wróć do wyjaśnienia</string>
     <string name="today_week_title">W tym tygodniu</string>
-    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
-    <plurals name="today_week_days">
-        <item quantity="one">%1$s z %2$d dnia</item>
-        <item quantity="few">%1$s z %2$d dni</item>
-        <item quantity="many">%1$s z %2$d dni</item>
-        <item quantity="other">%1$s z %2$d dni</item>
-    </plurals>
-    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
-    <string name="today_week_time">%1$s z %2$s nauki w tym tygodniu</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
@@ -517,4 +525,22 @@
     <string name="today_coming_stalled">Trwa to dłużej niż zwykle</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Jeszcze nie są przygotowane.</string>
+    <string name="today_segment_up_next">Następne</string>
+    <string name="today_segment_review_note">Przypomina to, co już znasz, zanim zdążysz to zapomnieć.</string>
+    <string name="today_segment_practice_note">Nowe pytania, które łączą poznane tematy.</string>
+    <string name="today_segment_mistakes_note">Wracasz do pytań, na które nie udało ci się poprawnie odpowiedzieć.</string>
+    <string name="today_segment_challenge_note">Sprawdza, co już wiesz.</string>
+    <string name="today_segment_mock_note">Egzamin próbny, podobny do prawdziwego.</string>
+    <string name="today_segment_essay_note">Opisujesz własnymi słowami to, co już wiesz.</string>
+    <string name="today_week_day_studied_of">Za tobą %1$s z %2$s nauki</string>
+    <string name="today_week_day_planned">Zaplanowano %1$s nauki</string>
+    <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
+    <string name="today_segment_label">%1$s: %2$s</string>
+    <!-- %1$s is a formatted number of questions answered, %2$d the step's questions: "3 of 12 questions". -->
+    <plurals name="today_segment_questions">
+        <item quantity="one">%1$s z %2$d pytania</item>
+        <item quantity="few">%1$s z %2$d pytań</item>
+        <item quantity="many">%1$s z %2$d pytań</item>
+        <item quantity="other">%1$s z %2$d pytań</item>
+    </plurals>
 </resources>

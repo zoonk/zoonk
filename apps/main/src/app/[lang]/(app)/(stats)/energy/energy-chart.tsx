@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type EnergyDay } from "@zoonk/core/progress/energy";
+import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
   ContributionCalendar,
   ContributionCalendarCaption,
@@ -12,7 +13,6 @@ import {
   ContributionCalendarLegendSkeleton,
   ContributionCalendarLegendSwatch,
   ContributionCalendarPeriod,
-  ContributionCalendarReadout,
   ContributionCalendarTitle,
   ContributionCalendarViewport,
   ContributionCalendarWeek,
@@ -43,7 +43,6 @@ const ENERGY_INTENSITY_CLASSES = [
 ] as const;
 
 type EnergyCalendarDay = EnergyDay & {
-  accessibleLabel: string;
   intensityClass: (typeof ENERGY_INTENSITY_CLASSES)[number];
   index: number;
 };
@@ -51,11 +50,9 @@ type EnergyCalendarDay = EnergyDay & {
 type EnergyCalendarWeek = { days: EnergyCalendarDay[]; key: string; periodLabel: string | null };
 
 function getEnergyCalendarDay({
-  accessibleLabel,
   day,
   index,
 }: {
-  accessibleLabel: string;
   day: EnergyDay;
   index: number;
 }): EnergyCalendarDay {
@@ -63,7 +60,7 @@ function getEnergyCalendarDay({
     ENERGY_INTENSITY_CLASSES.at(getEnergyCalendarIntensity(day.energy)) ??
     ENERGY_INTENSITY_CLASSES[0];
 
-  return { ...day, accessibleLabel, index, intensityClass };
+  return { ...day, index, intensityClass };
 }
 
 function getEnergyCalendarWeek({
@@ -131,22 +128,23 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
 
   const formatDay = getProgressDayFormatter({ locale, newest: days.at(-1)?.date });
 
-  function getAccessibleLabel(day: EnergyDay) {
-    const date = formatDay(day.date);
+  const calendarDays = days.map((day, index) => getEnergyCalendarDay({ day, index }));
 
-    if (day.energy === null) {
-      return t("{date} · No Energy recorded", { date });
-    }
-
-    return t("{date} · {percentage} Energy", {
-      date,
-      percentage: formatMetricPercent({ format, value: day.energy }),
-    });
-  }
-
-  const calendarDays = days.map((day, index) =>
-    getEnergyCalendarDay({ accessibleLabel: getAccessibleLabel(day), day, index }),
-  );
+  const details = days.map((day): ChartPointDetail => [
+    formatDay(day.date),
+    day.energy === null
+      ? t({
+          description:
+            "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.",
+          message: "No Energy recorded",
+        })
+      : t({
+          description:
+            "A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.",
+          message: "{percentage} Energy",
+          values: { percentage: formatMetricPercent({ format, value: day.energy }) },
+        }),
+  ]);
 
   const startIndex = days.findIndex((day) => day.date.getTime() === keyboardStartDate?.getTime());
 
@@ -158,7 +156,7 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
     <ContributionCalendar
       aria-labelledby={ENERGY_HISTORY_TITLE_ID}
       defaultIndex={Math.max(0, startIndex)}
-      labels={calendarDays.map((day) => day.accessibleLabel)}
+      details={details}
       weeks={weeks.length}
     >
       <ContributionCalendarCaption>
@@ -177,8 +175,6 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
           </ContributionCalendarGrid>
         </ContributionCalendarContent>
       </ContributionCalendarViewport>
-
-      <ContributionCalendarReadout />
     </ContributionCalendar>
   );
 }
@@ -191,7 +187,6 @@ export function EnergyChartSkeleton() {
         <ContributionCalendarLegendSkeleton />
       </ContributionCalendarCaption>
       <ContributionCalendarGridSkeleton />
-      <Skeleton className="h-5 w-40" />
     </ContributionCalendar>
   );
 }

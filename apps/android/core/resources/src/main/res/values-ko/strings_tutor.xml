@@ -86,6 +86,8 @@
   "tutor_offer_stats": "e0a43a90f647e818c0ea76e7b37f8295f9d584fbf9ce74183a65b5f82bcd2d01",
   "tutor_offer_stats_description": "fdeae6033470c41662afb688a1ee36aa1963f50e9ea1fa509edd139598e81dec",
   "tutor_offer_take_test": "473f34343915e9d897c9e393774fd4587892309b889422a6e2f5b6f39e8f272f",
+  "tutor_offer_variety_applied": "ac60dc78779c3bde9bc87a4ee06d4b1086839498a531f36a047d29b3a0165b97",
+  "tutor_offer_variety_description": "e7f2e086a4cc8f22d34d912d2879e6b6c48452bcc3d3ddea2c060ddf35cda791",
   "tutor_page_sign_up": "ed775be0a0b1a8930d44ebe7253ba84e2f267953250547c38c6f056897b55b40",
   "tutor_placeholder_answer": "ac83c45b4dd75b0f33fa690b45935863a0e9f3e61d76d95977b0df7af5a920dc",
   "tutor_placeholder_chapter": "b7ea3fa058dd39d7dc4da53c9f2a5ab3f873d168c3cfc4b9a6b9715c2e564952",
@@ -251,6 +253,10 @@
     <string name="tutor_offer_memory_description">짝꿍이 기억하는 내 정보를 확인하고 수정하거나 삭제하세요.</string>
     <string name="tutor_offer_stats">통계</string>
     <string name="tutor_offer_stats_description">에너지, 레벨, 정답 수와 공부가 가장 잘되는 시간대를 확인해요.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">짝꿍과 대화 연습에는 %1$s을(를) 사용해요.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">저장했어요. 계획에서 바꿀 수 있어요.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Plus에 포함된 기능과 가격을 확인해요.</string>
     <string name="tutor_offer_plus_subscribed">요금제와 결제 정보를 확인해요.</string>

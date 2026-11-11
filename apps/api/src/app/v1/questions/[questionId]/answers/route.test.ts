@@ -204,7 +204,7 @@ const OFFERED_MOCK = {
 };
 
 const MOCK_CALL: ProviderStreamPart = {
-  input: JSON.stringify({ area: null, goal: null, tool: "mockExam", topic: null }),
+  input: JSON.stringify({ area: null, country: null, goal: null, tool: "mockExam", topic: null }),
   toolCallId: "call-mock",
   toolName: "offerAppTool",
   type: "tool-call",
@@ -224,7 +224,13 @@ const CHANGE_AND_TEST_CALLS: ProviderStreamPart[] = [
     type: "tool-call",
   },
   {
-    input: JSON.stringify({ area: "Língua Inglesa", goal: null, tool: "chapterTest", topic: null }),
+    input: JSON.stringify({
+      area: "Língua Inglesa",
+      country: null,
+      goal: null,
+      tool: "chapterTest",
+      topic: null,
+    }),
     toolCallId: "call-2",
     toolName: "offerAppTool",
     type: "tool-call",
@@ -880,6 +886,7 @@ describe("lesson question answer route", () => {
 
     expect(offerTutorTool).toHaveBeenCalledExactlyOnceWith({
       area: null,
+      country: null,
       goalWords: null,
       questionId: QUESTION_ID,
       revision: 4,
@@ -918,6 +925,7 @@ describe("lesson question answer route", () => {
     const startGoalCall: ProviderStreamPart = {
       input: JSON.stringify({
         area: null,
+        country: null,
         goal: "Learn to play the guitar",
         tool: "startGoal",
         topic: "Guitar",
@@ -945,6 +953,7 @@ describe("lesson question answer route", () => {
 
     expect(offerTutorTool).toHaveBeenCalledExactlyOnceWith({
       area: null,
+      country: null,
       goalWords: "Learn to play the guitar",
       questionId: QUESTION_ID,
       revision: 5,

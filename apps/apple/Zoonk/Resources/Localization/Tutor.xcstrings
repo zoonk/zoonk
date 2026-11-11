@@ -5039,6 +5039,65 @@
         }
       }
     },
+    "Saved. You can change it in your plan." : {
+      "comment" : "The learner saved the country the buddy offered; the plan is the Plan tab",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert. Du kannst das in deinem Plan ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardó. Puedes cambiar esta preferencia en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré. Tu peux modifier ce choix dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scelta salvata. Puoi cambiarla nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。学習計画から変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요. 계획에서 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Możesz to zmienić w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo. Você pode mudar isso no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi. Planında değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Say %lld words again" : {
       "comment" : "The buddy offers pronunciation practice",
       "localizations" : {
@@ -6034,6 +6093,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Test: %@"
+          }
+        }
+      }
+    },
+    "That didn't save. Try again." : {
+      "comment" : "Applying the country the buddy offered failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se guardó. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce choix n’a pas été enregistré. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio non riuscito. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存できませんでした。もう一度試してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장되지 않았어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się zapisać. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para salvar. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilemedi. Tekrar dene."
           }
         }
       }
@@ -7987,6 +8105,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü yardım hakkını kullandın. Hakkın yarın yenilenir."
+          }
+        }
+      }
+    },
+    "Your buddy and practice calls use %@." : {
+      "comment" : "The buddy offers the language as the country lessons already teach speaks it; the argument is like 'Spanish (Mexico)'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compañero y las llamadas de práctica usan %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compagnon et tes appels d’entraînement utilisent %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo compagno e le conversazioni di allenamento usano %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相棒とのやり取りや会話練習では%@を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짝꿍과 대화 연습에는 %@을(를) 사용해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro e as conversas de prática usam %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %@ kullanılır."
           }
         }
       }

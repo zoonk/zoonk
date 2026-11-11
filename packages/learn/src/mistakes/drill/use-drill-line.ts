@@ -6,14 +6,10 @@ import { type Drill, isIdeaFirst } from "./drill-types";
 export function useDrillLine() {
   const t = useExtracted();
 
-  return (drill: Drill): string => {
+  return function drillLine(drill: Drill): string | null {
     switch (drill.kind) {
       case "reteach":
-        return isIdeaFirst(drill)
-          ? t("The idea first, then put it to use.")
-          : t("Back to an idea you missed.");
-      case "readCarefully":
-        return t("Read every word before you answer.");
+        return isIdeaFirst(drill) ? t("The idea first, then put it to use.") : null;
       case "spotTheTrap":
         return t("There's a trap in here. Find it before you answer.");
       case "timed":
@@ -22,10 +18,11 @@ export function useDrillLine() {
         });
       case "noGuessing":
         return t("Only answer when you're sure. Saying you're not sure is fine.");
+      case "readCarefully":
       case "retry":
-        return t("Try it again.");
+        return null;
       default:
-        return t("Try it again.");
+        return null;
     }
   };
 }

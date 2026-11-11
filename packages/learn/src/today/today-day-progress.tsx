@@ -4,14 +4,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { METER_PARTS_CLASS } from "../_components/meter";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatDuration } from "../_utils/time-format";
-import { getBlockKind } from "../session/block-kind";
+import { getDayMeterParts } from "../session/day-meter-parts";
+import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { DaySegment, type DaySegmentState } from "./day-segments";
+import { drawsDayMeter } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
-import { isFinished } from "./today-queue";
-import { getDaySegmentCount, getDayTime, getHeldMinutes } from "./today-time";
+import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
+import { getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
   if (block.status !== "active" || block.questions === 0) {
@@ -21,49 +23,42 @@ function getBlockShare(block: DayStep): number {
   return Math.min(1, block.answered / block.questions);
 }
 
-function getSegmentState(block: DayStep, current: boolean): DaySegmentState {
-  if (block.status === "completed") {
-    return "done";
-  }
-
-  if (block.status === "skipped") {
-    return "skipped";
-  }
-
-  return current ? "current" : "ahead";
-}
+const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
 
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, nextPosition } = today.session;
-  const done = blocks.filter((block) => isFinished(block)).length;
+  const { blocks, nextPosition, sessionBar } = today.session;
+  const next = blocks.find((block) => block.position === nextPosition);
   const held = getHeldMinutes(today.session);
 
-  if (getDaySegmentCount(today.session) < 2) {
+  const parts = getDayMeterParts({
+    nextShare: next ? getBlockShare(next) : 0,
+    rows: getSessionQueue({ blocks, nextPosition }),
+  });
+
+  const focusPosition = next?.position ?? parts[0]?.block.position;
+
+  if (!drawsDayMeter({ held: held > 0, parts })) {
     return null;
   }
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
     <div
       aria-label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-        { done, total: blocks.length },
+        { done: sessionBar.completed, total: sessionBar.total },
       )}
       className={cn(METER_PARTS_CLASS, className)}
       data-slot="today-day-progress"
-      role="img"
+      onKeyDown={moveBetweenSegments}
+      role="group"
     >
-      {blocks.map((block) => (
-        <DaySegment
-          key={block.position}
-          kind={getBlockKind(block)}
-          minutes={block.estimatedMinutes}
-          share={block.position === nextPosition ? getBlockShare(block) : 0}
-          state={getSegmentState(block, block.position === nextPosition)}
-        />
+      {parts.map((part) => (
+        <BlockSegment focusable={part.block.position === focusPosition} key={part.id} part={part} />
       ))}
-      {held > 0 && <DaySegment kind="lesson" minutes={held} state="ahead" />}
+      {held > 0 && <HeldSegment minutes={held} />}
     </div>
   );
 }
@@ -97,8 +92,7 @@ export function DayMeta({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const speaking = useTodayContinueSpeaking();
-  const { blocks, minutes } = today.session;
-  const done = blocks.filter((block) => isFinished(block)).length;
+  const { blocks, minutes, sessionBar } = today.session;
 
   if (blocks.length === 0 && minutes.left === 0) {
     return null;
@@ -112,11 +106,11 @@ export function DayMeta({ className }: { className?: string }) {
       )}
       data-slot="today-day-meta"
     >
-      {!speaking && blocks.length > 0 && (
+      {!speaking && sessionBar.total > 0 && (
         <span>
           {t(
             "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-            { done, total: blocks.length },
+            { done: sessionBar.completed, total: sessionBar.total },
           )}
         </span>
       )}

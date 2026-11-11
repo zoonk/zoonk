@@ -14918,7 +14918,7 @@
         }
       },
       "patch": {
-        "description": "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals and keeps the plan unless the pause left lessons on days now past, when it plans again from today and returns that change (`GET /goals/{goalId}/plan/resume-preview` shows it first); archiving the goal the tabs show moves them to another active goal.",
+        "description": "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals and keeps the plan unless the pause left lessons on days now past, when it plans again from today and returns that change (`GET /goals/{goalId}/plan/resume-preview` shows it first); archiving the goal the tabs show moves them to another active goal. A language goal's `targetRegion` changes only the variety its buddy and practice calls use: no plan change.",
         "operationId": "updateGoal",
         "security": [
           {
@@ -14998,7 +14998,7 @@
             }
           },
           "422": {
-            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date.",
+            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved.",
             "content": {
               "application/json": {
                 "schema": {
@@ -15008,6 +15008,9 @@
                     },
                     {
                       "$ref": "#/components/schemas/TargetDateOutOfRangeError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TargetRegionNotOfferedError"
                     }
                   ]
                 }
@@ -23988,7 +23991,7 @@
     },
     "/study-block-openings": {
       "post": {
-        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "openStudyBlock",
         "security": [
           {
@@ -24777,6 +24780,16 @@
             "description": "Study session ID"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudySessionTimeZone"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "The first block added, where the learner goes on",
@@ -24819,7 +24832,7 @@
             }
           },
           "409": {
-            "description": "Not available now; details.reason says why. Error code: EXTRA_TIME_UNAVAILABLE.",
+            "description": "Not available now; details.reason says why. `dayOver` means the session's day is over (a screen left open past midnight): go to Today, where the learner can add time to today. Error code: EXTRA_TIME_UNAVAILABLE.",
             "content": {
               "application/json": {
                 "schema": {
@@ -29055,10 +29068,15 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "targetLanguage": {
-            "description": "The language being learned",
+            "description": "The language being learned. A tag with one of the language's countries (`es-AR`) is stored as the language (`es`) with that `targetRegion`",
             "type": "string",
             "maxLength": 10,
             "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country, as an ISO 3166-1 alpha-2 code: the buddy and practice calls use its variety, while lessons and their audio stay those of the language. One the language doesn't list, or that contradicts the country in `targetLanguage`, is refused as invalid",
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "title": {
             "type": "string",
@@ -29128,6 +29146,12 @@
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country from its `regionChoices`, or null for none. Lessons and the plan don't change. Another country, or one on a goal that isn't a language goal, is refused with 422 TARGET_REGION_NOT_OFFERED",
+            "nullable": true,
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "timeZone": {
             "type": "string",
@@ -30733,6 +30757,35 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200
+              }
+            },
+            "required": [
+              "field",
+              "goal",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "enum": [
+                  "targetRegion"
+                ]
+              },
+              "goal": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9,
+                "description": "Which goal of the card, in order: 0 is the main goal"
+              },
+              "value": {
+                "nullable": true,
+                "description": "One of the goal's `regionChoices`, or null for none",
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
               }
             },
             "required": [
@@ -37019,7 +37072,7 @@
               "spotTheTrap",
               "timed"
             ],
-            "description": "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: a note to read every word before answering), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)"
+            "description": "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: asked again like a retry), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)"
           },
           "lesson": {
             "nullable": true,
@@ -38540,7 +38593,7 @@
           },
           "languageFlag": {
             "nullable": true,
-            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
             "type": "string"
           },
           "plan": {
@@ -38601,6 +38654,13 @@
             "type": "string",
             "description": "What the learner typed"
           },
+          "regionChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            },
+            "description": "The countries a language goal can set as `targetRegion` (`PATCH /goals/{goalId}`), named in the goal's language and sorted by name; empty for other goals and languages without countries"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -38633,6 +38693,11 @@
             "nullable": true,
             "type": "string"
           },
+          "targetRegion": {
+            "nullable": true,
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+            "type": "string"
+          },
           "timezone": {
             "nullable": true,
             "type": "string"
@@ -38655,13 +38720,37 @@
           "plan",
           "primaryCourseId",
           "prompt",
+          "regionChoices",
           "status",
           "studyDays",
           "studyTime",
           "targetDate",
           "targetLanguage",
+          "targetRegion",
           "timezone",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "RegionChoice": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "The country's name in the goal's language"
+          },
+          "taught": {
+            "type": "boolean",
+            "description": "The country whose variety lessons and their audio teach"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "taught"
         ],
         "additionalProperties": false
       },
@@ -46085,8 +46174,15 @@
           },
           "languageFlag": {
             "nullable": true,
-            "description": "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+            "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
             "type": "string"
+          },
+          "regionChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            },
+            "description": "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries"
           },
           "status": {
             "type": "string",
@@ -46107,6 +46203,11 @@
             "nullable": true,
             "type": "string"
           },
+          "targetRegion": {
+            "nullable": true,
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language",
+            "type": "string"
+          },
           "title": {
             "type": "string"
           }
@@ -46122,9 +46223,11 @@
           "isSettingUp",
           "kind",
           "languageFlag",
+          "regionChoices",
           "status",
           "targetDate",
           "targetLanguage",
+          "targetRegion",
           "title"
         ],
         "additionalProperties": false
@@ -46146,6 +46249,11 @@
               }
             ]
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "The flag the goal shows once started, as a goal's `languageFlag`: a language goal's country when its `input` names one, else its language's; null for other goals",
+            "type": "string"
+          },
           "locked": {
             "type": "boolean",
             "description": "The plan follows no more goals at once: show it with the Plus lock, opening Plus"
@@ -46155,6 +46263,7 @@
           "displayName",
           "id",
           "input",
+          "languageFlag",
           "locked"
         ],
         "additionalProperties": false
@@ -75467,6 +75576,9 @@
             },
             "description": "The authoritative queue after completion. A completion may shorten or extend its unstarted lesson tail to fit today's time."
           },
+          "dayProgress": {
+            "$ref": "#/components/schemas/StudyDayProgress"
+          },
           "deferredLessonsCount": {
             "type": "integer",
             "minimum": 0,
@@ -75682,7 +75794,7 @@
               "paid"
             ],
             "additionalProperties": false,
-            "description": "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Payment remains once per learner-local day across goals."
+            "description": "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts this goal's work from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Each goal's day pays once."
           },
           "milestones": {
             "type": "array",
@@ -75832,6 +75944,7 @@
         "required": [
           "blockId",
           "blocks",
+          "dayProgress",
           "deferredLessonsCount",
           "finishedChapterId",
           "goalId",
@@ -76253,6 +76366,64 @@
           }
         ],
         "type": "object"
+      },
+      "StudyDayProgress": {
+        "type": "object",
+        "properties": {
+          "catchUp": {
+            "nullable": true,
+            "description": "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind), for a small line under the block's facts. Static: it holds what the completion read, so never count it down on the client. Null when nothing is carried, on a welcome-back session, once a free exam plan's first week is over, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
+            "type": "object",
+            "properties": {
+              "doneToday": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Carried lessons completed since the session's learner-local day began. A lesson the learner tested out of leaves `lessonsLeft` without counting here."
+              },
+              "lessonsLeft": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Carried lessons still to do: the number Today shows as lessons to catch up."
+              }
+            },
+            "required": [
+              "doneToday",
+              "lessonsLeft"
+            ],
+            "additionalProperties": false
+          },
+          "lead": {
+            "type": "string",
+            "enum": [
+              "done",
+              "left",
+              "open",
+              "complete"
+            ],
+            "description": "Which count leads the day's line: `done` shows `sessionBar.completed` of `sessionBar.total` while the blocks done are no more than the blocks left (the midpoint included); `left` shows the blocks left once past the midpoint, with the done count as its caption; `open` shows only the blocks done, because the day holds time for lessons not on the queue yet and has no honest total; `complete` once the session is complete."
+          },
+          "lessonsComing": {
+            "type": "boolean",
+            "description": "On `open`, whether the held lessons are being written now and join the queue on their own, so the line can say more are coming. False when they wait for the learner to ask for them, and outside `open`."
+          },
+          "percent": {
+            "nullable": true,
+            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Its meter draws one equal segment per counted block, so bar, count and percent agree.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "catchUp",
+          "lead",
+          "lessonsComing",
+          "percent"
+        ],
+        "additionalProperties": false,
+        "description": "Today's session progress for a block's end screen, decided in core so every client says the same thing."
       },
       "StudySessionMinutes": {
         "type": "object",
@@ -77714,6 +77885,48 @@
               "goalId",
               "kind",
               "words"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "variety"
+                ],
+                "description": "The goal's language as one country speaks it, for the buddy and practice calls: Apply is `PATCH /goals/{goalId}` with this `targetRegion`, and nothing changes before it"
+              },
+              "languageFlag": {
+                "nullable": true,
+                "description": "The offered country's flag, as flag-icons names it: what the goal's `languageFlag` becomes once applied",
+                "type": "string"
+              },
+              "targetLanguage": {
+                "type": "string"
+              },
+              "targetRegion": {
+                "type": "string",
+                "description": "The country offered, a two-letter code"
+              },
+              "taughtRegion": {
+                "type": "string",
+                "description": "The country whose variety lessons and their audio keep"
+              }
+            },
+            "required": [
+              "goalId",
+              "kind",
+              "languageFlag",
+              "targetLanguage",
+              "targetRegion",
+              "taughtRegion"
             ],
             "additionalProperties": false
           },
@@ -81551,6 +81764,38 @@
         ],
         "additionalProperties": false
       },
+      "TargetRegionNotOfferedError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "TARGET_REGION_NOT_OFFERED"
+                ]
+              },
+              "details": {
+                "description": "Additional error details"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
       "GoalChapter": {
         "type": "object",
         "properties": {
@@ -83730,12 +83975,12 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+                "description": "Actual recorded study seconds for this goal this week, summed before rounding down to minutes"
               },
               "targetMinutes": {
                 "type": "number",
                 "minimum": 0,
-                "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "description": "This goal's weekly time budget, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                 "example": 105
               }
             },
@@ -83744,7 +83989,7 @@
               "targetMinutes"
             ],
             "additionalProperties": false,
-            "description": "This week's study time against the learner's weekly budget, in the goal's week: the same numbers as Today's `week.time`"
+            "description": "This goal's study time this week against its weekly budget, in the goal's week"
           },
           "writtenPractice": {
             "nullable": true,
@@ -85969,7 +86214,7 @@
           },
           "today": {
             "nullable": true,
-            "description": "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned when any goal paid it for that session's learner-local date.",
+            "description": "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned once that session paid it; each goal's day pays its own.",
             "type": "object",
             "properties": {
               "fullMeal": {
@@ -90655,13 +90900,22 @@
                 "$ref": "#/components/schemas/LanguageAim"
               }
             ]
+          },
+          "regionChoices": {
+            "default": [],
+            "description": "The countries a language goal can pick for `draft.targetRegion`, named in the learner's language; edit it with field targetRegion. Empty for other goals and languages without countries",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegionChoice"
+            }
           }
         },
         "required": [
           "cutoff",
           "draft",
           "examDates",
-          "languageAim"
+          "languageAim",
+          "regionChoices"
         ],
         "additionalProperties": false
       },
@@ -91669,7 +91923,7 @@
               "ready"
             ],
             "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting this goal's completions from any supported source. Earned means this day already paid the bonus. Each goal's day pays its own bonus once."
           },
           "goalId": {
             "nullable": true,
@@ -91816,7 +92070,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91835,17 +92089,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -91862,41 +92116,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           }
         },
         "required": [
@@ -91965,9 +92196,10 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
             "type": "string",
             "enum": [
+              "dayOver",
               "nothingToStudy",
               "plusRequired",
               "sessionNotFinished"
@@ -92063,7 +92295,7 @@
               "ready"
             ],
             "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting this goal's completions from any supported source. Earned means this day already paid the bonus. Each goal's day pays its own bonus once."
           },
           "goalId": {
             "nullable": true,
@@ -92184,7 +92416,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -92203,17 +92435,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -92230,41 +92462,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           },
           "blocks": {
             "type": "array",
@@ -96425,7 +96634,7 @@
           },
           "pattern": {
             "nullable": true,
-            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
+            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
             "type": "object",
             "properties": {
               "id": {
@@ -97574,10 +97783,15 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "targetLanguage": {
-            "description": "The language being learned",
+            "description": "The language being learned. A tag with one of the language's countries (`es-AR`) is stored as the language (`es`) with that `targetRegion`",
             "type": "string",
             "maxLength": 10,
             "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
+          },
+          "targetRegion": {
+            "description": "A language goal's country, as an ISO 3166-1 alpha-2 code: the buddy and practice calls use its variety, while lessons and their audio stay those of the language. One the language doesn't list, or that contradicts the country in `targetLanguage`, is refused as invalid",
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
           },
           "title": {
             "type": "string",

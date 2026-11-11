@@ -7,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { type JourneyPathLinks } from "./journey-links";
@@ -27,27 +28,7 @@ const PERCENT = 100;
 
 const ROADMAP_TITLE_ID = "plan-roadmap-title";
 
-function moveBetweenBands(event: React.KeyboardEvent<HTMLOListElement>) {
-  if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
-    return;
-  }
-
-  const bands = [...event.currentTarget.querySelectorAll("[data-slot=roadmap-band]")];
-  const active = document.activeElement;
-  const index = active ? bands.indexOf(active) : -1;
-
-  if (index === -1) {
-    return;
-  }
-
-  event.preventDefault();
-  const next = event.key === "ArrowRight" ? index + 1 : index - 1;
-  const band = bands[Math.min(bands.length - 1, Math.max(0, next))];
-
-  if (band instanceof HTMLElement) {
-    band.focus();
-  }
-}
+const moveBetweenBands = moveFocusWithArrows("roadmap-band");
 
 function TodayTicks({ share }: { share: number }) {
   const style = { left: `${share * PERCENT}%` };

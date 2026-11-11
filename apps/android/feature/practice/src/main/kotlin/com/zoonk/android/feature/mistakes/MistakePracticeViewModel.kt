@@ -38,7 +38,6 @@ import com.zoonk.api.models.MistakePractice
 import com.zoonk.api.models.MistakePracticeCompletion
 import com.zoonk.api.models.MistakePracticeFeedback
 import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
-import com.zoonk.api.models.MistakeSnapshot
 import com.zoonk.api.models.MistakeStatus
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,7 +67,6 @@ sealed interface MistakePracticeTask {
         val language: String,
         val targetLanguage: String?,
         val step: LessonStep,
-        val lastAnswer: String?,
         val tutorAvailable: Boolean,
     ) : MistakePracticeTask
 }
@@ -76,8 +74,6 @@ sealed interface MistakePracticeTask {
 data class PracticeQuestions(
     val questions: List<Question>,
     val words: TrueFalseWords,
-    /** The learner's earlier answer by step, only on the mistake's own question: beside another it misleads. */
-    val lastAnswers: Map<Int, String>,
     val tasks: List<MistakePracticeTask> = questions.map(MistakePracticeTask::Bank),
 )
 
@@ -510,7 +506,6 @@ internal fun MistakePractice.toQuestions(): PracticeQuestions {
                         lesson.language,
                         lesson.targetLanguage,
                         lesson.step.toLessonStep(),
-                        entry.snapshot.answer,
                         entry.tutorAvailable,
                     ),
                 )
@@ -527,15 +522,6 @@ internal fun MistakePractice.toQuestions(): PracticeQuestions {
     return PracticeQuestions(
         questions = tasks.mapNotNull { (it as? MistakePracticeTask.Bank)?.question },
         words = trueFalseLabels.recode<TrueFalseLabels, TrueFalseWords>(),
-        lastAnswers =
-            tasks
-                .mapIndexedNotNull { index, task ->
-                    val bank = task as? MistakePracticeTask.Bank ?: return@mapIndexedNotNull null
-                    val entry = practice.first { it.mistakeId.toString() == bank.mistakeId }
-                    entry.snapshot.answer
-                        ?.takeIf { entry.snapshot.isAskedBy(bank.question) }
-                        ?.let { index to it }
-                }.toMap(),
         tasks = tasks,
     )
 }
@@ -553,15 +539,3 @@ private fun PracticeQuestions.lessonState(index: Int) =
     (tasks.getOrNull(index) as? MistakePracticeTask.Lesson)?.let {
         LessonPlayerState.initial(it.lessonId, listOf(it.step), 0)
     }
-
-/** The notebook saves a lesson's question with its context before it, and a bank question as it's asked. */
-private fun MistakeSnapshot.isAskedBy(question: Question): Boolean {
-    val saved = this.question.squashed()
-    return saved == question.question.squashed() ||
-        (!question.context.isNullOrEmpty() && saved == "${question.context} ${question.question}".squashed())
-}
-
-private fun String.squashed(): String =
-    map {
-        if (it.isWhitespace()) ' ' else it
-    }.joinToString("").split(' ').filter(String::isNotEmpty).joinToString(" ")

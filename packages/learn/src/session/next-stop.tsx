@@ -20,6 +20,7 @@ import { useLearnAnalytics } from "../learn-context";
 import { useReadyHold } from "../wait/use-ready-hold";
 import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
+import { ReviewIntro, noteReviewStart } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { useSessionQueueAside } from "./session-queue";
@@ -42,7 +43,8 @@ export type NextStopActions = {
 
 export type NextStopTap = {
   focus: boolean;
-  state: "failed" | "opening";
+  /** `waiting`: the tap only brought the step here, and it starts when the learner taps Start. */
+  state: "failed" | "opening" | "waiting";
   /** `Date.now()` of the tap. */
   tappedAt: number;
 };
@@ -62,21 +64,23 @@ function useTapFocus(focus: boolean) {
 function StartButton({
   busy,
   focus,
-  onClick,
+  onStart,
   step,
 }: {
   busy: boolean;
   focus: boolean;
-  onClick: () => void;
+  onStart: () => void;
   step: DayStep;
 }) {
   const t = useExtracted();
   const ref = useTapFocus(focus);
 
   return (
-    <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onClick} ref={ref}>
-      {step.status === "active" ? t("Continue") : t("Start")}
-    </EnterButton>
+    <form action={() => onStart()} className="contents">
+      <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} ref={ref} type="submit">
+        {step.status === "active" ? t("Continue") : t("Start")}
+      </EnterButton>
+    </form>
   );
 }
 
@@ -190,22 +194,24 @@ function NextStopActionBar({
         }
       >
         {canStop && (
-          <Button
-            busy={stop.isPending}
-            icon={<CircleStopIcon aria-hidden="true" />}
-            onClick={stop.run}
-            size="xl"
-            variant="outline"
-          >
-            {t("Stop for today")}
-          </Button>
+          <form action={() => void stop.run()} className="contents">
+            <Button
+              busy={stop.isPending}
+              icon={<CircleStopIcon aria-hidden="true" />}
+              size="xl"
+              type="submit"
+              variant="outline"
+            >
+              {t("Stop for today")}
+            </Button>
+          </form>
         )}
 
         {isReady && (
           <StartButton
             busy={start.busy}
             focus={Boolean(tap?.focus) || written}
-            onClick={start.run}
+            onStart={start.run}
             step={block}
           />
         )}
@@ -311,6 +317,8 @@ export function NextStop({
             <TaskMeta facts={facts} />
           </div>
 
+          <ReviewIntro block={block} goalId={goalId} />
+
           <StatusRegion className="text-sm text-pretty">
             {written && t("Your lesson is ready.")}
           </StatusRegion>
@@ -325,7 +333,13 @@ export function NextStop({
         </TaskBody>
 
         <NextStopActionBar
-          actions={actions}
+          actions={{
+            ...actions,
+            start: (step) => {
+              noteReviewStart({ block: step, goalId });
+              return actions.start(step);
+            },
+          }}
           alternative={alternative}
           block={block}
           isReady={isReady}

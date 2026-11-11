@@ -33,7 +33,9 @@ const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBou
 
 /**
  * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
- * families, so an outage at one provider doesn't stop lessons. Argon hasn't run the current prompt.
+ * families, so an outage at one provider doesn't stop lessons. On 4 lessons (11 Nov 2026), Fable
+ * scored 8.53 to Opus's 8.63 at $704/1k against $155/1k, and a blind read preferred Opus 2 to 1.
+ * Gemini 4 Carbon scored 7.67 (PT 7.39) to Argon's 7.97 at $156/1k against $38/1k.
  */
 export const WRITER_MODELS = [
   "openai/gpt-6.1-terra",

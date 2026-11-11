@@ -13,7 +13,7 @@ export type PlanDay = { goalMinutes: number; kind: WeekDayKind };
 
 export type WeekDay = PlanDay & {
   date: Date;
-  /** Reached the day's time goal, or finished each goal's session for the day in less time. */
+  /** Reached the day's time goal, or finished the day's session in less time. */
   hitGoal: boolean;
   isToday: boolean;
   minutes: number;
@@ -28,52 +28,43 @@ export function toStudiedMinutes(seconds: number): number {
 
 export function getWeekDayKind({
   date,
+  goal,
   goalMinutes,
-  goals,
 }: {
   date: Date;
+  goal: { isExam: boolean; startDate: Date; targetDate: Date | null };
   goalMinutes: number;
-  goals: readonly { isExam: boolean; startDate: Date; targetDate: Date | null }[];
 }): WeekDayKind {
   if (goalMinutes > 0) {
     return "study";
   }
 
-  const target = goals.find((goal) => goal.targetDate?.getTime() === date.getTime());
-
-  if (target) {
-    return target.isExam ? "exam" : "deadline";
+  if (goal.targetDate?.getTime() === date.getTime()) {
+    return goal.isExam ? "exam" : "deadline";
   }
 
-  const started = goals.filter((goal) => date >= goal.startDate);
-
-  if (started.length === 0) {
+  if (date < goal.startDate) {
     return "beforeStart";
   }
 
-  return started.every((goal) => goal.targetDate !== null && date > goal.targetDate)
-    ? "afterEnd"
-    : "rest";
+  return goal.targetDate !== null && date > goal.targetDate ? "afterEnd" : "rest";
 }
 
 function includesDate(dates: readonly Date[], date: Date): boolean {
   return dates.some((item) => item.getTime() === date.getTime());
 }
 
-/** Monday through Sunday; finishing the day's sessions satisfies the daily goal even early, while rest days have no goal to hit. */
+/** Monday through Sunday; finishing the day's session satisfies the daily goal even early, while rest days have no goal to hit. */
 export function getWeekDays({
   days,
   finishedDates = [],
   getPlanDay,
-  studiedDates = [],
   today,
 }: {
   days: readonly { date: Date; seconds: number }[];
-  /** Days on which every goal that asked for time finished its session, as UTC-midnight labels. */
+  /** Days whose study session finished, as UTC-midnight labels. */
   finishedDates?: readonly Date[];
   getPlanDay: (date: Date) => PlanDay;
-  /** Days with any finished study session, as UTC-midnight labels. */
-  studiedDates?: readonly Date[];
   today: Date;
 }): WeekDay[] {
   const start = getStartOfWeek(today).getTime();
@@ -93,7 +84,7 @@ export function getWeekDays({
       isToday: date.getTime() === today.getTime(),
       kind,
       minutes,
-      studied: includesDate(studiedDates, date) || seconds > 0,
+      studied: includesDate(finishedDates, date) || seconds > 0,
     };
   });
 }

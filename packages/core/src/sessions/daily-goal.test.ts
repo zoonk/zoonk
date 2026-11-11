@@ -62,19 +62,14 @@ describe(getWeekDays, () => {
     ]);
   });
 
-  it("counts a day whose sessions all finished as reaching its goal, in fewer minutes too", () => {
+  it("counts a day whose session finished as reaching its goal, in fewer minutes too", () => {
     const week = getWeekDays({
       days: [
         { date: new Date("2026-09-28T00:00:00Z"), seconds: 5 * 60 },
         { date: new Date("2026-09-29T00:00:00Z"), seconds: 17 * 60 },
       ],
-      finishedDates: [new Date("2026-09-29T00:00:00Z")],
+      finishedDates: [new Date("2026-09-29T00:00:00Z"), new Date("2026-10-04T00:00:00Z")],
       getPlanDay: restsOnSundays(21),
-      studiedDates: [
-        new Date("2026-09-28T00:00:00Z"),
-        new Date("2026-09-29T00:00:00Z"),
-        new Date("2026-10-04T00:00:00Z"),
-      ],
       today: WEDNESDAY,
     });
 
@@ -94,7 +89,7 @@ describe(getWeekDayKind, () => {
 
   it("names days without study for what they are: outside the plan, the exam or a rest day", () => {
     const kindOf = (iso: string, goalMinutes = 0) =>
-      getWeekDayKind({ date: day(iso), goalMinutes, goals: [exam] });
+      getWeekDayKind({ date: day(iso), goal: exam, goalMinutes });
 
     expect(kindOf("2026-09-28")).toBe("beforeStart");
     expect(kindOf("2026-09-30", 30)).toBe("study");
@@ -103,14 +98,8 @@ describe(getWeekDayKind, () => {
     expect(kindOf("2026-10-03")).toBe("afterEnd");
 
     expect(
-      getWeekDayKind({
-        date: day("2026-10-02"),
-        goalMinutes: 0,
-        goals: [{ ...exam, isExam: false }],
-      }),
+      getWeekDayKind({ date: day("2026-10-02"), goal: { ...exam, isExam: false }, goalMinutes: 0 }),
     ).toBe("deadline");
-
-    expect(getWeekDayKind({ date: WEDNESDAY, goalMinutes: 0, goals: [] })).toBe("beforeStart");
   });
 });
 

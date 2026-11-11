@@ -43,6 +43,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
       screen: "session",
     },
     tappedAt: NOW - 500,
+    waiting: false,
     ...overrides,
   };
 }
@@ -99,6 +100,11 @@ describe(findDayTap, () => {
   it("says a failed tap failed, so the step offers Start again", () => {
     const failed = entry({ result: { kind: "failed" } });
     expect(findDayTap({ ...scope, day, entry: failed })?.tap.state).toBe("failed");
+  });
+
+  it("draws a step the tap only brought here at rest, waiting for Start, with the focus its control had", () => {
+    const tapped = findDayTap({ ...scope, day, entry: entry({ waiting: true }) });
+    expect(tapped?.tap).toMatchObject({ focus: true, state: "waiting" });
   });
 
   it("draws nothing with no tap, for another identity, once signed out, or on another page", () => {

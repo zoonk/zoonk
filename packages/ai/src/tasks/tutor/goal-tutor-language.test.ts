@@ -22,7 +22,7 @@ const LANGUAGES = Object.keys(TODAY_TABS) as (keyof typeof TODAY_TABS)[];
 
 describe(selectTutorLanguage, () => {
   it.each(LANGUAGES)("gives a %s learner the app's names in that language alone", (language) => {
-    const prompt = selectTutorLanguage({ language, template });
+    const prompt = selectTutorLanguage({ language, template, variety: false });
 
     const others = LANGUAGES.filter((other) => other !== language).map(
       (other) => TODAY_TABS[other],
@@ -34,13 +34,21 @@ describe(selectTutorLanguage, () => {
   });
 
   it("names the learner's language as the answer's", () => {
-    const prompt = selectTutorLanguage({ language: "pt", template });
+    const prompt = selectTutorLanguage({ language: "pt", template, variety: false });
 
     expect(prompt).toContain("Answer in Português Brasileiro, the language the app shows them");
   });
 
+  it("gives the variety's rules only to a learner who chose a country", () => {
+    const chosen = selectTutorLanguage({ language: "en", template, variety: true });
+    const none = selectTutorLanguage({ language: "en", template, variety: false });
+
+    expect(chosen).toContain("`goal.variety.chosen`");
+    expect(none).not.toContain("goal.variety");
+  });
+
   it("names nothing in a language the app doesn't show", () => {
-    const prompt = selectTutorLanguage({ language: "ar", template });
+    const prompt = selectTutorLanguage({ language: "ar", template, variety: false });
 
     expect(LANGUAGES.filter((language) => prompt.includes(TODAY_TABS[language]))).toStrictEqual([]);
   });

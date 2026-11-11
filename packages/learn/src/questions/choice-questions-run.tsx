@@ -242,7 +242,9 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
           <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
-            <p className={cn("min-w-0 text-pretty", aside && "lg:hidden")}>{hint?.(question)}</p>
+            <p className={cn("min-w-0 text-pretty", aside && "with-aside:hidden")}>
+              {hint?.(question)}
+            </p>
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
             </p>

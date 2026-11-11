@@ -1,0 +1,164 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-fable-5.2": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "German as used in Germany for learners in France. Questions, options and translations must be French as used in France. Preserve afternoon times in 24-hour notation and German noun capitalization and appropriate Sie/du. A1 stated facts, A2 sequence or combined facts, B1 reason or main point, B2 implications, C1 qualified stance or tone. Restaurant enjoyment and reservations must not become two simultaneously defensible options.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-11T03:03:57.600Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Every passage, question, and speaking sentence matches its target CEFR level and word-count range, progressing smoothly from single stated facts at A1 to nuanced implications and qualified stances at C1.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Each question has a single clearly supported correct answer, well-balanced option lengths, and plausible distractors that cannot be eliminated through general knowledge alone.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "German passages use authentic Germany-specific context, 24-hour times, and natural registers, while all questions, options, and translations are in idiomatic French as used in France.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A meets every CEFR calibration, word-count, and situation requirement with natural German texts and idiomatic French questions, options, and translations. Its C1 passages capture subtle tone and implication exceptionally well while keeping one unambiguous answer per question.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking sentences are accurately calibrated from A1 to C1, strictly respecting word-count ranges and testing the expected cognitive skills at each level.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All 20 questions have one unambiguously correct option supported by the text, accurate answer indexes, and effective distractors of comparable length.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "German texts and Germany-specific cultural details are natural and accurate, and the French is generally very good, though A2 reading 1 contains an awkward French phrasing ('Il mange ensemble à midi' referring to 'le groupe').",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model B is very strong overall, with well-calibrated levels, unambiguous answers, and authentic German passages. It ranks slightly behind Model A due to a minor French error in the A2 reading options ('Il mange ensemble à midi' using a singular pronoun with 'ensemble').",
+          "score": 9.75
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 13366,
+        "outputTokens": 582,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The progression clearly moves from stated facts through sequencing and reasons to inferred attitudes and nuanced implications. The B2 router anecdote and C1 workplace circular are especially well calibrated, while speaking sentences increase appropriately in length and complexity.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers are supported, and competing options are clearly distinguishable with generally comparable lengths. The restaurant item successfully contrasts qualified enjoyment with uncertainty, indiscriminate praise and disappointment without creating two defensible answers.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "German passages generally sound authentic, with convincing written and spoken registers and varied situations. However, “gegen neun” fails to preserve the evening time in 24-hour notation, and French wording such as “Il mange ensemble à midi” needs polishing.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "The stronger bank overall, with particularly effective B2 inference tasks and nuanced C1 interpretations. Answers are consistently distinguishable, although a few French formulations and one afternoon-time reference need editing.",
+          "score": 8.75
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Most tasks follow the intended progression, particularly the B1 reasons and C1 qualified stances. The B2 cooking-box judgment is substantially more transparent than the neighboring inference tasks, and the B1 speaking sentence offers a relatively modest step beyond A2.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are supported, and the restaurant options successfully separate enjoyment despite constraints from dissatisfaction. However, translating courage into “ne pas avoir peur” weakens the climbing answer’s precision, and several advanced distractors are conspicuously absolute.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The German is generally natural, with effective messages, notices and conversational recordings, and the French is mostly idiomatic. Afternoon references “um drei Uhr” and “halb drei” violate the requested 24-hour notation, while “le jour après” is less natural than “le lendemain”.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A strong and usable bank with clear answers and convincing advanced texts, but its progression is slightly less consistent than Model B’s. Minor answer imprecision and repeated departures from the required afternoon-time notation also reduce its polish.",
+          "score": 8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 12137,
+        "outputTokens": 1393,
+        "reasoningTokens": 798
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "1cb6b563327f22fb",
+    "anthropic/claude-fable-5.2": "5254e8823cbd802e"
+  },
+  "swapped": false,
+  "taskId": "level-test-bank",
+  "testCaseId": "fr-de-fable-1"
+}

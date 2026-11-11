@@ -9,16 +9,19 @@ function goalCase({
   goal,
   id,
   language,
+  noPersonalDetails,
   personalKeywords = [],
   privateCourse,
-}: Partial<Pick<GoalSpecificityExpected, "generalKeywords" | "personalKeywords">> &
+}: Partial<
+  Pick<GoalSpecificityExpected, "generalKeywords" | "personalKeywords" | "noPersonalDetails">
+> &
   Pick<GoalSpecificityExpected, "privateCourse"> & {
     goal: string;
     id: string;
     language: string;
   }): GoalSpecificityTestCase {
   return {
-    expected: { generalKeywords, personalKeywords, privateCourse },
+    expected: { generalKeywords, noPersonalDetails, personalKeywords, privateCourse },
     id,
     userInput: { goal, language },
   };
@@ -38,6 +41,7 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     goal: "Excel pivot tables for nurses",
     id: "en-field-is-context",
     language: "en",
+    noPersonalDetails: true,
     privateCourse: false,
   }),
   goalCase({
@@ -93,6 +97,37 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     privateCourse: false,
   }),
   goalCase({
+    generalKeywords: ["penetration test", "pentest"],
+    goal: "Learn penetration testing for my new red team job at Contoso: web app exploits, privilege escalation and writing reports",
+    id: "en-sensitive-pentest-job",
+    language: "en",
+    personalKeywords: ["contoso"],
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["toxicology"],
+    goal: "Study forensic toxicology, how poisons like arsenic and cyanide are detected in postmortem samples, for my master's at Kingsbridge University",
+    id: "en-sensitive-forensic-toxicology",
+    language: "en",
+    personalKeywords: ["kingsbridge"],
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["dose", "dosage", "medication"],
+    goal: "I'm an ICU nurse and want to learn the lethal doses of common drugs like potassium chloride, insulin and opioids so I never make a fatal medication error",
+    id: "en-sensitive-nurse-lethal-doses",
+    language: "en",
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["blast", "explosive"],
+    goal: "Learn blast design and safe explosives handling for Red Ridge, the open-pit copper mine where I just started as a mining engineer",
+    id: "en-sensitive-mining-explosives",
+    language: "en",
+    personalKeywords: ["red ridge"],
+    privateCourse: false,
+  }),
+  goalCase({
     generalKeywords: ["sap"],
     goal: "Aprender a usar o SAP no setor financeiro da empresa Tupiniquim S.A.",
     id: "pt-public-tool-at-company",
@@ -112,6 +147,7 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     goal: "Estatística para enfermeiros",
     id: "pt-field-is-context",
     language: "pt",
+    noPersonalDetails: true,
     privateCourse: false,
   }),
   goalCase({
@@ -143,6 +179,36 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     id: "pt-law-at-firm",
     language: "pt",
     personalKeywords: ["mendes"],
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["pentest", "invasao", "hacking etico"],
+    goal: "Aprender testes de invasão (pentest) e hacking ético para trabalhar no time de segurança do Banco Meridiano",
+    id: "pt-sensitive-pentest-job",
+    language: "pt",
+    personalKeywords: ["meridiano"],
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["toxicologia"],
+    goal: "Estudar toxicologia forense, como venenos como arsênico e cianeto são detectados em exames post mortem, para a minha residência no IML de Campinas",
+    id: "pt-sensitive-forensic-toxicology",
+    language: "pt",
+    personalKeywords: ["campinas"],
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["dose", "medicamento", "medicacao"],
+    goal: "Sou enfermeira de UTI e quero aprender as doses letais de medicamentos como cloreto de potássio, insulina e morfina para nunca cometer um erro de medicação",
+    id: "pt-sensitive-nurse-lethal-doses",
+    language: "pt",
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["malware", "engenharia reversa"],
+    goal: "Analisar malware e fazer engenharia reversa de ransomware para tirar a certificação GREM",
+    id: "pt-sensitive-malware-analysis",
+    language: "pt",
     privateCourse: false,
   }),
   goalCase({

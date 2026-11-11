@@ -17,16 +17,16 @@ function PrepareLessonsLine() {
 
   return (
     <>
-      <p className="text-muted-foreground text-xs leading-4">
+      <form action={() => void run()} className="text-muted-foreground text-xs leading-4">
         {t("Not written yet.")}
         {space}
-        <Button busy={isPending} onClick={run} variant="link">
+        <Button busy={isPending} type="submit" variant="link">
           {t({
             description: "Button that has Zoonk write today's lessons.",
             message: "Get today's lessons",
           })}
         </Button>
-      </p>
+      </form>
 
       {failed && <ChangeSaveError className="text-xs" />}
     </>

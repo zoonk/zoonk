@@ -5,9 +5,8 @@ import {
   type LessonQuestionContextSummary,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
-  type TutorToolOffer,
-  tutorToolOfferSchema,
 } from "../contract";
+import { type TutorToolOffer, tutorToolOfferSchema } from "../tutor-tool-offer-contract";
 import { findAboutCheckedAnswer } from "./about-checked-answer";
 
 export const lessonQuestionResourceOmit = { contextSnapshot: true } as const;

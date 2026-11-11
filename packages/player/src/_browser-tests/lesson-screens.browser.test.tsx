@@ -422,9 +422,16 @@ describe("lesson screens", () => {
     await page.getByRole("radio", { name: "Rent" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
-    await expect.element(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
-    await page.getByRole("button", { name: /^Continue/u }).click();
 
+    await expect
+      .element(
+        page
+          .getByRole("region", { name: "Answer feedback" })
+          .getByText("Não confunda com renda, que é income."),
+      )
+      .toBeVisible();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
   });
 

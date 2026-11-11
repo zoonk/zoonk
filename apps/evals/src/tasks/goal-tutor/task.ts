@@ -114,9 +114,9 @@ async function generate({
       results.push(answer);
       return Promise.resolve(answer);
     },
-    offerAppTool: ({ area, goal, tool, topic }) => {
+    offerAppTool: ({ area, country, goal, tool, topic }) => {
       const answer = standInAppTool({ appTools, area, tool });
-      const asked = [area, goal, topic].filter(Boolean).join(", ");
+      const asked = [area, country, goal, topic].filter(Boolean).join(", ");
       const locked = answer.status === "offered" && answer.plusRequired ? " (locked: Plus)" : "";
       offers.push(`${tool}${asked ? ` (${asked})` : ""}: ${answer.status}${locked}`);
       results.push(answer);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getScoreWeekdayLabel } from "./weekday";
+import { getScoreWeekdayLabel, getScoreWeekdayShortLabel } from "./weekday";
 
 describe("score weekdays", () => {
   it("names each stored weekday index, Sunday first, in the learner's locale", () => {
@@ -18,5 +18,10 @@ describe("score weekdays", () => {
     ]);
 
     expect(getScoreWeekdayLabel({ dayOfWeek: 0, locale: "pt" })).toBe("domingo");
+  });
+
+  it("shortens a weekday for a chart's axis", () => {
+    expect(getScoreWeekdayShortLabel({ dayOfWeek: 2, locale: "en" })).toBe("Tue");
+    expect(getScoreWeekdayShortLabel({ dayOfWeek: 6, locale: "pt" })).toBe("sáb.");
   });
 });

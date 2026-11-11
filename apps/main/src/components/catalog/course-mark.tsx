@@ -1,7 +1,7 @@
 import { SubjectIcon } from "@zoonk/learn/subject-icon";
 import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
+import { getVarietyName } from "@zoonk/utils/language-regions";
 import Image from "next/image";
 
 const COURSE_MARK_CLASS = "size-10 shrink-0 rounded-lg";
@@ -19,9 +19,7 @@ export function CourseMark({
     return (
       <span className={cn(COURSE_MARK_CLASS, "grid place-items-center")}>
         <LanguageFlag
-          alt={
-            getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ?? ""
-          }
+          alt={getVarietyName({ language: course.targetLanguage, userLanguage: locale })}
           className="w-8"
           language={course.targetLanguage}
         />

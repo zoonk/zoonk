@@ -117,7 +117,7 @@ export async function readSavedDayView({
       ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
       : null,
     emptyDay: null,
-    extraTime: getExtraTime({ blocks: refill.blocks }),
+    extraTime: getExtraTime({ blocks: refill.blocks, current: view.current }),
     minutes: getSessionMinutes({
       blocks: refill.blocks,
       dailyGoal: view.minutes.dailyGoal,

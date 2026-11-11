@@ -8,7 +8,7 @@ import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
+import { getDayMissions } from "../missions/get-day-missions";
 import { type DayProgressReader } from "../missions/mission-day-views";
 import { getVisibleSessionTotal } from "../session-minutes";
 import { loadCatchUpView } from "./catch-up";
@@ -23,7 +23,7 @@ import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionPlanItem } from "./session-plan-item";
-import { type StudySessionView, toStudySessionView } from "./session-view";
+import { EMPTY_WEEK, type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 async function loadDayOutlines({
@@ -111,7 +111,9 @@ export async function loadStudySessionView({
 }): Promise<StudySessionView> {
   const [basics, week, blockViews] = await Promise.all([
     loadSessionBasics({ initialDay, session: storedSession }),
-    loadStudyWeek({ localDate: weekDate, userId }),
+    storedSession.goal
+      ? loadStudyWeek({ goal: storedSession.goal, localDate: weekDate })
+      : EMPTY_WEEK,
     loadSessionBlockViews({
       blueprint,
       readLessonStates,
@@ -170,7 +172,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true, trialEnded: false };
 
-  const [outlines, missions, fullMealEarned, plusLessons, reserved] = await Promise.all([
+  const [outlines, missions, plusLessons, reserved] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -179,7 +181,6 @@ export async function loadStudySessionView({
       timeZone,
       ...(current && { through: new Date() }),
     }),
-    hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
       access: examAccess,
       goalId: session.goalId,
@@ -196,7 +197,6 @@ export async function loadStudySessionView({
     dayEndsAt,
     dayMinutes,
     examAccess,
-    fullMealEarned,
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (outlines ?? "idle") : null,

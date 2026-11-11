@@ -249,6 +249,38 @@ describe(reviseOnboardingDraft, () => {
     expect(card.goals[0]?.draft.targetDate).toBe(tomorrow);
   });
 
+  it("sets or clears a language goal's country, only one its language lists", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const draft = await onboardingDraftFixture({
+      understanding: {
+        goals: [
+          {
+            draft: {
+              kind: "language" as const,
+              language: "en",
+              prompt: "I want to learn Spanish",
+              targetLanguage: "es",
+              title: "Learn Spanish",
+            },
+            examDates: [],
+          },
+        ],
+        schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
+        status: "goals" as const,
+      },
+      userId: user.id,
+    });
+
+    const edit = (value: string | null) =>
+      reviseOnboardingDraft({ draftId: draft.id, edit: { field: "targetRegion", goal: 0, value } });
+
+    expect(readCard(await edit("AR")).goals[0]?.draft.targetRegion).toBe("AR");
+    await expect(edit("PT")).resolves.toStrictEqual({ status: "invalid" });
+    expect(readCard(await edit(null)).goals[0]?.draft).not.toHaveProperty("targetRegion");
+  });
+
   it("refuses fixes that don't apply to the goal", async () => {
     const { draft } = await setup();
 

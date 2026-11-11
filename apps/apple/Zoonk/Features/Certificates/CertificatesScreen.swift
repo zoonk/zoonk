@@ -228,7 +228,7 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(Text(goal.displayName), description: description) {
+    ListRow(title, description: description) {
       GoalMark(title: goal.displayName, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
@@ -243,6 +243,25 @@ private struct UpNextRow: View {
       }
     }
     .accessibilityElement(children: .combine)
+  }
+
+  /// The flag is decorative, so the country it shows is read after the goal's name.
+  private var title: Text {
+    let name = Text(goal.displayName)
+
+    guard let language = goal.targetLanguage, let region = goal.targetRegion else {
+      return name
+    }
+
+    let variety = Locale.current.varietyName(language: language, region: region)
+
+    return name.accessibilityLabel(
+      goal.displayName
+        + String(
+          localized: ", \(variety)", table: "Certificates",
+          comment:
+            "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)"
+        ))
   }
 
   private var description: Text {

@@ -88,9 +88,11 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
         </EmptyTitle>
       </EmptyHeader>
       <EmptyContent>
-        <Button busy={isPending} icon={<BellOffIcon aria-hidden="true" />} onClick={turnOff}>
-          {t("Turn off")}
-        </Button>
+        <form action={() => turnOff()} className="contents">
+          <Button busy={isPending} icon={<BellOffIcon aria-hidden="true" />} type="submit">
+            {t("Turn off")}
+          </Button>
+        </form>
         {failed && (
           <p className="text-destructive-text text-sm" role="alert">
             {t("That didn't save. Try again.")}

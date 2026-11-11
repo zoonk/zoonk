@@ -12,6 +12,19 @@ function bankFeedback() {
 }
 
 describe("exact standalone bank mistake practice", () => {
+  it("asks the mistake's own question without the answer the learner gave then", async () => {
+    const answer = vi.fn<Actions["answer"]>().mockResolvedValue(bankFeedback());
+
+    openPractice(null, { answer }, question("typed"));
+    await expect.element(page.getByRole("textbox")).toHaveFocus();
+    await expect.element(page.getByText("The earlier answer")).not.toBeInTheDocument();
+
+    await page.getByRole("textbox").fill("Mitochondrion");
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+    await expect.element(page.getByText("The earlier answer")).not.toBeInTheDocument();
+  });
+
   it("keeps the original numeric values and draft after a lost response", async () => {
     const answer = vi
       .fn<Actions["answer"]>()

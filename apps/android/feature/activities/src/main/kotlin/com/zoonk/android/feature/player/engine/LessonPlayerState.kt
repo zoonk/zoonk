@@ -33,6 +33,15 @@ data class RunAnswer(
     val result: StepResult,
 )
 
+/** One attempt at a screen, as it showed: its answer, result, revealed steps and canvas [round]. */
+@Immutable
+data class LessonAttempt(
+    val answer: LessonAnswer?,
+    val result: StepResult,
+    val revealed: Int?,
+    val round: Int,
+)
+
 /** Where Hyperdrive stood when the run started: right answers on [knownStepIds] don't build it. */
 @Immutable
 data class HyperdriveStart(
@@ -102,6 +111,8 @@ data class LessonPlayerState(
     /** Moves on wherever a screen's answer starts over, so what the learner did on its canvas lasts exactly as long as the answer. */
     val rounds: Map<String, Int> = emptyMap(),
     val results: Map<String, StepResult> = emptyMap(),
+    /** A question's attempt from before its retry started over, which its earlier copy still shows. */
+    val firstAttempts: Map<String, LessonAttempt> = emptyMap(),
     val firstVerdicts: Map<String, Boolean> = emptyMap(),
     val checkFailed: Boolean = false,
     val checkIssue: CheckIssue? = null,

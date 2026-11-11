@@ -424,3 +424,8 @@ msgstr "Below you can start it as a new goal."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "Below are your statistics."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "Below you can choose that variety for your buddy and practice calls."

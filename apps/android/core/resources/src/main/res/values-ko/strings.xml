@@ -38,6 +38,7 @@
   "gate_start_goal_description": "c50cea4f46376451aace50b56fbdfd00dc8de2455f3468c23c43528acf4df4a9",
   "gate_start_goal_title": "9eb2e139f9c41b9b08c46b6b972cb6d96481cbd16cca5aa2099958458fe50cd6",
   "gate_start_something_new": "9d5fcca3665a2328d89a37393abf0b8825327810c365f0ccd22637cb38927384",
+  "goal_with_variety": "70862f927a401b687ca5e7170e639cb884043f678f16027d898cd87538cfb27c",
   "lesson_summaries_title": "2bc180e0bc0a3d3aa46398616298bf8d1aaffafd192243ce41dc71eec154306f",
   "lessons_coming_up": "c0ca0eac66c24c7d3ec1eb8d79833d421dd1c4a802b400f6c748d3125e2f573d",
   "lessons_done": "c72bc8d69bf4896de630a2674b1467b23039094adebf73504ccfb5621b0c4506",
@@ -100,6 +101,8 @@
     <string name="gate_start_goal_title">목표부터 시작하기</string>
     <string name="gate_start_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
     <string name="gate_start_goal">목표 시작하기</string>
+    <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
+    <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">흰띠</string>
     <string name="belt_yellow">노란띠</string>
     <string name="belt_orange">주황띠</string>

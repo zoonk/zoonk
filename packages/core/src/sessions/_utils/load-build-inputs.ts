@@ -261,7 +261,7 @@ export async function loadSessionBuildInput(
     produce,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
-    topics: getPlanTopics(plan.graph),
+    topics: getPlanTopics({ goal, graph: plan.graph }),
     writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };
 

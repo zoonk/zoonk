@@ -70,7 +70,13 @@ class TutorViewModelTest {
     ): TutorViewModel =
         TutorViewModel(
             scope,
-            TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) },
+            TutorStore(
+                api,
+                cache,
+                session,
+                { MutationResult.Done(Unit) },
+                { _, _ -> MutationResult.Done(Unit) },
+            ) { _, _, status -> decision(status) },
             saved,
             openMission,
         ).also { it.thread.load() }
@@ -364,7 +370,14 @@ class TutorViewModelTest {
     fun aScreensAskDropsWhenTheLearnerLeavesBeforeTheConversationLoads() =
         runTest(dispatcher) {
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
@@ -381,7 +394,14 @@ class TutorViewModelTest {
         runTest(dispatcher) {
             api.thread = TutorThread(listOf(turn("q1", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
@@ -399,7 +419,14 @@ class TutorViewModelTest {
         runTest(dispatcher) {
             api.threadFailure = ApiException(ApiError.Network)
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val store =
+                TutorStore(
+                    api,
+                    cache,
+                    session,
+                    { MutationResult.Done(Unit) },
+                    { _, _ -> MutationResult.Done(Unit) },
+                ) { _, _, status -> decision(status) }
             val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
 
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
@@ -775,6 +802,23 @@ class TutorViewModelTest {
                     .planChange
                     ?.status,
             )
+        }
+
+    @Test
+    fun aVarietyCardShowsSavedOnlyWhileItsGoalHasItsCountry() =
+        runTest(dispatcher) {
+            val goal = UUID.fromString(GOAL)
+            val vm = conversation()
+
+            vm.applyVariety("q1", goal, "CA")
+            assertEquals(VarietySave.Saving, vm.varietySave("q1", goal, "CA"))
+            advanceUntilIdle()
+            assertEquals(VarietySave.Saved, vm.varietySave("q1", goal, "CA"))
+
+            vm.applyVariety("q2", goal, "AU")
+            advanceUntilIdle()
+            assertNull("the earlier card offers its country again", vm.varietySave("q1", goal, "CA"))
+            assertEquals(VarietySave.Saved, vm.varietySave("q2", goal, "AU"))
         }
 
     private val proposed = planChange(status = "proposed").copy(id = UUID.fromString(OTHER_CHANGE))

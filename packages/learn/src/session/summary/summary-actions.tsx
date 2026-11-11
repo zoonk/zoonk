@@ -56,16 +56,18 @@ export function KeepGoingButton({
   const t = useExtracted();
 
   return (
-    <Button
-      busy={keepGoing.isPending}
-      className={cn("shrink-0", className)}
-      icon={<PlayIcon aria-hidden="true" />}
-      onClick={keepGoing.run}
-      size="xl"
-      variant="outline"
-    >
-      {t("Keep going")}
-    </Button>
+    <form action={() => void keepGoing.run()} className="contents">
+      <Button
+        busy={keepGoing.isPending}
+        className={cn("shrink-0", className)}
+        icon={<PlayIcon aria-hidden="true" />}
+        size="xl"
+        type="submit"
+        variant="outline"
+      >
+        {t("Keep going")}
+      </Button>
+    </form>
   );
 }
 
@@ -98,7 +100,7 @@ export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
       {!stopped && extraTime.available && (
         <ExtraTimeButton
           action={actions.addExtraTime}
-          className={cn("lg:w-auto lg:self-end", !lastStep && "max-lg:hidden")}
+          className={cn("lg:w-auto lg:self-end", !lastStep && "without-aside:hidden")}
           label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
           minutes={extraTime.minutes}
         />

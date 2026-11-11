@@ -5,12 +5,14 @@ import {
   LESSON_QUESTION_SAVED_ANSWER_PART,
   LESSON_QUESTION_TOOL_OFFER_PART,
   type LessonQuestionMemoryChange,
-  type TutorToolOffer,
   lessonQuestionMemoryChangesSchema,
   replacedPlanChangesSchema,
   savedAnswerSchema,
-  tutorToolOfferSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import {
+  type TutorToolOffer,
+  tutorToolOfferSchema,
+} from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { safeAsync } from "@zoonk/utils/error";

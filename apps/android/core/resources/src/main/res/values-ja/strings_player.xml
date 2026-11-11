@@ -98,7 +98,6 @@
   "player_lesson_map_nested": "2c050a8255cde596287017ac1405380c2b7d1806b2ceea04739716b8937b5e25",
   "player_lesson_not_saved": "8886fab3bdc652708e96ed3be0d4ce790b7f130797df691b33dad1415880433d",
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
-  "player_lessons_deferred": "e9687453b8ab350a4da96c0a26e454ac0688c263b11e9ea7bb7442e82f4152a0",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_blocked": "6347cfd9522a5d5fb670890f070a888f91d6ad42f493d1190575411ddb09c64f",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
@@ -414,10 +413,6 @@
     <string name="player_time_studied">%1$s学習済み</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$sに復習</string>
-    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="player_lessons_deferred">
-        <item quantity="other">%1$sレッスンを別の日に移して、今日の学習時間が%2$sに収まるようにしました。</item>
-    </plurals>
     <string name="player_next_lesson">次のレッスン</string>
     <string name="player_stop_for_today">今日はここまでにする</string>
     <string name="player_see_todays_summary">今日のまとめを見る</string>

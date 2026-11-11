@@ -46,6 +46,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.goalSpokenName
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -94,8 +95,9 @@ fun GoalSwitcher(
     }
 
     val description =
-        selected?.let { stringResource(R.string.goal_switcher_current_goal, it.displayName) }
-            ?: stringResource(R.string.goal_switcher_start_goal)
+        selected?.let {
+            stringResource(R.string.goal_switcher_current_goal, goalSpokenName(it.displayName, it.targetLanguage, it.targetRegion))
+        } ?: stringResource(R.string.goal_switcher_start_goal)
 
     Box {
         // The button keeps its role and click action; only the words it reads are replaced.
@@ -159,7 +161,8 @@ private fun MenuItems(
             DropdownMenuItem(
                 text = {
                     Column {
-                        Text(goal.displayName)
+                        val spoken = goalSpokenName(goal.displayName, goal.targetLanguage, goal.targetRegion)
+                        Text(goal.displayName, Modifier.semantics { contentDescription = spoken })
                         GoalLine(goal)
                     }
                 },
@@ -174,10 +177,12 @@ private fun MenuItems(
         }
         waiting.forEach { goal ->
             val name = goal.displayName
+            val draft = goal.input.goals.firstOrNull()
             DropdownMenuItem(
                 text = {
                     Column {
-                        Text(name)
+                        val spoken = goalSpokenName(name, draft?.targetLanguage, draft?.targetRegion)
+                        Text(name, Modifier.semantics { contentDescription = spoken })
                         Text(
                             text =
                                 stringResource(
@@ -188,7 +193,7 @@ private fun MenuItems(
                         )
                     }
                 },
-                leadingIcon = { GoalMark(name) },
+                leadingIcon = { GoalMark(name, goal.languageFlag) },
                 onClick = {
                     onDismiss()
                     if (goal.locked) {

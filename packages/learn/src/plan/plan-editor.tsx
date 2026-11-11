@@ -32,6 +32,7 @@ import {
   getEditorSectionId,
 } from "./plan-editor-sections";
 import { PlanExamChoices } from "./plan-exam-choices";
+import { PlanLanguage } from "./plan-language";
 import { PlanSchedule } from "./plan-schedule";
 import { PlanSteering } from "./plan-steering";
 import { PlanTools } from "./plan-tools";
@@ -51,6 +52,9 @@ function EditorSections() {
         <PlanExamChoices />
       </div>
       <PlanBases />
+      <div className={SECTION_CLASS} id={getEditorSectionId("language")}>
+        <PlanLanguage />
+      </div>
       <div className={SECTION_CLASS} id={getEditorSectionId("practice")}>
         <PlanActivities />
       </div>

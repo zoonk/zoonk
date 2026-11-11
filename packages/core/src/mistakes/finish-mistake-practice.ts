@@ -18,7 +18,7 @@ import { withActivityMissionMoment } from "../sessions/missions/activity-mission
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
-import { recordLearningEvent } from "../stats/record-learning-event";
+import { getLedgerLocalTime, recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import {
   MISTAKE_PRACTICE_EVENT,
@@ -140,6 +140,7 @@ async function writeRun(
         brainPower: run.brainPower + brainPower,
         energyDelta: { increment: energyDelta },
         seconds: run.seconds + seconds,
+        ...getLedgerLocalTime({ date: lock.completedAt, timeZone }),
       },
       where: { id: run.id },
     });

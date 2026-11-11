@@ -8,19 +8,19 @@
       },
       "steps": [
         {
-          "conclusion": "Found every needed fact, plus 2 of 3 others.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Found every needed fact, plus 2 of 3 others.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Found every needed fact, plus 2 of 3 others.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -130,17 +130,17 @@
       },
       "steps": [
         {
-          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, deadline, score, has exam, struggles, difficulty, mixes, knows, studied, prefers, weak topics.",
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, score, deadline, has exam, essay, struggles, difficulty, weak, prefers, studies, topics.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, deadline, score, has exam, struggles, difficulty, mixes, knows, studied, prefers, weak topics.",
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, score, deadline, has exam, essay, struggles, difficulty, weak, prefers, studies, topics.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, deadline, score, has exam, struggles, difficulty, mixes, knows, studied, prefers, weak topics.",
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, wants, needs, goals, score, deadline, has exam, essay, struggles, difficulty, weak, prefers, studies, topics.",
           "kind": "potentialImprovements",
           "score": 7
         }
@@ -292,17 +292,17 @@
       },
       "steps": [
         {
-          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, joga, juros, dinheiro, compras, loja, desconto, salário, confunde.",
+          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, juros, dinheiro, compras, salário, empréstimo, investe.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, joga, juros, dinheiro, compras, loja, desconto, salário, confunde.",
+          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, juros, dinheiro, compras, salário, empréstimo, investe.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, joga, juros, dinheiro, compras, loja, desconto, salário, confunde.",
+          "conclusion": "Missed É dono de uma padaria with: gosta, exemplos, trabalha, emprego, tem, mora, juros, dinheiro, compras, salário, empréstimo, investe.",
           "kind": "potentialImprovements",
           "score": 7
         }

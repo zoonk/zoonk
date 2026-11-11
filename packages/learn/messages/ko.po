@@ -41,6 +41,7 @@ msgstr "정답"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "다음"
@@ -69,6 +70,7 @@ msgstr "건너뜀"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -555,6 +557,16 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
 
+#: src/_components/task-header.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "사이드바 펼치기"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
+
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
 msgctxt "27gMHa"
@@ -827,6 +839,7 @@ msgstr "주말 학습 시간 따로 설정"
 
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
+#: src/today/today-week-day.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
 msgstr "{time} 학습"
@@ -991,6 +1004,7 @@ msgstr "효과음"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "언어"
@@ -2914,6 +2928,7 @@ msgid "Use my date anyway"
 msgstr "그래도 내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-offer-suggestion.tsx
@@ -2981,6 +2996,17 @@ msgstr "학습 수준에 맞춰 소리 내어 짧게 대화해요."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "모의고사 보기"
+
+#. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "axUi06"
+msgid "Your buddy and practice calls use {variety}."
+msgstr "짝꿍과 대화 연습에는 {variety}을(를) 사용해요."
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "n-Iy44"
+msgid "Saved. You can change it in your plan."
+msgstr "저장했어요. 계획에서 바꿀 수 있어요."
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -4817,25 +4843,25 @@ msgid "Next on your path"
 msgstr "다음 단계"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
 msgstr "학습 안 함"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "1sq74z"
 msgid "rest day"
 msgstr "쉬는 날"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "kkpP2k"
 msgid "today"
 msgstr "오늘"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
 msgstr "학습 예정"
@@ -4852,7 +4878,7 @@ msgid "This week"
 msgstr "이번 주"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
@@ -5413,6 +5439,23 @@ msgstr "직접 설명하기. 목표 수준: {level}"
 msgctxt "qm_eL5"
 msgid "Something else"
 msgstr "다른 이유가 있어요"
+
+#: src/language-variety/country-field.tsx
+msgctxt "LTldLR"
+msgid "No preference"
+msgstr "상관없어요"
+
+#. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
+#: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "짝꿍과 연습 대화에는 선택한 국가가 반영돼요. 레슨과 오디오에는 {taughtVariety}을(를) 사용해요."
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
+#: src/language-variety/use-variety-words.ts
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "짝꿍과 대화 연습에는 {variety}을(를) 사용해요. 레슨과 오디오에는 {taughtVariety}을(를) 사용해요."
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -7811,12 +7854,6 @@ msgid "You earned +{points} Brain Power."
 msgstr "두뇌력 +{points} 보상을 받았어요."
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "오늘의 두뇌력 +{points} 보상은 이미 받았어요."
-
-#: src/missions/mission-moment.tsx
 msgctxt "DeTHLe"
 msgid "Just done"
 msgstr "방금 완료"
@@ -7888,25 +7925,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "문제 풀기"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "지난번 답: {answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "먼저 개념을 익힌 뒤 활용해 보세요."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "놓쳤던 개념을 다시 살펴보세요."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "답하기 전에 단어 하나하나 꼼꼼히 읽어 보세요."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7922,11 +7944,6 @@ msgstr "실제 시험처럼 한 문제당 {seconds, number}초예요."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "다시 풀어 보세요."
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
@@ -10917,6 +10934,12 @@ msgid "Read it again"
 msgstr "다시 읽기"
 
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "국가"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
 msgstr "사용하는 언어"
@@ -11623,6 +11646,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, other {계획보다 #일 빠름}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, other {밀린 레슨 #개}}"
@@ -13490,6 +13514,50 @@ msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "진도를 저장하고 있어요…"
 
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {오늘 <number>#</number>개 남음} other {오늘 <number>#</number>개 남음}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>개 완료} other {오늘 <number>#</number>개 완료}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>/{total}개 완료} other {오늘 <number>#</number>/{total}개 완료}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "학습을 이어 가면 더 추가돼요"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "밀린 레슨이 없어요."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
+
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
 msgid "This lesson is being written for you. It's usually ready in a few minutes."
@@ -13740,15 +13808,60 @@ msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "에너지 {energy}"
 
+#: src/session/review-intro.tsx
+msgctxt "ZbeKq5"
+msgid "Nothing is close to being forgotten, so you practice what's been hardest for you."
+msgstr "아직 기억이 흐려질 만한 내용이 없어서 가장 어려웠던 내용을 연습해요."
+
+#: src/session/review-intro.tsx
+msgctxt "0ThJT0"
+msgid "Your hardest topics today"
+msgstr "오늘 가장 어려운 주제"
+
+#: src/session/review-intro.tsx
+msgctxt "_4fVWu"
+msgid "Each idea you study comes back right before you'd start to forget it."
+msgstr "공부한 내용은 잊기 직전에 다시 나와요."
+
+#: src/session/review-intro.tsx
+msgctxt "pdLdyk"
+msgid "Just before you forget"
+msgstr "잊기 바로 전에"
+
+#: src/session/review-intro.tsx
+msgctxt "39jG7T"
+msgid "A few quick questions to check what you already know."
+msgstr "짧은 문제 몇 개로 이미 아는 내용을 확인해요."
+
+#: src/session/review-intro.tsx
+msgctxt "-syvZ6"
+msgid "How reviews work"
+msgstr "복습 진행 방식"
+
+#: src/session/review-intro.tsx
+msgctxt "UnfwOb"
+msgid "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner."
+msgstr "맞히면 복습 간격이 며칠에서 몇 주, 몇 달로 늘어나요. 틀리면 더 빨리 다시 나와요."
+
+#: src/session/review-intro.tsx
+msgctxt "MHf7Ug"
+msgid "Right answers wait longer"
+msgstr "맞히면 길어지는 복습 간격"
+
+#: src/session/review-intro.tsx
+msgctxt "tewzN0"
+msgid "Reviews open your session and take a small part of it, even after days away."
+msgstr "며칠 쉬었다 와도 학습은 짧은 복습으로 시작해요."
+
+#: src/session/review-intro.tsx
+msgctxt "QP64-t"
+msgid "First, and always short"
+msgstr "맨 먼저, 언제나 짧게"
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
 msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}} · 학습하면서 더 추가돼요"
-
-#: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
 
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -13762,11 +13875,6 @@ msgstr "오늘의 학습"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "순점수 {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -13969,6 +14077,12 @@ msgstr "복습"
 msgctxt "fqtVVy"
 msgid "Quick review"
 msgstr "간단 복습"
+
+#. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
+#: src/shell/goal-mark.tsx
+msgctxt "goalSwitcher.4dyYDe"
+msgid ", {variety}"
+msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
@@ -14493,6 +14607,7 @@ msgstr ", 건너뜀"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "맞춤 학습 내용을 만들고 있어요…"
@@ -14523,16 +14638,19 @@ msgid "What changed"
 msgstr "변경 사항"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Ay_6I8"
 msgid "Not written yet."
 msgstr "아직 만들지 않았어요."
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "평소보다 오래 걸리고 있어요"
@@ -14810,10 +14928,57 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "이번 주"
 
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "지금까지 배운 내용을 확인해요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "배운 내용을 자신의 말로 표현해요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "틀린 문제를 다시 풀어요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "실제 시험처럼 풀어 보는 모의고사예요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "배운 내용을 골고루 담은 새 문제를 풀어요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "배운 내용을 잊기 전에 복습해요."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number}문제 / {count, plural, other {총 #문제}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, other {#개 완료}}"
+
+#. Counts blocks of today's study session the learner skipped.
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, other {#개 건너뜀}}"
+
+#. Counts blocks of today's study session the learner finished and skipped.
+#: src/today/today-session-card.tsx
+msgctxt "DIDXQf"
+msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
+msgstr "{completed, plural, other {#개 완료}} · {skipped, plural, other {#개 건너뜀}}"
 
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
@@ -14860,55 +15025,55 @@ msgctxt "MuwOz5"
 msgid "every topic, your weakest first"
 msgstr "모든 주제, 가장 취약한 주제부터"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "VlCnpE"
 msgid "daily time met"
 msgstr "하루 학습 시간 달성"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "F8phHs"
 msgid "studied"
 msgstr "학습함"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "uMBOLl"
 msgid "exam day"
 msgstr "시험일"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "ndZ3YE"
 msgid "your goal's date"
 msgstr "목표 날짜"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
 msgid "before your plan"
 msgstr "계획 시작 전"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "fy2sc9"
 msgid "after your date"
 msgstr "목표 날짜 이후"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
 msgid "{day}: {name}"
 msgstr "{day}: {name}"
 
-#: src/today/today-week.tsx
+#: src/today/today-week-day.tsx
 msgctxt "JsGsZi"
 msgid "{day}: {name}, {status}"
 msgstr "{day}: {name}, {status}"
 
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "이번 주 {studied} 학습 (계획: {planned})"
+#: src/today/today-week-day.tsx
+msgctxt "KPis2L"
+msgid "{studied} of {planned} studied"
+msgstr "{studied} 학습 / 계획 {planned}"
 
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number}일 학습 (총 {total, plural, other {#일}})"
+#: src/today/today-week-day.tsx
+msgctxt "9PPMqu"
+msgid "{time} planned"
+msgstr "{time} 학습 예정"
 
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts

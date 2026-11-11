@@ -280,7 +280,7 @@ private struct LessonPlayerContent: View {
       }
       .lonePage()
     case .playing:
-      if let state = store.state {
+      if let state = store.state?.showingAttemptInView() {
         if case .refused(let refusal) = state.run {
           LessonUnavailableView(refusal: refusal) {
             Task { await store.load() }

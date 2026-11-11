@@ -7,6 +7,7 @@
   "stats_all_goals": "48c865bc34d6ad4abc751b21c30ab106aa9bdbba1e6a453806c9ca5c555af11b",
   "stats_answer_count": "6c535de89d2fbb19be3181b5459f1a3f7a9ae89a751a3418939526bc478f9295",
   "stats_answers": "27ec1d44ecb6c3a8cca5c3f1c255b83dd8620fc632f29184f4e23d84a6c3e5ff",
+  "stats_answers_to_count": "2cba2f2fdcace6685ea0808cd1522d49bede1df05570b11fab55ea3f3de0e09e",
   "stats_any_day": "be9fb0b7a8db280cdde1056b85cb439d0e4a7edfb2654de1d7fc8d9b35bcb662",
   "stats_any_day_studied": "edfaa4e64439e35da714053746213ff182a8ddb582eb7961b9b0c9d38e7aa59a",
   "stats_any_time": "0eaf6fbb0457242d71ed8f47763e9cf8530d3a9bbb0d0de067059dc6679908b7",
@@ -23,15 +24,12 @@
   "stats_calendar_activity_summary": "9365963c00642c317ef1656b1eade129f742c7bf485bfe275acb26bc6009a655",
   "stats_calendar_energy_summary": "a528284c00deb712a3c76f9dd4994eebb13419825bcfaff1230756e731addef0",
   "stats_correct_of_total": "bb4725e9917b72c02ec6441476c8514bd6532e291c205ded69f484ed8d6291fd",
-  "stats_day_activities": "1c290cf9a2fdd289b46a1a8d1c713e1f7b6e97c6efaaab105fe9a18fc7479f13",
-  "stats_day_energy": "1d449a5d177b30105e0923bd4a4b0da6f3f05e9bb6c7886c78a1cc3f174e5111",
-  "stats_day_no_energy": "29cf3a1f16a4a4b883a4a07ac5644a4c131e61c4d366a4dcc0142fc55babe3e6",
-  "stats_day_no_study": "8879ff2935139da249c2c855ac520f32238cb3bc889c1cdb3af2d8a0c7882e2b",
   "stats_days": "2c1a38cb6049fdaf4c8acc7fd062eaaef9f4a223692916fe7b09f2078ef77c0a",
   "stats_days_even": "9a2c285e8cf246e12a265a8cbf6d7684ab78278dad4fe2ea86de4284aa764ff6",
   "stats_days_studied": "5bdaa15d4da4be5f8d090629f881c1e21479ec30fd2bb24cefed57fbfe2c2bc3",
   "stats_empty_title": "ccb12917a4fb7de69f54e914cc68aedbcdbb1f357f08a1cb56681b92c22e5e32",
   "stats_energy": "d22491c2910a2442d1fd85e975d2d897c4adf2ca914187f2858b3cfb5002250c",
+  "stats_energy_amount": "e2f98b4b7ca49f99885c5894bf70874a4be898f9b685ce9bc41414c167e4c653",
   "stats_energy_average": "1ba77e297bf36191c41cfb29dc2ddf422af2fa72a462c74c9f84ed0b28705617",
   "stats_energy_line": "65c4eac057bb01c935ee22f75860d4b4fae98ce52d11c6c44053de26bbfdf243",
   "stats_evening": "c8df8e6c13ceee7afc1329c9792b632abf1a96b960113e55f21aa3a85875e696",
@@ -58,6 +56,8 @@
   "stats_next_level": "3971a01316481e5328fb5c706a0c7bb4bb35ad902ba9a8a0e21e7d041935da30",
   "stats_night": "c1f8bde01e58ca76e172feb8d45de0101c82d542378bda2a8771e14c3e532b27",
   "stats_no_answers": "c896cad7ab4580c28d16307d4a6956b51723c8058f33354ca190bc08130046fd",
+  "stats_no_energy": "4864d4a69df7a589b9e251a2121af7f0c6e9c9434f78d9449d478a689cbd01ad",
+  "stats_no_study": "b4d2a323e7f3e5fdae858bfe46f6fdc8420f452443fa7ced669b25b79975a8b2",
   "stats_not_enough": "662aa49c0127f7ea8384dde1b0bbb0be792b7d238ed4b9bd5cc77b676f6aa25f",
   "stats_not_yet": "15c4c9e09f9bbb3a98f3a0527ed2cc9e66c72ba4360ef5cdba6e9b06950c0f9f",
   "stats_of_all_answers": "7c264742f6d2a86fd6437674ce98f798f6ed863363bcb3ee0d14973480c4e052",
@@ -166,13 +166,12 @@
     <plurals name="stats_activities">
         <item quantity="other">활동 %1$s개</item>
     </plurals>
-    <string name="stats_day_no_study">%1$s · 학습 없음</string>
-    <!-- %1$s is a date; %2$s is how many activities the learner did that day, as in "Nov 3 · 4 activities". -->
-    <plurals name="stats_day_activities">
-        <item quantity="other">%1$s · 활동 %2$s개</item>
-    </plurals>
-    <string name="stats_day_no_energy">%1$s · 기록된 에너지 없음</string>
-    <string name="stats_day_energy">%1$s · 에너지 %2$s</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
+    <string name="stats_no_study">학습 없음</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
+    <string name="stats_no_energy">에너지 기록 없음</string>
+    <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
+    <string name="stats_energy_amount">에너지 %1$s</string>
     <string name="stats_calendar_energy_summary">지난 12개월간 에너지: 오늘 %1$s, 학습을 시작한 이후 평균 %2$s</string>
     <string name="stats_right_answers">정답</string>
     <string name="stats_right">정답</string>
@@ -206,6 +205,10 @@
         <item quantity="other">답변 %1$s개</item>
     </plurals>
     <string name="stats_no_answers">답변 없음</string>
+    <!-- A chart tooltip's last line for a weekday or a time of day with fewer answers than it needs before its score counts as a pattern, as in "7 answers, needs 10 to count". -->
+    <plurals name="stats_answers_to_count">
+        <item quantity="other">응답 %1$s개, %2$s개부터 반영</item>
+    </plurals>
     <string name="stats_throughout_week">요일별</string>
     <string name="stats_throughout_day">시간대별</string>
     <string name="stats_any_day">어느 요일이든</string>

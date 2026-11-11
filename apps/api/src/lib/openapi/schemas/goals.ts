@@ -1,4 +1,4 @@
-import { type GoalView } from "@zoonk/core/goals/contract";
+import { type GoalView, regionChoiceSchema } from "@zoonk/core/goals/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -25,7 +25,7 @@ export const goalSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's flag, as a language course's: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other goals",
+          "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
       }),
     plan: z
       .object({
@@ -48,6 +48,12 @@ export const goalSchema = z
       .nullable(),
     primaryCourseId: uuidSchema().nullable(),
     prompt: z.string().meta({ description: "What the learner typed" }),
+    regionChoices: z
+      .array(regionChoiceSchema)
+      .meta({
+        description:
+          "The countries a language goal can set as `targetRegion` (`PATCH /goals/{goalId}`), named in the goal's language and sorted by name; empty for other goals and languages without countries",
+      }),
     status: z.enum(["active", "archived", "completed", "paused"]),
     studyDays: z
       .array(weekdayNumberSchema)
@@ -55,6 +61,13 @@ export const goalSchema = z
     studyTime: z.string().nullable(),
     targetDate: isoDateSchema.nullable(),
     targetLanguage: z.string().nullable(),
+    targetRegion: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+      }),
     timezone: z.string().nullable(),
     title: z.string(),
   })

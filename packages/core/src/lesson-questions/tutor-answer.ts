@@ -36,11 +36,11 @@ import {
   failLessonQuestionAnswer,
   rememberLessonQuestionAnswer,
 } from "./answer-lifecycle";
-import { type TutorToolOffer } from "./contract";
 import { lookUpTutorData } from "./look-up-tutor-data";
 import { offerTutorTool } from "./offer-tutor-tool";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 import { createAnswerLinks } from "./tutor-app-links";
+import { type TutorToolOffer } from "./tutor-tool-offer-contract";
 
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 
@@ -95,6 +95,7 @@ function startGoalTutorAnswer(
 
   const offerAppTool = async ({
     area,
+    country,
     goal,
     tool,
     topic,
@@ -102,6 +103,7 @@ function startGoalTutorAnswer(
     const { data, error } = await safeAsync(() =>
       offerTutorTool({
         area,
+        country,
         goalWords: goal,
         questionId: claim.questionId,
         revision: claim.revision,

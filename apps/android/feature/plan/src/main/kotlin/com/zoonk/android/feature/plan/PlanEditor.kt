@@ -106,6 +106,7 @@ internal data class PlanEdits(
     val changes: Map<UUID, EditorChange> = emptyMap(),
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
+    val setRegion: (String?, () -> Unit) -> Unit = { _, _ -> },
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
@@ -301,6 +302,15 @@ internal fun ColumnScope.PlanEditorBody(
                     endDate = aimDates[aim.value],
                 )
             }
+        }
+        page.variety?.let { variety ->
+            VarietyRow(
+                variety,
+                onPick = edits.setRegion,
+                pending = edits.isPending(PlanPart.Region),
+                failed = edits.hasFailed(PlanPart.Region),
+                modifier = Modifier.section(PlanSection.Language),
+            )
         }
         PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(

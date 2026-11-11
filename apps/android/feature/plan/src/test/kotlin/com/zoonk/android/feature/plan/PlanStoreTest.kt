@@ -1,16 +1,24 @@
 package com.zoonk.android.feature.plan
 
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.LearnerSummaryStore
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
@@ -78,11 +86,59 @@ class PlanStoreTest {
             assertEquals(2, api.studyNextReads)
         }
 
+    @Test
+    fun aSavedCountryAndNameStayShownWhenTheGoalsCantBeReadAgain() =
+        runTest {
+            val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)))
+            var reads = 0
+            val argentine =
+                learnerSummary().let {
+                    it.copy(
+                        goals =
+                            it.goals.map { goal ->
+                                goal.copy(targetLanguage = "es", targetRegion = "AR", languageFlag = "ar")
+                            },
+                    )
+                }
+            val summary =
+                LearnerSummaryStore(
+                    api = {
+                        if (reads++ > 0) throw ApiException(ApiError.Network)
+                        argentine
+                    },
+                    cache = cache,
+                    scope = backgroundScope,
+                ).summary
+            val screen = launch { summary.shown.collect {} }
+            advanceUntilIdle()
+            val store = PlanStore(FakePlanApi(), cache, summary)
+
+            fun shown() =
+                summary.state.value.value!!
+                    .goals
+                    .single()
+
+            assertTrue(store.setRegion(goalId, null) is MutationResult.Done)
+            advanceUntilIdle()
+            assertEquals(null, shown().targetRegion)
+            assertEquals("es", shown().languageFlag)
+
+            assertTrue(store.setRegion(goalId, "MX") is MutationResult.Done)
+            assertTrue(store.rename(goalId, "Spanish for Mexico City") is MutationResult.Done)
+            advanceUntilIdle()
+
+            assertEquals(4, reads)
+            assertEquals("MX", shown().targetRegion)
+            assertEquals("mx", shown().languageFlag)
+            assertEquals("Spanish for Mexico City", shown().displayName)
+            screen.cancel()
+        }
+
     private fun kotlinx.coroutines.test.TestScope.store(
         api: PlanApi,
         now: () -> Instant,
     ): PlanStore {
-        val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return PlanStore(api, AppCache(FakeSession(ana), scope), now)
+        val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)))
+        return PlanStore(api, cache, cache.resource(Audience.SignedIn) { null }, now)
     }
 }

@@ -122,6 +122,31 @@ describe("the plan the buddy reads", () => {
     }
   });
 
+  it("tells the buddy the variety a learner chose and the one lessons teach, and nothing without one", async () => {
+    const [chosen, none] = await Promise.all([learnerBehind(), learnerBehind()]);
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { kind: "language", targetLanguage: "es", targetRegion: "AR" },
+        where: { id: chosen.goal.id },
+      }),
+      prisma.goal.update({
+        data: { kind: "language", targetLanguage: "es" },
+        where: { id: none.goal.id },
+      }),
+    ]);
+
+    const withVariety = await askAboutPlan({ goalId: chosen.goal.id, userId: chosen.user.id });
+    const without = await askAboutPlan({ goalId: none.goal.id, userId: none.user.id });
+
+    expect(readPlanSnapshot(withVariety.snapshot).goal.variety).toStrictEqual({
+      chosen: "Spanish (Argentina)",
+      lessons: "Spanish (Mexico)",
+    });
+
+    expect(readPlanSnapshot(without.snapshot).goal).not.toHaveProperty("variety");
+  });
+
   it("links a lesson earlier days left to today's block once the day holds it", async () => {
     const { carried, goal, user } = await learnerBehind();
     const [first] = carried;

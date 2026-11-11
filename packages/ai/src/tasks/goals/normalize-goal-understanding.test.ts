@@ -292,6 +292,28 @@ describe(normalizeGoalUnderstanding, () => {
     expect(result).toMatchObject({ goals: [{ nativeLanguage: "pt", targetLanguage: "zh" }] });
   });
 
+  it("keeps the country a language goal names, and drops one its language doesn't list", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({ kind: "language", targetLanguage: "es-AR", title: "Argentine Spanish" }),
+          rawGoal({ kind: "language", targetLanguage: "pt-JP", title: "Portuguese" }),
+          rawGoal({ examName: "IELTS", kind: "exam", targetLanguage: "en-GB", title: "IELTS" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { targetLanguage: "es", targetRegion: "AR" },
+        { targetLanguage: "pt", targetRegion: undefined },
+        { targetLanguage: "en", targetRegion: undefined },
+      ],
+    });
+  });
+
   it("asks for more when nothing usable is left", () => {
     expect(
       normalizeGoalUnderstanding({

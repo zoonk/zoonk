@@ -819,6 +819,23 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(work.value("pairs") as [String: String]?)
   }
 
+  /// A retry's canvas work stays while the learner looks back at the question's first attempt.
+  func testARetrysCanvasWorkStaysWhileItsFirstAttemptShows() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try pictureLesson(isDrawn: true))
+    }
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false))
+    await store.load()
+    store.work(for: "check", round: 1).set(["left": "right"], for: "pairs")
+
+    _ = store.work(for: "check", round: 0)
+
+    let retry = store.work(for: "check", round: 1)
+    XCTAssertEqual(retry.value("pairs") as [String: String]?, ["left": "right"])
+  }
+
   func testASessionLessonEndsWithTheMissionsItCompletedAndItsOwnBrainPower() async throws {
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
@@ -835,6 +852,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
     XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
     XCTAssertEqual(summary.block?.minutes.left, 20)
+    XCTAssertEqual(summary.block?.sessionBar, SessionBar(completed: 1, total: 3))
+    XCTAssertEqual(
+      summary.block?.dayProgress,
+      DayProgress(
+        catchUp: DayProgress.CatchUp(doneToday: 2, lessonsLeft: 5), lead: .done,
+        lessonsComing: false, percent: 33))
     XCTAssertEqual(summary.day?.missionMoment?.completed, [.somethingNew])
     XCTAssertEqual(summary.day?.missionMoment?.fullMeal.bonus, 50)
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
@@ -1419,7 +1442,7 @@ private let sessionLessonCompletion = #"""
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
      "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
-     "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions": ["somethingNew"],
+     "blocks":[],"dayProgress":{"catchUp":{"doneToday":2,"lessonsLeft":5},"lead":"done","lessonsComing":false,"percent":33},"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,

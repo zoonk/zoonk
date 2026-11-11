@@ -1,7 +1,7 @@
 import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { goalRefusedError, planChangeInvalid } from "@/lib/plan-errors";
+import { goalRefusedError, planChangeInvalid, targetRegionNotOffered } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { goalUpdateInputSchema } from "@zoonk/core/goals/contract";
 import { getGoal } from "@zoonk/core/goals/get";
@@ -30,6 +30,10 @@ async function editGoal(request: NextRequest, context: RouteContext<"/v1/goals/[
 
   if (result.status === "limitReached") {
     return goalRefusedError({ limit: result.limit, status: "limitReached" });
+  }
+
+  if (result.status === "regionNotOffered") {
+    return targetRegionNotOffered();
   }
 
   if (result.status !== "updated") {

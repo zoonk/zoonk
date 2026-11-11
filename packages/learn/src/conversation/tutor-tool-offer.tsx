@@ -1,6 +1,6 @@
 "use client";
 
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { CrosshairIcon, FastForwardIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -23,8 +23,11 @@ import {
   StartGoalOffer,
 } from "./tutor-feature-offers";
 import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
+import { VarietyOffer } from "./tutor-variety-offer";
 
 export type TutorToolActions = {
+  /** The goal's saved country; null for none, or for a goal this screen hasn't loaded. */
+  getGoalRegion: (goalId: string) => string | null;
   hrefs: {
     chooseFocus: string;
     chooseMock: string;
@@ -42,6 +45,8 @@ export type TutorToolActions = {
     goalId: string;
     minutes: number;
   }) => Promise<CallStartOutcome>;
+  /** Resolves to whether the country saved on the goal. */
+  setGoalRegion: (input: { goalId: string; region: string }) => Promise<boolean>;
   startTestOut: (input: { chapterId: string; goalId: string }) => Promise<TestOutStart>;
 };
 
@@ -69,9 +74,11 @@ function ChapterTestOffer({
       }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
-      <OfferButton busy={test.opening} icon={<PlayIcon aria-hidden="true" />} onClick={test.start}>
-        {t("Take the test")}
-      </OfferButton>
+      <form action={test.start} className="contents">
+        <OfferButton busy={test.opening} icon={<PlayIcon aria-hidden="true" />} type="submit">
+          {t("Take the test")}
+        </OfferButton>
+      </form>
       <TestOutStartStatus isPending={test.isPending} result={test.result} />
     </OfferCard>
   );
@@ -232,6 +239,16 @@ export function TutorToolOfferCard({
       return <PlaceOffer href={hrefs[offer.kind]} kind={offer.kind} />;
     case "plus":
       return <PlusOffer offer={offer} />;
+    case "variety":
+      return (
+        <VarietyOffer
+          offer={offer}
+          onApply={() =>
+            actions.setGoalRegion({ goalId: offer.goalId, region: offer.targetRegion })
+          }
+          saved={actions.getGoalRegion(offer.goalId) === offer.targetRegion}
+        />
+      );
     default:
       return offer satisfies never;
   }

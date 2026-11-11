@@ -41,7 +41,7 @@ struct TodaySessionSection: View {
     }
 
     Section {
-      let lead = TodayDayLead(view: view)
+      let lead = TodayDayLead(view: view, writingStalled: writingStalled)
 
       if !view.dayLeadJoinsHeader, !lead.isEmpty {
         lead
@@ -78,7 +78,9 @@ struct TodaySessionSection: View {
     let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
-      FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
+      FoldRow(
+        isOpen: $disclosures.showsDone, isDone: true, count: done.count,
+        skipped: done.filter { $0.status == .skipped }.count, minutes: nil)
     }
 
     if !foldsDone || disclosures.showsDone {
@@ -399,6 +401,7 @@ extension TodayView {
 /// What opens main's `TodaySession` before its queue: why the day is as it is, then its meter.
 struct TodayDayLead: View {
   let view: TodayView
+  let writingStalled: Bool
 
   private var session: StudyDay { view.session }
 
@@ -415,7 +418,7 @@ struct TodayDayLead: View {
       mockFunding
 
       if session.showsDayProgress {
-        DayProgressRow(session: session)
+        DayProgressRow(session: session, writingStalled: writingStalled)
       }
     }
   }
@@ -489,19 +492,6 @@ struct TodayDayLead: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
-  }
-}
-
-private struct DayProgressRow: View {
-  let session: StudyDay
-
-  var body: some View {
-    MeterParts(parts: session.meterParts)
-      .accessibilityElement(children: .ignore)
-      .accessibilityLabel(
-        Text(
-          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
-          tableName: "Today", comment: "How far the day's session is"))
   }
 }
 
@@ -746,20 +736,28 @@ private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int
+  var skipped = 0
   let minutes: Double?
+
+  private var onlySkipped: Bool { skipped > 0 && skipped == count }
 
   var body: some View {
     Button {
       isOpen.toggle()
     } label: {
       HStack(spacing: 12) {
-        Image(systemName: isDone ? "checkmark" : "ellipsis")
-          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
+        Image(systemName: onlySkipped ? "forward.fill" : isDone ? "checkmark" : "ellipsis")
+          .imageScale(onlySkipped ? .small : .medium)
+          .foregroundStyle(
+            isDone && !onlySkipped ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground)
+          )
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
         Group {
-          if isDone {
+          if isDone, skipped > 0 {
+            Text(doneAndSkipped)
+          } else if isDone {
             Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
           } else if isOpen {
             Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
@@ -784,6 +782,19 @@ private struct FoldRow: View {
       .foregroundStyle(.mutedForeground)
     }
     .tint(.primary)
+  }
+
+  /// Skipped blocks fold with the done ones, but never count as done.
+  private var doneAndSkipped: String {
+    let skippedFact = String(
+      localized: "\(skipped) skipped", table: "Today", comment: "Folded skipped blocks")
+
+    guard !onlySkipped else { return skippedFact }
+
+    return [
+      String(localized: "\(count - skipped) done", table: "Today", comment: "Folded done blocks"),
+      skippedFact,
+    ].joinedFacts()
   }
 }
 

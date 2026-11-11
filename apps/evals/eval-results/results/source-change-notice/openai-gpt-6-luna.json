@@ -7,19 +7,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 941,
-          "outputTokens": 242,
-          "reasoningTokens": 137
+          "inputTokens": 980,
+          "outputTokens": 343,
+          "reasoningTokens": 190
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The sentence says only “a prova,” rather than explicitly identifying “a prova objetiva” as required. Otherwise, it correctly names the notice change first, gives the new count of 100 questions, and meets the language, length, and neutrality constraints.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The sentence correctly says the notice changed and now has 100 questions, but does not specify that these belong to the objective test, leaving a required detail implicit.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Shorten the contest identification to foreground the change: \"O edital mudou: a prova objetiva agora tem 100 questões.\"",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the notice changed and the objective test now has 100 items (or questions), in Portuguese.",
@@ -37,15 +45,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1018,
-          "outputTokens": 98,
-          "reasoningTokens": 41
+          "inputTokens": 1048,
+          "outputTokens": 96,
+          "reasoningTokens": 39
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- Says the exam date moved to 22 November 2026 (in Portuguese), and may add \"e mais\" for the other change.",
@@ -63,15 +83,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 957,
-          "outputTokens": 404,
-          "reasoningTokens": 347
+          "inputTokens": 990,
+          "outputTokens": 327,
+          "reasoningTokens": 157
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“And uses Server Components to fetch data” turns the source's recommendation into a factual claim about version 17's behavior. That slightly exceeds what the changes establish. Otherwise, the sentence meets the language, length, ordering, and punctuation requirements.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep only the explicit removal: “The Next.js documentation changed: version 17 removes the getServerSideProps API.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In English, says the documentation changed and names the removed API or the new version from the lines.",
@@ -89,15 +121,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 980,
-          "outputTokens": 178,
-          "reasoningTokens": 121
+          "inputTokens": 1017,
+          "outputTokens": 116,
+          "reasoningTokens": 59
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "\n- One plain sentence in the requested language, at most 120 characters.\n- Names what changed first (the notice, the law, the documentation), then the most important new value.\n- States only what the changes show: no reasons, no advice, no judgment of whether the change is good.\n- No em dashes, exclamation marks or emoji, and no promise of any result.\n\n- In German, says the dates changed and gives the new Mathematik date (6 May 2027).",

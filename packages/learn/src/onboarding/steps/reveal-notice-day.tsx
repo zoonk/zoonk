@@ -24,19 +24,24 @@ export function RevealNoticeDay() {
 
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-muted-foreground text-sm text-pretty" data-slot="notice-day">
+      <form className="text-muted-foreground text-sm text-pretty" data-slot="notice-day">
         {noticeDay ? (
           <>
             <span>{noticeDayText({ ...noticeDay, document: plan.examDocument })}</span>
             {space}
-            <Button busy={isPending} onClick={() => use(noticeDay.date)} variant="link">
+            <Button
+              busy={isPending}
+              formAction={() => use(noticeDay.date)}
+              type="submit"
+              variant="link"
+            >
               {t("Use this date")}
             </Button>
           </>
         ) : (
           noSitting && <NoSittingWords disabled={isPending} noSitting={noSitting} onUse={use} />
         )}
-      </p>
+      </form>
 
       {failed && <ChangeSaveError />}
     </div>

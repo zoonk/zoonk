@@ -1,6 +1,6 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -482,8 +482,9 @@ describe("exact-question practice", () => {
   });
 
   it("settles the notebook mission from an exact lesson correction", async () => {
-    const { mistake, step, user } = await setup();
+    const { mistake, skill, step, user } = await setup();
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
 
     await studySessionFixture({
       goalId: goal.id,

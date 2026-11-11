@@ -16,11 +16,14 @@ import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * GPT-Live delegates only to the client, so the voice model can't call a tool to mark objectives
- * and a text model reads the transcript. Luna got 22 of 23 on its eval without ticking a goal early
- * or hearing a goodbye that wasn't said (2 Nov 2026).
+ * and a text model reads the transcript after each learner answer, while the call goes on. On 25
+ * cases (11 Nov 2026), Muse Ember without reasoning got all 25 at 0.9 s p50 and 1.3 s p95 for
+ * $0.14/1k; Luna missed a finished TOEFL repetition at 1.8 s p50 and 3.3 s p95 for $0.16/1k. A
+ * blind read found 22 ties and 1 Ember win. Ember's default reasoning triples its cost for no gain.
  */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+const defaultModel = "meta/muse-ember";
+const defaultReasoning: Reasoning = "none";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 
 const testSystemPrompt = `${basePrompt}\n${testPrompt}`;
 
@@ -34,6 +37,7 @@ export type CheckConversationObjectivesParams = {
   /** Unset or null for a role play. */
   exam?: SpeakingMockExam | null;
   targetLanguage: string;
+  targetRegion?: string | null;
   learnerLanguage: string;
   model?: string;
   useFallback?: boolean;
@@ -54,6 +58,7 @@ export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildS
 function buildUserPrompt(params: CheckConversationObjectivesParams): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
+    targetRegion: params.targetRegion,
     userLanguage: params.learnerLanguage,
   });
 
@@ -82,7 +87,13 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  * read says whether the call's last exchange was a mutual goodbye, so the app can hang up.
  */
 export async function checkConversationObjectives(params: CheckConversationObjectivesParams) {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
   const [first, ...rest] = params.objectives.map((objective) => objective.label);
 
   if (!first) {

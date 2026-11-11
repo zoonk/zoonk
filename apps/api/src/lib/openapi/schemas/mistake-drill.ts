@@ -8,7 +8,7 @@ export const mistakeDrillSchema = z
       .enum(MISTAKE_DRILL_KINDS)
       .meta({
         description:
-          "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: a note to read every word before answering), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)",
+          "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: asked again like a retry), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)",
       }),
     lesson: z
       .object({

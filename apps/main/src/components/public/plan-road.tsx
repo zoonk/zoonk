@@ -163,7 +163,7 @@ export function PlanRoad({
             <DaySegment
               className="min-w-6"
               key={band.id}
-              minutes={band.weight}
+              weight={band.weight}
               share={band.state === "current" ? (band.share ?? 0) : 0}
               state={SEGMENT_STATE[band.state]}
             />

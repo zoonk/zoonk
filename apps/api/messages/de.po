@@ -424,3 +424,8 @@ msgstr "Unten kannst du es als neues Ziel starten."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "Unten findest du deine Statistiken."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "Unten kannst du diese Sprachvariante für deinen Kumpel und deine Übungsgespräche auswählen."

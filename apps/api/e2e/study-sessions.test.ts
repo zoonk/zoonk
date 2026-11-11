@@ -227,7 +227,7 @@ test.describe("Study sessions API", () => {
       api.get(`/v1/study-sessions/${id}`),
       api.get(`/v1/study-sessions/${id}/summary`),
       api.post(`/v1/study-sessions/${id}/stops`, { data: {} }),
-      api.post(`/v1/study-sessions/${id}/extra-blocks`),
+      api.post(`/v1/study-sessions/${id}/extra-blocks`, { data: { timeZone: "UTC" } }),
       api.post(`/v1/study-sessions/${id}/catch-up-blocks`, { data: { timeZone: "UTC" } }),
       api.get(`/v1/study-sessions/${id}/blocks/${id}`),
       api.post(`/v1/study-sessions/${id}/blocks/${id}/starts`, { data: {} }),
@@ -334,7 +334,9 @@ test.describe("Study sessions API", () => {
     await learnerSkillFixture({ reps: 1, skillId: skills[1]?.id ?? "", state: "learning", userId });
 
     const extra = await readBody({
-      response: await api.post(`/v1/study-sessions/${today.id}/extra-blocks`),
+      response: await api.post(`/v1/study-sessions/${today.id}/extra-blocks`, {
+        data: { timeZone: "UTC" },
+      }),
       schema: studyBlockSchema,
       status: 201,
     });
@@ -607,7 +609,7 @@ test.describe("Study sessions API", () => {
     expect(catchUp.status()).toBe(402);
     await expect(catchUp.json()).resolves.toMatchObject(plusRequired);
 
-    const extra = await api.post(`${sessionPath}/extra-blocks`);
+    const extra = await api.post(`${sessionPath}/extra-blocks`, { data: { timeZone: "UTC" } });
 
     expect(extra.status()).toBe(409);
 

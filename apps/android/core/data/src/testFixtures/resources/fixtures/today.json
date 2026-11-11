@@ -44,11 +44,7 @@
     "sessionBar": { "completed": 0, "total": 0 },
     "state": "rest",
     "status": "planned",
-    "week": {
-      "days": [],
-      "nextStudyDate": null,
-      "time": { "studiedMinutes": 0, "targetMinutes": 0 }
-    }
+    "week": { "days": [], "nextStudyDate": null }
   },
   "shortPlan": null,
   "studiedToday": false,

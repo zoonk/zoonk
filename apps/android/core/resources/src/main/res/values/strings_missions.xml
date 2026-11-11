@@ -4,7 +4,6 @@
     <string name="missions_done">Missions done</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">You earned +%1$s Brain Power.</string>
-    <string name="missions_already_earned">Today\'s +%1$s Brain Power is already earned.</string>
     <plurals name="missions_count">
         <item quantity="one">%d mission</item>
         <item quantity="other">%d missions</item>
