@@ -106,8 +106,6 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
-export const HIDDEN_WITH_TASK_ASIDE_CLASS = "with-aside:hidden";
-
 export function TaskAsideHeader({
   className,
   meta,

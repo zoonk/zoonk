@@ -3,6 +3,7 @@
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
+import { CollapsibleTaskAside } from "@zoonk/learn/task-header";
 import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
@@ -232,15 +233,17 @@ export function LessonPlayerProvider({
   return (
     <LessonPlayerConfigContext value={config}>
       <LessonPlayerRuntimeContext value={runtime}>
-        <LessonTutor tutor={tutor}>
-          <LessonPicturesProvider
-            getLessonPictures={adapters.getLessonPictures}
-            onPicturesLost={actions.skipSteps}
-            steps={pictureSteps}
-          >
-            {children}
-          </LessonPicturesProvider>
-        </LessonTutor>
+        <CollapsibleTaskAside>
+          <LessonTutor tutor={tutor}>
+            <LessonPicturesProvider
+              getLessonPictures={adapters.getLessonPictures}
+              onPicturesLost={actions.skipSteps}
+              steps={pictureSteps}
+            >
+              {children}
+            </LessonPicturesProvider>
+          </LessonTutor>
+        </CollapsibleTaskAside>
       </LessonPlayerRuntimeContext>
     </LessonPlayerConfigContext>
   );

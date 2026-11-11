@@ -6,7 +6,7 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { buildLesson } from "../preview/preview-lesson";
-import { contentStep, explanationStep } from "../preview/preview-steps";
+import { contentStep, explanationStep, teachingStep } from "../preview/preview-steps";
 
 function aside() {
   return page.getByRole("complementary", { name: "Help with this screen" });
@@ -57,5 +57,29 @@ describe("collapsing the lesson's sidebar", () => {
     await expect.element(aside()).toBeVisible();
     await expect.poll(showsRecapRow).toBe(false);
     expect(localStorage.getItem(ASIDE_COLLAPSED_KEY)).toBe("false");
+  });
+
+  it("offers the lesson map from the menu at the lesson's end while the sidebar is collapsed", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([teachingStep("check")], {
+        summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
+      }),
+    });
+
+    await page
+      .getByRole("radio", { name: "Where the electron is most likely to be found" })
+      .click();
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
+    await page.getByRole("button", { name: "Screen options" }).click();
+    await page.getByRole("menuitem", { name: "Lesson map" }).click();
+
+    const map = page.getByRole("dialog", { name: "Lesson map" });
+    await expect.element(map.getByText("Electrons live in clouds.")).toBeVisible();
   });
 });

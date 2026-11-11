@@ -9,7 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { PanelRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useSyncExternalStore } from "react";
+import { createContext, use, useSyncExternalStore } from "react";
 import { deviceStorage } from "../_utils/device-storage";
 import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
@@ -169,17 +169,25 @@ function isAsideCollapsed(): boolean {
   return document.documentElement.hasAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
 }
 
-/** Keep in step with the `with-aside` variant in `@zoonk/ui`'s `globals.css`. */
-function isAsideShown(): boolean {
-  return (
-    globalThis.matchMedia(ASIDE_QUERY).matches &&
-    !(isAsideCollapsed() && document.querySelector("[data-aside-collapsible]"))
-  );
+const CollapsibleAsideContext = createContext(false);
+
+/** Wraps a task whose root is `getTaskAsideRootProps({ collapsible: true })`, menus and sheets included. */
+export function CollapsibleTaskAside({ children }: { children: React.ReactNode }) {
+  return <CollapsibleAsideContext value>{children}</CollapsibleAsideContext>;
 }
 
-/** False on the server and while hydrating, so layout stays in CSS; use it only for behavior. */
+/**
+ * Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`. False on the server and while
+ * hydrating, so layout stays in CSS; use it only for behavior.
+ */
 export function useTaskAsideShown(): boolean {
-  return useSyncExternalStore(subscribeToAside, isAsideShown, () => false);
+  const collapsible = use(CollapsibleAsideContext);
+
+  return useSyncExternalStore(
+    subscribeToAside,
+    () => globalThis.matchMedia(ASIDE_QUERY).matches && !(collapsible && isAsideCollapsed()),
+    () => false,
+  );
 }
 
 function toggleAside() {
