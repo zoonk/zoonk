@@ -54,8 +54,9 @@ async function FocusTestContent({ searchParams }: Props) {
     );
   }
 
+  // Only an exam goal has the test; any other chooses its focus on the plan.
   if (goal.kind !== "exam") {
-    redirect({ href: "/plan", locale });
+    redirect({ href: "/plan?focus=choose", locale });
     return null;
   }
 

@@ -82,9 +82,7 @@ function ChooseFocusOffer({ href }: { href: string }) {
 
   return (
     <OfferCard
-      description={t(
-        "Pick the subjects that get more depth, or take a short test that picks them.",
-      )}
+      description={t("Find which subjects should get more of your study time.")}
       tile={
         <OfferTile>
           <CrosshairIcon />
@@ -92,7 +90,7 @@ function ChooseFocusOffer({ href }: { href: string }) {
       }
       title={t("Choose where to focus")}
     >
-      <OfferLink href={href}>{t("Choose")}</OfferLink>
+      <OfferLink href={href}>{t("Open")}</OfferLink>
     </OfferCard>
   );
 }
