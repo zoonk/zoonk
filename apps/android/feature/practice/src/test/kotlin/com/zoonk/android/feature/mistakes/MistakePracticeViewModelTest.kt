@@ -102,6 +102,26 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun theEndSaysMissesWaitAndUnreachedMistakesAreStillReady() =
+        runTest(dispatcher) {
+            val api = FakeMistakesApi(twoMistakes)
+            api.answer = { practiceFeedback(isCorrect = false) }
+            val viewModel = viewModel(api)
+            val read = started(viewModel).read
+            assertEquals(PracticeEndNote.Unreached, viewModel.now.endNote)
+
+            viewModel.answer()
+            advanceUntilIdle()
+            assertEquals(PracticeEndNote.MissedAndUnreached, viewModel.now.endNote)
+
+            api.answer = { practiceFeedback() }
+            viewModel.next(read.questions)
+            viewModel.answer()
+            advanceUntilIdle()
+            assertEquals(PracticeEndNote.Missed, viewModel.now.endNote)
+        }
+
+    @Test
     fun theRunKeepsItsQuestionsWhenAnAnswerRefreshesThePractice() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
@@ -413,7 +433,6 @@ class MistakePracticeViewModelTest {
                             feedback = "Compare",
                             isCorrect = false,
                             keyPoints = null,
-                            nextReviewAt = null,
                             savedMistake = false,
                             score = null,
                             spelling = null,

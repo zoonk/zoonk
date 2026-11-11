@@ -19,12 +19,14 @@
   "mistakes_open_lesson": "4b01687efc3da90c3567e0b3996c6e593034491bc912b7c2434048f622e8637b",
   "mistakes_other_questions": "39cd6face3c1d1d861c190c57a1b22e48a6a47b42cad51d1f0f69b780caa60ee",
   "mistakes_practice": "119bf53fe90131d5260eaf3b73a9605bc5a6d6a08e2ab0c266447f95695db4e0",
-  "mistakes_practice_comes_back": "84aa968dff669a38bb9ebeecba9de1d6a976c9aba0181dbeaafecd8180cfe8d7",
+  "mistakes_practice_comes_back": "81b78a7484e9a8d0843c6b5aa6a03c6d62d4113e930bb55649f8816d2d4e93b9",
   "mistakes_practice_end": "0e1807865ecde7acfdad2ee5878116b17ad7f2012f02d767f47b97af90a7c106",
   "mistakes_practice_fixed": "e9894e560d70f22ec1b989115f6d501be5644281b881ca9b16e69ae85ae87b17",
+  "mistakes_practice_missed_and_unreached": "5e2b2913ad86c09261d21b3931e6c6a70ad6d1ae8b8a7327960c06d312e6671d",
   "mistakes_practice_skill": "f0576f57eccc9b8134fd63f3b176a35283ab1adf70dc44cb1bbf997be40c8fd5",
   "mistakes_practice_title": "44d9d18aac7f7cf0cd7d76cd6336f2bff590737c4b59939cb351fbd3af15c29d",
   "mistakes_practice_tomorrow": "d63d4642fee683df08b1b92d6b05a6524b836e7d7a2ef99c79e5943e0c339a1b",
+  "mistakes_practice_unreached": "ecc58ef8183375beb6883eef07bf941157bc84bce1c64177f6aba6a435c2852d",
   "mistakes_ready": "90d4aa9013bcda3b87e389330a362cbc19a8d08e192156080267228d751c1df9",
   "mistakes_show_more": "d8f773766fe6c02ee2ad62e8859eacefaa1edc5a2b19a661adce6dc795b35701",
   "mistakes_tab_fixed": "db001deb7f1ffcdef29cb3e3469e7b7896a56506013325bee5e7425a127952c5",
@@ -36,7 +38,9 @@
     <string name="mistakes_practice_title">틀린 문제 연습</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">연습 끝내기. 지금까지 푼 문제의 결과는 반영돼요.</string>
-    <string name="mistakes_practice_comes_back">나머지 문제는 더 오래 기억에 남도록 다른 날 다시 나와요.</string>
+    <string name="mistakes_practice_comes_back">틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요.</string>
+    <string name="mistakes_practice_missed_and_unreached">틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요.</string>
+    <string name="mistakes_practice_unreached">나머지 문제는 언제든 연습할 수 있어요.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="other">오답 %d개를 고쳤어요</item>
     </plurals>

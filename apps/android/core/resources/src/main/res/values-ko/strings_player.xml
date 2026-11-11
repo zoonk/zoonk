@@ -52,10 +52,6 @@
   "player_citation_from_material": "108a1fde8b24f6841ff933d5575762d34b943986477f83a460d839506023df3b",
   "player_citation_not_in_material": "fab9784325bca754b4f352062babb82149b465b4b5f69053dd15770933062cf8",
   "player_comes_back_at_end": "fe1143921ac73e6fb2773d05cd9efefac819858de98b28756cc8cfa707cebd3e",
-  "player_comes_back_date": "8861d731e80505f77588fd141089a943c6176e6215c7644e6874d42ed27432cb",
-  "player_comes_back_today": "2b75b08164c515aad75e110348616a3a65cbe3ec5b3259ec1d50238ec5a8b4bf",
-  "player_comes_back_tomorrow": "141d8183376ff2626f396a276de503c4db68cb862190dce6bfb8cb5a84742f97",
-  "player_comes_back_weekday": "ab22718ce6d400b1b2f63072a88d5dbabfa78032392c03d900d49cb7f6634f89",
   "player_correct_answer_label": "81b7b7930ecd21e4cb42a23e792d7fc458b2b1560edb4bb3ecf0ed4f408d23bc",
   "player_correction_right": "ed2d539af519be44a4505fdc0a891eb15901fd138e6a819e0f98b543f7267e4b",
   "player_correction_yours": "20e596a0138002191def30549074c66d29386725cb8ef0bc33e1ef3ffdf48fd5",
@@ -142,14 +138,9 @@
   "player_ready_instead": "efa4f52ed4ef3f8298df06cda701e5c20248debfcb2efa8853427f84503edf54",
   "player_ready_while_waiting": "edc077a5ef775b46bffdc7168241ccc70395832b1358b075b54618dea9cc9009",
   "player_review_ideas": "aa6c1037d8c827cab9204117f9f72f5b2aea492b0b09038a44e58715e67afd5a",
-  "player_review_on": "3adcfca2c76a8d6ffdc568300e4d94c924377dc7063178c9a1d1af2d63f924f9",
   "player_save_failed": "e5c107216d6612c32f167bd53bc9cce7aa93ba4fb5e227cbd7dd10a95f3ec43a",
   "player_saved_to_mistakes": "c4186f157d6392212790c00ea0554633298de41115c383ba142eb5558a8d4ea0",
   "player_saved_to_mistakes_back_at_end": "a579a7d8ea264c9f26e27c1142bd9c188812219d125a816be0d0af003046a597",
-  "player_saved_to_mistakes_back_date": "d3a61c3926006ea4f816467dc73e51d3696cad58ffb606d8b7b3af2677a37043",
-  "player_saved_to_mistakes_back_today": "2c44491ba7a4955bd395f89687f44052b7951db83f1fe82f5b41acd4e2f943a6",
-  "player_saved_to_mistakes_back_tomorrow": "b032f6eb55a172b655d39959114afe41ca3362a3c7018380407a5e8a4e4c75a3",
-  "player_saved_to_mistakes_back_weekday": "d57e120f81e503b8846c645ab71f01d1b939216ff77702b599b79c99ce908f2d",
   "player_saving_progress": "e0f0153d3008188529aa478cfb12799887e47643c9b0df520bc9dc9cd890e614",
   "player_say_it_instead": "cfab6b0ddb6c3b529975cfb6a3f763b1ce69fa264a4b5b05bd78a8d00808093a",
   "player_screen_options": "83c1b103275fc5175d841f5494cbb41ac2e95263767b268e1c8ae3fb6092e016",
@@ -271,14 +262,6 @@
     <string name="player_comes_back_at_end">이 문제는 레슨 마지막에 다시 나와요</string>
     <string name="player_saved_to_mistakes">오답 노트에 저장했어요</string>
     <string name="player_saved_to_mistakes_back_at_end">오답 노트에 저장했어요 · 이 레슨 마지막에 다시 나와요</string>
-    <string name="player_saved_to_mistakes_back_today">오답 노트에 저장했어요 · 오늘 나중에 복습할 때 다시 나와요</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">오답 노트에 저장했어요 · 내일 복습할 때 다시 나와요</string>
-    <string name="player_saved_to_mistakes_back_weekday">오답 노트에 저장했어요 · %1$s에 복습할 때 다시 나와요</string>
-    <string name="player_saved_to_mistakes_back_date">오답 노트에 저장했어요 · %1$s에 복습할 때 다시 나와요</string>
-    <string name="player_comes_back_today">이 내용은 오늘 나중에 복습할 때 다시 나와요</string>
-    <string name="player_comes_back_tomorrow">이 내용은 내일 복습할 때 다시 나와요</string>
-    <string name="player_comes_back_weekday">이 내용은 %1$s에 복습할 때 다시 나와요</string>
-    <string name="player_comes_back_date">이 내용은 %1$s에 복습할 때 다시 나와요</string>
     <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">예상일 뿐, 점수에는 반영되지 않아요</string>
     <string name="player_answer_options">답안 선택지</string>
@@ -411,8 +394,6 @@
     <string name="player_lesson_not_saved">레슨이 아직 저장되지 않았어요</string>
     <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
     <string name="player_time_studied">%1$s 학습</string>
-    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
-    <string name="player_review_on">%1$s에 복습</string>
     <string name="player_next_lesson">다음 레슨</string>
     <string name="player_stop_for_today">오늘 학습 마치기</string>
     <string name="player_see_todays_summary">오늘의 요약 보기</string>

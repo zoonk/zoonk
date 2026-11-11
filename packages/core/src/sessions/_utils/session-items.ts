@@ -11,7 +11,6 @@ import {
 } from "../../learner/_utils/choice-items";
 import {
   type MathItem,
-  describeEarlierMathAnswer,
   gradeMathAnswer,
   parseMathItem,
   readRecordedMath,
@@ -222,49 +221,6 @@ export function gradeSessionAnswer({
     default:
       throw new Error("Unknown session item format.");
   }
-}
-
-/** Returns null for match/order answers and numeric servings whose numbers differ from today's. */
-export function describeEarlierAnswer({
-  answer,
-  blockId,
-  item,
-}: {
-  answer: unknown;
-  blockId: string;
-  item: SessionItem;
-}): string | null {
-  if (item.format === "numeric") {
-    return describeEarlierMathAnswer({ answer, item, version: serveInBlock({ blockId, item }) });
-  }
-
-  const parsed = studyAnswerInputSchema.shape.answer.safeParse(answer);
-
-  if (!parsed.success || item.format === "matchPairs" || item.format === "order") {
-    return null;
-  }
-
-  if ("text" in parsed.data) {
-    return parsed.data.text;
-  }
-
-  if ("isTrue" in parsed.data) {
-    return String(parsed.data.isTrue);
-  }
-
-  if (item.format !== "multipleChoice") {
-    return null;
-  }
-
-  if ("selectedIndex" in parsed.data) {
-    return item.content.options[parsed.data.selectedIndex]?.text ?? null;
-  }
-
-  return "selectedIndexes" in parsed.data
-    ? parsed.data.selectedIndexes
-        .map((index) => item.content.options[index]?.text ?? "?")
-        .join("; ")
-    : null;
 }
 
 /** Includes the numbers a math answer was asked with, which QuestionAnswer alone does not carry. */

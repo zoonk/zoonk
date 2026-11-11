@@ -770,7 +770,8 @@ private struct WeekDayMark: View {
 
   /// Main's `useDayNote`: the day's status, unless its time already says it.
   private var note: String? {
-    let saidByTime = !day.hitGoal && (day.studied || (day.kind == "study" && !isMissed))
+    let saidByTime =
+      !day.hitGoal && (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == "study" && !isMissed))
     return saidByTime ? nil : status.labelCased()
   }
 

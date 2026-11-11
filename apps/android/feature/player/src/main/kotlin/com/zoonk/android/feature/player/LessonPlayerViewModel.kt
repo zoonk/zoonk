@@ -984,14 +984,7 @@ class LessonPlayerViewModel(
                     }
                     if (outcome is CheckOutcome.Checked) {
                         checked = true
-                        dispatch(
-                            LessonAction.CheckConfirmed(
-                                stepId,
-                                pending.attemptId,
-                                outcome.result.nextReviewAt,
-                                outcome.result.savedMistake,
-                            ),
-                        )
+                        dispatch(LessonAction.CheckConfirmed(stepId, pending.attemptId, outcome.result.savedMistake))
                     }
                     queue.removeAt(0)
                     hasUnsent = hasUnsent && unsaved.values.any { it.isNotEmpty() }

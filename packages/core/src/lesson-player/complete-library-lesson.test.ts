@@ -225,8 +225,6 @@ describe(completeLibraryLesson, () => {
       status: "completed",
     });
 
-    expect(outcome.status === "completed" && typeof outcome.completion.nextReviewAt).toBe("string");
-
     const [run, day] = await Promise.all([
       prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
@@ -506,36 +504,37 @@ describe(completeLibraryLesson, () => {
     });
   });
 
-  it("never says when a quick explanation comes back, since nothing reviews it", async () => {
+  it("never reviews a quick explanation's plan skill, since nothing reviews it", async () => {
     const setup = await setupPlayableLesson({ steps: ["explanation", "check"] });
-    const goal = await goalFixture({ kind: "explain", userId: setup.user.id });
+
+    const [goal, planSkill] = await Promise.all([
+      goalFixture({ kind: "explain", userId: setup.user.id }),
+      skillFixture(),
+    ]);
 
     await planFixture({
       goalId: goal.id,
-      items: [{ lessonId: setup.lesson.id, skillId: setup.skill.id }],
+      items: [{ lessonId: setup.lesson.id, skillId: planSkill.id }],
     });
 
     const runId = await startRun(setup.lesson.id);
 
-    const checked = await answer({
+    await answer({
       runId,
       stepId: stepOfKind(setup.steps, "check").id,
       value: { kind: "check", optionId: "likely" },
     });
 
-    expect(checked).toMatchObject({ result: { nextReviewAt: null }, status: "checked" });
-
     await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
-      completion: { nextReviewAt: null },
       status: "completed",
     });
 
     await expect(
-      prisma.learnerSkill.findFirst({ where: { skillId: setup.skill.id, userId: setup.user.id } }),
-    ).resolves.toMatchObject({ due: expect.any(Date) });
+      prisma.learnerSkill.findFirst({ where: { skillId: planSkill.id, userId: setup.user.id } }),
+    ).resolves.toBeNull();
   });
 
-  it("reviews the plan's skill its lesson is held for once, from every screen, and says when it comes back", async () => {
+  it("reviews the plan's skill its lesson is held for once, from every screen", async () => {
     freezeClock();
 
     const setup = await setupPlayableLesson({
@@ -553,20 +552,15 @@ describe(completeLibraryLesson, () => {
     });
 
     const runId = await startRun(setup.lesson.id);
-    const promises: (string | null)[] = [];
 
     for (const step of setup.steps) {
       // oxlint-disable-next-line no-await-in-loop -- the learner answers one screen after another
-      const checked = await answer({
-        runId,
-        stepId: step.id,
-        value: { kind: "check", optionId: "likely" },
-      });
-
-      promises.push(checked.status === "checked" ? checked.result.nextReviewAt : "unchecked");
+      await answer({ runId, stepId: step.id, value: { kind: "check", optionId: "likely" } });
     }
 
-    const outcome = await complete({ lessonId: setup.lesson.id, runId });
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      status: "completed",
+    });
 
     const [planMemory, ownMemory] = await Promise.all([
       prisma.learnerSkill.findFirstOrThrow({
@@ -579,12 +573,7 @@ describe(completeLibraryLesson, () => {
 
     expect(ownMemory.reps).toBe(8);
     expect(planMemory.reps).toBe(1);
-
-    const comesBack = planMemory.due?.toISOString();
-
-    expect(comesBack).toStrictEqual(expect.any(String));
-    expect(outcome).toMatchObject({ completion: { nextReviewAt: comesBack }, status: "completed" });
-    expect(promises).toStrictEqual(promises.map(() => comesBack));
+    expect(planMemory.due).toStrictEqual(expect.any(Date));
   });
 
   it("never reviews a plan's skill again when the lesson's screens train it themselves", async () => {

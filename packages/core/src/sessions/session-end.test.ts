@@ -221,10 +221,7 @@ describe("ending a session", () => {
       sessionId: today.session.id,
     });
 
-    expect(finished).toMatchObject({
-      completion: { comesBackOn: null, sessionCompleted: true },
-      status: "ready",
-    });
+    expect(finished).toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
     const ended = await getStudySessionSummary({ input: {}, sessionId: today.session.id });
 

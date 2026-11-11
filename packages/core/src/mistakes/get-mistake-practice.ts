@@ -2,7 +2,6 @@ import "server-only";
 import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { type ItemSetView } from "../library/items/item-set-view";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
@@ -11,7 +10,7 @@ import { getSession } from "../users/get-session";
 import { resolvePracticeScope } from "./_utils/practice-scope";
 import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
-import { getMistakePracticeBefore } from "./mistake-availability";
+import { getPracticeTimeZone, readyMistakeWhere } from "./mistake-availability";
 import {
   type DrillView,
   getDrillKind,
@@ -57,7 +56,7 @@ function getPracticeSkillIds({
   return !scopeSkillIds || scopeSkillIds.includes(skillId) ? [skillId] : [];
 }
 
-/** Every ready mistake a run holds, oldest first with skill breadth, one question each; excludes today. Submit each answer to answerMistakePractice. */
+/** Every ready mistake a run holds, oldest first with skill breadth, one question each. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
 ): Promise<MistakePracticeResult> {
@@ -74,7 +73,11 @@ export async function getMistakePractice(
     return { status: "notFound" };
   }
 
-  const timeZone = getAnswerTimeZone({ goal: scope.goal, timeZone: input.timeZone });
+  const timeZone = await getPracticeTimeZone({
+    goal: scope.goal,
+    timeZone: input.timeZone,
+    userId,
+  });
 
   // Next's io boundary keeps the live practice day out of prerendering.
   await io();
@@ -83,10 +86,9 @@ export async function getMistakePractice(
   const skillIds = getPracticeSkillIds({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
 
   const open = await prisma.mistake.findMany({
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     where: {
-      createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
-      status: "open",
+      ...readyMistakeWhere({ localDate: today, timeZone }),
       userId,
       ...(skillIds ? { skillId: { in: skillIds } } : {}),
     },
@@ -104,14 +106,7 @@ export async function getMistakePractice(
     );
   });
 
-  const selected = selectMistakesToPractice({
-    limit: MAX_PRACTICE_ANSWERS,
-    mistakes: drillable.map((mistake) => ({
-      ...mistake,
-      createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
-    })),
-    today,
-  });
+  const selected = selectMistakesToPractice({ limit: MAX_PRACTICE_ANSWERS, mistakes: drillable });
 
   const replays = selected.map((mistake) => ({ mistake, replay: replayById.get(mistake.id) }));
 

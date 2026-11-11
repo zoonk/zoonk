@@ -52,10 +52,6 @@
   "player_citation_from_material": "155af4a17f17a6262bd03cab41687605e5442da8d323dedf0b4f3f207ddb79ea",
   "player_citation_not_in_material": "a2b0ff4a56a8b8a4b5eeecbcccb99f3f2c785830f32f1f4ba7e399e9914bb95f",
   "player_comes_back_at_end": "bb1e3f97c091384f36dcc0f8d03f798defa57c07b57c8d2da386b1a72d6e2b6a",
-  "player_comes_back_date": "4e21d32bad7453d78ec82c8bb3211c765f8eea7a896b86bffb97cc54f9d54cf6",
-  "player_comes_back_today": "bfec92ba9bf0f9a3aa7dffdafe4aabf38a4cfa45733492912d4db8192f22112e",
-  "player_comes_back_tomorrow": "b9abe806cfd238014b7e9150aacd732f33d358f68e4a396a2756bdbf86f47394",
-  "player_comes_back_weekday": "78a116b6a606b72d43f9d9d0f0b83cd4c2652dd210ed2a0d626c46ee807845eb",
   "player_correct_answer_label": "850073967750b86333702f4bab33c56833fbb1ab1049a63d016a29b6ce3e8891",
   "player_correction_right": "16b84f21129bd52cb4124a38de309b33548ddb93913bf9798cd116763e15fc50",
   "player_correction_yours": "2d76c32ccce46887a621e215468fdd862cbe15b26ff28ac3652fca8718c802f3",
@@ -142,14 +138,9 @@
   "player_ready_instead": "a4655123e5f9e2fd2f78e3848cb1f49613dda6a4a4c59fdabac5893c0f9b62cd",
   "player_ready_while_waiting": "e0990a751996a8b0ac8b30f2a7b0fd38ba7299dc8e681ce3ecba8e6e9d8f2604",
   "player_review_ideas": "8531a5ec5d44163d7e991cdd1e8177791fa16b8992fefea4cbff545205d2fa2b",
-  "player_review_on": "31f5311afcc4ffe0178ee499cc8029cc37e785845f1e6dfbd977db8cd3f875ff",
   "player_save_failed": "e30cc356ad34049d72cbe3b4eb55e0a534b84e182cac1832817f2e53f25660e8",
   "player_saved_to_mistakes": "244b0be6e348b234e15371f7cf310f5244d89e1bf741599e0c0e3a01453fe057",
   "player_saved_to_mistakes_back_at_end": "1f721365893c1a7c0252ffde72a27cfb89fd82843b10afe6026e3856bc2c862e",
-  "player_saved_to_mistakes_back_date": "68ef006e6f65732cee32d6f60ae3ac53b9d1f24a00514f00a6a71be2395af0a6",
-  "player_saved_to_mistakes_back_today": "4fab7cdec710488e20e60b634bd26837c41ae20fcb56d55555fb75d2cf6331cc",
-  "player_saved_to_mistakes_back_tomorrow": "8632185cf7974cf01e660061984d0b70260893a87974c5095d6eb3cfdece718f",
-  "player_saved_to_mistakes_back_weekday": "4230b3e54f6861ca7d7ab8f4250b208de44a9700d5670849dd4e5d5b39c9ab68",
   "player_saving_progress": "6a98361c9b1f53b6897e58a86dfcba2d398952c5160d118d4a764377f85e7b16",
   "player_say_it_instead": "7aa93e434d87e08eacaf8fc63d0fc05dea938d032733ef3affac1b2c1aef5510",
   "player_screen_options": "2457d65f7d98920e0771fe07f484f9d2310c9c4db6c72c3907333cb59837d19f",
@@ -273,14 +264,6 @@
     <string name="player_comes_back_at_end">Esta pergunta volta no fim da aula</string>
     <string name="player_saved_to_mistakes">Salvo no seu caderno de erros</string>
     <string name="player_saved_to_mistakes_back_at_end">Salvo no seu caderno de erros · volta no fim desta aula</string>
-    <string name="player_saved_to_mistakes_back_today">Salvo no seu caderno de erros · volta em uma revisão ainda hoje</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">Salvo no seu caderno de erros · volta na revisão de amanhã</string>
-    <string name="player_saved_to_mistakes_back_weekday">Salvo no seu caderno de erros · volta na revisão de %1$s</string>
-    <string name="player_saved_to_mistakes_back_date">Salvo no seu caderno de erros · volta em uma revisão em %1$s</string>
-    <string name="player_comes_back_today">Esta ideia volta em uma revisão ainda hoje</string>
-    <string name="player_comes_back_tomorrow">Esta ideia volta na revisão de amanhã</string>
-    <string name="player_comes_back_weekday">Esta ideia volta na revisão de %1$s</string>
-    <string name="player_comes_back_date">Esta ideia volta em uma revisão em %1$s</string>
     <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">Só um palpite, não vale ponto</string>
     <string name="player_answer_options">Alternativas de resposta</string>
@@ -419,8 +402,6 @@
     <string name="player_lesson_not_saved">Sua aula ainda não foi salva</string>
     <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
     <string name="player_time_studied">%1$s de estudo</string>
-    <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
-    <string name="player_review_on">Revisão em %1$s</string>
     <string name="player_next_lesson">Próxima aula</string>
     <string name="player_stop_for_today">Parar por hoje</string>
     <string name="player_see_todays_summary">Ver o resumo de hoje</string>

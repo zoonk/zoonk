@@ -1,34 +1,11 @@
 "use client";
 
 import { FeedbackNote } from "@zoonk/learn/feedback-panel";
-import { useAppLocale } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
-import { type ReviewDate, describeReviewDate } from "../_utils/review-date";
 
-export type LessonResultNext = {
-  nextReviewAt: string | null;
-  savedMistake: boolean;
-  willReturn: boolean;
-};
+export type LessonResultNext = { savedMistake: boolean; willReturn: boolean };
 
-function getDayLabel(review: ReviewDate): string {
-  return "label" in review ? review.label : "";
-}
-
-function useReview(nextReviewAt: string | null): ReviewDate | null {
-  const locale = useAppLocale();
-  return nextReviewAt ? describeReviewDate({ locale, reviewAt: nextReviewAt }) : null;
-}
-
-function ResultNextText({
-  review,
-  savedMistake,
-  willReturn,
-}: {
-  review: ReviewDate | null;
-  savedMistake: boolean;
-  willReturn: boolean;
-}) {
+function ResultNextText({ savedMistake, willReturn }: LessonResultNext) {
   const t = useExtracted();
 
   if (savedMistake && willReturn) {
@@ -39,7 +16,7 @@ function ResultNextText({
     });
   }
 
-  if (savedMistake && !review) {
+  if (savedMistake) {
     return t({
       description:
         "“your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.",
@@ -47,28 +24,7 @@ function ResultNextText({
     });
   }
 
-  if (savedMistake && review) {
-    return t({
-      description:
-        "“your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.",
-      message:
-        "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}",
-      values: { day: getDayLabel(review), when: review.kind },
-    });
-  }
-
-  if (willReturn) {
-    return t("This question comes back at the end of the lesson");
-  }
-
-  if (!review) {
-    return null;
-  }
-
-  return t(
-    "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}",
-    { day: getDayLabel(review), when: review.kind },
-  );
+  return t("This question comes back at the end of the lesson");
 }
 
 export function HyperdriveStreak({ count }: { count: number }) {
@@ -81,28 +37,24 @@ export function HyperdriveStreak({ count }: { count: number }) {
   );
 }
 
-export function LessonResultNote({ nextReviewAt, savedMistake, willReturn }: LessonResultNext) {
-  const review = useReview(nextReviewAt);
-
-  if (!savedMistake && !willReturn && !review) {
+export function LessonResultNote({ savedMistake, willReturn }: LessonResultNext) {
+  if (!savedMistake && !willReturn) {
     return null;
   }
 
   return (
     <FeedbackNote>
-      <ResultNextText review={review} savedMistake={savedMistake} willReturn={willReturn} />
+      <ResultNextText savedMistake={savedMistake} willReturn={willReturn} />
     </FeedbackNote>
   );
 }
 
 export function LessonResultNotes({
   hyperdriveStreak,
-  nextReviewAt,
   savedMistake,
   willReturn,
 }: LessonResultNext & { hyperdriveStreak: number | null }) {
-  const review = useReview(nextReviewAt);
-  const hasNext = savedMistake || willReturn || review !== null;
+  const hasNext = savedMistake || willReturn;
 
   if (hyperdriveStreak === null && !hasNext) {
     return null;
@@ -112,9 +64,7 @@ export function LessonResultNotes({
     <FeedbackNote data-slot="lesson-result-notes">
       {hyperdriveStreak !== null && <HyperdriveStreak count={hyperdriveStreak} />}
       {hyperdriveStreak !== null && hasNext && " · "}
-      {hasNext && (
-        <ResultNextText review={review} savedMistake={savedMistake} willReturn={willReturn} />
-      )}
+      {hasNext && <ResultNextText savedMistake={savedMistake} willReturn={willReturn} />}
     </FeedbackNote>
   );
 }

@@ -2363,6 +2363,96 @@
           }
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are legally correct and unambiguous. Article 10, paragraph 3, prohibits requiring reasons for an information request. Article 15 provides a ten-day appeal period from notification and five days for the hierarchically superior authority to respond. Article 31 permits restrictions on protected personal information independently of secrecy classification, for a maximum of one hundred years from production. The explanations accurately reflect these provisions.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The sole false assertion uses a realistic misconception: believing applicants must justify why they need information. Its label identifies that precise mistake, and its feedback explicitly explains that the law prohibits requiring such justification. The true items also receive accurate, useful explanations.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents a plausible public-administration situation followed by one assertion judged Certo or Errado. The language and legal precision fit Cebraspe, and the false item contains one credible trap rather than an exaggerated or obviously implausible claim.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set is entirely in Portuguese and covers three distinct situations: demands for justification, appeals against denial, and personal-information restrictions. Neither prohibited used situation is repeated. The first and third items apply legal rules to circumstances, but the appeal item largely reproduces statutory wording, and the nominally hard item offers limited additional reasoning difficulty.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1121,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2838,
+          "outputTokens": 872,
+          "reasoningTokens": 338
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Difficulty differentiation is modest: the item labeled hard requires a straightforward distinction between personal-information restrictions and formal secrecy classification. The appeal item mainly tests recall of statutory deadlines rather than applying them.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the appeal item require evaluating a concrete procedural action, and strengthen the hardest item with a relevant personal-information exception. Preserve the distinct situations and the realistic justification-of-purpose trap.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in Brazilian Portuguese on the Access to Information Law (Lei 12.527/2011). The skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new item may use one of those situations again with other names, agencies or numbers (a request answered with partial access because part of a document is classified; an agency extending the 20-day answer deadline by 10 days), and the three items use different situations from each other. False items must hide one realistic trap. Check the legal accuracy of every statement against Law 12.527/2011.",
+        "id": "pt-cebraspe-acesso-informacao-avoids-used-situations-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar a Lei de Acesso à Informação (Lei 12.527/2011) a pedidos de informação: prazos, acesso parcial, sigilo e recursos.",
+            "name": "Lei de Acesso à Informação"
+          },
+          "usedSituations": [
+            "Rodrigo pediu à secretaria municipal de obras cópia de um contrato; parte do documento é sigilosa, e o órgão entregou o restante com a parte sigilosa ocultada.",
+            "Um órgão federal recebeu um pedido de informação e, sem conseguir responder em 20 dias, prorrogou o prazo por mais 10 dias, avisando o requerente."
+          ]
+        }
+      }
     }
   ],
   "taskId": "generate-items"

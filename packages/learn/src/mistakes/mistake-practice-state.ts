@@ -242,6 +242,19 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
   }
 }
 
+export type PracticeEndNote = "missed" | "missedAndUnreached" | "unreached";
+
+export function getPracticeEndNote(state: PracticeState): PracticeEndNote | null {
+  const missed = state.verdicts.some((verdict) => verdict !== "right");
+  const unreached = state.verdicts.length < state.steps.length;
+
+  if (missed) {
+    return unreached ? "missedAndUnreached" : "missed";
+  }
+
+  return unreached ? "unreached" : null;
+}
+
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   return state.steps.map((_, index) => {
     const verdict = state.verdicts[index];

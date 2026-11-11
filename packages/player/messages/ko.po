@@ -3159,11 +3159,6 @@ msgid "Take a short break"
 msgstr "잠깐 쉬어 가세요"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "{date}에 복습"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "sgeE0r"
 msgid "Back to unit"
 msgstr "단원으로 돌아가기"
@@ -3303,21 +3298,10 @@ msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
 msgstr "오답 노트에 저장했어요"
 
-#. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "L33Kca"
-msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "오답 노트에 저장했어요 · {when, select, today {오늘 나중에 복습할 때} tomorrow {내일 복습할 때} weekday {{day} 복습할 때} other {{day}에 복습할 때}} 다시 나와요"
-
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
 msgid "This question comes back at the end of the lesson"
 msgstr "이 문제는 레슨 마지막에 다시 나와요"
-
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "r6_UUR"
-msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "이 내용은 {when, select, today {오늘 나중에 복습할 때} tomorrow {내일 복습할 때} weekday {{day} 복습할 때} other {{day}에 복습할 때}} 다시 나와요"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"

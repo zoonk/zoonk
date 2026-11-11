@@ -63,7 +63,6 @@
   "session_review_intro_title": "3493ccc3bbe7d31c91d15c5c5b8f57a63e3e06d4c93cdf6bd9650c8d9ee10da8",
   "session_review_intro_weakest": "f4b371c5ec018cc70ab75c6cdb12ee5f318ecbc518e87e09475c64df39fe03a0",
   "session_review_intro_weakest_title": "0ba791eaebf8346c3c8411ae46c69bbd7fdd89ad96872820635a77b223fe9dd9",
-  "session_summary_back_on": "12006d67abedff1315b90191483ca472da61f984982a6ecc069ae33c2829b986",
   "session_summary_brain_power": "89f7f72963b04922627746a0202c96a5f0726b72364869e0c3b9707063fac26d",
   "session_summary_buddy_happy": "fcdc5ef09af23f6add015dbe503c9c53cf7d69ee73ee531663ef016fbaac401d",
   "session_summary_create_account": "2d60c0b2f36b99f2dd856887cd3c9a741f3f24c12caf088a07368fa131045881",
@@ -175,7 +174,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">복습 예정</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">%1$s에 복습</string>
     <string name="session_summary_brain_power">두뇌력</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>

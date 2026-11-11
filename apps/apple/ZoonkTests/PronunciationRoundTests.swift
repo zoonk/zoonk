@@ -124,7 +124,7 @@ extension PronunciationRound.Word {
 
 extension PronunciationRound.Grade {
   fileprivate static func fixture(isCorrect: Bool) -> Self {
-    .init(attemptId: "attempt", isCorrect: isCorrect, nextReviewAt: nil, transcript: "a")
+    .init(attemptId: "attempt", isCorrect: isCorrect, transcript: "a")
   }
 }
 

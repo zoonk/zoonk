@@ -33,7 +33,7 @@ final class TodayStoreTests: XCTestCase {
       checkpoint: nil)
     let moment: BlockMoment = try decode(
       """
-      {"blockId":"b1","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
+      {"blockId":"b1","brainPower":10,"ceremony":null,"certificates":[],
       "blocks":[\(lesson),\(review)],
       "dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":50},
       "sessionBar":{"completed":1,"total":2},"sessionId":"s1","goalId":null,
@@ -901,7 +901,7 @@ private func today(
 private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment {
   try decode(
     """
-    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
+    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],
     "blocks":[\(blockJSON(position: 0, kind: "learn", status: "completed", id: blockID, lessonID: "l0", planItemID: nil, checkpoint: nil)),\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil))],
     "dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":50},"sessionBar":{"completed":1,"total":2},
     "sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},
