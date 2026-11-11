@@ -214,12 +214,13 @@ const mindMapCreateOfferSchema = z
       .min(0)
       .meta({
         description:
-          "How many of the `eligible` chapters one request would start now, in course order, within the learner's current allowance; fewer than `eligible` when `stop` says why",
+          "How many of the `eligible` chapters one request would start now, in course order, within the learner's current allowance; fewer than `eligible` when `stop` says why. 0 with `stop` set means no new map can start now, so no chapter offers to create one",
       }),
     stop: mindMapAllowanceStopSchema
       .nullable()
       .meta({
-        description: "What would stop it before the last eligible chapter; null when nothing would",
+        description:
+          "What would stop it before the last eligible chapter; with none eligible, what stops one more map now. Null when nothing would",
       }),
   })
   .meta({ id: "MindMapCreateOffer" });

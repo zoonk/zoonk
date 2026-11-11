@@ -111,7 +111,10 @@ function walkOffer({ chapterId, walk }: { chapterId: string; walk: OfferWalk }):
   };
 }
 
-/** The offer walks the eligible chapters as the write admits them, against the same ledger rules. */
+/**
+ * The offer walks the eligible chapters as the write admits them, against the same ledger rules.
+ * With none eligible, `stop` is what would stop one more map now, asked of the next chapter's map.
+ */
 export function offerChapterMaps({
   chapters,
   ledger,
@@ -131,10 +134,12 @@ export function offerChapterMaps({
     stop: null,
   });
 
+  const [next] = eligible.length > 0 ? [] : needLessons;
+
   return {
     eligible: eligible.length,
     needLessons: needLessons.length,
     startable: walked.startable,
-    stop: walked.stop,
+    stop: next ? walkOffer({ chapterId: next, walk: walked }).stop : walked.stop,
   };
 }

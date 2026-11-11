@@ -2,6 +2,7 @@ import {
   type GoalMindMapView,
   type GoalMindMapsView,
   type MindMapAllowanceStop,
+  type MindMapCreateOffer,
 } from "@zoonk/core/mind-maps/contract";
 import { type MindMapLimit } from "../../_components/help-limit-notice";
 import { type MindMapTab } from "./mind-map-urls";
@@ -97,6 +98,11 @@ export function getIndexLayout<Row>(groups: readonly IndexGroup<Row>[]) {
   }
 
   return groups.some((group) => group.name !== null) ? ("folded" as const) : ("preview" as const);
+}
+
+/** No new map can start now: no chapter offers to create one, and the page says why. */
+export function startsNoMap({ startable, stop }: MindMapCreateOffer): boolean {
+  return startable === 0 && stop !== null;
 }
 
 export function toMindMapLimit({

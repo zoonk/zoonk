@@ -406,6 +406,42 @@ describe("making all of a goal's chapter maps", () => {
     });
   });
 
+  it("says what stops one more map when every chapter left needs its lessons", async () => {
+    const { goal, user } = await signedInCourseGoal();
+
+    await usageRecordsFixture({
+      count: 2,
+      createdAt: new Date(),
+      kind: "mindMap",
+      userId: user.id,
+    });
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: { eligible: 0, needLessons: 2, startable: 0, stop: null },
+    });
+
+    await usageRecordsFixture({
+      count: 1,
+      createdAt: new Date(),
+      kind: "mindMap",
+      userId: user.id,
+    });
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: {
+        eligible: 0,
+        needLessons: 2,
+        startable: 0,
+        stop: {
+          period: "day",
+          reason: "limitReached",
+          resetsAt: getUsageResets(new Date()).day.toISOString(),
+          resource: "mindMap",
+        },
+      },
+    });
+  });
+
   it("joins a map another learner is making and charges nothing on a second click", async () => {
     const { first, goal, lessons, user } = await writtenCourseGoal();
     const other = await userFixture();

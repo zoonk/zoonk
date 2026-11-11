@@ -8,6 +8,7 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -202,6 +203,39 @@ test.describe("Mind maps", () => {
       ).toBeVisible({ timeout: 15_000 });
 
       await expect(page.getByText(/1 on the way/u)).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a free learner out of maps for the day sees why, and no chapter offers to create one", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+
+    await Promise.all([
+      drawMap(first.chapter.id),
+      prisma.lesson.update({ data: { contentStatus: "pending" }, where: { id: second.lessonId } }),
+      usageRecordsFixture({ count: 3, createdAt: new Date(), kind: "mindMap", userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const notMade = page.getByRole("region", { name: "Not made yet" });
+
+    try {
+      await page.goto("/mind-maps");
+      await expect(notMade.getByText(/^That's all the new mind maps for today/u)).toBeVisible();
+      await expect(notMade.getByRole("link", { name: "See Plus" })).toBeVisible();
+
+      await notMade.getByRole("button", { name: /^Show chapters/u }).click();
+
+      const row = notMade.getByRole("listitem").filter({ hasText: second.chapter.title });
+      await expect(row.getByText("1 lesson to write", { exact: true })).toBeVisible();
+      await expect(row.getByRole("button", { name: "Create" })).toBeHidden();
+
+      await expect(
+        notMade.getByText("Writing lessons counts toward your free lessons."),
+      ).toBeHidden();
     } finally {
       await page.context().close();
     }

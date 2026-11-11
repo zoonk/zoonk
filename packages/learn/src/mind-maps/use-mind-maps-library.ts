@@ -8,6 +8,7 @@ import { useServedState } from "../_utils/use-served-state";
 import {
   type MindMapsPage,
   type MindMapsPageChapter,
+  startsNoMap,
   toMindMapsPage,
 } from "./_utils/mind-maps-page";
 import { type MindMapLibraryActions, type MindMapRequestOutcome } from "./mind-map-actions";
@@ -207,7 +208,7 @@ export function useMindMapsLibrary({
       const start = () => void create(chapter.chapterId);
 
       return {
-        create: start,
+        create: startsNoMap(page.createOffer) ? undefined : start,
         isPending: sending.has(chapter.chapterId),
         limit: local?.limit ?? null,
         retry: start,

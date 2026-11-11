@@ -70,7 +70,7 @@ function RowAction({
   titleId,
 }: {
   isPending: boolean;
-  onCreate: () => void;
+  onCreate?: () => void;
   onRetry: () => void;
   shown: MindMapShown;
   slowDown: boolean;
@@ -92,7 +92,7 @@ function RowAction({
     );
   }
 
-  if (shown === "available" || (shown === "refused" && slowDown)) {
+  if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
         aria-describedby={titleId}
@@ -109,12 +109,12 @@ function RowAction({
   return null;
 }
 
-/** Without `save`, the row never opens its map: the Mind maps page lists the ready ones itself. */
-export type MindMapRowRequest = Pick<
-  MindMapRequest,
-  "create" | "isPending" | "limit" | "retry" | "shown"
-> &
-  Partial<Pick<MindMapRequest, "save">>;
+/**
+ * Without `save`, the row never opens its map: the Mind maps page lists the ready ones itself.
+ * Without `create`, it offers none, as when no new map can start now.
+ */
+export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "retry" | "shown"> &
+  Partial<Pick<MindMapRequest, "create" | "save">>;
 
 /** The row for a map whose request someone else follows, like a page that shows it twice. */
 export function MindMapRowView({
