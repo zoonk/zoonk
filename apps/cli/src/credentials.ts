@@ -1,4 +1,4 @@
-import { closeSync, mkdirSync, openSync } from "node:fs";
+import { chmodSync, closeSync, existsSync, fchmodSync, mkdirSync, openSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
@@ -15,6 +15,7 @@ const OWNER_ONLY_DIRECTORY = 0o700;
 const OWNER_ONLY_FILE = 0o600;
 const BUSY_TIMEOUT_MS = 30_000;
 const SQLITE_BUSY = 5;
+const SQLITE_SIDE_FILE_SUFFIXES = ["-journal", "-wal", "-shm"];
 
 const CREATE_LOGINS = `
   CREATE TABLE IF NOT EXISTS logins (
@@ -60,10 +61,27 @@ function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredL
   };
 }
 
-/** SQLite would create the file with the umask's default permissions, so it starts owner-only. */
+/**
+ * File modes apply only when a file is created, and SQLite's side files copy the database's mode,
+ * so an older folder, database or side file with looser permissions is tightened on every open.
+ */
+function restrictToOwner(file: string) {
+  const directory = dirname(file);
+
+  mkdirSync(directory, { mode: OWNER_ONLY_DIRECTORY, recursive: true });
+  chmodSync(directory, OWNER_ONLY_DIRECTORY);
+
+  const descriptor = openSync(file, "a", OWNER_ONLY_FILE);
+  fchmodSync(descriptor, OWNER_ONLY_FILE);
+  closeSync(descriptor);
+
+  SQLITE_SIDE_FILE_SUFFIXES.map((suffix) => `${file}${suffix}`)
+    .filter((sideFile) => existsSync(sideFile))
+    .forEach((sideFile) => chmodSync(sideFile, OWNER_ONLY_FILE));
+}
+
 function openCredentials(file: string): DatabaseSync {
-  mkdirSync(dirname(file), { mode: OWNER_ONLY_DIRECTORY, recursive: true });
-  closeSync(openSync(file, "a", OWNER_ONLY_FILE));
+  restrictToOwner(file);
 
   const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
   database.exec(CREATE_LOGINS);
