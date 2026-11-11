@@ -1,0 +1,188 @@
+import { mkdtempSync, rmSync } from "node:fs";
+import { type IncomingMessage, type Server, type ServerResponse, createServer } from "node:http";
+import { type AddressInfo } from "node:net";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
+import { WHOAMI_REQUEST } from "./args.ts";
+import { type StoredLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
+import { EXIT_CODES } from "./errors.ts";
+import { sendAuthorized } from "./session.ts";
+
+type FakeApiOptions = {
+  acceptedToken: string;
+  beforeRejecting?: () => void;
+  refresh: { body: unknown; status: number };
+};
+
+const HOUR_MS = 3_600_000;
+const ME = { user: { email: "owner@zoonk.test", id: "user-1", name: "Owner", role: "admin" } };
+const directories: string[] = [];
+const servers: Server[] = [];
+
+function createCredentialsFile(): string {
+  const configHome = mkdtempSync(join(tmpdir(), "zoonk-cli-"));
+  directories.push(configHome);
+  return credentialsPath({ XDG_CONFIG_HOME: configHome });
+}
+
+function storedLogin(name: string, expiresAt: number): StoredLogin {
+  return { accessToken: `access-${name}`, expiresAt, refreshToken: `refresh-${name}` };
+}
+
+function tokenResponse(name: string) {
+  return {
+    access_token: `access-${name}`,
+    expires_in: 3600,
+    refresh_token: `refresh-${name}`,
+    token_type: "Bearer",
+  };
+}
+
+async function readForm(request: IncomingMessage): Promise<Record<string, string>> {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.from(chunk));
+  }
+
+  return Object.fromEntries(new URLSearchParams(Buffer.concat(chunks).toString()));
+}
+
+function reply(response: ServerResponse, status: number, body: unknown) {
+  response.writeHead(status, { "content-type": "application/json" }).end(JSON.stringify(body));
+}
+
+async function startFakeApi(options: FakeApiOptions) {
+  const refreshRequests: Record<string, string>[] = [];
+  const staffCalls: string[] = [];
+
+  const server = createServer(async (request, response) => {
+    if (request.url === "/v1/auth/oauth2/token") {
+      refreshRequests.push(await readForm(request));
+      reply(response, options.refresh.status, options.refresh.body);
+      return;
+    }
+
+    const authorization = request.headers.authorization ?? "";
+    staffCalls.push(authorization);
+
+    if (authorization === `Bearer ${options.acceptedToken}`) {
+      reply(response, 200, ME);
+      return;
+    }
+
+    options.beforeRejecting?.();
+    reply(response, 401, { error: { code: "UNAUTHORIZED", message: "Authentication required" } });
+  });
+
+  servers.push(server);
+
+  await new Promise<void>((resolve) => {
+    server.listen(0, "127.0.0.1", resolve);
+  });
+
+  const { port } = server.address() as AddressInfo;
+  return { origin: `http://127.0.0.1:${port}`, refreshRequests, staffCalls };
+}
+
+describe(sendAuthorized, () => {
+  afterEach(async () => {
+    await Promise.all(
+      servers.splice(0).map(
+        (server) =>
+          new Promise((resolve) => {
+            server.close(resolve);
+          }),
+      ),
+    );
+
+    for (const directory of directories.splice(0)) {
+      rmSync(directory, { force: true, recursive: true });
+    }
+  });
+
+  it("refreshes an expiring login before the call and saves the new pair", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    saveLogin({ file, login: storedLogin("old", Date.now() + 1000), origin: api.origin });
+
+    const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
+
+    expect(result).toStrictEqual({ body: ME, ok: true, status: 200 });
+
+    expect(api.refreshRequests).toStrictEqual([
+      { client_id: "zoonk-cli", grant_type: "refresh_token", refresh_token: "refresh-old" },
+    ]);
+
+    expect(api.staffCalls).toStrictEqual(["Bearer access-new"]);
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({
+      accessToken: "access-new",
+      refreshToken: "refresh-new",
+    });
+  });
+
+  it("refreshes once when the API rejects the access token, then retries", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    saveLogin({ file, login: storedLogin("revoked", Date.now() + HOUR_MS), origin: api.origin });
+
+    const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
+
+    expect(result.status).toBe(200);
+    expect(api.staffCalls).toStrictEqual(["Bearer access-revoked", "Bearer access-new"]);
+    expect(api.refreshRequests).toHaveLength(1);
+  });
+
+  it("uses the pair another command saved instead of sending a rotated refresh token", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-other",
+      beforeRejecting: () => {
+        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin });
+      },
+      refresh: { body: { error: "invalid_grant" }, status: 400 },
+    });
+
+    saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
+
+    const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
+
+    expect(result.status).toBe(200);
+    expect(api.refreshRequests).toStrictEqual([]);
+    expect(api.staffCalls).toStrictEqual(["Bearer access-old", "Bearer access-other"]);
+  });
+
+  it("asks for a new login and forgets the old one when the refresh token is refused", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: { error: "invalid_grant" }, status: 400 },
+    });
+
+    saveLogin({ file, login: storedLogin("ended", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({
+      exitCode: EXIT_CODES.notLoggedIn,
+      message: `Not logged in to ${api.origin}. Run \`pnpm zoonk login --api ${api.origin}\`.`,
+    });
+
+    expect(api.staffCalls).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+});

@@ -1,0 +1,18 @@
+{
+  "name": "@zoonk/cli",
+  "private": true,
+  "bin": {
+    "zoonk": "./src/main.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsrs --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
