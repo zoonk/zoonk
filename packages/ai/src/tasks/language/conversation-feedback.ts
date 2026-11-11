@@ -45,6 +45,7 @@ export type WriteConversationFeedbackParams = {
   turns: ConversationTurn[];
   objectivesMet: string[];
   targetLanguage: string;
+  targetRegion?: string | null;
   learnerLanguage: string;
   model?: string;
   useFallback?: boolean;
@@ -59,6 +60,7 @@ function formatList(values: readonly string[]): string {
 function buildUserPrompt(params: WriteConversationFeedbackParams): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
+    targetRegion: params.targetRegion,
     userLanguage: params.learnerLanguage,
   });
 

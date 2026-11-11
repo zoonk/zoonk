@@ -2,6 +2,7 @@ import "server-only";
 import {
   buildLiveConversationInstructions,
   getLiveConversationLanguageName,
+  hasLiveCallVariety,
 } from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type Chapter, type LanguageConversation } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
@@ -170,7 +171,7 @@ export function getLiveCallBuilder({
   learnerNote?: string;
   row: Pick<
     LanguageConversation,
-    "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage"
+    "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage" | "targetRegion"
   >;
 }): ((continuesCall: boolean) => LiveCall) | null {
   const data = readSavedScenario(row);
@@ -187,6 +188,7 @@ export function getLiveCallBuilder({
     level: row.level,
     scenario: data,
     targetLanguage: row.targetLanguage,
+    targetRegion: row.targetRegion,
   };
 
   const examiner =
@@ -200,6 +202,7 @@ export function getLiveCallBuilder({
       examiner,
       language: getLiveConversationLanguageName(params),
       openingLine: data.openingLine,
+      variety: hasLiveCallVariety(params),
     }),
   });
 }

@@ -35,6 +35,7 @@ export function toConversationData(input: Omit<NewConversation, "markChanged">) 
     sectionId: input.sectionId ?? null,
     studyBlockId: input.studyBlockId ?? null,
     targetLanguage: input.targetLanguage,
+    targetRegion: input.goal?.targetRegion ?? null,
     titleSnapshot: input.scenario.title,
     userId: input.userId,
   };
