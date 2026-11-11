@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -82,6 +83,7 @@ import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
+import com.zoonk.api.models.SavedMindMapKind
 import java.util.UUID
 import kotlin.math.exp
 
@@ -90,6 +92,7 @@ internal data class ViewedMap(
     val title: String,
     val image: MindMapImage?,
     val outline: MindMapOutline,
+    val saved: Boolean = false,
 )
 
 /**
@@ -119,7 +122,7 @@ fun MindMapScreen(
             listed.value
                 ?.chapters
                 ?.firstOrNull { it.chapterId == chapterId && it.status == GoalMindMap.Status.READY }
-                ?.let { map -> map.outline?.let { ViewedMap(map.title, map.image, it) } }
+                ?.let { map -> map.outline?.let { ViewedMap(map.title, map.image, it, map.saved) } }
         val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goal.id, chapterId))
 
         when (viewed) {
@@ -133,11 +136,15 @@ fun MindMapScreen(
 
             is Viewed.Shown -> {
                 val maps = host.maps(goal.id)
+                val saves by maps.saves.collectAsStateWithLifecycle()
+                val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+                val saved = saves[target] ?: viewed.map.saved
                 CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                     MindMapViewer(
-                        viewed.map,
+                        viewed.map.copy(saved = saved),
                         onClose = close,
                         onSave = viewed.map.image?.let { rememberSavePicture(maps, it, viewed.map.title) },
+                        onBookmark = { maps.save(target, chapterId, !saved) },
                     )
                 }
             }
@@ -165,7 +172,11 @@ private fun chapterMap(
     val map = state.value
     return when {
         map != null -> {
-            map.outline?.takeIf { map.status == ChapterMindMap.Status.READY }?.let { Viewed.Shown(ViewedMap(map.title, map.image, it)) }
+            map.outline?.takeIf { map.status == ChapterMindMap.Status.READY }?.let {
+                Viewed.Shown(
+                    ViewedMap(map.title, map.image, it, map.saved),
+                )
+            }
                 ?: Viewed.Missing
         }
 
@@ -188,6 +199,7 @@ internal fun MindMapViewer(
     map: ViewedMap,
     onClose: () -> Unit,
     onSave: (() -> Unit)?,
+    onBookmark: (() -> Unit)? = null,
 ) {
     var view by rememberSaveable(stateSaver = PAN_ZOOM_SAVER) { mutableStateOf(PanZoom.FIT) }
     var frame by remember { mutableStateOf(Size.Zero) }
@@ -205,6 +217,14 @@ internal fun MindMapViewer(
                 if (image != null && !outlineBeside) {
                     TextButton(onClick = { asText = !asText }) {
                         Text(stringResource(if (asText) R.string.mindmaps_as_picture else R.string.mindmaps_as_text))
+                    }
+                }
+                if (onBookmark != null) {
+                    IconToggleButton(checked = map.saved, onCheckedChange = { onBookmark() }) {
+                        Icon(
+                            painterResource(if (map.saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
+                            contentDescription = stringResource(R.string.mindmaps_save),
+                        )
                     }
                 }
                 if (onSave != null) {

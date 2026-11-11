@@ -62,13 +62,16 @@ import com.zoonk.android.ui.theme.zoonkType
  * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
  * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
- * is a value rather than a control passes `true`.
+ * is a value rather than a control passes `true`. [onLongClick] opens what else a tappable row offers,
+ * such as a menu, which TalkBack names with [onLongClickLabel].
  */
 @Composable
 fun ListRow(
     headline: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     focusableWhenDisabled: Boolean = false,
     busy: Boolean = false,
@@ -101,7 +104,16 @@ fun ListRow(
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
                 .then(
                     if (onClick != null) {
-                        Modifier.busyClickable(busy, interaction, indication = null, enabled, focusableWhenDisabled, onClick)
+                        Modifier.busyClickable(
+                            busy,
+                            interaction,
+                            indication = null,
+                            enabled,
+                            focusableWhenDisabled,
+                            onLongClickLabel,
+                            onLongClick,
+                            onClick,
+                        )
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },

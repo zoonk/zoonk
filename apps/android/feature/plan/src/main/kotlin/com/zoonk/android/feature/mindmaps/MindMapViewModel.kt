@@ -3,6 +3,7 @@ package com.zoonk.android.feature.mindmaps
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,17 +20,21 @@ import java.util.UUID
 
 enum class PictureSave { Saved, Failed }
 
+/** What making every chapter map at once got: on its way, or a server out of reach. */
+enum class CreateAll { Pending, Unreachable }
+
 /**
- * A screen's mind maps for one session: making one only from a tap, following one while it's on its
- * way (every 4 seconds while drawing, every 15 while its lessons are written, giving up after three
- * misses in a row; the server fails a run that stops reporting), and saving a picture where the
- * learner chose.
+ * A screen's mind maps for one session: making one, or all of them, only from a tap, following one
+ * while it's on its way (every 4 seconds while drawing, every 15 while its lessons are written,
+ * giving up after three misses in a row; the server fails a run that stops reporting), saving a map
+ * to study again, and saving a picture where the learner chose.
  */
 class MindMapViewModel(
     private val store: MindMapStore,
     private val session: AuthenticatedSession,
     private val goalId: UUID,
     private val currentSession: () -> AuthenticatedSession?,
+    private val saveFailed: () -> Unit = {},
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
@@ -42,6 +47,55 @@ class MindMapViewModel(
 
     private val saved = MutableStateFlow<PictureSave?>(null)
     val save: StateFlow<PictureSave?> = saved.asStateFlow()
+
+    private val wanted = MutableStateFlow<Map<MindMapTarget, Boolean>>(emptyMap())
+
+    /** What the learner asked for each map whose save is on its way; the reads say the rest. */
+    val saves: StateFlow<Map<MindMapTarget, Boolean>> = wanted.asStateFlow()
+    private val sending = mutableSetOf<MindMapTarget>()
+
+    private val all = MutableStateFlow<CreateAll?>(null)
+    val createAll: StateFlow<CreateAll?> = all.asStateFlow()
+
+    /**
+     * Shows [saved] at once and sends it. Taps while one is on its way only change what's wanted,
+     * and the last one wanted is sent after it, so the server ends on the learner's last tap. A
+     * failure shows the reads again and says so.
+     */
+    fun save(
+        target: MindMapTarget,
+        chapterId: UUID?,
+        saved: Boolean,
+    ) {
+        wanted.update { it + (target to saved) }
+        if (!sending.add(target)) return
+
+        viewModelScope.launch {
+            while (true) {
+                val sent = wanted.value[target] ?: break
+                val result = store.save(goalId, target, chapterId, sent)
+                if (result !is MutationResult.Done) {
+                    wanted.update { it - target }
+                    if (result is MutationResult.Failed) saveFailed()
+                    break
+                }
+                if (wanted.value[target] == sent) {
+                    wanted.update { it - target }
+                    break
+                }
+            }
+            sending.remove(target)
+        }
+    }
+
+    /** Create all chapter maps: the list, read again, shows them on their way. */
+    fun createAll() {
+        if (all.value == CreateAll.Pending) return
+        all.value = CreateAll.Pending
+        viewModelScope.launch {
+            all.value = if (store.createAll(goalId) == false) CreateAll.Unreachable else null
+        }
+    }
 
     /** Create and Try again. */
     fun create(chapterId: UUID) {

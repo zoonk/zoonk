@@ -12,4 +12,5 @@ fun EntryProviderScope<NavKey>.mindMapsEntries(
 ) {
     entry<AppRoute.MindMaps> { MindMapsScreen(it, app, navigator) }
     entry<AppRoute.MindMap> { MindMapScreen(it, app, navigator) }
+    entry<AppRoute.MindMapStudy> { MindMapStudyScreen(it, app, navigator) }
 }

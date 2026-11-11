@@ -16,6 +16,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
+import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -512,11 +513,100 @@ class MindMapViewModelTest {
             assertEquals(PictureSave.Failed, maps.save.value)
         }
 
-    private fun TestScope.setUp(): Triple<MindMapViewModel, MindMapStore, AppCache> {
+    @Test
+    fun aSaveShowsAtOnceThenTheListShowsWhatTheServerKept() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready", saved = true))) }
+
+            maps.save(target, chapterId, saved = true)
+            assertEquals(true, maps.saves.value[target])
+            advanceUntilIdle()
+
+            assertEquals(listOf(target to true), api.saved)
+            assertNull(maps.saves.value[target])
+            assertTrue(store.listed(chapterId).saved)
+            shown.cancel()
+        }
+
+    @Test
+    fun tapsWhileASaveIsOnItsWayEndOnTheLastOne() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.LESSON, UUID.fromString(mapLesson(1)))
+            val first = CompletableDeferred<Unit>()
+            api.save = { t, saved ->
+                if (api.saved.size == 1) first.await()
+                savedState(t, saved)
+            }
+
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+            maps.save(target, chapterId, saved = false)
+            maps.save(target, chapterId, saved = true)
+            maps.save(target, chapterId, saved = false)
+            advanceUntilIdle()
+            assertEquals(listOf(target to true), api.saved)
+            assertEquals(false, maps.saves.value[target])
+
+            first.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf(target to true, target to false), api.saved)
+            assertNull(maps.saves.value[target])
+        }
+
+    @Test
+    fun aFailedSaveShowsTheReadsAgainAndSaysSo() =
+        runTest(dispatcher) {
+            var said = 0
+            val (maps) = setUp(saveFailed = { said++ })
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            api.save = { _, _ -> throw ApiException(ApiError.Unavailable) }
+
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+
+            assertNull(maps.saves.value[target])
+            assertEquals(1, said)
+        }
+
+    @Test
+    fun creatingEveryMapReadsTheListAgainAndSaysWhenTheServerWasOutOfReach() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            val reads = api.lists
+
+            maps.createAll()
+            assertEquals(CreateAll.Pending, maps.createAll.value)
+            advanceUntilIdle()
+            assertEquals(1, api.createdAll)
+            assertEquals(reads + 1, api.lists)
+            assertNull(maps.createAll.value)
+
+            api.createAll = { throw ApiException(ApiError.Network) }
+            maps.createAll()
+            advanceUntilIdle()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+            shown.cancel()
+        }
+
+    private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return Triple(MindMapViewModel(store, ana, goalId, { current }, io = dispatcher), store, cache)
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, io = dispatcher), store, cache)
     }
+
+    private fun MindMapStore.listed(id: UUID) =
+        list[goalId]
+            .state.value.value!!
+            .chapters
+            .first { it.chapterId == id }
 
     private fun MindMapStore.chapterShown() =
         chapter[key]
