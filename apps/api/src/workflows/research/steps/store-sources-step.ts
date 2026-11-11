@@ -84,7 +84,8 @@ async function storeDownloadedSourceStep(input: StoreSourceInput): Promise<strin
 }
 
 export async function storeSource(input: StoreSourceInput): Promise<StoredSource> {
-  const subject = await sourceSearchSubjectStep(input);
+  // A copy the Library holds can sit on any site, and one that must be official is downloaded.
+  const subject = input.officialDomains ? null : await sourceSearchSubjectStep(input);
 
   const copyId = subject
     ? await findSourceCopyStep({

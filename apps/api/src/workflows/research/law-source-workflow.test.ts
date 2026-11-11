@@ -121,6 +121,33 @@ describe(lawSourceWorkflow, () => {
     expect(fetchedUrls()).toStrictEqual([refused.url, camara.url]);
   });
 
+  it("downloads an official address even when the Library holds a mirror of the same law", async () => {
+    const law = lawToLookUp();
+    const word = `zq${randomUUID().replaceAll("-", "").slice(0, 10)}`;
+    const official = lawAddress({ title: `Lei nº 12.813 ${word}` });
+
+    const mirror = await sourceFixture({
+      extractedText: LAW_TEXT,
+      language: "pt",
+      structure: { images: 0, pages: null, topic: "regulation" },
+      title: official.title,
+      url: `https://www.jusbrasil.com.br/${randomUUID()}`,
+    });
+
+    vi.mocked(generateSearchTerms).mockResolvedValue(taskResult({ subjects: [{ terms: [word] }] }));
+
+    findAddresses([official]);
+    servePages({ [official.url]: LAW_TEXT });
+    judgeAsLaw((url) => url === official.url || url === mirror.url);
+
+    await lawSourceWorkflow({ law });
+
+    const lookup = await readLawLookup(law);
+    const source = await prisma.source.findUniqueOrThrow({ where: { id: lookup?.sourceId ?? "" } });
+
+    expect(source.url).toBe(official.url);
+  });
+
   it("records that no text was found when the judge reads none of the addresses as the law", async () => {
     const law = lawToLookUp();
     const index = lawAddress({});
@@ -150,6 +177,7 @@ describe(lawSourceWorkflow, () => {
     const stored = await sourceFixture({
       extractedText: LAW_TEXT,
       language: "pt",
+      readVersion: 1,
       structure: { images: 0, pages: null, topic: "regulation" },
       title: `Lei nº 12.813 ${law.searchTerms[0]}`,
       url: `https://www.planalto.gov.br/ccivil_03/${randomUUID()}.htm`,
