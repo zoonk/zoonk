@@ -114,20 +114,20 @@ const ACCENTLESS_WORDS: Readonly<Record<string, ReadonlySet<string>>> = {
   ]),
 };
 
-/** Endings no word has without the accent: Portuguese "-ção", "-ções", "-ssão", Spanish "-ción". */
+/**
+ * Endings no word has without the accent: Portuguese "-ção", "-ções", "-ssão", Spanish "-ción",
+ * apart from English words that end the same way.
+ */
 const ACCENTLESS_ENDINGS: Readonly<Record<string, RegExp>> = {
-  es: /^[a-z]{3,}cion$/u,
+  es: /^(?!(?:coer|s|suspi)cion$)[a-z]{3,}cion$/u,
   pt: /^[a-z]{2,}(?:cao|coes|ssao|ssoes)$/u,
 };
 
 /**
- * Real words of a practiced language that look like another's accentless ones: Italian "voce" is
- * Portuguese "você" stripped. English shows up in every language's text, so its words always pass.
+ * Real words of a practiced language that look like another's accentless ones, in the case they're
+ * written in: Italian "voce" passes, but Portuguese "Voce" opening a sentence is still "Você".
  */
-const WORDS_ELSEWHERE: Readonly<Record<string, ReadonlySet<string>>> = {
-  en: new Set(["coercion", "scion", "suspicion"]),
-  it: new Set(["voce"]),
-};
+const WORDS_ELSEWHERE: Readonly<Record<string, ReadonlySet<string>>> = { it: new Set(["voce"]) };
 
 /** Composite codes `Intl` gives for scripts written with more than one Unicode script. */
 const WRITING_SYSTEMS: Readonly<Record<string, readonly string[]>> = {
@@ -179,8 +179,8 @@ function findInputScripts(input: string): string[] {
 
 const WORD = /[\p{L}\p{M}]+/gu;
 
-/** A Greek letter on its own is a math or science symbol ("π", "Δx"); a Greek word is Greek. */
-const GREEK_SYMBOL = /(?<!\p{scx=Grek})\p{scx=Grek}(?!\p{scx=Grek})/gu;
+/** One or two Greek letters are math or science symbols ("π", "Δθ"); a longer run is a Greek word. */
+const GREEK_SYMBOL = /(?<!\p{scx=Grek})\p{scx=Grek}{1,2}(?!\p{scx=Grek})/gu;
 
 /** A key, slug, enum or URL ("comunicacao", "regra-de-tres"): ids and codes, not prose. */
 const IDENTIFIER = /^(?:https?:\/\/\S+|[a-z\d]+(?:[-_./][a-z\d]+)*)$/u;
@@ -243,7 +243,7 @@ function isAccentless({
   const words = ACCENTLESS_WORDS[language];
   const ending = ACCENTLESS_ENDINGS[language];
 
-  const elsewhere = ["en", ...otherLanguages].some((other) => WORDS_ELSEWHERE[other]?.has(lower));
+  const elsewhere = otherLanguages.some((other) => WORDS_ELSEWHERE[other]?.has(word));
 
   return !elsewhere && Boolean(words?.has(lower) || ending?.test(lower));
 }
