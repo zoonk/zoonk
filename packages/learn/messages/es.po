@@ -4009,6 +4009,7 @@ msgid "Done. Your plan now gives these more time."
 msgstr "Listo. Tu plan ahora dedica más tiempo a estas materias."
 
 #: src/focus-test/focus-test-checkpoint.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "Actualizar mi plan"
@@ -12152,6 +12153,11 @@ msgstr "Para tu nuevo nivel, estas habilidades van primero: {skills}."
 msgctxt "Bot8U5"
 msgid "More time for {areas}, where it's needed most."
 msgstr "Más tiempo para {areas}, donde más hace falta."
+
+#: src/plan/use-change-sentence.ts
+msgctxt "_Ps9uY"
+msgid "More time for {areas}, from your Focus test."
+msgstr "Más tiempo para {areas}, según tu Prueba de enfoque."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"

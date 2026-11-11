@@ -4009,6 +4009,7 @@ msgid "Done. Your plan now gives these more time."
 msgstr "変更しました。これらの科目に多くの時間を割く学習計画になりました。"
 
 #: src/focus-test/focus-test-checkpoint.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "学習計画を更新する"
@@ -12152,6 +12153,11 @@ msgstr "新しいレベルでは、{skills}を先に学びます。"
 msgctxt "Bot8U5"
 msgid "More time for {areas}, where it's needed most."
 msgstr "特に学習が必要な{areas}に、より多くの時間をかけます。"
+
+#: src/plan/use-change-sentence.ts
+msgctxt "_Ps9uY"
+msgid "More time for {areas}, from your Focus test."
+msgstr "重点診断の結果をもとに、{areas}の学習時間を増やします。"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"

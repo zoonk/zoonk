@@ -1,5 +1,6 @@
 "use client";
 
+import { FOCUS_TEST_SOURCE } from "@zoonk/core/learner/placement/focus-test-contract";
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
@@ -107,7 +108,9 @@ function ChangeActions({
     <SuggestionActions>
       {change.canApply && (
         <SuggestionAction disabled={disabled} onClick={() => onAnswer("applied")}>
-          {overridesNotice ? t("Use my date anyway") : t("Apply")}
+          {overridesNotice && t("Use my date anyway")}
+          {!overridesNotice &&
+            (change.source === FOCUS_TEST_SOURCE ? t("Update my plan") : t("Apply"))}
         </SuggestionAction>
       )}
 

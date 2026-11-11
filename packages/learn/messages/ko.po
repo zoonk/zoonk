@@ -4009,6 +4009,7 @@ msgid "Done. Your plan now gives these more time."
 msgstr "반영했어요. 이제 이 과목들에 학습 시간을 더 배정해요."
 
 #: src/focus-test/focus-test-checkpoint.tsx
+#: src/today/today-plan-change.tsx
 msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "내 계획 바꾸기"
@@ -12152,6 +12153,11 @@ msgstr "새로운 수준에 맞춰 {skills}부터 학습해요."
 msgctxt "Bot8U5"
 msgid "More time for {areas}, where it's needed most."
 msgstr "가장 연습이 필요한 {areas} 영역에 시간을 더 써요."
+
+#: src/plan/use-change-sentence.ts
+msgctxt "_Ps9uY"
+msgid "More time for {areas}, from your Focus test."
+msgstr "집중 진단 결과에 따라 {areas}에 시간을 더 배분해요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"

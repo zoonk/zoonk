@@ -2,6 +2,7 @@
 
 import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type LanguageActivityType } from "@zoonk/core/language/activities";
+import { FOCUS_TEST_SOURCE } from "@zoonk/core/learner/placement/focus-test-contract";
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { OWN_LEVEL_SOURCE } from "@zoonk/core/plans/own-level-contract";
@@ -250,6 +251,16 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
 
     if (change.source === REBALANCE_SOURCE && first?.kind === "focusAreas") {
       return t("More time for {areas}, where it's needed most.", {
+        areas: format.list(first.areas, { type: "conjunction" }),
+      });
+    }
+
+    if (
+      change.source === FOCUS_TEST_SOURCE &&
+      first?.kind === "focusAreas" &&
+      first.areas.length > 0
+    ) {
+      return t("More time for {areas}, from your Focus test.", {
         areas: format.list(first.areas, { type: "conjunction" }),
       });
     }
