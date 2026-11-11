@@ -170,6 +170,7 @@ describe("write outcome analytics", () => {
       status: "fixed",
       userId: user.id,
     });
+
     const input = { blockId: block.id, sessionId: session.id, timeZone: "UTC", userId: user.id };
     await settleMissions(input);
     await settleMissions(input);
