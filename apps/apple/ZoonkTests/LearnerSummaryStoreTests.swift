@@ -177,7 +177,8 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
       goals: region.map { region in
         [
           LearnerGoal(
-            dailyMinutes: 15, id: "goal", kind: .language, language: "en", status: .active, targetDate: nil,
+            dailyMinutes: 15, id: "goal", kind: .language, language: "en", status: .active,
+            targetDate: nil,
             displayName: "Spanish", title: "Learn Spanish",
             variety: LanguageVariety(
               language: "es", region: region,
@@ -189,7 +190,8 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
         ?? contentCountry.map { country in
           [
             LearnerGoal(
-              dailyMinutes: 15, id: "finance", kind: .learn, language: "en", status: .active, targetDate: nil,
+              dailyMinutes: 15, id: "finance", kind: .learn, language: "en", status: .active,
+              targetDate: nil,
               displayName: "Personal finance", title: "Personal finance",
               contentCountry: Self.row(country, rebuild: .none))
           ]
