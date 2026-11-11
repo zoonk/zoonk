@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "23ded3dacde6be2cd71f531bda3bc69185251ef8b3990298cdae67b2dd7d3af2",
-  "pronunciation_comes_back": "2c84686d62e26601440f1c1c1eef6fe4cba39494dc669c078a97e50fb9cc5917",
+  "pronunciation_accent": "ee2b7cd29db587159add25e039fcdaaf16b9551abfd33182392615971f097f81",
   "pronunciation_continue": "8dd5f087670b30801618d8224a5f64ea11ad4675843051882d66cdf5c94be897",
   "pronunciation_done": "553bf1e6c41559c70790808ca98742dbb745e6a0e2abb44908b9def3a7228204",
   "pronunciation_failed": "628819987733f1b00adefa951f4c64f9c8849140fa324e41ca926db05fc26fae",
   "pronunciation_grading": "e704f2ee6e11f45c863ac7fbd3c91bda0ad318c7ed50bc22d80fd2d015123d38",
   "pronunciation_heard": "d5a96ceef2a9a907d288e2c14b53d6c7b31d9c1dac9157a9d5ed88832d657455",
-  "pronunciation_learned": "db42fc1ba44ce52feca90e6de2d804061f47c94938736f2c620bf8c5353a374f",
   "pronunciation_listen": "76ac75c032492fa7783783865e222450324c2d02fb6203521896c51b8b1980b8",
   "pronunciation_listen_slowly": "254bfbb9b2e6c5fbee2a5baf92e798ca2feddf6619186b38187dd1c5cbef6f73",
   "pronunciation_microphone_off": "150f4365cae63d4fdd09ff15cef841a0d3d953f6ef7f2dbe6ddc8f5b66b48b46",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">Doğru söyledin</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">“%1$s” duyduk</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">%1$s tarihinde tekrar gelecek.</string>
-    <string name="pronunciation_learned">Bu kelimeyi artık doğru söylüyorsun. Bir daha karşına çıkmayacak.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Tekrar dene</string>
     <!-- Goes on to the next word. -->
@@ -64,7 +59,7 @@
     <string name="pronunciation_no_words">Bugün tekrar söylemen gereken kelime yok.</string>
     <string name="pronunciation_practice_done">Alıştırma tamamlandı</string>
     <string name="pronunciation_nothing_said">Bu kez hiçbir şey söylemedin</string>
-    <string name="pronunciation_accent">Aksanın sana asla engel olmaz. Hâlâ farklı telaffuz ettiğin kelimeler yarın tekrar karşına çıkar.</string>
+    <string name="pronunciation_accent">Aksanın sana asla engel olmaz.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Kapat</string>
 </resources>

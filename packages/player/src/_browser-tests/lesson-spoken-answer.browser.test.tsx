@@ -302,7 +302,6 @@ describe("spoken answers", () => {
           feedback: null,
           isCorrect: false,
           keyPoints: null,
-          nextReviewAt: null,
           savedMistake: false,
           score: 0,
           spelling: null,

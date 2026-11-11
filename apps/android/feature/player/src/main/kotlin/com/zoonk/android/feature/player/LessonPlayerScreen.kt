@@ -810,7 +810,6 @@ private fun Result(
 
     val next =
         ResultNext(
-            nextReviewAt = result.nextReviewAt,
             savedMistake = result.savedMistake && !result.isCorrect,
             willReturn = !result.isCorrect && state.queue.drop(state.position + 1).contains(step.id),
         )

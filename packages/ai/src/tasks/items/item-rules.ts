@@ -22,6 +22,7 @@ export type ItemRulesScope = {
   /** By default when their formats can. A set's questions share the set's stimulus instead. */
   pictures?: boolean;
   severalPicks?: boolean;
+  usedSituations?: boolean;
 };
 
 const typedRules = typedSpokenRules.replace("{{TYPED_QUESTION}}\n", () => typedQuestionRules);
@@ -68,6 +69,7 @@ function buildItemRules({
   numericEntry = false,
   pictures,
   severalPicks = false,
+  usedSituations = false,
 }: ItemRulesScope): string {
   const rules = itemRulesTemplate
     .replace("{{FIELD_RULE}}", () => (field ? ` ${fieldRule.trim()}` : ""))
@@ -81,7 +83,7 @@ function buildItemRules({
 
   return selectPromptVariants({
     template: rules,
-    variants: { numericEntry, onePick: !severalPicks, severalPicks },
+    variants: { numericEntry, onePick: !severalPicks, severalPicks, usedSituations },
   });
 }
 

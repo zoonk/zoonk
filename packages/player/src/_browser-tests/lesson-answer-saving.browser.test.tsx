@@ -25,7 +25,6 @@ import { teachingStep } from "../preview/preview-steps";
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const WRONG_OPTION = "The electron's exact path";
 const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u;
-const MS_PER_DAY = 86_400_000;
 const NOT_SAVED = "Not saved yet";
 const EXPLANATION = "A cloud, not a little ball";
 const QUESTION = 'What does the electron "cloud" show?';
@@ -161,7 +160,6 @@ describe("saving answers", () => {
         feedback: null,
         isCorrect: false,
         keyPoints: null,
-        nextReviewAt: new Date(Date.now() + 3 * MS_PER_DAY).toISOString(),
         savedMistake: true,
         score: null,
         spelling: null,
@@ -178,10 +176,6 @@ describe("saving answers", () => {
 
     await expect
       .element(page.getByText("Saved to your mistakes", { exact: false }))
-      .not.toBeInTheDocument();
-
-    await expect
-      .element(page.getByText("This idea comes back", { exact: false }))
       .not.toBeInTheDocument();
   });
 

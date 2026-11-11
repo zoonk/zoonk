@@ -641,32 +641,19 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(7, repeated))).toStrictEqual([[7, "repeatedQuestion"]]);
   });
 
-  it("keeps the summary card to one distinct sentence per idea", () => {
+  it("keeps the summary card's ideas distinct, and leaves their length to the writer", () => {
     const lesson = writtenTemperatureLesson();
 
     expect(
       codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "A rise moves up."]) }),
     ).toContainEqual([null, "summary"]);
 
-    expect(codesOf({ ...lesson, summary: hubMap(["One. Two. Three."]) })).toContainEqual([
+    expect(codesOf({ ...lesson, summary: hubMap(["One. Two. Three."]) })).not.toContainEqual([
       null,
       "summary",
     ]);
 
     expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
-  });
-
-  it("counts a Japanese summary idea's sentences, which end on 。 with no space after", () => {
-    const lesson = writtenTemperatureLesson();
-
-    const japanese = (text: string) =>
-      codesOf({ ...lesson, summary: hubMap([text]) }, { language: "ja" });
-
-    expect(
-      japanese("資産は会社が持つものです。負債は返すお金です。純資産は残りです。"),
-    ).toContainEqual([null, "summary"]);
-
-    expect(japanese("資産は会社が持つものです。")).not.toContainEqual([null, "summary"]);
   });
 
   it("opens every lesson with a scene and writes a guess only where the plan puts one", () => {

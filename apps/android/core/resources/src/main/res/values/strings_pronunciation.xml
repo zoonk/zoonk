@@ -18,9 +18,6 @@
     <string name="pronunciation_sounded_right">That sounded right</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">We heard “%1$s”</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">It comes back %1$s.</string>
-    <string name="pronunciation_learned">You\'ve got this one. It won\'t come back.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Try again</string>
     <!-- Goes on to the next word. -->
@@ -33,7 +30,7 @@
     <string name="pronunciation_no_words">No words to say again today.</string>
     <string name="pronunciation_practice_done">Practice done</string>
     <string name="pronunciation_nothing_said">Nothing said this time</string>
-    <string name="pronunciation_accent">An accent never blocks you. Words that still sound different come back tomorrow.</string>
+    <string name="pronunciation_accent">An accent never blocks you.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Done</string>
 </resources>

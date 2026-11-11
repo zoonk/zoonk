@@ -23,11 +23,6 @@
   "practice_progress": "0d9a9c053215d37462b9d63ae3d509135d3197ae1904dba9e5e112a4fe563e3a",
   "practice_save_error": "d19c62b26b29f79b0db82d65a2dd9067caeb416cc2e2c0cce4f3729b654ec827",
   "practice_save_error_repeat": "f78d770ea3afabde1aedc0ba59e9436f877de5d3ea39a1cf3a754d4987cf60cf",
-  "practice_time_machine_answered": "3988713f5625c676020e30f7118a6bb68af89d0bfa92b111286490d3cb6c14a0",
-  "practice_time_machine_right_again": "88f65133907e8cd70178da3db13cd9380db7a03cd4d09983dd413e253c6c72ad",
-  "practice_time_machine_right_before": "13eeff7f7be1233ed17149223b07580ec19a278d25185631f3b695e5da7d33c7",
-  "practice_time_machine_seen": "e248d658da1ebabec646ec4b733746b5dfab85aea1c158203ec0754420184ff8",
-  "practice_time_machine_tripped": "0c0319bf91195dd0f3d4c32b6978bd86c8ad0918a96c967943b4a65490a84707",
   "practice_try_again": "c4610bd3d9e58061714b3e81308e0988b2018b86112407a3b3c8aa69524221d0",
   "practice_undo": "93af03b608e18cc636a5180640da2b41162c746a2984c48868ec1bd0b48f0565",
   "practice_undo_failed": "014d038054c998964c252d01ffebe108163dc584d8b9067250867f681c3802e2"
@@ -63,13 +58,6 @@
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">1問間違えると、正解1問分が差し引かれます。自信がないときは、空欄のままにしてください。</string>
-    <!-- %1$s is a day and month, like October 8. -->
-    <string name="practice_time_machine_seen">%1$sに見た問題です。</string>
-    <string name="practice_time_machine_right_again">%1$sに続いて、今回も正解です。</string>
-    <string name="practice_time_machine_right_before">%1$sには正解しています。今復習すると、記憶に残りやすくなります。</string>
-    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
-    <string name="practice_time_machine_answered">%1$sには「%2$s」と回答しました。</string>
-    <string name="practice_time_machine_tripped">%1$sには、この問題でつまずきました。</string>
     <string name="practice_pause_text">何問か間違いが続いています。ひと休みすると、集中しやすくなります。今日取り組んだ分は、すべて学習の積み重ねになっています。</string>
     <string name="practice_pause_stop">今日はここまでにする</string>
     <string name="practice_pause_failed">学習を終了できませんでした。もう一度お試しください。</string>

@@ -45,7 +45,6 @@
   "questions_right": "d399db5c429f4f92089bbf9daded23e14ca60e69cc43001022563fab9469a5da",
   "questions_right_answer": "76ee67c2a648f47a631f77c8244a374a85c4f63b4292243cbc74f79a6a1d1040",
   "questions_saved": "7aa1fd07cbf13ebd6a3ba61355a7a44ccee67cf3c59479f19127e38c27fd3b0c",
-  "questions_saved_tomorrow": "c2e6bdc40bdc6b4d4d8620324a3794a5b91b7c25a4b43aafd8cf453440da901e",
   "questions_set_place_audio": "aaae5dc856dd89431f9522348f3f88894303ae9dfeffa5ab7424704df05aa857",
   "questions_set_place_case": "556b8eba5bf8c544e78c35ac27495c6e52991fa0df24130069054e615630a2c8",
   "questions_set_place_chart": "36189efd92703b9e7bdefe053e64030cbda6a44d8d1297fafec7ec77549c220f",
@@ -108,7 +107,6 @@
         <item quantity="other">오답 %d개를 고쳤어요. 오답 노트에서 사라져요.</item>
     </plurals>
     <string name="questions_saved">오답 노트에 저장했어요</string>
-    <string name="questions_saved_tomorrow">오답 노트에 저장했어요 · 내일 다시 나와요</string>
     <string name="questions_show_less">접기</string>
     <string name="questions_read_again">전체 다시 읽기</string>
     <string name="questions_set_place_audio">이 녹음에 관한 %1$d번째 문제, 총 %2$d문제</string>

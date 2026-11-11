@@ -32,7 +32,6 @@ fun QuestionFeedback(
     answer: Answer,
     feedback: AnswerFeedback,
     words: TrueFalseWords,
-    examTomorrow: Boolean,
     timedOut: Boolean,
     modifier: Modifier = Modifier,
     notes: @Composable ColumnScope.() -> Unit = {},
@@ -60,7 +59,7 @@ fun QuestionFeedback(
         if (!feedback.isCorrect) WorkedSteps(feedback.workedSteps)
         question.citation?.let { ItemCitationNote(it) }
         notes()
-        MistakeNote(feedback, examTomorrow)
+        MistakeNote(feedback)
     }
 }
 
@@ -161,17 +160,13 @@ fun WorkedSteps(
 }
 
 @Composable
-private fun MistakeNote(
-    feedback: AnswerFeedback,
-    examTomorrow: Boolean,
-) {
+private fun MistakeNote(feedback: AnswerFeedback) {
     val text =
         when {
             feedback.fixedCount == 1 -> stringResource(R.string.questions_mistake_fixed)
             feedback.fixedCount > 1 -> pluralStringResource(R.plurals.questions_mistakes_fixed, feedback.fixedCount, feedback.fixedCount)
-            !feedback.savedToNotebook -> return
-            examTomorrow -> stringResource(R.string.questions_saved)
-            else -> stringResource(R.string.questions_saved_tomorrow)
+            feedback.savedToNotebook -> stringResource(R.string.questions_saved)
+            else -> return
         }
     FeedbackNote(text)
 }
