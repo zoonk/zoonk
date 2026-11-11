@@ -70,7 +70,7 @@ function FocusTestNotice({ offer }: { offer: FocusTestOffer }) {
                 {checkFocusLabel(offer.minutes)}
               </SuggestionLinkAction>
 
-              <SuggestionAction disabled={isPending} onClick={dismiss} variant="outline">
+              <SuggestionAction action={dismiss} disabled={isPending} variant="outline">
                 {t("Not now")}
               </SuggestionAction>
             </SuggestionActions>
