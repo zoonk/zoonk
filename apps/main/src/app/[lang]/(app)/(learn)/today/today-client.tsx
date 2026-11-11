@@ -113,10 +113,12 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
 
 /** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
 export function TodayClient({
+  banner,
   data,
   readAt,
   userId,
 }: {
+  banner: React.ReactNode;
   data: TodayScreenData;
   readAt: number;
   userId: string;
@@ -174,6 +176,7 @@ export function TodayClient({
 
   return (
     <TodayScreen
+      banner={banner}
       level={data.language?.level ?? null}
       readAt={readAt}
       actions={{

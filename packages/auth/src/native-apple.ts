@@ -295,7 +295,11 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
   });
 
   // The grant is already saved on the account, so nothing is revoked; the guest keeps its progress.
-  await linkNativeAppleGuest({ headers, userId: session.user.id }).catch(async (error: unknown) => {
+  await linkNativeAppleGuest({
+    headers,
+    sessionToken: session.token,
+    userId: session.user.id,
+  }).catch(async (error: unknown) => {
     await deleteAttemptSessions({ changes, responseSessionToken: session.token });
     throw error;
   });

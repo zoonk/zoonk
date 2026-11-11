@@ -350,6 +350,13 @@ msgid "Preferences"
 msgstr "Preferencje"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "-vBFap"
+msgid "Reminders"
+msgstr "Przypomnienia"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/footer-languages.tsx
 msgctxt "y1Z3or"
@@ -362,6 +369,7 @@ msgid "Couldn't open your next step. Try again."
 msgstr "Nie udało się przejść do kolejnego kroku. Spróbuj ponownie."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
 #: src/components/catalog/course-progress.tsx
 msgctxt "JIzivc"
 msgid "We couldn't switch goals. Try again."
@@ -998,6 +1006,16 @@ msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "Lekcje, powtórki i ćwiczenia na każdy dzień, by osiągnąć cel."
 
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "GdIZ3t"
+msgid "Your study reminder was for {goal}."
+msgstr "Twoje przypomnienie o nauce dotyczyło celu: {goal}."
+
+#: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
+msgctxt "h6bnZW"
+msgid "Switch to this goal"
+msgstr "Przełącz się na ten cel"
+
 #. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "hnzjLt"
@@ -1162,6 +1180,12 @@ msgstr "Zacznij od swojego celu"
 msgctxt "DId5yN"
 msgid "{email} · Plus"
 msgstr "{email} · Plus"
+
+#. Study reminders are off: the value beside the Reminders row in Settings
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+msgctxt "remindersOff"
+msgid "Off"
+msgstr "Wyłączone"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
@@ -1337,6 +1361,16 @@ msgstr "Zobacz, popraw lub usuń to, co Zoonk o tobie pamięta."
 msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "cwph5l"
+msgid "Choose when Zoonk reminds you to study, by email or push notification."
+msgstr "Wybierz, kiedy Zoonk ma przypominać ci o nauce e-mailem lub powiadomieniem push."
+
+#: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
+msgctxt "4jhMYU"
+msgid "One reminder on your study days, when you still have learning left."
+msgstr "Jedno przypomnienie w dni nauki, jeśli masz jeszcze coś do nauki."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
@@ -2658,6 +2692,46 @@ msgstr "Powiedz to jeszcze raz"
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Dzisiejsza nauka"
+
+#: src/app/[lang]/study-reminders/unsubscribe/page.tsx
+msgctxt "QacXkK"
+msgid "Email reminders"
+msgstr "Przypomnienia mailowe"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DekliR"
+msgid "Manage reminders"
+msgstr "Zarządzaj przypomnieniami"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "22mt47"
+msgid "Email reminders are off"
+msgstr "Przypomnienia mailowe są wyłączone"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "hvjqbs"
+msgid "This link is no longer active"
+msgstr "Ten link nie jest już aktywny"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "OqrvHM"
+msgid "Your other reminder settings haven't changed. You'll still get sign-in codes."
+msgstr "Pozostałe ustawienia przypomnień się nie zmieniły. Nadal będziesz dostawać kody logowania."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "c5ajtI"
+msgid "Turn off email reminders?"
+msgstr "Wyłączyć przypomnienia mailowe?"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "XZ-Fx6"
+msgid "Turn off"
+msgstr "Wyłącz"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "Nie udało się zapisać. Spróbuj ponownie."
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"

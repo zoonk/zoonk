@@ -85,6 +85,9 @@ dependencies {
     // Code sandbox.
     implementation(libs.androidx.webkit)
 
+    // Study reminder pushes.
+    implementation(libs.firebase.messaging)
+
     testFixturesImplementation(composeBom)
     testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
     testFixturesImplementation(libs.kotlinx.coroutines.test)

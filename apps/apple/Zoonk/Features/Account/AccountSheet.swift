@@ -11,6 +11,7 @@ private enum AccountDestination: Hashable {
   case preferences
   case plus(AccountSubscription)
   case profile
+  case reminders
   case subscription(UUID)
 }
 
@@ -19,6 +20,7 @@ enum AccountPage: Hashable {
   case memory
   case preferences
   case profile
+  case reminders
 }
 
 extension AccountDestination {
@@ -28,6 +30,7 @@ extension AccountDestination {
     case .memory: self = .memory
     case .preferences: self = .preferences
     case .profile: self = .profile
+    case .reminders: self = .reminders
     }
   }
 }
@@ -199,6 +202,10 @@ struct AccountSheet: View {
       }
     case .preferences:
       PreferencesView()
+    case .reminders:
+      RemindersView {
+        path.append(.createAccount)
+      }
     case .profile:
       // A guest has no profile: creating the account gives them one.
       if isGuest {
@@ -319,7 +326,7 @@ struct AccountSheet: View {
     case .signedOut, .unavailable:
       switch path.last {
       case .aboutYou, .aboutYouQuestion, .certificate, .certificates, .createAccount, .memory,
-        .plus, .preferences, .profile, .subscription:
+        .plus, .preferences, .profile, .reminders, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -337,6 +344,7 @@ private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
+  @Environment(StudyRemindersStore.self) private var reminders
   @ScaledMetric(relativeTo: .body) private var avatarSize = 36.0
 
   let account: CurrentAccount
@@ -392,6 +400,25 @@ private struct SettingsHubView: View {
                 Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)")
               } else {
                 Text(appLanguageName)
+              }
+            }
+            .typeStyle(.meta)
+          }
+        }
+
+        AccountSectionLink(destination: .reminders, sectionOpen: sectionOpen) {
+          ListRow(
+            Text("Reminders", tableName: "Account", comment: "Settings row for study reminders")
+          ) {
+            EmptyView()
+          } trailing: {
+            Group {
+              if let reminder = reminders.reminder.value {
+                if reminder.emailOn || reminder.pushOn {
+                  Text(ReminderTime.formatted(reminder.time))
+                } else {
+                  Text("Off", tableName: "Account", comment: "Study reminders are off")
+                }
               }
             }
             .typeStyle(.meta)
@@ -467,7 +494,9 @@ private struct SettingsHubView: View {
         }
       }
     }
-    .loads(settings.preferences, settings.memory, certificates.list, refreshable: false)
+    .loads(
+      settings.preferences, settings.memory, reminders.reminder, certificates.list,
+      refreshable: false)
   }
 
   private var isGuest: Bool {

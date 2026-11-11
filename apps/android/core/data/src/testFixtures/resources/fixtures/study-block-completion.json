@@ -14,6 +14,7 @@
   "netScore": null,
   "nextBlockId": null,
   "reached": { "energy": null, "level": null },
+  "reminderOffer": null,
   "sessionBar": { "completed": 1, "total": 3 },
   "deferredLessonsCount": 0,
   "minutes": { "dailyGoal": 0, "done": 0, "left": 0, "planned": 0 },

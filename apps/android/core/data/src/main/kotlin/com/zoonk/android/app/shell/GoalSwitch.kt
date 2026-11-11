@@ -13,6 +13,7 @@ import java.util.UUID
  * meanwhile, and a tap on Today's Start would open that goal's session.
  */
 class GoalSwitch(
+    private val ready: suspend () -> Unit = {},
     private val makeActive: suspend (UUID) -> Boolean,
 ) {
     private val target = MutableStateFlow<UUID?>(null)
@@ -32,6 +33,8 @@ class GoalSwitch(
         shown: List<Resource<*>>,
         shows: (UUID) -> Boolean,
     ): Boolean? {
+        // A tapped reminder can start the app: its switch waits for the stored session to be back.
+        ready()
         if (writing.value) return null
         writing.value = true
         target.value = goalId

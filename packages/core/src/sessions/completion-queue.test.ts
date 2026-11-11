@@ -26,6 +26,7 @@ const RESULT = {
   correct: 0,
   finishedChapter: null,
   netScore: null,
+  reminderOffer: null,
   testOutOffer: null,
   topHyperdrive: 0,
   total: 0,
