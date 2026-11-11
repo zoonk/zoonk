@@ -2,7 +2,7 @@
 
 import { type TodayNoticeKind } from "@zoonk/core/view-models/today/notice";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import { useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
@@ -11,25 +11,14 @@ import { TodayExamMoment } from "./today-exam-moment";
 import { TodayInsight } from "./today-insight";
 import { TodayPlanChange } from "./today-plan-change";
 import { TodaySuggestedGoal } from "./today-suggested-goal";
-
-/**
- * Next.js keeps a page the learner leaves mounted but hidden, so a visit ends when Today hides,
- * not when it unmounts.
- */
-function useVisit(): number {
-  const [visit, setVisit] = useState(0);
-
-  useLayoutEffect(() => () => setVisit((current) => current + 1), []);
-
-  return visit;
-}
+import { useTodayVisit } from "./use-today-visit";
 
 /**
  * Today's notice follows its latest read until the learner touches it, so a notice due now replaces
  * an older one; from then on it stays for the visit, so answering it shows what the answer did.
  */
 function useShownNotice(picked: TodayNoticeKind | null) {
-  const visit = useVisit();
+  const visit = useTodayVisit();
   const [held, setHeld] = useState<{ kind: TodayNoticeKind; visit: number } | null>(null);
   const kind = held?.visit === visit ? held.kind : picked;
 

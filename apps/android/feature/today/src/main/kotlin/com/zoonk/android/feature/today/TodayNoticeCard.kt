@@ -72,8 +72,9 @@ internal fun TodayNotice(
     val read = state.read
     val viewModel = state.viewModel
     val picked = read.today.notice
-    LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id, state.settled) {
-        viewModel.holdNotice(read, picked, state.settled)
+    val opens = state.settled || viewModel.isAnsweringNotice
+    LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id, opens) {
+        viewModel.holdNotice(read, picked, opens)
     }
     val hold = viewModel.heldNotice(read)
 

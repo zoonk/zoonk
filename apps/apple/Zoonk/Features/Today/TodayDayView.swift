@@ -95,6 +95,11 @@ struct TodayDayView: View {
         countNotice()
       }
     }
+    .onChange(of: examChoice != nil) {
+      if examChoice != nil {
+        holdShownNotice()
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
@@ -203,6 +208,7 @@ struct TodayDayView: View {
         isOpen: $disclosures.planChange, isSaving: busy == .planChange,
         failed: failed == .planChange
       ) { decision in
+        holdShownNotice()
         perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
       } showNext: {
         disclosures.planChange = false
@@ -271,6 +277,7 @@ struct TodayDayView: View {
         TodayUploadRequestSection(
           request: request, answered: answeredUpload != nil, draft: $uploadDraft
         ) {
+          holdShownNotice()
           answeredUpload = request
         }
       }
@@ -448,7 +455,23 @@ struct TodayDayView: View {
   }
 
   private var settledNotice: TodayView.Notice? {
-    store.today.isRefreshing || store.today.isInvalidated ? nil : view.notice
+    if store.today.isRefreshing {
+      return nil
+    }
+
+    if case .loading = store.today.freshState {
+      return nil
+    }
+
+    return view.notice
+  }
+
+  /// Answering the stored day's notice before the newer read lands holds it, so its result stays.
+  private func holdShownNotice() {
+    if shownNotice == nil {
+      shownNotice = view.notice
+      countNotice()
+    }
   }
 
   /// Main reads Today afresh on each visit (back from a lesson or another tab): what the learner

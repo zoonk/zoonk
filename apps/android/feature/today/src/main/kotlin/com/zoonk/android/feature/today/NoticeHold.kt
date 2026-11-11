@@ -7,8 +7,9 @@ import java.util.UUID
 
 /**
  * One visit to a goal's day: the notice Today named when it opened and the insight it showed, so
- * answering shows what the answer did; the next notice waits for the next visit. Today opens on its
- * first settled read, not on the stored one shown while a newer read loads.
+ * answering shows what the answer did; the next notice waits for the next visit. The visit opens on
+ * Today's first settled read, or on the one whose notice the learner answers, never on the stored day
+ * shown while a newer read loads.
  */
 data class NoticeHold(
     val goalId: UUID,
@@ -22,9 +23,9 @@ fun NoticeHold?.next(
     date: LocalDate,
     picked: Today.Notice?,
     insight: MemoryInsight?,
-    settled: Boolean,
+    opens: Boolean,
 ): NoticeHold? {
     val visit = this?.takeIf { it.goalId == goalId && it.date == date }
-    if (!settled) return visit
+    if (!opens) return visit
     return NoticeHold(goalId, date, kind = visit?.kind ?: picked, insight = insight ?: visit?.insight)
 }

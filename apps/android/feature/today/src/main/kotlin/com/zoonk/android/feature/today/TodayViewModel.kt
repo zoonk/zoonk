@@ -181,12 +181,14 @@ class TodayViewModel(
     var noticeHold by mutableStateOf<NoticeHold?>(null)
         private set
 
+    val isAnsweringNotice get() = isAnswering || isAnsweringInsight || isSavingPlanChange || isSavingExamChoice
+
     fun holdNotice(
         read: TodayRead.Day,
         picked: Today.Notice?,
-        settled: Boolean,
+        opens: Boolean,
     ) {
-        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight, settled)
+        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight, opens)
     }
 
     /**
