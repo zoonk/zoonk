@@ -6,7 +6,6 @@ import {
   loadLessonLawsInput,
   replanUnsourcedLesson,
 } from "@zoonk/core/library/lessons/laws";
-import { canLookUpLaw } from "@zoonk/core/library/sources/law-identity";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 export type NamedLessonLaws = { laws: LessonLaw[]; prompt: LessonLawsPrompt };
@@ -34,7 +33,13 @@ export async function nameLessonLawsStep({
     analytics: toContentAnalytics({ analytics, scope: input, workflowRunId }),
   });
 
-  return { laws: data.laws.filter((law) => canLookUpLaw(law)), prompt: input.prompt };
+  return { laws: data.laws, prompt: input.prompt };
+}
+
+export async function replanUnsourcedLessonStep(lessonId: string): Promise<void> {
+  "use step";
+
+  await replanUnsourcedLesson(lessonId);
 }
 
 export async function linkLessonLawsStep({

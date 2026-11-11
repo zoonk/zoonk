@@ -161,6 +161,31 @@ describe(readLessonLaws, () => {
     expect(writeLessonDraft).toHaveBeenCalledOnce();
   });
 
+  it("plans a lesson planned from memory again when its laws can't be named", async () => {
+    const lesson = await plannedLesson(recordedSpec.lessons[0] ?? {});
+    vi.mocked(generateLessonLaws).mockRejectedValue(new Error("Provider unavailable"));
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+  });
+
+  it("plans a lesson planned from memory again when no law it names can be looked up", async () => {
+    const lesson = await plannedLesson(recordedSpec.lessons[0] ?? {});
+    nameLaws([conflictOfInterestLaw({ officialDomains: [] })]);
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+    expect(getStartMock().mock.calls.map(([workflow]) => workflow)).not.toContain(
+      lawSourceWorkflow,
+    );
+  });
+
   it("looks a law up once for sibling lessons naming it at once", async () => {
     const [first, second] = await Promise.all([
       libraryLessonFixture({ language: "pt" }),

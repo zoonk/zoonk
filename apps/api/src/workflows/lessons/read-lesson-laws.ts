@@ -1,11 +1,15 @@
 import { type LessonLaw } from "@zoonk/ai/tasks/lesson-laws";
 import { type FoundLessonLaw } from "@zoonk/core/library/lessons/laws";
-import { getLawLookupToken } from "@zoonk/core/library/sources/law-identity";
+import { canLookUpLaw, getLawLookupToken } from "@zoonk/core/library/sources/law-identity";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { startOnce, waitForRun } from "../_shared/run-token";
 import { type LawToLookUp, lawSourceWorkflow } from "../research/law-source-workflow";
 import { readLawLookupStep } from "../research/steps/law-source-steps";
-import { linkLessonLawsStep, nameLessonLawsStep } from "./steps/lesson-laws-step";
+import {
+  linkLessonLawsStep,
+  nameLessonLawsStep,
+  replanUnsourcedLessonStep,
+} from "./steps/lesson-laws-step";
 
 function toLawToLookUp(law: LessonLaw): LawToLookUp {
   return {
@@ -19,6 +23,10 @@ function toLawToLookUp(law: LessonLaw): LawToLookUp {
 }
 
 async function lookUpLaw(lessonLaw: LessonLaw): Promise<string | null> {
+  if (!canLookUpLaw(lessonLaw)) {
+    return null;
+  }
+
   const law = toLawToLookUp(lessonLaw);
   const known = await readLawLookupStep(law);
 
@@ -49,7 +57,7 @@ function toFound({
 
 /**
  * Links the official text of the laws a lesson teaches before it's planned or written. A law whose
- * text can't be found or read leaves the lesson to go on without it.
+ * text can't be named, found or read leaves the lesson to go on without it.
  */
 export async function readLessonLaws(input: {
   analytics?: ContentAnalytics;
@@ -58,7 +66,12 @@ export async function readLessonLaws(input: {
 }): Promise<void> {
   const [named] = await Promise.allSettled([nameLessonLawsStep(input)]);
 
-  if (named.status === "rejected" || !named.value || named.value.laws.length === 0) {
+  if (named.status === "rejected") {
+    await replanUnsourcedLessonStep(input.lessonId);
+    return;
+  }
+
+  if (!named.value || named.value.laws.length === 0) {
     return;
   }
 
