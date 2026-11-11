@@ -1,0 +1,58 @@
+import { type LessonLaw, generateLessonLaws } from "@zoonk/ai/tasks/lesson-laws";
+import {
+  type FoundLessonLaw,
+  type LessonLawsPrompt,
+  linkLessonLaws,
+  loadLessonLawsInput,
+  replanUnsourcedLesson,
+} from "@zoonk/core/library/lessons/laws";
+import { canLookUpLaw } from "@zoonk/core/library/sources/law-identity";
+import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+
+export type NamedLessonLaws = { laws: LessonLaw[]; prompt: LessonLawsPrompt };
+
+/** Null for a lesson that never reads laws or already has them. */
+export async function nameLessonLawsStep({
+  analytics,
+  lessonId,
+  workflowRunId,
+}: {
+  analytics?: ContentAnalytics;
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<NamedLessonLaws | null> {
+  "use step";
+
+  const input = await loadLessonLawsInput(lessonId);
+
+  if (!input) {
+    return null;
+  }
+
+  const { data } = await generateLessonLaws({
+    ...input.prompt,
+    analytics: toContentAnalytics({ analytics, scope: input, workflowRunId }),
+  });
+
+  return { laws: data.laws.filter((law) => canLookUpLaw(law)), prompt: input.prompt };
+}
+
+export async function linkLessonLawsStep({
+  found,
+  lessonId,
+  prompt,
+  unavailable,
+}: {
+  found: FoundLessonLaw[];
+  lessonId: string;
+  prompt: LessonLawsPrompt;
+  unavailable: boolean;
+}): Promise<void> {
+  "use step";
+
+  await linkLessonLaws({ laws: found, lessonId, prompt });
+
+  if (unavailable) {
+    await replanUnsourcedLesson(lessonId);
+  }
+}
