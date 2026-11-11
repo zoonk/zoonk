@@ -18,10 +18,16 @@ type ReadData<T> =
   | { data: T; rows: number }
   | { status: "notFound"; message: string; rows: number };
 
-type ReadOptions<T, Input extends object> = { call: Call } & (
-  | { input: unknown; schema: ZodType<Input>; run: (input: Input) => Promise<ReadData<T>> }
-  | { run: () => Promise<ReadData<T>> }
-);
+type InputRead<T, Input extends object> = {
+  call: Call;
+  input: unknown;
+  schema: ZodType<Input>;
+  run: (input: Input) => Promise<ReadData<T>>;
+};
+
+type ActorRead<T> = { call: Call; run: (actor: { userId: string }) => Promise<ReadData<T>> };
+
+type ReadOptions<T, Input extends object> = InputRead<T, Input> | ActorRead<T>;
 
 function queryErrorCode(error: unknown): string | undefined {
   if (!error || typeof error !== "object") {
@@ -109,7 +115,11 @@ function logCall({
   );
 }
 
-export async function staffRead<T extends object, Input extends object = never>(
+export function staffRead<T extends object, Input extends object>(
+  options: InputRead<T, Input>,
+): Promise<StaffResult<T>>;
+export function staffRead<T extends object>(options: ActorRead<T>): Promise<StaffResult<T>>;
+export async function staffRead<T extends object, Input extends object>(
   options: ReadOptions<T, Input>,
 ): Promise<StaffResult<T>> {
   const { call } = options;
@@ -128,7 +138,7 @@ export async function staffRead<T extends object, Input extends object = never>(
 
   const { data, error } = await safeAsync(async () => {
     const prepared = await prepareRead(options);
-    return { call: prepared.call, ...(await safeAsync(prepared.run)) };
+    return { call: prepared.call, ...(await safeAsync(() => prepared.run(actor))) };
   });
 
   const result: StaffResult<T> = error ? failedRead(error) : readResult(data);

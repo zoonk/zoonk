@@ -2,6 +2,7 @@ import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as logger from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -34,6 +35,29 @@ describe("GET /staff/me", () => {
     await expect(response.json()).resolves.toStrictEqual({
       user: { email: admin.email, id: admin.id, name: "Staff Admin", role: "admin" },
     });
+  });
+
+  it("logs one line per call, refused ones included, without the token", async () => {
+    const admin = await adminFixture();
+    const { accessToken } = await cliTokenFixture({ user: admin });
+    const log = vi.spyOn(logger, "logInfo");
+
+    await whoami(`Bearer ${accessToken}`);
+    await whoami("Bearer not-a-real-token");
+
+    const lines = log.mock.calls.map(([line]) => String(line));
+
+    expect(lines.map((line): unknown => JSON.parse(line))).toStrictEqual([
+      expect.objectContaining({
+        actorUserId: admin.id,
+        event: "staff.read",
+        outcome: "ready",
+        verb: "me",
+      }),
+      expect.objectContaining({ actorUserId: null, outcome: "unauthorized", verb: "me" }),
+    ]);
+
+    expect(lines.join("\n")).not.toContain(accessToken);
   });
 
   it.each([
