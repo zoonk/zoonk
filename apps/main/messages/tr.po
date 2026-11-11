@@ -2495,7 +2495,7 @@ msgstr "Onaylarsan"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "CLI, üretim verilerini {email} olarak okur; örneğin hesapları, planları ve cevapları."
+msgstr "CLI, {email} hesabıyla canlı ortamdaki hesaplar, planlar ve cevaplar gibi verileri okur."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
@@ -2505,7 +2505,7 @@ msgstr "Hiçbir şeyi değiştiremez."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
 msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
-msgstr "O bilgisayarda çıkış yapana ya da 30 gün boyunca kullanmayana kadar oturumu açık kalır."
+msgstr "O bilgisayarda çıkış yapana kadar oturum açık kalır. Aracı 30 gün kullanmazsan da oturum kapanır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "WCaf5C"
@@ -2520,7 +2520,7 @@ msgstr "Reddet"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
-msgstr "Bu kodun süresi doldu. Yeni bir kod için {command} komutunu tekrar çalıştır."
+msgstr "Bu kodun süresi doldu. Yeni bir kod almak için {command} komutunu tekrar çalıştır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2531,17 +2531,17 @@ msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "DaD53k"
 msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Bu ağdan çok fazla deneme yapıldı. 30 dakika bekle, sonra tekrar dene."
+msgstr "Bu ağdan çok fazla deneme yapıldı. 30 dakika bekleyip tekrar dene."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
 msgid "This code was already used. Run {command} again for a new one."
-msgstr "Bu kod zaten kullanıldı. Yeni bir kod için {command} komutunu tekrar çalıştır."
+msgstr "Bu kod daha önce kullanıldı. Yeni bir kod almak için {command} komutunu tekrar çalıştır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "Bu kodu bekleyen bir giriş yok. Terminalindeki kodla karşılaştır ya da {command} komutunu tekrar çalıştır."
+msgstr "Bu kod için bekleyen bir giriş isteği yok. Terminalindeki kodla karşılaştır veya {command} komutunu tekrar çalıştır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
@@ -2551,12 +2551,12 @@ msgstr "Terminaline dön. CLI kullanıma hazır."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
-msgstr "Giriş yaptın"
+msgstr "Giriş yapıldı"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "CLI'a erişim verilmedi. Bu sayfayı kapatabilirsin."
+msgstr "CLI için erişim izni verilmedi. Bu sayfayı kapatabilirsin."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2566,27 +2566,27 @@ msgstr "Giriş reddedildi"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "{email} bir ekip hesabı olmadığı için CLI'a erişim verilmedi."
+msgstr "{email} bir çalışan hesabı olmadığı için CLI için erişim izni verilmedi."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
 msgid "This login needs a Zoonk staff account"
-msgstr "Bu giriş için bir Zoonk ekip hesabı gerekiyor"
+msgstr "Bu giriş için bir Zoonk çalışan hesabı gerekiyor"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "Yalnızca kendi başlattığın girişleri onayla. Bu bağlantıyı sana biri gönderdiyse reddet."
+msgstr "Yalnızca kendin başlattığın giriş isteğini onayla. Bu bağlantıyı sana biri gönderdiyse giriş isteğini reddet."
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
 msgid "Log in to the Zoonk CLI"
-msgstr "Zoonk CLI'a giriş yap"
+msgstr "Zoonk CLI için giriş yap"
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "Önce Zoonk ekip hesabınla giriş yap. Sonra onaylamak için buraya döneceksin."
+msgstr "Önce Zoonk çalışan hesabınla giriş yap. Onay vermek için buraya geri döneceksin."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

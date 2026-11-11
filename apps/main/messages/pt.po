@@ -2495,7 +2495,7 @@ msgstr "Se você aprovar"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "A CLI lê dados de produção como {email}, por exemplo contas, planos e respostas."
+msgstr "A CLI acessa dados de produção com a conta {email}, como contas, planos e respostas."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
@@ -2505,7 +2505,7 @@ msgstr "Ela não pode alterar nada."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
 msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
-msgstr "Ela continua conectada nesse computador até você sair por lá ou passar 30 dias sem usá-la."
+msgstr "A sessão fica aberta nesse computador até você sair da conta por lá ou ficar 30 dias sem usar a CLI."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "WCaf5C"
@@ -2515,12 +2515,12 @@ msgstr "Aprovar"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
-msgstr "Recusar"
+msgstr "Negar"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
-msgstr "Este código expirou. Rode {command} de novo para receber outro."
+msgstr "Este código expirou. Execute {command} de novo para gerar outro."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2531,52 +2531,52 @@ msgstr "Não deu certo. Tente de novo em instantes."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "DaD53k"
 msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Muitas tentativas a partir desta rede. Espere 30 minutos e tente de novo."
+msgstr "Muitas tentativas nesta rede. Espere 30 minutos e tente de novo."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
 msgid "This code was already used. Run {command} again for a new one."
-msgstr "Este código já foi usado. Rode {command} de novo para receber outro."
+msgstr "Este código já foi usado. Execute {command} de novo para gerar outro."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "Nenhum login está esperando este código. Compare com o código do seu terminal ou rode {command} de novo."
+msgstr "Não há nenhum pedido de acesso pendente para este código. Confira se ele é igual ao do terminal ou execute {command} de novo."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
 msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Volte para o seu terminal. A CLI já está pronta para usar."
+msgstr "Volte ao terminal. Você já pode usar a CLI."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
-msgstr "Login concluído"
+msgstr "Você entrou"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "A CLI não recebeu acesso. Você pode fechar esta página."
+msgstr "A CLI não teve acesso. Você pode fechar esta página."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
 msgid "Login denied"
-msgstr "Login recusado"
+msgstr "Acesso negado"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "A CLI não recebeu acesso, porque {email} não é uma conta da equipe."
+msgstr "A CLI não teve acesso porque {email} não é uma conta da equipe do Zoonk."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
 msgid "This login needs a Zoonk staff account"
-msgstr "Este login precisa de uma conta da equipe do Zoonk"
+msgstr "Este acesso exige uma conta da equipe do Zoonk"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "Só aprove um login iniciado por você. Se alguém te mandou este link, recuse."
+msgstr "Só aprove um acesso que você iniciou. Se alguém te enviou este link, negue o acesso."
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
@@ -2586,7 +2586,7 @@ msgstr "Entrar na CLI do Zoonk"
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "Primeiro, entre com sua conta da equipe do Zoonk. Depois você volta aqui para aprovar."
+msgstr "Primeiro, entre com sua conta da equipe do Zoonk. Você vai voltar aqui para aprovar o acesso."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

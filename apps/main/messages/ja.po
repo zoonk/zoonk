@@ -2480,7 +2480,7 @@ msgstr "チャレンジ"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "v_s6ET"
 msgid "Check that it matches the code in your terminal."
-msgstr "ターミナルに表示されたコードと同じか確認してください。"
+msgstr "ターミナルに表示されたコードと一致しているか確認してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "BuQX_w"
@@ -2495,32 +2495,32 @@ msgstr "承認すると"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "CLIは{email}として、アカウント、学習計画、回答などの本番データを読み取ります。"
+msgstr "CLIは{email}のアカウントで、アカウントや学習計画、回答などの本番環境のデータを読み取ります。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
 msgid "It can't change anything."
-msgstr "データを変更することはできません。"
+msgstr "何も変更できません。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
 msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
-msgstr "そのパソコンでログアウトするか、30日間使わないかぎり、ログインしたままになります。"
+msgstr "そのパソコンではログイン状態が続きます。そこでログアウトするか、CLIを30日間使わないと解除されます。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "WCaf5C"
 msgid "Approve"
-msgstr "承認"
+msgstr "承認する"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
-msgstr "拒否"
+msgstr "拒否する"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
-msgstr "このコードは期限切れです。{command}をもう一度実行して、新しいコードを取得してください。"
+msgstr "このコードの有効期限が切れています。{command}をもう一度実行して、新しいコードを取得してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2531,17 +2531,17 @@ msgstr "うまくいきませんでした。少し待ってから、もう一度
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "DaD53k"
 msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "このネットワークからの試行回数が多すぎます。30分待ってから、もう一度お試しください。"
+msgstr "このネットワークからの試行回数が上限に達しました。30分待ってから、もう一度試してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
 msgid "This code was already used. Run {command} again for a new one."
-msgstr "このコードはすでに使われています。{command}をもう一度実行して、新しいコードを取得してください。"
+msgstr "このコードは使用済みです。{command}をもう一度実行して、新しいコードを取得してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "このコードを待っているログインはありません。ターミナルのコードと見比べるか、{command}をもう一度実行してください。"
+msgstr "このコードで承認を待っているログインはありません。ターミナルのコードと見比べるか、{command}をもう一度実行してください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
@@ -2556,7 +2556,7 @@ msgstr "ログインしました"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "CLIにアクセス権は与えられていません。このページは閉じてかまいません。"
+msgstr "CLIからのアクセスは許可されませんでした。このページは閉じても大丈夫です。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2566,17 +2566,17 @@ msgstr "ログインを拒否しました"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "{email}はチームアカウントではないため、CLIにアクセス権は与えられていません。"
+msgstr "{email}はスタッフアカウントではないため、CLIからのアクセスは許可されませんでした。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
 msgid "This login needs a Zoonk staff account"
-msgstr "このログインにはZoonkのチームアカウントが必要です"
+msgstr "このログインにはZoonkのスタッフアカウントが必要です"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "自分で開始したログインだけを承認してください。誰かからこのリンクが送られてきた場合は、拒否してください。"
+msgstr "自分で始めたログインだけを承認してください。誰かからこのリンクが送られてきた場合は、拒否してください。"
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
@@ -2586,7 +2586,7 @@ msgstr "Zoonk CLIにログイン"
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "まずZoonkのチームアカウントでログインしてください。そのあと、このページに戻って承認できます。"
+msgstr "まずZoonkのスタッフアカウントでログインしてください。ログイン後、このページに戻ってCLIへのログインを承認できます。"
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

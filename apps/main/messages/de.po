@@ -2495,7 +2495,7 @@ msgstr "Wenn du die Anmeldung zulässt"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "Die CLI liest Produktionsdaten als {email}, zum Beispiel Konten, Pläne und Antworten."
+msgstr "Die CLI liest als {email} Produktivdaten wie Konten, Pläne und Antworten."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
@@ -2536,17 +2536,17 @@ msgstr "Zu viele Versuche aus diesem Netzwerk. Warte 30 Minuten und versuch es d
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
 msgid "This code was already used. Run {command} again for a new one."
-msgstr "Dieser Code wurde schon verwendet. Führ {command} noch einmal aus, um einen neuen zu bekommen."
+msgstr "Dieser Code wurde bereits verwendet. Führ {command} noch einmal aus, um einen neuen zu bekommen."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "Für diesen Code wartet keine Anmeldung. Vergleich ihn mit deinem Terminal oder führ {command} noch einmal aus."
+msgstr "Für diesen Code gibt es keine offene Anmeldung. Vergleich ihn mit dem Code in deinem Terminal oder führ {command} noch einmal aus."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
 msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Geh zurück zu deinem Terminal. Die CLI ist bereit."
+msgstr "Geh zurück zu deinem Terminal. Du kannst die CLI jetzt nutzen."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
@@ -2556,7 +2556,7 @@ msgstr "Du bist angemeldet"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "Die CLI hat keinen Zugriff bekommen. Du kannst diese Seite schließen."
+msgstr "Die CLI hat keinen Zugriff erhalten. Du kannst diese Seite schließen."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2566,17 +2566,17 @@ msgstr "Anmeldung abgelehnt"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "Die CLI hat keinen Zugriff bekommen, weil {email} kein Teamkonto ist."
+msgstr "Die CLI hat keinen Zugriff erhalten, weil {email} kein Mitarbeiterkonto ist."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
 msgid "This login needs a Zoonk staff account"
-msgstr "Diese Anmeldung braucht ein Zoonk-Teamkonto"
+msgstr "Für diese Anmeldung brauchst du ein Zoonk-Mitarbeiterkonto"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "Lass nur Anmeldungen zu, die du selbst gestartet hast. Wenn dir jemand diesen Link geschickt hat, lehne ab."
+msgstr "Lass nur eine Anmeldung zu, die du selbst gestartet hast. Wenn dir jemand diesen Link geschickt hat, lehn sie ab."
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
@@ -2586,7 +2586,7 @@ msgstr "Bei der Zoonk-CLI anmelden"
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "Melde dich zuerst mit deinem Zoonk-Teamkonto an. Danach kommst du hierher zurück, um die Anmeldung zuzulassen."
+msgstr "Meld dich zuerst mit deinem Zoonk-Mitarbeiterkonto an. Danach kommst du hierher zurück, um die Anmeldung zuzulassen."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

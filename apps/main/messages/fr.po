@@ -2485,32 +2485,32 @@ msgstr "Vérifie qu’il correspond au code affiché dans ton terminal."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "BuQX_w"
 msgid "Code from your terminal"
-msgstr "Code affiché dans ton terminal"
+msgstr "Code de ton terminal"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "v6Rcfx"
 msgid "If you approve"
-msgstr "Si tu approuves"
+msgstr "Si tu autorises la connexion"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "La CLI lit les données de production en tant que {email}, par exemple les comptes, les plans et les réponses."
+msgstr "L’outil CLI permet de consulter les données de production avec le compte {email}, comme les comptes, les plans et les réponses."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
 msgid "It can't change anything."
-msgstr "Elle ne peut rien modifier."
+msgstr "Il ne peut rien modifier."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
 msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
-msgstr "Elle reste connectée sur cet ordinateur jusqu’à ce que tu t’y déconnectes ou que tu ne l’utilises pas pendant 30 jours."
+msgstr "Il reste connecté sur cet ordinateur jusqu’à ce que tu t’y déconnectes ou que tu passes 30 jours sans l’utiliser."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "WCaf5C"
 msgid "Approve"
-msgstr "Approuver"
+msgstr "Autoriser"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
@@ -2541,22 +2541,22 @@ msgstr "Ce code a déjà été utilisé. Relance {command} pour en obtenir un no
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "Aucune connexion n’attend ce code. Compare-le avec celui de ton terminal ou relance {command}."
+msgstr "Aucune connexion en attente ne correspond à ce code. Compare-le à celui de ton terminal ou relance {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
 msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Retourne dans ton terminal. La CLI est prête."
+msgstr "Retourne dans ton terminal. L’outil CLI est prêt à l’emploi."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
-msgstr "Connexion réussie"
+msgstr "Connexion établie"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "La CLI n’a obtenu aucun accès. Tu peux fermer cette page."
+msgstr "L’outil CLI n’a obtenu aucun accès. Tu peux fermer cette page."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
@@ -2566,7 +2566,7 @@ msgstr "Connexion refusée"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "La CLI n’a obtenu aucun accès, car {email} n’est pas un compte de l’équipe."
+msgstr "L’outil CLI n’a obtenu aucun accès, car {email} n’est pas un compte de l’équipe Zoonk."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
@@ -2576,17 +2576,17 @@ msgstr "Cette connexion nécessite un compte de l’équipe Zoonk"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "N’approuve qu’une connexion que tu as lancée toi-même. Si quelqu’un t’a envoyé ce lien, refuse-la."
+msgstr "N’autorise une connexion que si tu l’as lancée toi-même. Si quelqu’un t’a envoyé ce lien, refuse-la."
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
 msgid "Log in to the Zoonk CLI"
-msgstr "Se connecter à la CLI Zoonk"
+msgstr "Se connecter à l’outil CLI de Zoonk"
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "Connecte-toi d’abord avec ton compte de l’équipe Zoonk. Tu reviendras ici pour l’approuver."
+msgstr "Connecte-toi d’abord avec ton compte de l’équipe Zoonk. Tu reviendras ici pour autoriser la connexion."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx

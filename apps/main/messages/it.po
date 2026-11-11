@@ -2480,12 +2480,12 @@ msgstr "Sfida"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "v_s6ET"
 msgid "Check that it matches the code in your terminal."
-msgstr "Controlla che corrisponda al codice nel tuo terminale."
+msgstr "Controlla che corrisponda al codice nel terminale."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "BuQX_w"
 msgid "Code from your terminal"
-msgstr "Codice dal tuo terminale"
+msgstr "Codice mostrato nel terminale"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "v6Rcfx"
@@ -2495,7 +2495,7 @@ msgstr "Se approvi"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "7njD2Z"
 msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
-msgstr "La CLI legge i dati di produzione come {email}, ad esempio account, piani e risposte."
+msgstr "La CLI usa l’account {email} per leggere i dati di produzione, come account, piani e risposte."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "d6AYf2"
@@ -2505,7 +2505,7 @@ msgstr "Non può modificare nulla."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
 msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
-msgstr "Resta connessa su quel computer finché non esci da lì o non la usi per 30 giorni."
+msgstr "La CLI mantiene l’accesso su quel computer finché non ti disconnetti da lì o la lasci inutilizzata per 30 giorni."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "WCaf5C"
@@ -2515,12 +2515,12 @@ msgstr "Approva"
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
-msgstr "Rifiuta"
+msgstr "Nega"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
-msgstr "Questo codice è scaduto. Esegui di nuovo {command} per averne uno nuovo."
+msgstr "Questo codice è scaduto. Esegui di nuovo {command} per ottenerne uno nuovo."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
@@ -2531,52 +2531,52 @@ msgstr "Non ha funzionato. Riprova tra poco."
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "DaD53k"
 msgid "Too many tries from this network. Wait 30 minutes, then try again."
-msgstr "Troppi tentativi da questa rete. Aspetta 30 minuti, poi riprova."
+msgstr "Troppi tentativi da questa rete. Attendi 30 minuti, poi riprova."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Wi5pqV"
 msgid "This code was already used. Run {command} again for a new one."
-msgstr "Questo codice è già stato usato. Esegui di nuovo {command} per averne uno nuovo."
+msgstr "Questo codice è già stato usato. Esegui di nuovo {command} per ottenerne uno nuovo."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "t8Dpvt"
 msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
-msgstr "Nessun accesso è in attesa di questo codice. Confrontalo con quello del tuo terminale o esegui di nuovo {command}."
+msgstr "Non ci sono richieste di accesso in attesa per questo codice. Confrontalo con quello nel terminale o esegui di nuovo {command}."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "4SuH6v"
 msgid "Go back to your terminal. The CLI is ready to use."
-msgstr "Torna al tuo terminale. La CLI è pronta."
+msgstr "Torna al terminale. La CLI è pronta all’uso."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "bz2dE8"
 msgid "You're logged in"
-msgstr "Accesso effettuato"
+msgstr "Hai effettuato l’accesso"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "NHsIWj"
 msgid "The CLI got no access. You can close this page."
-msgstr "La CLI non ha ricevuto alcun accesso. Puoi chiudere questa pagina."
+msgstr "La CLI non ha ottenuto l’accesso. Puoi chiudere questa pagina."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "lsi4Oy"
 msgid "Login denied"
-msgstr "Accesso rifiutato"
+msgstr "Accesso negato"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "tNO8Ji"
 msgid "The CLI got no access, because {email} isn't a staff account."
-msgstr "La CLI non ha ricevuto alcun accesso, perché {email} non è un account del team."
+msgstr "La CLI non ha ottenuto l’accesso perché {email} non è un account del personale."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "kGLcEt"
 msgid "This login needs a Zoonk staff account"
-msgstr "Questo accesso richiede un account del team di Zoonk"
+msgstr "Per questo accesso serve un account del personale di Zoonk"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "LQk7dy"
 msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
-msgstr "Approva solo un accesso che hai avviato tu. Se qualcuno ti ha mandato questo link, rifiutalo."
+msgstr "Approva solo una richiesta di accesso che hai avviato tu. Se qualcuno ti ha inviato questo link, nega l’accesso."
 
 #: src/app/[lang]/device/page.tsx
 msgctxt "xLjanC"
@@ -2586,7 +2586,7 @@ msgstr "Accedi alla CLI di Zoonk"
 #: src/app/[lang]/device/page.tsx
 msgctxt "cLTMYs"
 msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
-msgstr "Prima accedi con il tuo account del team di Zoonk. Poi tornerai qui per approvarlo."
+msgstr "Accedi prima con il tuo account del personale di Zoonk. Poi tornerai qui per approvare l’accesso."
 
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
