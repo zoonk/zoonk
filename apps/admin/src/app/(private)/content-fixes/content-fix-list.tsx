@@ -21,13 +21,15 @@ const DECIDED_COLUMNS: AdminTableColumn[] = [...PENDING_COLUMNS, { label: "Decis
 function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDecision: boolean }) {
   return (
     <AdminTableRow>
-      <TableCell className="max-w-96 whitespace-normal">
-        <AdminTableRowLink className="line-clamp-2 font-medium" href={`/content-fixes/${fix.id}`}>
-          {fix.revertsId ? "Revert: " : ""}
-          {fix.reason}
+      <TableCell className="max-w-96 min-w-56 whitespace-normal">
+        <AdminTableRowLink className="block font-medium" href={`/content-fixes/${fix.id}`} prefetch>
+          <span className="line-clamp-2">
+            {fix.revertsId ? "Revert: " : ""}
+            {fix.reason}
+          </span>
         </AdminTableRowLink>
       </TableCell>
-      <TableCell className="max-w-80 text-xs whitespace-normal">
+      <TableCell className="max-w-80 min-w-48 text-xs whitespace-normal">
         {fix.location.trail.join(" › ") || "Deleted content"}
       </TableCell>
       <TableCell className="text-xs">
