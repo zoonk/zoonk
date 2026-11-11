@@ -1,0 +1,69 @@
+"use client";
+
+import { Button } from "@zoonk/ui/components/button";
+import { ChevronRightIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useId, useState } from "react";
+import { SettingRow } from "../_components/setting-rows";
+import { type CountryChoice, type SuggestedCountry } from "../country/country-choice";
+import { CountryPicker } from "../country/country-picker";
+
+/** Nothing rebuilds, so a pick saves at once and closes; "Not set" clears it. */
+export function HomeCountrySetting({
+  onChange,
+  suggested,
+  value,
+}: {
+  onChange: (country: CountryChoice | null) => void;
+  suggested: readonly SuggestedCountry[];
+  value: CountryChoice | null;
+}) {
+  const t = useExtracted();
+  const labelId = useId();
+  const descriptionId = useId();
+  const valueId = useId();
+  const [open, setOpen] = useState(false);
+  const title = t("Where you live");
+
+  return (
+    <SettingRow
+      description={t(
+        "For new goals and your examples. It doesn't change the plans you already have.",
+      )}
+      descriptionId={descriptionId}
+      label={<span id={labelId}>{title}</span>}
+    >
+      <Button
+        aria-describedby={descriptionId}
+        aria-haspopup="dialog"
+        aria-labelledby={`${labelId} ${valueId}`}
+        className="h-auto min-h-8 max-w-48 py-1 text-left whitespace-normal"
+        onClick={() => setOpen(true)}
+        size="sm"
+        type="button"
+        variant="outline"
+      >
+        <span className="min-w-0 text-pretty" id={valueId}>
+          {value?.name ?? t("Not set")}
+        </span>
+        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground" />
+      </Button>
+
+      <CountryPicker
+        noneLabel={t("Not set")}
+        onOpenChange={setOpen}
+        onPick={(country) => {
+          setOpen(false);
+
+          if ((country?.code ?? null) !== (value?.code ?? null)) {
+            onChange(country);
+          }
+        }}
+        open={open}
+        suggested={suggested}
+        title={title}
+        value={value?.code ?? null}
+      />
+    </SettingRow>
+  );
+}
