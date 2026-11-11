@@ -225,10 +225,15 @@ describe(toArticleNumber, () => {
       ["§ 2000e-2", "2000E-2"],
     ]);
 
-    expect(["§ 2000e-2", "2000e-2"].map((hint) => toArticleNumber(hint))).toStrictEqual([
-      "2000E-2",
-      "2000E-2",
+    expect(headings("§ 2000e Definitions.\n§ 2000e–1 A.\n§ 2000e–2 B.")).toStrictEqual([
+      ["§ 2000e", "2000E"],
+      ["§ 2000e–1", "2000E-1"],
+      ["§ 2000e–2", "2000E-2"],
     ]);
+
+    expect(
+      ["§ 2000e-2", "2000e-2", "§ 2000e–2"].map((hint) => toArticleNumber(hint)),
+    ).toStrictEqual(["2000E-2", "2000E-2", "2000E-2"]);
   });
 
   it("names the same article a heading with a letter suffix heads, however the hint writes it", () => {

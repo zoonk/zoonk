@@ -6,7 +6,7 @@ const CJK_SUFFIX = String.raw`[の之][\d${CJK_NUMERALS}]+`;
  * "4-A", "4a", "2000e-1", "12 bis" and "32の二": one rule for headings and hints, so the two read
  * alike.
  */
-const SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}(?:-\d+)*\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
+const SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}(?:[-–]\d+)*\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
 const DIGITS = String.raw`\d+(?:[.-]\d+)*`;
 
 /**
@@ -79,7 +79,7 @@ function toSuffix(suffix: string): string {
     return `の${/^\d+$/u.test(cjk) ? Number(cjk) : parseCjkNumber(cjk)}`;
   }
 
-  return suffix.replace(/^-/u, "").replaceAll(/\s+/gu, "").toUpperCase();
+  return suffix.replace(/^-/u, "").replaceAll(/\s+/gu, "").replaceAll("–", "-").toUpperCase();
 }
 
 /**
