@@ -46,8 +46,7 @@ async function storeLawText({
   const [stored] = await Promise.allSettled([
     storeSource({
       analytics,
-      // Learners see this title in citations, and a page's own can be just "L9784".
-      document: { ...document, title: law.name },
+      document,
       language: law.language,
       officialDomains: law.officialDomains,
       topic: "regulation",

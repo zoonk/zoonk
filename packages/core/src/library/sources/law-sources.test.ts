@@ -67,6 +67,19 @@ describe(readLawLookup, () => {
   });
 });
 
+describe(recordLawLookup, () => {
+  it("titles a law's text with the law's name, which learners see in citations", async () => {
+    const law = lawRequest(uniqueWord());
+    const source = await storedLaw({ title: "L9784", word: uniqueWord() });
+
+    await recordLawLookup({ law, sourceId: source.id });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: law.name });
+  });
+});
+
 describe(findStoredLawSource, () => {
   beforeEach(() => {
     vi.resetAllMocks();

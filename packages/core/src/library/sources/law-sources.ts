@@ -35,11 +35,17 @@ export async function recordLawLookup({
   const key = toLawKey(law);
   const checkedAt = new Date();
 
-  await prisma.lawLookup.upsert({
-    create: { ...key, checkedAt, sourceId },
-    update: { checkedAt, sourceId },
-    where: { lawKey: key },
-  });
+  await prisma.$transaction([
+    prisma.lawLookup.upsert({
+      create: { ...key, checkedAt, sourceId },
+      update: { checkedAt, sourceId },
+      where: { lawKey: key },
+    }),
+    // Learners see this title in citations, and a law page's own can be just "L9784".
+    ...(sourceId
+      ? [prisma.source.update({ data: { title: law.name }, where: { id: sourceId } })]
+      : []),
+  ]);
 }
 
 /** A law is read from its official site's whole text: a cut text loses its last articles. */
