@@ -1,0 +1,258 @@
+[
+  {
+    "case": "pt-en-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 7.125,
+    "judges": {
+      "google/gemini-4-argon": 7.65,
+      "openai/gpt-6-astra": 6.6
+    },
+    "cost": 0.6298080000000001,
+    "seconds": 79149.957042,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "pt-en-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 9.175,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 8.35
+    },
+    "cost": 1.965976,
+    "seconds": 217057.826375,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "en-pt-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 8.4,
+    "judges": {
+      "google/gemini-4-argon": 9.75,
+      "openai/gpt-6-astra": 7.05
+    },
+    "cost": 0.632488,
+    "seconds": 80296.24208400001,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "en-pt-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 8.7,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 7.4
+    },
+    "cost": 1.9432560000000003,
+    "seconds": 120688.319708,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "es-en-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 9.05,
+    "judges": {
+      "google/gemini-4-argon": 9.75,
+      "openai/gpt-6-astra": 8.35
+    },
+    "cost": 0.619448,
+    "seconds": 71828.37820800001,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "es-en-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 9.5,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 9
+    },
+    "cost": 2.038736,
+    "seconds": 131066.89383300001,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "de-en-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 9.125,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 8.25
+    },
+    "cost": 0.7015480000000001,
+    "seconds": 95947.32620899999,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "de-en-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 8.175,
+    "judges": {
+      "google/gemini-4-argon": 9.75,
+      "openai/gpt-6-astra": 6.6
+    },
+    "cost": 2.2861360000000004,
+    "seconds": 231013.19108299998,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "en-ar-fable-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 8.7,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 7.4
+    },
+    "cost": 0.6822280000000001,
+    "seconds": 101255.758125,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "en-ar-fable-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 9.125,
+    "judges": {
+      "google/gemini-4-argon": 9.65,
+      "openai/gpt-6-astra": 8.6
+    },
+    "cost": 2.2592160000000003,
+    "seconds": 139981.12016700002,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "pt-ar-fable-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 8.774999999999999,
+    "judges": {
+      "google/gemini-4-argon": 8.95,
+      "openai/gpt-6-astra": 8.6
+    },
+    "cost": 0.669676,
+    "seconds": 107565.582,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "pt-ar-fable-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 9.375,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 8.75
+    },
+    "cost": 2.482644,
+    "seconds": 190962.554708,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "fr-de-fable-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 9.0,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 8
+    },
+    "cost": 0.6491960000000001,
+    "seconds": 87017.291541,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "fr-de-fable-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 9.25,
+    "judges": {
+      "google/gemini-4-argon": 9.75,
+      "openai/gpt-6-astra": 8.75
+    },
+    "cost": 2.0588040000000003,
+    "seconds": 243049.548125,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "ja-en-fable-1",
+    "model": "anthropic/claude-opus-5.5",
+    "score": 9.175,
+    "judges": {
+      "google/gemini-4-argon": 10,
+      "openai/gpt-6-astra": 8.35
+    },
+    "cost": 0.6330680000000001,
+    "seconds": 89886.69437499999,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  {
+    "case": "ja-en-fable-1",
+    "model": "anthropic/claude-fable-5.2",
+    "score": 8.375,
+    "judges": {
+      "google/gemini-4-argon": 9.6,
+      "openai/gpt-6-astra": 7.15
+    },
+    "cost": 1.9726160000000001,
+    "seconds": 161854.109958,
+    "codeChecks": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  }
+]

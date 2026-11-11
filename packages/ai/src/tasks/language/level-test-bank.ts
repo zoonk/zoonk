@@ -15,13 +15,17 @@ import { getLanguagePromptContext } from "../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
 
 /**
- * Written once per pair and shared, so quality wins: on 11 banks (8 Nov 2026), blind Argon judging
- * preferred Opus to Sonnet 5.5 by 0.58 and to Terra at high reasoning in all 11 by 1.06 (PT 1.36),
- * at $615 per 1k banks against $461 and $98. Terra runs at its default reasoning here, below the PT
- * floor (7.36), so it's only an outage route. A second review call didn't help.
+ * Shared banks favor Fable: on 8 blind-read cases (11 Nov 2026), it won 6, lost 1 and tied 1,
+ * with 1 confirmed key flaw versus Opus's 2 and no level flaws; judges flagged 1 key flaw each.
+ * Battle scores were 8.96 versus 8.67 at $2.13 versus $0.65 per bank, worth the gain for reuse.
  */
-const defaultModel = "anthropic/claude-opus-5.5";
-const fallbackModels = ["anthropic/claude-sonnet-5.5", "openai/gpt-6.1-terra"] as const;
+const defaultModel = "anthropic/claude-fable-5.2";
+
+const fallbackModels = [
+  "anthropic/claude-opus-5.5",
+  "anthropic/claude-sonnet-5.5",
+  "openai/gpt-6.1-terra",
+] as const;
 
 /** C2 isn't placed by a three-minute test. */
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const satisfies readonly CefrLevel[];

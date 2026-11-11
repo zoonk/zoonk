@@ -1,0 +1,164 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-fable-5.2": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "Modern Standard Arabic in Arabic script for Brazilian learners. Questions, options and translations must be Brazilian Portuguese with localized decimal and thousands separators. A1 is concrete, A2 combines details, B1 tests reasons, B2 tests implications, C1 tests qualified stance or tone. Exactly one passage-supported key; no target-language decoding from cognates or leaked generation instructions.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-11T02:59:08.775Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking prompts scale smoothly from A1 to C1, strictly respecting word-count targets and cognitive demands at each level. B2 and C1 items require genuine inference from concrete actions rather than matching explicit statements.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has a single unambiguously supported key, and distractors cleverly target details mentioned in the passage so careless readers are tested on comprehension rather than keyword matching.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Modern Standard Arabic is natural and idiomatic (including appropriate C1 idioms like أضرب أخماساً بأسداس), and all questions, options, and translations are in natural Brazilian Portuguese.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model A delivers an exceptional set of items across all CEFR levels. The B2 and C1 passages rely genuinely on inference, implication, and nuanced tone rather than explicit statements, and the Arabic and Brazilian Portuguese are both natural and accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Most levels are well calibrated, though A2 listening 2 is a simple linear sequence rather than combining details, B2 listening 1 states the packaging complaint quite explicitly, and the C1 speaking sentence is slightly above the 20-word target at 23 words.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All answer keys are accurate and supported by the passages, with plausible distractors of balanced length.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The Arabic passages and Brazilian Portuguese questions, options, and translations are natural, varied, and idiomatic, with only minor repetition of Cairo in the A1 and A2 speaking sentences.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B is strong and meets almost all expectations, with accurate Modern Standard Arabic and Brazilian Portuguese. However, a few A2 and B2 questions rely too heavily on direct linear matching or explicitly stated concerns rather than combining details or inferring implied meaning.",
+          "score": 8.95
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 11858,
+        "outputTokens": 442,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 recupera fatos concretos, A2 combina informações, B1 trabalha razões e opiniões, e B2 exige inferências. C1 acrescenta nuances claras de tom e posicionamento, enquanto as frases de fala crescem em extensão e complexidade.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Os índices apontam para respostas sustentadas pelos textos, com uma alternativa claramente adequada a cada pergunta. No recado B1 sobre a bagagem, a informação verdadeira sobre passaporte e dinheiro funciona como distrator porque não representa o recado principal.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "O árabe e o português brasileiro estão corretamente distribuídos, com situações variadas e formatos geralmente naturais. Entretanto, “caixas de cozinha” soa pouco idiomático, e justificar a manutenção da aula de quinta à noite pela indisponibilidade da professora na sexta de manhã prejudica a coerência do aviso.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Apresenta a progressão pedagógica mais consistente, sobretudo nos itens C1, que exploram autoironia, ressalvas e posições implícitas. As respostas estão bem fundamentadas; as principais melhorias seriam de naturalidade e coerência pontual.",
+          "score": 8.75
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A progressão geral é adequada: os níveis iniciais trabalham fatos e combinações simples, enquanto B1 e B2 avançam para razões, opiniões e inferências. A resenha C1 concentra-se mais em reconhecer entusiasmo implícito do que em interpretar uma posição qualificada, oferecendo menor diferenciação em relação a B2.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Todas as respostas marcadas são sustentadas pelos respectivos textos, sem uma segunda alternativa igualmente adequada à pergunta. Os distratores exploram detalhes, expectativas iniciais e interpretações equivocadas, mantendo comprimentos geralmente comparáveis.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Os textos e as frases de fala usam árabe padrão moderno natural, enquanto perguntas, alternativas e traduções estão em português brasileiro. Avisos, mensagens e depoimentos têm registros apropriados, com boa variedade de situações e sem instruções de geração expostas.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "É um banco forte, com linguagem natural, situações variadas e respostas bem sustentadas. Fica ligeiramente atrás na diferenciação dos níveis superiores, especialmente na resenha C1, cuja avaliação positiva tem menos nuances que os demais itens desse nível.",
+          "score": 8.6
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 10803,
+        "outputTokens": 1894,
+        "reasoningTokens": 1241
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "03255f8c3bf0335b",
+    "anthropic/claude-fable-5.2": "6b99a5476684613e"
+  },
+  "swapped": false,
+  "taskId": "level-test-bank",
+  "testCaseId": "pt-ar-fable-1"
+}
