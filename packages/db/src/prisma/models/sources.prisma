@@ -49,6 +49,8 @@ model Source {
   changeNotices      SourceChangeNotice[]
   steps              Step[]
   stepSources        StepSource[]
+  lessons            LessonSource[]
+  lawLookups         LawLookup[]
   uploads            SourceUpload[]
   releases           ProductRelease[]
   releasesOf         Product[]            @relation("ProductReleasesSource")
@@ -61,6 +63,25 @@ model Source {
   @@index([ownerId])
   @@index([unnoticedChangedAt])
   @@map("sources")
+}
+
+/// One search for a law's official text answers every lesson that teaches it until it's 30 days
+/// old, including a null `source` when no acceptable text was found. `name` is normalized.
+model LawLookup {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  country   String   @db.VarChar(2)
+  /// The official text's language, which can differ from the lessons'.
+  language  String   @db.VarChar(10)
+  name      String
+  sourceId  String?  @map("source_id") @db.Uuid
+  source    Source?  @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  checkedAt DateTime @map("checked_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([country, language, name], name: "lawKey")
+  @@index([sourceId])
+  @@map("law_lookups")
 }
 
 /// The current edition is metadata, so lessons and items carry over between editions. A blueprint
