@@ -6,8 +6,7 @@ import { PlanSetupTaskEndedError, isPlanSetupTaskOwed } from "./_utils/plan-setu
 import { askAboutNoticeDay } from "./notice-plan-change";
 
 export { type PlanSetupTask } from "@zoonk/db";
-export { type PlanMemorySearch } from "./_utils/plan-memory";
-export { searchRoutineMemory, selectRoutineMemory } from "./_utils/fit-plan-to-routine";
+export { selectRoutineMemory } from "./_utils/fit-plan-to-routine";
 
 /**
  * Placement first, since the routine's fit starts from what's left; the notice's day last, so it
@@ -46,8 +45,8 @@ async function runOwedTask({
 
 /**
  * Each task runs once; a failure throws and leaves it owed. Workflow bridge: the goal comes from
- * the run that built its plan. The routine runs in three calls, one model call each:
- * `searchRoutineMemory`, `selectRoutineMemory` when it returns terms, then `fitPlanToRoutine`.
+ * the run that built its plan. The routine runs in two calls so each retries alone:
+ * `selectRoutineMemory`, then `fitPlanToRoutine` when it returns memory.
  */
 export function runPlanSetupTask({
   goalId,

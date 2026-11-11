@@ -12,11 +12,9 @@ const TUTOR_MEMORY_CATEGORIES = Object.values(MemoryCategory);
 
 /** Memory failures never block an answer; markTutorMemoryUsed records only facts used in a personal answer. */
 export async function findTutorMemory({
-  language,
   question,
   userId,
 }: {
-  language: string;
   question: string;
   userId: string;
 }): Promise<MemoryFactForTask[]> {
@@ -25,7 +23,6 @@ export async function findTutorMemory({
       analytics: { contentScope: "personal", distinctId: userId },
       categories: TUTOR_MEMORY_CATEGORIES,
       includeSensitive: true,
-      language,
       need: `A tutor answering the learner's question about their studies: ${question}`,
       userId,
     }),

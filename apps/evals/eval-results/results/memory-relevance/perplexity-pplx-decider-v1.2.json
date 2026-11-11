@@ -507,42 +507,6 @@
     },
     {
       "classification": {
-        "expected": "relevant",
-        "predicted": "relevant"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "relevant": true
-        },
-        "id": "pt-example-bakery-1",
-        "userInput": {
-          "fact": {
-            "category": "background",
-            "statement": "É dono de uma padaria"
-          },
-          "need": "Escrever um exemplo pessoal para uma aula de juros"
-        }
-      }
-    },
-    {
-      "classification": {
         "expected": "irrelevant",
         "predicted": "irrelevant"
       },
@@ -1078,6 +1042,222 @@
             "statement": "Quer aprender a investir o primeiro salário"
           },
           "need": "Escrever um exemplo pessoal para uma aula sobre o que é uma ação"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "en-priorities-exam-date-1",
+        "userInput": {
+          "fact": {
+            "category": "goals",
+            "statement": "Has the ENEM on November 8"
+          },
+          "need": "Decide which topics to prioritize before the learner's exam"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "en-priorities-exam-date-2",
+        "userInput": {
+          "fact": {
+            "category": "goals",
+            "statement": "Has the ENEM on November 8"
+          },
+          "need": "Decide which topics to prioritize before the learner's exam"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "en-priorities-exam-date-3",
+        "userInput": {
+          "fact": {
+            "category": "goals",
+            "statement": "Has the ENEM on November 8"
+          },
+          "need": "Decide which topics to prioritize before the learner's exam"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "pt-example-bakery-1",
+        "userInput": {
+          "fact": {
+            "category": "background",
+            "statement": "É dono de uma padaria"
+          },
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "pt-example-bakery-2",
+        "userInput": {
+          "fact": {
+            "category": "background",
+            "statement": "É dono de uma padaria"
+          },
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "relevant",
+        "predicted": "relevant"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "relevant": true
+        },
+        "id": "pt-example-bakery-3",
+        "userInput": {
+          "fact": {
+            "category": "background",
+            "statement": "É dono de uma padaria"
+          },
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
         }
       }
     }

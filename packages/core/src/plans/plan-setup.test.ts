@@ -1,5 +1,4 @@
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
-import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -15,12 +14,7 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { announceTestedOutItems } from "./announce-tested-out-items";
 import { createGoalPlan } from "./create-goal-plan";
-import {
-  fitPlanToRoutine,
-  runPlanSetupTask,
-  searchRoutineMemory,
-  selectRoutineMemory,
-} from "./plan-setup";
+import { fitPlanToRoutine, runPlanSetupTask, selectRoutineMemory } from "./plan-setup";
 import type * as NoticeDay from "../exams/_utils/notice-day";
 import type * as Announcement from "./announce-tested-out-items";
 
@@ -189,7 +183,7 @@ describe(runPlanSetupTask, () => {
 
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement", "routine"]);
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-    expect(generateMemorySearchTerms).not.toHaveBeenCalled();
+    expect(selectRelevantMemoryFacts).not.toHaveBeenCalled();
     expect(fitPlanToRoutineFacts).not.toHaveBeenCalled();
   });
 
@@ -197,21 +191,20 @@ describe(runPlanSetupTask, () => {
     const { goal, library, plan } = await routineGoal();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    const search = await searchRoutineMemory(goal.id);
-    expect(search).toStrictEqual({ memory: ["Travels the week of October 5"] });
-    const memory = search && "memory" in search ? search.memory : [];
+    const memory = await selectRoutineMemory(goal.id);
+    expect(memory).toStrictEqual(["Travels the week of October 5"]);
 
     vi.mocked(fitPlanToRoutineFacts).mockRejectedValueOnce(new Error("The provider is overloaded"));
 
-    await expect(fitPlanToRoutine({ goalId: goal.id, memory })).rejects.toThrow(
+    await expect(fitPlanToRoutine({ goalId: goal.id, memory: memory ?? [] })).rejects.toThrow(
       "The provider is overloaded",
     );
 
     await expect(readSetupTasks(plan.id)).resolves.toContain("routine");
 
     mockLightWeek();
-    await fitPlanToRoutine({ goalId: goal.id, memory });
-    await fitPlanToRoutine({ goalId: goal.id, memory });
+    await fitPlanToRoutine({ goalId: goal.id, memory: memory ?? [] });
+    await fitPlanToRoutine({ goalId: goal.id, memory: memory ?? [] });
 
     const changes = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
@@ -221,37 +214,25 @@ describe(runPlanSetupTask, () => {
 
     expect(fitPlanToRoutineFacts).toHaveBeenCalledTimes(2);
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement"]);
-    await expect(searchRoutineMemory(goal.id)).resolves.toBeNull();
+    await expect(selectRoutineMemory(goal.id)).resolves.toBeNull();
   });
 
-  it("searches a large memory in two calls, each throwing for its retry instead of falling back", async () => {
+  it("selects from a large memory, throwing for its retry instead of falling back", async () => {
     const { goal, library, plan } = await routineGoal({ notes: 10 });
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    vi.mocked(generateMemorySearchTerms).mockRejectedValueOnce(new Error("Gateway down"));
-    await expect(searchRoutineMemory(goal.id)).rejects.toThrow("Gateway down");
-
-    vi.mocked(generateMemorySearchTerms).mockResolvedValueOnce({
-      data: { terms: ["travel"] },
-    } as Awaited<ReturnType<typeof generateMemorySearchTerms>>);
-
-    await expect(searchRoutineMemory(goal.id)).resolves.toStrictEqual({ terms: ["travel"] });
-
     vi.mocked(selectRelevantMemoryFacts).mockRejectedValueOnce(new Error("Gateway down"));
-
-    await expect(selectRoutineMemory({ goalId: goal.id, terms: ["travel"] })).rejects.toThrow(
-      "Gateway down",
-    );
+    await expect(selectRoutineMemory(goal.id)).rejects.toThrow("Gateway down");
 
     vi.mocked(selectRelevantMemoryFacts).mockImplementationOnce(async ({ facts }) =>
       facts.filter((fact) => fact.statement.startsWith("Travels")),
     );
 
-    const memory = await selectRoutineMemory({ goalId: goal.id, terms: ["travel"] });
+    const memory = await selectRoutineMemory(goal.id);
     expect(memory).toStrictEqual(["Travels the week of October 5"]);
 
     mockLightWeek();
-    await fitPlanToRoutine({ goalId: goal.id, memory });
+    await fitPlanToRoutine({ goalId: goal.id, memory: memory ?? [] });
 
     expect(fitPlanToRoutineFacts).toHaveBeenCalledWith(expect.objectContaining({ memory }));
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["placement"]);
