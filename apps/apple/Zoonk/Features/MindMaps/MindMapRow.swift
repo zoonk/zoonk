@@ -50,11 +50,17 @@ struct MindMapRow: View {
     .announcesStatus(waitLine)
     // Read only: a map on its way when the row showed, or once a tap started it, is followed
     // until its status changes or the connection drops; a newer read of the map starts it again.
-    .task(id: map.status.isOnItsWay && failure == nil) {
-      if map.status.isOnItsWay, failure == nil {
+    // The Mind maps page follows its whole list instead.
+    .task(id: place != .library && map.status.isOnItsWay && failure == nil) {
+      if place != .library, map.status.isOnItsWay, failure == nil {
         await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
+    .savesMindMap(
+      SaveTarget(
+        key: MindMapKey(kind: .chapter, targetId: map.chapterId), title: map.title,
+        chapterId: map.chapterId), goalId: goalId, server: map.saved,
+      isAvailable: place == .library && shown == .ready)
   }
 
   private var failure: MindMapRequestFailure? {
@@ -67,7 +73,15 @@ struct MindMapRow: View {
     } content: {
       words
     } end: {
-      action
+      HStack(spacing: 12) {
+        if place == .library, shown == .ready,
+          store.isSaved(MindMapKey(kind: .chapter, targetId: map.chapterId), server: map.saved)
+        {
+          SavedMark()
+        }
+
+        action
+      }
     }
   }
 
@@ -291,8 +305,17 @@ struct MindMapRow: View {
     }
   }
 
+  /// From the Mind maps page, into its Chapters deck at this map.
   private func open() {
-    router.open(.mindMap(chapterId: map.chapterId))
+    if place == .library {
+      router.open(
+        .mindMapStudy(
+          tab: .chapters,
+          start: MindMapPosition(
+            chapterId: map.chapterId, key: MindMapKey(kind: .chapter, targetId: map.chapterId))))
+    } else {
+      router.open(.mindMap(chapterId: map.chapterId))
+    }
   }
 }
 
@@ -367,6 +390,10 @@ extension MindMapLimit {
         localized:
           "You've made the mind map you can try without an account. Create a free account to make more.",
         table: "MindMaps", comment: "A guest made the one map they can without an account")
+    case (.plus, .month):
+      String(
+        localized: "That's all the new mind maps for this month. You can make more next month.",
+        table: "MindMaps", comment: "A Plus learner made this month's maps")
     case (.plus, _):
       String(
         localized: "That's all the new mind maps for today. You can make more tomorrow.",
