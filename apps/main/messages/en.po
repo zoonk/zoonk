@@ -315,6 +315,7 @@ msgstr "Profile"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "c2z6MR"
