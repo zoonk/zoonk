@@ -20,7 +20,7 @@ import {
   loadLanguageLessonInputs,
 } from "./_utils/language-lesson-inputs";
 import { buildLanguageLessonSteps } from "./_utils/language-lesson-steps";
-import { type LanguageLessonRows, saveLanguageLesson } from "./_utils/save-language-lesson";
+import { saveLanguageLesson } from "./_utils/save-language-lesson";
 import {
   type SharedVocabulary,
   saveBankWords,
@@ -31,19 +31,17 @@ type Analytics = Parameters<typeof generateLanguageLesson>[0]["analytics"];
 
 const MIN_SENTENCES = 2;
 
-/** What the review of a published lesson reads: the lesson as its writer wrote it, and its inputs. */
-export type LanguageLessonCheckPlan = {
+export type LanguageLessonDraft = {
   inputs: LanguageLessonInputs;
   lesson: LanguageLessonContent;
-  version: number;
-  writerModel: string;
+  provenance: LibraryProvenance;
 };
 
 type WriteLanguageLessonResult =
   | { status: "notClaimed" }
   | { status: "notLanguageLesson" }
   | { status: "heldBack" }
-  | { check: LanguageLessonCheckPlan; status: "published" };
+  | { draft: LanguageLessonDraft; status: "drafted" };
 
 async function getSharedOrganization() {
   return prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
@@ -99,7 +97,7 @@ export function cleanWrittenLanguageLesson({
  * Saves the lesson's shared words and sentences, the tiles its screens show and their audio, and
  * returns the rows a version of the lesson saves.
  */
-export async function storeLanguageLesson({
+async function storeLanguageLesson({
   content,
   inputs,
   lessonId,
@@ -109,7 +107,7 @@ export async function storeLanguageLesson({
   inputs: LanguageLessonInputs;
   lessonId: string;
   provenance: LibraryProvenance;
-}): Promise<LanguageLessonRows> {
+}): Promise<Omit<Parameters<typeof saveLanguageLesson>[0], "workflowRunId">> {
   const organization = await getSharedOrganization();
 
   const shared = await saveSharedVocabulary({
@@ -159,7 +157,7 @@ export async function storeLanguageLesson({
 }
 
 /** Internal workflow bridge: the caller must hold the lesson's content claim. */
-export async function writeLanguageLessonContent({
+export async function writeLanguageLessonDraft({
   analytics,
   lessonId,
   serviceTier,
@@ -180,16 +178,16 @@ export async function writeLanguageLessonContent({
 
   const { inputs } = state;
 
-  const draft = await generateLanguageLesson({
+  const written = await generateLanguageLesson({
     ...inputs.writerInput,
     analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
     serviceTier,
     speed,
   });
 
-  const cleaned = cleanWrittenLanguageLesson({ content: draft.data, inputs });
+  const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
 
-  if (!cleaned) {
+  if (!lesson) {
     await finishLibraryGeneration({
       id: lessonId,
       status: "failed",
@@ -200,21 +198,25 @@ export async function writeLanguageLessonContent({
     return { status: "heldBack" };
   }
 
+  return { draft: { inputs, lesson, provenance: written.provenance }, status: "drafted" };
+}
+
+/** Internal workflow bridge: false when `workflowRunId` no longer holds the lesson's content claim. */
+export async function publishLanguageLessonDraft({
+  draft,
+  lessonId,
+  workflowRunId,
+}: {
+  draft: LanguageLessonDraft;
+  lessonId: string;
+  workflowRunId: string;
+}): Promise<boolean> {
   const rows = await storeLanguageLesson({
-    content: cleaned,
-    inputs,
+    content: draft.lesson,
+    inputs: draft.inputs,
     lessonId,
     provenance: draft.provenance,
   });
 
-  const version = await saveLanguageLesson({ ...rows, workflowRunId });
-
-  if (version === null) {
-    return { status: "notClaimed" };
-  }
-
-  return {
-    check: { inputs, lesson: rows.content, version, writerModel: draft.provenance.model },
-    status: "published",
-  };
+  return saveLanguageLesson({ ...rows, workflowRunId });
 }

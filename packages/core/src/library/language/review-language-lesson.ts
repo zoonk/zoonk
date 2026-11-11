@@ -1,20 +1,17 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
+import { type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type FixLanguageLessonParams,
   type LanguageLessonContent,
   fixLanguageLesson,
 } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
-import { type LibraryProvenance } from "../_utils/library-rows";
-import { readCurrentLessonVersion } from "../lessons/lesson-versions";
-import { BACKGROUND_TIER } from "../quality/_utils/published-versions";
+import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { listLanguageReviewScreens } from "./_utils/language-review-screens";
-import { republishLanguageLesson } from "./_utils/save-language-lesson";
 import {
-  type LanguageLessonCheckPlan,
+  type LanguageLessonDraft,
   cleanWrittenLanguageLesson,
-  storeLanguageLesson,
 } from "./write-language-lesson-content";
 
 type Analytics = Parameters<typeof checkLanguageLesson>[0]["analytics"];
@@ -24,52 +21,39 @@ export type LessonProblem = FixLanguageLessonParams["problems"][number];
 
 type ReviewContext = {
   analytics?: Analytics;
-  lessonId: string;
-  plan: LanguageLessonCheckPlan;
-  workflowRunId: string;
+  draft: LanguageLessonDraft;
+  serviceTier?: ServiceTier;
 };
 
 export type LanguageLessonFix =
-  | { status: "replaced" | "unchanged" | "unfixed" }
-  | { lesson: LanguageLessonContent; provenance: LibraryProvenance; status: "fixed" };
-
-function toTaskAnalytics({ analytics, workflowRunId }: ReviewContext): Analytics {
-  return { ...analytics, contentScope: "shared", traceId: workflowRunId };
-}
+  | { status: "unchanged" }
+  | { status: "unfixed" }
+  | { draft: LanguageLessonDraft; status: "fixed" };
 
 function listScreens({
+  inputs,
   lesson,
-  plan,
 }: {
+  inputs: LanguageLessonDraft["inputs"];
   lesson: LanguageLessonContent;
-  plan: LanguageLessonCheckPlan;
 }) {
   return listLanguageReviewScreens({
     content: lesson,
-    learnerLanguage: plan.inputs.learnerLanguage,
-    targetLanguage: plan.inputs.targetLanguage,
+    learnerLanguage: inputs.learnerLanguage,
+    targetLanguage: inputs.targetLanguage,
   });
 }
 
-async function isReplaced({ lessonId, plan }: ReviewContext): Promise<boolean> {
-  return (await readCurrentLessonVersion(lessonId)) !== plan.version;
-}
-
-async function review({
-  context,
-  lesson,
-}: {
-  context: ReviewContext;
-  lesson: LanguageLessonContent;
-}): Promise<LessonProblem[]> {
-  const { plan } = context;
+/** Internal workflow bridge: the errors in a written lesson, before anyone sees it. */
+export async function reviewLanguageLessonDraft(context: ReviewContext): Promise<LessonProblem[]> {
+  const { draft } = context;
 
   const { data } = await checkLanguageLesson({
-    ...plan.inputs.writerInput,
-    analytics: toTaskAnalytics(context),
-    screens: listScreens({ lesson, plan }),
-    serviceTier: BACKGROUND_TIER,
-    writerModel: plan.writerModel,
+    ...draft.inputs.writerInput,
+    analytics: context.analytics,
+    screens: listScreens(draft),
+    serviceTier: context.serviceTier,
+    writerModel: draft.provenance.model,
   });
 
   return data.issues.map((issue) => ({
@@ -79,71 +63,53 @@ async function review({
   }));
 }
 
-/** Internal workflow bridge: null when the plan's version is no longer the one learners get. */
-export async function reviewLanguageLesson(
-  context: ReviewContext,
-): Promise<LessonProblem[] | null> {
-  if (await isReplaced(context)) {
-    return null;
-  }
-
-  return review({ context, lesson: context.plan.lesson });
-}
-
 /**
  * Internal workflow bridge: the lesson's writer fixes what `problems` name. It may leave the lesson
  * unchanged when it finds them wrong; its answer is final.
  */
-export async function writeLanguageLessonFix({
+export async function fixLanguageLessonDraft({
   problems,
+  speed,
   ...context
-}: ReviewContext & { problems: LessonProblem[] }): Promise<LanguageLessonFix> {
-  if (await isReplaced(context)) {
-    return { status: "replaced" };
-  }
-
-  const { plan } = context;
+}: ReviewContext & { problems: LessonProblem[]; speed?: ServedSpeed }): Promise<LanguageLessonFix> {
+  const { draft } = context;
 
   const { data, provenance } = await fixLanguageLesson({
-    ...plan.inputs.writerInput,
-    analytics: toTaskAnalytics(context),
-    lesson: plan.lesson,
-    model: plan.writerModel,
+    ...draft.inputs.writerInput,
+    analytics: context.analytics,
+    lesson: draft.lesson,
+    model: draft.provenance.model,
     problems,
-    screens: listScreens({ lesson: plan.lesson, plan }),
-    serviceTier: BACKGROUND_TIER,
+    screens: listScreens(draft),
+    serviceTier: context.serviceTier,
+    speed,
   });
 
-  const fixed = cleanWrittenLanguageLesson({ content: data, inputs: plan.inputs });
+  const lesson = cleanWrittenLanguageLesson({ content: data, inputs: draft.inputs });
 
-  if (!fixed) {
+  if (!lesson) {
     return { status: "unfixed" };
   }
 
-  return isDeepStrictEqual(fixed, plan.lesson)
+  return isDeepStrictEqual(lesson, draft.lesson)
     ? { status: "unchanged" }
-    : { lesson: fixed, provenance, status: "fixed" };
+    : { draft: { ...draft, lesson, provenance }, status: "fixed" };
 }
 
 /**
- * Internal workflow bridge: what still blocks the fixed lesson, or null when the plan's version was
- * replaced. A finding the writer saw on a screen it left unchanged is final, matched by screen, not
- * wording; a lesson-wide finding always blocks.
+ * Internal workflow bridge: what still blocks the fixed lesson. A finding the writer saw on a screen
+ * it left unchanged is final, matched by screen, not wording; a lesson-wide finding always blocks.
  */
 export async function reviewLanguageLessonFix({
   fixed,
   flaggedScreens,
   ...context
-}: ReviewContext & { fixed: LanguageLessonContent; flaggedScreens: (number | null)[] }): Promise<
-  LessonProblem[] | null
+}: ReviewContext & { fixed: LanguageLessonDraft; flaggedScreens: (number | null)[] }): Promise<
+  LessonProblem[]
 > {
-  if (await isReplaced(context)) {
-    return null;
-  }
-
-  const before = listScreens({ lesson: context.plan.lesson, plan: context.plan });
-  const after = listScreens({ lesson: fixed, plan: context.plan });
-  const problems = await review({ context, lesson: fixed });
+  const before = listScreens(context.draft);
+  const after = listScreens(fixed);
+  const problems = await reviewLanguageLessonDraft({ ...context, draft: fixed });
 
   return problems.filter(
     ({ screen }) =>
@@ -153,28 +119,22 @@ export async function reviewLanguageLessonFix({
   );
 }
 
-/** Internal workflow bridge: null when the plan's version is no longer the one learners get. */
-export async function publishLanguageLessonFix({
+/** Internal workflow bridge: keeps a lesson its fix couldn't clear from learners, for a redraft. */
+export async function holdBackLanguageLessonDraft({
+  draft,
   lessonId,
-  plan,
-  provenance,
-  lesson,
+  problems,
+  workflowRunId,
 }: {
-  lesson: LanguageLessonContent;
+  draft: LanguageLessonDraft;
   lessonId: string;
-  plan: LanguageLessonCheckPlan;
-  provenance: LibraryProvenance;
-}): Promise<number | null> {
-  if ((await readCurrentLessonVersion(lessonId)) !== plan.version) {
-    return null;
-  }
-
-  const rows = await storeLanguageLesson({
-    content: lesson,
-    inputs: plan.inputs,
+  problems: LessonProblem[];
+  workflowRunId: string;
+}): Promise<void> {
+  await holdBackLessonDraft({
     lessonId,
-    provenance,
+    model: draft.provenance.model,
+    problems: problems.map(({ problem, screen }) => ({ problem, screen })),
+    workflowRunId,
   });
-
-  return republishLanguageLesson({ ...rows, replaces: plan.version });
 }

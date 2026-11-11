@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
+import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
@@ -44,7 +45,6 @@ import {
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
-import { languageReviewWorkflow } from "../quality/language-review-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import * as pictures from "./mark-and-draw";
@@ -97,6 +97,10 @@ describe(lessonContentWorkflow, () => {
 
     vi.mocked(checkLessonQuality).mockResolvedValue(
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
+    );
+
+    vi.mocked(checkLanguageLesson).mockResolvedValue(
+      taskResult({ issues: [] }, "anthropic/claude-sonnet-5.5"),
     );
   });
 
@@ -452,7 +456,6 @@ describe(lessonContentWorkflow, () => {
     ).resolves.toStrictEqual({
       check: null,
       imageScope: "shared",
-      languageCheck: null,
       owesSentenceOrders: false,
       status: "published",
     });
@@ -460,7 +463,7 @@ describe(lessonContentWorkflow, () => {
     expect(writeLessonDraft).not.toHaveBeenCalled();
   });
 
-  it("starts a language lesson's other word orders and its review once the lesson is written", async () => {
+  it("starts writing a language lesson's other word orders once the lesson is written", async () => {
     await aiOrganizationFixture();
 
     const chapter = await libraryChapterFixture({
@@ -493,19 +496,6 @@ describe(lessonContentWorkflow, () => {
       [{ analytics: undefined, lessonId: lesson.id, wait: "soon" }],
       { experimental_hook: { token: getSentenceOrdersToken(lesson.id) } },
     );
-
-    expect(start).toHaveBeenCalledWith(languageReviewWorkflow, [
-      {
-        analytics: undefined,
-        lessonId: lesson.id,
-        plan: expect.objectContaining({
-          inputs: expect.objectContaining({ learnerLanguage: "pt", targetLanguage: "en" }),
-          lesson: expect.objectContaining({ summary: languageLessonDraft().summary }),
-          version: 1,
-          writerModel: "openai/gpt-6-sol",
-        }),
-      },
-    ]);
   });
 
   it("plans and writes a lesson a learner reaches soon at the standard tier, and one for a later day at the flex tier", async () => {

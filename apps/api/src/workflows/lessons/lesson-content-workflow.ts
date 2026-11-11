@@ -14,16 +14,23 @@ import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
-import { languageReviewWorkflow } from "../quality/language-review-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
+import {
+  fixLanguageDraftStep,
+  holdBackLanguageDraftStep,
+  publishLanguageDraftStep,
+  reviewLanguageDraftStep,
+  reviewLanguageFixStep,
+} from "./steps/language-draft-steps";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
 import { completeLessonContentStep } from "./steps/lesson-ready-steps";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
 import {
+  type LanguageDraftStage,
   type LessonWriteOutcome,
   type LessonWriteStage,
   type WriteInput,
@@ -137,9 +144,53 @@ async function checkDraft({
     : checked;
 }
 
+/**
+ * A language lesson is reviewed before anyone sees it: its screens point at words and sentences
+ * every version shares, so a fix published later would break a lesson a learner has open.
+ */
+async function reviewLanguageDraft({
+  input,
+  stage,
+}: {
+  input: WriteInput;
+  stage: LanguageDraftStage;
+}): Promise<LessonWriteOutcome> {
+  const { draft } = stage;
+  const problems = await reviewLanguageDraftStep(stage);
+
+  if (problems.length === 0) {
+    return publishLanguageDraftStep({ draft, input });
+  }
+
+  const fix = await fixLanguageDraftStep({ problems, stage });
+
+  if (fix.status === "unchanged") {
+    return publishLanguageDraftStep({ draft, input });
+  }
+
+  if (fix.status === "unfixed") {
+    return holdBackLanguageDraftStep({ draft, input, problems });
+  }
+
+  const remaining = await reviewLanguageFixStep({
+    fixed: fix.draft,
+    flaggedScreens: problems.map((problem) => problem.screen),
+    stage,
+  });
+
+  return remaining.length > 0
+    ? holdBackLanguageDraftStep({ draft: fix.draft, input, problems: remaining })
+    : publishLanguageDraftStep({ draft: fix.draft, input });
+}
+
 async function writeLesson(input: WriteInput): Promise<LessonWriteOutcome> {
   const stage = await writeLessonContentStep(input);
-  return stage.status === "drafted" ? checkDraft({ input, stage }) : stage;
+
+  if (stage.status === "drafted") {
+    return checkDraft({ input, stage });
+  }
+
+  return stage.status === "languageDrafted" ? reviewLanguageDraft({ input, stage }) : stage;
 }
 
 async function redraft({
@@ -218,32 +269,6 @@ async function planAndWrite({
   }
 }
 
-async function startPublishedFollowUps({
-  input,
-  outcome,
-}: {
-  input: LessonContentInput;
-  outcome: Extract<LessonWriteOutcome, { status: "published" }>;
-}) {
-  const { analytics, forExam, lessonId } = input;
-
-  if (outcome.owesSentenceOrders) {
-    await startOnce(
-      sentenceOrdersWorkflow,
-      [{ analytics, lessonId, wait: "soon" }],
-      getSentenceOrdersToken(lessonId),
-    );
-  }
-
-  if (outcome.languageCheck) {
-    await start(languageReviewWorkflow, [{ analytics, lessonId, plan: outcome.languageCheck }]);
-  }
-
-  if (outcome.check && (outcome.check.review || outcome.check.cite)) {
-    await start(lessonCheckWorkflow, [{ analytics, forExam, lessonId, plan: outcome.check }]);
-  }
-}
-
 export async function lessonContentWorkflow(
   input: LessonContentInput,
 ): Promise<LessonContentResult> {
@@ -302,7 +327,19 @@ export async function lessonContentWorkflow(
     const completed = await completeLessonContentStep({ lessonId, workflowRunId });
     const ready = await finish({ lessonId, status: completed ? "ready" : "missing" });
 
-    await startPublishedFollowUps({ input, outcome });
+    if (outcome.owesSentenceOrders) {
+      await startOnce(
+        sentenceOrdersWorkflow,
+        [{ analytics: input.analytics, lessonId, wait: "soon" }],
+        getSentenceOrdersToken(lessonId),
+      );
+    }
+
+    if (outcome.check && (outcome.check.review || outcome.check.cite)) {
+      const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
+      await start(lessonCheckWorkflow, [{ ...check, plan: outcome.check }]);
+    }
+
     return ready;
   } catch (error) {
     await failLessonContentStep({ lessonId, workflowRunId });

@@ -1,24 +1,22 @@
 import "server-only";
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { markPlanSourcesChanged } from "../../../learner/_utils/mark-learner-changed";
 import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
-import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { toStepData } from "../../lessons/_utils/step-data";
-import { lockCurrentLessonVersion, startLessonVersion } from "../../lessons/lesson-versions";
+import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type LanguageStepToSave } from "./language-lesson-steps";
 
-/** Another run claimed the lesson, or another version replaced the one a fix was for. */
-class LanguageLessonWriteLostError extends Error {
-  override name = "LanguageLessonWriteLostError";
+class LanguageLessonClaimLostError extends Error {
+  override name = "LanguageLessonClaimLostError";
 }
 
-export type LanguageLessonRows = {
+type SaveLanguageLessonInput = {
   content: LanguageLessonContent;
   lessonId: string;
   provenance: LibraryProvenance;
@@ -26,9 +24,10 @@ export type LanguageLessonRows = {
   skillId: string | null;
   steps: readonly LanguageStepToSave[];
   wordIds: readonly string[];
+  workflowRunId: string;
 };
 
-function toLessonWords({ content, lessonId, provenance, wordIds }: LanguageLessonRows) {
+function toLessonWords({ content, lessonId, provenance, wordIds }: SaveLanguageLessonInput) {
   return content.words.flatMap((word, position) => {
     const wordId = wordIds[position];
 
@@ -48,7 +47,12 @@ function toLessonWords({ content, lessonId, provenance, wordIds }: LanguageLesso
   });
 }
 
-function toLessonSentences({ content, lessonId, provenance, sentenceIds }: LanguageLessonRows) {
+function toLessonSentences({
+  content,
+  lessonId,
+  provenance,
+  sentenceIds,
+}: SaveLanguageLessonInput) {
   return content.sentences.flatMap((sentence, position) => {
     const sentenceId = sentenceIds[position];
 
@@ -69,55 +73,10 @@ function toLessonSentences({ content, lessonId, provenance, sentenceIds }: Langu
   });
 }
 
-async function writeLessonVersion(
-  tx: TransactionClient,
-  rows: LanguageLessonRows,
-): Promise<number> {
-  const { lessonId, provenance, skillId, steps } = rows;
+export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promise<boolean> {
+  const { content, lessonId, provenance, skillId, steps, workflowRunId } = input;
 
-  const [version] = await Promise.all([
-    startLessonVersion(tx, lessonId),
-    tx.lessonWord.deleteMany({ where: { lessonId } }),
-    tx.lessonSentence.deleteMany({ where: { lessonId } }),
-  ]);
-
-  await Promise.all([
-    tx.lessonWord.createMany({ data: toLessonWords(rows) }),
-    tx.lessonSentence.createMany({ data: toLessonSentences(rows) }),
-    tx.step.createMany({
-      data: steps.map((step, position) => ({
-        ...toStepData({
-          content: step.content,
-          contractVersion: STEP_CONTRACT_VERSION,
-          kind: step.kind,
-          position,
-          provenance,
-          sentenceId: step.sentenceId,
-          skillId,
-          wordId: step.wordId,
-        }),
-        lessonId,
-        position,
-        version,
-      })),
-    }),
-  ]);
-
-  return version;
-}
-
-function toSummary(content: LanguageLessonContent) {
-  return { ideas: content.summary.map((text) => ({ text })) };
-}
-
-/** Null when `workflowRunId` no longer holds the lesson's content claim. */
-export async function saveLanguageLesson({
-  workflowRunId,
-  ...rows
-}: LanguageLessonRows & { workflowRunId: string }): Promise<number | null> {
-  const { content, lessonId } = rows;
-
-  const { data: version, error } = await safeAsync(() =>
+  const { data: saved, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       const current = await tx.lesson.findFirst({
         include: { skills: { select: { skillId: true } } },
@@ -126,7 +85,7 @@ export async function saveLanguageLesson({
       });
 
       if (!current) {
-        return null;
+        return false;
       }
 
       const planIds = await resolvePlanInputDependents(tx, {
@@ -140,66 +99,58 @@ export async function saveLanguageLesson({
         data: {
           contentStatus: "completed",
           sentenceOrdersAttempts: 0,
-          summary: toSummary(content),
+          summary: { ideas: content.summary.map((text) => ({ text })) },
         },
         where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
       });
 
       if (claimed.count === 0) {
-        throw new LanguageLessonWriteLostError();
+        throw new LanguageLessonClaimLostError();
       }
 
-      return writeLessonVersion(tx, rows);
+      const [version] = await Promise.all([
+        startLessonVersion(tx, lessonId),
+        tx.lessonWord.deleteMany({ where: { lessonId } }),
+        tx.lessonSentence.deleteMany({ where: { lessonId } }),
+      ]);
+
+      await Promise.all([
+        tx.lessonWord.createMany({ data: toLessonWords(input) }),
+        tx.lessonSentence.createMany({ data: toLessonSentences(input) }),
+        tx.step.createMany({
+          data: steps.map((step, position) => ({
+            ...toStepData({
+              content: step.content,
+              contractVersion: STEP_CONTRACT_VERSION,
+              kind: step.kind,
+              position,
+              provenance,
+              sentenceId: step.sentenceId,
+              skillId,
+              wordId: step.wordId,
+            }),
+            lessonId,
+            position,
+            version,
+          })),
+        }),
+      ]);
+
+      return true;
     }),
   );
 
-  if (error instanceof LanguageLessonWriteLostError) {
-    return null;
+  if (error instanceof LanguageLessonClaimLostError) {
+    return false;
   }
 
   if (error) {
     throw error;
   }
 
-  if (version !== null) {
+  if (saved) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
   }
 
-  return version;
-}
-
-/** Null when `replaces` is no longer the version learners get. */
-export async function republishLanguageLesson({
-  replaces,
-  ...rows
-}: LanguageLessonRows & { replaces: number }): Promise<number | null> {
-  const { content, lessonId } = rows;
-
-  const { data: version, error } = await safeAsync(() =>
-    writePlanInputs(async (tx) => {
-      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
-
-      if ((await lockCurrentLessonVersion(tx, lessonId)) !== replaces) {
-        throw new LanguageLessonWriteLostError();
-      }
-
-      await tx.lesson.update({
-        data: { sentenceOrdersAttempts: 0, summary: toSummary(content) },
-        where: { id: lessonId },
-      });
-
-      return writeLessonVersion(tx, rows);
-    }),
-  );
-
-  if (error instanceof LanguageLessonWriteLostError) {
-    return null;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
-  return version;
+  return saved;
 }
