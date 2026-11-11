@@ -191,15 +191,22 @@ function toTestQuestion({
 
 type WrittenLevel = { level: TestLevel; output: GeneratedLevel };
 
+/** Throws when no question kept its options, since an empty bank can never start a test. */
 function toLevelTestBank(levels: readonly WrittenLevel[]): GenerateLevelTestBankSchema {
-  return {
-    questions: levels.flatMap(({ level, output }) =>
-      TEST_SKILLS.flatMap((skill) =>
-        output[skill]
-          .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
-          .map((question) => toTestQuestion({ level, question, skill })),
-      ),
+  const questions = levels.flatMap(({ level, output }) =>
+    TEST_SKILLS.flatMap((skill) =>
+      output[skill]
+        .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
+        .map((question) => toTestQuestion({ level, question, skill })),
     ),
+  );
+
+  if (questions.length === 0) {
+    throw new Error("No level test question has the three wrong options it needs.");
+  }
+
+  return {
+    questions,
     speaking: levels.map(({ level, output }) => ({ level, ...output.speaking })),
   };
 }
