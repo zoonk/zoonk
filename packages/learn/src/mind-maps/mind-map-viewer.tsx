@@ -146,7 +146,7 @@ function OutlinePane({ outline, pictureFailed }: { outline: Outline; pictureFail
             {t("Its picture had mistakes, so here's the mind map as text.")}
           </p>
         )}
-        <MindMapOutline outline={outline} />
+        <MindMapOutline outline={outline} titled />
       </div>
     </div>
   );
