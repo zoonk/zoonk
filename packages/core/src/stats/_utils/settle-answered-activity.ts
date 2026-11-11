@@ -13,7 +13,7 @@ const MS_PER_SECOND = 1000;
 const MAX_QUESTION_SECONDS = 300;
 
 export type AnsweredActivity = {
-  /** `isCorrect` is null for a question taken out of its test after it was answered: only its time counts. */
+  /** `isCorrect` is null for a question taken out of its test after it was answered: it counts as neither right nor wrong. */
   answers: readonly { durationMs: number; isCorrect: boolean | null }[];
   contentIds: Record<string, string>;
   goalId: string;
