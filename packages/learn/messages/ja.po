@@ -2488,7 +2488,7 @@ msgid "Next"
 msgstr "次へ"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "確定する"
@@ -7319,12 +7319,6 @@ msgid "As text"
 msgstr "テキストで見る"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-#: src/mind-maps/mind-map-save-button.tsx
-msgctxt "fsB_4p"
-msgid "Saved"
-msgstr "保存済み"
-
-#: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "dTo20G"
 msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
 msgstr "{count, plural, other {レッスンのマップ#枚}}"
@@ -7360,6 +7354,12 @@ msgstr "全{count, number}件を表示する"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "まとめ："
+
+#. A mind map the learner saved: the Save button's state, and a mark on its row.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSaved"
+msgid "Saved"
+msgstr "保存済み"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -10160,14 +10160,14 @@ msgid "Your answer, in your own words"
 msgstr "自分の言葉で回答"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "ここで終えて学習計画を見る"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "問題{number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "ここで終えて学習計画を見る"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

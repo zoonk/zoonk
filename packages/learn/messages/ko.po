@@ -2488,7 +2488,7 @@ msgid "Next"
 msgstr "다음"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "확인"
@@ -7319,12 +7319,6 @@ msgid "As text"
 msgstr "글로 보기"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-#: src/mind-maps/mind-map-save-button.tsx
-msgctxt "fsB_4p"
-msgid "Saved"
-msgstr "저장됨"
-
-#: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "dTo20G"
 msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
 msgstr "{count, plural, other {레슨 마인드맵 #개}}"
@@ -7360,6 +7354,12 @@ msgstr "{count, number}개 모두 보기"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "요약:"
+
+#. A mind map the learner saved: the Save button's state, and a mark on its row.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSaved"
+msgid "Saved"
+msgstr "저장됨"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -10160,14 +10160,14 @@ msgid "Your answer, in your own words"
 msgstr "내 말로 쓴 답변"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "여기서 멈추고 내 계획 보기"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "{number, number}번 문제"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "여기서 멈추고 내 계획 보기"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

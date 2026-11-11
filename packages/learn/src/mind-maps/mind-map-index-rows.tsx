@@ -21,7 +21,7 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { buildStudyHref } from "./_utils/mind-map-urls";
 import { type MindMapsPage, type MindMapsPageChapter } from "./_utils/mind-maps-page";
-import { MindMapSaveButton, SavedBookmarkIcon } from "./mind-map-save-button";
+import { MindMapSaveButton, SavedBookmarkIcon, SavedLabel } from "./mind-map-save-button";
 import { MindMapSlot } from "./mind-map-slot";
 
 const LEADING_CLASS = "py-2";
@@ -74,7 +74,9 @@ export function ChapterMapRow({ chapter, study }: { chapter: MindMapsPageChapter
       {chapter.saved && (
         <ListRowTrailing>
           <SavedBookmarkIcon className="size-4" saved />
-          <span className="sr-only">{t("Saved")}</span>
+          <span className="sr-only">
+            <SavedLabel />
+          </span>
         </ListRowTrailing>
       )}
     </ListRowLink>

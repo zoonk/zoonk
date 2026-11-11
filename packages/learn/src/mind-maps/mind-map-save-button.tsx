@@ -11,6 +11,17 @@ export function SavedBookmarkIcon({ className, saved }: { className?: string; sa
   return <BookmarkIcon aria-hidden="true" className={cn(saved && "fill-current", className)} />;
 }
 
+/** A saved mind map's "Saved": its own id, since other saved things agree differently in some languages. */
+export function SavedLabel() {
+  const t = useExtracted();
+
+  return t({
+    description: "A mind map the learner saved: the Save button's state, and a mark on its row.",
+    id: "mindMapSaved",
+    message: "Saved",
+  });
+}
+
 /** The label says the state, so it reads the same to everyone: "Save" until it's "Saved". */
 export function MindMapSaveButton({
   children,
@@ -42,7 +53,7 @@ export function MindMapSaveButton({
       variant={variant}
       {...props}
     >
-      <span className={cn(!labelled && "sr-only")}>{saved ? t("Saved") : t("Save")}</span>
+      <span className={cn(!labelled && "sr-only")}>{saved ? <SavedLabel /> : t("Save")}</span>
       {children}
     </Button>
   );

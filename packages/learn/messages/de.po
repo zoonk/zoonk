@@ -2488,7 +2488,7 @@ msgid "Next"
 msgstr "Weiter"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Bestätigen"
@@ -7319,12 +7319,6 @@ msgid "As text"
 msgstr "Als Text"
 
 #: src/mind-maps/mind-map-index-rows.tsx
-#: src/mind-maps/mind-map-save-button.tsx
-msgctxt "fsB_4p"
-msgid "Saved"
-msgstr "Gespeichert"
-
-#: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "dTo20G"
 msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
 msgstr "{count, plural, one {# Lektions-Mindmap} other {# Lektions-Mindmaps}}"
@@ -7360,6 +7354,12 @@ msgstr "Alle {count, number} anzeigen"
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "Kurz gesagt:"
+
+#. A mind map the learner saved: the Save button's state, and a mark on its row.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSaved"
+msgid "Saved"
+msgstr "Gespeichert"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -10160,14 +10160,14 @@ msgid "Your answer, in your own words"
 msgstr "Deine Antwort in eigenen Worten"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "Hier aufhören und meinen Plan ansehen"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Frage {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Hier aufhören und meinen Plan ansehen"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"
