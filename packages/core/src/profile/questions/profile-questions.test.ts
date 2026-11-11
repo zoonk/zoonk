@@ -206,6 +206,42 @@ describe("profile question capabilities", () => {
     });
   });
 
+  it("keeps the address form on the profile with memory off, never in memory, and a decline clears it", async () => {
+    const user = await learner();
+    await learningProfileFixture({ memoryEnabled: false, userId: user.id });
+
+    const profile = () =>
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } });
+
+    await expect(
+      save({ answer: { form: "feminine" }, question: "addressForm" }, "pt"),
+    ).resolves.toMatchObject({
+      question: { saved: { picks: ["feminine"] }, status: "answered" },
+      status: "saved",
+    });
+
+    await expect(profile()).resolves.toMatchObject({ addressForm: "feminine" });
+    await expect(activeFacts(user.id)).resolves.toStrictEqual([]);
+
+    await save({ answer: { form: "neutral" }, question: "addressForm" });
+    await expect(profile()).resolves.toMatchObject({ addressForm: "neutral" });
+
+    await expect(
+      save({ answer: { declined: true }, question: "addressForm" }),
+    ).resolves.toMatchObject({
+      question: { saved: { picks: [] }, status: "declined" },
+      status: "saved",
+    });
+
+    await expect(profile()).resolves.toMatchObject({ addressForm: null });
+
+    await expect(
+      prisma.profileAnswer.findUniqueOrThrow({
+        where: { userId_question: { question: "addressForm", userId: user.id } },
+      }),
+    ).resolves.toMatchObject({ outcome: "declined", version: 1 });
+  });
+
   it("treats sound-only as an answer, preserves omitted sounds, and clears declined needs", async () => {
     const user = await learner();
 
@@ -564,9 +600,11 @@ describe("profile question capabilities", () => {
       question: "conditions",
     });
 
+    await save({ answer: { form: "masculine" }, question: "addressForm" });
     const exported = await exportCurrentUserData();
 
     expect(exported).toMatchObject({
+      addressForm: "masculine",
       conditions: [expect.objectContaining({ condition: "adhd" })],
       learningNeeds: ["plainWords"],
       memory: {
@@ -578,7 +616,7 @@ describe("profile question capabilities", () => {
       },
     });
 
-    expect(exported?.profileAnswers).toHaveLength(3);
+    expect(exported?.profileAnswers).toHaveLength(4);
   });
 });
 
@@ -684,6 +722,50 @@ describe("profile onboarding", () => {
     ).toBeNull();
   });
 
+  it("asks how to address the learner first only in app languages that mark gender, and a decline holds", async () => {
+    const user = await learner();
+
+    const [portuguese, english] = await Promise.all([
+      goalFixture({ language: "pt", planRevealedAt: null, userId: user.id }),
+      goalFixture({ language: "en", planRevealedAt: null, userId: user.id }),
+    ]);
+
+    const [ptView, enView] = await Promise.all([
+      getOnboarding({ goalId: portuguese.id, locale: "pt" }),
+      getOnboarding({ goalId: english.id, locale: "en" }),
+    ]);
+
+    if (ptView.status !== "ready" || enView.status !== "ready") {
+      throw new Error("Expected both onboardings");
+    }
+
+    expect(
+      ptView.onboarding.steps.find((step) => PROFILE_QUESTIONS.some((id) => id === step)),
+    ).toBe("addressForm");
+
+    expect(enView.onboarding.steps).not.toContain("addressForm");
+
+    expect(
+      enView.onboarding.profile.questions.some((question) => question.id === "addressForm"),
+    ).toBe(true);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: portuguese.id,
+        input: { answer: { declined: true, form: null }, question: "addressForm" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const next = await goalFixture({ language: "pt", planRevealedAt: null, userId: user.id });
+    const view = await getOnboarding({ goalId: next.id, locale: "pt" });
+
+    if (view.status !== "ready") {
+      throw new Error(view.status);
+    }
+
+    expect(view.onboarding.steps).not.toContain("addressForm");
+  });
+
   it("Don't ask again declines only unanswered questions and leaves all saved data intact", async () => {
     const user = await learner();
     const goal = await goalFixture({ userId: user.id });
@@ -704,7 +786,7 @@ describe("profile onboarding", () => {
 
     await expect(
       prisma.profileAnswer.findMany({ where: { userId: user.id } }),
-    ).resolves.toHaveLength(10);
+    ).resolves.toHaveLength(PROFILE_QUESTIONS.length);
 
     const next = await goalFixture({ planRevealedAt: null, userId: user.id });
     const view = await getOnboarding({ goalId: next.id });
