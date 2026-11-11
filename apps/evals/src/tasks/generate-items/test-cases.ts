@@ -1,7 +1,10 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type GenerateItemsParams } from "@zoonk/ai/tasks/items/generate";
 
-type GenerateItemsInput = Omit<GenerateItemsParams, "model" | "useFallback" | "reasoning">;
+type GenerateItemsInput = Omit<
+  OptionalCountry<GenerateItemsParams>,
+  "model" | "useFallback" | "reasoning"
+>;
 
 const ITEMS_PER_CASE = 3;
 

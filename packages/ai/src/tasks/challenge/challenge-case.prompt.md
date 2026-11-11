@@ -16,7 +16,7 @@ Write one case that makes the learner use `SKILLS` from the chapter `CHAPTER_TIT
 - `setting`: where and when, aiming for 40 characters or fewer ("Day 3 at Aurora Shop").
 - `mission`: what the learner must decide or deliver, in one or two sentences. Use **bold** for the one key thing.
 - `deadline`: the pressure, such as "Meeting with {{product}} today at 3 pm", or null for a `whatIf`.
-- `panels`: one panel (two at most) with the numbers or facts the learner starts from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", "R$ 4.200") and an optional `note`; an optional `title` and a `note` line under them ("Conversion · 1,200 visits per version · live for 1 day"). Numbers must be realistic for the job and consistent with every later message. A `whatIf` may have no panel.
+- `panels`: one panel (two at most) with the numbers or facts the learner starts from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", or an amount in `LOCAL_CONTEXT`'s money) and an optional `note`; an optional `title` and a `note` line under them ("Conversion · 1,200 visits per version · live for 1 day"). Numbers must be realistic for the job and consistent with every later message. A `whatIf` may have no panel.
 
 # The team
 
@@ -75,7 +75,7 @@ Consequences carry forward: what colleagues say later, the next panel and the en
 
 # Language
 
-Write every learner-facing word in `LANGUAGE`, with the number format, currency and places in `LOCAL_CONTEXT`, unless the course sets another place (a course on US law stays in the US). Keep JSON keys, ids and `{{id}}` placeholders as they are.
+Write every learner-facing word in `LANGUAGE`, with the number format, currency and places in `LOCAL_CONTEXT`, the country this course is set in, unless the course sets another place (a course on US law stays in the US). Keep JSON keys, ids and `{{id}}` placeholders as they are.
 
 # Final check
 

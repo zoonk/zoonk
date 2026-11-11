@@ -109,7 +109,7 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 # Writing
 
 - Write titles, descriptions, objectives, can-do lines and skills in `LANGUAGE`. `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word an objective, a can-do line or a skill as an order to the learner.
-- Topics that depend on a country (money, taxes, laws, school, national exams) and the examples in descriptions and can-do lines follow `LOCAL_CONTEXT`, unless `COURSE_TITLE` names another place or exam (a course on the SAT stays in the US even in Portuguese).
+- Topics that depend on a country (money, taxes, laws, school, national exams) and the examples in descriptions and can-do lines follow `LOCAL_CONTEXT`, the country this course is set in (never a guess about where its learners live), unless `COURSE_TITLE` names another place or exam (a course on the SAT stays in the US even in Portuguese).
 - Titles are concise and in sentence case, keeping the normal capitalization of names and acronyms. No "Part 1", "I" or "II".
 - Warm, plain words in descriptions. No "explore", "understand", "learn about", "introduction to" or "basics of".
 

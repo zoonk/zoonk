@@ -1,11 +1,11 @@
 import { getSeedLearner, getSeedScreen } from "@/datasets/seed-learners";
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/variants/example-lines";
 
 type ExampleLinesInput = Omit<
-  GenerateExampleLinesParams,
-  "analytics" | "model" | "reasoning" | "useFallback"
->;
+  OptionalCountry<GenerateExampleLinesParams>,
+  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+> & { learnerHomeCountry?: string | null };
 
 const SHARED_EXPECTATIONS = `
   - The output is \`lines\`: one entry for the one screen, a sentence or null when nothing the learner shared fits

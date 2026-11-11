@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type GenerateStepVariantParams,
   generateStepVariant,
@@ -9,12 +9,14 @@ import { TEST_CASES } from "./test-cases";
 type StepVariantOutput = Awaited<ReturnType<typeof generateStepVariant>>["data"];
 
 export const stepVariantTask: Task<
-  Omit<GenerateStepVariantParams, "analytics" | "model" | "reasoning" | "useFallback">,
+  OptionalCountry<
+    Omit<GenerateStepVariantParams, "analytics" | "model" | "reasoning" | "useFallback">
+  >,
   StepVariantOutput
 > = {
   description:
     "Rewrite one lesson screen for the learner's field or tool, faithful to the original",
-  generate: generateStepVariant,
+  generate: (input) => generateStepVariant({ ...input, country: input.country ?? null }),
   id: "step-variant",
   name: "Step Variant",
   scoreCategories: STEP_VARIANT_SCORE_CATEGORIES,

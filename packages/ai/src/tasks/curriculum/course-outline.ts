@@ -51,6 +51,8 @@ type ExtendSkill = RequiredSkill & {
 
 export type CourseOutlineParams = {
   language: string;
+  /** The country the course is set in; null is the language's own. */
+  country: string | null;
   courseTitle: string;
   level: CourseLevel;
   requiredSkills?: RequiredSkill[];
@@ -165,7 +167,7 @@ function buildUserPrompt(
   return `
 ${formatBandInputs(params)}${mixed.length > 0 ? `\n    MIXED_AREA_CHAPTERS: ${formatMixedAreaChapters(mixed)}` : ""}
 
-${formatLocalContext(params.language)}
+${formatLocalContext({ country: params.country, language: params.language })}
 ${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` : ""}
   `;
 }

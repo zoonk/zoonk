@@ -1,11 +1,11 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-check";
 import fixtures from "./real-lessons.json";
 import { type LessonQualityCheckExpected } from "./test-cases";
 
 export type RealReviewInput = {
   recorded: Pick<CheckLessonQualityParams, "lesson"> & {
-    context: Omit<CheckLessonQualityParams, "lesson" | "writerModel">;
+    context: Omit<OptionalCountry<CheckLessonQualityParams>, "lesson" | "writerModel">;
   };
 };
 

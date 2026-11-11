@@ -67,6 +67,7 @@ describe(generatePlacementItems, () => {
     );
 
     const { data, systemPrompt, userPrompt } = await generatePlacementItems({
+      country: null,
       examFormat: { name: "ENEM", optionCount: 5, style: "ENEM style" },
       language: "pt",
       quickCount: 2,
@@ -96,6 +97,7 @@ describe(generatePlacementItems, () => {
     );
 
     const { systemPrompt, userPrompt } = await generatePlacementItems({
+      country: null,
       language: "pt",
       quickCount: 1,
       quickFormat: "trueFalse",
@@ -127,6 +129,7 @@ describe(generatePlacementItems, () => {
     );
 
     const { userPrompt } = await generatePlacementItems({
+      country: null,
       language: "pt",
       quickCount: 1,
       quickFormat: "multipleChoice",
@@ -137,7 +140,7 @@ describe(generatePlacementItems, () => {
 
     expect(userPrompt).toContain("- Place: Italy");
     expect(userPrompt).not.toMatch(/Brazil|Register/u);
-    expect(userPrompt).toContain(formatCast({ language: "it", seed: skill.name }));
+    expect(userPrompt).toContain(formatCast({ country: null, language: "it", seed: skill.name }));
   });
 
   it("lists only the used situations a skill has, and draws another cast once it has some", async () => {
@@ -153,6 +156,7 @@ describe(generatePlacementItems, () => {
     };
 
     const { userPrompt } = await generatePlacementItems({
+      country: null,
       language: "en",
       quickCount: 1,
       quickFormat: "multipleChoice",
@@ -170,6 +174,9 @@ describe(generatePlacementItems, () => {
     );
 
     expect(userPrompt.match(/USED_SITUATIONS/gu)).toHaveLength(1);
-    expect(userPrompt).not.toContain(formatCast({ language: "en", seed: "Percentages:Ratios" }));
+
+    expect(userPrompt).not.toContain(
+      formatCast({ country: null, language: "en", seed: "Percentages:Ratios" }),
+    );
   });
 });

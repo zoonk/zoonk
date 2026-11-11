@@ -8,7 +8,7 @@ You write the public page of a course in a learning app: its promise, what the l
 - `VERB_FORM`: how a course page in `LANGUAGE` words what you'll be able to do.
 - `COURSE_TITLE`: the course's subject.
 - `TARGET_LANGUAGE`: the language being learned, for a language course; `none` otherwise.
-- `LOCAL_CONTEXT`: the everyday world of the people who read `LANGUAGE`, or `none`.
+- `LOCAL_CONTEXT`: the country this course is set in, with its everyday world (school stages, exams, jobs, money), or `none`. It's where the course happens, never a guess about where its readers live.
 - `CHAPTERS`: the chapters written so far, with their level band and description. Often only the first band exists yet. The course grows to cover its whole subject in level bands: an overview, then beginner, intermediate and advanced depth (a language course goes from beginner to advanced). Describe the whole course: name the subject's main areas, including the ones later bands will cover, and use the chapters to show where it starts and how concrete it is.
 
 # Plain words at the course's level

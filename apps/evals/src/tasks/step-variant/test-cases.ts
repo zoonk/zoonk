@@ -1,8 +1,8 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type GenerateStepVariantParams } from "@zoonk/ai/tasks/variants/step-variant";
 
 type StepVariantInput = Omit<
-  GenerateStepVariantParams,
+  OptionalCountry<GenerateStepVariantParams>,
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 

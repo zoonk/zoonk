@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-check";
 import { ALPHABET_LESSONS, ALPHABET_SLIPS, type AlphabetCheckInput } from "./alphabet-lessons";
@@ -10,9 +10,10 @@ import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
 
 export type LessonQualityCheckInput = Pick<
-  CheckLessonQualityParams,
+  OptionalCountry<CheckLessonQualityParams>,
   | "chapterLessons"
   | "chapterTitle"
+  | "country"
   | "courseTitle"
   | "exams"
   | "language"
