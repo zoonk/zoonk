@@ -46,7 +46,7 @@ describe("staff registry", () => {
     expect(unreviewed).toStrictEqual([]);
   });
 
-  it("describes readable scalar types, nullability, lists and enum values", () => {
+  it("describes readable scalar types, nullability, lists, enum values and readable relations", () => {
     const models = describeModels();
 
     for (const model of excludedModels) {
@@ -62,7 +62,7 @@ describe("staff registry", () => {
 
     const session = models.find((model) => model.name === "Session");
     expect(session?.fields.map((field) => field.name)).not.toContain("token");
-    expect(session).not.toHaveProperty("relations");
+    expect(session?.relations).toStrictEqual(["user", "studyReminders"]);
 
     expect(models.find((model) => model.name === "FollowUp")?.fields).toContainEqual(
       expect.objectContaining({ name: "kind", values: expect.arrayContaining(["prepareSession"]) }),
