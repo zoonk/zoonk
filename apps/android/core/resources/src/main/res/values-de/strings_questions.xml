@@ -49,7 +49,6 @@
   "questions_right": "9b10dbf6d9c437b0430f7fe9e067cbf5702484bdb818d4bf6aa5b2cd4ea44238",
   "questions_right_answer": "16e7a7cd7e1aa12f8bae9255abee742e86864d70d01a6bc7a3a2b59e3772b815",
   "questions_saved": "3a35e84d13cbb25cd40e05a4766672026b05df67f3fae4c0c7a8d0cff7ce5cf4",
-  "questions_saved_tomorrow": "a76837e9565d2e054d14df397d7651d7466fe0ac9935b6c3040094a67f448a3e",
   "questions_set_place_audio": "aae4048a94645da7e7f4729036d0d358d93074290347a87163e715afd637b3c6",
   "questions_set_place_case": "8c91d0b034ac276cbcebae9933c71a8528348136fcc895f53c68077cd6a8cd25",
   "questions_set_place_chart": "4975c43ae9ad369e83aef9605253dc90516edf98e39954bc4781514c8a01db52",
@@ -116,7 +115,6 @@
         <item quantity="other">%d Fehler korrigiert. Sie werden aus deinem Fehlerheft entfernt.</item>
     </plurals>
     <string name="questions_saved">Im Fehlerheft gespeichert</string>
-    <string name="questions_saved_tomorrow">Im Fehlerheft gespeichert · wird morgen wiederholt</string>
     <string name="questions_show_less">Weniger anzeigen</string>
     <string name="questions_read_again">Alles noch einmal lesen</string>
     <string name="questions_set_place_audio">Frage %1$d von %2$d zu dieser Aufnahme</string>

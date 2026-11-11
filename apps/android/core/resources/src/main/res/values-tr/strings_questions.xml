@@ -49,7 +49,6 @@
   "questions_right": "1e3c407b6ace6503bf082bbfb70206b014fb72077ce04d5c9cdc1f02dc1714b0",
   "questions_right_answer": "55435b8a3886ea9caed7c09d88879bda07a6bba22c3a52e7d1b70528b5da08c9",
   "questions_saved": "464d9fc72b75f9fcb6fa942d2fce644496f6fcb644bc4520685fcf50901056d2",
-  "questions_saved_tomorrow": "0b39460525e15deab4276c89e0bd1bd7d4c077abf78d205be0d4a5b0fd317520",
   "questions_set_place_audio": "2c1a7442f1e1aafda92ec96c87062eaea317d2de70f6149adb5bc7d981165dfb",
   "questions_set_place_case": "5d8e66fcbfc06d670417cf53db81e40472020c20ccb7ec10a610c7cf50c190b8",
   "questions_set_place_chart": "e4d04c0f8083e9ceacc071d2ee85eaf00888410c688b366bfe590db999691415",
@@ -116,7 +115,6 @@
         <item quantity="other">%d yanlış düzeltildi. Artık defterinde değiller.</item>
     </plurals>
     <string name="questions_saved">Yanlış defterine kaydedildi</string>
-    <string name="questions_saved_tomorrow">Yanlış defterine kaydedildi · yarın tekrar gelecek</string>
     <string name="questions_show_less">Daha az göster</string>
     <string name="questions_read_again">Tamamını tekrar oku</string>
     <string name="questions_set_place_audio">Bu ses kaydındaki %1$d. soru (toplam %2$d)</string>

@@ -49,7 +49,6 @@
   "questions_right": "edf8c4501d189b888ba2b15a125c2b1c6f053bf1dd2750dc9ed783f8dcfddfbe",
   "questions_right_answer": "f1778ff13d164311812017311cfaf6cd61a7d30f6f9f3785a0a09f93680d7655",
   "questions_saved": "8df5bbbca846bf7740ad83be262a9efc21bb7fec68179cef5320ccf5e9085fea",
-  "questions_saved_tomorrow": "6cdf7f2c627bfca6f950ad194b84ca8ce24f4d2c859f7ab476cbdcca8d787693",
   "questions_set_place_audio": "15e214a218f05531ff390b613f179eb214b0dfe87cf44d915492cc18582ccbe3",
   "questions_set_place_case": "36d045e982d0137e29b23204f406c73c1c02cb7dc531071eab693c19b70c2291",
   "questions_set_place_chart": "963f07b450462b77edadb12dc5c69ad1dfe9fbf9d6ddc3d348bd273dcdad8909",
@@ -124,7 +123,6 @@
         <item quantity="other">Poprawiono %d błędów. Znikają z twojego zeszytu.</item>
     </plurals>
     <string name="questions_saved">Zapisano w zeszycie błędów</string>
-    <string name="questions_saved_tomorrow">Zapisano w zeszycie błędów · wróci jutro</string>
     <string name="questions_show_less">Pokaż mniej</string>
     <string name="questions_read_again">Przeczytaj całość ponownie</string>
     <string name="questions_set_place_audio">Pytanie %1$d z %2$d dotyczących tego nagrania</string>

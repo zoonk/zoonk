@@ -49,7 +49,6 @@
   "questions_right": "a1953c57f8b2e34cdb2611f83effbaec10f6f9f53bd264084a9085a98e5ead17",
   "questions_right_answer": "6502e9273e42655314a30fa6bd478c86246fe6d0fa0d242990f64f297a15da9a",
   "questions_saved": "f88a4026bf92aac9e683243863e8ef0a261cb9d46179797708885d47c2cff31f",
-  "questions_saved_tomorrow": "c7c178e3441f023e47e425f5c2deae80ae1f450c776c5bb9fabc2154cbc38c28",
   "questions_set_place_audio": "afade56a5134eb6a6a23bad704d9f8a4e31fcd3f7b53a3e8ef94060e25b2b168",
   "questions_set_place_case": "53d1b82e789d417cd487b64fc268a29dccc19a4f306c13b067fda003b9a0b1b4",
   "questions_set_place_chart": "30173d28799df833baeebbc1ef34e4573212a4edc909e81a2f6fb8b93a766917",
@@ -120,7 +119,6 @@
         <item quantity="other">Hai corretto %d errori. Non sono più nel tuo quaderno.</item>
     </plurals>
     <string name="questions_saved">Salvato nel tuo quaderno degli errori</string>
-    <string name="questions_saved_tomorrow">Salvato nel tuo quaderno degli errori · torna domani</string>
     <string name="questions_show_less">Mostra meno</string>
     <string name="questions_read_again">Rileggi tutto</string>
     <string name="questions_set_place_audio">Domanda %1$d di %2$d su questa registrazione</string>

@@ -49,7 +49,6 @@
   "questions_right": "62a40bcddb8d456520e2cf539b0b27a2a18d1aa741dca3c10fdbf0bda3a0f69b",
   "questions_right_answer": "8b60dc780199ae0b45632baf05f2a9245e2a858cf9e5126241a847296f0609f3",
   "questions_saved": "1f61e64c95e98651ad209c08719064910d8b3956bac15a8019a683afa2dd45ca",
-  "questions_saved_tomorrow": "e8c970e9d7cfa48b88947ae3bad4427ba395251e8f5172a1efa1eca6b3665209",
   "questions_set_place_audio": "c694af5ca16ed3498efe639492ccced139e137b0c8a3ac7cc68d6ddc136d58e9",
   "questions_set_place_case": "e10b7bab0b9c6b829955eb6b66bf0a34b5f4a7c76a6deb1ce7dee635299d135c",
   "questions_set_place_chart": "1e38c682e85f54927176ba84676bff904c7684162e372da1f3e623d497adf36f",
@@ -112,7 +111,6 @@
         <item quantity="other">%d件の間違いを克服しました。間違いノートから削除されます。</item>
     </plurals>
     <string name="questions_saved">間違いノートに保存しました</string>
-    <string name="questions_saved_tomorrow">間違いノートに保存しました · 明日また出てきます</string>
     <string name="questions_show_less">折りたたむ</string>
     <string name="questions_read_again">全文をもう一度読む</string>
     <string name="questions_set_place_audio">この音声の%1$d問目／全%2$d問</string>

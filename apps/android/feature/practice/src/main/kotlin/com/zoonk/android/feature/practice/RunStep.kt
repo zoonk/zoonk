@@ -302,7 +302,6 @@ internal fun RunQuestion(
     draft: Answer?,
     onDraft: (Answer?) -> Unit,
     netScored: Boolean = false,
-    examTomorrow: Boolean = false,
     lastAnswer: String? = null,
     afterFeedback: @Composable () -> Unit = {},
 ) {
@@ -374,7 +373,6 @@ internal fun RunQuestion(
             answer = checked.answer,
             feedback = checked.feedback,
             words = words,
-            examTomorrow = examTomorrow,
             timedOut = run.timedOut,
         ) {
             DrillAnswerNotes(drill, notSure = checked.answer == Answer.DontKnow, timedOut = run.timedOut, trap = checked.feedback.trap)
