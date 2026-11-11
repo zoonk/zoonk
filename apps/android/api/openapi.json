@@ -25883,14 +25883,14 @@
                   },
                   "id": {
                     "type": "string",
-                    "maxLength": 1400,
+                    "maxLength": 1364,
                     "format": "base64url",
                     "contentEncoding": "base64url",
                     "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
                   },
                   "rawId": {
                     "type": "string",
-                    "maxLength": 1400,
+                    "maxLength": 1364,
                     "format": "base64url",
                     "contentEncoding": "base64url",
                     "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
