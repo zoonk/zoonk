@@ -35,6 +35,32 @@ function focusRow(row: Element | null | undefined) {
   row.focus();
 }
 
+/** Skipped blocks fold in with the done ones, so the row says which is which. */
+function useDoneFoldLabel(done: readonly DayStep[]): string {
+  const t = useExtracted();
+  const skipped = done.filter((block) => block.status === "skipped").length;
+  const completed = done.length - skipped;
+
+  if (skipped === 0) {
+    return t("{count, plural, one {# done} other {# done}}", { count: completed });
+  }
+
+  if (completed === 0) {
+    return t({
+      description: "Counts blocks of today's study session the learner skipped.",
+      message: "{count, plural, one {# skipped} other {# skipped}}",
+      values: { count: skipped },
+    });
+  }
+
+  return t({
+    description: "Counts blocks of today's study session the learner finished and skipped.",
+    message:
+      "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}",
+    values: { completed, skipped },
+  });
+}
+
 function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -46,6 +72,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
   const opens = next !== null;
   const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next?.position ?? null });
   const foldsDone = done.length > DONE_ROWS;
+  const doneLabel = useDoneFoldLabel(done);
 
   // Activity keeps state while Today hides, so every visit starts folded.
   useLayoutEffect(
@@ -87,7 +114,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
       {foldsDone && (
         <FoldRow
           done
-          label={t("{count, plural, one {# done} other {# done}}", { count: done.length })}
+          label={doneLabel}
           onToggle={() => setDoneOpen((open) => !open)}
           open={doneOpen}
         />
