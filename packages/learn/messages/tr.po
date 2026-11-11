@@ -12935,14 +12935,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "Geçmişte aldığın ya da hâlâ devam ettiğin eğitimler olabilir. Bitirmiş olman ya da işinle ilgili olması gerekmez."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "İsteğe bağlı. Sonraki ekranda genellikle işe yarayan seçenekler önereceğiz. Sen onaylamadıkça buradaki hiçbir bilgi kaydedilmez."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "İsteğe bağlı. Sen onaylamadıkça buradaki hiçbir bilgi kaydedilmez."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "İsteğe bağlı. Ders arkadaşının sana uyum sağlayabilmesi için seçtiklerin profiline kaydedilir. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -12953,16 +12948,6 @@ msgstr "Sana yardımcı olan her şeyi seç. Kendini bir kategoriye koyman ya da
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "En fazla 3 tane seç. Derslerindeki örneklerde bunları kullanacağız."
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "Bunu profilime kaydet"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "Zoonk bu bilgileri sana hem şimdi hem de ileride uyum sağlamak için kullanır. Bu bilgiler asla paylaşılmaz veya ders örneklerinde kullanılmaz. İstediğin zaman Ayarlar’dan silebilirsin."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

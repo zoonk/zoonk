@@ -12935,14 +12935,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "예전에 했든 지금 하든, 마쳤든 아니든 괜찮아요. 지금 하는 일과 달라도 돼요."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "선택 사항이에요. 다음 화면에서 보통 도움이 되는 방법을 추천해 드릴게요. 저장에 동의한 경우에만 이 내용을 저장해요."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "선택 사항이에요. 저장에 동의한 경우에만 이 내용을 저장해요."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "선택 사항이에요. 선택한 내용을 프로필에 저장해 짝꿍이 그에 맞춰 도와줄 수 있게 해요. 설정에서 언제든 삭제할 수 있어요."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -12953,16 +12948,6 @@ msgstr "도움이 되는 건 모두 골라 주세요. 꼭 특정 유형에 해�
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "3개까지 골라 주세요. 레슨 속 예시에 쓸 거예요."
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "내 프로필에 저장하기"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "Zoonk가 학습 방식을 맞추고 꾸준히 조정하는 데 사용해요. 다른 사람에게 알려 주거나 레슨 예시에 쓰는 일은 없어요. 설정에서 언제든 삭제할 수 있어요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

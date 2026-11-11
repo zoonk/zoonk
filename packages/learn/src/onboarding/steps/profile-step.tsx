@@ -30,6 +30,12 @@ import { type FlowState } from "../_utils/answered-step";
 import { getProfileProgress } from "../_utils/setup-progress";
 import { StepForm } from "./step-form";
 
+/** Skipping conditions declines them, so a learner isn't asked about their health at every new goal. */
+const CONDITIONS_DECLINE = {
+  answer: { conditions: [], consented: false, declined: true },
+  question: "conditions",
+} satisfies OnboardingAnswerInput;
+
 function initialDraft({
   jobPrefill,
   precheck,
@@ -102,7 +108,6 @@ function ProfileStep({
   jobPrefill,
   lessonHref,
   memoryEnabled,
-  nextIsSupport,
   onAnswer,
   onConditions,
   pending,
@@ -114,7 +119,6 @@ function ProfileStep({
   /** Set while the first lesson is ready to open. */
   lessonHref: string | null;
   memoryEnabled: boolean;
-  nextIsSupport: boolean;
   onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
   /** The picks stay on the device, only to check rows on the supports screen that follows. */
   onConditions: (picks: string[]) => void;
@@ -125,7 +129,7 @@ function ProfileStep({
 }) {
   const t = useExtracted();
   const title = useProfileQuestionTitle(question.id);
-  const description = useProfileQuestionDescription({ nextIsSupport, question: question.id });
+  const description = useProfileQuestionDescription(question.id);
 
   const [draft, setDraft] = useState(() => initialDraft({ jobPrefill, precheck, question }));
   const canSend = canSendProfileDraft({ draft, from: "onboarding", question: question.id });
@@ -137,7 +141,7 @@ function ProfileStep({
     }
 
     if (question.id === "conditions") {
-      onConditions(draft.exclusive ? [] : draft.picks);
+      onConditions(draft.picks);
     }
 
     return onAnswer(input);
@@ -151,7 +155,12 @@ function ProfileStep({
       onContinue={() => void send()}
       onSkip={() => {
         onConditions([]);
-        void onAnswer({ answer: null, question: question.id });
+
+        void onAnswer(
+          question.id === "conditions"
+            ? CONDITIONS_DECLINE
+            : { answer: null, question: question.id },
+        );
       }}
       pending={pending}
       subject={t({
@@ -219,7 +228,6 @@ export function ProfileStepScreen({
         jobPrefill={getProfileJobPrefill(getString(view.goal.details, "role"))}
         lessonHref={lessonHref}
         memoryEnabled={view.profile.memoryEnabled}
-        nextIsSupport={view.steps[view.steps.indexOf(step) + 1] === "learningSupport"}
         onAnswer={onAnswer}
         onConditions={onConditions}
         pending={pending}

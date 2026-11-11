@@ -6,6 +6,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
+import { PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { toLabelCase } from "../_utils/label-case";
 import { OnboardingBarRow } from "./onboarding-bar";
 import {
@@ -234,7 +235,18 @@ export function OnboardingHeading({
   return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
-export function OnboardingFooter({ children, className, ...props }: React.ComponentProps<"div">) {
+/** The bottom padding reaches into the page's own, so a short screen's buttons stay where they were. */
+const PINNED_FOOTER_CLASS = cn(
+  PINNED_ACTIONS_CLASS,
+  "bottom-0 -mb-[max(1rem,env(safe-area-inset-bottom))] pb-[max(1rem,env(safe-area-inset-bottom))]",
+);
+
+export function OnboardingFooter({
+  children,
+  className,
+  pinned = false,
+  ...props
+}: React.ComponentProps<"div"> & { pinned?: boolean }) {
   const standalone = useOnboardingHost() === null;
 
   return (
@@ -242,6 +254,7 @@ export function OnboardingFooter({ children, className, ...props }: React.Compon
       className={cn(
         "mt-auto flex flex-col gap-2 pt-4 sm:mt-0",
         standalone && "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
+        pinned && PINNED_FOOTER_CLASS,
         className,
       )}
       {...props}

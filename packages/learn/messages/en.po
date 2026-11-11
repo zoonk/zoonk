@@ -12935,14 +12935,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "Past or present, finished or not. It can be different from your work."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "Optional. Nothing here is saved unless you choose to."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -12953,16 +12948,6 @@ msgstr "Pick anything that helps. No label or diagnosis needed."
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "Pick up to 3. We'll use them for examples in your lessons."
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "Save this to my profile"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
