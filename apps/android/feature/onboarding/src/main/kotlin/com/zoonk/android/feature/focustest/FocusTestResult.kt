@@ -161,9 +161,9 @@ private fun SuggestedFocus(
             focus.state == FocusTestFocus.State.HAND_PICKED ||
             focus.state == FocusTestFocus.State.DECLINED
 
-    // Once "Update my plan" saved, its result line says what the plan now does instead.
-    val applied = plan?.answer?.takeIf { it.change.id == proposal?.id }?.status == PlanChangeDecisionInput.Status.APPLIED
-    val intro = listOfNotNull(focusIntro(focus.state).takeUnless { applied }, importance)
+    // Once the proposal is answered in any way, the answer's line says what happened instead.
+    val answered = proposal != null && plan?.answer?.change?.id == proposal.id
+    val intro = listOfNotNull(focusIntro(focus.state).takeUnless { answered }, importance)
 
     Section(stringResource(R.string.focustest_suggested_focus)) {
         if (intro.isNotEmpty()) {
