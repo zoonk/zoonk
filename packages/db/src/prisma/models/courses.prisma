@@ -1,6 +1,7 @@
 /// A private course is built for one learner's too-specific goal: `userId` is its owner, and it is
 /// never indexed or reused.
 model Course {
+  country               String?              @db.VarChar(2)
   id                    String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
   familyId              String?              @map("family_id") @db.Uuid
   family                CourseFamily?        @relation(fields: [familyId], references: [id], onDelete: SetNull)

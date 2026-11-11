@@ -53,11 +53,14 @@ function lookupFor(
   return lookup;
 }
 
-async function findSettledExam(input: { language: string; lookup: ExamLookup }) {
+async function findStoredExam(input: { language: string; lookup: ExamLookup }) {
   const search = await searchStoredExam(input);
 
   if (search.status !== "settled") {
-    throw new Error("Expected the stored exam without an identity decision");
+    return readMatchedExam({
+      lookup: input.lookup,
+      matches: search.candidates.map(({ id }) => ({ id, probability: 1 })),
+    });
   }
 
   return search.stored;
@@ -109,7 +112,7 @@ async function storedExam({
       timeZone: null,
       year,
     },
-    identityKey: buildExamIdentityKey({ name, ownerId: null, role }),
+    identityKey: buildExamIdentityKey({ country: "BR", name, ownerId: null, role }),
     language,
     name,
     role,
@@ -194,8 +197,8 @@ describe(searchStoredExam, () => {
     };
 
     const [named, unnamed] = await Promise.all([
-      findSettledExam({ language: "en", lookup: lookupFor({ examName, examYear: 2026 }) }),
-      findSettledExam({ language: "en", lookup: lookupFor({ examName }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2026 }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
     ]);
 
     expect(named).toStrictEqual(expected);
@@ -212,7 +215,7 @@ describe(searchStoredExam, () => {
     const lookup = lookupFor({ examName, targetLanguage: "es" }, "pt");
 
     const [inPortuguese, inSpanish] = await Promise.all(
-      lookup.noticeLanguages.map((language) => findSettledExam({ language, lookup })),
+      lookup.noticeLanguages.map((language) => findStoredExam({ language, lookup })),
     );
 
     expect(inPortuguese).toBeNull();
@@ -227,7 +230,7 @@ describe(searchStoredExam, () => {
     });
 
     await expect(
-      findSettledExam({ language: "en", lookup: lookupFor({ examName }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName }) }),
     ).resolves.toStrictEqual({
       blueprintId: blueprint.id,
       dates: [
@@ -252,7 +255,7 @@ describe(searchStoredExam, () => {
   it("estimates the days in the month the learner named, over the notice's usual month", async () => {
     const { examName } = await storedExam({ days: ["2025-07-27"], year: 2025 });
 
-    const stored = await findSettledExam({
+    const stored = await findStoredExam({
       language: "en",
       lookup: lookupFor({ examMonth: 3, examName, examYear: 2027 }),
     });
@@ -272,7 +275,7 @@ describe(searchStoredExam, () => {
     const { blueprint, examName } = await storedExam({ days: ["2026-11-08"], year: 2026 });
 
     await expect(
-      findSettledExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
+      findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
     ).resolves.toStrictEqual({ blueprintId: blueprint.id, dates: [] });
   });
 });

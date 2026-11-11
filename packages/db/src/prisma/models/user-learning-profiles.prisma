@@ -17,6 +17,7 @@ enum BuddyGlasses {
 /// The buddy stores only its kind, name and chosen glasses: stage and glow come from the belt and
 /// Energy, and earned glasses are `Milestone` rows.
 model UserLearningProfile {
+  homeCountry    String?        @map("home_country") @db.VarChar(2)
   id             String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String         @unique @map("user_id") @db.Uuid
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
