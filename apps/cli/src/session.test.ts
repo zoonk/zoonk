@@ -12,7 +12,7 @@ import { sendAuthorized } from "./session.ts";
 type FakeApiOptions = {
   acceptedToken: string;
   beforeRejecting?: () => void;
-  refresh: { body: unknown; status: number };
+  refresh: { body: unknown; headers?: Record<string, string>; status: number };
 };
 
 const HOUR_MS = 3_600_000;
@@ -49,8 +49,20 @@ async function readForm(request: IncomingMessage): Promise<Record<string, string
   return Object.fromEntries(new URLSearchParams(Buffer.concat(chunks).toString()));
 }
 
-function reply(response: ServerResponse, status: number, body: unknown) {
-  response.writeHead(status, { "content-type": "application/json" }).end(JSON.stringify(body));
+function reply({
+  body,
+  headers,
+  response,
+  status,
+}: {
+  body: unknown;
+  headers?: Record<string, string>;
+  response: ServerResponse;
+  status: number;
+}) {
+  response
+    .writeHead(status, { "content-type": "application/json", ...headers })
+    .end(JSON.stringify(body));
 }
 
 async function startFakeApi(options: FakeApiOptions) {
@@ -60,7 +72,7 @@ async function startFakeApi(options: FakeApiOptions) {
   const server = createServer(async (request, response) => {
     if (request.url === "/v1/auth/oauth2/token") {
       refreshRequests.push(await readForm(request));
-      reply(response, options.refresh.status, options.refresh.body);
+      reply({ response, ...options.refresh });
       return;
     }
 
@@ -68,12 +80,17 @@ async function startFakeApi(options: FakeApiOptions) {
     staffCalls.push(authorization);
 
     if (authorization === `Bearer ${options.acceptedToken}`) {
-      reply(response, 200, ME);
+      reply({ body: ME, response, status: 200 });
       return;
     }
 
     options.beforeRejecting?.();
-    reply(response, 401, { error: { code: "UNAUTHORIZED", message: "Authentication required" } });
+
+    reply({
+      body: { error: { code: "UNAUTHORIZED", message: "Authentication required" } },
+      response,
+      status: 401,
+    });
   });
 
   servers.push(server);
@@ -184,5 +201,32 @@ describe(sendAuthorized, () => {
 
     expect(api.staffCalls).toStrictEqual([]);
     expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("never follows a redirect with the refresh token", async () => {
+    const file = createCredentialsFile();
+
+    const elsewhere = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: {
+        body: {},
+        headers: { location: `${elsewhere.origin}/v1/auth/oauth2/token` },
+        status: 307,
+      },
+    });
+
+    saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(elsewhere.refreshRequests).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 });

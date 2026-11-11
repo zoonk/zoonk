@@ -16,9 +16,10 @@ function parseJson(text: string): unknown {
   }
 }
 
+/** Every request carries a credential, and a redirect could send it somewhere unencrypted. */
 export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResult> {
   try {
-    const response = await fetch(url, init);
+    const response = await fetch(url, { ...init, redirect: "error" });
     return { body: parseJson(await response.text()), ok: response.ok, status: response.status };
   } catch (error) {
     const cause = error instanceof Error && error.cause instanceof Error ? error.cause : error;
