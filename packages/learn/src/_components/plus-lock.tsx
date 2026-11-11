@@ -60,14 +60,16 @@ export function PlusNotice({
         <NoticeCardTitle>{title ?? t("Available with Plus")}</NoticeCardTitle>
         {children && <NoticeCardDescription>{children}</NoticeCardDescription>}
 
-        {cta && (
+        {(cta || action) && (
           <NoticeCardActions>
-            <LearnLink
-              className={buttonVariants({ size: "sm", variant: "outline" })}
-              href={href ?? routes.upgrade}
-            >
-              {t("See Plus")}
-            </LearnLink>
+            {cta && (
+              <LearnLink
+                className={buttonVariants({ size: "sm", variant: "outline" })}
+                href={href ?? routes.upgrade}
+              >
+                {t("See Plus")}
+              </LearnLink>
+            )}
             {action}
           </NoticeCardActions>
         )}

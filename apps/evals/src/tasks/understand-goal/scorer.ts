@@ -20,6 +20,8 @@ type ExpectedGoal = {
   ownLevel?: string;
   purpose?: string;
   targetLanguage?: string;
+  /** Null when the words name no country of the language. */
+  targetRegion?: string | null;
   kind: "exam" | "language" | "learn";
   hasTarget?: boolean;
   targetScore?: RegExp;
@@ -140,6 +142,10 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     [
       !expected.targetLanguage || goal.targetLanguage === expected.targetLanguage,
       `language ${show(goal.targetLanguage)}`,
+    ],
+    [
+      expected.targetRegion === undefined || (goal.targetRegion ?? null) === expected.targetRegion,
+      `country ${show(goal.targetRegion)}`,
     ],
     [
       !expected.nativeLanguage || goal.nativeLanguage === expected.nativeLanguage,

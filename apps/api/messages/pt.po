@@ -424,3 +424,8 @@ msgstr "Abaixo você pode começar isso como um novo objetivo."
 msgctxt "40I13C"
 msgid "Below are your statistics."
 msgstr "Abaixo estão suas estatísticas."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "v3uUXk"
+msgid "Below you can choose that variety for your buddy and practice calls."
+msgstr "Abaixo, você pode escolher essa variedade para seu parceiro e suas conversas de prática."

@@ -59,7 +59,6 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
-import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -210,6 +209,7 @@ internal fun PlanPage(
             changes = changes,
             change = viewModel::change,
             undo = viewModel::undo,
+            setRegion = viewModel::setRegion,
             timeToCover = timeToCover,
             findTimeToCover = viewModel::findTimeToCover,
             chooseFocus = { choosingFocus = true },
@@ -360,7 +360,7 @@ internal fun PlanContent(
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
-    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
@@ -541,7 +541,7 @@ private fun NextAndMore(
 private val SIDE_BY_SIDE_WIDTH = 600.dp
 
 @Composable
-private fun PlanEvents(
+internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
 ) {

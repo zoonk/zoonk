@@ -260,10 +260,6 @@ describe(answerPronunciationReview, () => {
     expect(updated.stage).toBe(1);
     expect(updated.dueAt?.getTime()).toBeGreaterThan(Date.now() + DAY_MS);
 
-    expect(result.status === "graded" && result.grade.nextReviewAt).toBe(
-      updated.dueAt?.toISOString(),
-    );
-
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", pronunciationReviewId: review.id, roundId, transcript: word.word },
       durationMs: 1200,

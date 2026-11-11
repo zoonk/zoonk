@@ -1,23 +1,30 @@
 package com.zoonk.android.feature.today
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.view.WindowManager
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -62,7 +69,9 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import org.junit.Assert.assertEquals
@@ -140,7 +149,7 @@ class TodayFlowTest {
                 "minutes" to minutes,
                 "state" to "underway",
                 *sessionFields,
-            )
+            ).withSessionBar()
         val today = decodeFixture<Today>("today", "session" to day, *todayFields.toTypedArray())
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         todayApi.shown = today
@@ -243,6 +252,17 @@ class TodayFlowTest {
             put("planned", 240)
         }
 
+/** Core's count for the blocks the test shows: skipped blocks count neither as done nor in the total. */
+    private fun JsonObject.withSessionBar(): JsonObject {
+        val statuses = getValue("blocks").jsonArray.map { it.jsonObject["status"]?.jsonPrimitive?.content }
+        val bar =
+            buildJsonObject {
+                put("completed", statuses.count { it == "completed" })
+                put("total", statuses.count { it != "skipped" })
+            }
+        return JsonObject(this + ("sessionBar" to bar))
+    }
+
     private fun sevenMinuteLessons(count: Int) =
         JsonArray(
             (0 until count).map { index ->
@@ -310,6 +330,123 @@ class TodayFlowTest {
     @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun renderWaitingTimeOnAPhone() = renderHeldTime("today-waiting-time-phone-pt", waiting = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderSegmentPopoverOnAPhone() =
+        renderPopover("today-segment-popover-phone", descriptionContaining(": 8 min")) {
+            show("lessonsComing" to true)
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderHeldSegmentPopoverOnAPhone() =
+        renderPopover("today-held-segment-popover-phone", descriptionContaining("Your next lessons")) {
+            show("lessonsComing" to true)
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderWeekDayPopoverOnAPhone() =
+        renderPopover("today-week-day-popover-phone", descriptionContaining("Monday:")) {
+            show("week" to studiedWeek(), todayFields = listOf("weeklyChallenge" to weeklyChallenge("2026-10-26")))
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderStudiedWeekDayPopoverInDark() =
+        renderPopover("today-week-day-popover-phone-dark", descriptionContaining("Tuesday:")) {
+            show("week" to studiedWeek())
+        }
+
+    /** The screen with nothing open, then the popover its [anchor] opens. */
+    private fun renderPopover(
+        name: String,
+        anchor: SemanticsMatcher,
+        shown: () -> Unit,
+    ) {
+        val folder = System.getProperty("zoonk.shots").orEmpty()
+        assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+        shown()
+        rule.waitForIdle()
+        save(rule.onRoot(), File(folder, "$name-closed.png"))
+        rule.onNode(anchor and hasClickAction()).performClick()
+        rule.waitForIdle()
+        val roots = rule.onAllNodes(isRoot())
+        val bitmap = roots[0].captureRender().asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, true)
+        // Robolectric's PixelCopy reads only the activity's window, so the popover's window is drawn over it.
+        val popup = (roots.onLast().fetchSemanticsNode().root as ViewRootForTest).view.rootView
+        val params = popup.layoutParams as WindowManager.LayoutParams
+        Canvas(bitmap).apply {
+            translate(params.x.toFloat(), params.y.toFloat())
+            popup.draw(this)
+        }
+        File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private fun save(
+        node: SemanticsNodeInteraction,
+        file: File,
+    ) {
+        file.parentFile?.mkdirs()
+        file.outputStream().use { node.captureRender().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private fun descriptionContaining(text: String) =
+        SemanticsMatcher("description containing: $text") { node ->
+            node.config.getOrNull(SemanticsProperties.ContentDescription)?.any { it.replace('\u00a0', ' ').contains(text) } == true
+        }
+
+    private fun studiedWeek() =
+        buildJsonObject {
+            put(
+                "days",
+                JsonArray(
+                    listOf(
+                        weekDay("2026-10-26", minutes = 25, hitGoal = true),
+                        weekDay("2026-10-27", minutes = 10),
+                        weekDay("2026-10-28", isToday = true),
+                        weekDay("2026-10-29"),
+                        weekDay("2026-10-30"),
+                        weekDay("2026-10-31", kind = "rest", goal = 0),
+                        weekDay("2026-11-01"),
+                    ),
+                ),
+            )
+            put("nextStudyDate", JsonNull)
+        }
+
+    private fun weekDay(
+        date: String,
+        minutes: Int = 0,
+        goal: Int = 20,
+        hitGoal: Boolean = false,
+        isToday: Boolean = false,
+        kind: String = "study",
+    ) = buildJsonObject {
+        put("date", date)
+        put("goalMinutes", goal)
+        put("hitGoal", hitGoal)
+        put("isToday", isToday)
+        put("kind", kind)
+        put("minutes", minutes)
+        put("studied", minutes > 0)
+    }
+
+    private fun weeklyChallenge(date: String) =
+        buildJsonObject {
+            put("access", "open")
+            put("date", date)
+            put("kind", "mixed")
+            put("planItemId", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d51")
+            put("questions", 20)
+            put("timeLimitMinutes", JsonNull)
+            put("title", "Weekly challenge")
+        }
 
     private fun renderHeldTime(
         name: String,
@@ -535,7 +672,8 @@ class TodayFlowTest {
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
             sessionId: UUID,
-        ): StudyBlock {
+            timeZone: String,
+        ): StudyBlock? {
             extraBlockGate.await()
             error("Not used")
         }

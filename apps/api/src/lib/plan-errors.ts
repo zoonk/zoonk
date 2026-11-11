@@ -12,6 +12,7 @@ export const planErrorCodes = {
   planChangeInvalid: "PLAN_CHANGE_INVALID",
   planLinkTitleRequired: "PLAN_LINK_TITLE_REQUIRED",
   targetDateOutOfRange: "TARGET_DATE_OUT_OF_RANGE",
+  targetRegionNotOffered: "TARGET_REGION_NOT_OFFERED",
 } as const;
 
 const OPERATION_MESSAGES = {
@@ -67,6 +68,14 @@ export function targetDateOutOfRange(error: z.ZodError) {
       ...(issue.code === "custom" ? issue.params : {}),
     })),
     message: first?.message ?? "That date is outside the supported planning range",
+    status: httpStatus.unprocessableEntity,
+  });
+}
+
+export function targetRegionNotOffered() {
+  return createErrorResponse({
+    code: planErrorCodes.targetRegionNotOffered,
+    message: "That country isn't one of this goal's language's countries",
     status: httpStatus.unprocessableEntity,
   });
 }

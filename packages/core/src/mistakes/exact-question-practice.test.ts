@@ -1,6 +1,6 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -181,9 +181,13 @@ describe("exact-question practice", () => {
     ).resolves.toHaveLength(1);
   });
 
-  it("keeps today's exact original open even when its answer is correct", async () => {
-    const { mistake, step } = await setup();
-    await prisma.mistake.update({ data: { createdAt: new Date() }, where: { id: mistake.id } });
+  it("takes no practice answer for a mistake made today", async () => {
+    const { mistake, step, user } = await setup();
+
+    await prisma.mistake.update({
+      data: { createdAt: new Date(), missedAt: new Date() },
+      where: { id: mistake.id },
+    });
 
     const result = await answerMistakePractice({
       input: {
@@ -196,10 +200,8 @@ describe("exact-question practice", () => {
       mistakeId: mistake.id,
     });
 
-    expect(result).toMatchObject({
-      feedback: { fixed: false, fixedMistakeIds: [], mistakeStatus: "open" },
-      status: "ready",
-    });
+    expect(result).toStrictEqual({ status: "invalidItem" });
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
   it("offers no replacement for missing or retired originals, including their availability", async () => {
@@ -250,7 +252,11 @@ describe("exact-question practice", () => {
 
     expect(recorded.mistake).not.toBeNull();
     const savedId = recorded.mistake!.id;
-    await prisma.mistake.update({ data: { createdAt: YESTERDAY }, where: { id: savedId } });
+
+    await prisma.mistake.update({
+      data: { createdAt: YESTERDAY, missedAt: YESTERDAY },
+      where: { id: savedId },
+    });
 
     await prisma.step.update({
       data: { content: { ...(step.content as object), question: "Replacement question" } },
@@ -438,7 +444,7 @@ describe("exact-question practice", () => {
     }
 
     await prisma.mistake.update({
-      data: { createdAt: YESTERDAY },
+      data: { createdAt: YESTERDAY, missedAt: YESTERDAY },
       where: { id: recorded.mistake.id },
     });
 
@@ -482,8 +488,9 @@ describe("exact-question practice", () => {
   });
 
   it("settles the notebook mission from an exact lesson correction", async () => {
-    const { mistake, step, user } = await setup();
+    const { mistake, skill, step, user } = await setup();
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
 
     await studySessionFixture({
       goalId: goal.id,
@@ -519,7 +526,7 @@ describe("exact-question practice", () => {
     });
   });
 
-  it("records a new wrong recurrence after an exact original was fixed, and retries it once", async () => {
+  it("gives a later wrong answer to a fixed original the answer that fixed it, recording nothing new", async () => {
     const { mistake, step, user } = await setup();
 
     const right = await answerMistakePractice({
@@ -543,18 +550,15 @@ describe("exact-question practice", () => {
       timeZone: "UTC",
     };
 
-    await answerMistakePractice({ input, mistakeId: mistake.id });
-    await answerMistakePractice({ input, mistakeId: mistake.id });
-    const open = await prisma.mistake.findMany({ where: { status: "open", userId: user.id } });
-    expect(open).toHaveLength(1);
-    expect(open[0]?.id).not.toBe(mistake.id);
-    expect(open[0]?.createdAt.getTime()).toBeGreaterThan(YESTERDAY.getTime());
+    await expect(answerMistakePractice({ input, mistakeId: mistake.id })).resolves.toStrictEqual(
+      right,
+    );
 
     await expect(
-      getMistakePractice({ includeAllFormats: true, timeZone: "UTC" }),
-    ).resolves.toMatchObject({ practice: [], status: "ready" });
+      prisma.mistake.count({ where: { status: "open", userId: user.id } }),
+    ).resolves.toBe(0);
 
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(2);
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("restores the original lesson variant rather than the learner's current variant", async () => {

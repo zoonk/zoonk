@@ -5,12 +5,15 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type PronouncedWord,
   splitExpectedWords,
   toPronouncedWords,
 } from "./_utils/pronunciation-words";
-import systemPrompt from "./assess-pronunciation.prompt.md";
+import taskPrompt from "./assess-pronunciation.prompt.md";
+
+const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * No fallback: other providers' audio models on AI Gateway take only MP3 or WAV, not the WebM and

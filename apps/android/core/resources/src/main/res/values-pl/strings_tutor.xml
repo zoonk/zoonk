@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "64d67cdf7590b7492168de46c341141c8d91ed360d2161826ed74d47bf953f0d",
   "tutor_offer_essay_weekly": "a9172750f9031443baaab54258a0c6a717fa94d954df75f5bb9dca1c7b2b8289",
   "tutor_offer_goal": "098d3d189edd1d1ba22ed74044056d3e8b1a3803bfa0324ee97c3d45d7911dca",
+  "tutor_offer_goal_limit": "0a22c1a4ff01ca71d1da7c501fe3a9d14cb3326fad947ad590d408faad85cd5c",
   "tutor_offer_logbook": "80595a35567b06081aef0b93ba266c7df7ecbaf06842e0323a9c44bfdf5aa804",
   "tutor_offer_logbook_description": "f99d898932861db68112e38016af28935a4c8219dbd73830f99f9d0439a833e9",
   "tutor_offer_manage": "eb3c140c1d224562464a233737f204d4b00902468f3e368c4d9b3ced10520ab3",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "0a772a9fc8dceeafd0338ae425749a1088204d96f2a037953a6e939963758e94",
   "tutor_offer_mock_description": "527b9a6464ca21ac89f42edb9817d225f853f427eb03749467626cdb4fc3fe91",
   "tutor_offer_mock_plus": "b2c57981d37b52456047de6844e7ed827ee8bf13f6a9e0320fd7d9814f71d6f0",
-  "tutor_offer_one_goal": "6166116989a9a20313fefaa87a00042b0fdfe5588878be55e282f71029bb17d4",
   "tutor_offer_open": "5a45e41915c1ab5e1e629f8b383cd3e8a6f9a9efaa8c0ae42eb3801c9637c02b",
   "tutor_offer_plus": "1f97cba36f76e55546a4f81c895f9c3d68310580e992180bd23bbf2121d90bad",
   "tutor_offer_plus_description": "a1e742b9b412aca23bd9d2247c23a68ce017f9fdbc682aaffcc014f30af8e8e0",
@@ -86,6 +86,8 @@
   "tutor_offer_stats": "c1d332c5cff3a7e46fc5894c7eef4a817acecb54e462f21781a057a7b357653a",
   "tutor_offer_stats_description": "f76b8f5c56433752e90f2b75fde0a197833da3336260bf34e528effa606f5c4a",
   "tutor_offer_take_test": "0edaac9a4f70f30dd4aef583432573b6676dc2be350041f1b8e4dd188662b1b2",
+  "tutor_offer_variety_applied": "ccc211b8764917bfdfc90da49bd9312f20a93ee0a5498c343cf20769bd1343ec",
+  "tutor_offer_variety_description": "e1d7bbd5eac51771fb144b00e7a5099b78681580789af6c31496c5dbe87bc6e7",
   "tutor_page_sign_up": "77fdd2be6f05409c40227fc0ab5126ee38ec08ec19aa99e968344fe140a2f75a",
   "tutor_placeholder_answer": "7776e51657ff2a903cc3eef746bb9ff900e9eb509a08af2a23dde407d9da82d1",
   "tutor_placeholder_chapter": "60a8a5901e2fc90a38bb702fe1094608a4c10270dfe584c669a02c3221d0f37a",
@@ -213,7 +215,8 @@
     <string name="tutor_offer_start_goal">Wyznacz nowy cel</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">„%1$s”</string>
-    <string name="tutor_offer_one_goal">W pakiecie Free możesz realizować jeden cel naraz: wstrzymaj obecny cel w jego menu lub realizuj kilka celów z Plus.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">Z pakietem Plus możesz już teraz rozpocząć kolejny cel. Na razie pracuj dalej nad obecnymi celami.</string>
     <string name="tutor_offer_catalog_course">Gotowy kurs w katalogu</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -260,6 +263,10 @@
     <string name="tutor_offer_memory_description">Zobacz, popraw lub usuń to, co twój kumpel o tobie pamięta.</string>
     <string name="tutor_offer_stats">Zobacz statystyki</string>
     <string name="tutor_offer_stats_description">Energia, poziom, poprawne odpowiedzi i to, kiedy najlepiej ci się uczy.</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %1$s.</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">Zapisano. Możesz to zmienić w swoim planie.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Co oferuje Plus i ile kosztuje.</string>
     <string name="tutor_offer_plus_subscribed">Twój pakiet i rozliczenia.</string>

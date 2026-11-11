@@ -67,7 +67,9 @@ final class SettingsStore {
     profileQuestions = signedIn([.memory, .learningProfile]) {
       try await api.getProfileQuestions(token: $0)
     }
-    allowance = signedIn([.allowance, .userSubscription]) { try await api.getAllowance(token: $0) }
+    allowance = signedIn([.allowance, .goals, .userSubscription]) {
+      try await api.getAllowance(token: $0)
+    }
     preferenceSaves = QueuedSaves(preferences, cache: cache)
     memorySaves = QueuedSaves(memory, cache: cache)
     freePlan = cache.resource(audience: .everyone) { _ in try await api.getFreePlan() }

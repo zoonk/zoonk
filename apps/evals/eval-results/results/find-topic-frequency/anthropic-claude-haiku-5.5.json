@@ -4,6 +4,106 @@
     {
       "steps": [
         {
+          "conclusion": "Missed Biology",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed Biology",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed Biology",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "found": [
+            "Biology"
+          ],
+          "notHigh": [
+            "Biology and Human Welfare"
+          ],
+          "notLow": [
+            "Genetics and Evolution",
+            "Human Physiology"
+          ]
+        },
+        "id": "en-neet-biology-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "NEET (UG)",
+          "subjects": [
+            {
+              "name": "Biology",
+              "topics": [
+                "Diversity in Living World",
+                "Structural Organisation in Animals and Plants",
+                "Cell Structure and Function",
+                "Plant Physiology",
+                "Human Physiology",
+                "Reproduction",
+                "Genetics and Evolution",
+                "Biology and Human Welfare",
+                "Biotechnology and Its Applications",
+                "Ecology and Environment"
+              ]
+            }
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "found": [],
+          "notHigh": [],
+          "notLow": [],
+          "onlyFound": true
+        },
+        "id": "en-nextgen-bar-new-exam-1",
+        "userInput": {
+          "board": "NCBE",
+          "exam": "NextGen Uniform Bar Examination",
+          "subjects": [
+            {
+              "name": "Torts",
+              "topics": [
+                "Intentional torts",
+                "Negligence",
+                "Strict liability",
+                "Products liability"
+              ]
+            }
+          ],
+          "today": "2026-10-30"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
           "conclusion": "Missed Ciências da Natureza e suas Tecnologias",
           "kind": "majorErrors",
           "score": 8
@@ -208,106 +308,6 @@
                 "4.1 Funções do planejamento e do orçamento; relação entre PPA, LDO e LOA; receita e despesa em nível conceitual; restrições fiscais, escolhas alocativas e sustentabilidade das ações",
                 "5 Serviços e transformação digital",
                 "5.1 Orientação ao usuário; simplificação e acessibilidade; coordenação de serviços; oportunidades e riscos da automação e da inteligência artificial na administração"
-              ]
-            }
-          ],
-          "today": "2026-10-30"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Missed Biology",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Missed Biology",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Missed Biology",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "found": [
-            "Biology"
-          ],
-          "notHigh": [
-            "Biology and Human Welfare"
-          ],
-          "notLow": [
-            "Genetics and Evolution",
-            "Human Physiology"
-          ]
-        },
-        "id": "en-neet-biology-1",
-        "userInput": {
-          "board": "NTA",
-          "exam": "NEET (UG)",
-          "subjects": [
-            {
-              "name": "Biology",
-              "topics": [
-                "Diversity in Living World",
-                "Structural Organisation in Animals and Plants",
-                "Cell Structure and Function",
-                "Plant Physiology",
-                "Human Physiology",
-                "Reproduction",
-                "Genetics and Evolution",
-                "Biology and Human Welfare",
-                "Biotechnology and Its Applications",
-                "Ecology and Environment"
-              ]
-            }
-          ],
-          "today": "2026-10-07"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "found": [],
-          "notHigh": [],
-          "notLow": [],
-          "onlyFound": true
-        },
-        "id": "en-nextgen-bar-new-exam-1",
-        "userInput": {
-          "board": "NCBE",
-          "exam": "NextGen Uniform Bar Examination",
-          "subjects": [
-            {
-              "name": "Torts",
-              "topics": [
-                "Intentional torts",
-                "Negligence",
-                "Strict liability",
-                "Products liability"
               ]
             }
           ],

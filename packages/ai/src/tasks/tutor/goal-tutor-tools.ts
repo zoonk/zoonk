@@ -11,6 +11,7 @@ export const GOAL_TUTOR_APP_TOOLS = [
   "mistakes",
   "conversationCall",
   "pronunciation",
+  "variety",
   "stats",
   "logbook",
   "memory",
@@ -43,6 +44,8 @@ const APP_TOOL_USES: Record<GoalTutorAppTool, string> = {
     'starting a new goal, for anything this goal doesn\'t cover: another subject, skill, language or exam, or a quick explanation of a topic outside it. Give `goal`, what they want in their own words, as they\'d type it to start it ("Aprender violão para tocar na igreja"), and `topic`, its subject in one to three words as a course would be titled ("Violão"). The card starts the goal with their words filled in, and shows a ready course from the app\'s catalog when one matches.',
   stats:
     "their statistics: Energy, level, how many answers they get right, when they study best and the days they studied. When they ask how they're doing in numbers, or about their Energy or level.",
+  variety:
+    'the language as one country speaks it, for their buddy and practice calls, while lessons and their audio keep the variety they teach. Give `country`, the country\'s two-letter code ("AR" for Argentine Spanish, "PT" for European Portuguese). When they want a country\'s variety, accent or words, offer this card instead of a plan change that adds lessons for it.',
 };
 
 export const GOAL_TUTOR_APP_TOOLS_DESCRIPTION = [

@@ -93,7 +93,8 @@ class FakeStudyApi : StudyApi {
     override suspend fun addExtraBlock(
         session: AuthenticatedSession,
         sessionId: UUID,
-    ): StudyBlock {
+        timeZone: String,
+    ): StudyBlock? {
         added += sessionId
         return decodeFixture("study-block", "id" to EXTRA_BLOCK.toString(), "extra" to true)
     }

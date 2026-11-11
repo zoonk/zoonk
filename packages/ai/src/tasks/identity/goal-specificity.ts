@@ -9,13 +9,16 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./goal-specificity.prompt.md";
 
 /**
- * Haiku 5.5 got all 16 stored current-prompt cases at $0.0796/1k and 1.67 s p50; Luna and Flash
- * Lite got 15. Jev decided all 21 cases at half the cost (8 Nov 2026) but can't write the shareable
- * goal and the personal details apart.
+ * Onboarding waits on this call. On 21 cases (11 Nov 2026), Muse Ember without reasoning passed
+ * every case at 0.91 s p50 for $0.13/1k; Haiku 5.5 scored 9.90 (it invented an occupation) at
+ * 1.63 s for $0.08/1k, and a blind GPT-6.1 Sol read found 2 Ember wins and 19 ties. Ember's
+ * provider refuses some hostile course requests, but Ember answered all 8 legitimate goals a filter
+ * might misread, such as pentesting or lethal doses; Haiku and Luna (9.71) fall back. Jev decided
+ * all 21 at half Haiku's cost but can't write the shareable goal and the personal details apart.
  */
-const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "none";
-const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
 
 const schema = z.object({
   generalGoal: z.string().nullable(),

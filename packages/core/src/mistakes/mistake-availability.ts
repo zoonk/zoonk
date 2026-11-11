@@ -1,6 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readPracticeMistakes } from "../learner/facts/practice-mistakes";
 import { type MistakeAvailability } from "./contract";
 import {
@@ -8,28 +10,34 @@ import {
   filterMistakesWithPracticeMaterial,
 } from "./mistake-practice-eligibility";
 
-/** Fixing requires recall on a later local day, never repeating a just-shown answer. */
-export function getMistakePracticeBefore({
-  localDate,
+type LocalDay = { localDate: Date; timeZone: string };
+
+/** The run's goal's zone, else the active goal's, else the request's: the notebook, a run and its answers count the same day, and a sent zone can't move it past a stored one. */
+export async function getPracticeTimeZone({
+  goal,
   timeZone,
+  userId,
 }: {
-  localDate: Date;
-  timeZone: string;
-}): Date {
-  return getStartOfLocalDay({ localDate, timeZone });
+  goal: Pick<Goal, "timezone"> | null;
+  timeZone?: string | null;
+  userId: string;
+}): Promise<string> {
+  return goal ? getAnswerTimeZone({ goal, timeZone }) : getLearnerTimeZone({ timeZone, userId });
 }
 
-export function listReadyMistakes<TMistake extends Pick<PracticeMistake, "createdAt">>({
+/** Practice and fixing require recall on a later local day than the last miss, never repeating a just-shown answer. */
+export function readyMistakeWhere({ localDate, timeZone }: LocalDay) {
+  return { missedAt: { lt: getStartOfLocalDay({ localDate, timeZone }) }, status: "open" } as const;
+}
+
+/** For open mistakes already read; queries filter with `readyMistakeWhere`. */
+export function listReadyMistakes<TMistake extends Pick<PracticeMistake, "missedAt">>({
   localDate,
   mistakes,
   timeZone,
-}: {
-  localDate: Date;
-  mistakes: readonly TMistake[];
-  timeZone: string;
-}): TMistake[] {
-  const before = getMistakePracticeBefore({ localDate, timeZone }).getTime();
-  return mistakes.filter((mistake) => mistake.createdAt.getTime() < before);
+}: LocalDay & { mistakes: readonly TMistake[] }): TMistake[] {
+  const before = getStartOfLocalDay({ localDate, timeZone }).getTime();
+  return mistakes.filter((mistake) => mistake.missedAt.getTime() < before);
 }
 
 /** Caller must authorize the learner and scoped goal first; a skill counts only within the goal's, as practice does. */
@@ -53,6 +61,7 @@ async function loadPracticeEligibleMistakes({
       createdAt: true,
       id: true,
       itemId: true,
+      missedAt: true,
       skillId: true,
       snapshot: true,
       stepId: true,
@@ -108,11 +117,7 @@ export async function countReadyMistakes({
 }): Promise<number> {
   const candidate = await prisma.mistake.findFirst({
     select: { id: true },
-    where: {
-      createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
-      status: "open",
-      userId,
-    },
+    where: { ...readyMistakeWhere({ localDate: today, timeZone }), userId },
   });
 
   if (!candidate) {

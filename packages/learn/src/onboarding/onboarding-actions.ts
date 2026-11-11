@@ -15,10 +15,10 @@ import {
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import {
   type OnboardingAnswerInput,
-  type OnboardingDraftEdit,
   type OnboardingDraftView,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type FocusTestActions } from "../focus-test/focus-test-actions";
@@ -48,13 +48,13 @@ export type UnderstandingActions = {
 
 /** `browserBlocked`: the bot check refused to make this browser a guest. */
 export type GoalLimitReason =
+  | "activeGoals"
   | "browserBlocked"
   | "dailyExplanations"
   | "dailyGoals"
   | "guest"
   | "monthlyExplanations"
   | "monthlyGoals"
-  | "oneActiveGoal"
   | "signUpRequired"
   | "slowDown";
 

@@ -5,7 +5,10 @@
 - It never gives its answer away: the learner does the skill's work. The context and the question hold only what the learner needs to start, and no option shows that work (see the formats).
 - A reading or interpretation question makes the learner understand the text (an inference, the main idea, how two parts relate, a detail asked in other words), never find a word, number or phrase the text states in the question's own words ("The buses leave every 30 minutes." then "How often do the buses leave?").
 - Situations are concrete and realistic.{{FIELD_RULE}}
-- Vary the situations and what each question asks, and spread the difficulty (`easy`, `medium`, `hard`) across the set.
+- Vary the situations and what each question asks, and spread the difficulty (`easy`, `medium`, `hard`) across the set. The same case with other names, numbers or places (another leaking roof reported to the same kind of landlord, another flight cancelled the same way) is the same situation.
+{{#usedSituations}}
+- `USED_SITUATIONS` are the openings of questions the app already asks about a skill (each skill's own, when there are several), which the same learner also meets in practice and mock exams. Put each new question in a situation of its own, never one of those.
+{{/usedSituations}}
 - Fit `LEVEL`: overview and beginner questions use everyday words and one step; intermediate combine two ideas; advanced ones need judgment or several steps. For an exam, its own difficulty comes first (see "Exam style").
 - Be correct. If a fact depends on a country, a date or an edition, name it in the question. Never invent statistics, laws or quotes.
 - All learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}. Speak to the learner as "you" in reasons and feedback.

@@ -103,7 +103,6 @@ export const boundaries = {
   "@zoonk/ai/tasks/memory/insight": { generateMemoryInsight: vi.fn() },
   "@zoonk/ai/tasks/memory/reconcile": { reconcileMemoryFact: vi.fn() },
   "@zoonk/ai/tasks/memory/relevance": { selectRelevantMemoryFacts: vi.fn() },
-  "@zoonk/ai/tasks/memory/search-terms": { generateMemorySearchTerms: vi.fn() },
   "@zoonk/ai/tasks/memory/session-patterns": { findSessionPatterns: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/check": { checkMindMapImage: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/image": { generateMindMapImage: vi.fn() },

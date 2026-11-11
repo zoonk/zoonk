@@ -36,7 +36,50 @@ const QUANTUM: Understanding = {
   route: "goals",
 };
 
+const ARGENTINE_SPANISH: Understanding = {
+  followUps: [],
+  goals: [
+    {
+      kind: "language",
+      subject: "Spanish",
+      targetLanguage: "es",
+      targetRegion: "AR",
+      title: "Spanish for Buenos Aires",
+    },
+  ],
+  route: "goals",
+};
+
 test.describe("Onboarding from a typed goal", () => {
+  test("a language goal starts with the country the learner asked for, as changed on the card", async ({
+    page,
+  }) => {
+    const goal = await storeUnderstanding(page, {
+      result: ARGENTINE_SPANISH,
+      words: "learn argentine spanish before i move to buenos aires",
+    });
+
+    await page.goto("/start");
+    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await page.getByRole("button", { name: "Build my plan" }).click();
+
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByText("Spanish (Argentina)", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Edit Language" }).click();
+    await page.getByLabel("Country", { exact: true }).selectOption("ES");
+    await page.getByRole("button", { exact: true, name: "Save" }).click();
+    await expect(page.getByText("Spanish (Spain)", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Looks right" }).click();
+    await expect(page).toHaveURL(GOAL_URL);
+
+    await expect(prisma.goal.findFirstOrThrow({ where: { prompt: goal } })).resolves.toMatchObject({
+      targetLanguage: "es",
+      targetRegion: "ES",
+    });
+  });
+
   test("a visitor goes from a goal in their words to a plan", async ({ page }) => {
     const events = await captureAnalytics(page);
 

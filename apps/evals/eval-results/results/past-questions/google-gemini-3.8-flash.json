@@ -270,162 +270,78 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The included question is correctly keyed: Dylan's 5% monthly growth multiplies the business size by 1.05 each month, whereas the other scenarios describe constant absolute changes.",
+          "reasoning": "All six keyed options match both independent solutions and the official key. Question 138 requires 80−16=64 additional balls (C); 143 requires 400×1.10×0.25/10=11 rooms (B); 150 gives C=0.9q (A); 160 has N1>N2>N3, hence p1<p2<p3 (A); 167 requires a discount of 12/232≈5.17% (A); and 180 has its greatest consecutive-month mean in December–January, 325 mm (C). The numerical error in question 160's explanation does not change its correct option.",
           "score": 10,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "Question 3 is correctly selected and tagged with skill 1, and no unsuitable questions are included. However, eligible Questions 4 and 7 are missing without reason, triggering the maximum score of 8. Omitting two of the three expected questions substantially reduces coverage.",
-          "score": 7,
-          "label": "Which questions",
-          "weight": 25
-        },
-        {
-          "categoryId": "feedback",
-          "reasoning": "Every included option has accurate, learner-directed English feedback. Wrong-option reasons identify constant absolute change as linear rather than exponential, with specific neutral misconception labels. The correct-option reason explains the constant multiplier of 1.05.",
-          "score": 10,
-          "label": "Feedback on every option",
-          "weight": 25
-        },
-        {
-          "categoryId": "citation",
-          "reasoning": "The citation identifies the Regents Examination in Algebra I, June 2025, and Question 3. No included support text has a missing credit line.",
-          "score": 10,
-          "label": "Citation and credit",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "1 of 3 parts passed. Question 4: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table. Question 7: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table.",
-          "score": 4,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 7037,
-          "outputTokens": 548,
-          "reasoningTokens": 129
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Only Question 3 is included. Questions 4 and 7 are readable, have their required tables available, and test skills 2 and 3, respectively. Omitting both without reason leaves two of the three expected questions and skills uncovered.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
-        "id": "en-algebra-one-regents-june-2025-full-1",
-        "userInput": {
-          "count": 10,
-          "exam": "Regents Examination in Algebra I",
-          "format": "multipleChoice",
-          "language": "en",
-          "optionCount": 4,
-          "paper": {
-            "text": "ALGEBRA\nThe University of the State of New York\nREGENTS HIGH SCHOOL EXAMINATION\nALGEBRA I\nI\nWednesday, June 18, 2025 — 1:15 to 4:15 p.m., only\nStudent Name __________________________________________________________\nSchool Name ___________________________________________________________\nThe possession or use of any communications device is strictly prohibited when taking this examination. If you have or use any communications device, no matter how briefly, your examination will be invalidated and no score will be calculated for you.\nPrint your name and the name of your school on the lines above.\nA separate answer sheet for Part I has been provided to you. Follow the instructions from the proctor for completing the student information on your answer sheet.\nThis examination has four parts, with a total of 35 questions. You must answer all questions in this examination. Record your answers to the Part I multiple-choice questions on the separate answer sheet. Write your answers to the questions in Parts II, III, and IV directly in this booklet. All work should be written in pen, except for graphs and drawings, which should be done in pencil. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each question to determine your answer. Note that diagrams are not necessarily drawn to scale.\nThe formulas that you may need to answer some questions in this examination are found at the end of the examination. This sheet is perforated so you may remove it from this booklet.\nScrap paper is not permitted for any part of this examination, but you may use the blank spaces in this booklet as scrap paper. A perforated sheet of scrap graph paper is provided at the end of this booklet for any question for which graphing may be helpful but is not required. You may remove this sheet from this booklet. Any work done on this sheet of scrap graph paper will not be scored.\nWhen you have completed the examination, you must sign the statement printed at the end of the answer sheet, indicating that you had no unlawful knowledge of the questions or answers prior to the examination and that you have neither given nor received assistance in answering any of the questions during the examination. Your answer sheet cannot be accepted if you fail to sign this declaration.\nNotice …\nA graphing calculator and a straightedge (ruler) must be available for you to use while taking this examination.\nDO NOT OPEN THIS EXAMINATION BOOKLET UNTIL THE SIGNAL IS GIVEN.\nALGEBRA I\fPart I\nAnswer all 24 questions in this part. Each correct answer will receive 2 credits. No partial credit will be allowed. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or each statement or q uestion, choose the word or expression that, of those given, best completes the statement or answers the q uestion. Record your answers on your separate answer sheet. [48]\n10\n1 The expression\nis equivalent to\n2\n(1) 5\n(3) 5 2\n(2) 20\n(4) 10 2\nUse this space for computations.\n2 A parabola is graphed on the set of axes below.\ny\nx\nOver which interval is the parabola only increasing?\n(1) [1,4]\n(3) (2`,3]\n(2) [3,`)\n(4) [21,1]\n3 Which scenario represents an exponential relationship?\n(1) Kirsten’s New Year’s resolution is to lose one pound each week.\n(2) Sarah wants to increase her grade by 5 points each quarter.\n(3) Tommy wants to reduce his spending by $50 each month.\n(4) Dylan hopes to grow his business by 5% each month.\f4 The geometry test scores for Andrea and Joe are shown in the table below.\nUse this space for computations.\n| Andrea | Joe |\n| 82 | 91 |\n| 87 | 78 |\n| 90 | 94 |\n| 84 | 67 |\nWhich statement about their test scores is correct?\n(1) Both the mean and standard deviation of Andrea’s test scores are higher than Joe’s.\n(2) Both the mean and standard deviation of Joe’s test scores are higher than Andrea’s.\n(3) The mean of Andrea’s test scores is higher than Joe’s, but Joe’s standard deviation is higher than Andrea’s.\n(4) The mean of Joe’s test scores is higher than Andrea’s, but Andrea’s standard deviation is higher than Joe’s.\n5 Which polynomial has a degree of 3 and a leading coefficient of 2?\n(1) 2x2 1 3x 1 1\n(3) 3x2 1 2x 1 2\n(2) 6x3 1 3x2 2 2x\n(4) 2x3 1 x2 1 4x\n6 The expression (23x2 1 9) 2 (7x2 2 5x 1 4) is equivalent to\n(1) 210x2 1 5x 1 5\n(3) 210x2 2 5x 1 5\n(2) 210x2 1 5x 1 13\n(4) 210x2 2 5x 1 13\n[OVER]\f7 The function h(x) is used to calculate the average height, in inches, of a tomato plant x weeks after it is transplanted. These data are represented in the table below.\nUse this space for computations.\n| x | h(x) |\n| 2 | 6 |\n| 4 | 12 |\n| 6 | 24 |\n| 9 | 51 |\n| 12 | 60 |\n| 16 | 64 |\nBetween weeks 4 and 12, the average rate of change, in inches per week, is\n(1) 6\n(3) 48\n(2) 8\n(4) 58\n8 Chloe is solving the equation x2 1 5x 5 3x 1 3. Her first step is shown below.\nGiven: x2 1 5x 5 3x 1 3 Step 1: x2 1 2x 2 3 5 0\nWhich property justifies this step?\n(1) the zero product property\n(2) the commutative property\n(3) the distributive property\n(4) the subtraction property of equality\n9 Which function represents the graph of w(x) 5 |x| shifted 2 units to the right?\n(1) g(x) 5 |x 1 2|\n(3) q(x) 5 |x| 1 2\n(2) h(x) 5 |x 2 2|\n(4) r(x) 5 |x| 2 2\f10 Given the system of equations:\ny 1 4x 5 5 2x 2 3y 5 10\nA step in solving this system by using the substitution method would be\n(1) 2(5 2 4x) 1 4x 5 5\n(3) 2x 2 3(5 2 4x) 5 10\n(2) 2(5 1 4x) 1 4x 5 5\n(4) 2x 2 3(5 1 4x) 5 10\nUse this space for computations.\n11 Which equation is equivalent to x2 2 6x 5 27?\n(1) (x 2 3)2 5 27 2 9\n(3) (x 2 3)2 5 27 1 36\n(2) (x 2 3)2 5 27 1 9\n(4) (x 2 3)2 5 27 2 36\n12 The box plots below summarize the ages of athletes on the swim team and the track team.\nSwim Team\nTrack Team\n9 10 11 12 13 14 15 16 17\n8 9 10 11 12 13 14 15\nBased on the box plots, which statement must be true?\n(1) The IQR of both teams is the same.\n(2) There are more athletes on the swim team than on the track team.\n(3) The median age of the swim team is less than the median age of the track team.\n(4) The range of ages of the swim team is smaller than the range of ages of the track team.\n[OVER]\f13 The graph of f(x) is shown below.\ny 50\n|  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  | f(x) |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ▪ |\n40\n30\n20\n10\n5\n10\nx 15\nThe domain of this function is\n(1) [0,12]\n(3) 0 , x # 12\n(2) [15,45]\n(4) 15 , x # 45\nUse this space for computations.\n14 The sum of 3 and 5 is\n(1) rational, since the sum can be expressed as an integer\n(2) rational, since the sum can be expressed as a nonterminating decimal\n(3) irrational, since the sum can be expressed as a terminating decimal\n(4) irrational, since the sum cannot be expressed as a terminating or repeating decimal\n15 Which expression is equivalent to a8 2 b6?\n(1) (a4 2 b3)2\n(3) (a4)2 2 (b3)2\n(2) (a6 2 b4)2\n(4) (a6)2 2 (b4)2\n16 The sum of 2 27 and 4 12 is\n(1) 14 3\n(3) 6 39\n(2) 34 3\n(4) 8 39\f17 The sum of Tim’s age and Jack’s age is 44. Tim’s age is 4 less than 7 times Jack’s age, x. An equation that could be used to model this scenario is\n(1) (7x 2 4) 1 x 5 44\n(3) 7x 2 4 5 44\n(2) (4 2 7x) 1 x 5 44\n(4) 4 2 7x 5 44\nUse this space for computations.\nx 1 3\n2\n18 Given the function g(x) 5 2\n, what is the value of g(22)? x 2 2\n(1) 1\n(3) 21\n| 1 | 1 |\n| (2) | (4) 2 |\n| 3 | 3 |\n19 Four graphs are shown below.\n| y | y |\n| x | x |\n| A | C |\n| y | y |\n| x | x |\n| B | D |\nWhich of the graphs represent(s) a function?\n(1) A, only\n(3) A, B, and C, only\n(2) A and B, only\n(4) A, B, C, and D\n[OVER]\f1\n20 The formula to calculate kinetic energy is K 5 mv2, where K is 2\nkinetic energy, m is mass, and v is velocity. When m is written in terms\nof K and v, the equation is\n2K\n(1) m 5 2\n(3) m 5 2Kv2\nv\nK\n(2) m 5 2Kv2\n(4) m 5\n2v2\nUse this space for computations.\n2(3x 21)\n21 The solution to the equation\n5 x 1 2 is 3\n| 1 | 4 |\n| (1) | (3) |\n| 3 | 3 |\n| 2 | 8 |\n| (2) | (4) |\n| 3 | 3 |\n3\n22 Which equation represents the sequence 12, 6, 3, ,…, where 2\na1 5 12?\nn 2 1\n(1) an 5 12 • (12)\n(3) an 5 12 • (2)n 2 1\nn\n(2) an 5 12 • (12)\n(4) an 5 12 • (2)n\f23 The axis of symmetry is x 5 2 for which quadratic function? f(x)\nUse this space for computations.\n| x | g(x) |\n| –2 | 6 |\n| –1 | 3 |\n| 0 | 2 |\n| 1 | 3 |\n| 2 | 6 |\nx\n| (1) | (3) |\n| 2 | 2 |\n| j(x) 5 2x 1 8x | h(x) 5 x 2 4x 2 5 |\n| (2) | (4) |\n24 Each day, a freight train passes by Anna’s house. This freight train\ntravels at 49 miles per hour. Each railroad car is 56 feet long. Which\nexpression represents the number of railroad cars that pass by Anna’s\nhouse per minute?\n49 mi\n1 mi\n1 hr\n1 car\n•\n(1) 1 hr 5280 ft 60 min 56 ft\n| 49 mi | 1 mi | 60 min | 1 car |\n| (2) | • | • | • |\n| 1 hr 5280 ft | 1 hr | 56 ft |\n| 49 mi 5280 ft | 1 hr | 1 car |\n| (3) | • | • | • |\n| 1 hr | 1 mi | 60 min | 56 ft |\n49 mi 5280 ft 60 min 1 car\n(4) 1 hr\n1 mi\n1 hr\n56 ft\n[OVER]\fPart II\nAnswer all 6 questions in this part. Each correct answer will receive 2 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or all q uestions in this part, a correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [12]\n25 A survey was taken to determine whether students preferred to watch videos or listen to music. Of the 100 students surveyed, 44 were seniors. Of the 65 students who preferred to watch videos, 42 were juniors. Use this information to complete the frequency table below.\n|  | Juniors | Seniors | Total |\n| Watch Videos |  |  |  |\n| Listen to Music |  |  |  |\n| Total |  |  |  |\f26 Solve the inequality for y:\n5(2 2 y) . 211y 2 8\n[OVER]\f27 Express (5x 2 3)(22x 1 7) as a trinomial in standard form.\f28 The first and fourth terms in an arithmetic sequence are given below.\nDetermine the eighth term.\n220, _____, _____, 22\n[OVER]\f29 Write an equation in slope-intercept form for the line that passes through (22,5) and has a slope of 23. [Use of the set of axes below is optional.]\ny\nx\f30 Factor the expression x3 2 36x completely.\n[OVER]\fPart III\nAnswer all 4 questions in this part. Each correct answer will receive 4 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or all q uestions in this part, a correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [16]\n31 Graph f(x) 5 23x and g(x) 5 x2 1 2 on the set of axes below.\ny\nx\nState the values of x that satisfy the equation f(x) 5 g(x).\f32 Using the quadratic formula, solve 6x2 1 2x 2 1 5 0.\nExpress the answer in simplest radical form.\n[OVER]\f33 The table below shows the price of a new cell phone and the length of time, in months, since its release.\n| Time Since Release, in Months (x) | 0 | 3 | 6 | 9 | 12 |\n| Price, in Dollars (y) | 1200 | 1150 | 1100 | 1000 | 920 |\nState the linear regression equation for this set of data. Round all values to the nearest hundredth.\nState the correlation coefficient for this data set, to the nearest hundredth.\nState what the correlation coefficient indicates about the linear fit of the data.\f34 Solve the following system of equations algebraically for all values of x and y.\ny 5 x2 1 9x 1 4 y 2 2x 5 26\n[OVER]\fPart IV\nAnswer the question in this part. A correct answer will receive 6 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided to determine your answer. Note that diagrams are not necessarily drawn to scale. A correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [6]\n35 Sarah earns $6 per hour babysitting and $12 per hour tutoring. Her goal is to earn at least $120 per week. Sarah is allowed to work a maximum of 14 hours per week doing both jobs.\nIf x represents the number of hours Sarah babysits and y represents the number of hours she tutors, write a system of inequalities that could model this situation.\nOn the set of axes below, graph the system of inequalities that you wrote.\ny\n20\n15\n10\n5\nAlgebra I – June ’25\n5\n10\n15 Hours Babysitting\nx 20\nQuestion 35 is continued on the next page.\n[20]\nHours Tutoring\fQuestion 35 continued\nState a combination of hours babysitting and tutoring that would satisfy this situation. Justify your answer.\f\fScrap Graph Paper — this sheet will not be scored.\nTear Here Tear Here\fScrap Graph Paper — this sheet will not be scored.\nTear Here Tear Here\f\f\fReference Sheet for Algebra I\nConversions\n1 mile 5 5280 feet 1 mile 5 1760 yards 1 pound 5 16 ounces 1 ton 5 2000 pounds\nConversions Across Measurement Systems 1 inch 5 2.54 centimeters 1 meter 5 39.37 inches 1 mile 5 1.609 kilometers 1 kilometer 5 0.6214 mile 1 pound 5 0.454 kilogram 1 kilogram 5 2.2 pounds\n| Quadratic | 2 | Exponential | x |\n| y 5 ax 1 bx 1 c | y 5 ab |\n| Equation | Equation |\n| 2 | Annual |\n| Quadratic | x 5 | 2b 6 b 2 4ac |\n| Compound | A 5 P(1 1 r)n |\n| Formula | 2a |\nEquation of\n| b | Arithmetic |\n| the Axis of | x 5 2 | an 5 a 1 d(n 2 1) | 1 |\n| 2a | Sequence |\nSymmetry\nInterest\n| y2 2 y1 | Geometric |\n| Slope | m 5 | an 5 a r n 2 1 | 1 |\n| x2 2 x1 | Sequence |\nLinear Equation Slope Intercept\ny 5 mx 1 b\nLinear Equation\ny 2 y1 5 m(x 2 x1) Point Slope\nInterquartile Range (IQR)\nIQR 5 Q3 2 Q1\nOutlier\nLower Outlier Boundary 5 Q1 2 1.5(IQR)\nUpper Outlier Boundary 5 Q3 1 1.5(IQR)\nAlgebra I – June ’25\n[27]\nTear Here Tear Here\fALGEBRA I\nPrinted on Recycled Paper\nTear Here Tear Here\nALGEBRA I",
-            "title": "Regents Examination in Algebra I – June 2025"
-          },
-          "skills": [
-            {
-              "description": "Tell whether a situation grows by a constant amount or by a constant percent.",
-              "name": "Linear and exponential relationships"
-            },
-            {
-              "description": "Compare the center and spread of two data sets, such as their means and standard deviations.",
-              "name": "Compare data sets"
-            },
-            {
-              "description": "Find the average rate of change of a function over an interval from a table.",
-              "name": "Average rate of change"
-            },
-            {
-              "description": "Tell whether sums and products of rational and irrational numbers are rational.",
-              "name": "Rational and irrational numbers"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "All five answers are independently correct and match the official key: 138 C requires 64 additional balls; 143 B requires 110 additional places, or 11 rooms; 150 A expresses 90% as 0.9q; 167 A follows from purchasing 58 packages and obtaining a 12/232 ≈ 5.17% discount; 180 C gives the maximum consecutive-month mean, 325 mm.",
-          "score": 10,
-          "label": "Right answers",
-          "weight": 30
-        },
-        {
-          "categoryId": "selection",
-          "reasoning": "Every included question is within Matemática, tests its tagged skill, and is answerable without missing visuals. No annulled question is included. However, eligible material is missing without explanation: question 137 has its full table and directly tests weighted mean. Returning five questions is not inherently a violation of 'up to ten', but this unexplained omission triggers the cap of 8.",
+          "reasoning": "All included questions are within Mathematics 136–180, match their tagged skills, and can be solved without missing visual information. Question 164 is excluded. However, question 137 clearly fits the mean skill and has a complete table in the supplied text, yet is omitted without reason while only six questions are supplied. This triggers the maximum score of 8 for an unexplained omission.",
           "score": 8,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Every option has Portuguese feedback, and the correct-answer reasoning is substantively sound. However, some distractor explanations do not support the selected numerical answer. In question 167 E, the stated mistaken calculation produces 4.35%, not a value in (3.5; 4.0); question 143 C's suggested addition of percentages does not produce 13 rooms. Question 167 D merely refers to 'inadequate values' and an incorrect base, triggering the generic-feedback cap of 7. Long misconception descriptions and impersonal correct-answer explanations further weaken compliance.",
+          "reasoning": "Every option has feedback, and most correct-answer explanations provide useful worked reasoning in Portuguese. However, question 160 contains an incorrect product, and question 167's 8.0–8.5% distractor explanation instead computes 5.45%, which lies in the keyed interval. Several diagnoses are generic, particularly question 167's approximately 20% option, triggering the cap of 7. Inconsistent use of 'you', technical wording, and inaccurate distractor explanations further reduce usefulness.",
           "score": 6,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "All citations correctly identify Enem 2023, the second day, and the question number. Question 150 retains its source credit. Nevertheless, all five items preserve glued words in quoted material, including the complete question sentence in question 143 and extensive passages of its context. This widespread readability failure triggers the maximum score of 5 and warrants a lower score within that cap.",
-          "score": 4,
+          "reasoning": "Every citation names Enem 2023, the second day, and the correct question number. The copied wording and options closely preserve the supplied paper while restoring spaces between glued words. Question 150 retains its source credit and access date. No missing-credit or glued-word cap is triggered.",
+          "score": 10,
           "label": "Citation, credit and copy",
           "weight": 20
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "6 of 7 parts passed. Question 137: The support text isn't in the paper as printed.",
+          "score": 8.714285714285714,
           "weight": 30
         }
       ],
+      "itemsScored": 6,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 28829,
-          "outputTokens": 958,
-          "reasoningTokens": 187
+          "cacheWriteTokens": 1172,
+          "inputTokens": 30410,
+          "outputTokens": 1549,
+          "reasoningTokens": 516
         }
       },
+      "keyFlaws": [
+        {
+          "itemLocator": "questions[4].item (question 160)",
+          "keyedAnswer": "A — tipo I, pois p1 < p2 < p3.",
+          "kind": "factualError",
+          "workedAnswer": "The explanation miscalculates the type-I count: 68×67×66×65=19,545,240, not 19,545,120. The other counts are 7,956,000 and 7,160,400, so the ordering and keyed answer A remain correct."
+        },
+        {
+          "itemLocator": "questions[5].item (question 167)",
+          "keyedAnswer": "A — (5,0 ; 5,5).",
+          "kind": "factualError",
+          "workedAnswer": "The purchase requires 58 packages costing R$232, so the required discount is 12/232≈5.17%, making A correct. The explanation for B attributes its 8.0–8.5% answer to 12/220≈5.45%, but 5.45% is not in B's interval; it is in A's interval. Thus that explanation does not establish the claimed distractor error."
+        }
+      ],
       "steps": [
         {
-          "conclusion": "All five correct options match the official key, but every question retains glued-together words. Question 143's entire question sentence is unreadable without reconstructing its spacing, directly violating the copying requirement. Some distractor feedback is also misleading: question 167's explanation for option E calculates 4.35%, which is outside that option's interval, and question 143's proposed addition of 10% and 25% does not explain the answer 13.",
+          "conclusion": "Some feedback is mathematically unreliable: question 160 gives 19,545,120 type-I passwords instead of 19,545,240, and question 167 explains the 8.0–8.5% option using a calculation yielding 5.45%. Question 137, a complete weighted-mean question with its table available, is omitted without explanation despite room for more questions.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Eligible questions are omitted without explanation despite unused capacity, notably question 137, whose complete salary table supports a weighted-mean question. Several misconception labels are lengthy descriptions rather than short labels. Correct-answer explanations generally do not address the learner as 'você', unlike the distractor explanations.",
+          "conclusion": "Several explanations do not address the learner as 'you', particularly the correct-answer explanations. Some distractor diagnoses are vague or unsupported: question 143's explanation for 13 rooms does not show how that answer arises, and question 167's explanation for approximately 20% merely alleges a calculation error. Labels such as 'escalar absoluto' also fall short of plain language.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Check each distractor explanation by actually performing the proposed mistaken calculation. Where the learner's reasoning cannot be inferred, describe a possible error conditionally rather than asserting what the learner did. Use precise notation such as 400 × 1.10 = 440 instead of '400 + 10% = 440'.",
+          "conclusion": "For each distractor, show a concrete calculation or constraint that rules it out rather than confidently attributing an unverified thought process to the learner. Use shorter misconception labels and consistent learner-directed wording.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -455,6 +371,114 @@
             {
               "description": "Calcular e interpretar média, mediana e moda de um conjunto de dados.",
               "name": "Média, mediana e moda"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three keys are correct. Dylan's monthly growth multiplies the quantity by 1.05. Andrea's mean is 85.75 versus Joe's 82.5, while Joe has the larger standard deviation. The average rate of change in question 7 is (60 − 12)/(12 − 4) = 6. No wrong-key cap applies.",
+          "score": 10,
+          "label": "Right answers",
+          "weight": 30
+        },
+        {
+          "categoryId": "selection",
+          "reasoning": "Exactly the expected questions—3, 4, and 7—are included and correctly assigned to skills 1, 2, and 3. Questions requiring missing figures or corrupted mathematical notation are excluded, and skill 4 appropriately receives no question.",
+          "score": 10,
+          "label": "Which questions",
+          "weight": 25
+        },
+        {
+          "categoryId": "feedback",
+          "reasoning": "Every option has a substantive explanation, and wrong options have specific, neutral misconception labels. However, most explanations omit the required learner-directed \"you,\" and question 4 contains a small standard-deviation calculation error. The cap for merely restating answers or using generic misconceptions is not triggered.",
+          "score": 8,
+          "label": "Feedback on every option",
+          "weight": 25
+        },
+        {
+          "categoryId": "citation",
+          "reasoning": "Every citation identifies the Algebra I Regents examination, June 2025, and the original question number. Stems, options, and table values are faithfully copied, option numbers and computation notes are omitted, and both tables have proper header separators and separate data rows. No glued words or missing source credits appear.",
+          "score": 10,
+          "label": "Citation, credit and copy",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1139,
+          "inputTokens": 8625,
+          "outputTokens": 1027,
+          "reasoningTokens": 342
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "questions[1].item (question 4)",
+          "keyedAnswer": "The mean of Andrea’s test scores is higher than Joe’s, but Joe’s standard deviation is higher than Andrea’s.",
+          "kind": "factualError",
+          "workedAnswer": "The keyed comparison is correct, but the first option's explanation gives an incorrect numerical approximation. Joe's mean is 82.5, and his squared deviations sum to 465, so his population standard deviation is sqrt(465/4) ≈ 10.78, not 10.74. His sample standard deviation would be sqrt(465/3) ≈ 12.45."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Question 4 incorrectly gives Joe's standard deviation as approximately 10.74; the population standard deviation is approximately 10.78. This does not change the correct answer. Also, nine of the twelve option explanations do not address the learner as \"you,\" as required.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Shorten misconception labels while preserving their specificity—for example, \"Total change instead of rate\" for question 7's option 48.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Question 4 copies its scores as a table that shows as one (the header row, a --- line, then one row per line), without the page's \"Use this space for computations.\" note. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
+        "id": "en-algebra-one-regents-june-2025-full-1",
+        "userInput": {
+          "count": 10,
+          "exam": "Regents Examination in Algebra I",
+          "format": "multipleChoice",
+          "language": "en",
+          "optionCount": 4,
+          "paper": {
+            "text": "ALGEBRA\nThe University of the State of New York\nREGENTS HIGH SCHOOL EXAMINATION\nALGEBRA I\nI\nWednesday, June 18, 2025 — 1:15 to 4:15 p.m., only\nStudent Name __________________________________________________________\nSchool Name ___________________________________________________________\nThe possession or use of any communications device is strictly prohibited when taking this examination. If you have or use any communications device, no matter how briefly, your examination will be invalidated and no score will be calculated for you.\nPrint your name and the name of your school on the lines above.\nA separate answer sheet for Part I has been provided to you. Follow the instructions from the proctor for completing the student information on your answer sheet.\nThis examination has four parts, with a total of 35 questions. You must answer all questions in this examination. Record your answers to the Part I multiple-choice questions on the separate answer sheet. Write your answers to the questions in Parts II, III, and IV directly in this booklet. All work should be written in pen, except for graphs and drawings, which should be done in pencil. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each question to determine your answer. Note that diagrams are not necessarily drawn to scale.\nThe formulas that you may need to answer some questions in this examination are found at the end of the examination. This sheet is perforated so you may remove it from this booklet.\nScrap paper is not permitted for any part of this examination, but you may use the blank spaces in this booklet as scrap paper. A perforated sheet of scrap graph paper is provided at the end of this booklet for any question for which graphing may be helpful but is not required. You may remove this sheet from this booklet. Any work done on this sheet of scrap graph paper will not be scored.\nWhen you have completed the examination, you must sign the statement printed at the end of the answer sheet, indicating that you had no unlawful knowledge of the questions or answers prior to the examination and that you have neither given nor received assistance in answering any of the questions during the examination. Your answer sheet cannot be accepted if you fail to sign this declaration.\nNotice …\nA graphing calculator and a straightedge (ruler) must be available for you to use while taking this examination.\nDO NOT OPEN THIS EXAMINATION BOOKLET UNTIL THE SIGNAL IS GIVEN.\nALGEBRA I\fPart I\nAnswer all 24 questions in this part. Each correct answer will receive 2 credits. No partial credit will be allowed. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or each statement or q uestion, choose the word or expression that, of those given, best completes the statement or answers the q uestion. Record your answers on your separate answer sheet. [48]\n10\n1 The expression\nis equivalent to\n2\n(1) 5\n(3) 5 2\n(2) 20\n(4) 10 2\nUse this space for computations.\n2 A parabola is graphed on the set of axes below.\ny\nx\nOver which interval is the parabola only increasing?\n(1) [1,4]\n(3) (2`,3]\n(2) [3,`)\n(4) [21,1]\n3 Which scenario represents an exponential relationship?\n(1) Kirsten’s New Year’s resolution is to lose one pound each week.\n(2) Sarah wants to increase her grade by 5 points each quarter.\n(3) Tommy wants to reduce his spending by $50 each month.\n(4) Dylan hopes to grow his business by 5% each month.\f4 The geometry test scores for Andrea and Joe are shown in the table below.\nUse this space for computations.\n| Andrea | Joe |\n| 82 | 91 |\n| 87 | 78 |\n| 90 | 94 |\n| 84 | 67 |\nWhich statement about their test scores is correct?\n(1) Both the mean and standard deviation of Andrea’s test scores are higher than Joe’s.\n(2) Both the mean and standard deviation of Joe’s test scores are higher than Andrea’s.\n(3) The mean of Andrea’s test scores is higher than Joe’s, but Joe’s standard deviation is higher than Andrea’s.\n(4) The mean of Joe’s test scores is higher than Andrea’s, but Andrea’s standard deviation is higher than Joe’s.\n5 Which polynomial has a degree of 3 and a leading coefficient of 2?\n(1) 2x2 1 3x 1 1\n(3) 3x2 1 2x 1 2\n(2) 6x3 1 3x2 2 2x\n(4) 2x3 1 x2 1 4x\n6 The expression (23x2 1 9) 2 (7x2 2 5x 1 4) is equivalent to\n(1) 210x2 1 5x 1 5\n(3) 210x2 2 5x 1 5\n(2) 210x2 1 5x 1 13\n(4) 210x2 2 5x 1 13\n[OVER]\f7 The function h(x) is used to calculate the average height, in inches, of a tomato plant x weeks after it is transplanted. These data are represented in the table below.\nUse this space for computations.\n| x | h(x) |\n| 2 | 6 |\n| 4 | 12 |\n| 6 | 24 |\n| 9 | 51 |\n| 12 | 60 |\n| 16 | 64 |\nBetween weeks 4 and 12, the average rate of change, in inches per week, is\n(1) 6\n(3) 48\n(2) 8\n(4) 58\n8 Chloe is solving the equation x2 1 5x 5 3x 1 3. Her first step is shown below.\nGiven: x2 1 5x 5 3x 1 3 Step 1: x2 1 2x 2 3 5 0\nWhich property justifies this step?\n(1) the zero product property\n(2) the commutative property\n(3) the distributive property\n(4) the subtraction property of equality\n9 Which function represents the graph of w(x) 5 |x| shifted 2 units to the right?\n(1) g(x) 5 |x 1 2|\n(3) q(x) 5 |x| 1 2\n(2) h(x) 5 |x 2 2|\n(4) r(x) 5 |x| 2 2\f10 Given the system of equations:\ny 1 4x 5 5 2x 2 3y 5 10\nA step in solving this system by using the substitution method would be\n(1) 2(5 2 4x) 1 4x 5 5\n(3) 2x 2 3(5 2 4x) 5 10\n(2) 2(5 1 4x) 1 4x 5 5\n(4) 2x 2 3(5 1 4x) 5 10\nUse this space for computations.\n11 Which equation is equivalent to x2 2 6x 5 27?\n(1) (x 2 3)2 5 27 2 9\n(3) (x 2 3)2 5 27 1 36\n(2) (x 2 3)2 5 27 1 9\n(4) (x 2 3)2 5 27 2 36\n12 The box plots below summarize the ages of athletes on the swim team and the track team.\nSwim Team\nTrack Team\n9 10 11 12 13 14 15 16 17\n8 9 10 11 12 13 14 15\nBased on the box plots, which statement must be true?\n(1) The IQR of both teams is the same.\n(2) There are more athletes on the swim team than on the track team.\n(3) The median age of the swim team is less than the median age of the track team.\n(4) The range of ages of the swim team is smaller than the range of ages of the track team.\n[OVER]\f13 The graph of f(x) is shown below.\ny 50\n|  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  | f(x) |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |\n|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ▪ |\n40\n30\n20\n10\n5\n10\nx 15\nThe domain of this function is\n(1) [0,12]\n(3) 0 , x # 12\n(2) [15,45]\n(4) 15 , x # 45\nUse this space for computations.\n14 The sum of 3 and 5 is\n(1) rational, since the sum can be expressed as an integer\n(2) rational, since the sum can be expressed as a nonterminating decimal\n(3) irrational, since the sum can be expressed as a terminating decimal\n(4) irrational, since the sum cannot be expressed as a terminating or repeating decimal\n15 Which expression is equivalent to a8 2 b6?\n(1) (a4 2 b3)2\n(3) (a4)2 2 (b3)2\n(2) (a6 2 b4)2\n(4) (a6)2 2 (b4)2\n16 The sum of 2 27 and 4 12 is\n(1) 14 3\n(3) 6 39\n(2) 34 3\n(4) 8 39\f17 The sum of Tim’s age and Jack’s age is 44. Tim’s age is 4 less than 7 times Jack’s age, x. An equation that could be used to model this scenario is\n(1) (7x 2 4) 1 x 5 44\n(3) 7x 2 4 5 44\n(2) (4 2 7x) 1 x 5 44\n(4) 4 2 7x 5 44\nUse this space for computations.\nx 1 3\n2\n18 Given the function g(x) 5 2\n, what is the value of g(22)? x 2 2\n(1) 1\n(3) 21\n| 1 | 1 |\n| (2) | (4) 2 |\n| 3 | 3 |\n19 Four graphs are shown below.\n| y | y |\n| x | x |\n| A | C |\n| y | y |\n| x | x |\n| B | D |\nWhich of the graphs represent(s) a function?\n(1) A, only\n(3) A, B, and C, only\n(2) A and B, only\n(4) A, B, C, and D\n[OVER]\f1\n20 The formula to calculate kinetic energy is K 5 mv2, where K is 2\nkinetic energy, m is mass, and v is velocity. When m is written in terms\nof K and v, the equation is\n2K\n(1) m 5 2\n(3) m 5 2Kv2\nv\nK\n(2) m 5 2Kv2\n(4) m 5\n2v2\nUse this space for computations.\n2(3x 21)\n21 The solution to the equation\n5 x 1 2 is 3\n| 1 | 4 |\n| (1) | (3) |\n| 3 | 3 |\n| 2 | 8 |\n| (2) | (4) |\n| 3 | 3 |\n3\n22 Which equation represents the sequence 12, 6, 3, ,…, where 2\na1 5 12?\nn 2 1\n(1) an 5 12 • (12)\n(3) an 5 12 • (2)n 2 1\nn\n(2) an 5 12 • (12)\n(4) an 5 12 • (2)n\f23 The axis of symmetry is x 5 2 for which quadratic function? f(x)\nUse this space for computations.\n| x | g(x) |\n| –2 | 6 |\n| –1 | 3 |\n| 0 | 2 |\n| 1 | 3 |\n| 2 | 6 |\nx\n| (1) | (3) |\n| 2 | 2 |\n| j(x) 5 2x 1 8x | h(x) 5 x 2 4x 2 5 |\n| (2) | (4) |\n24 Each day, a freight train passes by Anna’s house. This freight train\ntravels at 49 miles per hour. Each railroad car is 56 feet long. Which\nexpression represents the number of railroad cars that pass by Anna’s\nhouse per minute?\n49 mi\n1 mi\n1 hr\n1 car\n•\n(1) 1 hr 5280 ft 60 min 56 ft\n| 49 mi | 1 mi | 60 min | 1 car |\n| (2) | • | • | • |\n| 1 hr 5280 ft | 1 hr | 56 ft |\n| 49 mi 5280 ft | 1 hr | 1 car |\n| (3) | • | • | • |\n| 1 hr | 1 mi | 60 min | 56 ft |\n49 mi 5280 ft 60 min 1 car\n(4) 1 hr\n1 mi\n1 hr\n56 ft\n[OVER]\fPart II\nAnswer all 6 questions in this part. Each correct answer will receive 2 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or all q uestions in this part, a correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [12]\n25 A survey was taken to determine whether students preferred to watch videos or listen to music. Of the 100 students surveyed, 44 were seniors. Of the 65 students who preferred to watch videos, 42 were juniors. Use this information to complete the frequency table below.\n|  | Juniors | Seniors | Total |\n| Watch Videos |  |  |  |\n| Listen to Music |  |  |  |\n| Total |  |  |  |\f26 Solve the inequality for y:\n5(2 2 y) . 211y 2 8\n[OVER]\f27 Express (5x 2 3)(22x 1 7) as a trinomial in standard form.\f28 The first and fourth terms in an arithmetic sequence are given below.\nDetermine the eighth term.\n220, _____, _____, 22\n[OVER]\f29 Write an equation in slope-intercept form for the line that passes through (22,5) and has a slope of 23. [Use of the set of axes below is optional.]\ny\nx\f30 Factor the expression x3 2 36x completely.\n[OVER]\fPart III\nAnswer all 4 questions in this part. Each correct answer will receive 4 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided for each q uestion to determine your answer. Note that diagrams are not necessarily drawn to scale. F or all q uestions in this part, a correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [16]\n31 Graph f(x) 5 23x and g(x) 5 x2 1 2 on the set of axes below.\ny\nx\nState the values of x that satisfy the equation f(x) 5 g(x).\f32 Using the quadratic formula, solve 6x2 1 2x 2 1 5 0.\nExpress the answer in simplest radical form.\n[OVER]\f33 The table below shows the price of a new cell phone and the length of time, in months, since its release.\n| Time Since Release, in Months (x) | 0 | 3 | 6 | 9 | 12 |\n| Price, in Dollars (y) | 1200 | 1150 | 1100 | 1000 | 920 |\nState the linear regression equation for this set of data. Round all values to the nearest hundredth.\nState the correlation coefficient for this data set, to the nearest hundredth.\nState what the correlation coefficient indicates about the linear fit of the data.\f34 Solve the following system of equations algebraically for all values of x and y.\ny 5 x2 1 9x 1 4 y 2 2x 5 26\n[OVER]\fPart IV\nAnswer the question in this part. A correct answer will receive 6 credits. Clearly indicate the necessary steps, including appropriate formula substitutions, diagrams, graphs, charts, etc. Utilize the information provided to determine your answer. Note that diagrams are not necessarily drawn to scale. A correct numerical answer with no work shown will receive only 1 credit. All answers should be written in pen, except for graphs and drawings, which should be done in pencil. [6]\n35 Sarah earns $6 per hour babysitting and $12 per hour tutoring. Her goal is to earn at least $120 per week. Sarah is allowed to work a maximum of 14 hours per week doing both jobs.\nIf x represents the number of hours Sarah babysits and y represents the number of hours she tutors, write a system of inequalities that could model this situation.\nOn the set of axes below, graph the system of inequalities that you wrote.\ny\n20\n15\n10\n5\nAlgebra I – June ’25\n5\n10\n15 Hours Babysitting\nx 20\nQuestion 35 is continued on the next page.\n[20]\nHours Tutoring\fQuestion 35 continued\nState a combination of hours babysitting and tutoring that would satisfy this situation. Justify your answer.\f\fScrap Graph Paper — this sheet will not be scored.\nTear Here Tear Here\fScrap Graph Paper — this sheet will not be scored.\nTear Here Tear Here\f\f\fReference Sheet for Algebra I\nConversions\n1 mile 5 5280 feet 1 mile 5 1760 yards 1 pound 5 16 ounces 1 ton 5 2000 pounds\nConversions Across Measurement Systems 1 inch 5 2.54 centimeters 1 meter 5 39.37 inches 1 mile 5 1.609 kilometers 1 kilometer 5 0.6214 mile 1 pound 5 0.454 kilogram 1 kilogram 5 2.2 pounds\n| Quadratic | 2 | Exponential | x |\n| y 5 ax 1 bx 1 c | y 5 ab |\n| Equation | Equation |\n| 2 | Annual |\n| Quadratic | x 5 | 2b 6 b 2 4ac |\n| Compound | A 5 P(1 1 r)n |\n| Formula | 2a |\nEquation of\n| b | Arithmetic |\n| the Axis of | x 5 2 | an 5 a 1 d(n 2 1) | 1 |\n| 2a | Sequence |\nSymmetry\nInterest\n| y2 2 y1 | Geometric |\n| Slope | m 5 | an 5 a r n 2 1 | 1 |\n| x2 2 x1 | Sequence |\nLinear Equation Slope Intercept\ny 5 mx 1 b\nLinear Equation\ny 2 y1 5 m(x 2 x1) Point Slope\nInterquartile Range (IQR)\nIQR 5 Q3 2 Q1\nOutlier\nLower Outlier Boundary 5 Q1 2 1.5(IQR)\nUpper Outlier Boundary 5 Q3 1 1.5(IQR)\nAlgebra I – June ’25\n[27]\nTear Here Tear Here\fALGEBRA I\nPrinted on Recycled Paper\nTear Here Tear Here\nALGEBRA I",
+            "title": "Regents Examination in Algebra I – June 2025"
+          },
+          "skills": [
+            {
+              "description": "Tell whether a situation grows by a constant amount or by a constant percent.",
+              "name": "Linear and exponential relationships"
+            },
+            {
+              "description": "Compare the center and spread of two data sets, such as their means and standard deviations.",
+              "name": "Compare data sets"
+            },
+            {
+              "description": "Find the average rate of change of a function over an interval from a table.",
+              "name": "Average rate of change"
+            },
+            {
+              "description": "Tell whether sums and products of rational and irrational numbers are rational.",
+              "name": "Rational and irrational numbers"
             }
           ]
         }

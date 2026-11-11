@@ -57,7 +57,7 @@ export function ChallengeTopics() {
 
   return (
     <section className="flex flex-col gap-2">
-      <PageSectionTitle className="lg:sr-only">{title}</PageSectionTitle>
+      <PageSectionTitle className="with-aside:sr-only">{title}</PageSectionTitle>
       <ListGroup>
         {rows.map((row) => (
           <ListRow key={`${row.subject ?? ""}:${row.topics.join(",")}`}>
@@ -97,7 +97,7 @@ export function DuelBriefing({ rule }: { rule: string }) {
   }
 
   return (
-    <TaskAsideContent className="flex w-full flex-col gap-6 lg:gap-8">
+    <TaskAsideContent className="with-aside:gap-8 flex w-full flex-col gap-6">
       <ChallengeTopics />
       {ruleLine}
     </TaskAsideContent>

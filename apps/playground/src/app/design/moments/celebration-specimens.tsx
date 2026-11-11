@@ -111,7 +111,7 @@ function PracticeEnd() {
     <div className="max-w-column flex flex-col items-start gap-6">
       <StepHeader>
         <p className="text-title">Practice done</p>
-        <StepDetail>The rest come back another day, when they stick better.</StepDetail>
+        <StepDetail>The ones you missed come back another day, when they stick better.</StepDetail>
       </StepHeader>
       <MomentReadouts
         brainPower={24}

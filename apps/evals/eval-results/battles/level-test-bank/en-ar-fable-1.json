@@ -1,0 +1,164 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-fable-5.2": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "Modern Standard Arabic in Arabic script with correct agreement and natural names; no dialect mixing. A1 asks one stated fact; A2 combines facts or event order; B1 asks a reason or main point; B2 requires implied attitude or purpose; C1 requires implicit stance, register or a qualified view. Questions, options and translations must be US English. Time and currency conversions must preserve value and exactly one answer must be defensible.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-11T02:54:51.527Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking prompts progress smoothly from A1 single-fact extraction to C1 nuanced implication and register shifts, with every single item sitting within its target word-count range.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one clearly supported answer and three plausible distractors that target specific misreadings of the passage. Option lengths are parallel and all answer indexes are accurate.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The Modern Standard Arabic is natural, unmixed with dialect, and uses correct number/gender agreement throughout, while the US English questions, options, and translations are completely idiomatic.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A delivers an exceptional set of items across all five CEFR levels with authentic, grammatically accurate Modern Standard Arabic and idiomatic US English. Every passage hits its exact word-count window, every question tests the precise cognitive skill required for its level, and the distractors are tightly balanced with one incontrovertible answer.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "All reading, listening, and speaking items adhere to the specified word counts and cognitive demands from A1 through C1, showing clear differentiation between neighboring levels.",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Answer keys are accurate and options are well balanced in length. In the final C1 listening item, option D ('She works so much now that she loses track of days') is very close to a literal reading of the final sentence, making it slightly less cleanly falsifiable than Model A's distractors, though option C clearly answers the question of what she really means about her decision.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The Arabic prose and spoken-style transcripts are natural, grammatically sound MSA, and all English fields follow US English conventions.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model B is also outstanding, featuring rich, natural Modern Standard Arabic and well-calibrated CEFR progression across all reading, listening, and speaking tasks. It finishes just slightly behind Model A only because one C1 distractor states a true detail from the text rather than a clearly false statement, though the main-point question still makes the intended answer clear.",
+          "score": 9.65
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "inputTokens": 11599,
+        "outputTokens": 642,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 tests single facts, A2 combines information or sequences events, and B1 tests reasons and opinions. B2 and C1 generally increase convincingly in interpretive demand, although the final C1 listening question tests a comparatively straightforward inferred preference.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are supported, with no competing option answering the question equally well. Distractors generally reuse passage details effectively, and numerical values and appointment times are preserved.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The Arabic consistently uses natural Modern Standard Arabic, with appropriate agreement and names. Written notices, personal messages, and spoken reflections suit their formats; questions, options, and translations use US English across varied situations.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-fable-5.2",
+          "reasoning": "Model B provides the stronger progression, with well-designed A2 fact combinations and advanced questions that require interpreting attitude, register, and qualified views. Its answers are consistently supported, and the Arabic and US English are natural and appropriate.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Most questions meet their intended demands, and speaking sentences increase in length and complexity. However, the final C1 listening answer follows directly from the explicit statement that the feasibility study was written a month afterward; this lower-level chronology task triggers the maximum score of 5.",
+              "score": 5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The answer indexes consistently identify the uniquely supported response to each question. Currency totals, times, and translations preserve value, and even factually true distractors do not compete with the requested main point or purpose.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The passages and speaking sentences use natural Modern Standard Arabic, while questions, options, and translations remain in US English. The bank varies situations effectively and distinguishes written texts from plausible spoken messages.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A is accurate and useful overall, with strong contextual variety and mostly effective level progression. However, its final C1 listening question reduces the task to explicitly stated event order rather than requiring C1 interpretation, triggering the calibration cap.",
+          "score": 7.4
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 10568,
+        "outputTokens": 1511,
+        "reasoningTokens": 940
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "e211b77922e984e4",
+    "anthropic/claude-fable-5.2": "f93e7f3eb9955c8d"
+  },
+  "swapped": false,
+  "taskId": "level-test-bank",
+  "testCaseId": "en-ar-fable-1"
+}

@@ -16,25 +16,21 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
-import {
-  LESSON_SCREEN_KINDS,
-  type LessonSpec,
-  type LessonSpecIssue,
-  getLessonSpecIssues,
-} from "./lesson-spec-rules";
+import { LESSON_SCREEN_KINDS, type LessonSpec, getLessonSpecIssues } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
 import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
-import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
- * needs. On the 22 visual plans (8 Nov 2026), once the eval judged each question's visual, Sol
- * scored 9.16 to Terra's 8.66, and a blind read preferred Sol on 11 and Terra on none: Terra left
- * questions without the diagram, chart or setup they ask about. Terra scored a bit higher on the
- * 24-plan mix (8.76 to 8.52) at 40% of the cost. Opus, the other provider, last ran an older
- * prompt. A learner's own lesson is planned with its scope's models.
+ * needs. On the 22 visual plans (8 Nov 2026), Sol scored 9.16 to Terra's 8.66, and a blind read
+ * preferred Sol on 11 and Terra on none: Terra left questions without the diagram, chart or setup
+ * they ask about. Terra scored a bit higher on the 24-plan mix (8.76 to 8.52) at 40% of the cost.
+ * On 4 plans (11 Nov 2026), Sol scored EN 9.62 and PT 9.27 at $82/1k, Opus 9.08 and 8.35 at
+ * $365/1k, and Gemini 4 Carbon 9.08 and 8.00 at $268/1k with a 1,122 s p95; a blind read liked
+ * Carbon's richer visuals on 3 of 4 despite its factual and scope flaws. A learner's own lesson is
+ * planned with its scope's models.
  */
 const defaultModel = "openai/gpt-6.1-sol";
 const defaultFallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
@@ -100,7 +96,7 @@ export type LessonSpecParams = {
   analytics?: AiGenerationContext;
 };
 
-/** Several when the planned lesson didn't fit and was split; a quick one never is. */
+/** Several when the planner split a lesson that didn't fit; a quick one never is. */
 type LessonSpecResult = { lessons: LessonSpec[] };
 
 function formatList(items: readonly string[]): string {
@@ -192,11 +188,7 @@ async function planLesson(params: LessonSpecParams) {
   );
 
   // A quick lesson is the one short lesson a learner chose instead of the skill's lessons.
-  const lessons = params.quick
-    ? specs.slice(0, 1)
-    : specs.flatMap((spec) =>
-        splitLessonSpec({ language: params.language, level: params.level, spec }),
-      );
+  const lessons = params.quick ? specs.slice(0, 1) : specs;
 
   const data: LessonSpecResult = { lessons };
 
@@ -204,42 +196,14 @@ async function planLesson(params: LessonSpecParams) {
 }
 
 /**
- * Sizes are left to the split rule, which keeps a skill too big for one lesson whole on purpose.
- */
-const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
-  "application",
-  "checkGap",
-  "earlyCheck",
-  "guess",
-  "hook",
-  "skillReference",
-  "unpracticedSkill",
-  "untaughtSkill",
-  "workedExample",
-]);
-
-function countShapeIssues({
-  data,
-  level,
-  novice,
-}: {
-  data: LessonSpecResult;
-  level: CourseLevel;
-  novice: boolean;
-}): number {
-  return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
-    .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
-}
-
-/**
- * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
- * more, and the one with fewer broken rules is kept.
+ * A plan that breaks a shape rule is planned once more, and the one with fewer broken rules is
+ * kept. Size and pacing are targets the prompt asks for, never checked here: a lesson a little off
+ * them beats a second plan, and code can't split one, since it can't write the new lessons' hooks
+ * and applications.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({
-    countProblems: ({ data }) =>
-      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
+    countProblems: ({ data }) => data.lessons.flatMap((spec) => getLessonSpecIssues(spec)).length,
     draft: () => planLesson(params),
   });
 }

@@ -3,15 +3,19 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { trackOnboardingProgress } from "../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
-import { claimUsage } from "../entitlements/claim-usage";
-import { type RefusedUsage } from "../entitlements/contract";
+import {
+  getAllowanceCacheTag,
+  getGoalsCacheTag,
+  getLearnerModelCacheTag,
+  getLearningProfileCacheTag,
+} from "../cache/tags";
+import { getEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { type RefusedUsage, isRefusedUsage } from "../entitlements/contract";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { assertTargetDates, withPlannableDate } from "../plans/target-date-range";
-import { getSession } from "../users/get-session";
 import { createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
@@ -123,13 +127,13 @@ function readNewGoalDates(input: GoalCreateInput): GoalCreateInput {
 }
 
 export async function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult> {
-  const session = await getSession();
+  const viewer = await getEntitlementViewer();
 
-  if (!session) {
+  if (!viewer) {
     return { status: "unauthorized" };
   }
 
-  const userId = session.user.id;
+  const { userId } = viewer;
   const input = readNewGoalDates(requested);
 
   if (!(await hasValidReferences({ goals: input.goals, userId }))) {
@@ -146,21 +150,7 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
       const state = await previous;
       const id = crypto.randomUUID();
 
-      const decision = await claimUsage({
-        generated: draft.kind === "explain",
-        kind: draft.kind === "explain" ? "explanation" : "goal",
-        targetId: id,
-      });
-
-      if (decision.status === "unauthorized") {
-        return state;
-      }
-
-      if (decision.status !== "allowed") {
-        return { ...state, refused: [...state.refused, { decision, index }] };
-      }
-
-      const limit = await createGoal({
+      const decision = await createGoal({
         dailyMinutes: minutes[index] ?? input.dailyMinutes,
         draft,
         id,
@@ -168,19 +158,16 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
         testedLanguage:
           (draft.kind === "exam" && testedLanguages.get(draft.examBlueprintId ?? "")) || null,
         userId,
+        viewer,
       });
 
-      if (limit) {
-        return {
-          ...state,
-          refused: [
-            ...state.refused,
-            { decision: { limit, status: "limitReached" as const }, index },
-          ],
-        };
+      if (decision.status === "allowed") {
+        return { ...state, ids: [...state.ids, id] };
       }
 
-      return { ...state, ids: [...state.ids, id] };
+      return isRefusedUsage(decision)
+        ? { ...state, refused: [...state.refused, { decision, index }] }
+        : state;
     },
     Promise.resolve({ ids: [], refused: [] }),
   );
@@ -195,7 +182,12 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
 
   await selectCreatedGoal({ activeGoalId, userId });
 
-  revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
+  revalidateCacheTags([
+    getAllowanceCacheTag(userId),
+    getGoalsCacheTag(userId),
+    getLearningProfileCacheTag(userId),
+    ...(input.pauseGoalId ? [getLearnerModelCacheTag(userId)] : []),
+  ]);
 
   const rows = await prisma.goal.findMany({ where: { id: { in: results.ids } } });
   const goals = results.ids.flatMap((id) => rows.find((goal) => goal.id === id) ?? []);

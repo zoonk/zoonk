@@ -122,13 +122,7 @@ function useCorrectAnswerLine({
   return answerText({ answer: feedback.correctAnswer, question });
 }
 
-function MistakeNote({
-  examTomorrow,
-  feedback,
-}: {
-  examTomorrow: boolean;
-  feedback: StudyAnswerFeedback;
-}) {
+function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {
   const t = useExtracted();
 
   if (feedback.mistakeFixed) {
@@ -141,12 +135,10 @@ function MistakeNote({
 
   return (
     <FeedbackNote>
-      {examTomorrow
-        ? t({
-            description: '"Your mistakes" is the learner\'s Mistakes notebook.',
-            message: "Saved to your mistakes",
-          })
-        : t("Saved to your mistakes · it comes back tomorrow")}
+      {t({
+        description: '"Your mistakes" is the learner\'s Mistakes notebook.',
+        message: "Saved to your mistakes",
+      })}
     </FeedbackNote>
   );
 }
@@ -198,7 +190,6 @@ function StreakNote({ streak }: { streak: number }) {
 export function QuestionFeedback({
   answer,
   children,
-  examTomorrow,
   feedback,
   question,
   timedOut,
@@ -206,7 +197,6 @@ export function QuestionFeedback({
 }: {
   answer: StudyQuestionAnswer;
   children?: React.ReactNode;
-  examTomorrow: boolean;
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
   timedOut: boolean;
@@ -246,7 +236,7 @@ export function QuestionFeedback({
       )}
 
       {children}
-      <MistakeNote examTomorrow={examTomorrow} feedback={feedback} />
+      <MistakeNote feedback={feedback} />
     </FeedbackPanel>
   );
 }

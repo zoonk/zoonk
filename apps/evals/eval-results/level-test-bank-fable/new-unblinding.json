@@ -1,0 +1,18 @@
+{
+  "ja-en-fable-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  "fr-de-fable-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  },
+  "en-ar-fable-1": {
+    "A": "anthropic-claude-opus-5.5",
+    "B": "anthropic-claude-fable-5.2"
+  },
+  "pt-ar-fable-1": {
+    "A": "anthropic-claude-fable-5.2",
+    "B": "anthropic-claude-opus-5.5"
+  }
+}

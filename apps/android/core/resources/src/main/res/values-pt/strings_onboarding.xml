@@ -148,13 +148,13 @@
   "onboarding_level_test_description": "9d03f364d552253924da5d8bb1df3b245c1003068d3faaedddb81da631df7cf7",
   "onboarding_level_title": "683f36ee3509a7337c08da16d4f2f3fdb1c7fb33795c98e501bc30ceb2314290",
   "onboarding_library_course_fits": "a59e4d795032f81a09e333c6911e214dca4c889b1f214c72ec98b8f20d0da850",
+  "onboarding_limit_active_goals": "70d6c156a87df5c00989d195cd5d035692dfb6ca1e22af9658914c89645b65c0",
   "onboarding_limit_daily_explanations": "aafe2d182e26be6389b588817d0231d38caa6ff424e7909ed905df3a7ec23572",
   "onboarding_limit_daily_goals": "ad3cbfad7b8cc4198bdcd771e519cb0b00f887012ca8d37614db6ca6c1b16170",
   "onboarding_limit_guest": "bb0dd743d50803e6ed89f4bb82abc0dc0e7b9cb96da33205001aa08a9ae3630d",
   "onboarding_limit_guest_blocked": "b718617326937a591b67a191266713acafd3a658bfb991fe089719a8019d61e4",
   "onboarding_limit_monthly_explanations": "c54a924e425da07bf3d63c3b0796a4345e84adc6d291192f6e2de96cb8d9cc8f",
   "onboarding_limit_monthly_goals": "413808d893abb7058ef62a6c3cb3a38ae8f87fae537d5b41a33c9e940ffa939c",
-  "onboarding_limit_one_active_goal": "d6bb4337291ea4afc3a09d45a2a488a416e37da068c37bc33b700b97ea5f1ff7",
   "onboarding_limit_sign_up_required": "f8ed7c5b80569bf74a53ae98499d174d7904eb313ad4e04e856d4ff33c5e48cb",
   "onboarding_limit_slow_down": "6fd4653b31f2cb09a846477f029ad89761f40ee92c85f77d558cf05ffcc6d47a",
   "onboarding_link": "759a3fd51867e61d649c5ef68eb1b4f61814bffaf684432fa1c88fd8118df114",
@@ -210,7 +210,7 @@
   "onboarding_plan_so_far": "242521df30ba65966efc29f1b5fda6a9a17a2a4ee54a8f2b3a34dc905d9a85f5",
   "onboarding_plan_stopped": "70f1bb3e3077ab4db36ca834ae53c34502627d71b24fdff2939de43f7e2b2264",
   "onboarding_plus_more_goals": "dc5c80546fe7621deac2bfaa59b8b453e0fd8ccd817268f726b0d4f8e6989011",
-  "onboarding_plus_more_goals_up_front": "72efa82e969ff2b8bb76d4241546e3ec6f87f2fb61ca9affc8207f98f7050ea5",
+  "onboarding_plus_more_goals_up_front": "21e2c243957b0df511040d0146b7915d1126bd0af53b69906be5481b97bff8e3",
   "onboarding_position_description": "b2812f0450013c546c12d5e435040e4215c06acb1bae1c3f8b38fd5ca241d762",
   "onboarding_position_label": "92342a01caaa650b75221f578d63feb0addabd265afcec523b3bfeb735077a0e",
   "onboarding_position_title": "ebeca67cca2c0444571d2e35057300b9ff1747f941b5ff42a20f74dd18358db5",
@@ -435,11 +435,18 @@
   "onboarding_understanding_title": "db578fe0851a0541051a1c52ac672801a7edd551371effd7d157c64cf02008af",
   "onboarding_understood_description": "e3ab4e927c51b117f87f80ad0e9dc32544cfd0f33164d45a57f817ef74ff7dc9",
   "onboarding_understood_description_shared": "d0f1c4c994912cd0d3850837d12faa831387cc2f55a27a10d8765c7158825399",
-  "onboarding_understood_locked_goal": "ee6187c227df91422e4a035b19b9dac6b6d58c0da69ade5ab3a2c46e8424b116",
-  "onboarding_understood_locked_goals": "22cd69d5526425d2502ba0e963e58ce1badbbd5cd7319d6e0e7563c618ca17b8",
+  "onboarding_understood_free_account_title": "64e63798ecb9876885bbcdab30ed4928f9f306b234083804194702cb4652d0d2",
+  "onboarding_understood_locked_goal": "9ae4a767f9df1be541a7e0514e8642eb65a27a40bae073d3f3d0ddc2eb27914b",
+  "onboarding_understood_locked_goal_guest": "68561f68e9a2d484a9324575914bb46b955f0ea7c34de5c816655777711649a8",
+  "onboarding_understood_locked_goals": "c56bbf9147b4f9908b5a987bcc9988831681c0c62b5a6fc55c2ebbc230e62706",
+  "onboarding_understood_locked_goals_guest": "bb48106b5e0e1fd9f31f740137250861b75bd84044dd381aa9f7d24e54f793aa",
   "onboarding_understood_title": "9362ba7355e7f60229b8b2e47d250ab335a6b00cc833c1ba93e62f257c6a3b97",
   "onboarding_upload_file": "e6c7609943a0fa9aead409bb4deecc6f6e34fcf0fd17d8192cd291d6d16afda6",
   "onboarding_use_this_date": "bf9e4939558bc15e0c02136a5bd33b06ab8bf369f5ad3b06a96c3f8c3bae317a",
+  "onboarding_variety_description": "68f6782fa08ffd3cf6799f22f72cb8226c7f4d4631c08376dd34f1107ab5e049",
+  "onboarding_variety_none": "360a2a1bff565a6bf8a59c1ccaca4f9d5bab08da7f335beb8d0239f445a2e6c1",
+  "onboarding_variety_note": "6a3518c71810f10d04d6311f0bef5a1b57f631d1a016ddadf925a745cd2e985c",
+  "onboarding_variety_title": "1dafe27746c7a2719048d3d3a4c91fa30cda90ff6357b76467832336658d5024",
   "onboarding_waitlist_joined": "ead0d54e2bf62296550a39c8bf6ea16fa3a0943370651268f3da2b911ce00269",
   "onboarding_waitlist_sign_in": "347aa36e6aec5cbca01bb72f6978a6d73832740bb58ecb2a88fd9186b2b420be",
   "onboarding_weekend_time": "288e8a744eb2f01ede9ea03a0758176486df42f70d7c2e98945f3d4a0a9e6ccd",
@@ -484,7 +491,8 @@
     <string name="onboarding_limit_guest_blocked">O sistema de segurança não deixou você começar sem uma conta. Crie uma conta grátis para continuar.</string>
     <string name="onboarding_limit_monthly_explanations">Você já fez todas as perguntas novas que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
     <string name="onboarding_limit_monthly_goals">Você já começou todos os objetivos novos que o plano grátis permite este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora.</string>
-    <string name="onboarding_limit_one_active_goal">No plano Grátis, você pode seguir um objetivo por vez. Para começar este, pause seu objetivo atual pelo menu do seu Plano ou assine o Plus.</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um dos seus objetivos pelo menu do seu Plano ou assine o Plus.</string>
     <string name="onboarding_limit_sign_up_required">Crie sua conta grátis para continuar.</string>
     <string name="onboarding_limit_slow_down">Você está começando objetivos muito rápido. Tente de novo em alguns minutos.</string>
     <string name="onboarding_read_limit_guest">Sem uma conta, você pode enviar alguns objetivos novos por dia. Crie uma conta grátis para continuar.</string>
@@ -503,7 +511,8 @@
     </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Mais objetivos ao mesmo tempo com o Plus</string>
-    <string name="onboarding_plus_more_goals_up_front">No plano Grátis, você pode seguir um objetivo por vez. Para começar outro, pause seu objetivo atual pelo menu do seu Plano. Você pode fazer perguntas rápidas a qualquer momento.</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um deles pelo menu do seu Plano. Você pode fazer perguntas rápidas a qualquer hora.</string>
     <string name="onboarding_go_to_plan">Ir para seu Plano</string>
     <string name="onboarding_see_plus">Conhecer o Plus</string>
     <string name="onboarding_create_account">Criar uma conta grátis</string>
@@ -518,10 +527,10 @@
     <string name="onboarding_understood_description">Você pode mudar tudo isso depois.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Esses objetivos compartilham seu tempo diário. Você pode mudar tudo isso depois.</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Com o Plus, você pode seguir mais de um objetivo ao mesmo tempo. Até lá, esse objetivo fica na sua lista de objetivos.</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Com o Plus, você pode seguir mais de um objetivo ao mesmo tempo. Até lá, esses objetivos ficam na sua lista de objetivos.</string>
+    <string name="onboarding_understood_locked_goals">Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos.</string>
     <string name="onboarding_looks_right">Está certo</string>
     <string name="onboarding_fix_something">Corrigir algo</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -542,7 +551,7 @@
     <string name="onboarding_row_language">Idioma</string>
     <string name="onboarding_row_you_speak">Você fala</string>
     <string name="onboarding_row_course">Curso</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">Onde: %1$s</string>
     <string name="onboarding_row_where">Onde</string>
     <!-- For someone changing careers. -->
@@ -551,7 +560,7 @@
     <string name="onboarding_row_level_aiming">Nível que você quer alcançar</string>
     <string name="onboarding_row_target_score">Pontuação desejada</string>
     <string name="onboarding_row_last_cutoff">Última nota de corte</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s de %2$s</string>
     <string name="onboarding_row_reason">Motivo</string>
     <string name="onboarding_row_what_you_do">O que você faz hoje</string>
@@ -765,7 +774,7 @@
         <item quantity="many">%d habilidades que você já conhece</item>
         <item quantity="other">%d habilidades que você já conhece</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">Mais aulas</string>
     <string name="onboarding_reveal_usual_structure">Este plano segue a estrutura usual da prova enquanto a gente termina de ler os documentos oficiais. Se eles trouxerem mudanças para o plano, você decide o que fazer na tela Hoje.</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -773,7 +782,7 @@
     <string name="onboarding_reveal_phase_gaps">Preencher lacunas</string>
     <string name="onboarding_reveal_phase_practice">Prática</string>
     <string name="onboarding_reveal_phase_final_stretch">Reta final</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">Fase %1$d</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">Mapa da prova e lacunas</string>
@@ -786,7 +795,7 @@
     <string name="onboarding_reveal_today">Hoje</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">dia %1$d de %2$d</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d de %2$d</string>
     <string name="onboarding_reveal_phase_place">fase %1$d de %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -798,7 +807,7 @@
     <string name="onboarding_reveal_free_week_over_title">Sua semana grátis de preparo para a prova acabou</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o restante do seu plano e simulados.</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s por dia não é tempo suficiente para estudar o conteúdo do seu objetivo.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Com %1$s por dia, você estuda todos os tópicos da prova e se aprofunda nos que mais caem.</string>
     <string name="onboarding_reveal_covers_exam_lighter">Com %1$s por dia, você estuda todos os tópicos da prova, alguns com menos profundidade.</string>
@@ -843,7 +852,7 @@
         <item quantity="many">%d tópicos, todos no seu plano</item>
         <item quantity="other">%d tópicos, todos no seu plano</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="one">%1$d de %2$d tópico não cabe em %3$s por dia</item>
         <item quantity="many">%1$d de %2$d tópicos não cabem em %3$s por dia</item>
@@ -856,7 +865,7 @@
         <item quantity="other">%1$d de %2$d tópicos no seu plano</item>
     </plurals>
     <string name="onboarding_reveal_weights">Peso por área</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ Estimativa: seu material não informa o peso desta área.</string>
     <string name="onboarding_reveal_estimated_material_areas">~ Estimativa: seu material não informa o peso destas áreas.</string>
@@ -1107,4 +1116,18 @@
     </plurals>
     <string name="onboarding_reason_choices">Por que você está aprendendo esse idioma</string>
     <string name="onboarding_aim_description">Até onde seu curso vai, o que define a duração do seu plano.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Disponível com uma conta grátis</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">País</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
+    <string name="onboarding_variety_description">O país que você escolher vale para seu parceiro e as conversas de prática. As aulas e seus áudios usam %1$s.</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">Sem preferência</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">Seu parceiro e as conversas de prática usam %1$s. As aulas e seus áudios usam %2$s.</string>
 </resources>

@@ -30,6 +30,11 @@ export const TEST_CASES: TestCase<unknown, QuickExplanationInput>[] = [
     userInput: { language: "pt", question: "o que é inflação?" },
   },
   {
+    expectations: `Inflation is a general rise in prices that makes the same money buy less; slower inflation still means prices rise, only less quickly. Examples in dollars with everyday US situations. The check must make the reader apply the idea, such as what happens to their savings or a fixed salary, never ask what a situation means when the right option only repeats that situation (a question saying prices still rise but more slowly, answered by "Prices are rising at a slower pace"). The description says what the explanation answers, not a screen's title, and each picture's alt describes the picture.`,
+    id: "en-inflation-check-and-alt",
+    userInput: { language: "en", question: "how does inflation work?" },
+  },
+  {
     expectations: `Sunlight scatters off air molecules, and blue light scatters much more than red (Rayleigh scattering); our eyes and the sun's spectrum explain why it looks blue and not violet. Sunsets are red because light crosses more air. Penalize "the sky reflects the ocean".`,
     id: "en-sky-blue",
     userInput: { language: "en", question: "why is the sky blue" },

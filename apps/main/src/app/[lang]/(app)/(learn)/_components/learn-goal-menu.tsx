@@ -20,19 +20,50 @@ type Placement = "bar" | "sidebar";
 
 function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   return goals.flatMap(
-    ({ dailyMinutes, id, kind, status, targetDate, targetLanguage, displayName }) =>
+    ({
+      dailyMinutes,
+      displayName,
+      id,
+      kind,
+      languageFlag,
+      status,
+      targetDate,
+      targetLanguage,
+      targetRegion,
+    }) =>
       status === "archived" || (kind === "explain" && status === "completed")
         ? []
-        : [{ dailyMinutes, displayName, id, kind, status, targetDate, targetLanguage }],
+        : [
+            {
+              dailyMinutes,
+              displayName,
+              id,
+              kind,
+              languageFlag,
+              status,
+              targetDate,
+              targetLanguage,
+              targetRegion,
+            },
+          ],
   );
 }
 
 function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, locked, displayName }) => {
+  return goals.flatMap(({ id, input, languageFlag, locked, displayName }) => {
     const [goal] = input.goals;
 
     return goal
-      ? [{ displayName, id, kind: goal.kind, locked, targetLanguage: goal.targetLanguage ?? null }]
+      ? [
+          {
+            displayName,
+            id,
+            languageFlag,
+            locked,
+            targetLanguage: goal.targetLanguage ?? null,
+            targetRegion: goal.targetRegion ?? null,
+          },
+        ]
       : [];
   });
 }
@@ -65,7 +96,13 @@ function GoalMenu({ placement }: { placement?: Placement }) {
 
   const { waitingGoals } = learner.summary;
 
-  const startWaiting = async (waitingGoalId: string): Promise<boolean> => {
+  const startWaiting = async ({
+    pauseGoalId,
+    waitingGoalId,
+  }: {
+    pauseGoalId?: string;
+    waitingGoalId: string;
+  }): Promise<boolean> => {
     const waiting = waitingGoals.find((goal) => goal.id === waitingGoalId);
 
     if (!waiting) {
@@ -73,7 +110,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
     }
 
     const outcome = await noteAppWrite(
-      createOnboardingGoalsAction({ ...waiting.input, timeZone: getLocalTimeZone() }),
+      createOnboardingGoalsAction({ ...waiting.input, pauseGoalId, timeZone: getLocalTimeZone() }),
     );
 
     if (outcome.status !== "created") {
@@ -90,6 +127,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
       explanationHref="/explain"
       exploreHref="/courses"
       goals={toSwitcherGoals(learner.summary.goals)}
+      hasAccount={!learner.summary.identity.isAnonymous}
       newGoalHref="/start"
       onSelect={switchGoal}
       onStartWaiting={startWaiting}

@@ -1,14 +1,10 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { Page, PageEyebrow, PageHeaderContent, PageTitle } from "../_components/page";
+import { useLayoutEffect, useState } from "react";
+import { Page } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
-import { type GenerationRun } from "../generation/generation-run";
-import { GenerationWait } from "../generation/generation-wait";
-import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { type AlphabetLink } from "../language/units/alphabet-row";
 import { PlanChoiceLines } from "../plan/plan-choice-lines";
 import {
@@ -28,15 +24,14 @@ import { type PlanEnd } from "../plan/plan-suggestion-context";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
-import { ArchiveGoalDialog, type GoalStatusControl, ResumeGoalDialog } from "./goal-actions";
+import { GoalMenuDialogs, type GoalStatusControl, useGoalMenu } from "./goal-actions";
 import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanHeader } from "./plan-header";
+import { PlanEyebrow, PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet, PlanPlaceRows } from "./plan-sections";
-import { useGoalMenu, usePlanEditor } from "./use-journey-sheets";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -70,35 +65,19 @@ function isPhaseBeingWritten(plan: PlanView): boolean {
   );
 }
 
-export function JourneyBuilding({
-  goalTitle,
-  onRefresh,
-  run,
-}: {
-  goalTitle: string;
-  onRefresh: () => void;
-  run: GenerationRun;
-}) {
-  const t = useExtracted();
+function usePlanEditor(arrival: boolean | PlanEditorSection) {
+  const at = typeof arrival === "string" ? arrival : null;
+  const arrived = { open: arrival !== false, section: at };
+  const [editor, setEditor] = useState<typeof arrived | null>(null);
 
-  useRefreshUntilShown({ refresh: onRefresh, status: run.status });
+  // Activity keeps state while the page hides, so a later arrival starts from its requested view.
+  useLayoutEffect(() => () => setEditor(null), []);
 
-  return (
-    <Page data-slot="journey-preparing">
-      <PageHeaderContent>
-        <PageEyebrow>{t("{goal} · Building your plan", { goal: goalTitle })}</PageEyebrow>
-        <PageTitle>{t("Plan")}</PageTitle>
-      </PageHeaderContent>
-
-      <section className="flex max-w-xl flex-col gap-8">
-        <GenerationWait kind="curriculum" run={run}>
-          <GenerationTimelineDescription>
-            {t("It usually takes a minute or two. Your plan opens here as soon as it's ready.")}
-          </GenerationTimelineDescription>
-        </GenerationWait>
-      </section>
-    </Page>
-  );
+  return {
+    editor: editor ?? arrived,
+    open: (section: PlanEditorSection | null = null) => setEditor({ open: true, section }),
+    setOpen: (open: boolean) => setEditor({ open, section: (editor ?? arrived).section }),
+  };
 }
 
 function JourneyBody({
@@ -169,9 +148,9 @@ function JourneyBody({
         asideLabel={t("Your plan at a glance")}
       >
         <Page data-slot="journey">
-          <PlanHeader>
+          <PlanHeader eyebrow={<PlanEyebrow />}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
-            <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu.goal} />
+            <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
 
           <PlanRoadmap
@@ -208,22 +187,7 @@ function JourneyBody({
           section={editor.editor.section}
         />
         {structure && <PhasesSheet links={links} onOpenChange={setPhasesOpen} open={phasesOpen} />}
-        {goalMenu.goal && (
-          <ArchiveGoalDialog
-            goalTitle={goal.displayName}
-            onArchive={goalMenu.archive}
-            onOpenChange={goalMenu.setArchiving}
-            open={goalMenu.archiving}
-          />
-        )}
-        {goalMenu.resumePreview && (
-          <ResumeGoalDialog
-            goalTitle={goal.displayName}
-            onOpenChange={goalMenu.setResuming}
-            onResume={goalMenu.resume}
-            open={goalMenu.resuming}
-          />
-        )}
+        <GoalMenuDialogs goalTitle={goal.displayName} menu={goalMenu} />
       </PageWithAside>
     </PlanSuggestionProvider>
   );

@@ -83,15 +83,22 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testTheOriginalQuestionMatchesWithItsContext() {
-    var question = PracticeQuestion(itemId: "a", format: .multipleChoice, question: "What  is it?")
-    question.context = "A case."
-    let entry = MistakePracticeEntry(
-      cause: nil, drill: .init(kind: .retry, lesson: nil, timeLimitSeconds: nil), mistakeId: "m",
-      questions: [question], snapshotQuestion: "A case. What is it?", snapshotAnswer: nil)
+  func testTheEndSaysMissesWaitAndUnreachedMistakesAreStillReady() {
+    let entries = [makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b"])]
+    var state = MistakePracticeState(entries: entries)
+    XCTAssertEqual(state.endNote, .unreached)
 
-    XCTAssertTrue(
-      MistakePracticeStep(entry: entry, isFirstOfEntry: true, question: question).isMistakeQuestion)
+    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
+    XCTAssertEqual(state.endNote, .missedAndUnreached)
+    state.next()
+    answer(&state, grade: makeGrade(isCorrect: true))
+    XCTAssertEqual(state.endNote, .missed)
+
+    var right = MistakePracticeState(entries: entries)
+    answer(&right, grade: makeGrade(isCorrect: true))
+    right.next()
+    answer(&right, grade: makeGrade(isCorrect: true))
+    XCTAssertNil(right.endNote)
   }
 
   private func answer(
@@ -186,8 +193,7 @@ private func makeEntry(
     cause: nil, drill: drill, mistakeId: mistakeId,
     questions: questions.map {
       PracticeQuestion(itemId: $0, format: .multipleChoice, question: $0, options: ["x", "y"])
-    },
-    snapshotQuestion: "saved", snapshotAnswer: nil)
+    })
 }
 
 private func makeGrade(

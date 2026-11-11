@@ -52,9 +52,11 @@ export function LessonNotWrittenNotice({
           <LessonLimitNotice limit={reason.limit} {...links} />
 
           {reason.limit.status === "slowDown" && onRetry && (
-            <Button onClick={onRetry} size="sm" variant="outline">
-              {t("Try again")}
-            </Button>
+            <form action={() => onRetry()} className="contents">
+              <Button size="sm" type="submit" variant="outline">
+                {t("Try again")}
+              </Button>
+            </form>
           )}
         </>
       )}

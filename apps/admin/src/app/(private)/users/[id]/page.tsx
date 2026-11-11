@@ -19,6 +19,7 @@ import { UserLearnerSkills } from "./user-learner-skills";
 import { UserLearningProfile } from "./user-learning-profile";
 import { UserLesson } from "./user-lesson";
 import { UserMemorySection } from "./user-memory";
+import { UserReminders } from "./user-reminders";
 import { UserStudySessions } from "./user-study-sessions";
 import { UserSubscription } from "./user-subscription";
 
@@ -78,6 +79,10 @@ async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "par
 
         <Suspense fallback={<AdminSectionSkeleton rows={5} />}>
           <UserLearningProfile userId={userId} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton rows={3} />}>
+          <UserReminders userId={userId} />
         </Suspense>
 
         <Suspense fallback={<AdminSectionSkeleton />}>

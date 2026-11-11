@@ -9,11 +9,14 @@ struct GoalStartScreen: View {
 
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(SettingsStore.self) private var settings
 
   var body: some View {
     GoalStartFlow(
       sentGoal: onboarding.sentGoal, prefill: goal, draftID: draftID, needsAccount: needsAccount,
-      limit: upFrontLimit)
+      limit: settings.allowance.value?.goalStartLimit
+    )
+    .loads(settings.allowance, refreshable: false)
   }
 
   private var needsAccount: Bool {
@@ -23,16 +26,28 @@ struct GoalStartScreen: View {
 
     return summary.identity.isAnonymous && !summary.followedGoals.isEmpty
   }
+}
 
-  /// Said before the learner types; creating a goal checks it again.
-  private var upFrontLimit: GoalLimitReason? {
-    guard let summary = learner.summary.value, summary.tier == .free,
-      summary.followedGoals.contains(where: { $0.status == .active })
-    else {
-      return nil
+extension PlanAllowance {
+  /// Said before the learner types, checked in core's order; creating a goal checks it again.
+  var goalStartLimit: GoalLimitReason? {
+    let reached: (period: String, resource: String)? =
+      if activeGoals.isReached {
+        ("total", "activeGoals")
+      } else if newGoalsTotal.isReached {
+        ("total", "goal")
+      } else if newGoalsToday.isReached {
+        ("day", "goal")
+      } else if newGoalsThisMonth.isReached {
+        ("month", "goal")
+      } else {
+        nil
+      }
+
+    return reached.map {
+      GoalLimitReason(
+        OnboardingLimit(period: $0.period, resource: $0.resource, tier: tier.rawValue))
     }
-
-    return .oneActiveGoal
   }
 }
 
@@ -79,9 +94,8 @@ private enum StartPage: Hashable {
 }
 
 private enum DraftState {
-  case opening(id: String)
   case sending(String)
-  case draft(OnboardingDraft, sentHere: Bool)
+  case draft(id: String, sentHere: Bool)
 }
 
 private struct GoalStartFlow: View {
@@ -120,7 +134,7 @@ private struct GoalStartFlow: View {
       _path = State(initialValue: [.questions])
     case nil:
       if let draftID {
-        _draft = State(initialValue: .opening(id: draftID))
+        _draft = State(initialValue: .draft(id: draftID, sentHere: false))
         _path = State(initialValue: [.draft])
       }
     }
@@ -189,9 +203,14 @@ private struct GoalStartFlow: View {
         }
       }
       .onChange(of: path) { _, path in
-        // Back from the draft: the words wait in the box, and nothing still being sent shows up.
+        // Back from the draft: its words wait in the box, and nothing still being sent shows up.
         if path.isEmpty {
           sending?.cancel()
+
+          if case .draft(let id, _) = draft, let prompt = onboarding.draft(id: id).value?.prompt {
+            words = prompt
+          }
+
           draft = nil
         }
       }
@@ -210,25 +229,15 @@ private struct GoalStartFlow: View {
   @ViewBuilder
   private var draftPage: some View {
     switch draft {
-    case .opening(let id):
-      ZoonkList {
-        ProgressView()
-          .frame(maxWidth: .infinity)
-          .listRowBackground(Color.clear)
-      }
-      .task(id: id) {
-        await open(id)
-      }
     case .sending(let goal):
       UnderstandingWaitView(goal: goal, generationID: nil, attemptID: attemptID) { true }
-    case .draft(let value, let sentHere):
+    case .draft(let id, let sentHere):
       DraftView(
-        draft: value,
+        card: onboarding.draft(id: id),
         sentHere: sentHere,
-        onDraft: { draft = .draft($0, sentHere: sentHere) },
         onRewrite: send,
         onBack: { path = [] },
-        onCreated: { goalID = $0 },
+        onGoal: { goalID = $0 },
         sourceIDs: material.map(\.id))
     case nil:
       EmptyView()
@@ -241,25 +250,6 @@ private struct GoalStartFlow: View {
       path = [.questions]
     case .goal(let goal):
       send(goal)
-    }
-  }
-
-  /// One saved as a goal meanwhile goes on with that goal's setup; one that can't be read leaves
-  /// the box empty, as main's start page does.
-  private func open(_ id: String) async {
-    do {
-      let value = try await onboarding.understanding(id: id)
-
-      if let goalID = value.goalId {
-        self.goalID = goalID
-      } else {
-        words = value.prompt
-        draft = .draft(value, sentHere: false)
-      }
-    } catch {
-      if !Task.isCancelled {
-        path = []
-      }
     }
   }
 
@@ -279,17 +269,16 @@ private struct GoalStartFlow: View {
 
     sending = Task {
       do {
-        let value = try await onboarding.understand(goal: goal)
+        let id = try await onboarding.understand(goal: goal)
         // A late reply still links an attempt the learner left.
         UsageAnalytics.track(
-          .onboardingProgressed(
-            .attemptLinked(attemptID: attempt, onboardingID: value.id), at: .now))
+          .onboardingProgressed(.attemptLinked(attemptID: attempt, onboardingID: id), at: .now))
 
         guard !Task.isCancelled else {
           return
         }
 
-        draft = .draft(value, sentHere: true)
+        draft = .draft(id: id, sentHere: true)
       } catch is CancellationError {
         // The session changed meanwhile.
         if !Task.isCancelled {
@@ -308,12 +297,11 @@ private struct GoalStartFlow: View {
 }
 
 private struct DraftView: View {
-  let draft: OnboardingDraft
+  let card: Resource<OnboardingDraft>
   let sentHere: Bool
-  let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onBack: () -> Void
-  let onCreated: (String) -> Void
+  let onGoal: (String) -> Void
   let sourceIDs: [String]
 
   @Environment(OnboardingStore.self) private var onboarding
@@ -321,22 +309,49 @@ private struct DraftView: View {
   @State private var isRetrying = false
 
   var body: some View {
+    Group {
+      switch card.state {
+      case .loaded(let draft):
+        page(draft)
+      case .failed:
+        GoalLoadFailure {
+          await card.refresh()
+        }
+      case .idle, .loading, .empty:
+        ZoonkList {
+          ProgressView()
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+        }
+      }
+    }
+    // One saved as a goal meanwhile goes on with that goal's setup.
+    .onChange(of: card.value?.goalId, initial: true) { _, goalID in
+      if let goalID {
+        onGoal(goalID)
+      }
+    }
+    .loads(card, refreshable: false)
+  }
+
+  @ViewBuilder
+  private func page(_ draft: OnboardingDraft) -> some View {
     switch draft.status {
     case .understanding:
       UnderstandingWaitView(
         goal: draft.prompt, generationID: draft.generationId, onboardingID: draft.id,
         readResult: reload)
     case .failed:
-      failed
+      failed(draft)
     case .understood:
       ReadDraftView(
-        draft: draft, sentHere: sentHere, onDraft: onDraft, onRewrite: onRewrite, onBack: onBack,
-        onCreated: onCreated, sourceIDs: sourceIDs)
+        draft: draft, sentHere: sentHere, onRewrite: onRewrite, onBack: onBack,
+        onCreated: onGoal, sourceIDs: sourceIDs)
     }
   }
 
   /// Starting it again is new work, so it waits for the learner's tap.
-  private var failed: some View {
+  private func failed(_ draft: OnboardingDraft) -> some View {
     ZoonkList {
       StepHeader(
         title: Text(
@@ -348,7 +363,7 @@ private struct DraftView: View {
 
       GenerationFailureSection(
         failure: .generation, isActing: isRetrying,
-        act: retryError?.needsAccount == true ? nil : { Task { await retry() } })
+        act: retryError?.needsAccount == true ? nil : { Task { await retry(draft.id) } })
 
       if let retryError {
         GoalErrorSection(error: retryError)
@@ -356,13 +371,13 @@ private struct DraftView: View {
     }
   }
 
-  private func retry() async {
+  private func retry(_ id: String) async {
     isRetrying = true
     retryError = nil
     defer { isRetrying = false }
 
     do {
-      onDraft(try await onboarding.readAgain(id: draft.id))
+      try await onboarding.readAgain(id: id)
     } catch is CancellationError {
     } catch {
       retryError = GoalError.starting(error)
@@ -372,10 +387,9 @@ private struct DraftView: View {
   /// A run that ended before the draft was saved reads it again a moment later.
   private func reload() async -> Bool {
     for attempt in 0..<5 {
-      if let fresh = try? await onboarding.understanding(id: draft.id),
-        fresh.status != .understanding
-      {
-        onDraft(fresh)
+      await card.refresh()
+
+      if let status = card.value?.status, status != .understanding {
         return true
       }
 

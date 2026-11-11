@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "winner": "B",
+    "reason": "Defines UX and clearer concise application; both accurate."
+  },
+  {
+    "id": "2",
+    "winner": "tie",
+    "reason": "Both teach chambers, orientation and septal shunting with usable diagrams."
+  },
+  {
+    "id": "3",
+    "winner": "B",
+    "reason": "Explicit major A chord alternative and diagnostic check; both accurate."
+  },
+  {
+    "id": "4",
+    "winner": "B",
+    "reason": "Concrete activity calculation agrees with lines and shift; stronger full explanation."
+  },
+  {
+    "id": "5",
+    "winner": "B",
+    "reason": "Stronger final distractor distinguishes an irrelevant outcome from a solution."
+  },
+  {
+    "id": "6",
+    "winner": "B",
+    "reason": "Directly teaches diagram orientation before activity and avoids unintroduced thick-wall question."
+  },
+  {
+    "id": "7",
+    "winner": "tie",
+    "reason": "Both teach correct triads and half-step changes with audible A minor."
+  },
+  {
+    "id": "8",
+    "winner": "A",
+    "reason": "Explains both rightward shifts before testing demand and supply increases; B tests untaught shifts."
+  }
+]

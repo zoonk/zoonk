@@ -18,7 +18,8 @@ protocol StudyAPIClient: Sendable {
   /// The server decides where the block opens, and starts it when its screen doesn't.
   func openBlock(token: String, target: StudyBlockOpeningTarget, timeZone: String) async throws
     -> StudyBlockOpening
-  func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock
+  /// Nil when the session's day is over: more time goes to today's, from Today.
+  func addExtraBlock(token: String, sessionID: String, timeZone: String) async throws -> StudyBlock?
   func catchUp(token: String, sessionID: String, timeZone: String) async throws
   func stop(token: String, sessionID: String, timeZone: String) async throws
   func getSession(token: String, sessionID: String) async throws -> StudyDay
@@ -169,11 +170,24 @@ struct StudyAPI: StudyAPIClient {
     }
   }
 
-  func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock {
-    try await clients.perform(token: token) { client in
-      switch try await client.createStudyExtraBlock(path: .init(sessionId: sessionID)) {
+  func addExtraBlock(token: String, sessionID: String, timeZone: String) async throws -> StudyBlock?
+  {
+    let body = TimeZoneBody(timeZone: timeZone)
+
+    return try await clients.perform(token: token) { client in
+      switch try await client.createStudyExtraBlock(
+        path: .init(sessionId: sessionID), body: .json(try StudyJSON.recode(body)))
+      {
       case .created(let response):
-        return try StudyJSON.recode(try response.body.json)
+        return try StudyJSON.recode(try response.body.json, as: StudyBlock.self)
+      case .conflict(let response):
+        let problem = try StudyJSON.recode(try response.body.json, as: ExtraTimeProblem.self)
+
+        guard problem.error.details?.reason == "dayOver" else {
+          throw APIError.unavailable
+        }
+
+        return nil
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
@@ -394,6 +408,19 @@ struct StudyAPI: StudyAPIClient {
       }
     }
   }
+}
+
+/// `EXTRA_TIME_UNAVAILABLE` says why in `details.reason`.
+private struct ExtraTimeProblem: Decodable {
+  struct Body: Decodable {
+    struct Details: Decodable {
+      let reason: String
+    }
+
+    let details: Details?
+  }
+
+  let error: Body
 }
 
 /// Nil for `STUDY_DAY_RETRYABLE`, which the API answers when the plan changed while the day opened.

@@ -1,6 +1,7 @@
 import "server-only";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { type MemoryFactText, formatMemoryFact } from "./memory-facts";
 import instructions from "./memory-relevance.prompt.md";
 
@@ -29,13 +30,16 @@ export const memoryRelevanceClassifier = {
 };
 
 async function getRelevance<FACT extends MemoryFactText>({
+  analytics,
   fact,
   need,
 }: {
+  analytics?: AiGenerationContext;
   fact: FACT;
   need: string;
 }) {
   const { answers } = await evaluateQuestions({
+    analytics,
     fallbackModel: FALLBACK_EVALUATION_MODEL,
     input: memoryRelevanceClassifier.toInput({ fact, need }),
     model: EVALUATION_MODEL,
@@ -51,15 +55,17 @@ async function getRelevance<FACT extends MemoryFactText>({
  * each answers in a fraction of a second.
  */
 export async function selectRelevantMemoryFacts<FACT extends MemoryFactText>({
+  analytics,
   facts,
   limit,
   need,
 }: {
+  analytics?: AiGenerationContext;
   facts: readonly FACT[];
   limit: number;
   need: string;
 }): Promise<FACT[]> {
-  const verdicts = await Promise.all(facts.map((fact) => getRelevance({ fact, need })));
+  const verdicts = await Promise.all(facts.map((fact) => getRelevance({ analytics, fact, need })));
 
   return verdicts
     .filter(({ probability }) => decideBoolean({ probability, threshold: RELEVANT_AT }))

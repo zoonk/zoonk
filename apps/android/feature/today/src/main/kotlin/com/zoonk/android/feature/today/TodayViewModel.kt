@@ -10,6 +10,7 @@ import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
+import com.zoonk.android.feature.session.introTo
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.PlanChange
@@ -71,17 +72,35 @@ class TodayViewModel(
         read: TodayRead.Day,
         step: DayStep,
         next: Boolean,
-    ) = run(read, if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
-        opener.open(read.day, step, next, read.today.goal.id)
+    ) {
+        if (showIntro(read, step)) return
+        run(read, if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
+            opener.open(read.day, step, next, read.today.goal.id)
+        }
     }
 
     /** A mission card's block; on a day not saved yet it opens as its row does. */
     fun openMission(
         read: TodayRead.Day,
         step: DayStep,
-    ) = run(read, TodayTap.Mission(step.position)) {
+    ) {
         val blockId = step.id
-        if (blockId == null) opener.open(read.day, step, false, read.today.goal.id) else opener.openMission(blockId)
+        if (showIntro(read, step)) return
+        run(read, TodayTap.Mission(step.position)) {
+            if (blockId == null) opener.open(read.day, step, false, read.today.goal.id) else opener.openMission(blockId)
+        }
+    }
+
+    private fun showIntro(
+        read: TodayRead.Day,
+        step: DayStep,
+    ): Boolean {
+        val intro = read.day.introTo(step, read.today.goal.id) ?: return false
+        if (pending == null) {
+            failed = null
+            opened.trySend(TodayRoute(intro, read.today.goal.id, read.day.localDate))
+        }
+        return true
     }
 
     fun keepLearning(

@@ -2,7 +2,12 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { loadMistakeReplays } from "./mistake-replay";
 
-export type PracticeMistake = { createdAt: Date; id: string; skillId: string | null };
+export type PracticeMistake = {
+  createdAt: Date;
+  id: string;
+  missedAt: Date;
+  skillId: string | null;
+};
 
 type MaterialMistake = PracticeMistake & {
   attemptId?: string | null;
@@ -28,7 +33,7 @@ export async function filterMistakesWithPracticeMaterial({
 
   return mistakes
     .filter((mistake) => material.get(mistake.id))
-    .map(({ createdAt, id, skillId }) => ({ createdAt, id, skillId }));
+    .map(({ createdAt, id, missedAt, skillId }) => ({ createdAt, id, missedAt, skillId }));
 }
 
 export async function loadPracticeMistakes({

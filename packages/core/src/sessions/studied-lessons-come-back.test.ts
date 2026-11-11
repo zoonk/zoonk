@@ -122,7 +122,6 @@ type FinishedLesson = {
   lessonId: string;
   nextReviewDay: number | null;
   planSkillId: string;
-  screenReviewDay: number | null;
 };
 
 async function liveDays(lessonSkills: LessonSkills) {
@@ -180,14 +179,27 @@ async function liveDays(lessonSkills: LessonSkills) {
       const check = library.checks.get(block.lessonId ?? "");
 
       // oxlint-disable-next-line no-await-in-loop -- the learner plays one lesson after another
-      const played = await playLesson({
+      await playLesson({
         blockId: block.id,
         lessonId: block.lessonId ?? "",
         sessionId: block.sessionId,
         stepId: check?.stepId ?? "",
       });
 
-      finished.push({ ...played, day, planSkillId: check?.planSkillId ?? "" });
+      const planSkillId = check?.planSkillId ?? "";
+
+      // oxlint-disable-next-line no-await-in-loop -- read right after its lesson, before later days review it
+      const memory = await prisma.learnerSkill.findFirst({
+        select: { due: true },
+        where: { skillId: planSkillId, userId: user.id },
+      });
+
+      finished.push({
+        day,
+        lessonId: block.lessonId ?? "",
+        nextReviewDay: memory?.due ? dayOf(memory.due) : null,
+        planSkillId,
+      });
     }
   }
 
@@ -238,7 +250,7 @@ async function playLesson({
     throw new Error(`Expected a started lesson, got ${started.status}`);
   }
 
-  const checked = await checkLessonStep({
+  await checkLessonStep({
     input: {
       answer: { kind: "check", optionId: "likely" },
       durationMs: 15_000,
@@ -250,19 +262,10 @@ async function playLesson({
 
   vi.setSystemTime(Date.now() + 3 * 60 * 1000);
 
-  const done = await completeLibraryLesson({
+  await completeLibraryLesson({
     input: { runId: started.run.runId, timeZone: TIME_ZONE },
     lessonId,
   });
-
-  const screenReviewAt = checked.status === "checked" ? checked.result.nextReviewAt : null;
-  const nextReviewAt = done.status === "completed" ? done.completion.nextReviewAt : null;
-
-  return {
-    lessonId,
-    nextReviewDay: nextReviewAt ? dayOf(new Date(nextReviewAt)) : null,
-    screenReviewDay: screenReviewAt ? dayOf(new Date(screenReviewAt)) : null,
-  };
 }
 
 describe("a lesson whose answers land on finer skills than the plan's", () => {
@@ -298,15 +301,11 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
     expect(finer.days).toStrictEqual(plan.days);
   });
 
-  it("brings each finished lesson's topic back on the day its end screen and its check said", async () => {
+  it("brings each finished lesson's topic back on the day its memory comes due", async () => {
     const { asked, finished } = await liveDaysOnce("finer");
     const promised = finished.filter((lesson) => lesson.nextReviewDay !== null);
 
     expect(promised).toHaveLength(finished.length);
-
-    expect(promised.map((lesson) => lesson.screenReviewDay)).toStrictEqual(
-      promised.map((lesson) => lesson.nextReviewDay),
-    );
 
     const reached = promised.filter((lesson) => (lesson.nextReviewDay ?? DAYS) < DAYS);
 

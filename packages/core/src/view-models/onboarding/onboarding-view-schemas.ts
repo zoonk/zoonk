@@ -1,7 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
-import { goalDraftSchema } from "../../goals/goal-contract";
+import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
   type GoalUnderstandingView,
@@ -61,6 +61,13 @@ const understoodGoalSchema = z
         description:
           "Language goals only: the level the words aim for and the aims the card offers instead. Edit it with field targetScore set to one of the choices' aims; null for other goals",
       }),
+    regionChoices: z
+      .array(regionChoiceSchema)
+      .default([])
+      .meta({
+        description:
+          "The countries a language goal can pick for `draft.targetRegion`, named in the learner's language; edit it with field targetRegion. Empty for other goals and languages without countries",
+      }),
   })
   .meta({ id: "UnderstoodGoal" }) satisfies z.ZodType<UnderstoodGoalView>;
 
@@ -103,12 +110,12 @@ export const goalUnderstandingViewSchema = z
 
 export const onboardingDraftViewSchema = z
   .object({
-    activeGoalLimit: z
+    activeGoalsLeft: z
       .int()
       .nullable()
       .meta({
         description:
-          "How many goals the learner's plan follows at once (1 on Free and for guests), null on Plus. The card's goals past it are Plus's: show them locked with the subscribe call to action and leave them out of POST /goals. They stay on the draft, so they unlock here once the learner has Plus",
+          "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Show and send only this many of the card's first goals; the rest are Plus's, shown locked with the subscribe call to action, and stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, show the plan's limit instead of confirming. When `goalId` is set, open that goal's setup instead.",
       }),
     generationId: z
       .string()

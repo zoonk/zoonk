@@ -94,10 +94,10 @@ fun MissionMoment(
             else -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
         }
     val status =
-        when {
-            left > 0 -> pluralStringResource(R.plurals.missions_moment_more, left, left, points)
-            facts.bonusPaid -> stringResource(R.string.missions_earned, points)
-            else -> stringResource(R.string.missions_already_earned, points)
+        if (left > 0) {
+            pluralStringResource(R.plurals.missions_moment_more, left, left, points)
+        } else {
+            stringResource(R.string.missions_earned, points)
         }
 
     Surface(

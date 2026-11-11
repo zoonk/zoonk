@@ -7,6 +7,7 @@ export type GoalSpecificityExpected = {
   privateCourse: boolean;
   generalKeywords: string[];
   personalKeywords: string[];
+  noPersonalDetails?: boolean;
 };
 
 type GeneratedSpecificity = {
@@ -60,6 +61,9 @@ function getSplitProblems({
     !expected.generalKeywords.some((keyword) => includesText(split.generalGoal, keyword));
 
   return [
+    expected.noPersonalDetails &&
+      split.personalDetails.length > 0 &&
+      "Invented personal details for a general audience.",
     missingGeneral && `generalGoal "${split.generalGoal}" doesn't name the shared subject.`,
     expected.privateCourse && split.generalGoal !== null && "A private goal kept a generalGoal.",
     ...expected.personalKeywords.flatMap((keyword) => [

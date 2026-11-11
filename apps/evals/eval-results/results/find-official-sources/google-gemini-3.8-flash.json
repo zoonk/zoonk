@@ -777,221 +777,6 @@
       ],
       "testCase": {
         "expected": {
-          "noticeHints": [
-            "2026",
-            "64"
-          ],
-          "officialDomains": [
-            "inep.gov.br",
-            "gov.br",
-            "in.gov.br"
-          ]
-        },
-        "id": "enem-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "INEP",
-            "country": "BR",
-            "edition": "2026",
-            "name": "ENEM",
-            "officialDomains": [
-              "gov.br/inep",
-              "enem.inep.gov.br",
-              "download.inep.gov.br"
-            ],
-            "queries": [
-              "edital ENEM 2026 INEP",
-              "Enem 2026 datas de aplicação edital retificação"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "tc_df_26",
-            "2026",
-            "anace"
-          ],
-          "officialDomains": [
-            "cebraspe.org.br",
-            "tc.df.gov.br"
-          ]
-        },
-        "id": "tcdf-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "Cebraspe",
-            "country": "BR",
-            "edition": "2026",
-            "name": "Concurso TCDF",
-            "officialDomains": [
-              "cebraspe.org.br",
-              "tc.df.gov.br"
-            ],
-            "queries": [
-              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
-              "TCDF 2026 edital retificação"
-            ],
-            "role": "Analista Administrativo de Controle Externo"
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "noticeHints": [
-            "47",
-            "2026"
-          ],
-          "officialDomains": [
-            "oab.org.br",
-            "fgv.br"
-          ]
-        },
-        "id": "oab-47:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": "FGV",
-            "country": "BR",
-            "edition": "47",
-            "name": "Exame de Ordem Unificado (OAB)",
-            "officialDomains": [
-              "examedeordem.oab.org.br",
-              "oab.org.br",
-              "oab.fgv.br"
-            ],
-            "queries": [
-              "edital 47º Exame de Ordem Unificado FGV",
-              "47º Exame de Ordem cronograma 2ª fase"
-            ],
-            "role": null
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "board": "IDEPI",
-          "noticeHints": [
-            "edital"
-          ],
-          "officialDomains": [
-            "idepi.org.br",
-            "piracema.mg.gov.br"
-          ],
-          "sectionHints": [
-            "quadro de provas",
-            "conteúdos programáticos"
-          ]
-        },
-        "id": "piracema-2026:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "board": null,
-            "country": "BR",
-            "edition": "2026",
-            "name": "Concurso Prefeitura de Piracema",
-            "officialDomains": [
-              "piracema.mg.gov.br"
-            ],
-            "queries": [
-              "edital concurso público Prefeitura de Piracema MG 2026",
-              "concurso Piracema MG 2026 Assistente Administrativo"
-            ],
-            "role": "Assistente Administrativo"
-          },
-          "searchTool": "parallel",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
           "board": "Cebraspe",
           "noticeHints": [
             "cgu_26",
@@ -1563,6 +1348,221 @@
             "https://www.vunesp.com.br/TJSP2503",
             "https://www.vunesp.com.br/TJSP2401"
           ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "2026",
+            "64"
+          ],
+          "officialDomains": [
+            "inep.gov.br",
+            "gov.br",
+            "in.gov.br"
+          ]
+        },
+        "id": "enem-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "INEP",
+            "country": "BR",
+            "edition": "2026",
+            "name": "ENEM",
+            "officialDomains": [
+              "gov.br/inep",
+              "enem.inep.gov.br",
+              "download.inep.gov.br"
+            ],
+            "queries": [
+              "edital ENEM 2026 INEP",
+              "Enem 2026 datas de aplicação edital retificação"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "tc_df_26",
+            "2026",
+            "anace"
+          ],
+          "officialDomains": [
+            "cebraspe.org.br",
+            "tc.df.gov.br"
+          ]
+        },
+        "id": "tcdf-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "Cebraspe",
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso TCDF",
+            "officialDomains": [
+              "cebraspe.org.br",
+              "tc.df.gov.br"
+            ],
+            "queries": [
+              "edital TCDF 2026 analista administrativo de controle externo Cebraspe",
+              "TCDF 2026 edital retificação"
+            ],
+            "role": "Analista Administrativo de Controle Externo"
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": [
+            "47",
+            "2026"
+          ],
+          "officialDomains": [
+            "oab.org.br",
+            "fgv.br"
+          ]
+        },
+        "id": "oab-47:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "FGV",
+            "country": "BR",
+            "edition": "47",
+            "name": "Exame de Ordem Unificado (OAB)",
+            "officialDomains": [
+              "examedeordem.oab.org.br",
+              "oab.org.br",
+              "oab.fgv.br"
+            ],
+            "queries": [
+              "edital 47º Exame de Ordem Unificado FGV",
+              "47º Exame de Ordem cronograma 2ª fase"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "board": "IDEPI",
+          "noticeHints": [
+            "edital"
+          ],
+          "officialDomains": [
+            "idepi.org.br",
+            "piracema.mg.gov.br"
+          ],
+          "sectionHints": [
+            "quadro de provas",
+            "conteúdos programáticos"
+          ]
+        },
+        "id": "piracema-2026:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": null,
+            "country": "BR",
+            "edition": "2026",
+            "name": "Concurso Prefeitura de Piracema",
+            "officialDomains": [
+              "piracema.mg.gov.br"
+            ],
+            "queries": [
+              "edital concurso público Prefeitura de Piracema MG 2026",
+              "concurso Piracema MG 2026 Assistente Administrativo"
+            ],
+            "role": "Assistente Administrativo"
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
         }
       }
     }

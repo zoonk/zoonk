@@ -426,6 +426,13 @@
         Label(String("A notice"), systemImage: "sparkle")
       }
 
+      HStack(alignment: .top, spacing: 12) {
+        ChartTooltip(detail: ChartPointDetail(label: "25 Oct", value: "13 activities"))
+        ChartTooltip(
+          detail: ChartPointDetail(
+            label: "Friday", value: "71%", note: "7 answers, needs 10 to count"))
+      }
+
       StatTileGrid(columns: [2, 1], minimumWidth: 140) {
         StatTile(
           label: Text(verbatim: "Preparation"), value: Text(verbatim: "16%"),
@@ -585,6 +592,9 @@
           .init(fill: .color(.success)), .init(weight: 2, fill: .current),
           .init(weight: 3, fill: .track), .init(fill: .color(LearnKind.review.color)),
           .init(weight: 4, fill: .color(LearnKind.conversation.color)),
+        ])
+        DaySegments(segments: [
+          .done, .done, .current, .ahead, .kind(LearnKind.review.color), .ahead,
         ])
         TaskSegments(
           segments: [.right, .wrong, .read, .current, .ahead, .ahead],

@@ -8,6 +8,7 @@ import {
   checkActivity,
   expectVerdict,
   openActivity,
+  openActivityToResume,
   press,
   pressOnSlider,
   valueInput,
@@ -16,7 +17,6 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
-import { activityStep, explanationStep } from "../preview/preview-steps";
 
 const PHONE = { height: 812, width: 375 };
 const WIDE = { height: 812, width: 480 };
@@ -476,19 +476,12 @@ describe("line crossing chart", () => {
     });
   });
 
-  it("brings a checked move back the way it was answered when the learner returns", async () => {
-    renderLessonPlayer({
-      lesson: buildLesson([
-        activityStep({ content: supplyDemand }),
-        explanationStep({ text: "Next.", title: "Next" }),
-      ]),
-    });
-
+  it("rebuilds a saved move the way it was answered when the learner comes back later", async () => {
+    const { reopenSaved } = openActivityToResume(supplyDemand);
     await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
     await checkActivity();
     await expectVerdict("Correct!");
-    await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: "Previous screen" }).click();
+    await reopenSaved();
 
     await expect
       .element(page.getByRole("slider", { name: "Move the line Supply" }))
@@ -497,19 +490,12 @@ describe("line crossing chart", () => {
     await expect.element(page.getByText("People didn't want more eggs.")).not.toBeInTheDocument();
   });
 
-  it("brings a move back no further than its line can go", async () => {
-    renderLessonPlayer({
-      lesson: buildLesson([
-        activityStep({ content: flatCostToMove }),
-        explanationStep({ text: "Next.", title: "Next" }),
-      ]),
-    });
-
+  it("rebuilds a saved move no further than its line can go", async () => {
+    const { reopenSaved } = openActivityToResume(flatCostToMove);
     await pressOnSlider("Move the line Cost", "ArrowDown", 1);
     await checkActivity();
     await expectVerdict("Not quite");
-    await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: "Previous screen" }).click();
+    await reopenSaved();
     const cost = page.getByRole("slider", { name: "Move the line Cost" });
 
     await expect.element(cost).toHaveAttribute("aria-valuenow", "-250");

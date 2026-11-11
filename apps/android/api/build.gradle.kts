@@ -40,6 +40,8 @@ openApiGenerate {
             // Its `level` is null for a quick test and absent to ask it in the setup, which the model can't tell apart.
             "CourseGoalStartInput",
             "ExamTopicFrequency",
+            // Its `targetRegion: null` clears a language goal's country, which the model can't tell from absent.
+            "GoalUpdateInput",
             "LanguageLevelTestSpokenAnswerRequest",
             // Its explicit nulls mean "clear it" (no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",

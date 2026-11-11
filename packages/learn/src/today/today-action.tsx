@@ -136,18 +136,20 @@ function ContinueButton() {
 
   return (
     <>
-      <Button
-        aria-describedby={NEXT_TITLE_ID}
-        aria-keyshortcuts="Enter"
-        busy={isPending}
-        className={ACTION_CLASS}
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={run}
-        size="lg"
-      >
-        {started ? t("Continue session") : t("Start session")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </Button>
+      <form action={() => void run()} className="contents">
+        <Button
+          aria-describedby={NEXT_TITLE_ID}
+          aria-keyshortcuts="Enter"
+          busy={isPending}
+          className={ACTION_CLASS}
+          icon={<PlayIcon aria-hidden="true" />}
+          size="lg"
+          type="submit"
+        >
+          {started ? t("Continue session") : t("Start session")}
+          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        </Button>
+      </form>
 
       <TodayContinueStatus className={cn(TODAY_ACTION_STATUS_CLASS, "sm:hidden")} />
     </>
@@ -188,9 +190,11 @@ function SaveAction({
 
   return (
     <>
-      <Button busy={isPending} className={ACTION_CLASS} icon={icon} onClick={run} size="lg">
-        {children}
-      </Button>
+      <form action={() => void run()} className="contents">
+        <Button busy={isPending} className={ACTION_CLASS} icon={icon} size="lg" type="submit">
+          {children}
+        </Button>
+      </form>
 
       <div className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
         {failed && <ChangeSaveError />}
@@ -235,19 +239,21 @@ function KeepLearning() {
 
   return (
     <>
-      <Button
-        aria-keyshortcuts="Enter"
-        busy={isPending && !rowSent}
-        className={ACTION_CLASS}
-        disabled={rowSent}
-        focusableWhenDisabled
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={run}
-        size="lg"
-      >
-        {t("Keep learning")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </Button>
+      <form action={() => void run()} className="contents">
+        <Button
+          aria-keyshortcuts="Enter"
+          busy={isPending && !rowSent}
+          className={ACTION_CLASS}
+          disabled={rowSent}
+          focusableWhenDisabled
+          icon={<PlayIcon aria-hidden="true" />}
+          size="lg"
+          type="submit"
+        >
+          {t("Keep learning")}
+          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        </Button>
+      </form>
 
       <span
         className={TODAY_ACTION_STATUS_CLASS}

@@ -186,9 +186,16 @@ async function openTappedBlock({
 
   const block = opened.session.blocks.find((candidate) => candidate.id === target.blockId);
 
-  return block
-    ? openSessionBlock({ block, sessionId: opened.session.id, timeZone, userId })
-    : { status: "notFound" };
+  if (!block) {
+    return { status: "notFound" };
+  }
+
+  // A day that's over starts nothing new, as Continue and missions don't; work under way goes on.
+  if (!opened.session.current && block.status === "pending") {
+    return openingResult({ kind: "today" });
+  }
+
+  return openSessionBlock({ block, sessionId: opened.session.id, timeZone, userId });
 }
 
 /**

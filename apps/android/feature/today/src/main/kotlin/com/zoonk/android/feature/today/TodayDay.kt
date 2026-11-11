@@ -153,6 +153,7 @@ fun TodayDay(
                 practice = practice,
                 notice = { layout ->
                     TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, language?.value, onboarding), layout)
+                    if (onboarding != null) UnfinishedGoal(onboarding, navigator::open)
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
                 pending = { viewModel.pending },

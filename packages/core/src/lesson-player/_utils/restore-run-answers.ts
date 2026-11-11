@@ -106,7 +106,7 @@ async function restoreRunAnswer({
     answeredAt: attempt.answeredAt.toISOString(),
     isCorrect: attempt.isCorrect,
     result: {
-      ...toCheckResult({ nextReviewAt: null, savedMistake: false, verdict: saved }),
+      ...toCheckResult({ savedMistake: false, verdict: saved }),
       answerText: saved.answerText,
     },
     stepId: attempt.stepId,

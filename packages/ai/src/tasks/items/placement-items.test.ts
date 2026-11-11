@@ -11,7 +11,7 @@ vi.mock("server-only", () => ({}));
 
 vi.mock("./placement-items.prompt.md", () => ({
   default:
-    "# Goal\n\n`QUICK_COUNT` quick{{TYPED_GOAL}} each.\n\n- Used situations.\n{{TYPED_CHECK}}\n- Medium.\n{{TRUE_FALSE_BALANCE}}\n{{TYPED_ANSWERS}}\n",
+    "# Goal\n\n`QUICK_COUNT` quick{{TYPED_GOAL}} each.\n\n{{TYPED_CHECK}}\n- Medium.\n{{TRUE_FALSE_BALANCE}}\n{{TYPED_ANSWERS}}\n",
 }));
 
 vi.mock("./placement-items-typed-check.prompt.md", () => ({ default: "- Typed confirms.\n" }));
@@ -75,14 +75,13 @@ describe(generatePlacementItems, () => {
       typedCount: 0,
     });
 
-    expect(systemPrompt).toBe(
-      "# Goal\n\n`QUICK_COUNT` quick each.\n\n- Used situations.\n- Medium.\n\n# Rules",
-    );
+    expect(systemPrompt).toBe("# Goal\n\n`QUICK_COUNT` quick each.\n\n- Medium.\n\n# Rules");
 
     expect(withItemRules).toHaveBeenCalledWith(expect.any(String), {
       field: false,
       formats: ["multipleChoice"],
       languageGoal: false,
+      usedSituations: false,
     });
 
     expect(userPrompt).toContain("OPTION_COUNT: 5");
@@ -106,13 +105,14 @@ describe(generatePlacementItems, () => {
     });
 
     expect(systemPrompt).toBe(
-      "# Goal\n\n`QUICK_COUNT` quick and exactly `TYPED_COUNT` in the `typed` format each.\n\n- Used situations.\n- Typed confirms.\n- Medium.\n- Half true.\n- Accepted answers.\n\n# Rules",
+      "# Goal\n\n`QUICK_COUNT` quick and exactly `TYPED_COUNT` in the `typed` format each.\n\n- Typed confirms.\n- Medium.\n- Half true.\n- Accepted answers.\n\n# Rules",
     );
 
     expect(withItemRules).toHaveBeenCalledWith(expect.any(String), {
       field: false,
       formats: ["trueFalse", "typed"],
       languageGoal: true,
+      usedSituations: false,
     });
 
     expect(userPrompt).toContain("TYPED_COUNT: 1");
@@ -138,5 +138,38 @@ describe(generatePlacementItems, () => {
     expect(userPrompt).toContain("- Place: Italy");
     expect(userPrompt).not.toMatch(/Brazil|Register/u);
     expect(userPrompt).toContain(formatCast({ language: "it", seed: skill.name }));
+  });
+
+  it("lists only the used situations a skill has, and draws another cast once it has some", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ skills: [{ quick: [], skill: 1 }] }),
+    );
+
+    const fresh = { ...skill, name: "Ratios" };
+
+    const used = {
+      ...skill,
+      usedSituations: ["Ana splits a bill.", "A shop raises prices twice."],
+    };
+
+    const { userPrompt } = await generatePlacementItems({
+      language: "en",
+      quickCount: 1,
+      quickFormat: "multipleChoice",
+      skills: [used, fresh],
+      typedCount: 0,
+    });
+
+    expect(withItemRules).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ usedSituations: true }),
+    );
+
+    expect(userPrompt).toContain(
+      "LEVEL: intermediate\n   USED_SITUATIONS:\n     - Ana splits a bill.\n     - A shop raises prices twice.\n2. SKILL: Ratios",
+    );
+
+    expect(userPrompt.match(/USED_SITUATIONS/gu)).toHaveLength(1);
+    expect(userPrompt).not.toContain(formatCast({ language: "en", seed: "Percentages:Ratios" }));
   });
 });

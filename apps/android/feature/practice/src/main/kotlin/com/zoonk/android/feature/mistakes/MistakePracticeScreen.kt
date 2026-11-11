@@ -39,7 +39,6 @@ import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runReportTarget
-import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
@@ -192,7 +191,6 @@ internal fun PracticeRun(
                     inlineSet = inlineSet,
                     draft = draft,
                     onDraft = { answer -> saved = Draft(run.index, it.itemId, answer) },
-                    lastAnswer = state.read.lastAnswers[run.index]?.let { answer -> savedAnswerText(answer, state.read.words) },
                 )
             }
         }
@@ -209,7 +207,14 @@ private fun PracticeDone(
     val end = state.end
     val summary = end?.summary
     val fixed = state.fixedIds.size
-    val comesBack = if (summary != null) summary.correct < summary.total else fixed == 0
+
+    val note =
+        when (state.endNote) {
+            PracticeEndNote.Missed -> R.string.mistakes_practice_comes_back
+            PracticeEndNote.MissedAndUnreached -> R.string.mistakes_practice_missed_and_unreached
+            PracticeEndNote.Unreached -> R.string.mistakes_practice_unreached
+            null -> null
+        }
 
     MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
@@ -218,7 +223,7 @@ private fun PracticeDone(
             saving = end == null,
             actionLeadingIcon = { ButtonIcon(R.drawable.ic_arrow_back) },
             onClose = onClose,
-            detail = if (end != null && comesBack) stringResource(R.string.mistakes_practice_comes_back) else null,
+            detail = if (end != null && note != null) stringResource(note) else null,
         ) {
             MomentReadouts(
                 brainPower = summary?.brainPower ?: 0,

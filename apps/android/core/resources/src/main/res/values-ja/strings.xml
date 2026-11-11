@@ -38,6 +38,7 @@
   "gate_start_goal_description": "d73b839138025fa04abc3ca8e19592ec1fe8a8bf67e28971604f2625b3eb3adb",
   "gate_start_goal_title": "ff4319c0e54acb293e6c590c35fae766c6f8f94e048cedf2735765c50e0c311f",
   "gate_start_something_new": "7ce7fa6cf29bec2ad23a185c4ba4a8754c4f30e1a9e397528174d072116d8cb1",
+  "goal_with_variety": "22546ac8c219dc6bcbd5741f5c24af9047a3f28ccd55a4f5eedefa9533bbc09c",
   "lesson_summaries_title": "bfdfca72a0f4a8feba5e6430bd0268471350bfbaf80725d99aac6b735ff82436",
   "lessons_coming_up": "0dcf3928f1a962aac225e0c8977f917155119d09c88e11467b1d802562991d6a",
   "lessons_done": "c204e1138515aa81bf4b2e2f8ae448e04463ed9bbb5e167599c75f52276ab1eb",
@@ -100,6 +101,8 @@
     <string name="gate_start_goal_title">目標を決めて始める</string>
     <string name="gate_start_goal_description">学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。</string>
     <string name="gate_start_goal">目標を始める</string>
+    <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
+    <string name="goal_with_variety">%1$s、%2$s</string>
     <string name="belt_white">白帯</string>
     <string name="belt_yellow">黄帯</string>
     <string name="belt_orange">オレンジ帯</string>

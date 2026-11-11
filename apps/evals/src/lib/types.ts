@@ -118,12 +118,26 @@ type TaskResult<T = unknown> = {
 
 export type ClassificationOutcome = { expected: string; predicted: string | null };
 
-export type ModelCall = { gatewayCharge?: GatewayCharge; modelId: string; usage: TokenUsage };
+export type ModelCall = {
+  gatewayCharge?: GatewayCharge;
+  modelId: string;
+  serviceTier?: string;
+  speed?: "fast";
+  usage: TokenUsage;
+};
 
-export function toModelCall({ gatewayCharge, model, usage }: Omit<BilledCall, "extra">): ModelCall {
+export function toModelCall({
+  gatewayCharge,
+  model,
+  serviceTier,
+  speed,
+  usage,
+}: Omit<BilledCall, "extra">): ModelCall {
   return {
     gatewayCharge,
     modelId: model,
+    serviceTier,
+    speed,
     usage: {
       cacheReadTokens: usage.cacheReadTokens,
       cacheWriteTokens: usage.cacheWriteTokens,

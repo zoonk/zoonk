@@ -103,11 +103,11 @@ function BehindChoices({
     focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
     keep: (
       <SuggestionAction
+        action={keep}
         busy={isPending}
         disabled={superseded}
         icon={<CheckIcon aria-hidden="true" />}
         key="keep"
-        onClick={keep}
         variant={variant("keep")}
       >
         {t({

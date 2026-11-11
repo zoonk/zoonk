@@ -3,15 +3,11 @@
 {
   "questions_correct": "745943abb490b04f66d909e635a205c87f948c622ecc1727d4ceceaa9db2b72e",
   "questions_dont_know_yet": "3cf7dfdd2ab237db138c6d984cf7c659001db206b01cdec97b66ff9f843545f9",
-  "questions_drill_last_answer": "2d4a383d9010ae96e2d83fd8797486f502fdba37c1cb6a53976df4fe9608338b",
   "questions_drill_no_guessing": "5d4d34ce226600b9120ef0a032b4d8ca3d6d4392aad060c6905b042160e6f4d4",
   "questions_drill_not_sure": "17ba0bebce51fc64e7b73d2bcd565179bed8045b080ac651c3a7c9c5d3d58aa5",
   "questions_drill_not_sure_praise": "482c43fed6a96cf3f30ee79f35ff9646305810a523af0da81bdc11d17936f053",
   "questions_drill_open_lesson": "217687ab5a61a30bf2abfe83b2fca85dfa54f9fe5491587be41a9b3ec2966a89",
-  "questions_drill_read_carefully": "733390d39f6c571a2dcbe2f6ca3409982861a70085b1beb0124aacba37f3512f",
-  "questions_drill_reteach": "246e3aee21a834c024df6dda2f087928fe1b8bf4704b4a856617b9c2d2cdcdc0",
   "questions_drill_reteach_ideas": "1b41389ec4c918e81e5e1f4c9905116a5c43b490a8a85d501ebb0995e7231ada",
-  "questions_drill_retry": "5202c834218f1aefa6874b8d7dce077dedfbc58e677856b7d175420061d84ac0",
   "questions_drill_seconds_left": "b4173464cea0838e6d7c9ce3ced519cd83138406a25a05483b5de1d2cc03c234",
   "questions_drill_spot_the_trap": "324a9816d921de8362947bf87850cd69a23a1725c18f3d9733063555662f1333",
   "questions_drill_start": "c78a08aabefc00ff564c94e3f65f2ace8edd779c0399fa360274f59d8927f591",
@@ -49,7 +45,6 @@
   "questions_right": "0601a4a91208cd71a19c1daf83a6776bc43876f25ab9dc41267fb5cea3fe2476",
   "questions_right_answer": "3d2e7b1d7d0877cc89a93f189dab71007eff1ae74777ed782c581cd44176d4dc",
   "questions_saved": "53f487afbe3877044bf37bdc0d56209daa135f74be0df28a27bc953c1e57cfa7",
-  "questions_saved_tomorrow": "95faafd8976932354f2019d03a891c3cf738dbd0f2398aa02c598b5fa7ba5f71",
   "questions_set_place_audio": "496ad1e5cb7a4ac62ea1e10527844ad207bd6c76d70c611574b79a10dea1e7f3",
   "questions_set_place_case": "e86f3983cee92d69c2e03675438fe66be87603d5119be7a0e4bc2cbd7f460799",
   "questions_set_place_chart": "d5254fc204639ac9933935dcca12ff9911529cd13e2485a783acead412caa398",
@@ -120,7 +115,6 @@
         <item quantity="other">%d erros corrigidos. Eles saem do seu caderno.</item>
     </plurals>
     <string name="questions_saved">Salvo no seu caderno de erros</string>
-    <string name="questions_saved_tomorrow">Salvo no seu caderno de erros · volta amanhã</string>
     <string name="questions_show_less">Mostrar menos</string>
     <string name="questions_read_again">Leia tudo de novo</string>
     <string name="questions_set_place_audio">Pergunta %1$d de %2$d sobre esta gravação</string>
@@ -131,8 +125,6 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Questão de prova anterior · %1$s</string>
     <string name="questions_drill_reteach_ideas">Primeiro a ideia, depois a prática.</string>
-    <string name="questions_drill_reteach">Vamos rever uma ideia que não ficou clara.</string>
-    <string name="questions_drill_read_carefully">Leia cada palavra antes de responder.</string>
     <string name="questions_drill_spot_the_trap">Tem uma pegadinha aqui. Encontre ela antes de responder.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">%d segundo por pergunta, como no dia da prova.</item>
@@ -140,10 +132,7 @@
         <item quantity="other">%d segundos por pergunta, como no dia da prova.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Responda só quando tiver certeza. Tudo bem dizer que não tem certeza.</string>
-    <string name="questions_drill_retry">Tente de novo.</string>
     <string name="questions_drill_start">Começar as perguntas</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">Da última vez, você respondeu: %1$s</string>
     <string name="questions_drill_timed_out">O tempo acabou. Conta como erro, então a pergunta volta depois.</string>
     <string name="questions_drill_not_sure_praise">Boa escolha. É melhor dizer que não tem certeza do que chutar.</string>
     <string name="questions_drill_trap">A pegadinha:</string>

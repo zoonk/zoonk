@@ -11,6 +11,7 @@ import {
   typedAnswerStep,
   workedExampleStep,
 } from "./_test-utils/lesson-steps";
+import { showAttemptInView } from "./_utils/lesson-attempts";
 import { lessonPlayerReducer } from "./lesson-player-reducer";
 import { getLessonScreen } from "./lesson-player-screen";
 import {
@@ -153,6 +154,67 @@ describe(lessonPlayerReducer, () => {
     expect(forward.firstVerdicts).toStrictEqual({ quiz: true });
   });
 
+  it("goes back from an answered question's result through earlier answered ones, read-only", () => {
+    const steps = [checkStep("q1"), explanationStep("tip"), checkStep("q2")];
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+
+    const atResult = play(steps, [
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+    ]);
+
+    expect([atResult.phase, getLessonScreen(atResult).canGoBack]).toStrictEqual(["feedback", true]);
+
+    const atTip = lessonPlayerReducer(atResult, back);
+    expect([getCurrentStep(atTip)?.id, atTip.phase]).toStrictEqual(["tip", "playing"]);
+
+    const atQ1 = lessonPlayerReducer(atTip, back);
+
+    expect(atQ1).toMatchObject({ phase: "feedback", position: 0, reviewing: true });
+    expect(getLessonScreen(atQ1).primary).toMatchObject({ action: "continue" });
+
+    const again = playOn(atQ1, [{ type: "continue" }, { type: "continue" }]);
+
+    expect(again).toMatchObject({ phase: "feedback", position: 2, reviewing: true });
+    expect([again.answers, again.results]).toStrictEqual([atResult.answers, atResult.results]);
+  });
+
+  it("keeps a retried question's answer when the learner goes back past it and returns", () => {
+    const steps = [checkStep("quiz"), explanationStep("tip")];
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+
+    const retried = play(steps, [
+      ...answerCheck("quiz", false),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("quiz", true, "quiz-retry"),
+    ]);
+
+    expect([retried.queue, retried.position, retried.phase]).toStrictEqual([
+      ["quiz", "tip", "quiz"],
+      2,
+      "feedback",
+    ]);
+
+    const returned = playOn(retried, [back, back, { type: "continue" }, { type: "continue" }]);
+
+    expect(returned).toMatchObject({ phase: "feedback", position: 2, reviewing: true });
+
+    expect([returned.results.quiz, returned.rounds]).toStrictEqual([
+      retried.results.quiz,
+      retried.rounds,
+    ]);
+
+    const atFirst = playOn(retried, [back, back]);
+
+    expect([atFirst.position, showAttemptInView(atFirst).results.quiz?.isCorrect]).toStrictEqual([
+      0,
+      false,
+    ]);
+  });
+
   it("keeps an unchecked answer when the learner goes back, and shows it again on Next", () => {
     const picked = { kind: "check", optionId: "right" } as const;
 
@@ -184,30 +246,50 @@ describe(lessonPlayerReducer, () => {
     expect(retry.rounds.quiz).toBe((missed.rounds.quiz ?? 0) + 1);
   });
 
-  it("stops Previous before the earlier copy of a question that came back", () => {
+  it("goes back past a retry still to answer, its first attempt shown read-only", () => {
     const steps = [checkStep("quiz"), explanationStep("tip"), summaryStep("end")];
+    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
+    const picked = { kind: "check", optionId: "right" } as const;
 
     const retry = play(steps, [
       ...answerCheck("quiz", false),
       { type: "continue" },
       { type: "continue" },
       { type: "continue" },
+      { answer: picked, stepId: "quiz", type: "selectAnswer" },
     ]);
 
-    expect([getCurrentStep(retry)?.id, retry.position]).toStrictEqual(["quiz", 3]);
+    expect([getCurrentStep(retry)?.id, retry.position, retry.phase]).toStrictEqual([
+      "quiz",
+      3,
+      "playing",
+    ]);
 
-    const back: LessonPlayerAction = { direction: "prev", type: "navigate" };
-    const atTip = lessonPlayerReducer(lessonPlayerReducer(retry, back), back);
+    const atFirst = playOn(retry, [back, back, back]);
 
-    expect([getCurrentStep(atTip)?.id, getLessonScreen(atTip).canGoBack]).toStrictEqual([
-      "tip",
+    expect(atFirst).toMatchObject({ phase: "feedback", position: 0, reviewing: true });
+    expect(getLessonScreen(atFirst).primary).toMatchObject({ action: "continue" });
+
+    const shown = showAttemptInView(atFirst);
+
+    expect([shown.answers.quiz, shown.results.quiz?.isCorrect]).toStrictEqual([
+      { kind: "check", optionId: "wrong" },
       false,
     ]);
 
-    expect(lessonPlayerReducer(atTip, back).position).toBe(1);
+    const returned = playOn(atFirst, [
+      { type: "continue" },
+      { type: "continue" },
+      { type: "continue" },
+    ]);
+
+    expect(returned).toMatchObject({ phase: "playing", position: 3, reviewing: false });
+    expect([returned.answers.quiz, returned.results.quiz]).toStrictEqual([picked, undefined]);
+    expect(showAttemptInView(returned)).toBe(returned);
+    expect(returned.rounds).toStrictEqual(retry.rounds);
   });
 
-  it("stops Previous on a missed last question that comes straight back", () => {
+  it("goes back from a missed last question that comes straight back", () => {
     const retry = play(
       [explanationStep("tip"), checkStep("quiz")],
       [{ type: "continue" }, ...answerCheck("quiz", false), { type: "continue" }],
@@ -218,11 +300,11 @@ describe(lessonPlayerReducer, () => {
       ["tip", "quiz", "quiz"],
     ]);
 
-    expect(getLessonScreen(retry).canGoBack).toBe(false);
+    const back = lessonPlayerReducer(retry, { direction: "prev", type: "navigate" });
 
-    const stillThere = lessonPlayerReducer(retry, { direction: "prev", type: "navigate" });
-
-    expect([stillThere.position, stillThere.answers.quiz]).toStrictEqual([2, undefined]);
+    expect(back).toMatchObject({ phase: "feedback", position: 1, reviewing: true });
+    expect(showAttemptInView(back).results.quiz?.isCorrect).toBe(false);
+    expect(getLessonScreen(back).canGoBack).toBe(true);
   });
 
   it("brings a pending self-correction back with its notice after the learner goes back", () => {
@@ -1614,21 +1696,17 @@ describe(lessonPlayerReducer, () => {
     expect(ignored.answers).toStrictEqual({});
   });
 
-  it("adds the server's review date to a verdict given on the device", () => {
-    const state = play([checkStep("quiz")], answerCheck("quiz", true));
+  it("adds the server's saved mistake to a verdict given on the device", () => {
+    const state = play([checkStep("quiz")], answerCheck("quiz", false));
 
     const confirmed = lessonPlayerReducer(state, {
       attemptId: "quiz-attempt",
-      result: {
-        ...stepResult(true),
-        nextReviewAt: "2026-10-02T00:00:00.000Z",
-        savedMistake: false,
-      },
+      result: { ...stepResult(false), savedMistake: true },
       stepId: "quiz",
       type: "checkConfirmed",
     });
 
-    expect(confirmed.results.quiz?.nextReviewAt).toBe("2026-10-02T00:00:00.000Z");
+    expect(confirmed.results.quiz?.savedMistake).toBe(true);
   });
 
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
@@ -1641,11 +1719,7 @@ describe(lessonPlayerReducer, () => {
 
     const late = lessonPlayerReducer(again, {
       attemptId: "first",
-      result: {
-        ...stepResult(false),
-        nextReviewAt: "2026-10-02T00:00:00.000Z",
-        savedMistake: true,
-      },
+      result: { ...stepResult(false), savedMistake: true },
       stepId: "quiz",
       type: "checkConfirmed",
     });

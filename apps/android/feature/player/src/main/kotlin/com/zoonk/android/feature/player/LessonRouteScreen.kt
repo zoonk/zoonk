@@ -66,6 +66,7 @@ import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
+import com.zoonk.android.feature.player.engine.showAttemptInView
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.model.StepContent
@@ -193,7 +194,8 @@ internal fun PlayingLesson(
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = (session as? SessionState.SignedIn)?.session
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val played by viewModel.state.collectAsStateWithLifecycle()
+    val state = remember(played) { played?.showAttemptInView() }
     val ending by viewModel.ending.collectAsStateWithLifecycle()
     val redirect by viewModel.redirect.collectAsStateWithLifecycle()
     LaunchedEffect(redirect) {

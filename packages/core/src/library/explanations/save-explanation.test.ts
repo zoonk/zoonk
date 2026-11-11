@@ -82,6 +82,7 @@ describe(saveExplanationLesson, () => {
 
     expect(lesson).toMatchObject({
       contentStatus: "completed",
+      description: "What a market index measures and what a 2% rise compares with.",
       level: "overview",
       title: "What “the market is up 2%” means",
       visibility: "public",
@@ -160,7 +161,7 @@ describe(saveExplanationLesson, () => {
       const explanation = marketExplanation();
 
       const outline = await createLibraryLesson({
-        description: explanation.screens[0]?.title ?? explanation.title,
+        description: explanation.description,
         estimatedMinutes: 4,
         homeChapterId: null,
         identityKey: scopeIdentityKey({

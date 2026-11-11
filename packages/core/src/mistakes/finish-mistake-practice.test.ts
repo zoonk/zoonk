@@ -5,13 +5,14 @@ import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner"
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
-const YESTERDAY = new Date(Date.now() - 86_400_000);
+/** From the test clock, which some tests freeze at a fixed day. */
+const yesterday = () => new Date(Date.now() - 86_400_000);
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
 
@@ -25,7 +26,7 @@ async function setup() {
 
   const mistake = await mistakeFixture({
     cause: "misread",
-    createdAt: YESTERDAY,
+    createdAt: yesterday(),
     itemId: original.id,
     skillId: skill.id,
     userId: user.id,
@@ -55,7 +56,7 @@ async function answer({
     originalMistake.itemId === itemId
       ? originalMistake
       : await mistakeFixture({
-          createdAt: YESTERDAY,
+          createdAt: yesterday(),
           itemId,
           skillId: originalMistake.skillId,
           userId: originalMistake.userId,
@@ -190,6 +191,23 @@ describe(finishMistakePractice, () => {
         .split(",")
         .toSorted(),
     ).toStrictEqual([first, second].toSorted());
+  });
+
+  it("files a run that goes past midnight under the day it ended, as the ledger dates every activity", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-10T23:59:00Z"));
+
+    const { extra, mistake, original, user } = await setup();
+    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
+    await finishMistakePractice({ answerIds: [first], timeZone: "UTC" });
+
+    vi.setSystemTime(new Date("2026-11-11T00:01:00Z"));
+    const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
+    await finishMistakePractice({ answerIds: [first, second], ended: true, timeZone: "UTC" });
+
+    await expect(loadRuns(user.id)).resolves.toMatchObject([
+      { hour: 0, localDate: new Date("2026-11-11T00:00:00Z"), weekday: 3 },
+    ]);
   });
 
   it("counts the run as each answer that names it is saved, and the end adds nothing twice", async () => {

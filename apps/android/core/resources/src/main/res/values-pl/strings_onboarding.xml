@@ -52,7 +52,7 @@
   "onboarding_course_more_chapters": "fd95e5cdd4b1092062855a828cd342e1dc72fed635ba3c85474ea2c0a9598f21",
   "onboarding_course_start_free": "bc310504a6b45eccb53d5f52ad2eee04bdfd6d6fb08abe896600679d392d77bb",
   "onboarding_course_starting": "b1e641adb077c2d7efb323e825fe9a33ca393f35de98afd41d871855d63b70cf",
-  "onboarding_create_account": "c394598d64a77ebebf133e8828cf32bf4b75da3b258a37a8be1c508368529d06",
+  "onboarding_create_account": "62c89f8af39bee24e40fcdb89794a8d2641b4728a58e251eba75360c68a2690a",
   "onboarding_create_account_short": "2938faaf3829b90b581715e3ca8000d3907493b142a256fa7470f553d4bce18d",
   "onboarding_date_description": "fabef68840706c98f56cf500be5df729d04c6e4eb5580e6d2cb7af15bd40b4c5",
   "onboarding_date_is_today": "8f526d16d4262d089d35ed430141606bc6f3bcffda3c5ce6d476efef94e25d6f",
@@ -148,13 +148,13 @@
   "onboarding_level_test_description": "25a58865d3c55a6065646162a0af50db7acebf7b158cb6568fa692e6c48b1be1",
   "onboarding_level_title": "5655fca8ae915b03f5cca84703172fba0e479b345106853be92e6eec4a5d81eb",
   "onboarding_library_course_fits": "af3f59de31bfd97521344eb3d87cb3a68403699b65f4df65b6584d904acde86c",
+  "onboarding_limit_active_goals": "cf584454f83d3945d0c4cb0da0d0f68fe75897f97b6b982f1bee60e0a5edd3c0",
   "onboarding_limit_daily_explanations": "4697fe035a84a6742f3b48501030f78d8444967bd975e4ea9bdc8f4ddbb801c1",
   "onboarding_limit_daily_goals": "e5480a6135d498b2045843bc4d434885c94d349587a26474cc25e16bc997218e",
   "onboarding_limit_guest": "d4b339ea7cbab77d180295a0fac8ef470c1154ecb723e123db2903965b27595e",
   "onboarding_limit_guest_blocked": "9d3e58241d0fcebb3b4755b06b31d67acf3344da51ac14a375adcca10a9e3478",
   "onboarding_limit_monthly_explanations": "ae11cbf95603939e043bc7ea151a589d84111d3c5d114b44ee9ec7a870350bf0",
   "onboarding_limit_monthly_goals": "736b236f572a9159ab32609260b7eb1a17060d82262a6350d09575307b827fc9",
-  "onboarding_limit_one_active_goal": "7a592e3cb455082e2853314672a89d294923fb8885f0ae50bd3c8da7f0616dba",
   "onboarding_limit_sign_up_required": "e7f6916eaf4fcd643603e1afd5b82cb05d456f669833daa4569bed8670d64fac",
   "onboarding_limit_slow_down": "184a72b2dd5386d9c3c56c4f386cdff0fbab088c679073fb3433d1fffba75844",
   "onboarding_link": "1c68d531c8439e4a2ce5935e6123b1e79b8547d76f7dd1c7c9b340639aeec477",
@@ -210,7 +210,7 @@
   "onboarding_plan_so_far": "ce2ef0eb9fffc06dd88c40adb1ad804f9eba1001694cb18fd0d212f63ec55f5b",
   "onboarding_plan_stopped": "c5538c137f78a92698f0fd1c51d965a31e9ca7e3b8d8e034e34dbe85fa0fd963",
   "onboarding_plus_more_goals": "b2bffaffbd409e9e0cb927ddcc81a15e33acc4a33db763664ef5afa92b536245",
-  "onboarding_plus_more_goals_up_front": "813ef818eed3dd15316da91dcd6b35636029999f414550db1dadb105cb71e4f0",
+  "onboarding_plus_more_goals_up_front": "89519142014542230fe2f92f72fc4e696665fa073c3d8cbdaaeff0a0d36bc616",
   "onboarding_position_description": "cae0e398514831c5a7886062a38a8bde5ca0a28ba8285a4270fdeef718659a47",
   "onboarding_position_label": "82bf55a79e88d23706bd91f9f6515dd92241b2424ffc2d21f6ddf5dd8f51e420",
   "onboarding_position_title": "b38568dfcee75cbc4389b79fd238146bf9d85675b46c4c34769b36533585c86d",
@@ -435,11 +435,18 @@
   "onboarding_understanding_title": "26e0642bf586ad795e747933d4357465659a4005e336d27140b6ef008db39205",
   "onboarding_understood_description": "0f229bc90d9f09d8a535de3731c08980c6fd74cd325f688a8f97500878b31739",
   "onboarding_understood_description_shared": "b3f910710712fb14fa2372d79f303afc825caa5f644daacac667b21c3fff2257",
-  "onboarding_understood_locked_goal": "e173979bfd4b573bb66e96b3a217bbed6d5d86a1eb369fc571ab9fa2848e0121",
-  "onboarding_understood_locked_goals": "f433ea6c50e7423f4fd759dcb417b408d4924663c36ecb0d2fb4553d3c44fbdf",
+  "onboarding_understood_free_account_title": "b97a2616c36f74434855741f48d857baa3d6e48e67b0965c722df3025e23bba1",
+  "onboarding_understood_locked_goal": "3caefd6c66d2e82d72c0c6de8f9cf1346e5f04629e6001e8db52561c6eab3135",
+  "onboarding_understood_locked_goal_guest": "e41a627870d36c2583e3b44fe15dfd1bd99f5043d88d2c73ad3e4d616f141c2b",
+  "onboarding_understood_locked_goals": "816003c4612d7753d42c4c9fbf1101f433b6cedd77eeee075e46471714585f05",
+  "onboarding_understood_locked_goals_guest": "7d727c9bb8cd46e40d0d520c9bb58ae0a2ce2fa59d3326e04eca5f37d0db1d01",
   "onboarding_understood_title": "f6d3dc4996b840ab8699176fef1fe9af033791072dab5597d68c97caf3ad708d",
   "onboarding_upload_file": "f4bb786254e79716490ce972383f37e717480a3e90b0d083a2f3221c4f5cfd37",
   "onboarding_use_this_date": "916f22f3959c1a1a05d48ba07200df04086557ce1d19b6c469ea8d7c54044125",
+  "onboarding_variety_description": "ac0a051d16524ca65c49b8385c3fbb050fca20a609705e560b0745ce595151fd",
+  "onboarding_variety_none": "7720b6ad677a6ea5f7027f6c63142c6ba6df954bff116afdb890bc709a47142f",
+  "onboarding_variety_note": "fc0f715ad6a4d5f75f4f40444c354a1d85c032a069a241a177a9a185c422d726",
+  "onboarding_variety_title": "746c473c184fa5b7d614ace03d631ab6e04bc2ad8d0b303ddc04f14404a3ba7b",
   "onboarding_waitlist_joined": "65c56caa00b9c203c2e5c1acdd573a497e425094d885398975e79be793249b09",
   "onboarding_waitlist_sign_in": "c75cc8fd64955bd94be1ae5110e7a031728e50c0c8709b07be8d1cf8b427f21c",
   "onboarding_weekend_time": "152c65568439c70dc56a51978fec2f186a364fbed5a9fe624499868cd17b1613",
@@ -484,7 +491,8 @@
     <string name="onboarding_limit_guest_blocked">Kontrola bezpieczeństwa nie pozwala rozpocząć nauki bez konta. Załóż bezpłatne konto, aby kontynuować.</string>
     <string name="onboarding_limit_monthly_explanations">W pakiecie Free nie możesz w tym miesiącu zadać więcej nowych pytań. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
     <string name="onboarding_limit_monthly_goals">W pakiecie Free nie możesz w tym miesiącu rozpocząć więcej nowych celów. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
-    <string name="onboarding_limit_one_active_goal">W pakiecie Free możesz pracować nad jednym celem naraz. Aby rozpocząć ten cel, wstrzymaj obecny cel w menu swojego Planu lub przejdź na Plus.</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden ze swoich celów w menu na ekranie Plan lub przejdź na Plus.</string>
     <string name="onboarding_limit_sign_up_required">Załóż bezpłatne konto, by kontynuować.</string>
     <string name="onboarding_limit_slow_down">Rozpoczynasz wiele celów w krótkim czasie. Spróbuj ponownie za kilka minut.</string>
     <string name="onboarding_read_limit_guest">Bez konta możesz wysłać kilka nowych celów dziennie. Załóż bezpłatne konto, żeby kontynuować.</string>
@@ -504,10 +512,11 @@
     </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Więcej celów naraz z pakietem Plus</string>
-    <string name="onboarding_plus_more_goals_up_front">W pakiecie Free możesz pracować nad jednym celem naraz. Aby zacząć kolejny, wstrzymaj obecny cel w menu na stronie Plan. Szybkie pytania możesz zadawać w każdej chwili.</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden z nich w menu na ekranie Plan. Szybkie pytania możesz zadawać w każdej chwili.</string>
     <string name="onboarding_go_to_plan">Przejdź do swojego planu</string>
     <string name="onboarding_see_plus">Zobacz Plus</string>
-    <string name="onboarding_create_account">Utwórz bezpłatne konto</string>
+    <string name="onboarding_create_account">Załóż bezpłatne konto</string>
     <string name="onboarding_create_account_short">Utwórz konto</string>
     <string name="onboarding_guest_gate_title">Utwórz bezpłatne konto, by zacząć realizować kolejny cel</string>
     <string name="onboarding_guest_gate_description">Bez konta możesz realizować jeden cel. Po założeniu konta zachowasz swój plan i postępy.</string>
@@ -519,10 +528,10 @@
     <string name="onboarding_understood_description">Wszystko możesz później zmienić.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Twój dzienny czas nauki dzielimy między te cele. Wszystko możesz później zmienić.</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Z pakietem Plus możesz realizować więcej niż jeden cel naraz. Na razie ten cel czeka na liście twoich celów.</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Z pakietem Plus możesz realizować więcej niż jeden cel naraz. Na razie te cele czekają na liście twoich celów.</string>
+    <string name="onboarding_understood_locked_goals">W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów.</string>
     <string name="onboarding_looks_right">Potwierdź</string>
     <string name="onboarding_fix_something">Popraw coś</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -543,7 +552,7 @@
     <string name="onboarding_row_language">Język</string>
     <string name="onboarding_row_you_speak">Języki, którymi mówisz</string>
     <string name="onboarding_row_course">Kurs</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">Gdzie: %1$s</string>
     <string name="onboarding_row_where">Gdzie</string>
     <!-- For someone changing careers. -->
@@ -552,7 +561,7 @@
     <string name="onboarding_row_level_aiming">Poziom, do którego dążysz</string>
     <string name="onboarding_row_target_score">Docelowy wynik</string>
     <string name="onboarding_row_last_cutoff">Ostatni próg punktowy</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s z %2$s</string>
     <string name="onboarding_row_reason">Powód</string>
     <string name="onboarding_row_what_you_do">Czym zajmujesz się teraz</string>
@@ -771,7 +780,7 @@
         <item quantity="many">%d umiejętności, które już znasz</item>
         <item quantity="other">%d umiejętności, które już znasz</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">Więcej lekcji</string>
     <string name="onboarding_reveal_usual_structure">Ten plan opiera się na typowej strukturze egzaminu, a my kończymy czytać jego oficjalne dokumenty. Jeśli będą potrzebne zmiany w planie, zdecydujesz o nich w zakładce Dziś.</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -779,7 +788,7 @@
     <string name="onboarding_reveal_phase_gaps">Uzupełnianie braków</string>
     <string name="onboarding_reveal_phase_practice">Praktyka</string>
     <string name="onboarding_reveal_phase_final_stretch">Ostatnia prosta</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">Etap %1$d</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">Zakres egzaminu i braki w wiedzy</string>
@@ -792,7 +801,7 @@
     <string name="onboarding_reveal_today">Dziś</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">dzień %1$d z %2$d</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d z %2$d</string>
     <string name="onboarding_reveal_phase_place">etap %1$d z %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -804,7 +813,7 @@
     <string name="onboarding_reveal_free_week_over_title">Twój darmowy tydzień przygotowań do egzaminu się skończył</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">Powtórki i poprawianie błędów pozostają bezpłatne. Plus daje dostęp do nowych lekcji, reszty planu i egzaminów próbnych.</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s dziennie to za mało, by zrealizować twój cel.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Przy %1$s nauki dziennie przerabiasz wszystkie tematy egzaminu, a te najczęściej spotykane dokładniej.</string>
     <string name="onboarding_reveal_covers_exam_lighter">Przy %1$s nauki dziennie przerabiasz wszystkie tematy egzaminu, choć niektóre mniej dokładnie.</string>
@@ -855,7 +864,7 @@
         <item quantity="many">%d tematów, wszystkie w twoim planie</item>
         <item quantity="other">%d tematów, wszystkie w twoim planie</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="one">Na %1$d z %2$d tematu brakuje czasu przy %3$s nauki dziennie</item>
         <item quantity="few">Na %1$d z %2$d tematów brakuje czasu przy %3$s nauki dziennie</item>
@@ -870,7 +879,7 @@
         <item quantity="other">%1$d z %2$d tematów w twoim planie</item>
     </plurals>
     <string name="onboarding_reveal_weights">Udział poszczególnych obszarów</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ Wartość szacunkowa: twoje materiały nie określają wagi tego obszaru.</string>
     <string name="onboarding_reveal_estimated_material_areas">~ Wartości szacunkowe: twoje materiały nie określają wag tych obszarów.</string>
@@ -1131,4 +1140,18 @@
     </plurals>
     <string name="onboarding_reason_choices">Dlaczego uczysz się tego języka</string>
     <string name="onboarding_aim_description">Docelowy poziom kursu określa czas trwania planu.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Dostępne z bezpłatnym kontem</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów.</string>
+    <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
+    <string name="onboarding_variety_title">Kraj</string>
+    <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
+    <string name="onboarding_variety_description">Wybrany kraj określa odmianę języka używaną przez twojego kumpla i w rozmowach ćwiczeniowych. Język lekcji i nagrań: %1$s.</string>
+    <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
+    <string name="onboarding_variety_none">Bez preferencji</string>
+    <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
+    <string name="onboarding_variety_note">Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %1$s. W lekcjach i ich nagraniach używamy odmiany: %2$s.</string>
 </resources>

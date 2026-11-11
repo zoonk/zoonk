@@ -8,11 +8,12 @@ import { type ImageScene, imageSceneSchema, normalizeImageScene } from "./image-
 import systemPrompt from "./image-scene.prompt.md";
 
 /**
- * Gemini 3.8 Flash scored highest on the image-scene eval (26 Sep 2026). The scene decides whether
- * the picture teaches, and costs little next to the image itself.
+ * The scene decides whether the picture teaches, and costs little next to the image itself. On 18
+ * cases (11 Nov 2026), Muse Ember scored 9.62 at 3.9 s p50 for $1.17/1k and Gemini 3.8 Flash 9.60
+ * at 6.5 s for $3.34/1k; a blind Claude read split them 6 wins each with 6 ties.
  */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
+const defaultModel = "meta/muse-ember";
+const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-luna"] as const;
 
 export type ImageSceneInput = {
   language: string;

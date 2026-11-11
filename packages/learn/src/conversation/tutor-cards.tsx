@@ -1,6 +1,6 @@
 "use client";
 
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { type ComponentProps } from "react";

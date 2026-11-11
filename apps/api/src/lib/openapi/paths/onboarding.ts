@@ -2,8 +2,8 @@ import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import {
   goalUnderstandingInputSchema,
   onboardingAnswerInputSchema,
-  onboardingDraftEditSchema,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { onboardingDraftEditSchema } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
 import {
   onboardingDraftViewSchema,
   onboardingResumeSchema,

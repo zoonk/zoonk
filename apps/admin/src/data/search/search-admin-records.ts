@@ -1,6 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { getUserSearchWhere } from "@/data/users/_utils/user-search";
+import { getUserSearchWhere } from "@zoonk/core/users/user-search";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Route } from "next";

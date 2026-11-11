@@ -1599,120 +1599,6 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description identifies nutrient functions, food labels, and everyday meal planning. Together, the outcomes cover label reading, balanced meals, salt reduction, and micronutrient choices, giving the course a recognizable practical range. These are course-specific abilities rather than generic educational claims.",
-          "score": 9,
-          "label": "Fit and specificity",
-          "weight": 30
-        },
-        {
-          "categoryId": "honesty",
-          "reasoning": "The page stays within personal everyday eating and does not imply professional qualification, disease treatment, or weight loss. However, 「過不足なく補える」 makes an inflated claim of achieving micronutrient intake without either deficiency or excess. The cap of 8 for an inflated claim applies.",
-          "score": 8,
-          "label": "Honest claims",
-          "weight": 25
-        },
-        {
-          "categoryId": "promise",
-          "reasoning": "The promise and outcomes use familiar vocabulary and end in potential forms rather than commands. The outcomes are concrete and readily recognizable. However, the promise is wordy and awkwardly constructed, especially 「控えられた健康的な食生活」, triggering the cap of 8 for a stiff or wordy promise.",
-          "score": 8,
-          "label": "Plain, outcome-first promise",
-          "weight": 20
-        },
-        {
-          "categoryId": "audience",
-          "reasoning": "All three items are short, recognizable interest-based labels: concern about meal balance, wanting to reduce salt, and wanting to interpret food labels. They describe distinct motivations without becoming course-activity sentences or vague labels such as 'anyone interested.'",
-          "score": 10,
-          "label": "Audience",
-          "weight": 10
-        },
-        {
-          "categoryId": "language",
-          "reasoning": "The copy is Japanese and uses relevant everyday contexts such as みそ汁 and 外食, without American defaults, stiff honorifics, or あなた. Nevertheless, the description uses prohibited 「学び」 and consistently fails the explicit です・ます requirement. These direct style violations materially reduce compliance.",
-          "score": 6,
-          "label": "Language and style",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "3 of 4 parts passed. The description has 0 sentences; it needs 1 to 3.",
-          "score": 7.75,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 3157,
-          "inputTokens": 3160,
-          "outputTokens": 953,
-          "reasoningTokens": 241
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The description violates two explicit language requirements: both sentences end in plain-form 「ようになる」 rather than です・ます, and 「学び」 is an inflection of the prohibited verb 学ぶ.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The promise contains the unnatural phrase 「塩分を無理なく控えられた健康的な食生活」 and is wordier than an at-a-glance promise should be. The outcome 「ビタミンやミネラルを過不足なく補える」 overstates the precision learners can achieve through an everyday nutrition course.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Shorten the promise to 「毎日の食事の栄養バランスを整えられる」. Replace the absolute micronutrient outcome with an observable food-selection ability, such as 「不足しがちな栄養素を含む食品を選べる」. Using 「栄養成分表示」 and 「食塩相当量」 would also make the label-reading outcome more precise.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた\n      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」\n      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド\n      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)\n      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": {
-          "categories": [
-            "health",
-            "science"
-          ]
-        },
-        "id": "ja-eiyogaku-beginner-1",
-        "userInput": {
-          "chapters": [
-            {
-              "description": "炭水化物・たんぱく質・脂質が、体の中でそれぞれどんな働きをしているか。",
-              "level": "beginner",
-              "title": "三大栄養素"
-            },
-            {
-              "description": "少しの量で体の調子を整える栄養素と、日本人に不足しがちなもの。",
-              "level": "beginner",
-              "title": "ビタミンとミネラル"
-            },
-            {
-              "description": "パッケージの表示から、エネルギーや食塩相当量を読み取るコツ。",
-              "level": "beginner",
-              "title": "栄養成分表示を読む"
-            },
-            {
-              "description": "主食・主菜・副菜をそろえて、無理なくバランスをとる方法。",
-              "level": "beginner",
-              "title": "一日の食事の組み立て"
-            },
-            {
-              "description": "みそ汁や漬物、外食で塩分が多くなりやすい理由と、減らす工夫。",
-              "level": "beginner",
-              "title": "塩分と日本の食卓"
-            }
-          ],
-          "courseTitle": "栄養学",
-          "language": "ja"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
           "reasoning": "The copy clearly concerns Korean-history exam preparation, and the outcomes describe observable skills relevant to the supplied chapters. However, “선사 시대부터 현대까지” is largely a range label: neither the description nor the outcomes meaningfully represents the later periods explicitly required by the expectations. The outcomes remain weighted toward the initial chapter band and do not establish a clear progression to whole-exam application.",
           "score": 7,
           "label": "Fit and specificity",
@@ -2026,6 +1912,120 @@
           ],
           "courseTitle": "Prawo pracy",
           "language": "pl"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names actual nutrients and connects nutrition to everyday food choices. Outcomes cover label reading, meal composition, salt reduction, and micronutrients, with appropriate Japanese examples. However, the final outcome goes beyond the supported scope by claiming the ability to supply vitamins and minerals without either deficiency or excess.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no qualification, treatment, weight-loss, career, price, or duration claims. The course is appropriately framed around everyday eating. However, 過不足なく補える is an inflated nutritional-completeness claim, triggering the cap of 8 for one inflated claim.",
+          "score": 8,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise and outcomes use familiar words and end in plain potential forms rather than commands. Most outcomes describe recognizable actions. The promise nevertheless combines several benefits into a cumbersome sentence, and 控えられた健康的な食生活 is awkward. The stiff, wordy promise triggers the cap of 8.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "All three items are short, recognizable labels with distinct motivations: balancing everyday meals, reducing salt, and evaluating food labels. None is generic or describes course activities.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is Japanese and uses relevant everyday food language without American defaults or visitor-directed あなた. However, the description explicitly violates the required です・ます register in both sentences and uses the prohibited verb 学ぶ as 学び. These are direct failures of the task's language requirements.",
+          "score": 6,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3160,
+          "outputTokens": 912,
+          "reasoningTokens": 258
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The description violates two explicit language requirements: it uses 学び, an inflection of the prohibited 学ぶ, and both sentences end in plain-form なる rather than です・ます.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The promise is wordy and unnatural, particularly 塩分を無理なく控えられた健康的な食生活. The final outcome, ビタミンやミネラルを過不足なく補える, overstates what an everyday nutrition course can reliably enable: ensuring neither deficiencies nor excesses is stronger than making informed food choices.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use 栄養成分表示 and 食塩相当量 instead of the less precise package-label and salt wording. Make the promise a single direct everyday ability, and replace the final outcome with an observable food-selection ability that does not imply nutritional perfection.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた\n      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」\n      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド\n      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)\n      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "health",
+            "science"
+          ]
+        },
+        "id": "ja-eiyogaku-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "炭水化物・たんぱく質・脂質が、体の中でそれぞれどんな働きをしているか。",
+              "level": "beginner",
+              "title": "三大栄養素"
+            },
+            {
+              "description": "少しの量で体の調子を整える栄養素と、日本人に不足しがちなもの。",
+              "level": "beginner",
+              "title": "ビタミンとミネラル"
+            },
+            {
+              "description": "パッケージの表示から、エネルギーや食塩相当量を読み取るコツ。",
+              "level": "beginner",
+              "title": "栄養成分表示を読む"
+            },
+            {
+              "description": "主食・主菜・副菜をそろえて、無理なくバランスをとる方法。",
+              "level": "beginner",
+              "title": "一日の食事の組み立て"
+            },
+            {
+              "description": "みそ汁や漬物、外食で塩分が多くなりやすい理由と、減らす工夫。",
+              "level": "beginner",
+              "title": "塩分と日本の食卓"
+            }
+          ],
+          "courseTitle": "栄養学",
+          "language": "ja"
         }
       }
     }

@@ -69,13 +69,13 @@ function TestQuestionsSwitch({
   }
 
   return (
-    <p className="text-muted-foreground ps-7 text-xs text-pretty">
+    <form className="text-muted-foreground ps-7 text-xs text-pretty">
       {paused ? t("Test questions in your sessions are paused.") : sessionQuestionsNote}
       {space}
-      <Button onClick={() => onChange(paused ? "on" : "paused")} variant="link">
+      <Button formAction={() => onChange(paused ? "on" : "paused")} type="submit" variant="link">
         {paused ? t("Ask them again") : t("Pause test questions")}
       </Button>
-    </p>
+    </form>
   );
 }
 

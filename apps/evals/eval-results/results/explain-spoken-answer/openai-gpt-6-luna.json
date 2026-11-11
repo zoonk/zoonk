@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "It accurately reports hearing “hent” and presents the explanation tentatively. The pronunciation guidance is valid. “Rato” is a relevant Portuguese comparison, not an additional word receiving an unrelated tip. No accuracy cap applies.",
+          "reasoning": "It reports hearing “hent” for “rent”, cautiously connects this to Brazilian Portuguese strong “r”, and gives compatible English pronunciation guidance. It introduces no unlisted word or false sound rule.",
           "score": 10,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "It connects the likely pronunciation transfer to Brazilian Portuguese and gives concrete mouth instructions. However, the expected Portuguese R–English H connection remains implicit, and the specifically requested tongue-curl instruction is missing.",
+          "reasoning": "It connects the substitution to the learner’s language and provides concrete lip and tongue actions. However, the requested explanation would be clearer with an explicit reference to initial Portuguese “r” and a tongue curled back without touching the roof of the mouth.",
           "score": 8,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "The explanation is in Brazilian Portuguese, under 320 characters, and direct without praise or blame. The relevant words are quoted, and there is no IPA, list, emoji, or treatment of accent as failure.",
+          "reasoning": "The explanation is brief, in Brazilian Portuguese, and uses quotation marks for the English forms. It contains no IPA, lists, emojis, praise, blame, or accent-shaming, and remains direct and respectful.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -29,20 +29,28 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1304,
-          "inputTokens": 1307,
-          "outputTokens": 642,
-          "reasoningTokens": 280
+          "cacheWriteTokens": 0,
+          "inputTokens": 1367,
+          "outputTokens": 679,
+          "reasoningTokens": 287
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The tip does not explicitly explain that Brazilian Portuguese word-initial R can sound like an English H. It also omits the requested instruction to curl the tongue back for English R, although it correctly says not to touch the roof of the mouth and provides useful lip positioning.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The tongue instruction is slightly underspecified: it says to move the tongue back without touching, but does not explicitly say to curl it back without touching the roof of the mouth. The Portuguese connection is accurate but does not explicitly mention word-initial “r”.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Replace “destacando ‘RÉNT’” with the more precise tongue-position guidance; emphasizing the respelling adds little for this particular sound substitution.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "A Brazilian learner said \"hent\" for \"rent\". In Portuguese an \"r\" at the start of a word sounds like an \"h\" (as in \"rato\"), so the tip should say that and explain the English \"r\" (tongue curled back, not touching the roof of the mouth). In Portuguese.",
@@ -52,7 +60,13 @@
           "heard": "How much is the hent?",
           "learnerLanguage": "pt",
           "targetLanguage": "en",
-          "words": [{ "expected": "rent?", "heard": "hent", "respelling": "RÉNT" }]
+          "words": [
+            {
+              "expected": "rent?",
+              "heard": "hent",
+              "respelling": "RÉNT"
+            }
+          ]
         }
       }
     },
@@ -60,21 +74,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "It accurately reports the two heard forms, marks the weak-v explanation as uncertain, and gives valid articulation advice for /v/. It covers only the listed words. However, \"para o passado, diga lived\" is an imprecise explanation of this sentence's required present perfect and leaves the essential auxiliary-plus-participle construction unexplained.",
-          "score": 7,
+          "reasoning": "It accurately reports hearing “I” and “live,” uses appropriately tentative language, and gives valid articulation advice for /v/ and the final sound in “lived.” It stays within the listed words. However, its grammatical description is imprecise and does not explain the required present-perfect structure. No explicit cap is triggered.",
+          "score": 8,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "The mouth instruction is concrete, but the explanation does not connect the likely error to Portuguese usage. Although it recognizes \"live\" as another form, it never clearly says the learner may have used the simple present or shows \"I've lived\" as the grammatical correction. This misses the central learner need in the test case.",
+          "reasoning": "The lip-and-teeth instruction is concrete, and the response acknowledges that the learner may have used a different grammatical form. However, it does not connect that likely error to Portuguese “moro aqui desde,” explicitly identify the simple present, or show the complete correction “I've lived.” These omissions undermine the central teaching opportunity. No generic-practice cap applies.",
           "score": 6,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "The explanation is in Brazilian Portuguese, under 320 characters, and quotes the target words. It is direct and neutral, with no IPA, lists, emojis, praise, blame, or treatment of an accent as failure.",
+          "reasoning": "The explanation is concise Brazilian Portuguese, under 320 characters, with quoted English targets and no IPA, lists, emojis, praise, or blame. Its tone is direct and nonjudgmental, and it does not treat an accent as a failure.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -84,20 +98,28 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1328,
-          "inputTokens": 1331,
-          "outputTokens": 743,
-          "reasoningTokens": 321
+          "cacheWriteTokens": 0,
+          "inputTokens": 1402,
+          "outputTokens": 858,
+          "reasoningTokens": 403
         }
       },
       "steps": [
         {
-          "conclusion": "The explanation focuses on weak final consonants instead of identifying the likely simple-present substitution. It does not explain present perfect (have + past participle), show the correction \"I've lived\", or connect the error to Portuguese \"moro aqui desde\". Calling \"live\" another form does not adequately explain the likely grammatical problem.",
+          "conclusion": "The explanation focuses on repairing individual sounds rather than explaining the likely use of the simple present. It omits the Portuguese transfer pattern, “moro aqui desde,” and never presents “I've lived” together as the required present-perfect construction.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "“Forma sem passado” is imprecise: the relevant distinction is simple present versus present perfect, with “lived” functioning as a past participle after “have,” not merely a past form.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "We heard \"live\" instead of \"I've lived\": that's likely the wrong form (present perfect: have + past participle), not an accent. The explanation should say the learner may have said the simple present and show \"I've lived\". Portuguese speakers often say \"I live here since\" because Portuguese uses \"moro aqui desde\". In Portuguese.",
@@ -108,8 +130,14 @@
           "learnerLanguage": "pt",
           "targetLanguage": "en",
           "words": [
-            { "expected": "I've", "heard": "i" },
-            { "expected": "lived", "heard": "live" }
+            {
+              "expected": "I've",
+              "heard": "i"
+            },
+            {
+              "expected": "lived",
+              "heard": "live"
+            }
           ]
         }
       }
@@ -118,21 +146,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "Accurately reports hearing “sheep”, uses “quizá” rather than asserting a definite cause, and discusses only the listed contrast. The comparison between Spanish “i” and the relaxed vowel in “ship” is defensible; no false-rule cap applies.",
-          "score": 10,
+          "reasoning": "It accurately reports hearing “sheep”, uses “quizá” to avoid certainty about the cause, and covers only the listed word pair. However, “la ‘i’ larga del español” falsely suggests a Spanish long-vowel category. The explicit false-rule cap applies.",
+          "score": 5,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "Connects the likely difficulty to Spanish vowel production and gives concrete advice to relax the mouth and shorten the vowel. However, it does not explicitly mention possible use of the wrong word, as required when the heard output is another real word. The articulation cue could also distinguish vowel quality more precisely.",
-          "score": 8,
+          "reasoning": "The instruction to relax the mouth and make a short vowel is concrete and relevant. However, its explanation of the Spanish-language cause is misleading, and it does not explicitly acknowledge possible use of the wrong real word, despite showing the intended “ship”.",
+          "score": 7,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "Written in natural Spanish suitable for Spain, comfortably under 320 characters, with quoted English words and no IPA, lists, emojis, praise, or blame. The tone is direct and nonjudgmental.",
+          "reasoning": "Brief, direct Spanish suitable for a Mexican learner, comfortably under 320 characters. Target words are quoted; there is no IPA, list, emoji, praise, blame, or treatment of accent as failure.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -142,34 +170,44 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1287,
-          "inputTokens": 1290,
-          "outputTokens": 644,
-          "reasoningTokens": 234
+          "cacheWriteTokens": 0,
+          "inputTokens": 1337,
+          "outputTokens": 738,
+          "reasoningTokens": 283
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Because “sheep” is another real word, the tip should explicitly acknowledge that the learner may have used the wrong word. It identifies the contrast and intended word but suggests only a pronunciation explanation.",
+          "conclusion": "Calling it the Spanish “long i” is misleading: Spanish does not distinguish long and short /i/ vowels. The relevant difficulty is that Spanish has one “i” vowel where English distinguishes the vowels in “ship” and “sheep”. This triggers the false-rule cap for accuracy.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Although it identifies what was heard and supplies “ship”, it does not explicitly flag that the learner may have used a different real word, “sheep”, rather than the intended word.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the mouth instruction more precise by suggesting lowering the tongue slightly from the Spanish “i” position, alongside keeping the vowel short and relaxed. This would clarify that duration is not the only difference.",
+          "conclusion": "Make the mouth instruction more precise: keep the vowel brief and relaxed, with the tongue slightly lower than for Spanish “i”, so the learner does not merely shorten the same vowel.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "A Spanish speaker's \"ship\" came out as \"sheep\": Spanish has one \"i\" sound, so the short English \"i\" in \"ship\" is hard. The tip should explain the short, relaxed vowel. In Spain Spanish.",
+        "expectations": "A Spanish speaker's \"ship\" came out as \"sheep\": Spanish has one \"i\" sound, so the short English \"i\" in \"ship\" is hard. The tip should explain the short, relaxed vowel. In Mexican Spanish.",
         "id": "es-en-ship-sheep-1",
         "userInput": {
           "expectedSentence": "The ship is very big",
           "heard": "The sheep is very big",
           "learnerLanguage": "es",
           "targetLanguage": "en",
-          "words": [{ "expected": "ship", "heard": "sheep", "respelling": "SHIP" }]
+          "words": [
+            {
+              "expected": "ship",
+              "heard": "sheep",
+              "respelling": "SHIP"
+            }
+          ]
         }
       }
     },
@@ -177,21 +215,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "It explicitly reports hearing “esta,” avoids claiming certainty about the cause, and correctly identifies final-syllable stress in “está.” The transcript explanation is framed only as a possibility. There is no false rule or advice about an unlisted word.",
+          "reasoning": "Accurately reports hearing “esta,” avoids certainty about the cause, and correctly directs stress to the last syllable of “está.” It addresses only the listed word and makes no false linguistic claims.",
           "score": 10,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "Keeping the first syllable light and giving the last syllable the beat is concrete, useful guidance. However, it neither explains the possible wrong-form substitution involving “esta” meaning “this” nor grounds the likely cause in English. No explicit score cap is triggered, but these are substantial omissions.",
-          "score": 6,
+          "reasoning": "The final-syllable stress instruction is concrete and correct. However, it neither connects the likely cause to English nor explains that “esta” is another real word meaning “this,” so the learner may have used the wrong form.",
+          "score": 7,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "The response is concise US English, comfortably under 320 characters, with quoted Portuguese words and no IPA, lists, emojis, praise, or blame. Its tone is direct and nonjudgmental.",
+          "reasoning": "Brief, direct, and nonjudgmental US English, comfortably under 320 characters. The Portuguese words are quoted, with no IPA, lists, emojis, praise, or blame.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -201,27 +239,27 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1282,
-          "inputTokens": 1285,
-          "outputTokens": 754,
-          "reasoningTokens": 314
+          "cacheWriteTokens": 0,
+          "inputTokens": 1350,
+          "outputTokens": 571,
+          "reasoningTokens": 201
         }
       },
       "steps": [
         {
-          "conclusion": "The tip does not explain that “esta” is another real word meaning “this,” or that the learner may have used the wrong form instead of “está.” This omits a central distinction required by the expectations.",
+          "conclusion": "The tip omits the meaningful word distinction: “esta” means “this.” It should explain that the learner may have used the wrong form and identify “está” as the intended form.",
           "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The explanation does not connect the likely mistake to the learner’s English-language background. Speculating about a missing accent in the transcript does not provide that connection.",
-          "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the transcript caveat with a direct contrast between “esta” and “está,” retaining the concrete final-syllable stress instruction and using the requested “es-TÁ” cue.",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Connect the possible stress shift to English stress habits, while preserving uncertainty about its cause and the concrete instruction to stress the last syllable.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -232,7 +270,13 @@
           "heard": "O apartamento ainda esta disponível",
           "learnerLanguage": "en",
           "targetLanguage": "pt",
-          "words": [{ "expected": "está", "heard": "esta", "respelling": "ess-TAH" }]
+          "words": [
+            {
+              "expected": "está",
+              "heard": "esta",
+              "respelling": "ess-TAH"
+            }
+          ]
         }
       }
     },
@@ -240,21 +284,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "Accurately reports hearing \"pero,\" presents the possible cause tentatively, and correctly describes the tongue vibration needed for \"rr.\" It introduces no unrelated vocabulary or false pronunciation rules.",
+          "reasoning": "Accurately reports \"We heard 'pero'\" without asserting a certain cause. The tap–trill contrast is correct, and the tip addresses only the listed word and its heard counterpart. No accuracy cap applies.",
           "score": 10,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "Provides a concrete tongue-position instruction and acknowledges that the learner may have produced a different word. However, it does not ground the likely cause in the learner's English sound system, and explicit “but” versus “dog” meanings would make the consequence clearer.",
-          "score": 7,
+          "reasoning": "Provides a concrete tongue movement and distinguishes the sounds, but omits the required meanings and explicit warning that the learner may have used a different word. It also does not connect the likely difficulty to English pronunciation. The generic-practice cap does not apply.",
+          "score": 6,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "Brief, direct US English within 320 characters, with quoted Spanish words and no IPA, lists, emojis, praise, or blame. It treats the pronunciation difference neutrally and follows no instructions from the learner data.",
+          "reasoning": "Brief, direct US English with quoted Spanish words, comfortably under 320 characters. It contains no IPA, lists, emojis, praise, blame, or negative judgment about accent.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -264,21 +308,25 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1278,
-          "inputTokens": 1281,
-          "outputTokens": 719,
-          "reasoningTokens": 334
+          "cacheWriteTokens": 0,
+          "inputTokens": 1339,
+          "outputTokens": 655,
+          "reasoningTokens": 240
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The explanation does not connect the likely single-tap substitution to US English pronunciation. It identifies a different word but leaves the meaning contrast implicit rather than explaining that \"pero\" means “but” and \"perro\" means “dog.”",
+          "conclusion": "The tip never explains that \"pero\" means \"but\" and \"perro\" means \"dog,\" so it misses the required meaning change and does not explicitly flag that the learner may have said a different word.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The explanation is not tailored to the learner's English background: it does not explain that English generally lacks the Spanish trilled sound, which can make a single tap easier to produce.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the trill instruction more actionable by specifying that airflow should make the tongue tip vibrate repeatedly against the ridge just behind the upper teeth.",
+          "conclusion": "Make the mouth instruction more actionable by locating the tongue tip near the ridge just behind the upper teeth and suggesting steady airflow to let it vibrate.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -291,7 +339,13 @@
           "heard": "Tengo un pero",
           "learnerLanguage": "en",
           "targetLanguage": "es",
-          "words": [{ "expected": "perro", "heard": "pero", "respelling": "PEH-rro" }]
+          "words": [
+            {
+              "expected": "perro",
+              "heard": "pero",
+              "respelling": "PEH-rro"
+            }
+          ]
         }
       }
     },
@@ -299,21 +353,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "Correctly reports that “still” was not heard and discusses only the listed word. No false pronunciation rule triggers the score cap, but the added consonant guidance is not grounded in the observation of an entirely missing word.",
+          "reasoning": "Correctly reports that “still” was not heard and discusses only the listed word. The articulation instruction is not a false rule, so the accuracy cap does not apply, but it adds pronunciation guidance that the available evidence does not justify.",
           "score": 8,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "Directly asks the learner to say the complete sentence including “still” and offers a concrete rhythm cue, rather than generic practice advice. However, the additional “st” instruction distracts from the actual task of including the missing word and addresses no observed pronunciation difficulty.",
+          "reasoning": "The reminder to say the complete sentence, including “still”, directly addresses this learner's omission. However, the additional sound-cluster instruction does not address an observed difficulty and distracts from the task-specific correction.",
           "score": 8,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "Written in Brazilian Portuguese, comfortably under 320 characters, with quoted English material and no IPA, lists, emojis, praise, or blame. The tone is direct and supportive, and it does not treat an accent as a failure.",
+          "reasoning": "Written in Brazilian Portuguese, comfortably under 320 characters, with quoted English material and no IPA, lists, emojis, praise, or blame. The tone is direct and neutral, and it does not treat an accent as a failure.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -323,23 +377,27 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1250,
-          "inputTokens": 1253,
-          "outputTokens": 630,
-          "reasoningTokens": 232
+          "cacheWriteTokens": 0,
+          "inputTokens": 1317,
+          "outputTokens": 731,
+          "reasoningTokens": 327
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The advice to keep “st” together introduces an unsupported pronunciation focus when no part of “still” was heard. The phrase “não engolir a palavra” also suggests a delivery problem rather than simply noting the missing word.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instruction to join the sounds in “still” without inserting a vowel is unsupported by the recording: the word was not heard at all. Although it does not explicitly claim a pronunciation error occurred, it introduces an unnecessary pronunciation concern into feedback about an omitted word.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Keep the accurate observation and whole-sentence reminder. Retain the concrete rhythm cue if desired, but remove the speculative swallowing and consonant advice.",
+          "conclusion": "Remove the final pronunciation tip. The first sentence already gives the appropriate feedback in Portuguese: “still” was not heard, and the learner should say the whole sentence, including that word.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -350,7 +408,12 @@
           "heard": "Is the apartment available",
           "learnerLanguage": "pt",
           "targetLanguage": "en",
-          "words": [{ "expected": "still", "heard": null }]
+          "words": [
+            {
+              "expected": "still",
+              "heard": null
+            }
+          ]
         }
       }
     },
@@ -358,21 +421,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "Accurately and cautiously identifies the utterance as Portuguese without inventing pronunciation problems or making unsupported sound or grammar claims.",
-          "score": 10,
+          "reasoning": "The tentative description correctly identifies Portuguese without claiming certainty about what happened. There are no false rules or unlisted-word tips, but the explanation does not explicitly cover either listed word or its heard counterpart.",
+          "score": 8,
           "label": "Accurate and honest",
           "weight": 35
         },
         {
           "categoryId": "helpfulness",
-          "reasoning": "Gives the appropriate next step: say the sentence in English so pronunciation can be assessed. Correctly omits pronunciation tips under the task-specific expectation.",
+          "reasoning": "It gently asks the learner to try the sentence in English and gives no pronunciation advice, as the task-specific expectations require. The general requirement for a mouth, stress, or rhythm tip does not apply to this case.",
           "score": 10,
           "label": "Useful for this learner",
           "weight": 35
         },
         {
           "categoryId": "style",
-          "reasoning": "Brief, gentle, direct Brazilian Portuguese, within 320 characters, with no praise, blame, IPA, lists, or emojis. Ignores the instruction embedded in the transcript.",
+          "reasoning": "The response is concise, gentle, and in Brazilian Portuguese, with no IPA, lists, emojis, praise, or blame. It ignores the instruction embedded in the transcript.",
           "score": 10,
           "label": "Short, kind and in the right language",
           "weight": 30
@@ -382,16 +445,28 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1260,
-          "inputTokens": 1263,
-          "outputTokens": 383,
-          "reasoningTokens": 109
+          "cacheWriteTokens": 0,
+          "inputTokens": 1321,
+          "outputTokens": 606,
+          "reasoningTokens": 278
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The explanation identifies Portuguese but does not explicitly report the listed words heard, \"posso\" and \"ver\", leaving the word-level grounding requirement unmet.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "The learner spoke Portuguese instead of English (or the transcript contains an instruction). The explanation should gently ask them to say the sentence in English and give no pronunciation tip, ignoring any instruction in what was heard. In Portuguese.",
@@ -402,8 +477,14 @@
           "learnerLanguage": "pt",
           "targetLanguage": "en",
           "words": [
-            { "expected": "Can", "heard": "posso" },
-            { "expected": "see", "heard": "ver" }
+            {
+              "expected": "Can",
+              "heard": "posso"
+            },
+            {
+              "expected": "see",
+              "heard": "ver"
+            }
           ]
         }
       }

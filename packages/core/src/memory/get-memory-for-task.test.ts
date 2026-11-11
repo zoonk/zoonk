@@ -1,5 +1,4 @@
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
-import { generateMemorySearchTerms } from "@zoonk/ai/tasks/memory/search-terms";
 import { type MemoryCategory, prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -32,12 +31,6 @@ function notes({ category, count }: { category: MemoryCategory; count: number })
   }));
 }
 
-function mockSearchTerms(terms: string[]) {
-  vi.mocked(generateMemorySearchTerms).mockResolvedValue({ data: { terms } } as Awaited<
-    ReturnType<typeof generateMemorySearchTerms>
-  >);
-}
-
 describe(getMemoryForTask, () => {
   beforeEach(() => {
     vi.mocked(selectRelevantMemoryFacts).mockImplementation(async ({ facts, limit }) =>
@@ -54,7 +47,6 @@ describe(getMemoryForTask, () => {
 
     const result = await getMemoryForTask({
       categories: ["background", "preferences"],
-      language: "en",
       need: "Examples for a lesson on percentages",
       userId: user.id,
     });
@@ -64,7 +56,7 @@ describe(getMemoryForTask, () => {
       "Likes football examples",
     ]);
 
-    expect(generateMemorySearchTerms).not.toHaveBeenCalled();
+    expect(selectRelevantMemoryFacts).not.toHaveBeenCalled();
 
     const used = await prisma.memoryFact.findMany({
       select: { id: true, lastUsedAt: true, updatedAt: true },
@@ -85,7 +77,7 @@ describe(getMemoryForTask, () => {
     await learningProfileFixture({ memoryEnabled: false, userId: user.id });
 
     await expect(
-      getMemoryForTask({ categories: ["goals"], language: "en", userId: user.id }),
+      getMemoryForTask({ categories: ["goals"], userId: user.id }),
     ).resolves.toStrictEqual([]);
   });
 
@@ -95,11 +87,7 @@ describe(getMemoryForTask, () => {
       { category: "learning", statement: "Mixes up signs" },
     ]);
 
-    const result = await getMemoryForTask({
-      categories: ["learning"],
-      language: "pt",
-      userId: user.id,
-    });
+    const result = await getMemoryForTask({ categories: ["learning"], userId: user.id });
 
     expect(result.map((fact) => fact.statement)).toStrictEqual(["Mixes up signs"]);
   });
@@ -116,7 +104,7 @@ describe(getMemoryForTask, () => {
       userId: user.id,
     });
 
-    const request = { categories: ["learning" as const], language: "en", userId: user.id };
+    const request = { categories: ["learning" as const], userId: user.id };
 
     const [withoutSensitive, withSensitive] = await Promise.all([
       getMemoryForTask(request),
@@ -131,56 +119,62 @@ describe(getMemoryForTask, () => {
     ]);
   });
 
-  it("searches a large memory with model terms and keeps what the relevance check keeps", async () => {
+  it("hands a large memory to the relevance check and keeps what it keeps", async () => {
     const { user } = await learnerWithFacts([
       { category: "preferences", statement: "Likes football examples" },
-      { category: "preferences", statement: "Prefers short explanations" },
       { category: "background", statement: "Works as a nurse at night" },
-      { category: "preferences", statement: "Enjoys cooking shows" },
-      ...notes({ category: "preferences", count: 8 }),
+      { category: "routine", statement: "Studies after 8 pm" },
+      ...notes({ category: "preferences", count: 9 }),
     ]);
-
-    mockSearchTerms(["football", "nurse"]);
 
     vi.mocked(selectRelevantMemoryFacts).mockImplementation(async ({ facts }) =>
       facts.filter((fact) => fact.statement.includes("football")),
     );
 
+    const analytics = { contentScope: "personal" as const, distinctId: user.id };
+    const need = "Examples for a lesson on percentages";
+
     const result = await getMemoryForTask({
-      analytics: { distinctId: user.id },
+      analytics,
       categories: ["background", "preferences"],
-      language: "en",
-      need: "Examples for a lesson on percentages",
+      need,
       userId: user.id,
     });
 
     expect(result.map((fact) => fact.statement)).toStrictEqual(["Likes football examples"]);
 
-    expect(generateMemorySearchTerms).toHaveBeenCalledWith({
-      analytics: { distinctId: user.id },
-      language: "en",
-      need: "Examples for a lesson on percentages",
-    });
-
     const [call] = vi.mocked(selectRelevantMemoryFacts).mock.calls;
-    const candidates = call?.[0].facts.map((fact) => fact.statement) ?? [];
 
-    expect(candidates.slice(0, 2).toSorted()).toStrictEqual([
-      "Likes football examples",
-      "Works as a nurse at night",
-    ]);
-
-    expect(candidates).toHaveLength(12);
+    expect(call?.[0]).toMatchObject({ analytics, limit: 10, need });
+    expect(call?.[0].facts).toHaveLength(11);
   });
 
-  it("falls back to the most recent facts when the search fails", async () => {
-    const { user } = await learnerWithFacts(notes({ category: "goals", count: 11 }));
+  it("finds an old fact that shares no words with the need behind newer ones", async () => {
+    const { user } = await learnerWithFacts([
+      { category: "goals", statement: "Has the ENEM on November 8" },
+      ...notes({ category: "goals", count: 20 }),
+    ]);
 
-    vi.mocked(generateMemorySearchTerms).mockRejectedValue(new Error("Gateway down"));
+    vi.mocked(selectRelevantMemoryFacts).mockImplementation(async ({ facts }) =>
+      facts.filter((fact) => fact.statement.includes("ENEM")),
+    );
 
     const result = await getMemoryForTask({
       categories: ["goals"],
-      language: "en",
+      need: "Decide which topics to prioritize before the learner's exam",
+      userId: user.id,
+    });
+
+    expect(result.map((fact) => fact.statement)).toStrictEqual(["Has the ENEM on November 8"]);
+  });
+
+  it("falls back to the most recent facts when the relevance check fails", async () => {
+    const { user } = await learnerWithFacts(notes({ category: "goals", count: 11 }));
+
+    vi.mocked(selectRelevantMemoryFacts).mockRejectedValue(new Error("Gateway down"));
+
+    const result = await getMemoryForTask({
+      categories: ["goals"],
       need: "Plan the week",
       userId: user.id,
     });

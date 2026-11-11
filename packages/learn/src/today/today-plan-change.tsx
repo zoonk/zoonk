@@ -107,14 +107,14 @@ function ChangeActions({
   return (
     <SuggestionActions>
       {change.canApply && (
-        <SuggestionAction disabled={disabled} onClick={() => onAnswer("applied")}>
+        <SuggestionAction action={() => onAnswer("applied")} disabled={disabled}>
           {overridesNotice && t("Use my date anyway")}
           {!overridesNotice &&
             (change.source === FOCUS_TEST_SOURCE ? t("Update my plan") : t("Apply"))}
         </SuggestionAction>
       )}
 
-      <SuggestionAction disabled={disabled} onClick={() => onAnswer("declined")} variant="outline">
+      <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
         {keepsMine && !overridesNotice && t("Keep mine")}
         {overridesNotice && keepOfficialDate(change.examDocument)}
         {!keepsMine && !overridesNotice && t("Not now")}
@@ -194,9 +194,9 @@ function AfterAnswer({
   if (state.answer === "applied" && state.answered.canUndo) {
     return (
       <SuggestionAction
+        action={() => answer("undone")}
         busy={isPending}
         icon={<Undo2Icon aria-hidden="true" />}
-        onClick={() => answer("undone")}
         variant="outline"
       >
         {t("Undo")}

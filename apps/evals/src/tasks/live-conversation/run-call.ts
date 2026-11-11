@@ -3,6 +3,7 @@ import {
   type LiveConversationInstructionsParams,
   buildLiveConversationInstructions,
   getLiveConversationLanguageName,
+  hasLiveCallVariety,
 } from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
 import {
@@ -173,6 +174,7 @@ export async function runLiveCall({ call, learner }: LiveConversationInput) {
     examiner: false,
     language: getLiveConversationLanguageName(call),
     openingLine: call.scenario.openingLine,
+    variety: hasLiveCallVariety(call),
   });
 
   const learnerPrompt = buildLearnerPrompt({

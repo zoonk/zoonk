@@ -17,7 +17,7 @@ internal class FakeStatsApi(
 ) : StatsApi {
     private val verdicts =
         """"dayVerdict":{"kind":"best","points":null},"minimumAnswers":10,"timeVerdict":{"kind":"best","points":null},""" +
-            """"weekSpread":{"high":90,"low":60}"""
+            """"weekSpread":{"high":92,"low":74}"""
 
     override suspend fun progress(session: AuthenticatedSession): CurrentUserProgressResponse =
         ApiJson.decodeFromString(
@@ -68,17 +68,23 @@ internal class FakeStatsApi(
                 {"correctAnswers":25,"incorrectAnswers":5,"score":83.3,"totalAnswers":30,"date":"2026-10-27"}]}""",
         )
 
+    /** Every state a column has: the best, counted ones, one under the minimum (Friday, the evening) and one without answers. */
     override suspend fun patterns(session: AuthenticatedSession): CurrentUserScorePatternsResponsePatterns =
         ApiJson.decodeFromString(
             """{$verdicts,
-                "strongestWeekday":{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
-                "weekdays":[{"correctAnswers":18,"incorrectAnswers":2,"score":90,"totalAnswers":20,"dayOfWeek":"tuesday"},
-                {"correctAnswers":12,"incorrectAnswers":8,"score":60,"totalAnswers":20,"dayOfWeek":"friday"}],
-                "strongestTime":{"correctAnswers":10,"incorrectAnswers":2,"score":83.3,"totalAnswers":12,"period":"morning"},
+                "strongestWeekday":{"correctAnswers":46,"incorrectAnswers":4,"score":92,"totalAnswers":50,"dayOfWeek":"tuesday"},
+                "weekdays":[{"correctAnswers":39,"incorrectAnswers":11,"score":78,"totalAnswers":50,"dayOfWeek":"sunday"},
+                {"correctAnswers":42,"incorrectAnswers":8,"score":84,"totalAnswers":50,"dayOfWeek":"monday"},
+                {"correctAnswers":46,"incorrectAnswers":4,"score":92,"totalAnswers":50,"dayOfWeek":"tuesday"},
+                {"correctAnswers":40,"incorrectAnswers":10,"score":80,"totalAnswers":50,"dayOfWeek":"wednesday"},
+                {"correctAnswers":37,"incorrectAnswers":13,"score":74,"totalAnswers":50,"dayOfWeek":"thursday"},
+                {"correctAnswers":5,"incorrectAnswers":2,"score":71.4,"totalAnswers":7,"dayOfWeek":"friday"},
+                {"correctAnswers":0,"incorrectAnswers":0,"score":0,"totalAnswers":0,"dayOfWeek":"saturday"}],
+                "strongestTime":{"correctAnswers":91,"incorrectAnswers":9,"score":91,"totalAnswers":100,"period":"morning"},
                 "times":[{"correctAnswers":0,"incorrectAnswers":0,"score":0,"totalAnswers":0,"period":"night"},
-                {"correctAnswers":10,"incorrectAnswers":2,"score":83.3,"totalAnswers":12,"period":"morning"},
-                {"correctAnswers":6,"incorrectAnswers":2,"score":75,"totalAnswers":8,"period":"afternoon"},
-                {"correctAnswers":14,"incorrectAnswers":6,"score":70,"totalAnswers":20,"period":"evening"}]}""",
+                {"correctAnswers":91,"incorrectAnswers":9,"score":91,"totalAnswers":100,"period":"morning"},
+                {"correctAnswers":79,"incorrectAnswers":21,"score":79,"totalAnswers":100,"period":"afternoon"},
+                {"correctAnswers":4,"incorrectAnswers":2,"score":66.7,"totalAnswers":6,"period":"evening"}]}""",
         )
 }
 

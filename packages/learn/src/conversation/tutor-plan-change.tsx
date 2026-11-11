@@ -10,6 +10,7 @@ import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
 import { CHIP_CLASS } from "../_components/chip";
 import { ChangeSaveError } from "../_components/save-error";
+import { StatusRegion } from "../_components/status-region";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -177,14 +178,15 @@ function ChangeActions({
 
   if (status === "proposed") {
     return (
-      <div className="flex gap-2">
+      <form className="flex gap-2">
         {canApply && (
           <Button
             className="min-w-0 flex-1"
             disabled={isPending}
             focusableWhenDisabled
-            onClick={() => answer("applied")}
+            formAction={() => answer("applied")}
             size="sm"
+            type="submit"
           >
             <span className="truncate">
               {overridesNotice ? t("Use my date anyway") : t("Apply")}
@@ -195,30 +197,32 @@ function ChangeActions({
           className="min-w-0 flex-1"
           disabled={isPending}
           focusableWhenDisabled
-          onClick={() => answer("declined")}
+          formAction={() => answer("declined")}
           size="sm"
+          type="submit"
           variant="outline"
         >
           <span className="truncate">
             {overridesNotice ? keepOfficialDate(document) : t("Not now")}
           </span>
         </Button>
-      </div>
+      </form>
     );
   }
 
   if (status === "applied" && canUndo) {
     return (
-      <Button
-        busy={isPending}
-        className="self-start"
-        icon={<Undo2Icon aria-hidden="true" />}
-        onClick={() => answer("undone")}
-        size="sm"
-        variant="outline"
-      >
-        {t("Undo")}
-      </Button>
+      <form action={() => answer("undone")} className="self-start">
+        <Button
+          busy={isPending}
+          icon={<Undo2Icon aria-hidden="true" />}
+          size="sm"
+          type="submit"
+          variant="outline"
+        >
+          {t("Undo")}
+        </Button>
+      </form>
     );
   }
 
@@ -271,11 +275,7 @@ export function TutorPlanChange({
       {footnote && <p className="text-muted-foreground text-xs leading-snug">{footnote}</p>}
       {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
-      {statusLine && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {statusLine}
-        </p>
-      )}
+      <StatusRegion className="text-muted-foreground text-sm">{statusLine}</StatusRegion>
 
       <ChangeActions
         answer={answer}

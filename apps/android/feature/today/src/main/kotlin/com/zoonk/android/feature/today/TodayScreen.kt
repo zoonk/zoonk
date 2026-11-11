@@ -41,6 +41,7 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -193,7 +194,7 @@ private fun TodayRead(
                     if (suggestion != null) {
                         WelcomeBack(suggestion, viewModel, padding)
                     } else {
-                        FirstGoal(summary.value, navigator, padding)
+                        FirstGoal(summary.value, app.onboarding, navigator, padding)
                     }
                 }
 
@@ -237,10 +238,11 @@ private fun WelcomeBack(
     }
 }
 
-/** A signed-in learner without a goal states one here; an unfinished quick explanation comes first. */
+/** A signed-in learner without a goal states one here; an unfinished quick explanation or goal comes first. */
 @Composable
 private fun FirstGoal(
     summary: LearnerSummary?,
+    onboarding: OnboardingStore,
     navigator: AppNavigator,
     padding: PaddingValues,
 ) {
@@ -266,6 +268,7 @@ private fun FirstGoal(
         TodayPage(PaddingValues()) {
             TodayPageHeader(state = null, title = stringResource(R.string.today_title))
             if (explanation != null) ExplanationContinue(explanation, navigator)
+            UnfinishedGoal(onboarding, navigator::open)
             GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
             if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = start)
         }
@@ -287,6 +290,29 @@ private fun ExplanationContinue(
         )
         Button(onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) }) {
             Text(stringResource(R.string.today_continue_explanation))
+        }
+    }
+}
+
+/** A goal typed after the learner's newest goal and not confirmed yet, offered back where it was left. */
+@Composable
+internal fun UnfinishedGoal(
+    onboarding: OnboardingStore,
+    navigate: (AppRoute) -> Unit,
+) {
+    val state by onboarding.unfinishedGoal.collectShown()
+    val draft = state.value ?: return
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ListRow(
+            headline = { Text(draft.prompt, maxLines = 3, overflow = TextOverflow.Ellipsis) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+            highlighted = true,
+            leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
+            supporting = { Text(stringResource(R.string.onboarding_what_you_wrote)) },
+        )
+        OutlinedButton(onClick = { navigate(AppRoute.StartGoal(draftId = draft.draftId.toString())) }) {
+            Text(stringResource(R.string.today_continue_draft))
         }
     }
 }
@@ -317,6 +343,7 @@ private fun GoalAtRest(
 
     TodayAtRest(
         padding = padding,
+        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
         state = stringResource(R.string.today_paused),
         icon = R.drawable.ic_pause,
         sentence =
@@ -458,6 +485,7 @@ private fun TodayPlanWait(goalTitle: String) {
 @Composable
 private fun TodayAtRest(
     padding: PaddingValues,
+    banner: @Composable () -> Unit = {},
     state: String,
     @DrawableRes icon: Int,
     sentence: String,
@@ -467,6 +495,7 @@ private fun TodayAtRest(
     actions: @Composable () -> Unit,
 ) {
     TodayPage(padding) {
+        banner()
         TodayPageHeader(state = state, title = stringResource(R.string.today_title))
         TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
         detail()

@@ -7,7 +7,7 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { type LearningProfileView } from "../../profile/learning-profile-contract";
 import { getSession } from "../../users/get-session";
-import { parseStoredUnderstanding } from "./_utils/onboarding-draft";
+import { type ResumeDraft, findResumeDraft } from "./_utils/resume-draft";
 import { type OnboardingResumeView } from "./onboarding-contract";
 import { getOnboardingSteps, hasOnboardingQuestions, isPlanRevealOwed } from "./onboarding-steps";
 
@@ -15,12 +15,8 @@ export type OnboardingResumeResult =
   | { resume: OnboardingResumeView | null; status: "ready" }
   | { status: "unauthorized" };
 
-/** Newer goals supersede abandoned older drafts. */
-const RECENT_DRAFTS = 5;
-
 type ResumeGoal = Pick<
   Goal,
-  | "createdAt"
   | "details"
   | "examBlueprintId"
   | "id"
@@ -32,14 +28,6 @@ type ResumeGoal = Pick<
   | "title"
 >;
 
-type ResumeDraft = {
-  id: string;
-  prompt: string;
-  status: string;
-  understanding: unknown;
-  updatedAt: Date;
-};
-
 function readDetails(goal: ResumeGoal): Record<string, unknown> {
   return isJsonObject(goal.details) ? goal.details : {};
 }
@@ -47,20 +35,6 @@ function readDetails(goal: ResumeGoal): Record<string, unknown> {
 function readOnboardingId(goal: ResumeGoal): string | null {
   const { onboardingId } = readDetails(goal);
   return typeof onboardingId === "string" ? onboardingId : null;
-}
-
-/** Created goals close a draft even after archival; non-goal routes already have their answer. */
-function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: ResumeGoal[] }) {
-  const closed = new Set(goals.map((goal) => readOnboardingId(goal)));
-
-  return (
-    drafts.find(
-      (draft) =>
-        !closed.has(draft.id) &&
-        (draft.status !== "understood" ||
-          parseStoredUnderstanding(draft.understanding)?.status === "goals"),
-    ) ?? null
-  );
 }
 
 /** Onboarding ends when the learner presses the plan reveal's action; quick explanations have none. */
@@ -101,7 +75,7 @@ async function isInOnboarding({
   return hasOnboardingQuestions(steps);
 }
 
-/** Drafts count only when newer than every goal; otherwise resume the newest unfinished onboarding or the day. */
+/** A draft newer than every goal comes first; otherwise resume the newest unfinished onboarding or the day. */
 async function toResume({
   draft,
   goals,
@@ -111,10 +85,8 @@ async function toResume({
   goals: ResumeGoal[];
   profile: LearningProfileView;
 }): Promise<OnboardingResumeView | null> {
-  const [newest] = goals;
-
-  if (draft && (!newest || draft.updatedAt > newest.createdAt)) {
-    return { draftId: draft.id, kind: "draft", prompt: draft.prompt };
+  if (draft) {
+    return { ...draft, kind: "draft" };
   }
 
   const activeGoals = goals.filter((goal) => goal.status === "active");
@@ -138,17 +110,11 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
 
   const userId = session.user.id;
 
-  const [drafts, goals, profile] = await Promise.all([
-    prisma.onboardingDraft.findMany({
-      orderBy: { updatedAt: "desc" },
-      select: { id: true, prompt: true, status: true, understanding: true, updatedAt: true },
-      take: RECENT_DRAFTS,
-      where: { userId },
-    }),
+  const [draft, goals, profile] = await Promise.all([
+    findResumeDraft(userId),
     prisma.goal.findMany({
       orderBy: { createdAt: "desc" },
       select: {
-        createdAt: true,
         details: true,
         examBlueprintId: true,
         id: true,
@@ -164,8 +130,5 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
     findLearningProfileView(userId),
   ]);
 
-  return {
-    resume: await toResume({ draft: findOpenDraft({ drafts, goals }), goals, profile }),
-    status: "ready",
-  };
+  return { resume: await toResume({ draft, goals, profile }), status: "ready" };
 }

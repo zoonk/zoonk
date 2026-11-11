@@ -190,7 +190,7 @@ type SettledSessionDay = {
   sessionCompleted: boolean;
 };
 
-/** Settles missions and completes the session when nothing remains; the full-meal reward pays once per day. */
+/** Settles missions and completes the session when nothing remains; the full-meal reward pays once per goal's day. */
 export async function settleSessionDay({
   blockId,
   rewardMissions = true,

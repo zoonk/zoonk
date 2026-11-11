@@ -1,4 +1,5 @@
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type UnderstandingActions } from "@zoonk/learn/onboarding/actions";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import {
@@ -12,7 +13,7 @@ import {
 export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
   get: getUnderstandingAction,
   retry: retryUnderstandingAction,
-  revise: ({ draftId, edit }) => reviseUnderstandingAction(draftId, edit),
+  revise: ({ draftId, edit }) => noteAppWrite(reviseUnderstandingAction(draftId, edit)),
   start: async (input) => {
     const guest = await ensureGuestSession();
 

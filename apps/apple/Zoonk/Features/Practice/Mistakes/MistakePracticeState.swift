@@ -4,19 +4,6 @@ struct MistakePracticeStep: Equatable {
   let entry: MistakePracticeEntry
   let isFirstOfEntry: Bool
   let question: PracticeQuestion?
-
-  /// The question the mistake was made on: the notebook keeps a lesson's question with its context
-  /// before it, and a bank question as it's asked. Its drill note says the last answer.
-  var isMistakeQuestion: Bool {
-    guard let question else { return true }
-    let saved = Self.squash(entry.snapshotQuestion)
-    return saved == Self.squash(question.question)
-      || (question.context.map { saved == Self.squash("\($0) \(question.question)") } ?? false)
-  }
-
-  private static func squash(_ text: String) -> String {
-    text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
-  }
 }
 
 enum MistakePracticePhase: Equatable {
@@ -33,6 +20,12 @@ enum MistakePracticePhase: Equatable {
   var failed: SentAnswer? {
     if case .answerFailed(let sent) = self { sent } else { nil }
   }
+}
+
+enum PracticeEndNote: Equatable {
+  case missed
+  case missedAndUnreached
+  case unreached
 }
 
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
@@ -157,6 +150,17 @@ struct MistakePracticeState: Equatable {
       reached = reached.merged(with: PracticeReached(energy: energy, level: nil))
     }
     phase = .ended(summary)
+  }
+
+  var endNote: PracticeEndNote? {
+    let missed = verdicts.contains { $0 != .right }
+    let unreached = verdicts.count < steps.count
+    switch (missed, unreached) {
+    case (true, true): return .missedAndUnreached
+    case (true, false): return .missed
+    case (false, true): return .unreached
+    case (false, false): return nil
+    }
   }
 
   var segments: [TaskSegment] {

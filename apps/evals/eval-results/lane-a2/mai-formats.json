@@ -1,0 +1,60 @@
+{
+  "model": "microsoft/mai-transcribe-2",
+  "testedAtUtc": "2026-11-11",
+  "source": "apps/evals/data/speech/en-rent-correct.mp3",
+  "sourceSha256": "e115e82ac109ad75e691897f2ec4cb9f6fd352d70a9e3bf9344d7c89558a0264",
+  "conversion": "ffmpeg -i <source> -c:a libopus <output.webm>; ffmpeg -i <source> -c:a aac <output.mp4>",
+  "cost": "Rejected transcription calls do not report usage or gateway charge.",
+  "clips": [
+    {
+      "format": "webm",
+      "sha256": "87de621b450e2e51c1a1dd3cc0a9cd3d7c2d4cb76d2b20e23c2c881ae2e698df",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "opus",
+            "sample_rate": "48000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "format_name": "matroska,webm",
+          "duration": "2.360000"
+        }
+      }
+    },
+    {
+      "format": "mp4",
+      "sha256": "1f743262871ae8bd6510b106fe96231daff70f508624b2859bcfa0a46c7d9309",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "aac",
+            "sample_rate": "24000",
+            "channels": 1
+          }
+        ],
+        "format": {
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration": "2.352000"
+        }
+      }
+    }
+  ],
+  "results": [
+    {
+      "format": "webm",
+      "seconds": 1.2839745420000002,
+      "error": "GatewayInternalServerError: Bad Request"
+    },
+    {
+      "format": "mp4",
+      "seconds": 0.4646924999999999,
+      "error": "GatewayInternalServerError: Bad Request"
+    }
+  ]
+}

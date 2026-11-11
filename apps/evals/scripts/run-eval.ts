@@ -120,8 +120,8 @@ function parseCliArgs() {
     fail("Pass --saved or --fresh, not both: --saved reads results without calling any model.");
   }
 
-  if (!values.battle && (values.runs !== undefined || values.swap)) {
-    fail("--runs and --swap apply only to --battle.");
+  if (!values.battle && values.swap) {
+    fail("--swap applies only to --battle.");
   }
 
   const runs = values.runs === undefined ? RUNS_PER_TEST_CASE : Number(values.runs);
@@ -188,7 +188,7 @@ function sampleTestCases({
     .slice(0, limit);
 }
 
-function getRunIds(testCases: TestCase[], runsPerTestCase = RUNS_PER_TEST_CASE): Set<string> {
+function getRunIds(testCases: TestCase[], runsPerTestCase: number): Set<string> {
   return new Set(getTestCaseRunIds({ runsPerTestCase, testCases }));
 }
 
@@ -197,12 +197,14 @@ async function generateAndScore({
   model,
   prices,
   runIds,
+  runs,
   task,
 }: {
   fresh: boolean;
   model: ModelConfig;
   prices: GatewayPrices;
   runIds: Set<string>;
+  runs: number;
   task: RegisteredTask;
 }): Promise<{ spent: number }> {
   if (fresh) {
@@ -213,13 +215,13 @@ async function generateAndScore({
   }
 
   const { calls } = await meterWork(async () => {
-    const generated = await generateOutputs(task, model.id);
+    const generated = await generateOutputs(task, model.id, { runsPerTestCase: runs });
 
     if (isPricedFromOutputs(model.kind)) {
       recordCalls(generated.map((usage) => ({ modelId: model.gatewayModelId, usage })));
     }
 
-    return runEval(task, model.id);
+    return runEval(task, model.id, runIds);
   });
 
   return { spent: getCallsCost({ calls, prices }) };
@@ -230,6 +232,7 @@ async function runModel({
   modelId,
   prices,
   runIds,
+  runs,
   saved,
   task,
 }: {
@@ -237,11 +240,12 @@ async function runModel({
   modelId: string;
   prices: GatewayPrices;
   runIds: Set<string>;
+  runs: number;
   saved: boolean;
   task: RegisteredTask;
 }): Promise<ReportRow> {
   const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
-  const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, task });
+  const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, runs, task });
 
   const evalResults: TaskEvalResults = (await getTaskResults(task.id, modelId, runIds)) ?? {
     modelId,
@@ -349,6 +353,7 @@ async function runTask({
   limit,
   modelIds,
   prices,
+  runs,
   saved,
   task,
 }: {
@@ -357,6 +362,7 @@ async function runTask({
   limit?: number;
   modelIds: string[];
   prices: GatewayPrices;
+  runs: number;
   saved: boolean;
   task: RegisteredTask;
 }): Promise<ReportRow[]> {
@@ -365,12 +371,12 @@ async function runTask({
     testCases: sampleTestCases({ filters, limit, testCases: task.testCases }),
   };
 
-  const runIds = getRunIds(sampledTask.testCases);
+  const runIds = getRunIds(sampledTask.testCases, runs);
 
   return modelIds.reduce<Promise<ReportRow[]>>(
     async (previousRows, modelId) => [
       ...(await previousRows),
-      await runModel({ fresh, modelId, prices, runIds, saved, task: sampledTask }),
+      await runModel({ fresh, modelId, prices, runIds, runs, saved, task: sampledTask }),
     ],
     Promise.resolve([]),
   );
@@ -528,7 +534,7 @@ async function runEvals({
   const reports = await tasks.reduce<Promise<{ rows: ReportRow[]; task: RegisteredTask }[]>>(
     async (previous, task) => [
       ...(await previous),
-      { rows: await runTask({ filters, fresh, limit, modelIds, prices, saved, task }), task },
+      { rows: await runTask({ filters, fresh, limit, modelIds, prices, runs, saved, task }), task },
     ],
     Promise.resolve([]),
   );

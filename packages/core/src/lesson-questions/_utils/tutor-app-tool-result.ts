@@ -1,7 +1,7 @@
 import { type GoalTutorAppToolResult } from "@zoonk/ai/tasks/tutor/goal-tutor-cards";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/tutor/goal-tutor-tools";
-import { type TutorToolOffer } from "../contract";
 import { type offerTutorTool } from "../offer-tutor-tool";
+import { type TutorToolOffer } from "../tutor-tool-offer-contract";
 
 type OfferedDetails = Extract<GoalTutorAppToolResult, { status: "offered" }>["offered"];
 
@@ -23,6 +23,8 @@ function describeOffer(offer: TutorToolOffer): OfferedDetails {
         : { minutes: offer.call.minutes, unit: offer.unitTitle };
     case "pronunciation":
       return { words: offer.words };
+    case "variety":
+      return { country: offer.targetRegion };
     case "plus":
       return { subscribed: offer.subscribed };
     case "chooseFocus":

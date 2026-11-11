@@ -27,12 +27,21 @@
   "session_block_weekly_challenge": "b3e959bb0c8e69691a6c821bc3b8ca792a3612c3d9f478b3ea6f146097439814",
   "session_block_what_you_know": "9b5359a0466c6ad81b838068ba12c7cb8eccecf2617c2939bf4cd846dcc3a2bf",
   "session_block_writing_practice": "fdc84147d9d9aa269b73311b7615a0ebf51014df028d60f7559bb2b1c28651d7",
+  "session_catch_up_to_go": "f297b466e703eb603dbcddc4081982f184c946ec6bba21eb4e2037237c6f0d91",
+  "session_caught_up_today": "32430ad1ca6dce8193708bfccb9e54229e8695dfb3acfc6493b9dab6aef8ec4c",
+  "session_day_done": "1b5de0e8634ec6cba7aaf480193ae488da9042d2cf120e2b8fb51f76b0ca3e04",
+  "session_day_done_caption": "b72da27623ae8d4a254dca87419b212f46a57e98df300160eeade7d1e4c6354d",
+  "session_day_left": "1dd33e581b8503decc1056de6501b64948ddd2f0cfc4abec32c6999af09280e7",
+  "session_day_more_coming": "a7d98f9d50edada458b7e83f1c2d9de5b7d3b65e08fc0ece42127961572fec08",
+  "session_day_open": "ddf2bd51615f093518c3b8c232289cd95f5d5cd79e50ec4663f7aed543da31f8",
   "session_energy_at": "9748751203dc0b93cce603cf59f44e3fe455e64d7cd0e5a950696253e296b7b4",
   "session_energy_detail": "7403f9bb1a5c4c4f8a5f4eac2d4c2f93094670fb15dc707699f81ef88dc3aada",
   "session_energy_glowing": "42c74b3e3c9a05b9dabd9c61060e01422c609c7101ff96f8cbb4c46de8fd80af",
   "session_energy_glowing_brightest": "39160b3c6edd5226332735f935cf58db234bde438e38581a7f2fe9de68bf2414",
   "session_energy_max": "1d3bb47dc7678c67cacfa31e931794d1ce57ebab16253a7ba2506a78617bf7dc",
+  "session_lessons_deferred": "e5e98d2a5ff683d5e5007bb70196d349d6e916a6b12aa009309bd7ae1a87e7ee",
   "session_level_up": "84804ea8e0ecfef3e141751c23bd7c8eb9db83cd30ab00b795d0d7b3074cd1b0",
+  "session_next_continue": "43842b11264159fbce04c87dc7ee8b057a0176c607cff018b07f7fd34ac4cab7",
   "session_next_eyebrow": "9b2e5474ad38a19de0fb02491aaf0efe0417d0cf21614eaeb161648620437d5c",
   "session_next_instead": "77e67bf137900d3e557ed38788980efb51f9971ed97e1489c59118779a7850d2",
   "session_next_lesson_ready": "aa2b76d34f9c61bd20fcebf1f72f4bcca88c0329f097f822979199ad5a3207d6",
@@ -41,9 +50,19 @@
   "session_next_stop_failed": "5ebef059b80687e427348e61c1095ae3d0819125e6d6c419390d0331a0d14dbb",
   "session_next_while_waiting": "8c82ff8f7a5d84916d8ceda9fd615f27c5e9d00bbab5b891dead09c170a54a30",
   "session_next_writing_note": "d6258918cce204547432d0c5824e2e22e2992a60945058e34f8985f6ca19a2da",
+  "session_no_catch_up_left": "061238ed81f768bd4b3dffa907c0fd68784231c3af2bc0e22b6adec959fb4b31",
   "session_opening_slow": "b8cce8b3e48a2581e50e48730313e0269e43065e40bf5f5991f2365baa698a8a",
   "session_opening_very_slow": "568ce72e3057f0884faab9cced37072d21a74c526c01ea1047d35f3e24165536",
-  "session_summary_back_on": "8a370b4c392590687b98a23410edacad202ad8b0897ea06111ecd6ef8fc6d9b4",
+  "session_review_intro_first_week": "c55f16811a340e778c8571d7438b086837d091ffe24f9f0b9e4313e474debe83",
+  "session_review_intro_forget": "38b77fe1f28dbe543ab1d63c37be90ec6714385b74555cba71f1b35afd0da282",
+  "session_review_intro_forget_title": "3ceba81b725cfc466243c5b72769b67a528124b447f55d5c937f92229a515a99",
+  "session_review_intro_short": "abaa3165e6150a22cf79278ce8ca2d1d76c79793173a19a4003dcd6274b28c5e",
+  "session_review_intro_short_title": "f402f700b0768ba8e7293ee9650d529bf44755c736dc93cb546ce58892ac73c9",
+  "session_review_intro_spacing": "fd339a3a5ae9eace9ef325fd08f573bc182f073597e9eb446bf5acef290e9927",
+  "session_review_intro_spacing_title": "16e3a8c5f3429cf4408a5e882071629b74484b50f0392b97b892d74f853ea9e2",
+  "session_review_intro_title": "a82ad3dced9e21281c4aba1953014e27dc69a8acd1a01c968e185aea426cf383",
+  "session_review_intro_weakest": "ef950a7d25a188169933a10ea6d244366f2c5f37ccea7cb2feb9ae5f43e8343a",
+  "session_review_intro_weakest_title": "ae6629623190da448ae2b81a497d704ff575a1cd5167ad57291ebe067e8928d5",
   "session_summary_brain_power": "d4ba6ba3b944cedbfe396918ce11a3f1f5a004ba3aa56915217c4fbf4668ff66",
   "session_summary_buddy_happy": "c1428b1c27651554945d7f5cdae6304c24def633621d786a0cbe0c533a66cfb1",
   "session_summary_create_account": "bf405585b810aadda95e096c1ba771fc2836beef1989df3765a39866ff6a1753",
@@ -171,7 +190,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">Para revisar</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">De volta em %1$s</string>
     <string name="session_summary_brain_power">Poder Mental</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
@@ -203,6 +221,17 @@
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A seguir</string>
     <string name="session_next_start">Começar</string>
+    <string name="session_next_continue">Continuar</string>
+    <string name="session_review_intro_title">Como funcionam as revisões</string>
+    <string name="session_review_intro_forget_title">Pouco antes de você esquecer</string>
+    <string name="session_review_intro_forget">Cada ideia que você estuda volta pouco antes de você começar a esquecer.</string>
+    <string name="session_review_intro_spacing_title">O que você acerta demora mais para voltar</string>
+    <string name="session_review_intro_spacing">Se você acertar, a ideia volta depois de alguns dias, depois de semanas e depois de meses. Se errar, ela volta mais cedo.</string>
+    <string name="session_review_intro_short_title">No começo e sempre curtas</string>
+    <string name="session_review_intro_short">As revisões vêm no começo da sessão e ocupam só uma pequena parte dela, mesmo depois de dias sem estudar.</string>
+    <string name="session_review_intro_weakest_title">Seus tópicos mais difíceis hoje</string>
+    <string name="session_review_intro_weakest">Você ainda se lembra bem do que estudou, então pratica o que tem sido mais difícil para você.</string>
+    <string name="session_review_intro_first_week">Algumas perguntas rápidas para ver o que você já sabe.</string>
     <string name="session_next_writing_note">Esta aula está sendo criada para você. Ela costuma ficar pronta em alguns minutos.</string>
     <string name="session_next_lesson_ready">Sua aula está pronta.</string>
     <string name="session_next_stop">Parar por hoje</string>
@@ -211,4 +240,50 @@
     <string name="session_next_while_waiting">Enquanto você espera: %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
     <string name="session_next_instead">Em vez disso: %1$s</string>
+    <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
+    <plurals name="session_day_done">
+        <item quantity="one">%1$s de %2$s concluído hoje</item>
+        <item quantity="many">%1$s de %2$s concluídos hoje</item>
+        <item quantity="other">%1$s de %2$s concluídos hoje</item>
+    </plurals>
+    <!-- A finished block's line about today's session, past its midpoint. %1$s is how many of the day's blocks are left, shown larger. -->
+    <plurals name="session_day_left">
+        <item quantity="one">%1$s para fazer hoje</item>
+        <item quantity="many">%1$s para fazer hoje</item>
+        <item quantity="other">%1$s para fazer hoje</item>
+    </plurals>
+    <!-- Under "3 left today": %1$s of the session's %2$s blocks are done. -->
+    <plurals name="session_day_done_caption">
+        <item quantity="one">%1$s de %2$s concluído</item>
+        <item quantity="many">%1$s de %2$s concluídos</item>
+        <item quantity="other">%1$s de %2$s concluídos</item>
+    </plurals>
+    <!-- A finished block's line about today's session while the day still holds time for lessons not on the list yet, so it has no total. %1$s is how many blocks are done, shown larger. -->
+    <plurals name="session_day_open">
+        <item quantity="one">%1$s concluído hoje</item>
+        <item quantity="many">%1$s concluídos hoje</item>
+        <item quantity="other">%1$s concluídos hoje</item>
+    </plurals>
+    <!-- Under "3 done today": more lessons are being written and join today's session on their own. -->
+    <string name="session_day_more_coming">Mais aulas conforme você avança</string>
+    <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
+    <plurals name="session_caught_up_today">
+        <item quantity="one">%1$s colocada em dia hoje</item>
+        <item quantity="many">%1$s colocadas em dia hoje</item>
+        <item quantity="other">%1$s colocadas em dia hoje</item>
+    </plurals>
+    <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
+    <plurals name="session_catch_up_to_go">
+        <item quantity="one">falta %1$s</item>
+        <item quantity="many">faltam %1$s</item>
+        <item quantity="other">faltam %1$s</item>
+    </plurals>
+    <!-- At a finished block's end, once every lesson earlier days left is done. -->
+    <string name="session_no_catch_up_left">Nenhuma aula para colocar em dia.</string>
+    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="session_lessons_deferred">
+        <item quantity="one">%1$s aula ficou para outro dia, para o estudo de hoje caber em %2$s.</item>
+        <item quantity="many">%1$s aulas ficaram para outro dia, para o estudo de hoje caber em %2$s.</item>
+        <item quantity="other">%1$s aulas ficaram para outro dia, para o estudo de hoje caber em %2$s.</item>
+    </plurals>
 </resources>

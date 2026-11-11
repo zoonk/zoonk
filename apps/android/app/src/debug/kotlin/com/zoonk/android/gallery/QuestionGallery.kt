@@ -221,7 +221,6 @@ internal fun QuestionFeedbacks() {
                     savedToNotebook = true,
                 ),
             words = TrueFalseWords.TrueFalse,
-            examTomorrow = false,
             timedOut = false,
         ) { DrillAnswerNotes(drill = null, notSure = false, timedOut = false, trap = "15% off isn't 15 reais off.") }
         QuestionFeedback(
@@ -229,7 +228,6 @@ internal fun QuestionFeedbacks() {
             answer = Answer.Choice(1),
             feedback = AnswerFeedback(isCorrect = true, hyperdrive = AnswerFeedback.Hyperdrive(4), mistakeFixed = true),
             words = TrueFalseWords.TrueFalse,
-            examTomorrow = false,
             timedOut = false,
         )
         QuestionFeedback(
@@ -237,7 +235,6 @@ internal fun QuestionFeedbacks() {
             answer = Answer.DontKnow,
             feedback = AnswerFeedback(isCorrect = false, blank = true),
             words = TrueFalseWords.RightWrong,
-            examTomorrow = false,
             timedOut = false,
         )
     }
@@ -271,7 +268,6 @@ internal fun QuestionDrills() {
         key("full") { DrillCountdown(seconds = 45, onTimeUp = {}) }
         key("ending") { DrillCountdown(seconds = 8, onTimeUp = {}) }
         DrillAnswerNotes(drill = Drill(Drill.Kind.NoGuessing), notSure = true, timedOut = true, trap = null)
-        DrillNote(Drill(Drill.Kind.Retry), onOpenLesson = null, lastAnswer = "Ribosome")
         DrillNote(drill.copy(lesson = drill.lesson?.copy(ideas = emptyList())), onOpenLesson = {})
         DrillIdeas(drill, onOpenLesson = {})
     }

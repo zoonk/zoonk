@@ -21,11 +21,6 @@ enum ItemTextBlock {
     String(inline(text).characters)
   }
 
-  /// A learner's earlier answer, quoted without its markup but with their numbers as they wrote them.
-  static func asWritten(_ text: String) -> String {
-    String(markdown(text).characters)
-  }
-
   /// Text that isn't valid Markdown stays as written.
   private static func markdown(_ text: String) -> AttributedString {
     let options = AttributedString.MarkdownParsingOptions(

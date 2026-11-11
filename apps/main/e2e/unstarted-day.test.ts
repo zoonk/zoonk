@@ -1,3 +1,4 @@
+import { instant } from "@next/playwright";
 import { prisma } from "@zoonk/db";
 import { type Page, expect, test } from "./fixtures";
 import { openAs } from "./study-day";
@@ -36,12 +37,19 @@ async function openToday(page: Page) {
   await page.waitForLoadState("networkidle");
 }
 
+/** Today opens the step on its intro, which waits for the learner's Start. */
+async function startStep(page: Page) {
+  const start = page.getByRole("button", { exact: true, name: "Start" });
+  await expect(start).toBeEnabled();
+  await start.click();
+}
+
 function countSessions(userId: string) {
   return prisma.studySession.count({ where: { userId } });
 }
 
 test.describe("An unstarted day", () => {
-  test("Today previews the day without saving it, and the day it opens is the day Today showed", async ({
+  test("Today previews the day without saving it, its intro waits for Start, and the day it opens is the day Today showed", async ({
     browser,
   }) => {
     const day = await createUnstartedDay();
@@ -51,7 +59,16 @@ test.describe("An unstarted day", () => {
     const shown = await readTodaySteps(page);
     await expect(countSessions(day.user.id)).resolves.toBe(0);
 
-    await page.getByRole("button", { name: "Start session" }).click();
+    // Under `instant()` the session screen's read never arrives: the intro draws from Today's day.
+    await instant(page, async () => {
+      await page.getByRole("button", { name: "Start session" }).click();
+      await expect(page.getByRole("button", { name: "How reviews work" })).toBeVisible();
+    });
+
+    await expect(countSessions(day.user.id)).resolves.toBe(0);
+
+    await page.reload();
+    await startStep(page);
     await expect(page.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
 
     await page.getByRole("link", { name: "Close. Your answers are saved." }).click();
@@ -77,6 +94,7 @@ test.describe("An unstarted day", () => {
     const phone = await openAs(browser, day.user);
     await phone.goto("/today");
     await phone.getByRole("button", { name: "Start session" }).click();
+    await startStep(phone);
     await expect(phone.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
     await phone.context().close();
 

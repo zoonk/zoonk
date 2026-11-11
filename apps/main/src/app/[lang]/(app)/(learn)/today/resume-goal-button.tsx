@@ -21,9 +21,12 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
 
   return (
     <p className="text-destructive-text text-sm text-pretty" role="alert">
-      {t(
-        "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-      )}
+      {t({
+        description:
+          "Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
+        message:
+          "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
+      })}
     </p>
   );
 }
@@ -44,16 +47,18 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
 
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
-      <Button
-        busy={isPending}
-        disabled={outcome === "saved"}
-        focusableWhenDisabled
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={resume}
-        size="lg"
-      >
-        <span className="truncate">{t("Resume {goal}", { goal: goalTitle })}</span>
-      </Button>
+      <form action={() => resume()} className="contents">
+        <Button
+          busy={isPending}
+          disabled={outcome === "saved"}
+          focusableWhenDisabled
+          icon={<PlayIcon aria-hidden="true" />}
+          size="lg"
+          type="submit"
+        >
+          <span className="truncate">{t("Resume {goal}", { goal: goalTitle })}</span>
+        </Button>
+      </form>
       <ResumeError outcome={outcome} />
     </div>
   );

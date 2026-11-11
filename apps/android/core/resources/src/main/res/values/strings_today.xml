@@ -54,6 +54,11 @@
         <item quantity="one">%d done</item>
         <item quantity="other">%d done</item>
     </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d skipped</item>
+        <item quantity="other">%d skipped</item>
+    </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d more</item>
         <item quantity="other">+%d more</item>
@@ -134,7 +139,8 @@
     <string name="today_resume_goal">Resume %1$s</string>
     <string name="today_new_goal">New goal</string>
     <string name="today_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
-    <string name="today_resume_goal_limit">The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="today_resume_goal_limit">You\'re following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.</string>
     <string name="today_setting_up">Setting up</string>
     <string name="today_setting_up_goal">Your %1$s plan needs a few more answers.</string>
     <string name="today_setting_up_detail">It\'s built from what you tell us.</string>
@@ -144,14 +150,8 @@
     <string name="today_building_plan_detail">It usually takes a minute or two. Your first day opens here as soon as it\'s ready.</string>
     <string name="today_quick_explanation">Quick explanation</string>
     <string name="today_continue_explanation">Continue explanation</string>
+    <string name="today_continue_draft">Continue</string>
     <string name="today_week_title">This week</string>
-    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
-    <plurals name="today_week_days">
-        <item quantity="one">%1$s of %2$d day</item>
-        <item quantity="other">%1$s of %2$d days</item>
-    </plurals>
-    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
-    <string name="today_week_time">%1$s of %2$s studied this week</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->
@@ -296,4 +296,20 @@
     <string name="today_coming_stalled">Taking longer than usual</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
     <string name="today_coming_not_written">Not written yet.</string>
+    <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
+    <string name="today_segment_label">%1$s: %2$s</string>
+    <string name="today_segment_up_next">Up next</string>
+    <!-- %1$s is a formatted number of questions answered, %2$d the step's questions: "3 of 12 questions". -->
+    <plurals name="today_segment_questions">
+        <item quantity="one">%1$s of %2$d question</item>
+        <item quantity="other">%1$s of %2$d questions</item>
+    </plurals>
+    <string name="today_segment_review_note">Brings back what you studied before you forget it.</string>
+    <string name="today_segment_practice_note">New questions that mix what you\'ve learned.</string>
+    <string name="today_segment_mistakes_note">Another try at questions you missed.</string>
+    <string name="today_segment_challenge_note">Checks what you\'ve learned so far.</string>
+    <string name="today_segment_mock_note">A practice exam, like the real one.</string>
+    <string name="today_segment_essay_note">You put what you learned into your own words.</string>
+    <string name="today_week_day_studied_of">%1$s of %2$s studied</string>
+    <string name="today_week_day_planned">%1$s planned</string>
 </resources>

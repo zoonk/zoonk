@@ -15,20 +15,16 @@ extension PracticeDrill.Kind {
 }
 
 extension PracticeDrill {
-  var line: LocalizedStringResource {
+  var line: LocalizedStringResource? {
     switch kind {
     case .reteach:
       isIdeaFirst
         ? LocalizedStringResource(
           "The idea first, then put it to use.", table: "Practice",
           comment: "How a content-gap drill goes, when it shows the lesson's ideas first.")
-        : LocalizedStringResource(
-          "Back to an idea you missed.", table: "Practice",
-          comment: "How a content-gap drill goes, without ideas to show.")
-    case .readCarefully:
-      LocalizedStringResource(
-        "Read every word before you answer.", table: "Practice",
-        comment: "How a misread drill goes.")
+        : nil
+    case .readCarefully, .retry:
+      nil
     case .spotTheTrap:
       LocalizedStringResource(
         "There's a trap in here. Find it before you answer.", table: "Practice",
@@ -41,41 +37,21 @@ extension PracticeDrill {
       LocalizedStringResource(
         "Only answer when you're sure. Saying you're not sure is fine.", table: "Practice",
         comment: "How a no-guessing drill goes.")
-    case .retry:
-      LocalizedStringResource(
-        "Try it again.", table: "Practice", comment: "How a plain retry drill goes.")
     }
   }
 }
 
-/// Once graded only the last answer and the lesson stay.
+/// What the drill asks until it's answered, or the lesson behind a content gap.
 struct DrillNoteView: View {
   let drill: PracticeDrill
-  var lastAnswer: String?
   var isAnswered = false
 
   var body: some View {
-    let lesson = drill.kind == .reteach ? drill.lesson : nil
-
-    if !(drill.kind == .retry && lastAnswer == nil)
-      && !(isAnswered && lastAnswer == nil && lesson == nil)
-    {
+    if drill.kind == .reteach, let lesson = drill.lesson {
+      LessonLinkButton(lessonId: lesson.id)
+    } else if !isAnswered, let line = drill.line {
       PracticeCallout(systemImage: drill.kind.systemImage) {
-        if !isAnswered {
-          Text(drill.line).typeWeight(.medium)
-        }
-
-        if let lastAnswer {
-          Text(
-            "Last time you answered: \(lastAnswer)", tableName: "Practice",
-            comment: "A mistake drill's note: what the learner answered when they got it wrong."
-          )
-          .foregroundStyle(.mutedForeground)
-        }
-
-        if let lesson {
-          LessonLinkButton(lessonId: lesson.id)
-        }
+        Text(line).typeWeight(.medium)
       }
     }
   }
@@ -111,7 +87,9 @@ struct DrillIdeaView: View {
     VStack(alignment: .leading, spacing: 20) {
       VStack(alignment: .leading, spacing: 6) {
         Text(lesson.title).typeStyle(.section)
-        Text(drill.line).foregroundStyle(.mutedForeground)
+        if let line = drill.line {
+          Text(line).foregroundStyle(.mutedForeground)
+        }
       }
 
       VStack(alignment: .leading, spacing: 0) {
@@ -211,48 +189,5 @@ struct DrillAnswerNotes: View {
           comment: "The misconception a trap drill's wrong answer fell for.")
       }
     }
-  }
-}
-
-/// When the learner last met a question: before the answer only when they saw it; after it, the
-/// earlier wrong answer quoted, or why a question they got right came back.
-enum TimeMachineText {
-  static func line(
-    _ machine: PracticeTimeMachine, result: AnswerOptionResult?, format: PracticeItemFormat,
-    labels: PracticeTrueFalseLabels
-  ) -> LocalizedStringResource {
-    let date = machine.answeredAt.formatted(.dateTime.day().month(.wide))
-
-    guard let result else {
-      return LocalizedStringResource(
-        "You saw this on \(date).", table: "Practice",
-        comment: "Time machine line above a question seen before.")
-    }
-
-    if machine.isCorrect {
-      return result == .right
-        ? LocalizedStringResource(
-          "Right again, like on \(date).", table: "Practice",
-          comment: "Time machine note: right today and the last time.")
-        : LocalizedStringResource(
-          "You got it right on \(date). Reviewing it now helps it stick.", table: "Practice",
-          comment: "Time machine note: right last time, wrong today.")
-    }
-
-    let saved =
-      format == .trueFalse
-      ? TrueFalseWords.savedAnswer(machine.answer, labels: labels)
-      : machine.answer.map(ItemTextBlock.asWritten)
-
-    if let saved, !saved.isEmpty {
-      let answer = saved.replacingOccurrences(of: #"\.+$"#, with: "", options: .regularExpression)
-      return LocalizedStringResource(
-        "On \(date) you answered “\(answer)”.", table: "Practice",
-        comment: "Time machine note: the learner's earlier wrong answer, quoted.")
-    }
-
-    return LocalizedStringResource(
-      "On \(date) this one tripped you up.", table: "Practice",
-      comment: "Time machine note: wrong last time, without the answer's text.")
   }
 }

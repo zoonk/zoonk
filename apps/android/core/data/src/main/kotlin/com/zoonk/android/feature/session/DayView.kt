@@ -34,6 +34,7 @@ data class DayView(
     val goalId: UUID?,
     val localDate: LocalDate,
     val steps: List<DayStep>,
+    val sessionBar: SessionBar,
     val nextPosition: Long?,
     val state: StudySession.State,
     val missions: List<DayMission>,
@@ -50,6 +51,13 @@ data class DayView(
     val plusLessons: List<String>,
     val week: StudySessionWeek,
     val dayEndsAt: Long,
+)
+
+/** Core's count of the day's blocks: skipped ones count neither as done nor in the total. */
+@Immutable
+data class SessionBar(
+    val completed: Int,
+    val total: Int,
 )
 
 enum class EmptyDay { LessonsComing, LessonsToPrepare, NothingNew }
@@ -209,6 +217,7 @@ fun StudySession.toDayView(): DayView =
         goalId = goalId,
         localDate = localDate,
         steps = blocks.map(StudyBlock::toDayStep),
+        sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = state,
         missions = missions.map(StudyMission::toDayMission),
@@ -233,6 +242,7 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         goalId = goalId,
         localDate = localDate,
         steps = blocks.map(UnstartedStudyDayBlocksInner::toDayStep),
+        sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = StudySession.State.entries.first { it.value == state.value },
         missions = missions.map(UnstartedStudyDayMissionsInner::toDayMission),

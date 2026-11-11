@@ -2,7 +2,10 @@
   "modelId": "openai/gpt-6.1-sol",
   "results": [
     {
-      "classification": { "expected": "pass", "predicted": "fail" },
+      "classification": {
+        "expected": "pass",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 1] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
@@ -21,7 +24,9 @@
         }
       ],
       "testCase": {
-        "expected": { "verdict": "pass" },
+        "expected": {
+          "verdict": "pass"
+        },
         "id": "en-tax-deadlines-sourced-clean-1",
         "userInput": {
           "chapterTitle": "Income taxes",
@@ -46,7 +51,9 @@
                 "activityTemplate": null,
                 "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -54,7 +61,9 @@
                 "activityTemplate": null,
                 "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -62,7 +71,9 @@
                 "activityTemplate": null,
                 "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -70,7 +81,9 @@
                 "activityTemplate": null,
                 "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -78,7 +91,10 @@
                 "activityTemplate": null,
                 "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -127,8 +143,14 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
-                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
                 ],
                 "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
                 "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
@@ -218,14 +240,31 @@
       }
     },
     {
-      "classification": { "expected": "pass", "predicted": "pass" },
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
       "steps": [
-        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "verdict": "pass" },
+        "expected": {
+          "verdict": "pass"
+        },
         "id": "pt-finalidades-oab-exam-prep-clean-1",
         "userInput": {
           "chapterTitle": "Estrutura e competências da OAB",
@@ -255,7 +294,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -263,7 +304,9 @@
                 "activityTemplate": null,
                 "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -271,7 +314,9 @@
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -279,7 +324,9 @@
                 "activityTemplate": null,
                 "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -287,7 +334,9 @@
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -295,7 +344,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -303,7 +354,9 @@
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -311,7 +364,9 @@
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -352,10 +407,22 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
-                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
-                  { "isCorrect": true, "text": "As duas propostas." },
-                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
+                  {
+                    "isCorrect": false,
+                    "text": "Só cobrar providências contra a demora."
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Só defender advogados em questões da profissão."
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "As duas propostas."
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Nenhuma das duas propostas."
+                  }
                 ],
                 "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
                 "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
@@ -538,7 +605,10 @@
       }
     },
     {
-      "classification": { "expected": "pass", "predicted": "fail" },
+      "classification": {
+        "expected": "pass",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 2] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
@@ -557,7 +627,9 @@
         }
       ],
       "testCase": {
-        "expected": { "verdict": "pass" },
+        "expected": {
+          "verdict": "pass"
+        },
         "id": "pt-finalidades-oab-exam-prep-absurd-option-1",
         "userInput": {
           "chapterTitle": "Estrutura e competências da OAB",
@@ -587,7 +659,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -595,7 +669,9 @@
                 "activityTemplate": null,
                 "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -603,7 +679,9 @@
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -611,7 +689,9 @@
                 "activityTemplate": null,
                 "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -619,7 +699,9 @@
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -627,7 +709,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -635,7 +719,9 @@
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -643,7 +729,9 @@
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -684,10 +772,22 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
-                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
-                  { "isCorrect": true, "text": "As duas propostas." },
-                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
+                  {
+                    "isCorrect": false,
+                    "text": "Só cobrar providências contra a demora."
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Só defender advogados em questões da profissão."
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "As duas propostas."
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Nenhuma das duas propostas."
+                  }
                 ],
                 "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
                 "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
@@ -864,7 +964,10 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 1] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
@@ -883,7 +986,10 @@
         }
       ],
       "testCase": {
-        "expected": { "screen": 4, "verdict": "fail" },
+        "expected": {
+          "screen": 4,
+          "verdict": "fail"
+        },
         "id": "en-tax-deadlines-contradicts-source-1",
         "userInput": {
           "chapterTitle": "Income taxes",
@@ -908,7 +1014,9 @@
                 "activityTemplate": null,
                 "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -916,7 +1024,9 @@
                 "activityTemplate": null,
                 "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -924,7 +1034,9 @@
                 "activityTemplate": null,
                 "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -932,7 +1044,9 @@
                 "activityTemplate": null,
                 "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -940,7 +1054,10 @@
                 "activityTemplate": null,
                 "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -989,8 +1106,14 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
-                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                  {
+                    "isCorrect": false,
+                    "text": "Yes, 6 more months to pay"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "No, the tax is still due in April"
+                  }
                 ],
                 "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
                 "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
@@ -1080,7 +1203,10 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen -] The summary states, “Para defender uma resposta, a regra vem antes”, as a general requirement. An argument need not begin with a rule: it can present a fact before introducing the criterion used to assess it, and independent supporting reasons need not involve a rule at all.",
@@ -1099,7 +1225,10 @@
         }
       ],
       "testCase": {
-        "expected": { "screen": 8, "verdict": "fail" },
+        "expected": {
+          "screen": 8,
+          "verdict": "fail"
+        },
         "id": "real-1-1",
         "language": "pt",
         "origin": "production",
@@ -1187,7 +1316,9 @@
                     "activityTemplate": null,
                     "brief": "Otávio lê um parecer contrário ao atendimento só pela internet: há dados sobre falta de conexão, mas a conclusão parece solta. Como fazer esses dados sustentarem a resposta?",
                     "kind": "hook",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1195,7 +1326,9 @@
                     "activityTemplate": null,
                     "brief": "A linha de argumentação organiza os fundamentos conforme o raciocínio que o leitor precisa acompanhar: para demonstrar que uma despesa ultrapassa um limite, apresentar o limite antes ajuda a entender a comparação.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1203,7 +1336,9 @@
                     "activityTemplate": null,
                     "brief": "Um texto defende criar um parque porque suas árvores reduzem o calor e seu espaço oferece lazer; o que acontece se esses dois motivos trocarem de posição? Opções: “A defesa necessariamente enfraquece”; “A defesa mantém sua sustentação” (correta); “A defesa necessariamente se fortalece”.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1211,7 +1346,9 @@
                     "activityTemplate": null,
                     "brief": "Nem todo fundamento depende do anterior: no exemplo do parque, calor e lazer sustentam a proposta por caminhos próprios. Por isso, as duas ordens funcionam; não existe uma sequência única para toda resposta.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1219,7 +1356,9 @@
                     "activityTemplate": null,
                     "brief": "Mostrar o planejamento para defender “Não tornar o atendimento exclusivamente digital”, sob uma regra fictícia de acesso para todos. Revelar: 1) regra: todos devem conseguir acessar o serviço; 2) fato: há usuários sem internet; 3) ligação: a exclusividade digital impediria o acesso deles.",
                     "kind": "workedExample",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1227,7 +1366,9 @@
                     "activityTemplate": null,
                     "brief": "Para defender “A biblioteca deve abrir à noite”, ordenar: A) alunos do turno noturno precisam consultar o acervo; B) uma regra fictícia exige acesso para todos os turnos; C) fechar antes das aulas noturnas impede esse acesso. Resposta: B–A–C; incluir A–C–B como distração, deixando o critério só para o fim.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1235,7 +1376,9 @@
                     "activityTemplate": null,
                     "brief": "A ligação precisa dizer o que o fato demonstra: “Há usuários sem internet; portanto, manter uma alternativa” deixa implícito que o canal exclusivamente digital os excluiria. Acrescentar essa consequência sustenta a resposta; o conector sozinho não faz esse trabalho.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1243,7 +1386,9 @@
                     "activityTemplate": "processOrder",
                     "brief": "Para defender a adaptação de um prédio, ordenar os cartões: “Regra fictícia: todas as salas devem ser acessíveis”; “Só há escadas para o andar superior”; “Quem não consegue usar escadas fica sem acesso às salas desse andar”. Perguntar por que o último cartão é necessário: ele liga a barreira à violação da regra, não apenas repete a existência da escada.",
                     "kind": "activity",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "template"
                   },
@@ -1251,7 +1396,9 @@
                     "activityTemplate": null,
                     "brief": "Uma equipe defende manter um canal humano: seu plano traz “exigência fictícia de acesso para todos → usuários que não conseguem usar o aplicativo → o canal humano reduz a espera”. Pedir que você complete a ligação ausente e decida onde manter o motivo da espera: explicitar a exclusão pelo aplicativo e tratar a espera como fundamento independente, sem impor uma única posição.",
                     "kind": "application",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -1293,13 +1440,21 @@
                   "content": {
                     "reveal": "A defesa continua igualmente sustentada, mesmo com os dois motivos trocados de lugar.",
                     "options": [
-                      { "id": "a", "text": "A defesa fica mais fraca", "isCorrect": false },
+                      {
+                        "id": "a",
+                        "text": "A defesa fica mais fraca",
+                        "isCorrect": false
+                      },
                       {
                         "id": "b",
                         "text": "A defesa continua igualmente sustentada",
                         "isCorrect": true
                       },
-                      { "id": "c", "text": "A defesa fica mais forte", "isCorrect": false }
+                      {
+                        "id": "c",
+                        "text": "A defesa fica mais forte",
+                        "isCorrect": false
+                      }
                     ],
                     "variant": "guess",
                     "question": "Um texto defende criar um parque: as árvores reduzem o calor e o espaço oferece lazer. Se o texto falar do lazer antes do calor, o que acontece com a defesa?"
@@ -1316,9 +1471,15 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      { "text": "A regra exige acesso para todos." },
-                      { "text": "Há usuários sem internet." },
-                      { "text": "Só digital os deixaria sem acesso." }
+                      {
+                        "text": "A regra exige acesso para todos."
+                      },
+                      {
+                        "text": "Há usuários sem internet."
+                      },
+                      {
+                        "text": "Só digital os deixaria sem acesso."
+                      }
                     ],
                     "title": "Da regra à resposta",
                     "result": "Logo, mantenha outra opção.",
@@ -1441,7 +1602,11 @@
                     "iconNeed": {
                       "name": "stepping stone",
                       "description": "A single flat stone set on a simple path.",
-                      "searchWords": ["path", "stone", "walkway"]
+                      "searchWords": [
+                        "path",
+                        "stone",
+                        "walkway"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1453,7 +1618,11 @@
                     "iconNeed": {
                       "name": "sun",
                       "description": "A bright sun with short rays.",
-                      "searchWords": ["sunshine", "sunlight", "sunbeam"]
+                      "searchWords": [
+                        "sunshine",
+                        "sunlight",
+                        "sunbeam"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1465,7 +1634,11 @@
                     "iconNeed": {
                       "name": "bridge",
                       "description": "A small bridge spanning a gap.",
-                      "searchWords": ["crossing", "span", "overpass"]
+                      "searchWords": [
+                        "crossing",
+                        "span",
+                        "overpass"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1477,7 +1650,11 @@
                     "iconNeed": {
                       "name": "domino",
                       "description": "A single upright domino tile with two dots.",
-                      "searchWords": ["domino tile", "domino piece", "game tile"]
+                      "searchWords": [
+                        "domino tile",
+                        "domino piece",
+                        "game tile"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -1501,7 +1678,10 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 7] The statement “ainda não pode gastar sem permissão na LOA” incorrectly makes authorization in the LOA indispensable. Expenditure may also be authorized through additional credits, including special and extraordinary credits for expenditure not originally covered by the LOA. The same overstatement appears in screen 11: “Sem autorização na LOA, a despesa é proibida mesmo com caixa.”",
@@ -1520,7 +1700,10 @@
         }
       ],
       "testCase": {
-        "expected": { "screen": 7, "verdict": "fail" },
+        "expected": {
+          "screen": 7,
+          "verdict": "fail"
+        },
         "id": "real-2-1",
         "language": "pt",
         "origin": "production",
@@ -1596,7 +1779,9 @@
                     "activityTemplate": null,
                     "brief": "Sabrina recebe a informação de que a compra de equipamentos do hospital está no orçamento, mas o pagamento precisa esperar por dinheiro. Como uma despesa aprovada pode ficar sem pagamento?",
                     "kind": "hook",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1604,7 +1789,9 @@
                     "activityTemplate": null,
                     "brief": "Na lei orçamentária anual (LOA), a receita é uma previsão: estimar R$ 8 milhões em impostos não significa já ter arrecadado esse valor. Base: Constituição Federal, art. 165, § 8º.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1612,7 +1799,9 @@
                     "activityTemplate": null,
                     "brief": "A LOA foi aprovada com previsão de R$ 8 milhões em impostos: o que essa aprovação, sozinha, faz com o saldo bancário do governo? Opções: “Acrescenta R$ 8 milhões”; “Não altera o saldo”; correta: a segunda.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1620,7 +1809,9 @@
                     "activityTemplate": null,
                     "brief": "Aprovar uma previsão não deposita dinheiro: disponibilidade financeira é dinheiro efetivamente em caixa para atender pagamentos. Se o saldo era zero, a aprovação da LOA, sozinha, mantém esse saldo.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1628,7 +1819,9 @@
                     "activityTemplate": null,
                     "brief": "Na despesa, a LOA estabelece autorização orçamentária: prever R$ 600 mil para equipamentos permite gastar dentro desse limite, mas não garante caixa. Base: Constituição Federal, art. 165, § 8º.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1636,7 +1829,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma despesa de R$ 120 mil está autorizada no orçamento; logo, o órgão dispõe desse valor para pagá-la hoje”. Gabarito: Errado; incluir como tentação tratar autorização como prova de dinheiro em caixa.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1644,7 +1839,9 @@
                     "activityTemplate": null,
                     "brief": "Ter dinheiro também não substitui autorização: um saldo bancário de R$ 200 mil não permite fazer despesa sem crédito orçamentário que a comporte. Base: Constituição Federal, art. 167, II.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1652,7 +1849,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma arrecadação inesperada permite ultrapassar o crédito orçamentário disponível, pois há dinheiro para pagar”. Gabarito: Errado; a tentação é confundir entrada de receita com aumento automático da autorização.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1660,7 +1859,9 @@
                     "activityTemplate": null,
                     "brief": "Nem todo saldo pode pagar qualquer despesa: recursos vinculados têm destinação legal específica, como dinheiro reservado por lei à educação. Base: Lei de Responsabilidade Fiscal, art. 8º, parágrafo único.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1668,7 +1869,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma compra da saúde tem autorização; por isso, pode ser paga com dinheiro legalmente vinculado à educação”. Gabarito: Errado; a tentação é considerar todo saldo bancário livre para qualquer pagamento.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1676,7 +1879,9 @@
                     "activityTemplate": null,
                     "brief": "Mostrar tabela: Pedido | Custo | Autorização | Caixa utilizável; Equipamentos | R$ 40 mil | R$ 40 mil | zero; Móveis | R$ 30 mil | zero | R$ 30 mil. Avaliar a proposta de pagar ambos hoje e justificar os dois impedimentos: falta caixa para equipamentos e autorização para móveis.",
                     "kind": "application",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "table"
                   }
@@ -1715,9 +1920,21 @@
                   "content": {
                     "reveal": "A conta continua com R$ 500.000.",
                     "options": [
-                      { "id": "a", "text": "R$ 8.000.000", "isCorrect": false },
-                      { "id": "b", "text": "R$ 500.000", "isCorrect": true },
-                      { "id": "c", "text": "R$ 8.500.000", "isCorrect": false }
+                      {
+                        "id": "a",
+                        "text": "R$ 8.000.000",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "R$ 500.000",
+                        "isCorrect": true
+                      },
+                      {
+                        "id": "c",
+                        "text": "R$ 8.500.000",
+                        "isCorrect": false
+                      }
                     ],
                     "variant": "guess",
                     "question": "A conta do governo tem R$ 500.000. Então a LOA é aprovada, prevendo R$ 8.000.000 em impostos. Logo depois da aprovação, quanto há na conta?"
@@ -1743,7 +1960,10 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": { "quote": "Ela não garante dinheiro em caixa.", "position": 4 },
+                    "basis": {
+                      "quote": "Ela não garante dinheiro em caixa.",
+                      "position": 4
+                    },
                     "context": "Julgue o item a seguir.",
                     "options": [
                       {
@@ -1871,7 +2091,11 @@
                     "iconNeed": {
                       "name": "calendar",
                       "description": "A simple calendar with a few blank date squares.",
-                      "searchWords": ["planner", "schedule", "date"]
+                      "searchWords": [
+                        "planner",
+                        "schedule",
+                        "date"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1883,7 +2107,11 @@
                     "iconNeed": {
                       "name": "coin",
                       "description": "A single round coin with a plain surface.",
-                      "searchWords": ["money", "cash", "currency"]
+                      "searchWords": [
+                        "money",
+                        "cash",
+                        "currency"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1895,7 +2123,11 @@
                     "iconNeed": {
                       "name": "key",
                       "description": "A simple metal key with a round bow.",
-                      "searchWords": ["permission", "access", "unlock"]
+                      "searchWords": [
+                        "permission",
+                        "access",
+                        "unlock"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1907,7 +2139,11 @@
                     "iconNeed": {
                       "name": "ruler",
                       "description": "A straight ruler with evenly spaced marks.",
-                      "searchWords": ["measuring stick", "measure", "length"]
+                      "searchWords": [
+                        "measuring stick",
+                        "measure",
+                        "length"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -1919,7 +2155,11 @@
                     "iconNeed": {
                       "name": "schoolhouse",
                       "description": "A small school building with a peaked roof.",
-                      "searchWords": ["school", "education", "building"]
+                      "searchWords": [
+                        "school",
+                        "education",
+                        "building"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -1945,14 +2185,32 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "pass" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "pass"
+      },
       "steps": [
-        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 6 },
-        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 6 }
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
-        "expected": { "screen": null, "verdict": "fail" },
+        "expected": {
+          "screen": null,
+          "verdict": "fail"
+        },
         "id": "real-3-1",
         "language": "pt",
         "origin": "production",
@@ -2046,7 +2304,9 @@
                     "activityTemplate": null,
                     "brief": "Renan lê no processo: “O pagamento foi autorizado”, mas descobre que nenhuma autorização foi dada. Uma afirmação falsa ainda pode fazer parte do raciocínio lógico?",
                     "kind": "hook",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2054,7 +2314,9 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição é uma afirmação que admite exatamente um valor: verdadeiro ou falso. “O documento tem três páginas” é uma proposição.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2062,7 +2324,9 @@
                     "activityTemplate": null,
                     "brief": "O sistema fica inacessível, impedindo conferir “O backup foi concluído”; o que acontece com essa frase na análise lógica? Opções: “Continua sendo proposição” ou “Deixa de ser proposição”; correta: continua sendo proposição.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2070,7 +2334,9 @@
                     "activityTemplate": null,
                     "brief": "Ser proposição não depende de conhecermos seu valor nem de ela ser verdadeira. “O backup foi concluído” continua sendo proposição mesmo sem conferência ou se for falsa.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2078,7 +2344,9 @@
                     "activityTemplate": null,
                     "brief": "Perguntas e ordens não são proposições, pois não afirmam algo verdadeiro ou falso. “O processo chegou?” pergunta; “Encaminhe o processo” dá uma ordem.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2086,7 +2354,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Entre ‘11 é menor que 4’ e ‘Confira o total’, apenas a primeira frase é proposição”. Gabarito: Certo; incluir Errado como opção para quem exclui afirmações falsas.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2094,7 +2364,9 @@
                     "activityTemplate": null,
                     "brief": "Uma sentença aberta depende de algo ainda não definido: “x é maior que 10” não tem valor lógico determinado enquanto x estiver livre. Fixando x em 12, temos uma proposição.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2102,7 +2374,9 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição simples apresenta uma afirmação sem ser formada pela combinação de outras proposições. “O relatório tem vinte páginas” é simples, apesar de ter várias palavras.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2110,7 +2384,9 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição composta combina proposições em uma afirmação maior. “O relatório chegou e o prazo terminou” reúne “O relatório chegou” e “O prazo terminou”.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2118,7 +2394,10 @@
                     "activityTemplate": null,
                     "brief": "Resolver em passos: “O cadastro está ativo e a senha expirou” afirma algo; suas partes são “O cadastro está ativo” e “A senha expirou”; cada parte é uma proposição simples, e a combinação é composta.",
                     "kind": "workedExample",
-                    "skills": [0, 1],
+                    "skills": [
+                      0,
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2126,7 +2405,9 @@
                     "activityTemplate": null,
                     "brief": "Selecionar a classificação e as partes de “O recurso foi recebido e a análise começou”: composta, formada por duas proposições simples. Incluir “simples, porque forma uma única frase” e a divisão incorreta em “O recurso” e “foi recebido e a análise começou”.",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2134,7 +2415,9 @@
                     "activityTemplate": null,
                     "brief": "A palavra “e” nem sempre liga proposições: em “A distância entre o depósito e o arquivo é de 40 metros”, ela liga os lugares comparados. A proposição é simples.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2142,7 +2425,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “‘O contrato está entre a capa e o anexo’ é composta porque contém ‘e’”. Gabarito: Errado; a frase é simples, pois “a capa” e “o anexo” não são proposições.",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2150,7 +2435,10 @@
                     "activityTemplate": null,
                     "brief": "Um registro contém “x documentos foram enviados”, sem definir x; “Envie o parecer”; e “O parecer foi assinado e o processo foi arquivado”. Selecionar o trecho que permite análise como proposição, classificá-lo e separar suas partes; resposta: o terceiro, composto pelas duas afirmações completas, não o primeiro por conter um verbo.",
                     "kind": "application",
-                    "skills": [0, 1],
+                    "skills": [
+                      0,
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -2202,8 +2490,16 @@
                         "text": "Só vira proposição após a conferência",
                         "isCorrect": false
                       },
-                      { "id": "b", "text": "Deixa de ser proposição", "isCorrect": false },
-                      { "id": "c", "text": "Continua sendo proposição", "isCorrect": true }
+                      {
+                        "id": "b",
+                        "text": "Deixa de ser proposição",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "c",
+                        "text": "Continua sendo proposição",
+                        "isCorrect": true
+                      }
                     ],
                     "variant": "guess",
                     "question": "O sistema caiu, e ninguém consegue conferir se _O backup foi concluído_ é verdade. Na análise lógica, o que acontece com essa frase?"
@@ -2276,7 +2572,9 @@
                       {
                         "text": "A frase afirma algo; suas partes são _O cadastro está ativo_ e _A senha expirou_."
                       },
-                      { "text": "Cada parte é simples; juntas, formam uma composta." }
+                      {
+                        "text": "Cada parte é simples; juntas, formam uma composta."
+                      }
                     ],
                     "title": "Separando as partes",
                     "result": "É uma proposição composta.",
@@ -2286,7 +2584,10 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": { "quote": "Cada uma poderia ser julgada sozinha.", "position": 8 },
+                    "basis": {
+                      "quote": "Cada uma poderia ser julgada sozinha.",
+                      "position": 8
+                    },
                     "context": "Considere a frase _O recurso foi recebido e a análise começou_.",
                     "options": [
                       {
@@ -2388,7 +2689,12 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A small balance scale with two empty pans.",
-                      "searchWords": ["scales", "justice", "truth", "weighing"]
+                      "searchWords": [
+                        "scales",
+                        "justice",
+                        "truth",
+                        "weighing"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -2400,7 +2706,12 @@
                     "iconNeed": {
                       "name": "puzzle piece",
                       "description": "A single colorful jigsaw puzzle piece.",
-                      "searchWords": ["jigsaw", "piece", "puzzle", "missing"]
+                      "searchWords": [
+                        "jigsaw",
+                        "piece",
+                        "puzzle",
+                        "missing"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -2412,7 +2723,12 @@
                     "iconNeed": {
                       "name": "candle",
                       "description": "A small lit candle with a simple flame.",
-                      "searchWords": ["wax", "flame", "single", "light"]
+                      "searchWords": [
+                        "wax",
+                        "flame",
+                        "single",
+                        "light"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -2424,7 +2740,12 @@
                     "iconNeed": {
                       "name": "chain link",
                       "description": "Two sturdy metal chain links joined together.",
-                      "searchWords": ["chain", "links", "connected", "metal"]
+                      "searchWords": [
+                        "chain",
+                        "links",
+                        "connected",
+                        "metal"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -2436,7 +2757,12 @@
                     "iconNeed": {
                       "name": "bridge",
                       "description": "A small bridge spanning a narrow stream.",
-                      "searchWords": ["crossing", "span", "river", "connection"]
+                      "searchWords": [
+                        "crossing",
+                        "span",
+                        "river",
+                        "connection"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -2465,7 +2791,10 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 14] “O presidente só sai antes do prazo se cometer um ato grave contra a Constituição” incorrectly makes an impeachable offense the only possible cause of an early end to the presidency. The term can also end through resignation, death, electoral annulment, or removal following conviction for an ordinary crime. [screen 16] The feedback for option d says “só um ato grave contra a Constituição, julgado em impeachment, faz isso.” This falsely states that impeachment is the only way to remove a president before the term ends; electoral annulment and conviction for an ordinary crime can also lead to removal. [screen -] The summary states “só o impeachment, por ato grave contra a Constituição, tira o presidente antes do prazo.” Impeachment is not the only way a presidency can end early.",
@@ -2484,7 +2813,10 @@
         }
       ],
       "testCase": {
-        "expected": { "screen": 14, "verdict": "fail" },
+        "expected": {
+          "screen": 14,
+          "verdict": "fail"
+        },
         "id": "real-4-1",
         "language": "pt",
         "origin": "production",
@@ -2579,7 +2911,9 @@
                     "activityTemplate": null,
                     "brief": "Forma de Estado é a maneira de distribuir o poder político pelo território: no Brasil, um município decide assuntos locais sem ser outro país.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2587,7 +2921,9 @@
                     "activityTemplate": null,
                     "brief": "Se toda a população de um estado votar pela separação do Brasil, o que acontecerá juridicamente? Opções: “A separação terá efeito”; “A votação não criará outro país”; correta: a segunda.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2595,7 +2931,9 @@
                     "activityTemplate": null,
                     "brief": "A federação brasileira reúne entes com poder político próprio numa união indissolúvel: nem uma votação unânime permite a um estado separar-se do país (CF, art. 1º, caput).",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2603,7 +2941,9 @@
                     "activityTemplate": null,
                     "brief": "Autonomia é governar-se dentro da Constituição: União, estados, Distrito Federal e municípios a possuem, sem serem países soberanos; um estado pode ter sua própria Constituição (CF, arts. 18 e 25).",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2611,7 +2951,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Ao aprovar sua própria Constituição, um estado passa a ter soberania, como o Brasil”. Gabarito: Errado; a armadilha é confundir autonomia estadual com soberania.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2619,7 +2961,9 @@
                     "activityTemplate": null,
                     "brief": "Forma de governo trata do acesso ao poder e da responsabilidade de quem o exerce: ocupar um cargo por mandato é diferente de herdá-lo por toda a vida.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2627,7 +2971,9 @@
                     "activityTemplate": null,
                     "brief": "Na república, o poder não pertence a uma família: os governantes têm mandatos temporários, são escolhidos por eleição e respondem por seus atos; o presidente brasileiro exemplifica isso (CF, arts. 1º, 77, 82 e 85).",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2635,7 +2981,9 @@
                     "activityTemplate": null,
                     "brief": "Na monarquia, a chefia do Estado é, em regra, hereditária e vitalícia: no Reino Unido, a Coroa passa pela linha de sucessão, não por eleição periódica.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2643,7 +2991,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Um país mantém a forma republicana se eleger um presidente para ocupar o cargo vitaliciamente”. Gabarito: Errado; a armadilha é considerar a eleição suficiente, ignorando a temporariedade.",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2651,7 +3001,9 @@
                     "activityTemplate": null,
                     "brief": "Sistema de governo descreve a relação entre Executivo e Legislativo: uma questão é saber se o governante precisa conservar o apoio do Parlamento para permanecer no cargo.",
                     "kind": "explanation",
-                    "skills": [2],
+                    "skills": [
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2659,7 +3011,9 @@
                     "activityTemplate": null,
                     "brief": "No presidencialismo, o presidente representa o Estado e dirige o governo com mandato próprio: no Brasil, perder uma votação no Congresso não encerra esse mandato (CF, arts. 76, 82 e 84).",
                     "kind": "explanation",
-                    "skills": [2],
+                    "skills": [
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2667,7 +3021,9 @@
                     "activityTemplate": null,
                     "brief": "No parlamentarismo, quem dirige o governo depende da confiança do Parlamento: no Reino Unido, a perda formal desse apoio pode levar à substituição do primeiro-ministro.",
                     "kind": "explanation",
-                    "skills": [2],
+                    "skills": [
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2675,7 +3031,9 @@
                     "activityTemplate": null,
                     "brief": "Impeachment é um processo de responsabilização por crime de responsabilidade: pode retirar o presidente antes do fim do mandato, mas não equivale a perder apoio político (CF, arts. 85 e 86).",
                     "kind": "explanation",
-                    "skills": [2],
+                    "skills": [
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2683,7 +3041,11 @@
                     "activityTemplate": "categorize",
                     "brief": "Separar três casos entre forma de Estado, forma de governo e sistema de governo: município com poder próprio; cargo máximo hereditário e vitalício; governo substituído por perda de confiança parlamentar. Gabarito: Estado, governo, sistema; explorar a troca entre os dois últimos.",
                     "kind": "activity",
-                    "skills": [0, 1, 2],
+                    "skills": [
+                      0,
+                      1,
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "template"
                   },
@@ -2691,7 +3053,11 @@
                     "activityTemplate": null,
                     "brief": "Uma nota diz: I — município autônomo é soberano; II — mandato temporário e responsabilização são republicanos; III — derrota parlamentar encerra o mandato presidencial. Selecionar as corretas e corrigir as demais: apenas II; a armadilha é aceitar III como impeachment.",
                     "kind": "application",
-                    "skills": [0, 1, 2],
+                    "skills": [
+                      0,
+                      1,
+                      2
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -2756,7 +3122,11 @@
                         "text": "O estado vira um país independente",
                         "isCorrect": false
                       },
-                      { "id": "c", "text": "O estado continua parte do Brasil", "isCorrect": true }
+                      {
+                        "id": "c",
+                        "text": "O estado continua parte do Brasil",
+                        "isCorrect": true
+                      }
                     ],
                     "variant": "guess",
                     "question": "Numa votação, 100% dos moradores de um estado escolhem sair do Brasil. Pela Constituição, o que acontece?"
@@ -3009,7 +3379,11 @@
                     "iconNeed": {
                       "name": "puzzle piece",
                       "description": "A single interlocking puzzle piece with rounded tabs.",
-                      "searchWords": ["jigsaw", "piece", "puzzle"]
+                      "searchWords": [
+                        "jigsaw",
+                        "piece",
+                        "puzzle"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3021,7 +3395,11 @@
                     "iconNeed": {
                       "name": "house",
                       "description": "A simple small house with a pitched roof.",
-                      "searchWords": ["home", "residence", "building"]
+                      "searchWords": [
+                        "home",
+                        "residence",
+                        "building"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3033,7 +3411,11 @@
                     "iconNeed": {
                       "name": "ballot box",
                       "description": "A ballot box with a slot in its top.",
-                      "searchWords": ["election", "voting", "poll"]
+                      "searchWords": [
+                        "election",
+                        "voting",
+                        "poll"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3045,7 +3427,11 @@
                     "iconNeed": {
                       "name": "hourglass",
                       "description": "A classic hourglass with sand falling between its chambers.",
-                      "searchWords": ["timer", "sand clock", "time"]
+                      "searchWords": [
+                        "timer",
+                        "sand clock",
+                        "time"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3057,7 +3443,11 @@
                     "iconNeed": {
                       "name": "parliament building",
                       "description": "A neoclassical building with columns and a broad central facade.",
-                      "searchWords": ["assembly", "legislature", "capitol"]
+                      "searchWords": [
+                        "assembly",
+                        "legislature",
+                        "capitol"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -3088,7 +3478,10 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
       "steps": [
         {
           "conclusion": "[screen 3] The question “Como mudou a vantagem da origem alta?” does not specify how to measure that advantage, so “Diminui” is also defensible. The ratio of probabilities falls from 50/10 = 5 to 75/25 = 3. Only the odds ratio remains at 9, and odds have not yet been introduced. [screen 8] “Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem” turns a possible outcome into a general rule. More positions at the top can coexist with a decrease, increase, or no change in the association between origin and destination. The same overgeneralization appears in screen 9’s quotation and the summary.",
@@ -3107,7 +3500,10 @@
         }
       ],
       "testCase": {
-        "expected": { "screen": 3, "verdict": "fail" },
+        "expected": {
+          "screen": 3,
+          "verdict": "fail"
+        },
         "id": "real-5-1",
         "language": "pt",
         "origin": "production",
@@ -3202,7 +3598,9 @@
                     "activityTemplate": null,
                     "brief": "Mobilidade absoluta é a proporção de pessoas que mudam de posição social: se 30 de 100 filhos ocupam uma posição diferente da dos pais, ela é de 30%. A mudança pode ser para cima ou para baixo.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3210,7 +3608,9 @@
                     "activityTemplate": null,
                     "brief": "Tabela fictícia, colunas período/origem/destino baixo/destino alto: A/baixa/90/10; A/alta/50/50; B/baixa/75/25; B/alta/25/75. Perguntar como muda a vantagem da origem alta para alcançar o topo: diminui, permanece igual ou aumenta; correta: permanece igual.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "table"
                   },
@@ -3218,7 +3618,9 @@
                     "activityTemplate": null,
                     "brief": "A vantagem de origem permaneceu igual, apesar de mais pessoas chegarem ao topo. A mobilidade relativa compara a facilidade de alcançar uma posição conforme a origem social: quanto menor essa dependência, maior a mobilidade relativa.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3226,7 +3628,9 @@
                     "activityTemplate": null,
                     "brief": "Para comparar essa facilidade, usamos a razão entre quem alcança a posição e quem não alcança, chamada odds. Na origem baixa do período A, são 10 para 90: 10/90 = 1/9.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3234,7 +3638,9 @@
                     "activityTemplate": null,
                     "brief": "Mostrar em etapas a vantagem de origem no período A: origem alta, 50/50 = 1; origem baixa, 10/90 = 1/9; comparação, 1 ÷ (1/9) = 9. A origem alta tem nove vezes as odds da origem baixa.",
                     "kind": "workedExample",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3242,7 +3648,9 @@
                     "activityTemplate": null,
                     "brief": "No período B, mostrar origem baixa: 75 no destino baixo e 25 no alto; origem alta: 25 no baixo e 75 no alto. Pedir a vantagem da origem alta: correta 9; incluir 3, erro de usar apenas 75/25 sem comparar as origens.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "table"
                   },
@@ -3250,7 +3658,9 @@
                     "activityTemplate": null,
                     "brief": "A abertura de mais posições superiores pode aumentar as subidas sem reduzir a vantagem de origem. Entre A e B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25, mas a vantagem continuou em nove vezes.",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3258,7 +3668,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma pesquisa registrou mais mudanças de posição; logo, comprovou menor desigualdade de oportunidades”. Gabarito: Errado; incluir Certo como resposta tentadora por confundir quantidade de mudanças com menor dependência da origem.",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3266,7 +3678,9 @@
                     "activityTemplate": null,
                     "brief": "Comparar a posição de filhos com a dos pais é analisar mobilidade intergeracional. Uma filha na direção de uma empresa e sua mãe em trabalho de baixa posição, ambas observadas aos 40 anos, exemplificam essa comparação.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3274,7 +3688,9 @@
                     "activityTemplate": null,
                     "brief": "Comparar posições da mesma pessoa ao longo da vida é analisar mobilidade intrageracional. Uma trabalhadora que passa de auxiliar a gerente apresenta essa trajetória, mesmo sem informação sobre seus pais.",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3282,7 +3698,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma pesquisa que compara a ocupação de cada participante aos 25 e aos 50 anos mede mobilidade intergeracional”. Gabarito: Errado; a armadilha é confundir duas idades da mesma pessoa com duas gerações familiares.",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3290,7 +3708,10 @@
                     "activityTemplate": null,
                     "brief": "Um relatório traz mobilidade absoluta de 20% para 35%, vantagem de origem fixa em nove vezes, Valéria promovida de auxiliar a gerente e Danilo gerente, filho de auxiliar. Pedir um parecer: não houve redução da vantagem de origem; Valéria exemplifica mobilidade intrageracional e Danilo, intergeracional; incluir a conclusão tentadora de oportunidades mais iguais.",
                     "kind": "application",
-                    "skills": [0, 1],
+                    "skills": [
+                      0,
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -3337,9 +3758,21 @@
                   "content": {
                     "reveal": "A vantagem da origem alta permanece igual nos dois períodos, mesmo com mais filhos de origem baixa chegando ao topo.",
                     "options": [
-                      { "id": "a", "text": "Diminui", "isCorrect": false },
-                      { "id": "b", "text": "Aumenta", "isCorrect": false },
-                      { "id": "c", "text": "Permanece igual", "isCorrect": true }
+                      {
+                        "id": "a",
+                        "text": "Diminui",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "Aumenta",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "c",
+                        "text": "Permanece igual",
+                        "isCorrect": true
+                      }
                     ],
                     "variant": "guess",
                     "question": "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?"
@@ -3363,7 +3796,10 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      { "math": "\\frac{50}{50}=1", "text": "Alta: 50 chegam e 50 não." },
+                      {
+                        "math": "\\frac{50}{50}=1",
+                        "text": "Alta: 50 chegam e 50 não."
+                      },
                       {
                         "math": "\\frac{10}{90}=\\frac{1}{9}",
                         "text": "Baixa: 10 chegam e 90 não."
@@ -3381,7 +3817,10 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": { "quote": "Divida as odds da alta pelas da baixa.", "position": 5 },
+                    "basis": {
+                      "quote": "Divida as odds da alta pelas da baixa.",
+                      "position": 5
+                    },
                     "context": "Num período C fictício, o estudo registrou:\n\n| Origem | Destino baixo | Destino alto |\n|---|---:|---:|\n| Baixa | 60 | 40 |\n| Alta | 20 | 80 |",
                     "options": [
                       {
@@ -3531,7 +3970,11 @@
                     "iconNeed": {
                       "name": "staircase",
                       "description": "A simple staircase with several steps.",
-                      "searchWords": ["stairs", "steps", "stairway"]
+                      "searchWords": [
+                        "stairs",
+                        "steps",
+                        "stairway"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3543,7 +3986,11 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A traditional balance scale with two hanging pans.",
-                      "searchWords": ["scales", "weighing scale", "justice"]
+                      "searchWords": [
+                        "scales",
+                        "weighing scale",
+                        "justice"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3555,7 +4002,11 @@
                     "iconNeed": {
                       "name": "open door",
                       "description": "A simple door standing open.",
-                      "searchWords": ["doorway", "entrance", "door"]
+                      "searchWords": [
+                        "doorway",
+                        "entrance",
+                        "door"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3567,7 +4018,11 @@
                     "iconNeed": {
                       "name": "family tree",
                       "description": "A branching tree with small circular markers at its ends.",
-                      "searchWords": ["genealogy", "family diagram", "tree"]
+                      "searchWords": [
+                        "genealogy",
+                        "family diagram",
+                        "tree"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -3579,7 +4034,11 @@
                     "iconNeed": {
                       "name": "hourglass",
                       "description": "A glass hourglass with sand in its lower chamber.",
-                      "searchWords": ["sand timer", "time", "timer"]
+                      "searchWords": [
+                        "sand timer",
+                        "time",
+                        "timer"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -3607,14 +4066,31 @@
       }
     },
     {
-      "classification": { "expected": "pass", "predicted": "pass" },
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
       "steps": [
-        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "verdict": "pass" },
+        "expected": {
+          "verdict": "pass"
+        },
         "id": "real-6-1",
         "language": "pt",
         "origin": "production",
@@ -3695,7 +4171,10 @@
                     "activityTemplate": null,
                     "brief": "Raimundo recebe para análise um pedido de uma empresa da qual é sócio e pensa: “Vou seguir todos os critérios técnicos”. Isso basta para que ele possa conduzir a análise?",
                     "kind": "hook",
-                    "skills": [0, 1],
+                    "skills": [
+                      0,
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3703,7 +4182,9 @@
                     "activityTemplate": null,
                     "brief": "Conflito de interesses é o confronto entre interesses públicos e privados capaz de comprometer o interesse coletivo ou influenciar impropriamente a função pública: analisar um pedido da própria empresa cria esse risco (Lei nº 12.813/2013, art. 3º, I).",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3711,7 +4192,9 @@
                     "activityTemplate": null,
                     "brief": "Um servidor presta consultoria a uma empresa interessada em decisão sua; se dispensar os honorários, o que acontece com o conflito? Opções: “Desaparece”; “Permanece”; “Depende de prejuízo ao erário”; resposta: “Permanece”, com justificativa imediata.",
                     "kind": "guess",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3719,7 +4202,9 @@
                     "activityTemplate": null,
                     "brief": "O conflito independe de lesão ao patrimônio público ou de vantagem recebida: dispensar os honorários não elimina, por si só, o conflito da consultoria (Lei nº 12.813/2013, art. 4º, § 1º).",
                     "kind": "explanation",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3727,7 +4212,9 @@
                     "activityTemplate": null,
                     "brief": "Resolver em etapas: Thaís presta consultoria à empresa interessada em decisão que ela tomará — identificar o serviço privado → ligar a empresa à decisão → reconhecer o conflito, mesmo sem favorecimento consumado (Lei nº 12.813/2013, art. 5º, II).",
                     "kind": "workedExample",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3735,7 +4222,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Murilo presta consultoria gratuita a uma empresa interessada em decisão sua; sem remuneração nem prejuízo ao erário, inexiste conflito”. Gabarito: Errado; explorar a confusão entre conflito e dano efetivo (arts. 4º, § 1º, e 5º, II).",
                     "kind": "check",
-                    "skills": [0],
+                    "skills": [
+                      0
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3743,7 +4232,9 @@
                     "activityTemplate": null,
                     "brief": "Ter interesse direto ou indireto na matéria impede a atuação no processo: Sabrina não pode analisar pedido que afeta o lucro da empresa de que é sócia, mesmo prometendo neutralidade (Lei nº 9.784/1999, art. 18, I).",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3751,7 +4242,9 @@
                     "activityTemplate": null,
                     "brief": "Cauê analisaria recurso que afeta sua própria empresa: reconhecer o interesse direto → comunicar o impedimento à autoridade competente → abster-se de atuar, sem aguardar autorização para parar (Lei nº 9.784/1999, arts. 18, I, e 19).",
                     "kind": "workedExample",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3759,7 +4252,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Rosana tem interesse financeiro no resultado do processo e comunica o impedimento, mas pode continuar instruindo-o até receber substituto”. Gabarito: Errado; comunicar não dispensa a abstenção de atuar (Lei nº 9.784/1999, art. 19).",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3767,7 +4262,9 @@
                     "activityTemplate": null,
                     "brief": "Amizade íntima com um interessado permite arguir suspeição, fundamento distinto do impedimento: a relação próxima de Leandro com o requerente importa, mas ser mero conhecido não basta para esse enquadramento (Lei nº 9.784/1999, art. 20).",
                     "kind": "explanation",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3775,7 +4272,9 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Valéria encontra a requerente ocasionalmente em eventos profissionais; isso basta para caracterizar suspeição por amizade íntima”. Gabarito: Errado; o contato descrito não demonstra a proximidade exigida pelo art. 20 da Lei nº 9.784/1999.",
                     "kind": "check",
-                    "skills": [1],
+                    "skills": [
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3783,7 +4282,10 @@
                     "activityTemplate": null,
                     "brief": "Uma servidora presta consultoria gratuita à empresa da qual é sócia e recebe processo sobre pedido dessa empresa: identificar o conflito e indicar como agir. Esperado: reconhecer o vínculo privado, comunicar o impedimento e abster-se; rejeitar apenas prometer uma análise técnica.",
                     "kind": "application",
-                    "skills": [0, 1],
+                    "skills": [
+                      0,
+                      1
+                    ],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -3830,8 +4332,16 @@
                   "content": {
                     "reveal": "O conflito permanece, mesmo sem honorários e sem prejuízo ao erário.",
                     "options": [
-                      { "id": "a", "text": "O conflito permanece", "isCorrect": true },
-                      { "id": "b", "text": "O conflito desaparece", "isCorrect": false },
+                      {
+                        "id": "a",
+                        "text": "O conflito permanece",
+                        "isCorrect": true
+                      },
+                      {
+                        "id": "b",
+                        "text": "O conflito desaparece",
+                        "isCorrect": false
+                      },
                       {
                         "id": "c",
                         "text": "Só existe se houver prejuízo ao erário",
@@ -3856,9 +4366,15 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      { "text": "Ela presta serviço privado à empresa." },
-                      { "text": "A empresa tem interesse na decisão." },
-                      { "text": "Não é preciso haver favorecimento." }
+                      {
+                        "text": "Ela presta serviço privado à empresa."
+                      },
+                      {
+                        "text": "A empresa tem interesse na decisão."
+                      },
+                      {
+                        "text": "Não é preciso haver favorecimento."
+                      }
                     ],
                     "title": "Consultoria e decisão",
                     "result": "Há conflito (Lei nº 12.813/2013, art. 5º, II).",
@@ -3901,9 +4417,15 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      { "text": "Ele tem interesse direto na matéria." },
-                      { "text": "Comunica o impedimento à autoridade competente." },
-                      { "text": "Abstém-se de atuar sem esperar autorização." }
+                      {
+                        "text": "Ele tem interesse direto na matéria."
+                      },
+                      {
+                        "text": "Comunica o impedimento à autoridade competente."
+                      },
+                      {
+                        "text": "Abstém-se de atuar sem esperar autorização."
+                      }
                     ],
                     "title": "Como agir no impedimento",
                     "result": "É o procedimento dos arts. 18, I, e 19 da Lei nº 9.784/1999.",
@@ -3942,7 +4464,10 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": { "quote": "Ser só conhecido não basta.", "position": 9 },
+                    "basis": {
+                      "quote": "Ser só conhecido não basta.",
+                      "position": 9
+                    },
                     "context": "Valéria vai decidir o pedido de uma advogada que ela encontra de vez em quando em eventos profissionais.",
                     "options": [
                       {
@@ -4006,7 +4531,11 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A traditional balance scale with two hanging pans.",
-                      "searchWords": ["scales", "justice", "law"]
+                      "searchWords": [
+                        "scales",
+                        "justice",
+                        "law"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -4018,7 +4547,11 @@
                     "iconNeed": {
                       "name": "wallet",
                       "description": "A simple closed leather wallet.",
-                      "searchWords": ["purse", "money", "billfold"]
+                      "searchWords": [
+                        "purse",
+                        "money",
+                        "billfold"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -4030,7 +4563,11 @@
                     "iconNeed": {
                       "name": "road barrier",
                       "description": "A striped barrier lowered across a road.",
-                      "searchWords": ["barricade", "gate", "obstacle"]
+                      "searchWords": [
+                        "barricade",
+                        "gate",
+                        "obstacle"
+                      ]
                     },
                     "iconPending": false
                   },
@@ -4042,7 +4579,11 @@
                     "iconNeed": {
                       "name": "friendship bracelet",
                       "description": "A colorful woven bracelet made from thin threads.",
-                      "searchWords": ["woven bracelet", "cord bracelet", "friendship band"]
+                      "searchWords": [
+                        "woven bracelet",
+                        "cord bracelet",
+                        "friendship band"
+                      ]
                     },
                     "iconPending": false
                   }
@@ -4064,6 +4605,1758 @@
               "anthropic/claude-opus-5.5",
               "anthropic/claude-opus-5.5"
             ]
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "fail",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screen": 2,
+          "verdict": "fail"
+        },
+        "id": "real-7-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "recorded": {
+            "lessonId": "01a1bc05-4308-7765-b4ed-3aaf4786eedc",
+            "title": "Efeitos distributivos das políticas",
+            "version": 1,
+            "context": {
+              "activityTemplates": [],
+              "chapterLessons": [
+                {
+                  "order": "before",
+                  "title": "Interseccionalidade das desigualdades",
+                  "canDo": "Analisar desigualdades de raça, gênero e classe em conjunto"
+                },
+                {
+                  "order": "before",
+                  "title": "Desigualdades territoriais",
+                  "canDo": "Analisar como o território condiciona o acesso a oportunidades",
+                  "ideas": [
+                    "Desigualdades territoriais são diferenças de condições ligadas ao lugar onde se vive.",
+                    "Para comparar a oferta entre territórios, é preciso considerar a população atendida, como em vagas por mil habitantes.",
+                    "Acessibilidade é a chance real de alcançar e usar um serviço, e uma vaga sem um jeito de chegar existe mas não serve.",
+                    "A desigualdade inter-regional ocorre entre regiões, e a desigualdade intraurbana ocorre dentro da mesma cidade.",
+                    "Uma média municipal não diz quanto tem cada bairro e pode esconder bairros muito abaixo dela."
+                  ],
+                  "examples": [
+                    "Igor conseguiu uma vaga num curso gratuito no centro de Santarém. A aula termina às 22h, mas o último ônibus para o bairro dele sai às 21h30. Se a vaga é dele, por que ele não consegue aproveitá-la?",
+                    "Duas regiões recebem 200 novas vagas de formação cada. Uma tem 20 mil habitantes, e a outra tem 80 mil. Em qual delas a oferta por habitante cresce mais?",
+                    "Cada região ganhou 200 vagas. Quantas vagas por mil habitantes?",
+                    "A região A tem 300 vagas de formação para 30 mil habitantes. A região B tem 150 vagas para 15 mil habitantes. Julgue o item: a região A tem maior oferta proporcional de vagas que a região B.",
+                    "No distrito de Lagoa Seca, sobram vagas de consulta no posto de saúde, que atende até as 16h. O único ônibus do distrito chega ao posto às 16h30. Julgue o item: ampliar o número de vagas de consulta elimina a barreira enfrentada pelos moradores.",
+                    "Um relatório informa que 85% dos domicílios de uma cidade têm água encanada. Com base nisso, conclui que todos os bairros da cidade superam 80%. Julgue a conclusão do relatório."
+                  ]
+                },
+                {
+                  "order": "before",
+                  "title": "Oportunidades e resultados desiguais",
+                  "canDo": "Distinguir desigualdade de resultados e de oportunidades"
+                },
+                {
+                  "order": "after",
+                  "title": "Desafio: Desigualdades e distribuição de oportunidades",
+                  "canDo": "Tomar decisões com as habilidades deste capítulo"
+                }
+              ],
+              "chapterTitle": "Desigualdades e distribuição de oportunidades",
+              "courseTitle": "Administração Pública",
+              "exams": [
+                {
+                  "name": "Concurso CGU",
+                  "style": "trueFalse: Itens para julgamento individual como Certo ou Errado. essay: Questão discursiva relacionada a conhecimentos complementares a ser respondida em até 30 linhas. essay: Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos a ser respondida em até 60 linhas."
+                }
+              ],
+              "language": "pt",
+              "level": "intermediate",
+              "setup": false,
+              "shortAnswers": false,
+              "spec": {
+                "canDo": "Avaliar quem ganha e quem fica excluído de políticas públicas",
+                "description": "Analisar a distribuição de benefícios, custos e acesso para avaliar se uma política reduz ou reforça desigualdades.",
+                "estimatedMinutes": 5,
+                "screens": [
+                  {
+                    "activityTemplate": null,
+                    "brief": "Um programa de cursos gratuitos dobrou suas vagas, mas o atendimento às famílias de baixa renda não aumentou. Como uma expansão pode deixar justamente esse grupo para trás?",
+                    "kind": "hook",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "O efeito distributivo mostra como benefícios e custos se repartem entre grupos: de 100 novas vagas gratuitas, por exemplo, 80 podem chegar a pessoas de renda alta.",
+                    "kind": "explanation",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Dois grupos têm rendas mensais por pessoa de R$ 1.000 e R$ 5.000; todos receberão R$ 100. A distância proporcional entre as rendas vai diminuir, ficar igual ou aumentar? Resposta: diminuir.",
+                    "kind": "guess",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Mostrar em etapas: R$ 100 ÷ R$ 1.000 = 10%; R$ 100 ÷ R$ 5.000 = 2%. A transferência é progressiva porque aumenta proporcionalmente mais a renda de quem tem menos.",
+                    "kind": "workedExample",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Julgar: receber R$ 200 sobre renda de R$ 1.000 é proporcionalmente menos vantajoso que receber R$ 500 sobre R$ 5.000. Errado: são 20% contra 10%; a armadilha é comparar apenas os valores recebidos.",
+                    "kind": "check",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Uma transferência progressiva pode manter a diferença absoluta, medida em reais: ela continua em R$ 4.000 neste caso. Tabela de renda mensal por pessoa: menor renda, R$ 1.000 antes e R$ 1.100 depois; maior renda, R$ 5.000 antes e R$ 5.100 depois.",
+                    "kind": "explanation",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "table"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "O benefício líquido desconta do benefício recebido o custo suportado para financiar a política. Quem recebe R$ 200, mas paga R$ 250 adicionais no seu financiamento, fica com R$ 200 − R$ 250 = −R$ 50.",
+                    "kind": "explanation",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Tabela mensal por pessoa, com colunas renda, benefício e custo adicional: R$ 1.000 | R$ 200 | R$ 150; R$ 5.000 | R$ 400 | R$ 100. Julgar se o ganho líquido proporcional favorece a menor renda: Errado, são 5% contra 6%; a armadilha é ignorar o financiamento.",
+                    "kind": "check",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "table"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "A elegibilidade, isto é, cumprir os critérios para receber, não garante acesso efetivo. Um auxílio com inscrição apenas por aplicativo pode excluir pessoas que têm direito, mas não têm internet.",
+                    "kind": "explanation",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Um auxílio exclusivo para famílias de baixa renda exige conta bancária, que parte delas não possui. Julgar: o critério de renda basta para assegurar atendimento a todo o público previsto; Errado, pois o pagamento cria uma barreira de acesso.",
+                    "kind": "check",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "none"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "O crescimento total pode esconder a concentração dos novos benefícios: as vagas ocupadas passaram de 40 para 100, sem avanço na baixa renda. Mostrar barras por grupo, antes/depois: baixa renda, 20/20; renda alta, 20/80.",
+                    "kind": "explanation",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "chart"
+                  },
+                  {
+                    "activityTemplate": null,
+                    "brief": "Um auxílio exige aplicativo; tabela mensal por pessoa, com renda | recebem/elegíveis | auxílio | custo adicional: R$ 1.000 | 40/100 | R$ 300 | R$ 100; R$ 5.000 | 100/100 | R$ 300 | R$ 0. Pedir uma conclusão técnica e uma mudança de acesso: o ganho líquido entre recebedores é 20% contra 6%, mas a cobertura é 40% contra 100%; propor inscrição presencial, rejeitando que valores iguais garantam efeitos iguais.",
+                    "kind": "application",
+                    "skills": [
+                      0
+                    ],
+                    "visual": null,
+                    "visualKind": "table"
+                  }
+                ],
+                "skills": [
+                  {
+                    "description": "Analisar quem recebe benefícios, quem suporta os custos e quem encontra barreiras de acesso para avaliar a distribuição dos efeitos de uma política.",
+                    "example": "Um auxílio de R$ 100 representa 10% de uma renda de R$ 1.000 e 2% de uma renda de R$ 5.000.",
+                    "hard": true,
+                    "name": "Avaliar efeitos distributivos de políticas",
+                    "topic": "Avaliar efeitos distributivos de políticas",
+                    "useCase": "Examinar programas públicos sem confundir expansão do atendimento com redução das desigualdades."
+                  }
+                ],
+                "title": "Efeitos distributivos das políticas"
+              }
+            },
+            "lesson": {
+              "screens": [
+                {
+                  "content": {
+                    "text": "Em Cuiabá, um programa de cursos gratuitos mais que dobrou suas vagas. Um ano depois, o número de alunos de baixa renda era o mesmo. Como uma expansão pode deixar justamente esse grupo para trás?",
+                    "variant": "text"
+                  },
+                  "kind": "hook"
+                },
+                {
+                  "content": {
+                    "text": "Um programa abre 60 novas vagas gratuitas, e 45 delas ficam com pessoas de renda alta. A forma como benefícios e custos se repartem entre grupos se chama **efeito distributivo**.",
+                    "title": "Quem fica com o quê"
+                  },
+                  "kind": "explanation"
+                },
+                {
+                  "content": {
+                    "reveal": "Diminui: a renda maior era 5 vezes a menor e depois fica perto de 4,6 vezes.",
+                    "options": [
+                      {
+                        "id": "a",
+                        "text": "Diminui",
+                        "isCorrect": true
+                      },
+                      {
+                        "id": "b",
+                        "text": "Fica igual",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "c",
+                        "text": "Aumenta",
+                        "isCorrect": false
+                      }
+                    ],
+                    "variant": "guess",
+                    "question": "Uma pessoa ganha R$ 1.000 por mês e outra, R$ 5.000. As duas passam a receber R$ 100 a mais. Em proporção, o que acontece com a distância entre essas rendas?"
+                  },
+                  "kind": "hook"
+                },
+                {
+                  "content": {
+                    "steps": [
+                      {
+                        "math": "100 \\div 1{.}000 = 10\\%",
+                        "text": "Divida pela renda."
+                      },
+                      {
+                        "math": "100 \\div 5{.}000 = 2\\%",
+                        "text": "Repita."
+                      }
+                    ],
+                    "title": "R$ 100 em proporção",
+                    "result": "A mesma quantia pesa mais na renda menor. Por isso, essa transferência é **progressiva**.",
+                    "problem": "Quanto dos salários de R$ 1.000 e R$ 5.000 são R$ 100?"
+                  },
+                  "kind": "workedExample"
+                },
+                {
+                  "content": {
+                    "basis": {
+                      "quote": "A mesma quantia pesa mais na renda menor.",
+                      "position": 3
+                    },
+                    "context": "Julgue o item.",
+                    "options": [
+                      {
+                        "id": "a",
+                        "text": "Certo",
+                        "reason": "R$ 420 é um valor maior, mas comparar só os valores recebidos engana: R$ 180 são 15% da renda, enquanto R$ 420 são 7%.",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "Errado",
+                        "reason": "R$ 180 são 15% de R$ 1.200, e R$ 420 são 7% de R$ 6.000. Proporcionalmente, a pessoa de menor renda recebe mais.",
+                        "isCorrect": true
+                      }
+                    ],
+                    "question": "Receber R$ 180 sobre uma renda de R$ 1.200 é proporcionalmente menos vantajoso que receber R$ 420 sobre uma renda de R$ 6.000."
+                  },
+                  "kind": "check"
+                },
+                {
+                  "content": {
+                    "text": "Renda mensal por pessoa:\n\n| Renda | Antes | Depois |\n|---|---:|---:|\n| Menor | R$ 1.000 | R$ 1.100 |\n| Maior | R$ 5.000 | R$ 5.100 |\n\nA proporção entre as rendas caiu, mas a distância segue em R$ 4.000. Essa distância medida em reais se chama **diferença absoluta**. Um auxílio igual para todos não a reduz.",
+                    "title": "Proporção cai, reais não"
+                  },
+                  "kind": "explanation"
+                },
+                {
+                  "content": {
+                    "text": "Débora recebe R$ 200 de um programa, mas paga R$ 250 a mais em tributos que o financiam. No saldo, ela perde R$ 50. O que sobra depois de descontar o custo é o **benefício líquido**.",
+                    "title": "Benefício menos custo",
+                    "exampleLineSlot": {
+                      "idea": "um benefício que o aprendiz recebe, mas ajuda a pagar de outra forma, como em impostos ou tarifas"
+                    }
+                  },
+                  "kind": "explanation"
+                },
+                {
+                  "content": {
+                    "basis": {
+                      "quote": "O que sobra depois de descontar o custo é o **benefício líquido**.",
+                      "position": 6
+                    },
+                    "context": "Valores mensais por pessoa:\n\n| Renda | Benefício | Custo adicional |\n|---:|---:|---:|\n| R$ 1.000 | R$ 200 | R$ 150 |\n| R$ 5.000 | R$ 400 | R$ 100 |\n\nJulgue o item.",
+                    "options": [
+                      {
+                        "id": "a",
+                        "text": "Certo",
+                        "reason": "Sem o custo, seriam 20% contra 8%, e o item pareceria certo. Descontado o custo, ficam R$ 50 sobre R$ 1.000 (5%) contra R$ 300 sobre R$ 5.000 (6%).",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "Errado",
+                        "reason": "A menor renda fica com R$ 50 líquidos, ou 5%. A maior fica com R$ 300, ou 6%. O ganho líquido proporcional favorece a maior renda.",
+                        "isCorrect": true
+                      }
+                    ],
+                    "question": "Considerado o custo adicional, o ganho líquido proporcional favorece a pessoa de menor renda."
+                  },
+                  "kind": "check"
+                },
+                {
+                  "content": {
+                    "text": "Iara cumpre todos os critérios de um auxílio. Mas a inscrição é só por aplicativo, e ela não tem internet. Cumprir os critérios se chama **elegibilidade**. Mas ser elegível não garante acesso.",
+                    "title": "Ter direito não é receber"
+                  },
+                  "kind": "explanation"
+                },
+                {
+                  "content": {
+                    "basis": {
+                      "quote": "Mas ser elegível não garante acesso.",
+                      "position": 8
+                    },
+                    "context": "Um auxílio é exclusivo para famílias de baixa renda. O pagamento, porém, só é feito em conta bancária, e parte dessas famílias não tem conta.",
+                    "options": [
+                      {
+                        "id": "a",
+                        "text": "Certo",
+                        "reason": "O critério define quem tem direito, por isso parece suficiente. Mas quem não tem conta bancária não consegue receber, mesmo sendo elegível.",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "Errado",
+                        "reason": "A exigência de conta bancária é uma barreira de acesso. Ela exclui famílias que cumprem o critério de renda.",
+                        "isCorrect": true
+                      }
+                    ],
+                    "question": "Julgue: o critério de renda basta para assegurar o atendimento a todo o público previsto."
+                  },
+                  "kind": "check"
+                },
+                {
+                  "content": {
+                    "text": "As vagas ocupadas foram de 40 para 100. As 60 novas ficaram todas com a renda alta, e a baixa renda seguiu com 20. Quando os ganhos se acumulam num só grupo, há **concentração** dos benefícios.",
+                    "title": "Crescer não é distribuir",
+                    "visual": {
+                      "kind": "chart",
+                      "unit": null,
+                      "chart": "bar",
+                      "title": "Vagas ocupadas por grupo de renda",
+                      "series": [
+                        {
+                          "name": "Antes",
+                          "values": [
+                            20,
+                            20
+                          ]
+                        },
+                        {
+                          "name": "Depois",
+                          "values": [
+                            20,
+                            80
+                          ]
+                        }
+                      ],
+                      "source": null,
+                      "axisStart": null,
+                      "categories": [
+                        "Baixa renda",
+                        "Renda alta"
+                      ],
+                      "valueLabel": "Vagas ocupadas",
+                      "categoryLabel": "Grupo"
+                    }
+                  },
+                  "kind": "explanation"
+                },
+                {
+                  "content": {
+                    "basis": null,
+                    "context": "Uma prefeitura oferece auxílio com inscrição só por aplicativo. Valores mensais por pessoa:\n\n| Renda | Recebem/elegíveis | Auxílio | Custo adicional |\n|---:|---:|---:|---:|\n| R$ 2.400 | 60/100 | R$ 600 | R$ 120 |\n| R$ 12.000 | 100/100 | R$ 600 | R$ 0 |",
+                    "options": [
+                      {
+                        "id": "a",
+                        "text": "O ganho líquido de 20% contra 5% prova que todos os elegíveis já são atendidos. Basta aumentar o valor.",
+                        "reason": "Essa comparação vale para quem recebe. Só 60 de cada 100 elegíveis de menor renda recebem, então aumentar o valor não resolve a barreira do aplicativo.",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "b",
+                        "text": "Entre quem recebe, o ganho líquido é 20% contra 5%, mas a cobertura é 60% contra 100%. Oferecer inscrição presencial pode reduzir a barreira.",
+                        "reason": "R$ 480 líquidos sobre R$ 2.400 são 20%; R$ 600 sobre R$ 12.000 são 5%. Mas 40% dos elegíveis de menor renda não recebem; a inscrição presencial pode ampliar o acesso.",
+                        "isCorrect": true
+                      },
+                      {
+                        "id": "c",
+                        "text": "O auxílio tem o mesmo valor para todos, então seus efeitos são iguais. Basta manter o aplicativo.",
+                        "reason": "O mesmo valor representa proporções diferentes, e a cobertura também difere: 60 de cada 100 elegíveis de menor renda recebem, contra todos os de maior renda.",
+                        "isCorrect": false
+                      },
+                      {
+                        "id": "d",
+                        "text": "O ganho é de 25% contra 5%, e a cobertura não importa. Basta manter o aplicativo.",
+                        "reason": "Os 25% ignoram o custo adicional de R$ 120: o ganho líquido é 20%. A cobertura importa, pois 40% dos elegíveis de menor renda ficam sem receber.",
+                        "isCorrect": false
+                      }
+                    ],
+                    "question": "Qual avaliação e qual mudança de acesso fazem sentido?"
+                  },
+                  "kind": "check"
+                }
+              ],
+              "summary": {
+                "ideas": [
+                  {
+                    "text": "O efeito distributivo mostra como os benefícios e os custos de uma política se repartem entre grupos.",
+                    "about": "Como benefícios e custos se distribuem entre grupos?",
+                    "label": "Efeito distributivo",
+                    "iconId": "01a1bc05-64ba-7394-8de1-e2785c535339",
+                    "iconNeed": {
+                      "name": "pie chart",
+                      "description": "A simple circle chart divided into several distinct slices.",
+                      "searchWords": [
+                        "chart",
+                        "circle graph",
+                        "distribution"
+                      ]
+                    },
+                    "iconPending": false
+                  },
+                  {
+                    "text": "Uma transferência é progressiva quando aumenta proporcionalmente mais a renda de quem tem menos, como R$ 100 que somam 10% a R$ 1.000 e 2% a R$ 5.000.",
+                    "about": "Quando uma transferência pesa mais para quem tem menos",
+                    "label": "Transferência progressiva",
+                    "iconId": "01a1bb7b-5719-7d97-babd-8727e15c91e4",
+                    "iconNeed": {
+                      "name": "staircase",
+                      "description": "A short staircase with several clearly visible steps.",
+                      "searchWords": [
+                        "stairs",
+                        "steps",
+                        "stairway"
+                      ]
+                    },
+                    "iconPending": false
+                  },
+                  {
+                    "text": "Um auxílio igual para todos pode reduzir a proporção entre as rendas e ainda manter a diferença absoluta em reais.",
+                    "about": "Como comparar distâncias entre rendas em reais?",
+                    "label": "Diferença absoluta",
+                    "iconId": "01a1bc08-7e8d-7865-9d98-3e5a320b0817",
+                    "iconNeed": {
+                      "name": "ruler",
+                      "description": "A straight ruler with small measurement marks.",
+                      "searchWords": [
+                        "measuring stick",
+                        "measure",
+                        "length"
+                      ]
+                    },
+                    "iconPending": false
+                  },
+                  {
+                    "text": "O benefício líquido é o que sobra do benefício recebido depois de descontar o custo pago para financiar a política.",
+                    "about": "Como comparar o que se recebe e o que se paga?",
+                    "label": "Benefício líquido",
+                    "iconId": "01a1bc09-196e-78b7-a9e1-f194c6e0f101",
+                    "iconNeed": {
+                      "name": "balance scale",
+                      "description": "A classic balance scale with a pan on each side.",
+                      "searchWords": [
+                        "scales",
+                        "weighing scale",
+                        "balance"
+                      ]
+                    },
+                    "iconPending": false
+                  },
+                  {
+                    "text": "Ser elegível não garante acesso, e uma expansão do total de vagas pode concentrar os novos benefícios num só grupo.",
+                    "about": "Quem consegue acessar um benefício e como ele se distribui?",
+                    "label": "Elegibilidade e concentração",
+                    "iconId": "01a1ba8d-7694-7d49-be3c-dd57e75749eb",
+                    "iconNeed": {
+                      "name": "doorway",
+                      "description": "An open doorway with a visible threshold.",
+                      "searchWords": [
+                        "door",
+                        "entrance",
+                        "entry"
+                      ]
+                    },
+                    "iconPending": false
+                  }
+                ],
+                "shape": "hub"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "verdict": "pass"
+        },
+        "id": "pt-regra-clean-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+                  "prompt": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas."
+                },
+                "kind": "hookText",
+                "text": "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam. O dono promete ao cliente o prazo de sempre. Ele pode prometer isso?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "explore": null,
+                "image": {
+                  "alt": "Com a mesma roupa, mais secadoras levam menos tempo; com as mesmas secadoras, mais roupa leva mais tempo.",
+                  "prompt": "Duas cenas de uma lavanderia. Mesma roupa: 2 secadoras levam mais tempo que 4. Mesmas secadoras: 1 cesto de roupa leva menos tempo que 2. Rótulos: 'roupa fixa', 'secadoras fixas', 'menos tempo', 'mais tempo'."
+                },
+                "kind": "explanation",
+                "text": "Olhe a lavanderia. Para a mesma roupa, mais secadoras significam menos tempo: é uma relação **inversa**. Com as mesmas secadoras, mais roupa significa mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "title": "O que fica fixo?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Aumenta"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Diminui"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Fica igual"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "Depende de quanto cada coisa mudou"
+                  }
+                ],
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "title": "Uma mudança por vez",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo.",
+                    "text": "Cai pela metade; depois dobra."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido.",
+                    "text": "Dobra nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe.",
+                    "text": "Cai pela metade nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo.",
+                    "text": "Dobra; depois cai pela metade."
+                  }
+                ],
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "steps": [
+                  {
+                    "math": null,
+                    "text": "Mantenha a obra fixa: é o mesmo muro."
+                  },
+                  {
+                    "math": "\\frac{4}{8}",
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes."
+                  },
+                  {
+                    "math": "6\\times\\frac{4}{8}=3",
+                    "text": "Multiplique o prazo inicial por essa razão."
+                  }
+                ],
+                "title": "Mais gente, menos dias",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 5,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*etiquetas/meta",
+                      "misconception": "Razão invertida",
+                      "reason": "Você inverteu a razão das etiquetas. Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    },
+                    {
+                      "expression": "(meta-etiquetas)/(etiquetas/horas)",
+                      "misconception": "Só o tempo extra",
+                      "reason": "Você calculou apenas o tempo das etiquetas adicionais e esqueceu o tempo gasto com a quantidade inicial."
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas",
+                  "steps": [
+                    {
+                      "expression": null,
+                      "text": "As {impressoras} impressoras continuam trabalhando. Só a quantidade de etiquetas muda."
+                    },
+                    {
+                      "expression": "horas*meta/etiquetas",
+                      "text": "Como mais etiquetas exigem mais tempo, multiplique {horas} pela razão entre {meta} e {etiquetas}."
+                    },
+                    {
+                      "expression": "horas*meta/etiquetas",
+                      "text": "O novo prazo é {result} horas."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "horas",
+                  "variables": [
+                    {
+                      "max": 5,
+                      "min": 2,
+                      "name": "impressoras",
+                      "step": 1,
+                      "unit": null,
+                      "value": 2
+                    },
+                    {
+                      "max": 160,
+                      "min": 40,
+                      "name": "etiquetas",
+                      "step": 40,
+                      "unit": "etiquetas",
+                      "value": 80
+                    },
+                    {
+                      "max": 5,
+                      "min": 1,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 2
+                    },
+                    {
+                      "max": 400,
+                      "min": 200,
+                      "name": "meta",
+                      "step": 40,
+                      "unit": "etiquetas",
+                      "value": 200
+                    }
+                  ]
+                },
+                "question": "Mantendo as mesmas impressoras, quanto tempo elas levam para fazer {meta} etiquetas?"
+              },
+              {
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "title": "Duas mudanças juntas",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "steps": [
+                  {
+                    "math": "4\\text{ horas}",
+                    "text": "Comece pelo prazo conhecido."
+                  },
+                  {
+                    "math": "\\frac{600}{240}",
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo."
+                  },
+                  {
+                    "math": "\\frac{3}{5}",
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa."
+                  },
+                  {
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6",
+                    "text": "Junte os dois efeitos."
+                  }
+                ],
+                "title": "Pedido maior, mais impressoras",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 4,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "steps": [
+                    {
+                      "expression": null,
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)",
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                      "text": "O prazo calculado é {result} horas."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "horas",
+                  "variables": [
+                    {
+                      "max": 4,
+                      "min": 2,
+                      "name": "maquinasAntigas",
+                      "step": 1,
+                      "unit": "máquinas",
+                      "value": 2
+                    },
+                    {
+                      "max": 200,
+                      "min": 80,
+                      "name": "pecasAntigas",
+                      "step": 40,
+                      "unit": "peças",
+                      "value": 120
+                    },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
+                    {
+                      "max": 8,
+                      "min": 4,
+                      "name": "maquinasNovas",
+                      "step": 1,
+                      "unit": "máquinas",
+                      "value": 4
+                    },
+                    {
+                      "max": 480,
+                      "min": 240,
+                      "name": "pecasNovas",
+                      "step": 40,
+                      "unit": "peças",
+                      "value": 320
+                    }
+                  ]
+                },
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?"
+              },
+              {
+                "basis": null,
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 5,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "steps": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                      "text": "O prazo para a nova fornada é {result} horas."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "horas",
+                  "variables": [
+                    {
+                      "max": 4,
+                      "min": 2,
+                      "name": "fornosAntigos",
+                      "step": 1,
+                      "unit": "fornos",
+                      "value": 2
+                    },
+                    {
+                      "max": 200,
+                      "min": 80,
+                      "name": "paesAntigos",
+                      "step": 40,
+                      "unit": "pães",
+                      "value": 120
+                    },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
+                    {
+                      "max": 6,
+                      "min": 3,
+                      "name": "fornosNovos",
+                      "step": 1,
+                      "unit": "fornos",
+                      "value": 3
+                    },
+                    {
+                      "max": 480,
+                      "min": 240,
+                      "name": "paesNovos",
+                      "step": 20,
+                      "unit": "pães",
+                      "value": 300
+                    }
+                  ]
+                },
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?"
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Trabalho ou capacidade fixa",
+                  "text": "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo."
+                },
+                {
+                  "label": "Regra de três simples",
+                  "text": "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou."
+                },
+                {
+                  "label": "Regra de três composta",
+                  "text": "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+                }
+              ],
+              "shape": "hub"
+            }
+          },
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam, e o dono promete ao cliente o prazo de sempre. Termine na pergunta aberta: ele pode prometer isso?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Compare dois casos numa lavanderia: para a mesma roupa, mais secadoras significam menos tempo, uma relação inversa; com as mesmas secadoras, mais roupa significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": "Duas cenas de uma lavanderia: roupa fixa com números diferentes de secadoras; secadoras fixas com cestos de roupa diferentes.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que o aluno escolha o que acontece com o prazo da gráfica em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "kind": "workedExample",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "kind": "check",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "kind": "explanation",
+                "skills": [
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "kind": "workedExample",
+                "skills": [
+                  0,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "kind": "check",
+                "skills": [
+                  0,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "title": "Regra de três simples e composta"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "fail",
+        "predicted": "fail"
+      },
+      "steps": [
+        {
+          "conclusion": "[screen 7] The statement “Uma hora tem 60 minutos” is a fixed conversion, but `newNumbers` allows “minutos” to vary from 30 to 90 in steps of 15. Practice could therefore teach a false conversion between hours and minutes.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 7] The statement “Uma hora tem 60 minutos” is a fixed conversion, but `newNumbers` allows “minutos” to vary from 30 to 90 in steps of 15. Practice could therefore teach a false conversion between hours and minutes.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[screen 7] The statement “Uma hora tem 60 minutos” is a fixed conversion, but `newNumbers` allows “minutos” to vary from 30 to 90 in steps of 15. Practice could therefore teach a false conversion between hours and minutes.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screen": 7,
+          "verdict": "fail"
+        },
+        "id": "pt-regra-minutes-per-hour-varies-1",
+        "userInput": {
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+                  "prompt": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas."
+                },
+                "kind": "hookText",
+                "text": "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam. O dono promete ao cliente o prazo de sempre. Ele pode prometer isso?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+                "explore": null,
+                "image": {
+                  "alt": "Com a mesma roupa, mais secadoras levam menos tempo; com as mesmas secadoras, mais roupa leva mais tempo.",
+                  "prompt": "Duas cenas de uma lavanderia. Mesma roupa: 2 secadoras levam mais tempo que 4. Mesmas secadoras: 1 cesto de roupa leva menos tempo que 2. Rótulos: 'roupa fixa', 'secadoras fixas', 'menos tempo', 'mais tempo'."
+                },
+                "kind": "explanation",
+                "text": "Olhe a lavanderia. Para a mesma roupa, mais secadoras significam menos tempo: é uma relação **inversa**. Com as mesmas secadoras, mais roupa significa mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+                "title": "O que fica fixo?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "Aumenta"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Diminui"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "Fica igual"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "Depende de quanto cada coisa mudou"
+                  }
+                ],
+                "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
+                "title": "Uma mudança por vez",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo.",
+                    "text": "Cai pela metade; depois dobra."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido.",
+                    "text": "Dobra nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe.",
+                    "text": "Cai pela metade nos dois casos."
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo.",
+                    "text": "Dobra; depois cai pela metade."
+                  }
+                ],
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Quatro trabalhadores terminam um muro em 6 dias. No mesmo ritmo, quantos dias 8 trabalhadores levam para terminar o mesmo muro?",
+                "result": "Oito trabalhadores terminam o muro em 3 dias.",
+                "steps": [
+                  {
+                    "math": null,
+                    "text": "Mantenha a obra fixa: é o mesmo muro."
+                  },
+                  {
+                    "math": "\\frac{4}{8}",
+                    "text": "Com mais trabalhadores, o tempo diminui. Use a razão inversa entre as equipes."
+                  },
+                  {
+                    "math": "6\\times\\frac{4}{8}=3",
+                    "text": "Multiplique o prazo inicial por essa razão."
+                  }
+                ],
+                "title": "Mais gente, menos dias",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo. Uma hora tem {minutos} minutos.",
+                "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção, e cada hora vale {minutos} minutos.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 300,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*meta/etiquetas",
+                      "misconception": "Esqueceu de converter",
+                      "reason": "Você achou o prazo em horas, mas a pergunta pede minutos."
+                    },
+                    {
+                      "expression": "horas*etiquetas/meta*minutos",
+                      "misconception": "Razão invertida",
+                      "reason": "Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos."
+                    }
+                  ],
+                  "solution": "horas*meta/etiquetas*minutos",
+                  "steps": [
+                    {
+                      "expression": "horas*meta/etiquetas",
+                      "text": "Multiplique {horas} pela razão entre {meta} e {etiquetas}: {result} horas."
+                    },
+                    {
+                      "expression": "horas*meta/etiquetas*minutos",
+                      "text": "Em minutos, são {result}."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "minutos",
+                  "variables": [
+                    {
+                      "max": 5,
+                      "min": 2,
+                      "name": "impressoras",
+                      "step": 1,
+                      "unit": null,
+                      "value": 2
+                    },
+                    {
+                      "max": 160,
+                      "min": 40,
+                      "name": "etiquetas",
+                      "step": 40,
+                      "unit": "etiquetas",
+                      "value": 80
+                    },
+                    {
+                      "max": 5,
+                      "min": 1,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 2
+                    },
+                    {
+                      "max": 400,
+                      "min": 200,
+                      "name": "meta",
+                      "step": 40,
+                      "unit": "etiquetas",
+                      "value": 200
+                    },
+                    {
+                      "max": 90,
+                      "min": 30,
+                      "name": "minutos",
+                      "step": 15,
+                      "unit": "minutos",
+                      "value": 60
+                    }
+                  ]
+                },
+                "question": "Mantendo as mesmas impressoras, quantos minutos elas levam para fazer {meta} etiquetas?"
+              },
+              {
+                "exampleLineIdea": "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "title": "Duas mudanças juntas",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Três impressoras fazem 240 etiquetas em 4 horas. No mesmo ritmo, quanto tempo 5 impressoras levam para fazer 600 etiquetas?",
+                "result": "Cinco impressoras fazem as 600 etiquetas em 6 horas.",
+                "steps": [
+                  {
+                    "math": "4\\text{ horas}",
+                    "text": "Comece pelo prazo conhecido."
+                  },
+                  {
+                    "math": "\\frac{600}{240}",
+                    "text": "A quantidade de etiquetas aumenta. Multiplique pela razão entre o pedido novo e o antigo."
+                  },
+                  {
+                    "math": "\\frac{3}{5}",
+                    "text": "O número de impressoras também aumenta. Para o tempo, use a razão inversa."
+                  },
+                  {
+                    "math": "4\\times\\frac{600}{240}\\times\\frac{3}{5}=6",
+                    "text": "Junte os dois efeitos."
+                  }
+                ],
+                "title": "Pedido maior, mais impressoras",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
+                "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 4,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasNovas/maquinasAntigas)",
+                      "misconception": "Máquinas como relação direta",
+                      "reason": "Você tratou mais máquinas como se elas aumentassem o prazo. Para a mesma quantidade de peças, mais máquinas reduzem o tempo."
+                    },
+                    {
+                      "expression": "horas*(pecasAntigas/pecasNovas)*(maquinasAntigas/maquinasNovas)",
+                      "misconception": "Razão das peças invertida",
+                      "reason": "Você tratou mais peças como se elas reduzissem o prazo. Mantendo as máquinas fixas, mais peças exigem mais tempo."
+                    }
+                  ],
+                  "solution": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                  "steps": [
+                    {
+                      "expression": null,
+                      "text": "Parta de {horas} horas para {pecasAntigas} peças."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)",
+                      "text": "Ajuste pela quantidade de peças, que altera o tempo no mesmo sentido."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                      "text": "Ajuste pelo número de máquinas, que altera o tempo no sentido contrário."
+                    },
+                    {
+                      "expression": "horas*(pecasNovas/pecasAntigas)*(maquinasAntigas/maquinasNovas)",
+                      "text": "O prazo calculado é {result} horas."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "horas",
+                  "variables": [
+                    {
+                      "max": 4,
+                      "min": 2,
+                      "name": "maquinasAntigas",
+                      "step": 1,
+                      "unit": "máquinas",
+                      "value": 2
+                    },
+                    {
+                      "max": 200,
+                      "min": 80,
+                      "name": "pecasAntigas",
+                      "step": 40,
+                      "unit": "peças",
+                      "value": 120
+                    },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
+                    {
+                      "max": 8,
+                      "min": 4,
+                      "name": "maquinasNovas",
+                      "step": 1,
+                      "unit": "máquinas",
+                      "value": 4
+                    },
+                    {
+                      "max": 480,
+                      "min": 240,
+                      "name": "pecasNovas",
+                      "step": 40,
+                      "unit": "peças",
+                      "value": 320
+                    }
+                  ]
+                },
+                "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?"
+              },
+              {
+                "basis": null,
+                "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
+                "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 5,
+                  "commonMistakes": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "misconception": "Esquecer os fornos",
+                      "reason": "Você ajustou o prazo pelo pedido maior, mas não considerou que mais fornos assam os pães mais rápido."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosNovos/fornosAntigos)",
+                      "misconception": "Razão dos fornos invertida",
+                      "reason": "Você tratou mais fornos como se aumentassem o tempo. Com a quantidade de pães fixa, mais fornos reduzem o prazo."
+                    }
+                  ],
+                  "solution": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                  "steps": [
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)",
+                      "text": "Mais pães aumentam o tempo. Ajuste o prazo pela razão entre as quantidades."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                      "text": "Mais fornos reduzem o tempo. Ajuste pela razão inversa entre os fornos."
+                    },
+                    {
+                      "expression": "horas*(paesNovos/paesAntigos)*(fornosAntigos/fornosNovos)",
+                      "text": "O prazo para a nova fornada é {result} horas."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "horas",
+                  "variables": [
+                    {
+                      "max": 4,
+                      "min": 2,
+                      "name": "fornosAntigos",
+                      "step": 1,
+                      "unit": "fornos",
+                      "value": 2
+                    },
+                    {
+                      "max": 200,
+                      "min": 80,
+                      "name": "paesAntigos",
+                      "step": 40,
+                      "unit": "pães",
+                      "value": 120
+                    },
+                    {
+                      "max": 6,
+                      "min": 2,
+                      "name": "horas",
+                      "step": 1,
+                      "unit": "horas",
+                      "value": 3
+                    },
+                    {
+                      "max": 6,
+                      "min": 3,
+                      "name": "fornosNovos",
+                      "step": 1,
+                      "unit": "fornos",
+                      "value": 3
+                    },
+                    {
+                      "max": 480,
+                      "min": 240,
+                      "name": "paesNovos",
+                      "step": 20,
+                      "unit": "pães",
+                      "value": 300
+                    }
+                  ]
+                },
+                "question": "Quanto tempo {fornosNovos} fornos levam para assar {paesNovos} pães?"
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Trabalho ou capacidade fixa",
+                  "text": "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo."
+                },
+                {
+                  "label": "Regra de três simples",
+                  "text": "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou."
+                },
+                {
+                  "label": "Regra de três composta",
+                  "text": "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção."
+                }
+              ],
+              "shape": "hub"
+            }
+          },
+          "level": "intermediate",
+          "spec": {
+            "canDo": "Resolver regras de três simples e compostas com grandezas diretas e inversas",
+            "description": "Use a relação entre grandezas para calcular prazos quando mudam a quantidade de trabalho e a capacidade de produção.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Na gráfica do bairro, um pedido de etiquetas dobra de tamanho no mesmo dia em que dois funcionários novos começam, e o dono promete ao cliente o prazo de sempre. Termine na pergunta aberta: ele pode prometer isso?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "Uma gráfica de bairro com pilhas de etiquetas e quatro funcionários nas máquinas.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Compare dois casos numa lavanderia: para a mesma roupa, mais secadoras significam menos tempo, uma relação inversa; com as mesmas secadoras, mais roupa significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": "Duas cenas de uma lavanderia: roupa fixa com números diferentes de secadoras; secadoras fixas com cestos de roupa diferentes.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma gráfica recebe um pedido maior e contrata mais gente para ajudar. O prazo vai aumentar ou diminuir? Peça um palpite sem avaliar a resposta.",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que o aluno escolha o que acontece com o prazo da gráfica em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
+                "kind": "workedExample",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
+                "kind": "check",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
+                "kind": "explanation",
+                "skills": [
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
+                "kind": "workedExample",
+                "skills": [
+                  0,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
+                "kind": "check",
+                "skills": [
+                  0,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "Determine se duas grandezas variam no mesmo sentido ou em sentidos opostos, mantendo as demais condições fixas.",
+                "example": "Para o mesmo pedido, dobrar a equipe reduz o prazo pela metade.",
+                "hard": false,
+                "name": "Identificar grandezas direta e inversamente proporcionais",
+                "topic": "Grandezas proporcionais",
+                "useCase": "Prever como uma mudança na equipe ou no tamanho de um pedido afeta um prazo."
+              },
+              {
+                "description": "Calcule um valor desconhecido a partir de duas grandezas diretamente ou inversamente proporcionais.",
+                "example": "Se 4 pessoas terminam um muro em 6 dias, 8 pessoas levam 3 dias.",
+                "hard": true,
+                "name": "Resolver regra de três simples",
+                "topic": "Regra de três simples",
+                "useCase": "Estimar o tempo de um serviço quando muda a equipe ou a quantidade produzida."
+              },
+              {
+                "description": "Calcule um valor desconhecido quando duas ou mais grandezas mudam, considerando o sentido de cada relação.",
+                "example": "Se 3 impressoras fazem 240 etiquetas em 4 horas, 5 impressoras fazem 600 em 6 horas.",
+                "hard": true,
+                "name": "Resolver regra de três composta",
+                "topic": "Regra de três composta",
+                "useCase": "Planejar prazos quando mudam ao mesmo tempo o tamanho do pedido e os recursos disponíveis."
+              }
+            ],
+            "title": "Regra de três simples e composta"
           }
         }
       }

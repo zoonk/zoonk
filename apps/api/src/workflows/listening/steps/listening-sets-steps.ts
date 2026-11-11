@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/exams/listening/prepare";
 import { voiceListeningSet } from "@zoonk/core/library/listening/voice";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { storeKeyCheckedItemSet } from "../../_shared/item-set-steps";
 
 type PartStepInput = Pick<PartsToPrepare, "exam"> & {
   analytics?: ContentAnalytics;
@@ -28,20 +29,34 @@ export async function listListeningPartsToPrepareStep(input: {
   return listListeningPartsToPrepare(input);
 }
 
-export async function preparePartSetStep(input: PartStepInput): Promise<string | null> {
+async function findUnvoicedPartSetStep(input: PartStepInput): Promise<string | null> {
   "use step";
 
-  const unvoiced = await findUnvoicedPartSet(input);
+  return findUnvoicedPartSet(input);
+}
 
-  if (unvoiced) {
-    return unvoiced;
-  }
+async function writePartSetStep(input: PartStepInput) {
+  "use step";
 
   return writePartSet({
     analytics: toAnalytics(input),
     exam: input.exam,
     part: input.part,
     serviceTier: chooseServiceTier({ wait: input.wait }),
+  });
+}
+
+export async function preparePartSet(input: PartStepInput): Promise<string | null> {
+  const unvoiced = await findUnvoicedPartSetStep(input);
+
+  if (unvoiced) {
+    return unvoiced;
+  }
+
+  return storeKeyCheckedItemSet({
+    analytics: toAnalytics(input),
+    set: await writePartSetStep(input),
+    wait: input.wait,
   });
 }
 

@@ -5,7 +5,12 @@ import { getExampleExamDay, getExampleSet } from "./landing-examples";
 async function getExamGoal(): Promise<string> {
   const format = await getFormatter();
   const { exam } = await getExampleSet();
-  const examDay = await getExampleExamDay();
+
+  if (!("sittings" in exam)) {
+    return exam.goal;
+  }
+
+  const examDay = await getExampleExamDay(exam);
 
   return exam.goal(format.dateTime(examDay, { month: "long", timeZone: "UTC" }));
 }

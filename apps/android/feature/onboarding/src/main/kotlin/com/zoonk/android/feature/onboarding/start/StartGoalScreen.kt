@@ -113,7 +113,7 @@ fun StartGoalScreen(
     val analytics = LocalEventTracker.current
     val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId, analytics) }
     val hasSession = sessionKey != null
-    LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
+    LaunchedEffect(sessionKey) { vm.followSession(sessionKey, hasAccount = canAttach) }
     val caps by allowance.collectShown()
     val upFront = caps.value?.goalStartLimit()
     val language = currentLocale().language
@@ -192,7 +192,7 @@ fun StartGoalScreen(
                     }
 
                     screen is StartScreen.Draft -> {
-                        Draft(vm, store, screen.id, hasSession, upFront, language, actions)
+                        Draft(vm, store, screen.id, hasSession, canAttach, upFront, language, actions)
                     }
                 }
             }
@@ -314,6 +314,7 @@ private fun ColumnScope.Draft(
     store: OnboardingStore,
     id: String,
     hasSession: Boolean,
+    hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
@@ -323,7 +324,7 @@ private fun ColumnScope.Draft(
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            DraftContent(vm, shown.value, upFront, language, actions)
+            DraftContent(vm, shown.value, hasAccount, upFront, language, actions)
         }
 
         is LoadState.Failed -> {
@@ -357,6 +358,7 @@ private fun ColumnScope.Draft(
 private fun ColumnScope.DraftContent(
     vm: StartGoalViewModel,
     draft: OnboardingDraft,
+    hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
@@ -371,6 +373,7 @@ private fun ColumnScope.DraftContent(
     LaunchedEffect(draft.id, draft.status) {
         vm.settle(draft, explanation = { read, question -> explanationInput(read, question, language) }, onCreated = actions.toExplanation)
     }
+    LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
     val back = { vm.backToEntry(draft.prompt) }
     val limit = vm.draftLimit
@@ -447,9 +450,10 @@ private fun ColumnScope.DraftContent(
             UnderstoodScreen(
                 goal = draft.prompt,
                 understanding = understanding.value,
-                activeGoalLimit = draft.activeGoalLimit,
+                activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
+                hasAccount = hasAccount,
                 isCreating = vm.isCreating,
                 error = vm.creationError,
                 goalLimit = upFront,
@@ -458,7 +462,7 @@ private fun ColumnScope.DraftContent(
                     vm.confirm(
                         understoodGoalsInput(
                             understanding.value,
-                            draft.activeGoalLimit,
+                            draft.activeGoalsLeft,
                             draft.timeZone,
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },

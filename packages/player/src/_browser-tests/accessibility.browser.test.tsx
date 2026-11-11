@@ -160,7 +160,7 @@ describe("lesson player accessibility", () => {
 
       await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
 
-      await enterTo(page.getByText('What does the electron "cloud" show?'));
+      await enterTo(page.getByRole("heading", { name: 'What does the electron "cloud" show?' }));
       await pick("1", "The electron's exact path");
       await enterTo(verdict("Not quite"));
       await expectAccessibleScreen("a wrong answer's feedback");
@@ -177,7 +177,7 @@ describe("lesson player accessibility", () => {
       await expect.element(verdict("Correct!")).toBeVisible();
       await expectAccessibleScreen("a written answer's grade");
 
-      await enterTo(page.getByText('What does the electron "cloud" show?'));
+      await enterTo(page.getByRole("heading", { name: 'What does the electron "cloud" show?' }));
       await pick("2", RIGHT_OPTION);
       await enterTo(verdict("Correct!"));
       await enterTo(page.getByRole("heading", { name: "Lesson map" }));

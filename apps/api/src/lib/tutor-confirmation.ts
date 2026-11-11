@@ -1,5 +1,5 @@
 import { getBrowserLocale } from "@/i18n/locale";
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
+import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type TutorAnswerRun } from "@zoonk/core/lesson-questions/tutor-answer";
 import { getContentLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -31,6 +31,7 @@ export async function loadConfirmationWords(language: string) {
     proposal: t("I've put the change to your plan below. Nothing changes until you apply it."),
     startGoal: t("Below you can start it as a new goal."),
     stats: t("Below are your statistics."),
+    variety: t("Below you can choose that variety for your buddy and practice calls."),
   };
 }
 
@@ -52,6 +53,7 @@ function describeOffer({ offer, words }: { offer: TutorToolOffer; words: Confirm
     case "pronunciation":
     case "startGoal":
     case "stats":
+    case "variety":
       return words[offer.kind];
     default:
       return offer satisfies never;

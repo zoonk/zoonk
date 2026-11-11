@@ -169,20 +169,20 @@ function CoverageBody({
   return (
     <SuggestionActions>
       {offer && (
-        <SuggestionAction key="preview" onClick={() => void requestPreview(offer.operations)}>
+        <SuggestionAction action={() => void requestPreview(offer.operations)} key="preview">
           {t("Preview")}
         </SuggestionAction>
       )}
 
       {findsTime && (
-        <SuggestionAction busy={pending} key="find" onClick={() => ask(retry ? intent : "time")}>
+        <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
           {retry ? texts.tryAgain : texts.find}
         </SuggestionAction>
       )}
 
       {/* Keyed as Find, so the button Find was pressed on becomes it and keeps the keyboard. */}
       {flags.studiesEverything && fullCourse && (
-        <SuggestionAction key="find" onClick={() => studyEverything(fullCourse)}>
+        <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
           {t("Study everything, even after the exam")}
         </SuggestionAction>
       )}

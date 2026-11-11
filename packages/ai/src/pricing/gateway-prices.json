@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-08T14:46:58.126Z",
+  "fetchedAt": "2026-11-11T02:17:45.697Z",
   "models": {
     "alibaba/qwen-3-14b": { "input": 1.2e-7, "output": 2.4e-7 },
     "alibaba/qwen-3-235b": { "input": 2.2e-7, "output": 8.8e-7 },
@@ -60,6 +60,7 @@
       ]
     },
     "alibaba/qwen3.6-27b": { "input": 6e-7, "output": 0.0000036 },
+    "alibaba/qwen3.6-35b-a3b": { "input": 3.75e-7, "output": 0.00000225 },
     "alibaba/qwen3.6-plus": {
       "input": 5e-7,
       "inputCacheRead": 5e-8,
@@ -189,6 +190,24 @@
       "inputCacheRead": 1.25e-7,
       "inputCacheWrite": 0.00000625,
       "output": 0.000025
+    },
+    "anthropic/claude-fable-5.2": {
+      "input": 0.000008,
+      "inputCacheRead": 2e-7,
+      "inputCacheWrite": 0.00001,
+      "output": 0.00004
+    },
+    "anthropic/claude-fable-5.2-fast": {
+      "input": 0.000016,
+      "inputCacheRead": 4e-7,
+      "inputCacheWrite": 0.00002,
+      "output": 0.00008
+    },
+    "anthropic/claude-fable-5.2-batch": {
+      "input": 0.000004,
+      "inputCacheRead": 1e-7,
+      "inputCacheWrite": 0.000005,
+      "output": 0.00002
     },
     "anthropic/claude-haiku-4.5": {
       "input": 0.000001,
@@ -529,18 +548,18 @@
       "output": 0.0000024
     },
     "elevenlabs/eleven-realtime-v1-max": {
-      "input": 9e-7,
-      "inputCacheRead": 9e-8,
-      "output": 0.0000045,
-      "perSecond": 0.0006667
+      "input": 0.0000018,
+      "inputCacheRead": 1.8e-7,
+      "output": 0.000009,
+      "perSecond": 0.0013334
     },
     "elevenlabs/eleven-realtime-v1-mini": {
-      "input": 1e-7,
-      "inputCacheRead": 1e-8,
-      "output": 0.000003,
-      "perSecond": 0.0006667
+      "input": 2e-7,
+      "inputCacheRead": 2e-8,
+      "output": 0.000006,
+      "perSecond": 0.0013334
     },
-    "elevenlabs/scribe-v2": { "input": 0, "output": 0, "perSecond": 0.000030556 },
+    "elevenlabs/scribe-v2": { "input": 0, "output": 0, "perSecond": 0.000061112 },
     "elorian/glimpse": { "input": 6e-7, "inputCacheRead": 6e-8, "output": 0.000003 },
     "fireworks/ember-1": { "input": 0.000003, "inputCacheRead": 3e-7, "output": 0.000015 },
     "fish-audio/transcribe-1": { "input": 1e-10, "output": 0, "perSecond": 0.0001 },
@@ -794,6 +813,15 @@
         "priority": { "input": 0.0000036, "inputCacheRead": 1.8e-7, "output": 0.000018 }
       }
     },
+    "google/gemini-4-carbon": {
+      "input": 0.000002,
+      "inputCacheRead": 1e-7,
+      "output": 0.00001,
+      "serviceTiers": {
+        "flex": { "input": 0.000001, "inputCacheRead": 5e-8, "output": 0.000005 },
+        "priority": { "input": 0.0000036, "inputCacheRead": 1.8e-7, "output": 0.000018 }
+      }
+    },
     "google/gemini-nano-banana-2.1": {
       "input": 0.0000015,
       "inputCacheRead": 1.5e-7,
@@ -848,6 +876,7 @@
     "meta/llama-3.3-70b": { "input": 7.2e-7, "output": 7.2e-7 },
     "meta/llama-4-maverick": { "input": 2.4e-7, "output": 9.7e-7 },
     "meta/llama-4-scout": { "input": 1.7e-7, "output": 6.6e-7 },
+    "meta/muse-ember": { "input": 1e-7, "inputCacheRead": 4e-9, "output": 5e-7 },
     "meta/muse-glimmer-30b": { "input": 3.5e-7, "inputCacheRead": 4e-8, "output": 0.0000015 },
     "meta/muse-image-1.0": { "input": 0, "output": 0, "perImage": 0.01 },
     "meta/muse-spark-1.1": { "input": 0.00000125, "inputCacheRead": 1.5e-7, "output": 0.00000425 },
@@ -861,6 +890,8 @@
     "microsoft/mai-image-2.6-flash": { "input": 0.00000175, "output": 0.000019 },
     "microsoft/mai-transcribe-2": { "input": 0, "output": 0, "perSecond": 0.00002778 },
     "microsoft/microsoft-decision-1": { "input": 4.2e-8, "output": 0 },
+    "minimax/minimax-h3-image": { "input": 0.0000023, "output": 0.0000038 },
+    "minimax/minimax-h3-image-highspeed": { "input": 0.0000023, "output": 0.0000076 },
     "minimax/minimax-m2": {
       "input": 3e-7,
       "inputCacheRead": 3e-8,
@@ -945,6 +976,9 @@
     },
     "morph/morph-v3-fast": { "input": 8e-7, "output": 0.0000012 },
     "morph/morph-v3-large": { "input": 9e-7, "output": 0.0000019 },
+    "nace-ai/drex-max-finance": { "input": 3e-8, "output": 0 },
+    "nace-ai/drex-max-v1.1": { "input": 3e-8, "output": 0 },
+    "nace-ai/drex-v2.0": { "input": 3e-8, "output": 0 },
     "nvidia/nemotron-3-nano-30b-a3b": { "input": 5e-8, "inputCacheRead": 2.5e-8, "output": 2e-7 },
     "nvidia/nemotron-3-super-120b-a12b": { "input": 1.5e-7, "output": 6.5e-7 },
     "nvidia/nemotron-3-ultra-550b-a55b": {

@@ -31,10 +31,11 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
 
   useEffect(() => () => setResult(null), []);
 
-  const start = () =>
+  const start = () => {
     startTransition(async () => {
       setResult(await onStart().catch((): TestOutStart => ({ status: "failed" })));
     });
+  };
 
   return { isPending, opening: isPending || result?.status === "started", result, start };
 }
@@ -82,16 +83,41 @@ export function TestOutStartLink({
 
   return (
     <div className="flex flex-col items-start gap-2">
-      <p className={cn("text-muted-foreground text-sm", className)}>
+      <form action={start} className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}
         {space}
-        <Button busy={opening} onClick={start} variant="link">
+        <Button busy={opening} type="submit" variant="link">
           {t("Take the test")}
         </Button>
-      </p>
+      </form>
 
       <TestOutStartStatus isPending={isPending} result={result} />
     </div>
+  );
+}
+
+function TestOutRowContent({
+  opening,
+  plusRequired,
+  scope,
+}: {
+  opening: boolean;
+  plusRequired: boolean;
+  scope: "chapter" | "unit";
+}) {
+  const t = useExtracted();
+
+  return (
+    <ListRowContent>
+      <ListRowTitle>
+        <MarkedText mark={plusRequired && <PlusMark />}>{t("Already know this?")}</MarkedText>
+      </ListRowTitle>
+      <ListRowDescription>
+        {opening && t("Opening the test…")}
+        {!opening && scope === "chapter" && t("Take the test and skip the chapter")}
+        {!opening && scope === "unit" && t("Take the test and skip the unit")}
+      </ListRowDescription>
+    </ListRowContent>
   );
 }
 
@@ -104,26 +130,18 @@ export function TestOutStartRow({
   plusRequired?: boolean;
   scope: "chapter" | "unit";
 }) {
-  const t = useExtracted();
   const { isPending, opening, result, start } = useTestOutStart(onStart);
 
   return (
     <>
-      <ListRowButton disabled={opening} onClick={start}>
-        <ListRowLeading>
-          <KindDot kind="practice" />
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>
-            <MarkedText mark={plusRequired && <PlusMark />}>{t("Already know this?")}</MarkedText>
-          </ListRowTitle>
-          <ListRowDescription>
-            {opening && t("Opening the test…")}
-            {!opening && scope === "chapter" && t("Take the test and skip the chapter")}
-            {!opening && scope === "unit" && t("Take the test and skip the unit")}
-          </ListRowDescription>
-        </ListRowContent>
-      </ListRowButton>
+      <form action={start}>
+        <ListRowButton disabled={opening} type={opening ? "button" : "submit"}>
+          <ListRowLeading>
+            <KindDot kind="practice" />
+          </ListRowLeading>
+          <TestOutRowContent opening={opening} plusRequired={plusRequired} scope={scope} />
+        </ListRowButton>
+      </form>
 
       <TestOutStartStatus
         className="in-data-[list=panel]:px-4 [&:has(>*)]:pb-3"

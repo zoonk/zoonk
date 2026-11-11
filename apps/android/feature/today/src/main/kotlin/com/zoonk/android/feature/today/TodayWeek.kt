@@ -2,11 +2,9 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -15,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +34,6 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.WeekdayNames
@@ -43,20 +41,14 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.weekdayNames
-import com.zoonk.android.ui.scaffold.isMediumLayout
-import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudySessionWeekDaysInner
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import kotlin.math.roundToInt
 
 private typealias WeekDay = StudySessionWeekDaysInner
 
-/** The week as rings (time studied against each day's goal), its time, and the week's challenge. */
 @Composable
 internal fun TodayWeek(
     day: DayView,
@@ -70,7 +62,7 @@ internal fun TodayWeek(
     val inWeek = challenge?.date != null && week.days.any { it.date == challenge.date }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        WeekHeader(day)
+        WeekHeader()
 
         val names = weekdayNames(currentLocale())
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -84,67 +76,13 @@ internal fun TodayWeek(
     }
 }
 
-/** The week's time is a big number where there's room; on a phone it joins the days line. */
 @Composable
-private fun WeekHeader(day: DayView) {
-    val days = day.week.days
-    val studyDays = days.count { it.kind == StudySessionWeekDaysInner.Kind.STUDY || it.studied }
-    val studied = days.count { it.studied }
-    val locale = currentLocale()
-    val time = day.week.time
-    val wide = isMediumLayout()
-    val studiedText = formatMinutes(time.studiedMinutes.toInt(), locale)
-    val planned = formatMinutes(time.targetMinutes.roundToInt(), locale)
-    val timeDescription = stringResource(R.string.today_week_time, studiedText, planned)
-    val hasTime = time.targetMinutes > 0
-    val daysText =
-        if (studyDays >
-            0
-        ) {
-            pluralStringResource(R.plurals.today_week_days, studyDays, formatNumber(studied.toDouble(), locale), studyDays)
-        } else {
-            null
-        }
-
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, itemVerticalAlignment = Alignment.Bottom) {
-            Text(
-                stringResource(R.string.today_week_title),
-                modifier =
-                    Modifier.padding(end = 12.dp).semantics {
-                        heading()
-                    },
-                style = MaterialTheme.typography.titleMedium,
-            )
-            val line = listOfNotNull(daysText, if (hasTime && !wide) "$studiedText / $planned" else null).factsLine()
-            if (line.isNotEmpty()) {
-                Text(
-                    text = line,
-                    modifier =
-                        if (hasTime &&
-                            !wide
-                        ) {
-                            Modifier.semantics { contentDescription = listOfNotNull(daysText, timeDescription).joinToString(", ") }
-                        } else {
-                            Modifier
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.zoonkType.data,
-                )
-            }
-        }
-
-        if (hasTime && wide) {
-            Row(Modifier.clearAndSetSemantics { contentDescription = timeDescription }, verticalAlignment = Alignment.Bottom) {
-                Readout(studiedText)
-                Text(
-                    text = " / $planned",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-                )
-            }
-        }
-    }
+private fun WeekHeader() {
+    Text(
+        stringResource(R.string.today_week_title),
+        modifier = Modifier.semantics { heading() },
+        style = MaterialTheme.typography.titleMedium,
+    )
 }
 
 @Composable
@@ -165,20 +103,86 @@ private fun DayCell(
             else -> stringResource(R.string.today_week_challenge_day, weekday, challengeDayName(challenge), status)
         }
 
-    Column(
-        modifier = modifier.heightIn(min = 48.dp).clearAndSetSemantics { contentDescription = description },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        DayRing(day, weekDate) {
-            if (challenge != null && day.share == 0f) KindMark(challenge.kind())
+    TodayPopover(
+        title = weekday,
+        facts = dayTime(day),
+        note = dayNote(day, weekDate, status),
+        modifier = modifier,
+        footer = { if (challenge != null) ChallengeLine(challenge) },
+    ) { open ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
+                    .then(open)
+                    .clearAndSetSemantics { contentDescription = description }
+                    .heightIn(min = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            DayRing(day, weekDate) {
+                if (challenge != null && day.share == 0f) KindMark(challenge.kind())
+            }
+            Text(
+                text = names.narrow.getValue(dayOfWeek),
+                color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = if (day.isToday) FontWeight.Medium else null,
+                style = MaterialTheme.typography.labelSmall,
+            )
         }
-        Text(
-            text = names.narrow.getValue(dayOfWeek),
-            color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = if (day.isToday) FontWeight.Medium else null,
-            style = MaterialTheme.typography.labelSmall,
-        )
+    }
+}
+
+/** The day's time studied against its plan, or its plan while nothing is studied. */
+@Composable
+private fun dayTime(day: WeekDay): String? {
+    val locale = currentLocale()
+
+    return when {
+        day.minutes > 0 && day.goalMinutes > 0 -> {
+            stringResource(
+                R.string.today_week_day_studied_of,
+                formatMinutes(day.minutes.toInt(), locale),
+                formatMinutes(day.goalMinutes, locale),
+            )
+        }
+
+        day.minutes > 0 -> {
+            stringResource(R.string.today_time_studied, formatMinutes(day.minutes.toInt(), locale))
+        }
+
+        day.goalMinutes > 0 -> {
+            stringResource(R.string.today_week_day_planned, formatMinutes(day.goalMinutes, locale))
+        }
+
+        else -> {
+            null
+        }
+    }
+}
+
+/** The day's status, only where its time doesn't already say it. */
+@Composable
+private fun dayNote(
+    day: WeekDay,
+    weekDate: LocalDate,
+    status: String,
+): String? {
+    val locale = currentLocale()
+    val saidByTime =
+        !day.hitGoal &&
+            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == StudySessionWeekDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
+
+    return if (saidByTime) null else status.replaceFirstChar { it.titlecase(locale) }
+}
+
+@Composable
+private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        KindMark(challenge.kind())
+        val locale = currentLocale()
+        Text(challengeDayName(challenge).replaceFirstChar { it.titlecase(locale) })
     }
 }
 

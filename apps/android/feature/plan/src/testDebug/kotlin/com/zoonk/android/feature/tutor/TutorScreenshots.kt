@@ -137,7 +137,9 @@ class TutorScreenshots {
         val vm =
             TutorViewModel(
                 TutorScope.Plan("goal"),
-                TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, _ -> MutationResult.Obsolete },
+                TutorStore(api, cache, session, {
+                    MutationResult.Done(Unit)
+                }, { _, _ -> MutationResult.Done(Unit) }) { _, _, _ -> MutationResult.Obsolete },
                 SavedStateHandle(),
             ) { MutationResult.Obsolete }
         val routes =

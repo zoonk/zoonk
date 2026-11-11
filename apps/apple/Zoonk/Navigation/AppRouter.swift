@@ -4,6 +4,7 @@ import SwiftUI
 enum AppSheet: Hashable, Identifiable {
   case account(AccountPage? = nil)
   case feedback(screen: String)
+  case makeRoom(LearnerWaitingGoal)
   case signIn
   case subscription
 

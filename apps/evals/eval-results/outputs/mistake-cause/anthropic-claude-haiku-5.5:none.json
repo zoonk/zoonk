@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07T19:33:14.502Z",
+  "generatedAt": "2026-11-11T02:26:59.027Z",
   "modelId": "anthropic/claude-haiku-5.5:none",
   "outputs": [
     {
@@ -8,7 +8,23 @@
       "inputTokens": 1101,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 2431.395291,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 952,
+            "inputTokens": 1101,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1289.1486249999998,
       "output": "{\n  \"cause\": \"trap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-trap-raise-then-discount-1",
@@ -20,7 +36,23 @@
       "inputTokens": 1085,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 4255.2919999999995,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 952,
+            "inputTokens": 1085,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1342.7519170000014,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-gap-percent-of-wrong-base-1",
@@ -32,7 +64,23 @@
       "inputTokens": 1082,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1840.4104579999998,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 952,
+            "inputTokens": 1082,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1228.879500000001,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-misread-not-question-1",
@@ -44,7 +92,23 @@
       "inputTokens": 1099,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 3923.861833,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 952,
+            "inputTokens": 1099,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1603.711792,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-gap-photosynthesis-inputs-1",
@@ -56,7 +120,23 @@
       "inputTokens": 1082,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1560.7252080000003,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1082,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1392.8425829999996,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-misread-units-1",
@@ -68,7 +148,23 @@
       "inputTokens": 1086,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1496.327667,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1086,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1020.8685830000013,
       "output": "{\n  \"cause\": \"trap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-trap-partial-step-1",
@@ -80,7 +176,23 @@
       "inputTokens": 1085,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1181.4119169999994,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1085,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1218.286333,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-gap-affect-effect-1",
@@ -92,7 +204,23 @@
       "inputTokens": 1079,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 2140.3695419999995,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1079,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1185.8935000000001,
       "output": "{\n  \"cause\": \"trap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-trap-median-vs-mean-1",
@@ -104,7 +232,23 @@
       "inputTokens": 1140,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1259.0006249999997,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1140,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1318.6442910000005,
       "output": "{\n  \"cause\": \"trap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-trap-desconto-sobre-desconto-1",
@@ -116,7 +260,23 @@
       "inputTokens": 1130,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1400.265625,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1130,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1154.2262499999997,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-gap-regra-de-tres-inversa-1",
@@ -128,7 +288,23 @@
       "inputTokens": 1111,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1344.696417,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1111,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1089.5930419999986,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-misread-exceto-1",
@@ -140,7 +316,23 @@
       "inputTokens": 1101,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1166.9160410000004,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1101,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 952.3748749999995,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-gap-crase-1",
@@ -152,7 +344,23 @@
       "inputTokens": 1130,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 886.9608330000001,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1130,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1099.3709999999992,
       "output": "{\n  \"cause\": \"trap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-trap-porcentagem-de-porcentagem-1",
@@ -164,7 +372,23 @@
       "inputTokens": 1092,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1354.8587499999994,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1092,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1015.2673340000001,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-misread-unidade-pedida-1",
@@ -176,7 +400,23 @@
       "inputTokens": 1105,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1237.806708,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1105,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 968.9891250000019,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-gap-mitose-meiose-1",
@@ -188,7 +428,23 @@
       "inputTokens": 1106,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 893.9762920000003,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1106,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1153.6811249999992,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-misread-least-likely-1",
@@ -200,7 +456,23 @@
       "inputTokens": 1072,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 937.1276250000001,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1072,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 2169.5658750000002,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-persona-maya-negative-power-1",
@@ -212,7 +484,23 @@
       "inputTokens": 1107,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1222.2006249999995,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1107,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1437.3580839999995,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "en-persona-guest-cloud-spins-fast-1",
@@ -224,7 +512,23 @@
       "inputTokens": 1137,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1180.3520829999998,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1137,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1040.5386249999974,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-persona-ana-circuit-one-resistor-1",
@@ -236,11 +540,27 @@
       "inputTokens": 1102,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1185.3474590000005,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1102,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 921.9017080000012,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-persona-lucas-brighter-photons-1",
-      "userPrompt": "CORRECT_ANSWER: Falso\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: Verdadeiro\nMISCONCEPTION: Acha que o brilho define a energia do fóton\nQUESTION: Uma luz vermelha mais forte é feita de fótons com mais energia cada um.\nRECENT_ACCURACY_ON_SKILL: 0 of 1 right"
+      "userPrompt": "CORRECT_ANSWER: Falso\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: Verdadeiro\nMISCONCEPTION: Acha que o brilho define a energia do fóton\nQUESTION: Uma luz vermelha mais forte é feita de fótons com mais energia cada um.\nRECENT_ACCURACY_ON_SKILL: 2 of 3 right"
     },
     {
       "cacheReadTokens": 952,
@@ -248,11 +568,27 @@
       "inputTokens": 1108,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 3389.8547089999993,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1108,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1273.828458,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-persona-pedro-bankruptcy-order-1",
-      "userPrompt": "CORRECT_ANSWER: Eles são os últimos da fila e muitas vezes não recebem nada\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: Eles são pagos primeiro\nMISCONCEPTION: none\nQUESTION: A rede de padarias vai à falência. O que acontece com os acionistas?\nRECENT_ACCURACY_ON_SKILL: 1 of 2 right"
+      "userPrompt": "CORRECT_ANSWER: Eles são os últimos da fila e muitas vezes não recebem nada\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: Eles são pagos primeiro\nMISCONCEPTION: none\nQUESTION: A rede de padarias vai à falência. O que acontece com os acionistas?\nRECENT_ACCURACY_ON_SKILL: 0 of 1 right"
     },
     {
       "cacheReadTokens": 952,
@@ -260,11 +596,27 @@
       "inputTokens": 1084,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 1443.383291,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1084,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 936.5227090000008,
       "output": "{\n  \"cause\": \"gap\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-persona-marcos-how-many-deposit-1",
-      "userPrompt": "CORRECT_ANSWER: How much is the deposit?\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: How many is the deposit?\nMISCONCEPTION: Usou how many para preço\nQUESTION: How [BLANK] is the deposit?\nRECENT_ACCURACY_ON_SKILL: 1 of 2 right"
+      "userPrompt": "CORRECT_ANSWER: How much is the deposit?\nLANGUAGE: Português Brasileiro\nLEARNER_ANSWER: How many is the deposit?\nMISCONCEPTION: Usou how many para preço\nQUESTION: How [BLANK] is the deposit?\nRECENT_ACCURACY_ON_SKILL: 0 of 1 right"
     },
     {
       "cacheReadTokens": 952,
@@ -272,7 +624,23 @@
       "inputTokens": 1123,
       "outputTokens": 11,
       "reasoningTokens": 0,
-      "duration": 2344.9900830000006,
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "anthropic/claude-haiku-5.5",
+          "usage": {
+            "cacheReadTokens": 952,
+            "cacheWriteTokens": 0,
+            "inputTokens": 1123,
+            "outputTokens": 11,
+            "reasoningTokens": 0
+          }
+        }
+      ],
+      "duration": 1113.025916999999,
       "output": "{\n  \"cause\": \"misread\"\n}",
       "systemPrompt": "You name the cause of one wrong answer for a learner's mistakes notebook. The cause decides which short practice the learner gets next, so pick the cause that practice would fix.\n\nCode already handled the clear cases: answers over a time limit and answers given faster than the question can be read never reach you. You only see mistakes where the learner's history with the skill is mixed.\n\n## Causes\n\n### gap\n\nThe learner doesn't know the idea yet, or holds a wrong idea about it. Signs: the chosen answer shows a misunderstanding of the concept itself (a wrong rule, a wrong definition, a confused term), or the misconception describes a conceptual error. Practice: the idea is taught again before more questions.\n\n### misread\n\nThe learner knows the idea but answered a different question than the one asked. Signs: the chosen answer would be right for a slightly different question (a missed \"not\", \"except\", \"least\", a wrong unit, a swapped quantity, the wrong part of the question), and there is no misconception pointing to a conceptual error. Practice: read-carefully questions.\n\n### trap\n\nThe learner fell for a distractor built around a classic slip. Signs: the misconception names a common trap in this kind of question (applying a discount to the wrong base, a raise followed by a discount treated as cancelling out, confusing similar-looking options, a partial step taken as the final answer), and the rest of the learner's history suggests they know the idea. Practice: spotting traps.\n\n## Rules\n\n1. Base the decision on the question, the learner's answer, the correct answer and the misconception. Use the recent accuracy only to break ties: high accuracy favors `misread` or `trap`, low accuracy favors `gap`.\n2. When the misconception describes a conceptual error and nothing suggests the learner knows the idea, choose `gap`.\n3. When the misconception describes a well-known trap and the learner usually gets this skill right, choose `trap`.\n4. When there is no misconception and the answer fits a misreading of the question, choose `misread`.\n5. When in doubt between `gap` and another cause, choose `gap`: re-teaching never hurts.\n6. The inputs are in the learner's language. Judge the meaning, whatever the language.\n",
       "testCaseId": "pt-persona-marcos-first-last-rent-1",

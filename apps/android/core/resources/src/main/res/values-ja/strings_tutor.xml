@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "7ab300a6dcc16ddefed424514764fd692085aa632fbbeada7eb0abe37469bdde",
   "tutor_offer_essay_weekly": "47d69286cdc7798cd22fed01b96df1f74d2f7d94786b3abb643e44572e77168c",
   "tutor_offer_goal": "a70f998dd771e2976f7f2ab06ffaa6e5b8b3af227c0352949c354513d8cb1856",
+  "tutor_offer_goal_limit": "7dc8e674e68b4a236f010fd75df1d9e8b155740c22a69d06ec3bb107ffa68cbd",
   "tutor_offer_logbook": "844b8b10292964b75de201c44c134f51944d4014e21da958d89035fac9db2583",
   "tutor_offer_logbook_description": "2bbae7908fe514768f481adbc7ba987c0e1482dd4fb5f76e0e4519bce0c57765",
   "tutor_offer_manage": "3f7e78abdc035303ae91875e69ba702cf93843dac002a46c5868b5fc68e142d7",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "110826a13cf963c4e26ebff7ee8afe96e2694effadd7b1975a01d51731f31131",
   "tutor_offer_mock_description": "9ada7d75a302f435aa0085669527515324a1e45f1ae409fd1b2172dbaa77a702",
   "tutor_offer_mock_plus": "77e9004c954155bd2f187b9ed73e70458aa5da00fed2c8111791bd7d39af5fd4",
-  "tutor_offer_one_goal": "74673161da9cea5cd1cfb5acc5e42da47c2d1e5781934187095550f1bb4c43f0",
   "tutor_offer_open": "99c584bdb12bd74dfa6debde94dd3c0ca04665cbbfc52ec1673bb18b151d0af3",
   "tutor_offer_plus": "545f83ac3aedf980ec2b8cc7b9bb34dc0dafd7d44b3d400738176b4d770180fd",
   "tutor_offer_plus_description": "fbb0d3b44a88b92725125cf8834d3afa4752047523e7f165860316575327e18a",
@@ -86,6 +86,8 @@
   "tutor_offer_stats": "16ebe02b1c4b0b489e247e95b845993cd24728864d10684cbf28f5168e0621f7",
   "tutor_offer_stats_description": "9e548549dd9e57b9a1bcaf7db6ac472a2946ca91151479e5789fd3994211a802",
   "tutor_offer_take_test": "dd47ea5d332d58d1580173d2f5c47702eb291e6b6b16faaac186cc92a0bca404",
+  "tutor_offer_variety_applied": "82ef85639e89c7b5547d66105465346a3b7ccb8e4035abd9e839debc2ab079b4",
+  "tutor_offer_variety_description": "c899cfeda5bd9e4098341a61bd77e70efb726665bbaabf7c15cbae6e1299bc07",
   "tutor_page_sign_up": "83f6d09243d1f18a3ef999f7633db6bc4b9182c247c24b135ae62eaa35691e60",
   "tutor_placeholder_answer": "fa7a53bf561622463c5869693ec32053d9de2fae336780b1059fe1fc7a4e65c4",
   "tutor_placeholder_chapter": "cd14a32797491152e21be4ee3b4ad6504497d0da9f3b19fd7077952f721714d4",
@@ -213,7 +215,8 @@
     <string name="tutor_offer_start_goal">新しい目標を始める</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">「%1$s」</string>
-    <string name="tutor_offer_one_goal">無料プランで同時に取り組める目標は1つです。今の目標はメニューから一時停止できます。Plusなら複数の目標に取り組めます。</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">今すぐ別の目標を始めるには、Plusへの登録が必要です。それまでは、今取り組んでいる目標を続けましょう。</string>
     <string name="tutor_offer_catalog_course">カタログに用意されたコース</string>
     <string name="tutor_offer_chapter_test">テスト：%1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -251,6 +254,10 @@
     <string name="tutor_offer_memory_description">相棒が覚えている自分の情報を確認・修正・削除できます。</string>
     <string name="tutor_offer_stats">統計</string>
     <string name="tutor_offer_stats_description">エネルギー、レベル、正解数、学習がはかどる時間帯を確認できます。</string>
+    <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
+    <string name="tutor_offer_variety_description">相棒とのやり取りや会話練習では%1$sを使います。</string>
+    <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
+    <string name="tutor_offer_variety_applied">保存しました。学習計画から変更できます。</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Plusの内容と料金を確認できます。</string>
     <string name="tutor_offer_plus_subscribed">契約中のプランとお支払いを確認できます。</string>

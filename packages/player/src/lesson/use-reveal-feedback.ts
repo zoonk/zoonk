@@ -2,6 +2,7 @@
 
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
+import { queryShown } from "./_utils/lesson-focus";
 import { useLessonPlayer } from "./lesson-player-context";
 
 const FEEDBACK_SELECTOR = [
@@ -41,16 +42,17 @@ function getFeedbackDelta(parts: HTMLElement[], visible: { bottom: number; top: 
  * verdict: then it scrolls only as far as keeps the question in view.
  */
 function getScrollDelta(scroller: HTMLElement): number {
-  const parts = [...scroller.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR)];
+  const stage = queryShown('[data-slot="lesson-stage"]', scroller);
+  const parts = [...(stage?.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR) ?? [])];
 
-  if (parts.length === 0) {
+  if (!stage || parts.length === 0) {
     return 0;
   }
 
   const visible = getVisibleArea(scroller);
   const whole = getFeedbackDelta(parts, visible);
-  const question = scroller.querySelector(QUESTION_SELECTOR)?.getBoundingClientRect();
-  const verdict = scroller.querySelector(VERDICT_SELECTOR)?.getBoundingClientRect();
+  const question = stage.querySelector(QUESTION_SELECTOR)?.getBoundingClientRect();
+  const verdict = stage.querySelector(VERDICT_SELECTOR)?.getBoundingClientRect();
 
   if (!question || !verdict) {
     return whole;

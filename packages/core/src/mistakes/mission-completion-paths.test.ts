@@ -1,6 +1,11 @@
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -27,6 +32,7 @@ import { practiceMistakePattern } from "../language/patterns/practice-mistake-pa
 import { finishPronunciationRound } from "../language/pronunciation/finish-pronunciation-round";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { getBuddyStatus } from "../milestones/get-buddy-status";
+import { getStudySession } from "../sessions/get-study-session";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { answerMistakePractice } from "./answer-mistake-practice";
@@ -142,11 +148,15 @@ describe("missions completed outside a study block", () => {
     vi.useRealTimers();
   });
 
-  it("pays the last notebook mission immediately, once across goals, without closing the session", async () => {
+  it("pays the last notebook mission immediately, for its own goal only, without closing the session", async () => {
     const { goal, user } = await signedInLearner();
     const skill = await skillFixture();
-    const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-    const secondGoal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
+
+    const [item, secondGoal] = await Promise.all([
+      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+      goalFixture({ timezone: TIME_ZONE, userId: user.id }),
+      planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } }),
+    ]);
 
     const missions = {
       picks: [
@@ -210,7 +220,17 @@ describe("missions completed outside a study block", () => {
 
     expect(progress.totalBrainPower).toBe(52n);
     expect(daily.brainPowerEarned).toBe(52);
-    expect(days.filter((session) => session.fullMealAt !== null)).toHaveLength(1);
+
+    expect(
+      days.filter((session) => session.fullMealAt !== null).map((session) => session.id),
+    ).toStrictEqual([day.id]);
+
+    expect(days.find((session) => session.id === otherDay.id)?.missions).toMatchObject({
+      picks: [
+        { done: 1, kind: "review" },
+        { anchor: {}, kind: "fixMistake", total: 1 },
+      ],
+    });
 
     expect(days.every((session) => session.status === "planned" && session.endedAt === null)).toBe(
       true,
@@ -435,8 +455,21 @@ describe("missions completed outside a study block", () => {
 
     await studySessionBlockFixture({ sessionId: day.id });
 
-    await prisma.usageRecord.create({
-      data: { createdAt: new Date(), kind: "tutorMessage", targetId: questionId, userId: user.id },
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId: user.id },
+    });
+
+    await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "plan",
+        contextSnapshot: {},
+        goalId: goal.id,
+        id: questionId,
+        question: "Why?",
+        requestFingerprint: questionId,
+        requestId: questionId,
+        threadId: thread.id,
+      },
     });
 
     await attemptFixture({ answer: { roundId }, userId: user.id });
@@ -792,6 +825,7 @@ describe("missions completed outside a study block", () => {
     const [{ lesson }, day] = await Promise.all([
       playableLessonFixture(),
       missionDay({ goalId: goal.id, kind: "askBuddy", userId: user.id }),
+      planFixture({ goalId: goal.id }),
     ]);
 
     const request = {
@@ -828,14 +862,17 @@ describe("missions completed outside a study block", () => {
     ).resolves.toMatchObject({ totalBrainPower: 50n });
   });
 
-  it("pays one buddy bonus across goals whose local dates differ at the same instant", async () => {
+  it("counts a buddy question for the goal it was asked in, not another goal on a different local date", async () => {
     const { goal, user } = await signedInLearner();
 
     await prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } });
 
-    const secondary = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
+    const [secondary] = await Promise.all([
+      goalFixture({ timezone: TIME_ZONE, userId: user.id }),
+      planFixture({ goalId: goal.id }),
+    ]);
 
-    await Promise.all([
+    const [, secondaryDay] = await Promise.all([
       missionDay({
         goalId: goal.id,
         kind: "askBuddy",
@@ -868,13 +905,13 @@ describe("missions completed outside a study block", () => {
     ]);
 
     expect(progress.totalBrainPower).toBe(50n);
-    expect(days).toHaveLength(2);
-    expect(days.filter((day) => day.fullMealAt !== null)).toHaveLength(1);
+    expect(days.map((day) => day.goalId)).toStrictEqual([secondary.id, goal.id]);
+    expect(days.map((day) => day.fullMealAt !== null)).toStrictEqual([false, true]);
 
     const completedBy = { id: expect.any(String), kind: "buddyQuestion" };
 
     expect(days.map((day) => day.missions)).toStrictEqual([
-      { picks: [{ anchor: {}, completedBy, done: 1, kind: "askBuddy", total: 1 }], version: 1 },
+      { picks: [{ anchor: {}, kind: "askBuddy", total: 1 }], version: 1 },
       { picks: [{ anchor: {}, completedBy, done: 1, kind: "askBuddy", total: 1 }], version: 1 },
     ]);
 
@@ -884,6 +921,16 @@ describe("missions completed outside a study block", () => {
           fullMeal: { earned: true },
           missions: [{ done: 1, kind: "askBuddy", status: "done" }],
         },
+      },
+      status: "ready",
+    });
+
+    await expect(
+      getStudySession({ input: { timeZone: TIME_ZONE }, sessionId: secondaryDay.id }),
+    ).resolves.toMatchObject({
+      session: {
+        fullMeal: { earned: false },
+        missions: [{ done: 0, kind: "askBuddy", status: "todo" }],
       },
       status: "ready",
     });

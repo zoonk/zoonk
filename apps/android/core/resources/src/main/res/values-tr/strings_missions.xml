@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "6383f44a45451401915ea46633ce876ec8e2d3b5d4dfa1aa92852aaf4539309c",
-  "missions_already_earned": "d4aaf7e39df9ab563354bc549deb084658ea83aa93846f6c1baa20a30af5ef10",
   "missions_ask_anything": "aa7421a13f41c09aafdbdc50c6ad5367f08c0e3d5771f19b66d65990d192af8e",
   "missions_ask_buddy": "5a16edbe40dab7b957fb033352dba7411c9f50a83c20b32907fba37a5ec580cf",
   "missions_brain_power": "004a8dc5df946b0d4c6e1091c4e8a845e801b06a41204b5c3829580c8f5368e8",
@@ -66,7 +65,6 @@
     <string name="missions_done">Görevler tamamlandı</string>
     <!-- %1$s is a formatted number of points. -->
     <string name="missions_earned">+%1$s Beyin Gücü kazandın.</string>
-    <string name="missions_already_earned">Bugünkü +%1$s Beyin Gücünü zaten kazandın.</string>
     <plurals name="missions_count">
         <item quantity="one">%d görev</item>
         <item quantity="other">%d görev</item>

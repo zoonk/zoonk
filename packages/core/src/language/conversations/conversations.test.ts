@@ -198,6 +198,44 @@ describe("language conversations", () => {
     expect(result.status === "ready" && "instructions" in result.conversation).toBe(false);
   });
 
+  it("speaks the goal's country as it was when the call started, through a reconnect, its checks and its feedback", async () => {
+    const { goal, renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    await prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } });
+
+    const { conversationId } = await connectPractice(renting.id);
+    await prisma.goal.update({ data: { targetRegion: null }, where: { id: goal.id } });
+
+    vi.setSystemTime(new Date(Date.now() + 30_000));
+    const { setup } = await connectTestCall(conversationId);
+    await checkGoals({ connectionId: setup.connectionId, conversationId }, TURNS);
+
+    await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
+    });
+
+    const sessions = vi.mocked(createLiveCallSession).mock.calls.map(([session]) => session);
+
+    expect(sessions).toHaveLength(2);
+
+    expect(sessions.map((session) => session.instructions)).toStrictEqual([
+      expect.stringContaining("Speak only English (United Kingdom)"),
+      expect.stringContaining("Speak only English (United Kingdom)"),
+    ]);
+
+    expect(sessions[0]?.greeting).toContain("as a native speaker of English (United Kingdom)");
+
+    expect(checkConversationObjectives).toHaveBeenCalledWith(
+      expect.objectContaining({ targetRegion: "GB" }),
+    );
+
+    expect(writeConversationFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({ targetRegion: "GB" }),
+    );
+  });
+
   it("asks for a unit's call that isn't written at the learner's level, then starts once it's written", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);

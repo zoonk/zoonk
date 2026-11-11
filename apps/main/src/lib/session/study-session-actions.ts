@@ -131,15 +131,24 @@ export async function addExtraStudyBlockAction(
     return null;
   }
 
-  const { data: result, error } = await safeAsync(async () => {
-    const added = await addExtraStudyBlock({ sessionId: parsed.data.sessionId });
+  const { data: opening, error } = await safeAsync(async (): Promise<StudyBlockOpening | null> => {
+    const { sessionId, timeZone } = parsed.data;
+    const added = await addExtraStudyBlock({ input: { timeZone }, sessionId });
 
-    return added.status === "ready"
-      ? openStudyBlock({
-          target: { blockId: added.block.id, kind: "block" },
-          timeZone: parsed.data.timeZone,
-        })
-      : null;
+    if (added.status === "unavailable" && added.reason === "dayOver") {
+      return { kind: "today" };
+    }
+
+    if (added.status !== "ready") {
+      return null;
+    }
+
+    const opened = await openStudyBlock({
+      target: { blockId: added.block.id, kind: "block" },
+      timeZone,
+    });
+
+    return opened.status === "ready" ? opened.opening : null;
   });
 
   if (error) {
@@ -147,7 +156,7 @@ export async function addExtraStudyBlockAction(
     return null;
   }
 
-  return result?.status === "ready" ? result.opening : null;
+  return opening;
 }
 
 export async function catchUpTodayAction(input: SessionInput): Promise<boolean> {

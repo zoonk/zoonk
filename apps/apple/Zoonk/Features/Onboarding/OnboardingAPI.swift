@@ -441,7 +441,8 @@ struct OnboardingAPI: Sendable {
     edit: Components.Schemas.OnboardingDraftEdit,
     token: String
   ) async throws -> OnboardingDraft {
-    let output = try await clients.perform(token: token) { client in
+    // Every edit sends a value; the generated client leaves out a nil one.
+    let output = try await clients.perform(token: token, sendingNull: ["value"]) { client in
       try await client.reviseGoalUnderstanding(
         path: .init(understandingId: id), body: .json(edit))
     }

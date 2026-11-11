@@ -213,7 +213,7 @@ export async function buildPlanView({
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
     loadPlanTools({ currentPhase, goal, items }),
-    loadStudyWeek({ localDate: context.today, userId: goal.userId }),
+    loadStudyWeek({ goal, localDate: context.today, planSettings: state.settings }),
     loadGoalDateKind(goal),
     loadNoticeDates({
       goal,

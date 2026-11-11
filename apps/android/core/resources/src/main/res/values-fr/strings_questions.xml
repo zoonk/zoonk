@@ -3,15 +3,11 @@
 {
   "questions_correct": "f18ef07e81c4fa337137c593118d83b7e06a8a885475300b56d4cb7c3e0ed8f3",
   "questions_dont_know_yet": "9ccc25fa499c65ed4ed62b1642a67366f55b6a67a470200ba073f6e438cab49c",
-  "questions_drill_last_answer": "524d63b7946d905b448e139ec3fc915113d397f4554b891230ca662fac36ec30",
   "questions_drill_no_guessing": "591d23df2c54150d239e7612e3ecfa09ae2d69512f3ce0d494bce79c5c2dda13",
   "questions_drill_not_sure": "7b7bc17ba93bc9fb45ea2e40cc7f249d14a08ca772211f7bf2733666227cadfb",
   "questions_drill_not_sure_praise": "7c49c9c0d998b83c710caa0035d9db651a03e05793e680c4d1a2c5ba1e810295",
   "questions_drill_open_lesson": "1fa3e18be44e873f3b29f9e218c815ad80af39841d850ad9e8b3c53e6cffe6f4",
-  "questions_drill_read_carefully": "d03466f999017130168f0b1991d2ffa224331d401487553e1aec6d0924f24d78",
-  "questions_drill_reteach": "26af99ffcc626ca07c7b1654fb0fe46be3cbef0b9493473d793390dba63d1a4d",
   "questions_drill_reteach_ideas": "8a8047a7b7a072923cacc314cebb1b8f143655e750772fbaa6ef4228f1e057a0",
-  "questions_drill_retry": "f5fd83997db947efedb4069f45bc2b24a1685e6824af2b7558894d53a81c0997",
   "questions_drill_seconds_left": "b048c1924eada91ede8f100ebe99f69ddda079383cbb40dfdd0e08e86c00e113",
   "questions_drill_spot_the_trap": "b3ecd71166f8f01b1ed8c3dd49e3038bc6eca744c1a6429944cef933c3906fc3",
   "questions_drill_start": "5e3dc94b40d150edd3c702eff6fbc3e3f6a0165ead32414ed37acbe634625011",
@@ -49,7 +45,6 @@
   "questions_right": "4acd626fc55fb211811947bd768239dcff5276dc1b38cb8a2b3c31035683bca8",
   "questions_right_answer": "e32799071478125a7b4e167b0fab6b3e8d646b2fde629f8f1a3746c39138ba66",
   "questions_saved": "0f2ccaa15be860feada4e95afddb3515bedc8e7b4b55ea9207e6af3af247b90f",
-  "questions_saved_tomorrow": "6a7897076a23d551f2a3c648f8804dd0c38ce94aa2a096b12a2e1399df7d881f",
   "questions_set_place_audio": "0cb1e6c34d76db93e1971b026d5c75520f9fc08639c3155a1f35493268f94f03",
   "questions_set_place_case": "481bd1ae7faad6c7cb4b7b9db548e5f0f96931a091220aad85a8059d538a5325",
   "questions_set_place_chart": "b175089c78fff89c711985fdb15ae56a4a3771a3df16d0099a5d4a6d08d9d35b",
@@ -120,7 +115,6 @@
         <item quantity="other">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
     </plurals>
     <string name="questions_saved">Ajouté à ton carnet d’erreurs</string>
-    <string name="questions_saved_tomorrow">Ajouté à ton carnet d’erreurs · à revoir demain</string>
     <string name="questions_show_less">Afficher moins</string>
     <string name="questions_read_again">Tout relire</string>
     <string name="questions_set_place_audio">Question %1$d sur %2$d pour cet enregistrement</string>
@@ -131,8 +125,6 @@
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Question d’un ancien examen · %1$s</string>
     <string name="questions_drill_reteach_ideas">D’abord la notion, puis la mise en pratique.</string>
-    <string name="questions_drill_reteach">Revenons sur une notion qui t’a échappé.</string>
-    <string name="questions_drill_read_carefully">Lis bien chaque mot avant de répondre.</string>
     <string name="questions_drill_spot_the_trap">Il y a un piège ici. Trouve-le avant de répondre.</string>
     <plurals name="questions_drill_timed">
         <item quantity="one">%d seconde par question, comme le jour de l’examen.</item>
@@ -140,10 +132,7 @@
         <item quantity="other">%d secondes par question, comme le jour de l’examen.</item>
     </plurals>
     <string name="questions_drill_no_guessing">Réponds seulement si tu es sûr de toi. Tu peux dire que tu n’es pas sûr.</string>
-    <string name="questions_drill_retry">Réessaie.</string>
     <string name="questions_drill_start">Commencer les questions</string>
-    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
-    <string name="questions_drill_last_answer">La dernière fois, tu as répondu : %1$s</string>
     <string name="questions_drill_timed_out">Temps écoulé. Cela compte comme une erreur, donc la question reviendra.</string>
     <string name="questions_drill_not_sure_praise">Bien vu. Mieux vaut dire que tu n’es pas sûr que de répondre au hasard.</string>
     <string name="questions_drill_trap">Le piège :</string>

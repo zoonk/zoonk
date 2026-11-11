@@ -8,9 +8,7 @@ import { getExamChoiceFormat } from "../exams/exam-choice-format";
 import { readBlueprintContent } from "../exams/save-exam-blueprint";
 import { getKnownReusePolicy } from "../sources/reuse-policy";
 import { reusePolicySchema } from "../sources/source-contract";
-import { checkItem } from "./item-checks";
 import { toStoredItem } from "./item-content";
-import { repairItem } from "./item-repairs";
 import { checkPastQuestion } from "./past-question-checks";
 
 const MAX_PAPER_SKILLS = 40;
@@ -133,13 +131,11 @@ function checkQuestion({
   question: PastQuestion;
   target: PastPaperTarget;
 }) {
-  const { language, optionCount } = target;
-  const question = { ...written, item: repairItem({ item: written.item, language, optionCount }) };
-
-  const problems = [
-    ...checkItem({ expectedFormat: target.format, item: question.item, language, optionCount }),
-    ...checkPastQuestion({ paperText, question, skillCount: target.skills.length }),
-  ];
+  const { problems, question } = checkPastQuestion({
+    paperText,
+    question: written,
+    target: { ...target, skillCount: target.skills.length },
+  });
 
   return { problems, question, skillId: target.skills[question.skill - 1]?.id };
 }

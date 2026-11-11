@@ -10,6 +10,7 @@
     "./learner-writes": "./src/learner-writes.ts",
     "./live-call-enums": "./src/live-call-enums.ts",
     "./local-database": "./src/local-database.ts",
+    "./schema": "./src/schema.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",
     "./seed": "./src/prisma/seed/index.ts",
     "./seed/localize": "./src/prisma/seed/_utils/localize.ts",
@@ -40,6 +41,7 @@
     "pg": "8.23.1"
   },
   "devDependencies": {
+    "@prisma/generator-helper": "7.10.1",
     "@types/pg": "8.23.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
