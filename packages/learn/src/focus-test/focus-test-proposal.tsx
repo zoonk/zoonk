@@ -96,7 +96,7 @@ export function FocusProposal({
 
   return (
     <div className="flex flex-col gap-3">
-      {answered?.decision !== "applied" && (
+      {!answered && (
         <>
           {effect && <p className="text-muted-foreground text-sm text-pretty">{effect}</p>}
           <PlanEffectDiff effect={proposal.effect} />
