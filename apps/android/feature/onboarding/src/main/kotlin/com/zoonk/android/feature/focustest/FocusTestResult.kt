@@ -156,12 +156,18 @@ private fun SuggestedFocus(
     val proposal = focus.proposal?.takeIf { focus.state == FocusTestFocus.State.PROPOSED }
     val changesFocus = focus.state == FocusTestFocus.State.CURRENT || focus.state == FocusTestFocus.State.HAND_PICKED
 
+    // Once "Update my plan" saved, its result line says what the plan now does instead.
+    val applied = plan?.answer?.takeIf { it.change.id == proposal?.id }?.status == PlanChangeDecisionInput.Status.APPLIED
+    val intro = listOfNotNull(focusIntro(focus.state).takeUnless { applied }, importance)
+
     Section(stringResource(R.string.focustest_suggested_focus)) {
-        Text(
-            listOfNotNull(focusIntro(focus.state), importance).joinSentences(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (intro.isNotEmpty()) {
+            Text(
+                intro.joinSentences(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             focus.rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
