@@ -23,6 +23,7 @@ let learnerSummaryUITestJSON = """
         "isActive": true,
         "isSettingUp": false,
         "kind": "learn",
+        "language": "en",
         "languageCountry": { "code": "US", "name": "United States" },
         "languageFlag": null,
         "regionChoices": [],

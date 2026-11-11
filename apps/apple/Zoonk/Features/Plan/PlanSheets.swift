@@ -90,7 +90,7 @@ private struct PlanSheets: ViewModifier {
                   comment:
                     "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
                 ),
-                language: OnboardingAPI.language,
+                language: context.goal.language,
                 suggested: context.goal.suggestedCountries,
                 selected: country.code,
                 confirmsRebuild: true

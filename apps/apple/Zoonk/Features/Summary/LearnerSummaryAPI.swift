@@ -35,6 +35,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   /// Questions are left before its plan is set, so continuing it opens its setup instead of Today.
   var isSettingUp = false
   let kind: Kind
+  /// The language the goal is studied in, which its country picker names countries in.
+  let language: String
   /// A flag's code: the goal's country's, else its language's; nil for a goal without one.
   var languageFlag: String? = nil
   let status: Status
@@ -234,6 +236,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         id: goal.id,
         isSettingUp: goal.isSettingUp,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,
+        language: goal.language,
         languageFlag: goal.languageFlag,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,
