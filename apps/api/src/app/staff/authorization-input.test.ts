@@ -1,8 +1,9 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { describe, expect, it, vi } from "vitest";
-import { cliTokenFixture, sendStaffAuthorization } from "./_test-utils/cli-tokens";
+import { cliTokenFixture } from "../../../../../packages/auth/src/_test-utils/cli-tokens";
 import { staffRequest } from "./_test-utils/requests";
+import { sendStaffAuthorization } from "./_test-utils/staff-authorization";
 import { POST as count } from "./records/count/route";
 import { POST as get } from "./records/get/route";
 import { POST as list } from "./records/list/route";
