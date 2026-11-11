@@ -7749,25 +7749,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "Empezar con las preguntas"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "La última vez respondiste: {answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "Primero la idea, luego ponla en práctica."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "Volvamos a una idea que no te quedó clara."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "Lee cada palabra antes de responder."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7783,11 +7768,6 @@ msgstr "{seconds, number} segundos por pregunta, como el día del examen."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Responde solo cuando no tengas dudas. Está bien decir que no lo tienes claro."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "Inténtalo de nuevo."
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"

@@ -7749,25 +7749,10 @@ msgctxt "Pl_GnV"
 msgid "Start the questions"
 msgstr "Start the questions"
 
-#: src/mistakes/drill/drill-intro.tsx
-msgctxt "tnb_M0"
-msgid "Last time you answered: {answer}"
-msgstr "Last time you answered: {answer}"
-
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "49QdsH"
 msgid "The idea first, then put it to use."
 msgstr "The idea first, then put it to use."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "OYk1Dn"
-msgid "Back to an idea you missed."
-msgstr "Back to an idea you missed."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "I2TE37"
-msgid "Read every word before you answer."
-msgstr "Read every word before you answer."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "QsqF6K"
@@ -7783,11 +7768,6 @@ msgstr "{seconds, number} seconds a question, like on the day."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Only answer when you're sure. Saying you're not sure is fine."
-
-#: src/mistakes/drill/use-drill-line.ts
-msgctxt "LANVur"
-msgid "Try it again."
-msgstr "Try it again."
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"

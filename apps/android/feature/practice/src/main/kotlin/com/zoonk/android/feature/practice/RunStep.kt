@@ -285,10 +285,7 @@ internal fun RunHeader(
     }
 }
 
-/**
- * A drill's line goes once answered; [lastAnswer] is the learner's earlier answer to the mistake's own
- * question. [part] says what of it this page draws: the question, or the learner's turn and feedback.
- */
+/** [part] says what of the question this page draws: the question, or the learner's turn and feedback. */
 @Composable
 internal fun RunQuestion(
     questions: List<Question>,
@@ -303,7 +300,6 @@ internal fun RunQuestion(
     onDraft: (Answer?) -> Unit,
     netScored: Boolean = false,
     examTomorrow: Boolean = false,
-    lastAnswer: String? = null,
     afterFeedback: @Composable () -> Unit = {},
 ) {
     val drill = question.drill
@@ -321,17 +317,8 @@ internal fun RunQuestion(
         if (netScored) SwipeScore(netTally(questions, run))
         if (checked == null) question.timeMachine?.let { TimeMachine(it, question.format, words) }
 
-        if (drill != null) {
-            val first = previous?.mistakeId != question.mistakeId
-            val shown = if (drill.isIdeaFirst) lastAnswer != null else first
-            if (shown) {
-                DrillNote(
-                    drill,
-                    openLesson,
-                    answered = checked != null || drill.isIdeaFirst,
-                    lastAnswer = lastAnswer?.takeIf { first || drill.isIdeaFirst },
-                )
-            }
+        if (drill != null && !drill.isIdeaFirst && previous?.mistakeId != question.mistakeId) {
+            DrillNote(drill, openLesson, answered = checked != null)
         }
     }
     // The clock times the learner's answer, so it's part of their turn.
