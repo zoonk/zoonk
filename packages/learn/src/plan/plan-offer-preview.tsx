@@ -152,11 +152,7 @@ export function OfferPreview({
       <SuggestionActions>
         {/* Never applied without the diff it makes, as Today's proposals. */}
         {!unchanged && effect !== null && (
-          <SuggestionAction
-            busy={pending}
-            icon={<CheckIcon aria-hidden="true" />}
-            onClick={onApply}
-          >
+          <SuggestionAction action={onApply} busy={pending} icon={<CheckIcon aria-hidden="true" />}>
             {t("Apply")}
           </SuggestionAction>
         )}

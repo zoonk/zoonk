@@ -21,7 +21,7 @@ function CallGoals({ call }: { call: ChallengeCall }) {
 
   return (
     <TaskAsideContent className="flex w-full flex-col gap-1">
-      <PageSectionTitle className="lg:sr-only">{t("What to get across")}</PageSectionTitle>
+      <PageSectionTitle className="with-aside:sr-only">{t("What to get across")}</PageSectionTitle>
       <ChecklistRows>
         {call.goals.map((goal) => (
           <ChecklistRow

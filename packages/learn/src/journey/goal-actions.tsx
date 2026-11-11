@@ -197,9 +197,9 @@ export function GoalPausedSuggestion({
 
   const resume = (
     <SuggestionAction
+      action={() => setStatus("active")}
       busy={isPending}
       icon={<PlayIcon aria-hidden="true" />}
-      onClick={() => setStatus("active")}
     >
       {t("Resume")}
     </SuggestionAction>

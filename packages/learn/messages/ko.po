@@ -551,6 +551,16 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
 
+#: src/_components/task-header.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "사이드바 펼치기"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
+
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
 msgctxt "27gMHa"

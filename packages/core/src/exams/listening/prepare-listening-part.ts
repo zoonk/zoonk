@@ -2,7 +2,8 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { prisma } from "@zoonk/db";
-import { createListeningSet } from "../../library/listening/create-listening-set";
+import { type ItemSetToStore, type WrittenSetItem } from "../../library/items/create-item-set";
+import { writeExamListeningSet } from "../../library/listening/write-exam-listening-set";
 import { type ListeningExam, loadListeningExam } from "./listening-exam";
 import { type ListeningPart } from "./listening-parts";
 import { loadListeningSkills } from "./listening-skills";
@@ -36,9 +37,10 @@ export async function writePartSet({
   exam,
   part,
   serviceTier,
-}: PartInput & { analytics?: AiGenerationContext; serviceTier?: ServiceTier }): Promise<
-  string | null
-> {
+}: PartInput & {
+  analytics?: AiGenerationContext;
+  serviceTier?: ServiceTier;
+}): Promise<ItemSetToStore<WrittenSetItem> | null> {
   const [stored, skills] = await Promise.all([
     prisma.itemSet.count({ where: getFilter({ exam, part }) }),
     loadListeningSkills({ examBlueprintId: exam.blueprintId, sectionName: part.sectionName }),
@@ -48,7 +50,7 @@ export async function writePartSet({
     return null;
   }
 
-  return createListeningSet({
+  return writeExamListeningSet({
     analytics,
     exam: { blueprintId: exam.blueprintId, name: exam.name },
     language: exam.language,

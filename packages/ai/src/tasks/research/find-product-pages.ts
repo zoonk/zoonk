@@ -10,9 +10,9 @@ import { type ProductHints } from "./source-research-plan";
 
 /**
  * With Parallel on 12 cases (8 Nov 2026), Flash scored 10.00 at $17.43/1k and Haiku 5.5 9.87 at
- * $11.22/1k. Read blind, Haiku gave iPhone's iOS update notes as its model list, TOTVS's generic
- * systems page as Protheus's, and a release page when none was named: these pages feed a product
- * many learners share, so the saving isn't worth it. Haiku is the fallback.
+ * $11.22/1k. Read blind, Haiku gave iPhone's iOS update notes as its model list and TOTVS's generic
+ * systems page as Protheus's: these pages feed a product many learners share, so the saving isn't
+ * worth it. Haiku is the fallback.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
@@ -58,7 +58,10 @@ function toUserPrompt({
     .join("\n");
 }
 
-/** Addresses on sites no search returned are dropped, since the model invented them. */
+/**
+ * Addresses on sites no search returned are dropped, since the model invented them. Models return
+ * a release's page even when the learner named no release, so it's kept only when they did.
+ */
 export async function findProductPages({
   analytics,
   hints,
@@ -71,10 +74,11 @@ export async function findProductPages({
   useFallback,
 }: FindProductPagesParams) {
   const userPrompt = toUserPrompt({ hints, knownWebsite, officialDomains });
+  const namedRelease = hints.release !== null;
 
   const systemPrompt = selectPromptVariants({
     template: promptTemplate,
-    variants: { known: Boolean(knownWebsite), release: hints.release !== null },
+    variants: { known: Boolean(knownWebsite), release: namedRelease },
   });
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
@@ -99,7 +103,7 @@ export async function findProductPages({
       brandUrl: keep(output.brandUrl),
       docsUrl: keep(output.docsUrl),
       productUrl: keep(output.productUrl),
-      releaseUrl: keep(output.releaseUrl),
+      releaseUrl: namedRelease ? keep(output.releaseUrl) : null,
       releasesUrl: keep(output.releasesUrl),
       searchCalls,
     },

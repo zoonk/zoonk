@@ -2814,5 +2814,433 @@
       "anthropic/claude-opus-5.5",
       "anthropic/claude-opus-5.5"
     ]
+  },
+  {
+    "lessonId": "01a1bc05-4308-7765-b4ed-3aaf4786eedc",
+    "title": "Efeitos distributivos das políticas",
+    "version": 1,
+    "context": {
+      "activityTemplates": [],
+      "chapterLessons": [
+        {
+          "order": "before",
+          "title": "Interseccionalidade das desigualdades",
+          "canDo": "Analisar desigualdades de raça, gênero e classe em conjunto"
+        },
+        {
+          "order": "before",
+          "title": "Desigualdades territoriais",
+          "canDo": "Analisar como o território condiciona o acesso a oportunidades",
+          "ideas": [
+            "Desigualdades territoriais são diferenças de condições ligadas ao lugar onde se vive.",
+            "Para comparar a oferta entre territórios, é preciso considerar a população atendida, como em vagas por mil habitantes.",
+            "Acessibilidade é a chance real de alcançar e usar um serviço, e uma vaga sem um jeito de chegar existe mas não serve.",
+            "A desigualdade inter-regional ocorre entre regiões, e a desigualdade intraurbana ocorre dentro da mesma cidade.",
+            "Uma média municipal não diz quanto tem cada bairro e pode esconder bairros muito abaixo dela."
+          ],
+          "examples": [
+            "Igor conseguiu uma vaga num curso gratuito no centro de Santarém. A aula termina às 22h, mas o último ônibus para o bairro dele sai às 21h30. Se a vaga é dele, por que ele não consegue aproveitá-la?",
+            "Duas regiões recebem 200 novas vagas de formação cada. Uma tem 20 mil habitantes, e a outra tem 80 mil. Em qual delas a oferta por habitante cresce mais?",
+            "Cada região ganhou 200 vagas. Quantas vagas por mil habitantes?",
+            "A região A tem 300 vagas de formação para 30 mil habitantes. A região B tem 150 vagas para 15 mil habitantes. Julgue o item: a região A tem maior oferta proporcional de vagas que a região B.",
+            "No distrito de Lagoa Seca, sobram vagas de consulta no posto de saúde, que atende até as 16h. O único ônibus do distrito chega ao posto às 16h30. Julgue o item: ampliar o número de vagas de consulta elimina a barreira enfrentada pelos moradores.",
+            "Um relatório informa que 85% dos domicílios de uma cidade têm água encanada. Com base nisso, conclui que todos os bairros da cidade superam 80%. Julgue a conclusão do relatório."
+          ]
+        },
+        {
+          "order": "before",
+          "title": "Oportunidades e resultados desiguais",
+          "canDo": "Distinguir desigualdade de resultados e de oportunidades"
+        },
+        {
+          "order": "after",
+          "title": "Desafio: Desigualdades e distribuição de oportunidades",
+          "canDo": "Tomar decisões com as habilidades deste capítulo"
+        }
+      ],
+      "chapterTitle": "Desigualdades e distribuição de oportunidades",
+      "courseTitle": "Administração Pública",
+      "exams": [
+        {
+          "name": "Concurso CGU",
+          "style": "trueFalse: Itens para julgamento individual como Certo ou Errado. essay: Questão discursiva relacionada a conhecimentos complementares a ser respondida em até 30 linhas. essay: Questão discursiva envolvendo situação-problema relacionada a conhecimentos específicos a ser respondida em até 60 linhas."
+        }
+      ],
+      "language": "pt",
+      "level": "intermediate",
+      "setup": false,
+      "shortAnswers": false,
+      "spec": {
+        "canDo": "Avaliar quem ganha e quem fica excluído de políticas públicas",
+        "description": "Analisar a distribuição de benefícios, custos e acesso para avaliar se uma política reduz ou reforça desigualdades.",
+        "estimatedMinutes": 5,
+        "screens": [
+          {
+            "activityTemplate": null,
+            "brief": "Um programa de cursos gratuitos dobrou suas vagas, mas o atendimento às famílias de baixa renda não aumentou. Como uma expansão pode deixar justamente esse grupo para trás?",
+            "kind": "hook",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "O efeito distributivo mostra como benefícios e custos se repartem entre grupos: de 100 novas vagas gratuitas, por exemplo, 80 podem chegar a pessoas de renda alta.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Dois grupos têm rendas mensais por pessoa de R$ 1.000 e R$ 5.000; todos receberão R$ 100. A distância proporcional entre as rendas vai diminuir, ficar igual ou aumentar? Resposta: diminuir.",
+            "kind": "guess",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Mostrar em etapas: R$ 100 ÷ R$ 1.000 = 10%; R$ 100 ÷ R$ 5.000 = 2%. A transferência é progressiva porque aumenta proporcionalmente mais a renda de quem tem menos.",
+            "kind": "workedExample",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Julgar: receber R$ 200 sobre renda de R$ 1.000 é proporcionalmente menos vantajoso que receber R$ 500 sobre R$ 5.000. Errado: são 20% contra 10%; a armadilha é comparar apenas os valores recebidos.",
+            "kind": "check",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Uma transferência progressiva pode manter a diferença absoluta, medida em reais: ela continua em R$ 4.000 neste caso. Tabela de renda mensal por pessoa: menor renda, R$ 1.000 antes e R$ 1.100 depois; maior renda, R$ 5.000 antes e R$ 5.100 depois.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "table"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "O benefício líquido desconta do benefício recebido o custo suportado para financiar a política. Quem recebe R$ 200, mas paga R$ 250 adicionais no seu financiamento, fica com R$ 200 − R$ 250 = −R$ 50.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Tabela mensal por pessoa, com colunas renda, benefício e custo adicional: R$ 1.000 | R$ 200 | R$ 150; R$ 5.000 | R$ 400 | R$ 100. Julgar se o ganho líquido proporcional favorece a menor renda: Errado, são 5% contra 6%; a armadilha é ignorar o financiamento.",
+            "kind": "check",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "table"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "A elegibilidade, isto é, cumprir os critérios para receber, não garante acesso efetivo. Um auxílio com inscrição apenas por aplicativo pode excluir pessoas que têm direito, mas não têm internet.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Um auxílio exclusivo para famílias de baixa renda exige conta bancária, que parte delas não possui. Julgar: o critério de renda basta para assegurar atendimento a todo o público previsto; Errado, pois o pagamento cria uma barreira de acesso.",
+            "kind": "check",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "none"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "O crescimento total pode esconder a concentração dos novos benefícios: as vagas ocupadas passaram de 40 para 100, sem avanço na baixa renda. Mostrar barras por grupo, antes/depois: baixa renda, 20/20; renda alta, 20/80.",
+            "kind": "explanation",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "chart"
+          },
+          {
+            "activityTemplate": null,
+            "brief": "Um auxílio exige aplicativo; tabela mensal por pessoa, com renda | recebem/elegíveis | auxílio | custo adicional: R$ 1.000 | 40/100 | R$ 300 | R$ 100; R$ 5.000 | 100/100 | R$ 300 | R$ 0. Pedir uma conclusão técnica e uma mudança de acesso: o ganho líquido entre recebedores é 20% contra 6%, mas a cobertura é 40% contra 100%; propor inscrição presencial, rejeitando que valores iguais garantam efeitos iguais.",
+            "kind": "application",
+            "skills": [0],
+            "visual": null,
+            "visualKind": "table"
+          }
+        ],
+        "skills": [
+          {
+            "description": "Analisar quem recebe benefícios, quem suporta os custos e quem encontra barreiras de acesso para avaliar a distribuição dos efeitos de uma política.",
+            "example": "Um auxílio de R$ 100 representa 10% de uma renda de R$ 1.000 e 2% de uma renda de R$ 5.000.",
+            "hard": true,
+            "name": "Avaliar efeitos distributivos de políticas",
+            "topic": "Avaliar efeitos distributivos de políticas",
+            "useCase": "Examinar programas públicos sem confundir expansão do atendimento com redução das desigualdades."
+          }
+        ],
+        "title": "Efeitos distributivos das políticas"
+      }
+    },
+    "lesson": {
+      "screens": [
+        {
+          "content": {
+            "text": "Em Cuiabá, um programa de cursos gratuitos mais que dobrou suas vagas. Um ano depois, o número de alunos de baixa renda era o mesmo. Como uma expansão pode deixar justamente esse grupo para trás?",
+            "variant": "text"
+          },
+          "kind": "hook"
+        },
+        {
+          "content": {
+            "text": "Um programa abre 60 novas vagas gratuitas, e 45 delas ficam com pessoas de renda alta. A forma como benefícios e custos se repartem entre grupos se chama **efeito distributivo**.",
+            "title": "Quem fica com o quê"
+          },
+          "kind": "explanation"
+        },
+        {
+          "content": {
+            "reveal": "Diminui: a renda maior era 5 vezes a menor e depois fica perto de 4,6 vezes.",
+            "options": [
+              { "id": "a", "text": "Diminui", "isCorrect": true },
+              { "id": "b", "text": "Fica igual", "isCorrect": false },
+              { "id": "c", "text": "Aumenta", "isCorrect": false }
+            ],
+            "variant": "guess",
+            "question": "Uma pessoa ganha R$ 1.000 por mês e outra, R$ 5.000. As duas passam a receber R$ 100 a mais. Em proporção, o que acontece com a distância entre essas rendas?"
+          },
+          "kind": "hook"
+        },
+        {
+          "content": {
+            "steps": [
+              { "math": "100 \\div 1{.}000 = 10\\%", "text": "Divida pela renda." },
+              { "math": "100 \\div 5{.}000 = 2\\%", "text": "Repita." }
+            ],
+            "title": "R$ 100 em proporção",
+            "result": "A mesma quantia pesa mais na renda menor. Por isso, essa transferência é **progressiva**.",
+            "problem": "Quanto dos salários de R$ 1.000 e R$ 5.000 são R$ 100?"
+          },
+          "kind": "workedExample"
+        },
+        {
+          "content": {
+            "basis": { "quote": "A mesma quantia pesa mais na renda menor.", "position": 3 },
+            "context": "Julgue o item.",
+            "options": [
+              {
+                "id": "a",
+                "text": "Certo",
+                "reason": "R$ 420 é um valor maior, mas comparar só os valores recebidos engana: R$ 180 são 15% da renda, enquanto R$ 420 são 7%.",
+                "isCorrect": false
+              },
+              {
+                "id": "b",
+                "text": "Errado",
+                "reason": "R$ 180 são 15% de R$ 1.200, e R$ 420 são 7% de R$ 6.000. Proporcionalmente, a pessoa de menor renda recebe mais.",
+                "isCorrect": true
+              }
+            ],
+            "question": "Receber R$ 180 sobre uma renda de R$ 1.200 é proporcionalmente menos vantajoso que receber R$ 420 sobre uma renda de R$ 6.000."
+          },
+          "kind": "check"
+        },
+        {
+          "content": {
+            "text": "Renda mensal por pessoa:\n\n| Renda | Antes | Depois |\n|---|---:|---:|\n| Menor | R$ 1.000 | R$ 1.100 |\n| Maior | R$ 5.000 | R$ 5.100 |\n\nA proporção entre as rendas caiu, mas a distância segue em R$ 4.000. Essa distância medida em reais se chama **diferença absoluta**. Um auxílio igual para todos não a reduz.",
+            "title": "Proporção cai, reais não"
+          },
+          "kind": "explanation"
+        },
+        {
+          "content": {
+            "text": "Débora recebe R$ 200 de um programa, mas paga R$ 250 a mais em tributos que o financiam. No saldo, ela perde R$ 50. O que sobra depois de descontar o custo é o **benefício líquido**.",
+            "title": "Benefício menos custo",
+            "exampleLineSlot": {
+              "idea": "um benefício que o aprendiz recebe, mas ajuda a pagar de outra forma, como em impostos ou tarifas"
+            }
+          },
+          "kind": "explanation"
+        },
+        {
+          "content": {
+            "basis": {
+              "quote": "O que sobra depois de descontar o custo é o **benefício líquido**.",
+              "position": 6
+            },
+            "context": "Valores mensais por pessoa:\n\n| Renda | Benefício | Custo adicional |\n|---:|---:|---:|\n| R$ 1.000 | R$ 200 | R$ 150 |\n| R$ 5.000 | R$ 400 | R$ 100 |\n\nJulgue o item.",
+            "options": [
+              {
+                "id": "a",
+                "text": "Certo",
+                "reason": "Sem o custo, seriam 20% contra 8%, e o item pareceria certo. Descontado o custo, ficam R$ 50 sobre R$ 1.000 (5%) contra R$ 300 sobre R$ 5.000 (6%).",
+                "isCorrect": false
+              },
+              {
+                "id": "b",
+                "text": "Errado",
+                "reason": "A menor renda fica com R$ 50 líquidos, ou 5%. A maior fica com R$ 300, ou 6%. O ganho líquido proporcional favorece a maior renda.",
+                "isCorrect": true
+              }
+            ],
+            "question": "Considerado o custo adicional, o ganho líquido proporcional favorece a pessoa de menor renda."
+          },
+          "kind": "check"
+        },
+        {
+          "content": {
+            "text": "Iara cumpre todos os critérios de um auxílio. Mas a inscrição é só por aplicativo, e ela não tem internet. Cumprir os critérios se chama **elegibilidade**. Mas ser elegível não garante acesso.",
+            "title": "Ter direito não é receber"
+          },
+          "kind": "explanation"
+        },
+        {
+          "content": {
+            "basis": { "quote": "Mas ser elegível não garante acesso.", "position": 8 },
+            "context": "Um auxílio é exclusivo para famílias de baixa renda. O pagamento, porém, só é feito em conta bancária, e parte dessas famílias não tem conta.",
+            "options": [
+              {
+                "id": "a",
+                "text": "Certo",
+                "reason": "O critério define quem tem direito, por isso parece suficiente. Mas quem não tem conta bancária não consegue receber, mesmo sendo elegível.",
+                "isCorrect": false
+              },
+              {
+                "id": "b",
+                "text": "Errado",
+                "reason": "A exigência de conta bancária é uma barreira de acesso. Ela exclui famílias que cumprem o critério de renda.",
+                "isCorrect": true
+              }
+            ],
+            "question": "Julgue: o critério de renda basta para assegurar o atendimento a todo o público previsto."
+          },
+          "kind": "check"
+        },
+        {
+          "content": {
+            "text": "As vagas ocupadas foram de 40 para 100. As 60 novas ficaram todas com a renda alta, e a baixa renda seguiu com 20. Quando os ganhos se acumulam num só grupo, há **concentração** dos benefícios.",
+            "title": "Crescer não é distribuir",
+            "visual": {
+              "kind": "chart",
+              "unit": null,
+              "chart": "bar",
+              "title": "Vagas ocupadas por grupo de renda",
+              "series": [
+                { "name": "Antes", "values": [20, 20] },
+                { "name": "Depois", "values": [20, 80] }
+              ],
+              "source": null,
+              "axisStart": null,
+              "categories": ["Baixa renda", "Renda alta"],
+              "valueLabel": "Vagas ocupadas",
+              "categoryLabel": "Grupo"
+            }
+          },
+          "kind": "explanation"
+        },
+        {
+          "content": {
+            "basis": null,
+            "context": "Uma prefeitura oferece auxílio com inscrição só por aplicativo. Valores mensais por pessoa:\n\n| Renda | Recebem/elegíveis | Auxílio | Custo adicional |\n|---:|---:|---:|---:|\n| R$ 2.400 | 60/100 | R$ 600 | R$ 120 |\n| R$ 12.000 | 100/100 | R$ 600 | R$ 0 |",
+            "options": [
+              {
+                "id": "a",
+                "text": "O ganho líquido de 20% contra 5% prova que todos os elegíveis já são atendidos. Basta aumentar o valor.",
+                "reason": "Essa comparação vale para quem recebe. Só 60 de cada 100 elegíveis de menor renda recebem, então aumentar o valor não resolve a barreira do aplicativo.",
+                "isCorrect": false
+              },
+              {
+                "id": "b",
+                "text": "Entre quem recebe, o ganho líquido é 20% contra 5%, mas a cobertura é 60% contra 100%. Oferecer inscrição presencial pode reduzir a barreira.",
+                "reason": "R$ 480 líquidos sobre R$ 2.400 são 20%; R$ 600 sobre R$ 12.000 são 5%. Mas 40% dos elegíveis de menor renda não recebem; a inscrição presencial pode ampliar o acesso.",
+                "isCorrect": true
+              },
+              {
+                "id": "c",
+                "text": "O auxílio tem o mesmo valor para todos, então seus efeitos são iguais. Basta manter o aplicativo.",
+                "reason": "O mesmo valor representa proporções diferentes, e a cobertura também difere: 60 de cada 100 elegíveis de menor renda recebem, contra todos os de maior renda.",
+                "isCorrect": false
+              },
+              {
+                "id": "d",
+                "text": "O ganho é de 25% contra 5%, e a cobertura não importa. Basta manter o aplicativo.",
+                "reason": "Os 25% ignoram o custo adicional de R$ 120: o ganho líquido é 20%. A cobertura importa, pois 40% dos elegíveis de menor renda ficam sem receber.",
+                "isCorrect": false
+              }
+            ],
+            "question": "Qual avaliação e qual mudança de acesso fazem sentido?"
+          },
+          "kind": "check"
+        }
+      ],
+      "summary": {
+        "ideas": [
+          {
+            "text": "O efeito distributivo mostra como os benefícios e os custos de uma política se repartem entre grupos.",
+            "about": "Como benefícios e custos se distribuem entre grupos?",
+            "label": "Efeito distributivo",
+            "iconId": "01a1bc05-64ba-7394-8de1-e2785c535339",
+            "iconNeed": {
+              "name": "pie chart",
+              "description": "A simple circle chart divided into several distinct slices.",
+              "searchWords": ["chart", "circle graph", "distribution"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Uma transferência é progressiva quando aumenta proporcionalmente mais a renda de quem tem menos, como R$ 100 que somam 10% a R$ 1.000 e 2% a R$ 5.000.",
+            "about": "Quando uma transferência pesa mais para quem tem menos",
+            "label": "Transferência progressiva",
+            "iconId": "01a1bb7b-5719-7d97-babd-8727e15c91e4",
+            "iconNeed": {
+              "name": "staircase",
+              "description": "A short staircase with several clearly visible steps.",
+              "searchWords": ["stairs", "steps", "stairway"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Um auxílio igual para todos pode reduzir a proporção entre as rendas e ainda manter a diferença absoluta em reais.",
+            "about": "Como comparar distâncias entre rendas em reais?",
+            "label": "Diferença absoluta",
+            "iconId": "01a1bc08-7e8d-7865-9d98-3e5a320b0817",
+            "iconNeed": {
+              "name": "ruler",
+              "description": "A straight ruler with small measurement marks.",
+              "searchWords": ["measuring stick", "measure", "length"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "O benefício líquido é o que sobra do benefício recebido depois de descontar o custo pago para financiar a política.",
+            "about": "Como comparar o que se recebe e o que se paga?",
+            "label": "Benefício líquido",
+            "iconId": "01a1bc09-196e-78b7-a9e1-f194c6e0f101",
+            "iconNeed": {
+              "name": "balance scale",
+              "description": "A classic balance scale with a pan on each side.",
+              "searchWords": ["scales", "weighing scale", "balance"]
+            },
+            "iconPending": false
+          },
+          {
+            "text": "Ser elegível não garante acesso, e uma expansão do total de vagas pode concentrar os novos benefícios num só grupo.",
+            "about": "Quem consegue acessar um benefício e como ele se distribui?",
+            "label": "Elegibilidade e concentração",
+            "iconId": "01a1ba8d-7694-7d49-be3c-dd57e75749eb",
+            "iconNeed": {
+              "name": "doorway",
+              "description": "An open doorway with a visible threshold.",
+              "searchWords": ["door", "entrance", "entry"]
+            },
+            "iconPending": false
+          }
+        ],
+        "shape": "hub"
+      }
+    }
   }
 ]

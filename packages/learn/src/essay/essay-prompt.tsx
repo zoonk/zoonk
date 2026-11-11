@@ -46,9 +46,11 @@ export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: stri
     <TaskAsideContent className="flex flex-col gap-6" data-slot="essay-texts">
       {texts && (
         <section className="flex flex-col gap-3">
-          <PageSectionTitle className="lg:group-data-aside/task:sr-only">{label}</PageSectionTitle>
+          <PageSectionTitle className="with-aside:group-data-aside/task:sr-only">
+            {label}
+          </PageSectionTitle>
           <ItemText
-            className="border-border border-l-2 pl-4 text-sm leading-relaxed lg:group-data-aside/task:border-l-0 lg:group-data-aside/task:pl-0"
+            className="border-border with-aside:group-data-aside/task:border-l-0 with-aside:group-data-aside/task:pl-0 border-l-2 pl-4 text-sm leading-relaxed"
             text={texts}
           />
         </section>

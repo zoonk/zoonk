@@ -59,7 +59,7 @@ type AskTutorSize = "bar" | "sm" | "task";
 
 const TASK_ASK_CLASS = cn(
   "size-11 shrink-0 px-0 lg:w-auto lg:px-4 lg:pl-2",
-  "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-5 lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] lg:group-data-aside/task:justify-start",
+  "with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:right-5 with-aside:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] with-aside:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] with-aside:group-data-aside/task:justify-start",
 );
 
 const BAR_ASK_CLASS = cn(

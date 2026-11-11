@@ -3,7 +3,7 @@ import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import {
   listListeningPartsToPrepareStep,
-  preparePartSetStep,
+  preparePartSet,
   voiceListeningSetStep,
 } from "./steps/listening-sets-steps";
 
@@ -39,7 +39,7 @@ export async function listeningSetsWorkflow(
 
   const voiced = await Promise.allSettled(
     unready.parts.map(async (part) => {
-      const setId = await preparePartSetStep({ ...context, exam: unready.exam, part });
+      const setId = await preparePartSet({ ...context, exam: unready.exam, part });
       return setId ? voiceListeningSetStep({ ...context, setId }) : false;
     }),
   );

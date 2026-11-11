@@ -14,12 +14,10 @@ export function hasAttemptAt(state: LessonPlayerState, position: number): boolea
   return id in state.results || (id in state.firstAttempts && isEarlierCopy(state, position));
 }
 
-/** The state the screen in view shows: an earlier copy of a question shows its own attempt. */
-export function showAttemptInView(state: LessonPlayerState): LessonPlayerState {
-  const id = state.queue[state.position] ?? "";
+function showFirstAttempt(state: LessonPlayerState, id: string): LessonPlayerState {
   const first = state.firstAttempts[id];
 
-  if (!first || !isEarlierCopy(state, state.position)) {
+  if (!first) {
     return state;
   }
 
@@ -31,4 +29,14 @@ export function showAttemptInView(state: LessonPlayerState): LessonPlayerState {
     results: { ...state.results, [id]: first.result },
     rounds: { ...state.rounds, [id]: first.round },
   };
+}
+
+/** The state the screen at a position shows: an earlier copy of a question shows its own attempt. */
+export function showAttemptAt(state: LessonPlayerState, position: number): LessonPlayerState {
+  const id = state.queue[position] ?? "";
+  return isEarlierCopy(state, position) ? showFirstAttempt(state, id) : state;
+}
+
+export function showAttemptInView(state: LessonPlayerState): LessonPlayerState {
+  return showAttemptAt(state, state.position);
 }

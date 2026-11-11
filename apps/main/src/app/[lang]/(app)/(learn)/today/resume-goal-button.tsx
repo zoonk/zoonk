@@ -47,16 +47,18 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
 
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
-      <Button
-        busy={isPending}
-        disabled={outcome === "saved"}
-        focusableWhenDisabled
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={resume}
-        size="lg"
-      >
-        <span className="truncate">{t("Resume {goal}", { goal: goalTitle })}</span>
-      </Button>
+      <form action={() => resume()} className="contents">
+        <Button
+          busy={isPending}
+          disabled={outcome === "saved"}
+          focusableWhenDisabled
+          icon={<PlayIcon aria-hidden="true" />}
+          size="lg"
+          type="submit"
+        >
+          <span className="truncate">{t("Resume {goal}", { goal: goalTitle })}</span>
+        </Button>
+      </form>
       <ResumeError outcome={outcome} />
     </div>
   );

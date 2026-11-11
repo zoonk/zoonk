@@ -77,7 +77,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
 
   return (
     <section
-      className={cn("flex flex-col gap-2", !subject && "lg:hidden")}
+      className={cn("flex flex-col gap-2", !subject && "with-aside:hidden")}
       data-slot="study-moment-next"
     >
       <PageSectionLabel>{t("Up next")}</PageSectionLabel>

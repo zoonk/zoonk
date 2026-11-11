@@ -114,16 +114,18 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
           description={t("Everything in your memory, as one file")}
           label={t("Download my memory")}
         >
-          <Button
-            aria-label={t("Download my memory")}
-            busy={isPending}
-            icon={<DownloadIcon aria-hidden="true" />}
-            onClick={download}
-            size="sm"
-            variant="outline"
-          >
-            {t("Download")}
-          </Button>
+          <form action={() => download()} className="contents">
+            <Button
+              aria-label={t("Download my memory")}
+              busy={isPending}
+              icon={<DownloadIcon aria-hidden="true" />}
+              size="sm"
+              type="submit"
+              variant="outline"
+            >
+              {t("Download")}
+            </Button>
+          </form>
         </SettingRow>
       </ListGroup>
       {failed && (

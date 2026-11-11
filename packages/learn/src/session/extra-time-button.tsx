@@ -27,16 +27,18 @@ export function ExtraTimeButton({
 
   return (
     <>
-      <Button
-        busy={isPending}
-        className={cn("w-full", className)}
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={run}
-        size="xl"
-        variant="ghost"
-      >
-        {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
-      </Button>
+      <form action={() => void run()} className="contents">
+        <Button
+          busy={isPending}
+          className={cn("w-full", className)}
+          icon={<PlayIcon aria-hidden="true" />}
+          size="xl"
+          type="submit"
+          variant="ghost"
+        >
+          {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
+        </Button>
+      </form>
 
       {failed && <ChangeSaveError />}
     </>

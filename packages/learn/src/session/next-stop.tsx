@@ -64,21 +64,23 @@ function useTapFocus(focus: boolean) {
 function StartButton({
   busy,
   focus,
-  onClick,
+  onStart,
   step,
 }: {
   busy: boolean;
   focus: boolean;
-  onClick: () => void;
+  onStart: () => void;
   step: DayStep;
 }) {
   const t = useExtracted();
   const ref = useTapFocus(focus);
 
   return (
-    <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onClick} ref={ref}>
-      {step.status === "active" ? t("Continue") : t("Start")}
-    </EnterButton>
+    <form action={() => onStart()} className="contents">
+      <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} ref={ref} type="submit">
+        {step.status === "active" ? t("Continue") : t("Start")}
+      </EnterButton>
+    </form>
   );
 }
 
@@ -192,22 +194,24 @@ function NextStopActionBar({
         }
       >
         {canStop && (
-          <Button
-            busy={stop.isPending}
-            icon={<CircleStopIcon aria-hidden="true" />}
-            onClick={stop.run}
-            size="xl"
-            variant="outline"
-          >
-            {t("Stop for today")}
-          </Button>
+          <form action={() => void stop.run()} className="contents">
+            <Button
+              busy={stop.isPending}
+              icon={<CircleStopIcon aria-hidden="true" />}
+              size="xl"
+              type="submit"
+              variant="outline"
+            >
+              {t("Stop for today")}
+            </Button>
+          </form>
         )}
 
         {isReady && (
           <StartButton
             busy={start.busy}
             focus={Boolean(tap?.focus) || written}
-            onClick={start.run}
+            onStart={start.run}
             step={block}
           />
         )}

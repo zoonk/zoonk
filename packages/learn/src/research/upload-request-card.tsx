@@ -143,7 +143,7 @@ export function UploadRequestCard({
       )}
 
       {state === "asking" && (
-        <div className="flex flex-wrap gap-2">
+        <form className="flex flex-wrap gap-2">
           <Button
             disabled={isPending}
             focusableWhenDisabled
@@ -157,16 +157,17 @@ export function UploadRequestCard({
 
           <Button
             busy={isPending}
-            icon={<XIcon aria-hidden="true" />}
-            onClick={() =>
+            formAction={() =>
               run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
             }
+            icon={<XIcon aria-hidden="true" />}
             size="sm"
+            type="submit"
             variant="ghost"
           >
             {t("Not now")}
           </Button>
-        </div>
+        </form>
       )}
 
       {state === "uploading" && (

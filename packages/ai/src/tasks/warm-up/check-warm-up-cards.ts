@@ -12,7 +12,7 @@ import { type WarmUpCard } from "./warm-up-cards";
 import { getWarmUpCheckModels } from "./warm-up-check-models";
 import { type WarmUpGoalKind } from "./write-warm-up-cards";
 
-const defaultReasoning: Reasoning = "low";
+const defaultReasoning: Reasoning = "medium";
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the problem before the verdict it leads to. */
 const schema = z.object({

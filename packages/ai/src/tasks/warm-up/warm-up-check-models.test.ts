@@ -9,7 +9,7 @@ describe(getWarmUpCheckModels, () => {
       ),
     ).toStrictEqual([
       { fallbackModels: ["anthropic/claude-sonnet-5.5"], model: "google/gemini-3.8-flash" },
-      { fallbackModels: ["anthropic/claude-sonnet-5.5"], model: "openai/gpt-6-luna" },
+      { fallbackModels: ["openai/gpt-6-luna"], model: "anthropic/claude-sonnet-5.5" },
       { fallbackModels: ["openai/gpt-6-luna"], model: "google/gemini-3.8-flash" },
     ]);
   });
