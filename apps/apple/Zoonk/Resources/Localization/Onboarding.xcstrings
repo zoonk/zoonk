@@ -4832,10 +4832,64 @@
     "At %@ a day, some topics won't fit before %@. This plan gives %@ more time." : {
       "comment" : "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %1$@ am Tag reicht die Zeit bis %2$@ nicht für alle Themen. Dieser Plan sieht für %3$@ mehr Zeit vor."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "At %1$@ a day, some topics won't fit before %2$@. This plan gives %3$@ more time."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al día, no hay tiempo para todos los temas antes de %2$@. Este plan dedica más tiempo a %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec %1$@ par jour, tu ne pourras pas aborder tous les sujets avant %2$@. Ce plan consacre plus de temps à %3$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %1$@ al giorno, non c’è tempo per tutti gli argomenti prima dell’esame (%2$@). Questo piano dedica più tempo a %3$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日%1$@では、%2$@までに学びきれないトピックがあります。この学習計画では、%3$@に時間を多く割いています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루에 %1$@씩 공부하면 %2$@ 전까지 일부 주제는 다루지 못해요. 이 계획에서는 %3$@에 시간을 더 배정해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przy %1$@ nauki dziennie część tematów nie zmieści się w planie na %2$@. Plan przeznacza więcej czasu na przedmioty: %3$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com %1$@ por dia, não dá para estudar todos os tópicos antes de %2$@. Este plano reserva mais tempo para %3$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günde %1$@ ayırdığında bazı konular %2$@ öncesine sığmıyor. Bu plan %3$@ için daha fazla zaman ayırıyor."
           }
         }
       }
@@ -5803,7 +5857,63 @@
       }
     },
     "Change focus" : {
-      "comment" : "Opens the choice of the subjects the plan gives more time"
+      "comment" : "Opens the choice of the subjects the plan gives more time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schwerpunkt ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar el enfoque"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer les priorités"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia le priorità"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重点科目を変更する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중 과목 바꾸기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień priorytety"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar foco"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odağı değiştir"
+          }
+        }
+      }
     },
     "Chapters" : {
       "comment" : "Header over a new plan's chapters",
@@ -17762,10 +17872,64 @@
     "Question %lld of %lld" : {
       "comment" : "Which question of a test with a promised count this is",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frage %1$lld von %2$lld"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Question %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pregunta %1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Question %1$lld sur %2$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domanda %1$lld di %2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld問目（全%2$lld問）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld번 문제 (총 %2$lld문제)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pytanie %1$lld z %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pergunta %1$lld de %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soru %1$lld / %2$lld"
           }
         }
       }
@@ -19488,7 +19652,63 @@
       }
     },
     "See what fits" : {
-      "comment" : "Opens what a short plan studies, from the line saying what it leaves out"
+      "comment" : "Opens what a short plan studies, from the line saying what it leaves out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ansehen, was in den Plan passt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver qué temas caben"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir ce qui est prévu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedi cosa rientra nel piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習できる範囲を見る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공부할 수 있는 내용 보기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobacz, co się zmieści"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver o que cabe"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nelerin sığdığını gör"
+          }
+        }
+      }
     },
     "See your plan" : {
       "comment" : "Leaves the plan's wait, once the plan is ready, for the plan",
@@ -27910,7 +28130,63 @@
       }
     },
     "What your test changed" : {
-      "comment" : "Opens the Focus test's result from the plan's reveal"
+      "comment" : "Opens the Focus test's result from the plan's reveal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen durch deinen Test ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver qué cambió con tu prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que ton test a changé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa è cambiato con il test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストで変わったこと"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진단으로 달라진 점"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobacz, co zmienił test"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que seu teste mudou"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testinin neleri değiştirdiğini gör"
+          }
+        }
+      }
     },
     "When you study" : {
       "comment" : "Row with when the learner studies",
@@ -28562,7 +28838,63 @@
       }
     },
     "With this time, we suggest giving %@ more attention." : {
-      "comment" : "Under the daily time: up to three subjects the plan would give more time"
+      "comment" : "Under the daily time: up to three subjects the plan would give more time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei dieser Lernzeit empfehlen wir, %@ mehr Zeit zu widmen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con este tiempo, te sugerimos dedicar más atención a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec ce temps d’étude, nous te suggérons de privilégier %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con questo tempo a disposizione, ti consigliamo di dedicare più attenzione a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この学習時間なら、%@を重点的に学ぶことをおすすめします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 학습 시간이라면 %@에 더 집중하는 걸 추천해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przy takim czasie nauki proponujemy poświęcić więcej uwagi tym przedmiotom: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com esse tempo, a gente sugere dar mais atenção a %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu sürede %@ üzerinde daha çok durmanı öneriyoruz."
+          }
+        }
+      }
     },
     "Without a date, you study everything at your own pace, and we show when you reach each milestone." : {
       "comment" : "Under the date question",

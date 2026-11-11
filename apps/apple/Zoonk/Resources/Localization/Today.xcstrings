@@ -5329,7 +5329,63 @@
       }
     },
     "A quick test can suggest where your study time should go." : {
-      "comment" : "Today's suggestion of the Focus test, in one line"
+      "comment" : "Today's suggestion of the Focus test, in one line",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzer Test kann dir zeigen, wofür du deine Lernzeit am besten nutzt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba rápida puede orientarte sobre cómo distribuir tu tiempo de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test rapide peut te suggérer quelles matières privilégier."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un breve test può suggerirti a cosa dedicare il tuo tempo di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短いテストで、学習時間の配分を提案します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "간단한 진단으로 어느 과목에 학습 시간을 더 쓸지 알아볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krótki test może podpowiedzieć, na co przeznaczyć czas nauki."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste rápido pode sugerir como distribuir seu tempo de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa bir test, çalışma süreni neye ayırabileceğini gösterebilir."
+          }
+        }
+      }
     },
     "Add your class material" : {
       "comment" : "Asks for a class's material, since the teacher's test isn't published",
@@ -8194,7 +8250,63 @@
       }
     },
     "Find where your study time should go" : {
-      "comment" : "Title of Today's suggestion of the Focus test"
+      "comment" : "Title of Today's suggestion of the Focus test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau, wofür du deine Lernzeit am besten nutzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubre a qué dedicar tu tiempo de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouve à quoi consacrer ton temps d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scopri a cosa dedicare il tuo tempo di studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習時間をかける科目を見つける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시간을 더 쓸 과목 찾기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź, na co przeznaczyć czas nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubra como distribuir seu tempo de estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma süreni neye ayıracağını bul"
+          }
+        }
+      }
     },
     "Finish “%@”" : {
       "comment" : "Mission: finish a chapter",
@@ -11140,7 +11252,63 @@
       }
     },
     "Noted. You can take the test from your plan." : {
-      "comment" : "After the learner dismissed Today's suggestion of the Focus test"
+      "comment" : "After the learner dismissed Today's suggestion of the Focus test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles klar. Du kannst den Test über deinen Plan machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendido. Puedes hacer la prueba desde tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est noté. Tu peux faire le test depuis ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Va bene. Puoi fare il test dal tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "わかりました。テストは学習計画から受けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알겠어요. 계획에서 진단을 받을 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jasne. Test znajdziesz w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anotado. Você pode fazer o teste pelo seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam. Testi planından çözebilirsin."
+          }
+        }
+      }
     },
     "Noted. You keep your time, with less depth where it counts least." : {
       "comment" : "The learner kept their daily time after falling behind",
@@ -16481,7 +16649,63 @@
       }
     },
     "Update my plan" : {
-      "comment" : "Applies the focus a learner's Focus test answers propose"
+      "comment" : "Applies the focus a learner's Focus test answers propose",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Plan aktualisieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar mi plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mettre à jour mon plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiorna il mio piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を更新する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 계획에 반영하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaktualizuj mój plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualizar meu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planımı güncelle"
+          }
+        }
+      }
     },
     "Upload a document" : {
       "comment" : "Opens the ways to add the goal's official source",
@@ -19358,7 +19582,63 @@
       }
     },
     "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus." : {
-      "comment" : "Why Today suggests the Focus test"
+      "comment" : "Why Today suggests the Focus test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lernzeit reicht bis zur Prüfung nicht für alles. Kurze Fragen zu deinen Fächern helfen dir, einen Schwerpunkt zu finden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu tiempo de estudio no alcanza para cubrir todo antes de tu examen. Unas preguntas rápidas sobre tus materias te ayudan a decidir en qué enfocarte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton temps d’étude ne suffit pas pour tout aborder avant ton examen. Quelques questions rapides sur tes matières t’aident à savoir lesquelles privilégier."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo tempo di studio non basta per affrontare tutto prima dell’esame. Brevi domande sulle tue materie ti aiutano a capire a cosa dare priorità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今の学習時間では、試験までにすべてを学びきれません。科目ごとの短いテストで、重点的に学ぶ科目の目安がわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 학습 시간으로는 시험 전까지 모든 내용을 공부하기 어려워요. 과목별로 몇 문제를 풀어 보면 어디에 집중할지 알아볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czasu na naukę nie wystarczy na wszystko przed egzaminem. Krótkie pytania z twoich przedmiotów podpowiedzą, na czym się skupić."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá para estudar tudo antes da prova com o tempo que você tem. Perguntas rápidas sobre suas matérias sugerem onde focar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma süren sınavdan önce tüm konulara yetmiyor. Branşlarınla ilgili kısa sorular neye odaklanabileceğini gösteriyor."
+          }
+        }
+      }
     },
     "Your teacher's test isn't published anywhere. Upload the slides, notes or list of topics so your plan follows your class." : {
       "comment" : "Why a class's material is asked for",

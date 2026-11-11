@@ -3510,7 +3510,63 @@
       }
     },
     "Find which subjects should get more of your study time." : {
-      "comment" : "What choosing the plan's focus does"
+      "comment" : "What choosing the plan's focus does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau, welchen Fächern du mehr Lernzeit widmen solltest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubre a qué materias conviene dedicar más tiempo de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Découvre à quelles matières consacrer plus de temps d’étude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scopri a quali materie dedicare più tempo di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの科目に学習時間を多くかけるとよいかがわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시간을 더 쓸 과목을 찾아보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź, którym przedmiotom warto poświęcić więcej czasu nauki."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubra quais matérias precisam de mais tempo de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hangi branşlara daha çok zaman ayırman gerektiğini bul."
+          }
+        }
+      }
     },
     "Get answer" : {
       "comment" : "Asks the buddy for an answer that wasn't written yet",
