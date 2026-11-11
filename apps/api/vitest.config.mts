@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
 import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
+const STAFF_TIMEOUT_TEST = "src/app/staff/timeout.test.ts";
+
 /**
  * A mocked module stays mocked in its worker, so files that mock their own run in a fresh worker
  * each; every other file shares workers and loads the app once per worker.
@@ -11,6 +13,7 @@ const OWN_MOCKS = globSync(["src/**/*.test.ts", "scripts/**/*.test.ts"], {
   cwd: import.meta.dirname,
 }).filter(
   (file) =>
+    file !== STAFF_TIMEOUT_TEST &&
     !file.endsWith(".integration.test.ts") &&
     /\bvi\.(?:mock|doMock|unmock)\(/u.test(
       readFileSync(resolve(import.meta.dirname, file), "utf8"),
@@ -63,12 +66,22 @@ export default defineConfig({
             "**/e2e/**",
             "**/*.integration.test.ts",
             ...OWN_MOCKS,
+            STAFF_TIMEOUT_TEST,
           ],
           isolate: false,
           name: "shared",
         },
       },
       { extends: true, test: { include: OWN_MOCKS, name: "own-mocks" } },
+      {
+        extends: true,
+        test: {
+          include: [STAFF_TIMEOUT_TEST],
+          name: "staff-timeout",
+          // Its table lock must not cancel queries from parallel tests.
+          sequence: { groupOrder: 1 },
+        },
+      },
     ],
     setupFiles: ["./setup-tests.ts"],
     // Tests read and write the real database; on CI two suites share a 4-vCPU runner, where a test

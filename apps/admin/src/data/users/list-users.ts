@@ -1,8 +1,8 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { getUserSearchWhere } from "@/data/users/_utils/user-search";
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { type UserSort } from "@/lib/user-sort";
+import { getUserSearchWhere } from "@zoonk/core/users/user-search";
 import { type Subscription, prisma } from "@zoonk/db";
 
 const cachedListUsers = cacheAdminData(
