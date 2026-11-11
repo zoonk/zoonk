@@ -20,6 +20,7 @@ import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
 import { loadPlacementWithSummary } from "./load-placement-state";
+import { SITTING_ANSWER_FILTER } from "./placement-answers";
 
 /**
  * Opens the sitting the offer promised; one already open stays as it is. The first start also
@@ -116,11 +117,8 @@ export async function closeTestSitting({
       select: { answer: true, durationMs: true, isCorrect: true },
       where: {
         answeredAt: { gte: new Date(before.sitting.startedAt) },
-        isPlacement: true,
-        itemId: { not: null },
+        ...SITTING_ANSWER_FILTER,
         skillId: { in: skillIds },
-        stepId: null,
-        studySessionId: null,
         userId,
       },
     });

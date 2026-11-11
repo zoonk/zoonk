@@ -18,6 +18,7 @@ import {
   publishLearnerAnswer,
 } from "../record-learner-answer";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
+import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
 import { saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
@@ -112,7 +113,7 @@ async function recordPlacementAnswer(input: LearnerAnswer): Promise<boolean> {
   const events = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const answered = await tx.attempt.findFirst({
       select: { id: true },
-      where: { isPlacement: true, itemId, stepId: null, studySessionId: null, userId },
+      where: { ...SITTING_ANSWER_FILTER, itemId, userId },
     });
 
     if (answered) {

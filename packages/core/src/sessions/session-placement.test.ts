@@ -91,6 +91,7 @@ async function plannedSetup() {
   await attemptFixture({
     answeredAt: new Date(Date.now() - DAY_MS),
     isCorrect: true,
+    isPlacement: true,
     itemId: answered.id,
     skillId,
     userId: user.id,

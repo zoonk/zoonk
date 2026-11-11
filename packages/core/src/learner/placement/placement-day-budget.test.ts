@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -45,9 +46,17 @@ async function previousAnswers({
   userId: string;
 }) {
   await Promise.all(
-    Array.from({ length: count }, () =>
-      attemptFixture({ durationMs, itemId: item.id, skillId: item.skillId, userId }),
-    ),
+    Array.from({ length: count }, async () => {
+      const previous = await itemFixture({ skillId: item.skillId });
+
+      return attemptFixture({
+        durationMs,
+        isPlacement: true,
+        itemId: previous.id,
+        skillId: item.skillId,
+        userId,
+      });
+    }),
   );
 }
 

@@ -1011,6 +1011,7 @@ describe(finishGoalPlacement, () => {
       attemptFixture({
         answeredAt: new Date(Date.now() - 60_000 + attrs.at),
         isCorrect: attrs.isCorrect,
+        isPlacement: true,
         itemId: attrs.itemId ?? itemOf(attrs.skill),
         skillId: skillAt(attrs.skill),
         userId: user.id,
@@ -1067,6 +1068,7 @@ describe(finishGoalPlacement, () => {
       attemptFixture({
         answeredAt: new Date(Date.now() - 60_000 + at),
         isCorrect: true,
+        isPlacement: true,
         itemId: itemsOf(skill)[item]?.id,
         skillId: skillAt(skill),
         userId: user.id,

@@ -4,7 +4,13 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { MAX_PACED_ANSWER_MS, UNKNOWN_STREAK } from "../focus-test-rules";
 import { type PlacementEvidence } from "../placement-beliefs";
-import { isPlacementAnswer } from "./placement-answers";
+import {
+  SITTING_ANSWER_FILTER,
+  SITTING_ANSWER_SQL,
+  TEST_ANSWER_FILTER,
+  TEST_ANSWER_SQL,
+  isPlacementAnswer,
+} from "./placement-answers";
 
 const MAX_EVIDENCE = 1000;
 
@@ -74,11 +80,10 @@ async function loadTestSkills({
       COUNT(*) FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb))::int AS "paceAnswers",
       COALESCE(SUM(LEAST(duration_ms, ${MAX_PACED_ANSWER_MS}))
         FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb)), 0)::float8 AS "paceDurationMs",
-      COUNT(*) FILTER (WHERE study_session_id IS NULL AND step_id IS NULL
-        AND item_id IS NOT NULL AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
+      COUNT(*) FILTER (WHERE ${SITTING_ANSWER_SQL} AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
     FROM attempts
     WHERE user_id = ${userId}::uuid AND skill_id = ANY(${skillIds}::uuid[])
-      AND (is_placement OR (item_id IS NOT NULL AND step_id IS NULL AND study_session_id IS NULL))
+      AND ${TEST_ANSWER_SQL}
     GROUP BY skill_id
   `;
 }
@@ -94,11 +99,7 @@ export async function loadAnsweredTestItems({
 }): Promise<Set<string | null>> {
   const answered = await tx.attempt.groupBy({
     by: ["itemId"],
-    where: {
-      OR: [{ isPlacement: true }, { stepId: null, studySessionId: null }],
-      itemId: { in: itemIds },
-      userId,
-    },
+    where: { ...TEST_ANSWER_FILTER, itemId: { in: itemIds }, userId },
   });
 
   return new Set(answered.map((attempt) => attempt.itemId));
@@ -146,10 +147,8 @@ export async function loadEvidence({
             take: UNKNOWN_STREAK,
             where: {
               answeredAt: { gte: sittingStartedAt },
-              itemId: { not: null },
+              ...SITTING_ANSWER_FILTER,
               skillId: { in: skillIds },
-              stepId: null,
-              studySessionId: null,
               userId,
             },
           })
