@@ -47,7 +47,6 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
   const t = useExtracted();
   const { hint, line } = useStateLines(input);
   const { place, view } = input;
-  const chapter = t("Chapter {number, number}", { number: view.position });
 
   return (
     <ListRowContent aria-live="polite">
@@ -55,11 +54,7 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
         {place === "chapter" ? t("Mind map") : view.title}
       </ListRowTitle>
 
-      {(line || place === "library") && (
-        <ListRowDescription className="text-pretty">
-          {place === "library" && line ? `${chapter} · ${line}` : (line ?? chapter)}
-        </ListRowDescription>
-      )}
+      {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
 
       {hint && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
     </ListRowContent>

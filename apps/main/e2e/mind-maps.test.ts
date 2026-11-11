@@ -215,7 +215,7 @@ test.describe("Mind maps", () => {
     const row = (title: string) => page.getByRole("listitem").filter({ hasText: title });
     const secondRow = row(second.chapter.title);
     const message = "We couldn't reach the server. Check your connection.";
-    const unreachable = page.getByText(message, { exact: true });
+    const unreachable = page.getByText(message, { exact: true }).filter({ visible: true });
 
     try {
       await page.goto("/mind-maps");
@@ -231,11 +231,12 @@ test.describe("Mind maps", () => {
       await secondRow.getByRole("button", { name: "Create" }).click();
       await createRest.click();
 
+      // Both requests say so: the row's in the row, the button's under the button.
       await expect(secondRow.getByRole("button", { name: "Try again" })).toBeVisible();
-      await expect(unreachable).toBeVisible();
+      await expect(unreachable).toHaveCount(2);
 
       // The first map is still drawing, so the page reads the list again within a few seconds.
-      await expect(unreachable).toBeHidden({ timeout: 15_000 });
+      await expect(unreachable).toHaveCount(0, { timeout: 15_000 });
       await expect(secondRow.getByRole("button", { name: "Create" })).toBeVisible();
     } finally {
       await page.context().close();

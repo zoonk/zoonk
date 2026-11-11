@@ -2392,7 +2392,6 @@ msgstr "{subject} · Capítulo {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
-#: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
 msgstr "Capítulo {number, number}"
