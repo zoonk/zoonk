@@ -2,8 +2,11 @@ const LINE_START = String.raw`(?:^|[\n\f])[^\S\n\f]*`;
 const ORDINAL = String.raw`(?:\.?[º°ª]|o\b|er\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
 const CJK_SUFFIX = String.raw`[の之][\d${CJK_NUMERALS}]+`;
-/** "4-A", "4a", "12 bis" and "32の二": one rule for headings and hints, so the two read alike. */
-const SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
+/**
+ * "4-A", "4a", "2000e-1", "12 bis" and "32の二": one rule for headings and hints, so the two read
+ * alike.
+ */
+const SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}(?:-\d+)*\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
 const DIGITS = String.raw`\d+(?:[.-]\d+)*`;
 
 /**
@@ -65,7 +68,10 @@ function parseCjkNumber(numeral: string): number {
   return total + digit;
 }
 
-/** "-a", " bis" and "之二" are written "A", "BIS" and "の2", however a heading or hint spells them. */
+/**
+ * "-a", "e-1", " bis" and "之二" are written "A", "E-1", "BIS" and "の2", however a heading or hint
+ * spells them.
+ */
 function toSuffix(suffix: string): string {
   const cjk = /^[の之](?<numeral>.+)$/u.exec(suffix)?.groups?.numeral;
 
@@ -73,7 +79,7 @@ function toSuffix(suffix: string): string {
     return `の${/^\d+$/u.test(cjk) ? Number(cjk) : parseCjkNumber(cjk)}`;
   }
 
-  return suffix.replaceAll(/[\s-]+/gu, "").toUpperCase();
+  return suffix.replace(/^-/u, "").replaceAll(/\s+/gu, "").toUpperCase();
 }
 
 /**
