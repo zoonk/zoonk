@@ -3,9 +3,40 @@ import { prisma } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import { signInStaff, staffRequest } from "./_test-utils/requests";
 import { POST as countRecords } from "./records/count/route";
+import { POST as getRecord } from "./records/get/route";
 import { POST as listRecords } from "./records/list/route";
 
 describe("staff request validation", () => {
+  it("names UUID formats and points null filters to the null operations", async () => {
+    await signInStaff();
+
+    const invalidId = await getRecord(
+      staffRequest({ body: { id: "not-a-uuid", model: "Goal" }, path: "/staff/records/get" }),
+    );
+
+    expect(invalidId.status).toBe(400);
+
+    await expect(invalidId.json()).resolves.toMatchObject({
+      error: { message: expect.stringContaining("Expected UUID") },
+    });
+
+    await Promise.all(
+      [null, "null", undefined].map(async (value) => {
+        const response = await countRecords(
+          staffRequest({
+            body: { model: "User", where: [{ field: "username", op: "eq", value }] },
+            path: "/staff/records/count",
+          }),
+        );
+
+        expect(response.status).toBe(400);
+        const text = JSON.stringify(await response.json());
+        expect(text).toContain("isNull");
+        expect(text).toContain("notNull");
+      }),
+    );
+  });
+
   it("coerces CLI string values and string membership arrays before querying", async () => {
     await signInStaff();
 
@@ -111,7 +142,7 @@ describe("staff request validation", () => {
     );
 
     expect(malformed.status).toBe(400);
-    await expect(malformed.json()).resolves.toMatchObject({ error: { code: "VALIDATION_ERROR" } });
+    await expect(malformed.json()).resolves.toMatchObject({ error: { code: "BAD_REQUEST" } });
 
     const retry = await countRecords(
       staffRequest({

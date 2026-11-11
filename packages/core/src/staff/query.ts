@@ -1,9 +1,9 @@
 import { AnyNull, type TransactionClient } from "@zoonk/db";
-import { type DatabaseField, type DatabaseModel, databaseSchema } from "@zoonk/db/schema";
+import { type DatabaseField, type DatabaseModel } from "@zoonk/db/schema";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type StaffFilter, StaffInputError, staffIntegerMax } from "./input";
-import { readableFields, readableModels } from "./registry";
+import { getEnumValues, readableFields, readableModels } from "./registry";
 
 const numericText = /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/iu;
 const MAX_MEMBERSHIP_VALUES = 1000;
@@ -26,8 +26,6 @@ const bigint = z
       .min(-(2n ** 63n))
       .max(2n ** 63n - 1n),
   );
-
-const decimal = z.union([z.number(), z.string().regex(numericText)]);
 
 export function requireStaffModel(name: string) {
   const model = readableModels.find((entry) => entry.name === name);
@@ -56,8 +54,7 @@ function requireField({ model, name }: { model: DatabaseModel; name: string }) {
 
 function scalarSchema(field: DatabaseField): z.ZodType {
   if (field.kind === "enum") {
-    const values = databaseSchema.enums.find((entry) => entry.name === field.type)?.values ?? [];
-    return z.enum(values);
+    return z.enum(getEnumValues(field.type));
   }
 
   switch (field.type) {
@@ -74,14 +71,10 @@ function scalarSchema(field: DatabaseField): z.ZodType {
       ]);
     case "BigInt":
       return bigint;
-    case "Decimal":
-      return decimal;
     case "DateTime":
       return z
         .union([z.iso.datetime({ offset: true }), z.iso.date()])
         .transform((value) => new Date(value));
-    case "Bytes":
-      return z.base64().transform((value) => Buffer.from(value, "base64"));
     case "Json":
       return z.preprocess(jsonFromText, z.json());
     default:
@@ -114,12 +107,10 @@ function parseFieldValue({
   const parsed = schema.safeParse(value);
 
   if (!parsed.success) {
-    const options =
-      field.kind === "enum"
-        ? databaseSchema.enums.find((entry) => entry.name === field.type)?.values
-        : undefined;
+    const options = field.kind === "enum" ? getEnumValues(field.type) : undefined;
 
-    const expected = isList ? `an array of ${field.type} values` : field.type;
+    const type = field.nativeType?.[0] === "Uuid" ? "UUID" : field.type;
+    const expected = isList ? `an array of ${type} values` : type;
 
     throw new StaffInputError(
       `Invalid value for ${field.name}. Expected ${expected}.${options ? ` Valid options: ${options.join(", ")}.` : ""}`,
@@ -151,14 +142,13 @@ function allowedOps(field: DatabaseField): string[] {
   }
 
   const ordered =
-    ["String", "Int", "BigInt", "Float", "Decimal", "DateTime"].includes(field.type) &&
-    field.kind !== "enum";
+    ["String", "Int", "BigInt", "Float", "DateTime"].includes(field.type) && field.kind !== "enum";
 
   return [
     "eq",
     "ne",
     ...(field.type === "Json" ? [] : ["in", "notIn"]),
-    ...(field.isRequired ? [] : ["isNull", "notNull"]),
+    ...(field.isRequired && field.type !== "Json" ? [] : ["isNull", "notNull"]),
     ...(ordered ? ["gt", "gte", "lt", "lte"] : []),
   ];
 }
@@ -171,6 +161,13 @@ function filterWhere({ model, filter }: { model: DatabaseModel; filter: StaffFil
     throw new StaffInputError(
       `Invalid operation for ${field.name}. Valid operations: ${ops.join(", ")}`,
     );
+  }
+
+  if (
+    (filter.op === "eq" || filter.op === "ne") &&
+    (filter.value === null || filter.value === undefined || filter.value === "null")
+  ) {
+    throw new StaffInputError("Use isNull or notNull for null checks.");
   }
 
   if (filter.op === "isNull" || filter.op === "notNull") {
@@ -229,10 +226,10 @@ export function staffOrder({
   if (orderBy) {
     const field = requireField({ model, name: orderBy.field });
 
-    if (field.isList || field.type === "Json" || field.type === "Bytes") {
+    if (field.isList || field.type === "Json") {
       throw new StaffInputError(
         `Field cannot be sorted. Valid fields: ${readableFields(model)
-          .filter((entry) => !entry.isList && !["Json", "Bytes"].includes(entry.type))
+          .filter((entry) => !entry.isList && entry.type !== "Json")
           .map((entry) => entry.name)
           .join(", ")}`,
       );

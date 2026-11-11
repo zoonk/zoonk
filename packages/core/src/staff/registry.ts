@@ -13,6 +13,10 @@ export function readableFields(model: DatabaseModel) {
   );
 }
 
+export function getEnumValues(type: string) {
+  return databaseSchema.enums.find((entry) => entry.name === type)?.values ?? [];
+}
+
 export function describeModels() {
   return readableModels.map((model) => ({
     fields: readableFields(model).map((field) => ({
@@ -20,13 +24,8 @@ export function describeModels() {
       isOptional: !field.isRequired,
       name: field.name,
       type: field.type,
+      ...(field.kind === "enum" ? { values: getEnumValues(field.type) } : {}),
     })),
     name: model.name,
-    relations: model.fields
-      .filter(
-        (field) =>
-          field.kind === "object" && !staffCredentialPolicy.excludedModels.includes(field.type),
-      )
-      .map((field) => field.name),
   }));
 }
