@@ -15,6 +15,7 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { ChangeSaveError } from "../../_components/save-error";
+import { StepOpenFailed } from "../../_components/step-open-failed";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { type LearnBuddy, resolveLearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
@@ -71,12 +72,15 @@ function RevealActions({
   isGuest,
   onAdjust,
   onStart,
+  opensStep,
   signUpHref,
   started,
 }: {
   isGuest: boolean;
   onAdjust: () => void;
   onStart: () => Promise<boolean>;
+  /** Start opens a step rather than only saving, so a failure is the step's, as on its row. */
+  opensStep: boolean;
   signUpHref: string;
   started: boolean;
 }) {
@@ -103,7 +107,7 @@ function RevealActions({
       )}
       data-slot="reveal-actions"
     >
-      {failed && <ChangeSaveError />}
+      {failed && (opensStep ? <StepOpenFailed /> : <ChangeSaveError />)}
 
       <div className="flex gap-2 lg:flex-col-reverse">
         <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
@@ -160,6 +164,7 @@ function RevealColumn({
   const { goal, plan } = usePlanScreen();
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
   const startStep = findRevealStart(reveal);
+  const openStart = openStep && startStep ? () => openStep(startStep) : null;
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -220,7 +225,8 @@ function RevealColumn({
       <RevealActions
         isGuest={isGuest}
         onAdjust={() => setEditor({ open: true, section: null })}
-        onStart={openStep && startStep ? () => openStep(startStep) : onStart}
+        onStart={openStart ?? onStart}
+        opensStep={openStart !== null}
         signUpHref={signUpHref}
         started={started}
       />
