@@ -15689,6 +15689,65 @@
         }
       }
     },
+    "Country" : {
+      "comment" : "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Land"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "País"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pays"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kraj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "País"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ülke"
+          }
+        }
+      }
+    },
     "Course complete" : {
       "comment" : "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead",
       "localizations" : {
@@ -19537,7 +19596,7 @@
       }
     },
     "Language" : {
-      "comment" : "Setting: the language a goal learns\nTitle of a language goal's country picker",
+      "comment" : "Setting: the language a goal learns",
       "localizations" : {
         "de" : {
           "stringUnit" : {

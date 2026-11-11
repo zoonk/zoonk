@@ -101,7 +101,11 @@ struct LanguageVarietySheet: View {
       }
       .disabled(saving != nil)
       .navigationTitle(
-        Text("Language", tableName: "Plan", comment: "Title of a language goal's country picker")
+        Text(
+          "Country", tableName: "Plan",
+          comment:
+            "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+        )
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
