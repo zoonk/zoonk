@@ -71,7 +71,16 @@ internal fun GoalMindMaps.lessonIndex(): List<IndexGroup<Pair<LessonMapGroup, Go
     return lessonGroups
         .mapNotNull { group -> byId[group.chapterId]?.let { group to it } }
         .groupBy { (_, chapter) -> chapter.subject?.key.orEmpty() }
-        .map { (key, rows) -> IndexGroup(key, rows.first().second.subject?.name, rows) }
+        .map { (key, rows) ->
+            IndexGroup(
+                key,
+                rows
+                    .first()
+                    .second.subject
+                    ?.name,
+                rows,
+            )
+        }
 }
 
 /** Chapters: the ready maps and the Plus-locked ones by subject, then the maps not made yet. */
