@@ -80,16 +80,21 @@ val EXAM_SUBJECTS =
 
 private fun subjectRef(name: String) = """{"key":"${name.lowercase().replace(' ', '-')}","name":"$name","shortName":null}"""
 
-/** The first [asked] subjects have answers, one of two right; the Essay is a written part the test can't check. */
+/**
+ * The first [asked] subjects have two responses each, in turn both "I don't know yet", one unknown and one wrong, or one of
+ * two right; the Essay is a written part the test can't check.
+ */
 private fun focusSubjects(asked: Int) =
     EXAM_SUBJECTS.mapIndexed { index, name ->
         val answered = index < asked
+        val dontKnow = if (answered) 2 - index % 3 else 0
+        val right = if (answered && index % 3 == 2) 1 else 0
         """{"key":"${name.lowercase().replace(
             ' ',
             '-',
         )}","name":"$name","shortName":null,"state":"${if (answered) "answered" else "notAsked"}",
-           "part":null,"asked":${if (answered) 2 else 0},"right":${if (answered) index % 3 else 0}}"""
-    } + """{"key":"essay","name":"Essay","shortName":null,"state":"notChecked","part":"written","asked":0,"right":0}"""
+           "part":null,"asked":${if (answered) 2 else 0},"dontKnow":$dontKnow,"right":$right}"""
+    } + """{"key":"essay","name":"Essay","shortName":null,"state":"notChecked","part":"written","asked":0,"dontKnow":0,"right":0}"""
 
 fun focusSittingOf(
     answered: Int = 0,

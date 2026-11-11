@@ -98,6 +98,8 @@
     <string name="focustest_done">Done</string>
     <!-- %1$s is a duration, such as "10 min". -->
     <string name="focustest_continue_test">Continue the test · About %1$s</string>
+    <!-- A subject whose test answers were all "I don't know yet": nothing is graded yet. -->
+    <string name="focustest_not_known_yet">Not known yet</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
         <item quantity="one">%1$d of %2$d right</item>

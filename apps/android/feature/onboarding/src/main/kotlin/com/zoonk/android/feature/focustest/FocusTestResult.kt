@@ -278,7 +278,12 @@ private fun ProposalOutcome(
 private fun subjectState(subject: FocusTestSubject): String =
     when (subject.state) {
         FocusTestSubject.State.ANSWERED -> {
-            pluralStringResource(R.plurals.focustest_subject_right, subject.right.toInt(), subject.right.toInt(), subject.asked.toInt())
+            val chosen = (subject.asked - subject.dontKnow).toInt()
+            if (chosen == 0) {
+                stringResource(R.string.focustest_not_known_yet)
+            } else {
+                pluralStringResource(R.plurals.focustest_subject_right, subject.right.toInt(), subject.right.toInt(), chosen)
+            }
         }
 
         FocusTestSubject.State.NOT_ASKED -> {
