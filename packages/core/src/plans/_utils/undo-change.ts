@@ -4,6 +4,7 @@ import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
+import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
@@ -110,9 +111,9 @@ export async function undoChange({
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
 
-    if (parsePlanChangePayload(change.payload).source === FOCUS_TEST_SOURCE) {
+    if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({
-        areas: snapshot.state.settings.focusAreas,
+        areas: snapshot.testFocus,
         goalId: context.goal.id,
         tx,
         userId: context.goal.userId,

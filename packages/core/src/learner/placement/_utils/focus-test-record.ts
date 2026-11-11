@@ -89,7 +89,7 @@ export async function keepTestFocus({
   tx,
   userId,
 }: {
-  areas: readonly string[];
+  areas: readonly string[] | null;
   goalId: string;
   tx: TransactionClient;
   userId: string;
@@ -97,7 +97,7 @@ export async function keepTestFocus({
   await lockLearner(tx, { lockPlanIds: [], userId });
 
   await changeFocusTestRecord({
-    change: (record) => ({ ...record, focus: [...areas] }),
+    change: (record) => ({ ...record, focus: areas ? [...areas] : null }),
     goalId,
     tx,
   });
