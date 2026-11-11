@@ -1,8 +1,13 @@
 import { prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
+import { openAs } from "./study-day";
 
 function minutesLabel(minutes: number): string {
   const hours = Math.floor(minutes / 60);
@@ -111,5 +116,50 @@ test.describe("Journey", () => {
       await page.keyboard.press("Escape");
       await expect(row).toHaveText(/English$/u);
     });
+  });
+
+  test("pauses and resumes a goal that still has setup questions left", async ({ browser }) => {
+    const user = await createE2EUser(getBaseURL());
+
+    const goal = await goalFixture({
+      details: { answered: [] },
+      planRevealedAt: null,
+      title: "Astronomy",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+
+    const readStatus = async () => {
+      const { status } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      return status;
+    };
+
+    await page.goto("/plan");
+    await expect(page.getByRole("link", { name: "Continue" })).toBeVisible();
+
+    const options = page.getByRole("button", { name: "Plan options" });
+    await expectHydrated(options);
+    await options.click();
+    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Your Astronomy goal is paused" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Continue" })).toHaveCount(0);
+    await expect.poll(readStatus).toBe("paused");
+
+    await page.getByRole("button", { name: "Resume" }).click();
+
+    await expect(page.getByRole("link", { name: "Continue" })).toBeVisible();
+    await expect.poll(readStatus).toBe("active");
+
+    await page.context().close();
   });
 });

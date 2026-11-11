@@ -27,7 +27,8 @@ private struct GoalPlanView: View {
 
     Group {
       if goal.isSettingUp {
-        PlanSetupLeft(goalID: goal.id)
+        PlanSetupLeft(goal: goal)
+          .modifier(GoalOptionsToolbar(goal: goal))
       } else if goal.kind == .language {
         content(plan: plan)
           .loads(
@@ -52,6 +53,7 @@ private struct GoalPlanView: View {
         await plan.refresh()
       }
       .lonePage()
+      .modifier(GoalOptionsToolbar(goal: goal))
     case .failed:
       ContentUnavailableView {
         Label {
@@ -114,13 +116,26 @@ private func planEyebrow(goal: LearnerGoal, plan: GoalPlan) -> Text {
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
-/// yet, so the Plan leads back to them as Today does.
+/// yet, so the Plan leads back to them as Today does. Paused, nothing asks for them until the
+/// learner resumes the goal.
 private struct PlanSetupLeft: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.resumeGoal) private var resumeGoal
 
-  let goalID: String
+  let goal: LearnerGoal
 
   var body: some View {
+    Group {
+      if goal.status == .paused {
+        paused
+      } else {
+        questionsLeft
+      }
+    }
+    .lonePage()
+  }
+
+  private var questionsLeft: some View {
     ContentUnavailableView {
       Label {
         Text(
@@ -135,14 +150,35 @@ private struct PlanSetupLeft: View {
         comment: "Why the Plan waits for the goal's setup questions")
     } actions: {
       Button {
-        router.open(.goalSetup(goalId: goalID))
+        router.open(.goalSetup(goalId: goal.id))
       } label: {
         Text("Continue", tableName: "Plan", comment: "Opens the goal's setup questions")
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
     }
-    .lonePage()
+  }
+
+  private var paused: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "Your \(goal.displayName) goal is paused", tableName: "Plan",
+          comment: "Title of the Plan's notice for a paused goal")
+      } icon: {
+        Image(systemName: "pause.circle")
+      }
+    } description: {
+      Text(
+        "Nothing is planned until you resume it.", tableName: "Plan",
+        comment: "Explains a paused goal")
+    } actions: {
+      BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
+        Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
+      }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+    }
   }
 }
 

@@ -57,7 +57,7 @@ async function createLearnerWithWaitingGoal() {
     learningProfileFixture({ activeGoalId: english.id, userId: user.id }),
   ]);
 
-  return { draft, user };
+  return { draft, english, user };
 }
 
 test.describe("Goals typed together beyond the free plan's one goal", () => {
@@ -105,7 +105,7 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
     ).resolves.toStrictEqual([{ dailyMinutes: 30, title: ENGLISH.title }]);
   });
 
-  test("the waiting goal sits in the goal switcher, locked on Free and started from there with Plus", async ({
+  test("the waiting goal sits in the goal switcher, waiting for room on Free and started from there with Plus", async ({
     browser,
   }) => {
     const { draft, user } = await createLearnerWithWaitingGoal();
@@ -118,8 +118,8 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
     await switcher.click();
 
     await expect(
-      page.getByRole("menuitem", { name: `${STATISTICS.subject} Starts with Plus` }),
-    ).toHaveAttribute("href", /\/subscription$/u);
+      page.getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal or get Plus` }),
+    ).toBeVisible();
 
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
@@ -137,6 +137,50 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
         where: { details: { equals: draft.id, path: ["onboardingId"] }, title: STATISTICS.title },
       }),
     ).resolves.toBe(1);
+
+    await page.context().close();
+  });
+
+  test("a Free learner pauses a goal from the waiting goal's row, and the waiting goal starts", async ({
+    browser,
+  }) => {
+    const { draft, english, user } = await createLearnerWithWaitingGoal();
+    const page = await openAs(browser, user);
+
+    await page.goto("/today");
+
+    const switcher = page.getByRole("button", { name: /^Learn English.*Switch goal$/u });
+    await expectHydrated(switcher);
+    await switcher.click();
+
+    await page
+      .getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal or get Plus` })
+      .click();
+
+    const sheet = page.getByRole("dialog", { name: `Make room for ${STATISTICS.subject}` });
+
+    await expect(sheet.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
+      "href",
+      /\/subscription$/u,
+    );
+
+    await sheet.getByRole("button", { name: `Pause ${ENGLISH.title}` }).click();
+
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    await expect(sheet).toHaveCount(0);
+
+    await expect(
+      prisma.goal.findMany({
+        orderBy: { createdAt: "asc" },
+        select: { status: true, title: true },
+        where: {
+          OR: [{ id: english.id }, { details: { equals: draft.id, path: ["onboardingId"] } }],
+        },
+      }),
+    ).resolves.toStrictEqual([
+      { status: "paused", title: ENGLISH.title },
+      { status: "active", title: STATISTICS.title },
+    ]);
 
     await page.context().close();
   });

@@ -152,6 +152,7 @@ msgstr "하루 학습 시간"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -2393,7 +2394,6 @@ msgid "Chapter options"
 msgstr "챕터 옵션"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -4527,6 +4527,12 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 일시 중지하면 이 목표를 다시 진행할 수 있고, Plus를 구독하면 여러 목표를 함께 진행할 수 있어요."
 
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "목표 이름 바꾸기"
+
+#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "이 목표 일시 중지하기"
@@ -4547,6 +4553,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "이어가기"
@@ -4567,11 +4574,13 @@ msgid "Archive"
 msgstr "보관하기"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "{goal} 목표가 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4721,12 +4730,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "계획 공유하기"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "목표 이름 바꾸기"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4807,12 +4810,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "모의고사"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · 계획을 만들고 있어요"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 계획이 완성되면 여기에서 바로 열려요."
@@ -13948,6 +13961,11 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "목표 일시 중지 또는 Plus 구독하기"
+
+#: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
 msgid "Starts with Plus"
 msgstr "Plus로 시작 가능"
@@ -13988,6 +14006,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "목표를 바꾸지 못했어요. 다시 시도해 보세요."
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "이 목표를 시작하지 못했어요. 다시 시도해 보세요."
@@ -13998,6 +14017,7 @@ msgid ", current goal. Switch goal"
 msgstr ", 현재 목표. 목표 바꾸기"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "내 목표"
@@ -14031,6 +14051,31 @@ msgstr "{done, plural, =0 {오늘 완료한 미션은 #개예요 · 총 {total}�
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "학습 탭"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "일시 정지"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "{goal} 목표를 위한 자리 만들기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. {goal} 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요."
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "닫기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus 구독하기"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx

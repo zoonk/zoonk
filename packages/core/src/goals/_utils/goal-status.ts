@@ -4,6 +4,16 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
 
+export class ActiveGoalLimitError extends Error {
+  readonly limit: AllowanceLimit;
+
+  constructor(limit: AllowanceLimit) {
+    super("The learner's active goals are at their plan's limit.");
+    this.name = "ActiveGoalLimitError";
+    this.limit = limit;
+  }
+}
+
 export async function findActiveGoalLimit({
   db = prisma,
   goalId,

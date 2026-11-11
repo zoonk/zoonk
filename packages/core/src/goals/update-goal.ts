@@ -1,7 +1,5 @@
 import "server-only";
-import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -25,16 +23,12 @@ import { type PlanOperationError } from "../plans/planner/plan-operations";
 import { getScheduleOperations } from "../plans/planner/schedule-operations";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { assertTargetDates } from "../plans/target-date-range";
+import { goalMetadata, saveMetadataInTransaction } from "./_utils/goal-metadata";
 import { isGoalRegion } from "./_utils/goal-region";
-import { findActiveGoalLimit, moveActiveGoalAway } from "./_utils/goal-status";
+import { ActiveGoalLimitError, findActiveGoalLimit } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
-import {
-  type GoalUpdateInput,
-  type GoalView,
-  onlyCoreDetails,
-  withoutCoreDetails,
-} from "./goal-contract";
+import { type GoalUpdateInput, type GoalView } from "./goal-contract";
 
 export type GoalUpdateResult =
   | { change: PlanChangeView | null; goal: GoalView; status: "updated" }
@@ -45,40 +39,6 @@ export type GoalUpdateResult =
 /** For logs and admin only; the apps word these changes from their operations. */
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
-
-/** A learner's details replace theirs whole but keep what only core writes. */
-function mergeDetails({
-  current,
-  details,
-}: {
-  current: Goal;
-  details: GoalUpdateInput["details"];
-}) {
-  if (details === undefined) {
-    return details;
-  }
-
-  const stored = isJsonObject(current.details) ? current.details : {};
-  return { ...withoutCoreDetails(details), ...onlyCoreDetails(stored) };
-}
-
-function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInput }) {
-  return {
-    details: mergeDetails({ current, details: input.details }),
-    displayName: input.displayName,
-    status: input.status,
-    studyTime: input.studyTime,
-    targetRegion: input.targetRegion,
-    timezone: input.timeZone,
-    title: input.title,
-  };
-}
-
-function changesMetadata(goal: Goal, input: GoalUpdateInput): boolean {
-  return Object.entries(goalMetadata({ current: goal, input })).some(
-    ([key, value]) => value !== undefined && !isDeepStrictEqual(value, Reflect.get(goal, key)),
-  );
-}
 
 async function saveMetadata({
   goal,
@@ -100,32 +60,6 @@ async function saveMetadata({
       return saved.changed ? saved : unchanged(saved);
     },
   );
-}
-
-async function saveMetadataInTransaction(
-  tx: TransactionClient,
-  { goal, input, userId }: { goal: Goal; input: GoalUpdateInput; userId: string },
-) {
-  const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
-  const changed = changesMetadata(current, input);
-
-  const updated = changed
-    ? await tx.goal.update({ data: goalMetadata({ current, input }), where: { id: current.id } })
-    : current;
-
-  const moved = input.status
-    ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })
-    : 0;
-
-  if (!changed && moved === 0) {
-    return { changed: false, completed: false, goal: current };
-  }
-
-  return {
-    changed: true,
-    completed: current.status !== "completed" && updated.status === "completed",
-    goal: updated,
-  };
 }
 
 async function resumePlan(
@@ -165,7 +99,7 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
       metadata: null,
     };
 
-    const extraWrites = async (tx: TransactionClient) => {
+    const saveGoalFields = async (tx: TransactionClient) => {
       writes.metadata = await saveMetadataInTransaction(tx, { goal, input, userId: goal.userId });
     };
 
@@ -190,7 +124,7 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
 
       const changeId =
         context && isResuming && isPlanReady(context)
-          ? await resumePlan(context, extraWrites)
+          ? await resumePlan(context, saveGoalFields)
           : null;
 
       return { changeId, metadata: writes.metadata };
@@ -198,11 +132,11 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
 
     const result = await applyChangeNow({
       context,
-      extraWrites,
       followToday: true,
       operations,
       reason: SETTINGS_NOTE,
       source: "learner",
+      writesWithSave: saveGoalFields,
     });
 
     if (result.status === "invalid") {
@@ -214,6 +148,39 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
       metadata: writes.metadata,
     };
   });
+}
+
+async function saveGoal({
+  goal,
+  input,
+  userId,
+}: {
+  goal: Goal;
+  input: GoalUpdateInput;
+  userId: string;
+}) {
+  const planResult = await updatePlan({ goal, input });
+
+  if ("error" in planResult) {
+    return planResult;
+  }
+
+  const metadata = planResult.metadata ?? (await saveMetadata({ goal, input, userId }));
+
+  return {
+    ...metadata,
+    changeId: planResult.changeId,
+    savedWithPlan: planResult.metadata !== null,
+    status: "saved" as const,
+  };
+}
+
+function refuseOverLimit(error: unknown): { limit: AllowanceLimit; status: "limitReached" } {
+  if (error instanceof ActiveGoalLimitError) {
+    return { limit: error.limit, status: "limitReached" };
+  }
+
+  throw error;
 }
 
 export async function updateGoal({
@@ -236,23 +203,24 @@ export async function updateGoal({
   }
 
   const isActivating = input.status === "active" && goal.status !== "active";
+
+  /** Skips planning a resume that can't happen; the status write recounts under its lock. */
   const limit = isActivating ? await findActiveGoalLimit({ goalId, userId }) : null;
 
   if (limit) {
     return { limit, status: "limitReached" };
   }
 
-  const planResult = await updatePlan({ goal, input });
+  const saved = await saveGoal({ goal, input, userId }).catch(refuseOverLimit);
 
-  if ("error" in planResult) {
-    return planResult;
+  if (saved.status !== "saved") {
+    return saved;
   }
 
-  const { completed, goal: updated } =
-    planResult.metadata ?? (await saveMetadata({ goal, input, userId }));
+  const { changeId, completed, goal: updated, savedWithPlan } = saved;
 
   if (
-    !planResult.metadata &&
+    !savedWithPlan &&
     updated.status === "active" &&
     (input.details !== undefined || input.timeZone !== undefined)
   ) {
@@ -276,7 +244,7 @@ export async function updateGoal({
 
   return view
     ? {
-        change: planResult.changeId ? await loadPlanChangeView(planResult.changeId) : null,
+        change: changeId ? await loadPlanChangeView(changeId) : null,
         goal: view,
         status: "updated",
       }

@@ -25,14 +25,19 @@ export type WaitingGoal = {
 export function WaitingOption({
   goal,
   isStarting,
+  onMakeRoom,
   onStart,
 }: {
   goal: WaitingGoal;
   isStarting: boolean;
+  /** Null for a guest, whose locked row goes to Plus. */
+  onMakeRoom: (() => void) | null;
   onStart: (waitingGoalId: string) => void;
 }) {
   const t = useExtracted("goalSwitcher");
   const routes = useLearnRoutes();
+
+  const lockedLine = onMakeRoom ? t("Pause a goal or get Plus") : t("Starts with Plus");
 
   const content = (
     <>
@@ -43,11 +48,19 @@ export function WaitingOption({
           <GoalCountryName goal={goal} />
         </span>
         <span className="text-muted-foreground font-mono text-[0.71875rem]">
-          {goal.locked ? t("Starts with Plus") : t("Ready to start")}
+          {goal.locked ? lockedLine : t("Ready to start")}
         </span>
       </span>
     </>
   );
+
+  if (goal.locked && onMakeRoom) {
+    return (
+      <DropdownMenuItem className={GOAL_ROW_CLASS} onClick={onMakeRoom}>
+        {content}
+      </DropdownMenuItem>
+    );
+  }
 
   if (goal.locked) {
     return (
