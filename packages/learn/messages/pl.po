@@ -1398,8 +1398,8 @@ msgstr "Zu"
 
 #: src/ceremonies/milestone-ceremony.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
 #: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/plan/plan-fit-suggestion.tsx
@@ -2301,7 +2301,7 @@ msgstr "Wróć do „Dziś”"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2893,7 +2893,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "Nie zastosowano. Twój plan pozostaje bez zmian."
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3986,33 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "Nie wystarczy ci czasu na wszystko. Twój plan może przeznaczyć więcej czasu na te przedmioty."
 
+#. Shown above a short list of exam subjects the Focus test suggests giving more study time. It says the learner's study plan already does what the list suggests.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "ITVIDG"
-msgid "Your plan gives these more time."
-msgstr "Twój plan przeznacza więcej czasu na te przedmioty."
+msgctxt "l_lxS0"
+msgid "Your plan already follows this focus."
+msgstr "Twój plan już uwzględnia te priorytety."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
 msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
 msgstr "Twój plan zachowuje wybrane przez ciebie priorytety. Oto sugestie na podstawie testu."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "Twój plan pozostaje bez zmian."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "Q-qRTX"
-msgid "Done. Your plan now gives these more time."
-msgstr "Gotowe. Twój plan przeznacza teraz więcej czasu na te przedmioty."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "Zaktualizuj mój plan"
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "N09SQx"
@@ -4062,6 +4045,24 @@ msgstr "Większość tego materiału jest dla ciebie nowa? To w porządku. Może
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Przerwij i użyj moich odpowiedzi"
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "Twój plan pozostaje bez zmian."
+
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "Q-qRTX"
+msgid "Done. Your plan now gives these more time."
+msgstr "Gotowe. Twój plan przeznacza teraz więcej czasu na te przedmioty."
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "YWfqky"
+msgid "Update my plan"
+msgstr "Zaktualizuj mój plan"
 
 #. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
 #: src/focus-test/focus-test-screens.tsx

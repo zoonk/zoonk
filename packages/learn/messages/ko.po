@@ -1398,8 +1398,8 @@ msgstr "Zu"
 
 #: src/ceremonies/milestone-ceremony.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
 #: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/plan/plan-fit-suggestion.tsx
@@ -2301,7 +2301,7 @@ msgstr "오늘로 돌아가기"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2893,7 +2893,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "적용하지 않았어요. 계획은 그대로 유지돼요."
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-checkpoint.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3986,33 +3986,16 @@ msgctxt "HkifIb"
 msgid "Your time can't cover everything. Your plan can give these more time."
 msgstr "모든 내용을 공부하기에는 시간이 부족해요. 이 과목들에 시간을 더 배정하도록 계획을 바꿀 수 있어요."
 
+#. Shown above a short list of exam subjects the Focus test suggests giving more study time. It says the learner's study plan already does what the list suggests.
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "ITVIDG"
-msgid "Your plan gives these more time."
-msgstr "이 과목들에 학습 시간을 더 배정해요."
+msgctxt "l_lxS0"
+msgid "Your plan already follows this focus."
+msgstr "이미 이 과목들에 더 집중하도록 계획되어 있어요."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
 msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
 msgstr "계획에는 직접 고른 집중 과목을 그대로 반영해요. 아래는 테스트에서 추천하는 과목이에요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "계획은 그대로예요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "Q-qRTX"
-msgid "Done. Your plan now gives these more time."
-msgstr "반영했어요. 이제 이 과목들에 학습 시간을 더 배정해요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "내 계획 바꾸기"
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "N09SQx"
@@ -4062,6 +4045,24 @@ msgstr "아직 배우지 않은 내용이 대부분인가요? 괜찮아요. 여�
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "그만 풀고 내 답변 반영하기"
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "계획은 그대로예요."
+
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "Q-qRTX"
+msgid "Done. Your plan now gives these more time."
+msgstr "반영했어요. 이제 이 과목들에 학습 시간을 더 배정해요."
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "YWfqky"
+msgid "Update my plan"
+msgstr "내 계획 바꾸기"
 
 #. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
 #: src/focus-test/focus-test-screens.tsx

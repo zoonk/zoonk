@@ -119,7 +119,11 @@ function useFocusIntro() {
       case "proposed":
         return t("Your time can't cover everything. Your plan can give these more time.");
       case "current":
-        return t("Your plan gives these more time.");
+        return t({
+          description:
+            "Shown above a short list of exam subjects the Focus test suggests giving more study time. It says the learner's study plan already does what the list suggests.",
+          message: "Your plan already follows this focus.",
+        });
       case "handPicked":
         return t(
           "You chose your own focus, and your plan keeps it. This is what the test suggests.",
