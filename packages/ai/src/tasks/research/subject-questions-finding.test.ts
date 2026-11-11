@@ -15,6 +15,7 @@ const raw = {
   sourceTitle: "Quantas questões cai de cada matéria",
   sourceUrl: PAGE,
   status: "found" as const,
+  unlistedSubjects: [],
 };
 
 function findStatus({ board, counted }: { board: string | null; counted: string | null }) {
@@ -46,8 +47,29 @@ describe(toSubjectQuestionsFinding, () => {
     });
   });
 
+  it("keeps every count when the source also counts a subject the reading missed", () => {
+    expect(
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw: { ...raw, unlistedSubjects: [{ name: "Ética", questions: 2 }] },
+        subjectCount: 3,
+        total: 22,
+      }),
+    ).toMatchObject({ questions: [8, 6, 6], status: "found" });
+
+    expect(
+      toSubjectQuestionsFinding({
+        board: "FGV",
+        isSearched: searched,
+        raw: { ...raw, unlistedSubjects: [{ name: "Ética", questions: 2 }] },
+        subjectCount: 3,
+        total: 30,
+      }),
+    ).toMatchObject({ status: "unknown" });
+  });
+
   it("keeps the counts it has when a subject has none or two, never more than the exam's total", () => {
-    // The OAB's source counts ethics too, which this reading's 4th subject list lacks.
     expect(
       toSubjectQuestionsFinding({
         board: "FGV",

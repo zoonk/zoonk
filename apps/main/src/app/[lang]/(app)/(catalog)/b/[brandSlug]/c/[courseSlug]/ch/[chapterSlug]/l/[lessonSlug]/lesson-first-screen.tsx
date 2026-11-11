@@ -108,7 +108,7 @@ export async function LessonFirstScreen({
 
   return (
     <StartBlock note={note}>
-      <StartLessonButton action={playerPath} lessonId={lessonId} origin={origin}>
+      <StartLessonButton lessonId={lessonId} origin={origin}>
         {t("Start this lesson")}
       </StartLessonButton>
     </StartBlock>

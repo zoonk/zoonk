@@ -16,7 +16,16 @@ describe(getLessonCheckModels, () => {
 
   it("keeps the alphabet chain", () => {
     expect(
-      getLessonCheckModels({ alphabet: true, writerModel: "openai/gpt-6-luna" }),
+      getLessonCheckModels({ kind: "alphabet", writerModel: "openai/gpt-6-luna" }),
+    ).toStrictEqual({
+      fallbackModels: ["google/gemini-3.8-flash"],
+      model: "anthropic/claude-sonnet-5.5",
+    });
+  });
+
+  it("keeps OpenAI out of the language chain", () => {
+    expect(
+      getLessonCheckModels({ kind: "language", writerModel: "openai/gpt-6.1-terra" }),
     ).toStrictEqual({
       fallbackModels: ["google/gemini-3.8-flash"],
       model: "anthropic/claude-sonnet-5.5",

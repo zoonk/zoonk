@@ -1,6 +1,5 @@
 import {
   normalizePunctuation,
-  normalizeString,
   segmentLearnerWords,
   segmentWords,
   stripPunctuation,
@@ -14,8 +13,9 @@ function getNormalizedText(text: string): string | null {
   return normalizedText || null;
 }
 
+/** Accents stay: they tell words apart, like the tones of Vietnamese "ma", "má" and "mà". */
 export function normalizeDistractorKey(text: string): string {
-  return normalizeString(stripPunctuation(text));
+  return stripPunctuation(text.normalize("NFC")).toLowerCase().replaceAll(/\s+/gu, " ").trim();
 }
 
 function hasSupportedShape(params: { distractor: string; shape: DistractorShape }): boolean {

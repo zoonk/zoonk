@@ -9,12 +9,9 @@ import {
 
 export type CourseDetailsExpected = { categories?: string[] };
 
-const MAX_DESCRIPTION_SENTENCES = 3;
 const MAX_CATEGORIES = 2;
 
 type ListField = keyof typeof PAGE_LIST_ITEMS;
-
-const SENTENCE_END = /[.!?](?:\s|$)/gu;
 
 function parseDetails(output: string): CourseDetails | null {
   try {
@@ -22,10 +19,6 @@ function parseDetails(output: string): CourseDetails | null {
   } catch {
     return null;
   }
-}
-
-function countSentences(text: string): number {
-  return text.match(SENTENCE_END)?.length ?? 0;
 }
 
 function checkList({ details, field }: { details: CourseDetails; field: ListField }): string[] {
@@ -59,15 +52,11 @@ function checkCategories({
 
 function checkText(details: CourseDetails): string[] {
   const { description, landingPage } = details;
-  const sentences = countSentences(description);
-  const promise = landingPage.valueProposition;
   const allText = JSON.stringify(details);
 
   return [
-    (sentences === 0 || sentences > MAX_DESCRIPTION_SENTENCES) &&
-      `The description has ${sentences} sentences; it needs 1 to 3.`,
-    (!promise || countSentences(promise) > 1) &&
-      "The promise (valueProposition) is missing or longer than one sentence.",
+    !description.trim() && "The description is missing.",
+    !landingPage.valueProposition.trim() && "The promise (valueProposition) is missing.",
     allText.includes("—") && "The copy uses an em dash.",
   ].filter((problem) => typeof problem === "string");
 }

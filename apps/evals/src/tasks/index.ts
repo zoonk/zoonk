@@ -7,6 +7,7 @@ import { challengeCaseTask } from "./challenge-case/task";
 import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
+import { checkLevelTestQuestionsTask } from "./check-level-test-questions/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
@@ -45,6 +46,8 @@ import { imageCheckTask } from "./image-check/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { imageSceneTask } from "./image-scene/task";
 import { languageAudioTask } from "./language-audio/task";
+import { languageLessonCheckTask } from "./language-lesson-check/task";
+import { languageLessonFixTask } from "./language-lesson-fix/task";
 import { languageLessonTask } from "./language-lesson/task";
 import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
 import { lessonFixTask } from "./lesson-fix/task";
@@ -63,7 +66,6 @@ import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
 import { memoryReconcileTask } from "./memory-reconcile/task";
 import { memoryRelevanceTask } from "./memory-relevance/task";
-import { memorySearchTermsTask } from "./memory-search-terms/task";
 import { memorySessionPatternsTask } from "./memory-session-patterns/task";
 import { mindMapImageTask } from "./mind-map-image/task";
 import { mistakeCauseTask } from "./mistake-cause/task";
@@ -159,6 +161,8 @@ export const TASKS: readonly RegisteredTask[] = [
   pictureNeedTask,
   lessonWriterTask,
   lessonQualityCheckTask,
+  languageLessonCheckTask,
+  languageLessonFixTask,
   lessonFixTask,
   stepVariantTask,
   exampleLinesTask,
@@ -175,7 +179,6 @@ export const TASKS: readonly RegisteredTask[] = [
   memoryExtractionTask,
   memoryGateTask,
   memoryReconcileTask,
-  memorySearchTermsTask,
   memoryRelevanceTask,
   memoryInsightTask,
   memorySessionPatternsTask,
@@ -196,6 +199,7 @@ export const TASKS: readonly RegisteredTask[] = [
   speakingScoreTask,
   mistakePatternTask,
   levelTestBankTask,
+  checkLevelTestQuestionsTask,
   alphabetLessonTask,
   alphabetLessonFixTask,
   setupLessonOutlineTask,

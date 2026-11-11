@@ -655,11 +655,10 @@ internal fun ColumnScope.DateStep(
         title = stringResource(R.string.onboarding_date_title),
         description = listOfNotNull(passedNote, stringResource(R.string.onboarding_date_description)).joinSentences(),
         subject = subject,
-        canContinue = picked != null && picked > today,
-        skipLabel = stringResource(R.string.onboarding_date_none),
+        canContinue = picked == null || picked > today,
+        continueLabel = if (picked == null) stringResource(R.string.onboarding_date_continue_without) else null,
         pending = pending,
-        onContinue = { picked?.let(answer) },
-        onSkip = { answer(null) },
+        onContinue = { answer(picked) },
     ) {
         val shown = picked?.let { formatDate(it, currentLocale(), DateStyle.LongYear) }.orEmpty()
         val label = stringResource(R.string.onboarding_date_label)
@@ -684,6 +683,11 @@ internal fun ColumnScope.DateStep(
             trailingIcon = { Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = null) },
             interactionSource = presses,
         )
+        if (picked != null) {
+            TextButton(onClick = { date = null }, enabled = !pending) {
+                Text(stringResource(R.string.onboarding_date_remove))
+            }
+        }
         noSitting?.let { NoSittingLine(it, pending, onUse = answer) }
     }
 

@@ -93,10 +93,24 @@ fun readMarkdownTable(
     )
 }
 
-/** The lines that belong to a table, so a question can split its data from its words (`findMarkdownTableLines`). */
-fun findMarkdownTableLines(lines: List<String>): Set<Int> =
-    lines.indices
-        .flatMap { index ->
-            val read = if (isRow(lines.getOrNull(index - 1))) null else readMarkdownTable(lines, index)
-            read?.let { (index until it.end).toList() }.orEmpty()
-        }.toSet()
+/**
+ * The lines that belong to a table, so a question can split its data from its words (`findMarkdownTableLines`).
+ * Like the players, the search carries on after a table's last row, so a body row is never read as a new header.
+ */
+fun findMarkdownTableLines(lines: List<String>): Set<Int> {
+    val found = mutableSetOf<Int>()
+    var index = 0
+
+    while (index < lines.size) {
+        val read = readMarkdownTable(lines, index)
+
+        if (read == null) {
+            index++
+        } else {
+            found.addAll(index until read.end)
+            index = read.end
+        }
+    }
+
+    return found
+}

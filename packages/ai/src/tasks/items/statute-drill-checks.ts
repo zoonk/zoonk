@@ -1,8 +1,7 @@
 import { normalizeString } from "@zoonk/utils/string";
+import { ANSWER_GAP } from "../_utils/answer-gap";
 import { type StatuteArticle, type StatuteDrill } from "./statute-drills";
 
-/** Prompts ask for "____", but a gap of any length reads the same to a learner. */
-const GAP_PATTERN = /_{3,}/gu;
 const NON_WORD_PATTERN = /[^\p{L}\p{N}\s]/gu;
 
 /** Words that flip a clause when a statement adds or drops them, compared without accents. */
@@ -75,7 +74,7 @@ function checkTrueFalse(drill: DrillOf<"trueFalse">, article: readonly string[])
 }
 
 function checkGap(drill: DrillOf<"typed">, article: readonly string[]): Problem[] {
-  const gaps = drill.question.match(GAP_PATTERN)?.length ?? 0;
+  const gaps = drill.question.match(ANSWER_GAP)?.length ?? 0;
   const [answer] = drill.acceptedAnswers;
 
   if (gaps !== 1) {
@@ -86,7 +85,7 @@ function checkGap(drill: DrillOf<"typed">, article: readonly string[]): Problem[
     return ["Has no accepted answer for its gap."];
   }
 
-  const filled = toWords(drill.question.replaceAll(GAP_PATTERN, ` ${answer} `));
+  const filled = toWords(drill.question.replaceAll(ANSWER_GAP, ` ${answer} `));
 
   return [
     !containsWords(article, filled) &&

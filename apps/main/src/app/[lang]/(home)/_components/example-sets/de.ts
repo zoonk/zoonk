@@ -29,11 +29,10 @@ export const de: ExampleSet = {
       review: ["Ableitungen", "Integrale"],
       scores: [{ label: "Mathematik", range: "10–12 Punkte" }],
     },
-    name: "Abitur",
     sittings: ["2027-04-13"],
     timeZone: "Europe/Berlin",
   },
-  exams: "Abitur, IHK-Prüfung, Staatsexamen oder Einbürgerungstest",
+  exams: "Abitur, IHK-Prüfung, Staatsexamen, Einbürgerungstest oder eine Klassenarbeit",
   move: "london",
   topic: {
     chapters: [

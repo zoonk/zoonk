@@ -6,7 +6,7 @@ import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
-import { selectMemoryFacts, startMemorySearch } from "../../memory/get-memory-for-task";
+import { findMemoryForTask } from "../../memory/get-memory-for-task";
 import { getSession } from "../../users/get-session";
 import { toProvenanceData } from "../_utils/library-rows";
 import { canViewLibraryRow } from "../_utils/library-visibility";
@@ -133,20 +133,13 @@ async function writeLessonLines({
     return usage;
   }
 
-  const request = {
-    analytics: { contentScope: "personal" as const, distinctId: userId },
+  const picked = await findMemoryForTask({
+    analytics: { contentScope: "personal", distinctId: userId },
     candidateIds: context.facts.map((fact) => fact.id),
     categories: Object.values(MemoryCategory),
-    language,
-    markUsed: false,
     need: `Example lines for the lesson "${lessonTitle}": ${missing.map((screen) => screen.idea).join("; ")}`,
     userId,
-  };
-
-  const search = await startMemorySearch(request);
-
-  const picked =
-    "facts" in search ? search.facts : await selectMemoryFacts({ ...request, terms: search.terms });
+  });
 
   const { data, provenance } = await generateExampleLines({
     analytics: { contentScope: "personal", distinctId: userId },

@@ -9881,14 +9881,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "Tarih belirlemezsen tüm konuları kendi temponda çalışırsın, biz de her aşamaya ne zaman ulaşacağını gösteririz."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "Tarih belirlemeden tüm konuları çalış"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "Tarih belirlemeden devam et"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Hedeflediğin bir tarih var mı?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "Tarihi kaldır"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"

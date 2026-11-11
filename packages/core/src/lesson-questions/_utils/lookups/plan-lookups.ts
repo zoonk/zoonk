@@ -8,6 +8,7 @@ import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { WEEKLY_CHALLENGE_KINDS } from "../../../checkpoints/_utils/load-weekly-challenge";
+import { isPastPlusOnlyMock } from "../../../checkpoints/plus-only-mock";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import {
   type SkillAreas,
@@ -212,7 +213,14 @@ async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
       when: checkpoint.when,
     }));
 
-  const planned = weekly.filter((item) => item.status === "todo" && item.scheduledFor);
+  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+
+  const planned = weekly.filter(
+    (item) =>
+      item.status === "todo" &&
+      item.scheduledFor &&
+      !isPastPlusOnlyMock({ includesMockExams: !plan.access.mocksRequirePlus, item, today }),
+  );
 
   const shown = planned
     .slice(0, MAX_WEEKLY_CHALLENGES)

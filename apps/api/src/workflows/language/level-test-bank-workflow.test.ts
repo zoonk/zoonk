@@ -1,49 +1,21 @@
 import { put } from "@vercel/blob";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateLevelTestBank } from "@zoonk/ai/tasks/language/level-test-bank";
+import { checkLevelTestQuestions } from "@zoonk/ai/tasks/language/check-level-test-questions";
+import { generateLevelTestBankLevel } from "@zoonk/ai/tasks/language/level-test-bank";
+import { LEVEL_TEST_LEVELS } from "@zoonk/ai/tasks/language/level-test-levels";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
+import { writtenLevel } from "../_test-utils/level-test-bank";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
-const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
+const TEST_LEVELS = LEVEL_TEST_LEVELS;
 
-type Written = Awaited<ReturnType<typeof generateLevelTestBank>>;
-
-function bankFrom(passage: string): Written {
-  return {
-    data: {
-      questions: TEST_LEVELS.flatMap((level) =>
-        (["reading", "listening"] as const).map((skill) => ({
-          answerIndex: 0,
-          level,
-          options: ["a", "b", "c", "d"],
-          passage: `${passage} ${level}`,
-          question: "O que diz?",
-          skill,
-        })),
-      ),
-      speaking: TEST_LEVELS.map((level) => ({
-        level,
-        sentence: `Say ${level}`,
-        translation: "Diga",
-      })),
-    },
-    provenance: {
-      generatedAt: new Date().toISOString(),
-      latencyMs: 1,
-      model: "anthropic/claude-opus-5.5",
-      promptVersion: "test-prompt",
-      provider: "anthropic",
-      requestedModel: "anthropic/claude-opus-5.5",
-      runId: crypto.randomUUID(),
-      usage: {},
-    },
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
-  };
+function mockWriter(passage: string) {
+  vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
+    writtenLevel({ level, passage }),
+  );
 }
 
 function voicedAudio(): Awaited<ReturnType<typeof generateLanguageAudio>> {
@@ -52,7 +24,7 @@ function voicedAudio(): Awaited<ReturnType<typeof generateLanguageAudio>> {
       audio: new Uint8Array([1, 2, 3]),
       durationMs: 2400,
       format: "mp3",
-      provenance: bankFrom("voice").provenance,
+      provenance: writtenLevel({ level: "A1", passage: "voice" }).provenance,
     },
     error: null,
   };
@@ -68,7 +40,7 @@ function streamedSteps() {
 
 describe(levelTestBankWorkflow, () => {
   beforeEach(() => {
-    vi.mocked(generateLevelTestBank).mockReset();
+    vi.mocked(generateLevelTestBankLevel).mockReset();
 
     vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
 
@@ -84,19 +56,30 @@ describe(levelTestBankWorkflow, () => {
 
   it("writes the pair's questions once, saying so on its stream", async () => {
     const pair = freshPair();
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom("Bank"));
+    mockWriter("Bank");
 
     await expect(
       levelTestBankWorkflow({ analytics: { distinctId: "learner-id", goalId: "goal-id" }, pair }),
     ).resolves.toStrictEqual({ status: "written" });
 
-    expect(generateLevelTestBank).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        analytics: expect.objectContaining({ distinctId: "learner-id", goalId: "goal-id" }),
-        learnerLanguage: pair.language,
-        targetLanguage: "ja",
-      }),
-    );
+    const writes = vi.mocked(generateLevelTestBankLevel).mock.calls.map(([input]) => input);
+    expect(writes.map((input) => input.level)).toStrictEqual([...TEST_LEVELS]);
+
+    expect(
+      writes.every(
+        ({ analytics, learnerLanguage, targetLanguage }) =>
+          analytics?.distinctId === "learner-id" &&
+          analytics.goalId === "goal-id" &&
+          learnerLanguage === pair.language &&
+          targetLanguage === "ja",
+      ),
+    ).toBe(true);
+
+    expect(
+      vi
+        .mocked(checkLevelTestQuestions)
+        .mock.calls.map(([input]) => new Set(input.questions.map((question) => question.passage))),
+    ).toStrictEqual(TEST_LEVELS.map((level) => new Set([`Bank ${level}`])));
 
     expect(streamedSteps()).toStrictEqual([
       "writeLevelTestBank:started",
@@ -104,14 +87,14 @@ describe(levelTestBankWorkflow, () => {
     ]);
 
     await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "ready" });
-    expect(generateLevelTestBank).toHaveBeenCalledOnce();
+    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(TEST_LEVELS.length);
   });
 
   it("announces the test is ready while its listening clips are still being prepared", async () => {
     const pair = freshPair();
     const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
 
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
+    mockWriter(crypto.randomUUID());
     vi.mocked(generateLanguageAudio).mockReturnValue(audio.promise);
     const writing = levelTestBankWorkflow({ pair });
 
@@ -130,7 +113,7 @@ describe(levelTestBankWorkflow, () => {
 
   it("finishes with its questions ready when no clip can be voiced", async () => {
     const pair = freshPair();
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
+    mockWriter(crypto.randomUUID());
 
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
@@ -144,13 +127,13 @@ describe(levelTestBankWorkflow, () => {
       "levelTestBankReady:completed",
     ]);
 
-    expect(generateLevelTestBank).toHaveBeenCalledOnce();
+    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(TEST_LEVELS.length);
   });
 
   it("keeps the clips that were voiced when another one fails, and voices only the missing one on the pair's next run", async () => {
     const pair = freshPair();
     const passage = crypto.randomUUID();
-    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(passage));
+    mockWriter(passage);
     const failing = `${passage} B1`;
 
     vi.mocked(generateLanguageAudio).mockImplementation(async ({ text }) =>
@@ -192,15 +175,17 @@ describe(levelTestBankWorkflow, () => {
     });
 
     vi.mocked(sleep).mockImplementationOnce(async () => {
-      const { data, provenance } = bankFrom("Other");
+      const levels = TEST_LEVELS.map((level) => writtenLevel({ level, passage: "Other" }));
 
       await prisma.languageLevelTest.updateMany({
         data: {
           content: {
-            questions: data.questions.map((question, index) => ({ ...question, id: `q${index}` })),
-            speaking: data.speaking,
+            questions: levels
+              .flatMap(({ data }) => data.questions)
+              .map((question, index) => ({ ...question, id: `q${index}` })),
+            speaking: levels.map(({ data }) => data.speaking),
           },
-          model: provenance.model,
+          model: "anthropic/claude-fable-5.2",
         },
         where: pair,
       });
@@ -208,13 +193,13 @@ describe(levelTestBankWorkflow, () => {
 
     await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "ready" });
 
-    expect(generateLevelTestBank).not.toHaveBeenCalled();
+    expect(generateLevelTestBankLevel).not.toHaveBeenCalled();
     expect(streamedSteps().at(-1)).toBe("levelTestBankReady:completed");
   });
 
   it("reports a writer that failed, giving the pair's claim up so the level test can start it again", async () => {
     const pair = freshPair();
-    vi.mocked(generateLevelTestBank).mockRejectedValue(new Error("Provider down"));
+    vi.mocked(generateLevelTestBankLevel).mockRejectedValue(new Error("Provider down"));
 
     await expect(levelTestBankWorkflow({ pair })).rejects.toThrow("Provider down");
 
