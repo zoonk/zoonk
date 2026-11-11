@@ -49,6 +49,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.BlockMark
+import com.zoonk.android.feature.session.DayProgress
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
@@ -67,7 +68,6 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.color
@@ -104,7 +104,7 @@ internal fun LazyListScope.todaySession(
     freshStartItem(model)
 
     if (day.steps.isNotEmpty() && (day.steps.size >= 2 || day.heldMinutes > 0)) {
-        item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
+        item(key = "segments", contentType = "segments") { TodayDayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
     if (wide && (day.steps.isNotEmpty() || model.state == StudySession.State.WAITING)) {
@@ -522,9 +522,9 @@ private fun FoldRow(
     }
 }
 
-/** Main's `DayProgress`: the day's blocks by their minutes, the ones ahead in their kind's color. */
+/** Main's `DayProgress`: one equal part per block, the ones ahead in their kind's color. */
 @Composable
-private fun DayProgress(
+private fun TodayDayProgress(
     model: TodayDayModel,
     modifier: Modifier,
 ) {
@@ -532,21 +532,18 @@ private fun DayProgress(
     val done = day.steps.count(DayStep::isFinished)
     val tertiary = MaterialTheme.colorScheme.tertiary
     val skipped = MaterialTheme.colorScheme.onSurface.copy(alpha = SKIPPED_ALPHA)
-    val parts =
+    val fills =
         day.steps.map { step ->
-            val current = step.position == day.nextPosition
-            val fill =
-                when {
-                    step.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(tertiary)
-                    step.status == StudyBlock.Status.SKIPPED -> MeterPart.Fill.Solid(skipped)
-                    current -> MeterPart.Fill.Place(step.share)
-                    step.learnKind == LearnKind.Lesson -> MeterPart.Fill.Track
-                    else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
-                }
-            MeterPart(fill, weight = step.estimatedMinutes.coerceAtLeast(1).toFloat())
-        } + listOfNotNull(day.heldMinutes.takeIf { it > 0 }?.let { MeterPart(MeterPart.Fill.Track, weight = it.toFloat()) })
+            when {
+                step.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(tertiary)
+                step.status == StudyBlock.Status.SKIPPED -> MeterPart.Fill.Solid(skipped)
+                step.position == day.nextPosition -> MeterPart.Fill.Place(step.share)
+                step.learnKind == LearnKind.Lesson -> MeterPart.Fill.Track
+                else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
+            }
+        }
 
-    MeterParts(parts, modifier, contentDescription = stepsDone(done, day.steps.size))
+    DayProgress(fills, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(done, day.steps.size))
 }
 
 private val DayStep.share: Float
