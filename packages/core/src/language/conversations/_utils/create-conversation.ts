@@ -22,6 +22,9 @@ type NewConversation = {
   userId: string;
 };
 
+/** Speaking mocks and exam tasks speak their exam's own variety, whatever the learner's country. */
+const CALLS_IN_LEARNER_VARIETY = new Set<LanguageConversationKind>(["practice", "checkpoint"]);
+
 export function toConversationData(input: Omit<NewConversation, "markChanged">) {
   return {
     chapterId: input.chapterId,
@@ -35,7 +38,9 @@ export function toConversationData(input: Omit<NewConversation, "markChanged">) 
     sectionId: input.sectionId ?? null,
     studyBlockId: input.studyBlockId ?? null,
     targetLanguage: input.targetLanguage,
-    targetRegion: input.goal?.targetRegion ?? null,
+    targetRegion: CALLS_IN_LEARNER_VARIETY.has(input.kind)
+      ? (input.goal?.targetRegion ?? null)
+      : null,
     titleSnapshot: input.scenario.title,
     userId: input.userId,
   };
