@@ -32,8 +32,7 @@
     "status": "planned",
     "week": {
       "days": [],
-      "nextStudyDate": null,
-      "time": { "studiedMinutes": 0, "targetMinutes": 0 }
+      "nextStudyDate": null
     }
   },
   "sessionId": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00",

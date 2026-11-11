@@ -14877,16 +14877,6 @@ msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time}の学習を予定"
 
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "今週は{studied}学習済み（予定は{planned}）"
-
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number}日 / {total, plural, other {#日}}"
-
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts
 msgctxt "afsNpC"

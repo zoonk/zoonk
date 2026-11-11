@@ -403,10 +403,6 @@ class TodayFlowTest {
                 ),
             )
             put("nextStudyDate", JsonNull)
-            putJsonObject("time") {
-                put("studiedMinutes", 35)
-                put("targetMinutes", 120)
-            }
         }
 
     private fun weekDay(

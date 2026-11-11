@@ -1,7 +1,6 @@
 import { type Goal, type StudyFreshStart } from "@zoonk/db";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
-import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
 import { getExtraTime } from "../extra-time";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
@@ -14,7 +13,7 @@ import { isExamTomorrow } from "./exam-tomorrow";
 import { type DayOutlines } from "./outlining-stand-ins";
 import { type PlusLesson } from "./plus-only-lessons";
 import { type SessionAnswer } from "./session-answers";
-import { type StudySessionView } from "./session-view";
+import { type SessionWeek, type StudySessionView } from "./session-view";
 
 export type DayViewFieldsInput = {
   answers: readonly SessionAnswer[];
@@ -37,7 +36,7 @@ export type DayViewFieldsInput = {
     plannedMinutes: number;
   };
   timeZone?: string;
-  week: StudyWeek;
+  week: SessionWeek;
 };
 
 function getNextPosition(
@@ -114,6 +113,6 @@ export function toDayViewFields({
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     plusLessons,
     sessionBar,
-    week,
+    week: { days: week.days, nextStudyDate: week.nextStudyDate },
   };
 }

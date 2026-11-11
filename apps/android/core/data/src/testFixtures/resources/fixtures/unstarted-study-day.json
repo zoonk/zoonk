@@ -20,8 +20,7 @@
   "sessionBar": { "completed": 0, "total": 0 },
   "week": {
     "days": [],
-    "nextStudyDate": null,
-    "time": { "studiedMinutes": 0, "targetMinutes": 0 }
+    "nextStudyDate": null
   },
   "blocks": [],
   "catchUp": null,

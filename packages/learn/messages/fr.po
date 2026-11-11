@@ -14877,16 +14877,6 @@ msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "Durée prévue : {time}"
 
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "{studied} sur {planned} étudiées cette semaine"
-
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number} sur {total, plural, one {# jour} other {# jours}}"
-
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts
 msgctxt "afsNpC"

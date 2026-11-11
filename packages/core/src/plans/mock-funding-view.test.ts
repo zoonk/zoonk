@@ -350,15 +350,12 @@ describe("public mock funding views", () => {
     });
 
     expect(opened.today.session.minutes.planned).toBe(result.today.session.minutes.planned);
-    expect(opened.today.session.week.time).toBeDefined();
+    expect(opened.today.session.week.days).toHaveLength(7);
     expect(opened.today).toMatchObject({ mockFunding: expected });
 
     expect(todayResponseSchema.parse(serializeToday(opened.today))).toMatchObject({
       mockFunding: expected,
-      session: {
-        minutes: opened.today.session.minutes,
-        week: { time: opened.today.session.week.time },
-      },
+      session: { minutes: opened.today.session.minutes },
     });
 
     const updated = await getGoalPlan(goal.id);
