@@ -4,13 +4,145 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { endFollowUp, listFollowUps } from "../follow-ups/follow-up-rows";
+import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../learner/_test-utils/exam-test-goal";
+import { readFocusTestRecord } from "../learner/placement/focus-test-state";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import * as rebalance from "../preparation/rebalance-plan";
 import { settleSessionDay } from "./_utils/settle-session-day";
+import { answerStudyQuestion } from "./answer-study-question";
+import { finishStudyBlock } from "./finish-study-block";
+import { settleSessionPlan } from "./settle-session-plan";
+import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-describe("the plan work a session's first end owes", () => {
+describe("the plan work a session end owes", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it.each([
+    ["complete", false],
+    ["stop", false],
+    ["complete", true],
+    ["stop", true],
+  ] as const)(
+    "settles resumed test answers at a later %s (first settlement pending: %s)",
+    async (ending, pending) => {
+      const { goal, plan, user } = await shortPlanExamGoalFixture({
+        goal: { ...PLAN_SHOWN, timezone: "UTC" },
+      });
+
+      const session = await studySessionFixture({
+        goalId: goal.id,
+        plannedMinutes: 0,
+        userId: user.id,
+      });
+
+      const item = await prisma.item.findFirstOrThrow({
+        where: { examBlueprintId: goal.examBlueprintId },
+      });
+
+      const block = await studySessionBlockFixture({
+        kind: "review",
+        payload: { itemIds: [item.id], placementItemIds: [item.id] },
+        sessionId: session.id,
+      });
+
+      const readSummary = async () =>
+        readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }))
+          ?.summary;
+
+      const settleOwed = async () => {
+        const rows = await listFollowUps(user.id);
+        const owed = rows.find((row) => row.kind === "settleSessionPlan");
+
+        if (owed?.kind === "settleSessionPlan") {
+          await settleSessionPlan({ ...owed.input, userId: user.id });
+          await endFollowUp(owed);
+        }
+      };
+
+      const rebalancePlan = vi.spyOn(rebalance, "rebalancePlanAfterSession");
+
+      await startStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
+      await stopStudySession({ input: {}, sessionId: session.id });
+
+      const firstOwed = await prisma.followUp.findFirstOrThrow({
+        where: { key: session.id, kind: "settleSessionPlan", userId: user.id },
+      });
+
+      if (!pending) {
+        await settleOwed();
+      }
+
+      await expect(readSummary()).resolves.toMatchObject({ asked: 0 });
+      expect(rebalancePlan).toHaveBeenCalledTimes(pending ? 0 : 1);
+
+      await startStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
+
+      await expect(
+        answerStudyQuestion({
+          blockId: block.id,
+          input: { answer: { dontKnow: true }, durationMs: 3000, itemId: item.id },
+          sessionId: session.id,
+        }),
+      ).resolves.toMatchObject({ status: "ready" });
+
+      await expect(readSummary()).resolves.toMatchObject({ asked: 0 });
+      await finishStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
+
+      if (ending === "stop") {
+        await studySessionBlockFixture({ kind: "practice", sessionId: session.id });
+
+        await Promise.all([
+          stopStudySession({ input: {}, sessionId: session.id }),
+          stopStudySession({ input: {}, sessionId: session.id }),
+        ]);
+      } else {
+        await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
+      }
+
+      const owed = await prisma.followUp.findMany({
+        where: { kind: "settleSessionPlan", userId: user.id },
+      });
+
+      expect(owed).toHaveLength(1);
+
+      expect(owed[0]).toMatchObject({
+        input: pending
+          ? firstOwed.input
+          : { goalId: goal.id, rebalance: false, sessionId: session.id, timeZone: "UTC" },
+        key: session.id,
+        revision: pending ? 1 : 0,
+      });
+
+      await endFollowUp(firstOwed);
+
+      await expect(
+        prisma.followUp.findMany({ where: { kind: "settleSessionPlan", userId: user.id } }),
+      ).resolves.toStrictEqual(owed);
+
+      await settleOwed();
+
+      await expect(readSummary()).resolves.toMatchObject({ asked: 1 });
+
+      await expect(
+        prisma.planChange.findMany({
+          where: { payload: { equals: "focusTest", path: ["source"] }, planId: plan.id },
+        }),
+      ).resolves.toMatchObject([{ status: "proposed" }]);
+
+      expect(rebalancePlan).toHaveBeenCalledOnce();
+      await stopStudySession({ input: {}, sessionId: session.id });
+      await settleSessionDay({ sessionId: session.id, timeZone: "UTC", userId: user.id });
+
+      await expect(
+        prisma.followUp.count({ where: { kind: "settleSessionPlan", userId: user.id } }),
+      ).resolves.toBe(0);
+    },
+  );
+
   it("keeps owing memory when a completed session is reopened and stopped", async () => {
     const user = await userFixture();
     const { goal } = await unplannedGoalFixture({ timezone: "UTC", userId: user.id });

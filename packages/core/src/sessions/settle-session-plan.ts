@@ -4,11 +4,12 @@ import { settleFocusTestAfterSession } from "../learner/placement/_utils/settle-
 import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
 
 /**
- * Internal workflow bridge for the plan work owed by a session's first end. Settle the test
+ * Internal workflow bridge for a session's owed plan work. Settle the test
  * before rebalancing so their focus proposals cannot race.
  */
 export async function settleSessionPlan(session: {
   goalId: string;
+  rebalance?: boolean;
   sessionId: string;
   timeZone: string;
   userId: string;
@@ -22,5 +23,8 @@ export async function settleSessionPlan(session: {
   }
 
   await settleFocusTestAfterSession(session);
-  await rebalancePlanAfterSession(session);
+
+  if (session.rebalance !== false) {
+    await rebalancePlanAfterSession(session);
+  }
 }

@@ -1,7 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
@@ -10,6 +9,7 @@ import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
+import { oweSessionPlanSettlement } from "./owe-session-plan-settlement";
 import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
@@ -135,21 +135,14 @@ async function completeIfFinished({
       // Memory reads once at the first stop or end; later work belongs to the next session's reading.
       const firstEnd = !current.endedAt && !current.stoppedAt;
 
-      await oweFollowUps({
-        db: tx,
+      await oweSessionPlanSettlement(tx, {
         followUps: [
           { input: { sessionId: session.id }, kind: "prepareSession" },
-          ...(firstEnd && session.goalId
-            ? [
-                {
-                  input: { goalId: session.goalId, sessionId: session.id, timeZone },
-                  kind: "settleSessionPlan" as const,
-                },
-              ]
-            : []),
           ...(firstEnd ? memoryFollowUps : []),
         ],
-        userId,
+        goal: session.goal,
+        session: current,
+        timeZone,
       });
 
       return { session: current, status: "completed" as const };
