@@ -291,8 +291,8 @@ export async function buildPlanView({
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
+      access,
       challengeResults,
-      challengesOpen: phaseChallengesRequired && !access.freeWeekOver,
       chapterTitles,
       context,
       currentPhase,

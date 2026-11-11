@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { checkLikeTheKeys } from "../src/workflows/_test-utils/level-test-bank";
 import { solveLikeTheKeys } from "../src/workflows/_test-utils/solved-items";
 
 export const nextServer = { after: vi.fn() };
@@ -50,6 +51,9 @@ export const boundaries = {
     fixAlphabetLesson: vi.fn(),
     generateAlphabetLesson: vi.fn(),
   },
+  "@zoonk/ai/tasks/language/check-level-test-questions": {
+    checkLevelTestQuestions: vi.fn(checkLikeTheKeys),
+  },
   "@zoonk/ai/tasks/language/check-sentence-orders": { checkSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/conversation-scenario": { generateConversationScenario: vi.fn() },
   "@zoonk/ai/tasks/language/language-lesson": {
@@ -58,7 +62,7 @@ export const boundaries = {
   },
   "@zoonk/ai/tasks/language/language-lesson-check": { checkLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
-  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
+  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBankLevel: vi.fn() },
   "@zoonk/ai/tasks/language/skill-levels": { classifySkillLevels: vi.fn() },
   // Most lessons teach no law: one that does mocks the laws it names.
   "@zoonk/ai/tasks/lesson-laws": {

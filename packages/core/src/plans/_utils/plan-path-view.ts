@@ -3,6 +3,7 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
+import { type PlanView } from "../plan-view-contract";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -31,13 +32,13 @@ type PathInput = Pick<
   | "skillAreas"
   | "taughtSkillIds"
 > & {
-  challengesOpen: boolean;
+  access: Pick<PlanView["access"], "freeWeekOver" | "mocksRequirePlus">;
   context: PlanReadContext;
   today: Awaited<ReturnType<typeof readPlanToday>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;
 };
 
-export function buildPlanPath({ challengeResults, context, today, ...input }: PathInput) {
+export function buildPlanPath({ access, challengeResults, context, today, ...input }: PathInput) {
   const { goal, items, phases, state } = context;
 
   const todayBlocks = listTodayLearnBlocks(today.session?.blocks ?? []);
@@ -46,8 +47,10 @@ export function buildPlanPath({ challengeResults, context, today, ...input }: Pa
 
   return buildPhaseViews({
     ...input,
+    challengesOpen: input.phaseChallengesRequired !== false && !access.freeWeekOver,
     goalKind: goal.kind,
     items,
+    mocksRequirePlus: access.mocksRequirePlus,
     outlinedUntil: getOutlinedUntil(context.today),
     phases,
     skillPhases: new Map(state.graph.skills.map((skill) => [skill.skillId, skill.phase])),
