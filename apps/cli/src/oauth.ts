@@ -1,4 +1,4 @@
-import { type StoredLogin } from "./credentials.ts";
+import { type StoredLogin, isPlainToken } from "./credentials.ts";
 import { CliError } from "./errors.ts";
 import { type HttpResult, isRecord, postForm } from "./http.ts";
 
@@ -8,6 +8,7 @@ const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 /** RFC 8628 section 3.2: clients poll every 5 seconds when the server names no interval. */
 const DEFAULT_POLL_SECONDS = 5;
 const FIRST_SERVER_ERROR = 500;
+const OAUTH_ERROR_PATTERN = /^[a-z_]{1,64}$/u;
 
 const ENDPOINTS = {
   deviceCode: "/v1/auth/device/code",
@@ -31,7 +32,8 @@ function unexpectedResponse(result: HttpResult): CliError {
 }
 
 function oauthError(result: HttpResult): string | null {
-  return isRecord(result.body) && typeof result.body.error === "string" ? result.body.error : null;
+  const error = isRecord(result.body) ? result.body.error : null;
+  return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
 }
 
 function toLogin(result: HttpResult): StoredLogin {
@@ -39,8 +41,8 @@ function toLogin(result: HttpResult): StoredLogin {
 
   if (
     !isRecord(body) ||
-    typeof body.access_token !== "string" ||
-    typeof body.refresh_token !== "string" ||
+    !isPlainToken(body.access_token) ||
+    !isPlainToken(body.refresh_token) ||
     typeof body.expires_in !== "number"
   ) {
     throw unexpectedResponse(result);

@@ -229,4 +229,31 @@ describe(sendAuthorized, () => {
     expect(elsewhere.refreshRequests).toStrictEqual([]);
     expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
+
+  it("refuses a refreshed token a header can't carry, without printing it", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: {
+        body: { ...tokenResponse("new"), access_token: "SECRET\r\nX-Injected: yes" },
+        status: 200,
+      },
+    });
+
+    saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    const failure = await sendAuthorized({
+      file,
+      origin: api.origin,
+      request: WHOAMI_REQUEST,
+    }).then(
+      () => null,
+      (error: unknown) => error,
+    );
+
+    expect(failure).toMatchObject({ exitCode: EXIT_CODES.failed });
+    expect(String(failure)).not.toContain("SECRET");
+    expect(api.staffCalls).toStrictEqual([]);
+  });
 });

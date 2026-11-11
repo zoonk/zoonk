@@ -11,6 +11,7 @@ export type LoginPlace = { file: string; origin: string };
 
 type CredentialsFile = Record<string, unknown>;
 
+const PLAIN_TOKEN_PATTERN = /^[\w\-.~+/]+=*$/u;
 const OWNER_ONLY_DIRECTORY = 0o700;
 const OWNER_ONLY_FILE = 0o600;
 
@@ -19,11 +20,16 @@ export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   return join(configHome, "zoonk", "credentials.json");
 }
 
+/** RFC 6750's token characters, so a token can't break a header or a line of output. */
+export function isPlainToken(value: unknown): value is string {
+  return typeof value === "string" && PLAIN_TOKEN_PATTERN.test(value);
+}
+
 function isStoredLogin(value: unknown): value is StoredLogin {
   return (
     isRecord(value) &&
-    typeof value.accessToken === "string" &&
-    typeof value.refreshToken === "string" &&
+    isPlainToken(value.accessToken) &&
+    isPlainToken(value.refreshToken) &&
     typeof value.expiresAt === "number"
   );
 }

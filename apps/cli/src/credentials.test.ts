@@ -57,4 +57,16 @@ describe("credentials file", () => {
     expect(readLogin({ file, origin: PRODUCTION })).toBeNull();
     expect(readLogin({ file, origin: LOCAL })).toStrictEqual(login("local"));
   });
+
+  it("reads a login whose tokens a header can't carry as no login", () => {
+    const file = createCredentialsFile();
+
+    saveLogin({
+      file,
+      login: { ...login("broken"), accessToken: "access\r\nX-Injected: yes" },
+      origin: PRODUCTION,
+    });
+
+    expect(readLogin({ file, origin: PRODUCTION })).toBeNull();
+  });
 });
