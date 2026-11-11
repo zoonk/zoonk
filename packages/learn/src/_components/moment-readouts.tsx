@@ -70,11 +70,13 @@ const NO_FACTS: readonly (string | false | null | undefined)[] = [];
 
 export function MomentReadouts({
   brainPower,
+  children,
   className,
   facts = NO_FACTS,
   score,
 }: {
   brainPower: number;
+  children?: React.ReactNode;
   className?: string;
   facts?: readonly (string | false | null | undefined)[];
   score?: MomentScore | null;
@@ -82,7 +84,7 @@ export function MomentReadouts({
   const shownScore = score && score.answered > 0 ? score : null;
   const earned = brainPower > 0;
 
-  if (!shownScore && !earned && !facts.some(Boolean)) {
+  if (!shownScore && !earned && !facts.some(Boolean) && !children) {
     return null;
   }
 
@@ -105,6 +107,7 @@ export function MomentReadouts({
       )}
 
       <TaskMeta facts={facts} />
+      {children}
     </div>
   );
 }

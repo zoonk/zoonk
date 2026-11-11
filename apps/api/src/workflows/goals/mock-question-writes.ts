@@ -2,7 +2,7 @@ import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import {
   listListeningPartsToPrepareStep,
-  preparePartSetStep,
+  preparePartSet,
   voiceListeningSetStep,
 } from "../listening/steps/listening-sets-steps";
 import { type PlacementItemsWritten, preparePlacementItems } from "./placement-items";
@@ -113,7 +113,7 @@ export async function prepareMockRecordings({
 
   const voiced = await Promise.allSettled(
     unready.parts.map(async (part) => {
-      const setId = await preparePartSetStep({ ...context, exam: unready.exam, part });
+      const setId = await preparePartSet({ ...context, exam: unready.exam, part });
       return setId ? voiceListeningSetStep({ ...context, setId }) : false;
     }),
   );

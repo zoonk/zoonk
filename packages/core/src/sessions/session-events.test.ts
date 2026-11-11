@@ -194,7 +194,9 @@ describe("session outcomes sent from the server", () => {
     await skipAll();
     await stopStudySession({ input: {}, sessionId });
 
-    await expect(addExtraStudyBlock({ sessionId })).resolves.toMatchObject({ status: "ready" });
+    await expect(addExtraStudyBlock({ input: {}, sessionId })).resolves.toMatchObject({
+      status: "ready",
+    });
 
     await skipAll();
     await stopStudySession({ input: {}, sessionId });

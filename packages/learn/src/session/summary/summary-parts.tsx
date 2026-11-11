@@ -167,7 +167,7 @@ function SessionNumbers() {
       />
 
       <StatTile
-        className="lg:hidden"
+        className="with-aside:hidden"
         detail={summary.belt && <BeltDetail belt={summary.belt} />}
         icon={<BrainIcon />}
         label={t("Brain Power")}

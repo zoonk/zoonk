@@ -171,6 +171,19 @@ export function addGatewayCharge<UsageUsd extends number | undefined>({
   return usageUsd === undefined ? usageUsd : usageUsd + charge.usd;
 }
 
+/** The gateway lists a model's fast price as its own `-fast` model. */
+export function findServedPricing({
+  findPricing,
+  model,
+  speed,
+}: {
+  findPricing: (model: string) => ModelPricing | undefined;
+  model: string;
+  speed?: "fast";
+}): ModelPricing | undefined {
+  return (speed && findPricing(`${model}-${speed}`)) || findPricing(model);
+}
+
 /**
  * Undefined when the model has no price and no gateway charge covers its usage, so an unknown
  * model never looks free.
@@ -187,13 +200,14 @@ export function computeCallCostUsd({
   charge?: GatewayCharge;
   model: string;
   serviceTier?: string;
-  /** The gateway lists a model's fast price as its own `-fast` model. */
   speed?: "fast";
   usage: CallUsage;
 }): number | undefined {
-  const pricing =
-    (speed && getModelPricing({ at, model: `${model}-${speed}` })) ||
-    getModelPricing({ at, model });
+  const pricing = findServedPricing({
+    findPricing: (candidate) => getModelPricing({ at, model: candidate }),
+    model,
+    speed,
+  });
 
   return addGatewayCharge({
     charge,

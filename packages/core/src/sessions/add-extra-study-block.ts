@@ -1,5 +1,7 @@
 import "server-only";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { isCurrentSession } from "./_utils/current-session";
 import {
   appendExtraBlocks,
   isFreeWeekOver,
@@ -9,6 +11,7 @@ import {
 import { readBlockLessonStates } from "./_utils/lesson-screens";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
+import { type StudySessionTimeZoneInput } from "./contract";
 import { getBlockScreen } from "./day-block";
 import { type ExtraTimeReason, getExtraTime } from "./extra-time";
 
@@ -19,10 +22,15 @@ export type ExtraStudyBlockResult =
   | { status: "unauthorized" }
   | { reason: ExtraTimeReason; status: "unavailable" };
 
-/** Requires all planned blocks finished; returns the first added block and respects free-exam gates. */
+/**
+ * Adds to the learner's current day only, once its planned blocks are finished; returns the first
+ * added block and respects free-exam gates.
+ */
 export async function addExtraStudyBlock({
+  input,
   sessionId,
 }: {
+  input: StudySessionTimeZoneInput;
   sessionId: string;
 }): Promise<ExtraStudyBlockResult> {
   const owned = await findOwnedStudySession(sessionId);
@@ -31,19 +39,23 @@ export async function addExtraStudyBlock({
     return owned;
   }
 
-  if (await isFreeWeekOver(owned.session)) {
-    return { reason: "plusRequired", status: "unavailable" };
-  }
-
   const { userId } = owned;
+  const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
   const skillIds = owned.session.goalId ? await loadGoalSkillIds(owned.session.goalId) : [];
 
   const added = await withSessionAppendLock<ExtraStudyBlockResult>({
     run: async ({ session, transaction }) => {
-      const extraTime = getExtraTime({ blocks: session.blocks });
+      const extraTime = getExtraTime({
+        blocks: session.blocks,
+        current: isCurrentSession({ now: new Date(), session, timeZone }),
+      });
 
       if (!extraTime.available) {
         return { reason: extraTime.reason, status: "unavailable" };
+      }
+
+      if (await isFreeWeekOver(session)) {
+        return { reason: "plusRequired", status: "unavailable" };
       }
 
       const planned = await planExtraBlocks({

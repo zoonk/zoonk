@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.session
 
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.StudyBlock
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -16,6 +18,20 @@ fun fixture(
     val text = requireNotNull(object {}.javaClass.getResource("/fixtures/$name.json")).readText()
     return JsonObject(ApiJson.parseToJsonElement(text).jsonObject + overrides.associate { (key, value) -> key to value.toJson() })
 }
+
+/** A completion's `blocks`, in order, with [blockId] ids. */
+fun studyBlocks(vararg blocks: Pair<StudyBlock.Kind, StudyBlock.Status>): JsonArray =
+    JsonArray(
+        blocks.mapIndexed { position, (kind, status) ->
+            fixture(
+                "study-block",
+                "id" to blockId(position).toString(),
+                "kind" to kind.value,
+                "position" to position,
+                "status" to status.value,
+            )
+        },
+    )
 
 inline fun <reified T> decodeFixture(
     name: String,

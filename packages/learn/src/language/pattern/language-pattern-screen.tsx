@@ -90,7 +90,7 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="lg:hidden">
+    <div className="with-aside:hidden">
       <DropdownMenu>
         <DropdownMenuTrigger
           render={

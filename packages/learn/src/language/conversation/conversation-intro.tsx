@@ -215,7 +215,7 @@ function CallIntro({
         className="flex w-full flex-col gap-1"
         role="region"
       >
-        <PageSectionTitle className="lg:sr-only" id="call-goals">
+        <PageSectionTitle className="with-aside:sr-only" id="call-goals">
           {t("What to get across")}
         </PageSectionTitle>
         <ChecklistRows>

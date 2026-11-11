@@ -91,9 +91,9 @@ function ChoiceQuestion({
           <SuggestionActions className="flex-col items-stretch">
             {choice.options.map((option) => (
               <SuggestionAction
+                action={() => onPick({ group: choice.group, subjects: [option.name] })}
                 disabled={isPending}
                 key={option.name}
-                onClick={() => onPick({ group: choice.group, subjects: [option.name] })}
                 variant="outline"
               >
                 {option.shortName ?? option.name}
@@ -119,9 +119,9 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 
   const undoButton = change.canUndo && (
     <SuggestionAction
+      action={undo}
       busy={isPending}
       icon={<Undo2Icon aria-hidden="true" />}
-      onClick={undo}
       variant="outline"
     >
       {t("Undo")}

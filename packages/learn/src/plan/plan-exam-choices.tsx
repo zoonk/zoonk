@@ -186,9 +186,9 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
               <SuggestionActions>
                 {choice.options.map((option) => (
                   <SuggestionAction
+                    action={() => choose({ group: choice.group, subjects: [option.name] })}
                     disabled={isPending}
                     key={option.name}
-                    onClick={() => choose({ group: choice.group, subjects: [option.name] })}
                     variant="outline"
                   >
                     {option.shortName ?? option.name}

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.session
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -12,6 +13,9 @@ import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionTimeZone
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import java.util.UUID
 
 class LiveStudyApi(
@@ -44,7 +48,13 @@ class LiveStudyApi(
     override suspend fun addExtraBlock(
         session: AuthenticatedSession,
         sessionId: UUID,
-    ): StudyBlock = perform { api.clients(session).studySessions.createStudyExtraBlock(sessionId) }
+        timeZone: String,
+    ): StudyBlock? =
+        try {
+            perform { api.clients(session).studySessions.createStudyExtraBlock(sessionId, StudySessionTimeZone(timeZone)) }
+        } catch (e: ApiException) {
+            if (e.isDayOver()) null else throw e
+        }
 
     override suspend fun catchUp(
         session: AuthenticatedSession,
@@ -62,3 +72,7 @@ class LiveStudyApi(
         perform { api.clients(session).studySessions.createStudySessionStop(sessionId, StudySessionTimeZone(timeZone)) }
     }
 }
+
+/** `EXTRA_TIME_UNAVAILABLE` says why in `details.reason`. */
+private fun ApiException.isDayOver(): Boolean =
+    code == "EXTRA_TIME_UNAVAILABLE" && ((details as? JsonObject)?.get("reason") as? JsonPrimitive)?.contentOrNull == "dayOver"

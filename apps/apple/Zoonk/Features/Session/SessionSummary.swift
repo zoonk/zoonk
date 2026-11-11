@@ -79,6 +79,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
     let opensInPlayer: Bool
   }
   let blocks: [StudyBlock]
+  let dayProgress: DayProgress
   let deferredLessonsCount: Int
   let minutes: StudyDay.Minutes
   let sessionId: String
@@ -104,6 +105,7 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let nextBlockId: String?
   let reached: DayResult.Reached?
   let reminderOffer: ReminderOffer?
+  let sessionBar: SessionBar
   let sessionCompleted: Bool
   let total: Int
 

@@ -165,7 +165,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
           {retry ? retryText : doesText}
         </SuggestionDescription>
         <SuggestionActions>
-          <SuggestionAction key="preview" onClick={() => void showChange()}>
+          <SuggestionAction action={() => void showChange()} key="preview">
             {retry ? t("Try again") : t("Preview")}
           </SuggestionAction>
           <OtherOptions item={item} />

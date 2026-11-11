@@ -20,8 +20,9 @@ import {
   generatePlacementItems,
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
+import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
-import { writeItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { type WrittenItemSet, writeItemSet } from "@zoonk/ai/tasks/items/write-set";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/plans/routine-fit";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
@@ -56,7 +57,7 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getWritable, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
@@ -65,6 +66,7 @@ import { loadPlacementState } from "../../../../../packages/core/src/learner/pla
 import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
+import { solveAsKeyed, solveLikeTheKeys } from "../_test-utils/solved-items";
 import { getStartMock } from "../_test-utils/start-mock";
 import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
@@ -423,6 +425,31 @@ const planPlacesSchema = z.object({
     z.object({ area: z.string().nullable(), topics: z.array(z.string()).optional() }),
   ),
 });
+
+function setChoice(question: string, evidence: string, [right, ...wrong]: string[]) {
+  return {
+    difficulty: "medium" as const,
+    evidence,
+    fixedOrder: false,
+    format: "multipleChoice" as const,
+    options: [
+      {
+        isCorrect: true,
+        misconception: null,
+        reason: `The passage says that ${evidence}.`,
+        text: right ?? "",
+      },
+      ...wrong.map((text) => ({
+        isCorrect: false,
+        misconception: "Misreads the passage",
+        reason: `The passage says that ${evidence}.`,
+        text,
+      })),
+    ],
+    question: `${question} ${crypto.randomUUID()}`,
+    skill: 1,
+  };
+}
 
 describe(goalContentWorkflow, () => {
   beforeAll(async () => {
@@ -3252,6 +3279,86 @@ describe(goalContentWorkflow, () => {
     });
 
     expect(calls.every((params) => params.skills.length >= 2)).toBe(true);
+  });
+
+  it("stores a question set's questions only where the solve, reading its passage, reaches the key", async () => {
+    const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
+    const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
+
+    const passage = [
+      "Vaccines train the immune system by showing it a harmless piece of a pathogen, such as a",
+      "protein from its surface. Memory cells formed after the first dose let the body respond",
+      "faster when it meets the real pathogen later. Some vaccines need a booster because the",
+      "memory fades over the years, while others protect for life after a single course. Herd",
+      "immunity appears when enough people are protected that the pathogen cannot spread easily,",
+      "which shields newborns and people whose immune systems cannot respond to a vaccine. Public",
+      "health teams track coverage in each district so they can see where outbreaks may return.",
+    ].join(" ");
+
+    const questions = [
+      setChoice("What do memory cells do?", "let the body respond faster", [
+        "Speed up the response",
+        "Block every infection",
+        "Replace boosters",
+      ]),
+      setChoice("How long do vaccines protect?", "others protect for life", [
+        "For life, every one",
+        "It depends on the vaccine",
+        "Never past a year",
+      ]),
+      setChoice("Whom does herd immunity shield?", "which shields newborns", [
+        "Newborns",
+        "Only vaccinated adults",
+        "Health workers alone",
+      ]),
+    ];
+
+    const [rightKey, wrongKey] = questions;
+
+    const written: WrittenItemSet = {
+      kind: "text",
+      questions,
+      text: passage,
+      title: "How vaccines remember",
+      visual: null,
+    };
+
+    vi.mocked(writeItemSet).mockImplementation(async () => taskResult(written) as never);
+
+    vi.mocked(solveItems).mockImplementation(async ({ items }) =>
+      taskResult({
+        solutions: items.map((item) =>
+          item.format === "multipleChoice" && item.question === wrongKey?.question
+            ? { format: "multipleChoice" as const, picks: [1], work: "Only some protect for life." }
+            : solveAsKeyed(item),
+        ),
+      }),
+    );
+
+    onTestFinished(() => {
+      vi.mocked(writeItemSet).mockReset();
+      vi.mocked(solveItems).mockReset().mockImplementation(solveLikeTheKeys);
+    });
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    expect(solveItems).toHaveBeenCalledWith(
+      expect.objectContaining({ stimulus: `How vaccines remember\n\n${passage}` }),
+    );
+
+    const sets = await prisma.itemSet.findMany({
+      include: { items: true },
+      where: { examBlueprintId: blueprint.id },
+    });
+
+    expect(sets.length).toBeGreaterThan(0);
+
+    const stored = sets.flatMap((set) =>
+      set.items.map((item) => (item.content as { question?: string }).question),
+    );
+
+    expect(stored).not.toContain(wrongKey?.question);
+    expect(stored).toContain(rightKey?.question);
   });
 
   it("writes a learn goal's graph once research decides it's no product, and only its coverage check waits for research's end", async () => {

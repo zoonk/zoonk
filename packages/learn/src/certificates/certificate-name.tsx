@@ -21,6 +21,12 @@ import { ChangeSaveError } from "../_components/save-error";
 /** Resolves false when it didn't save. The profile name is the one every certificate shows. */
 export type SaveCertificateName = (name: string) => Promise<boolean>;
 
+function checkName({ current, name }: { current: string | null; name: string }) {
+  const trimmed = name.trim();
+  const isTooLong = isNameChangeTooLong({ name, savedName: current ?? "" });
+  return { isTooLong, trimmed, valid: Boolean(trimmed) && !isTooLong };
+}
+
 function useNameSave({
   current,
   onSaved,
@@ -33,21 +39,22 @@ function useNameSave({
   const [name, setName] = useState(current ?? "");
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
-  const trimmed = name.trim();
-  const isTooLong = isNameChangeTooLong({ name, savedName: current ?? "" });
-  const canSave = !pending && Boolean(trimmed) && !isTooLong;
+  const { isTooLong, valid } = checkName({ current, name });
+  const canSave = !pending && valid;
 
-  const submit = () => {
-    if (!canSave) {
+  const submit = (value: string) => {
+    const check = checkName({ current, name: value });
+
+    if (pending || !check.valid) {
       return;
     }
 
     startTransition(async () => {
-      const { data: saved } = await safeAsync(() => save(trimmed));
+      const { data: saved } = await safeAsync(() => save(check.trimmed));
       setFailed(!saved);
 
       if (saved) {
-        onSaved?.(trimmed);
+        onSaved?.(check.trimmed);
       }
     });
   };
@@ -92,12 +99,12 @@ export function CertificateNameField({
 
   return (
     <form
+      action={(formData) => {
+        const value = formData.get("name");
+        submit(typeof value === "string" ? value : "");
+      }}
       className={cn("flex w-full max-w-md flex-col gap-2 text-left", className)}
       data-slot="certificate-name-field"
-      onSubmit={(event) => {
-        event.preventDefault();
-        submit();
-      }}
     >
       <label className="text-[0.8125rem] font-[550]" htmlFor={`${id}-name`}>
         {current ? t("Name on your certificates") : t("Your name, as it should appear")}
@@ -111,6 +118,7 @@ export function CertificateNameField({
           // oxlint-disable-next-line jsx-a11y/no-autofocus -- The field is what the learner asked for, or the one thing between them and sharing.
           autoFocus={Boolean(current)}
           id={`${id}-name`}
+          name="name"
           onChange={(event) => setName(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Escape" && onCancel) {
@@ -168,7 +176,7 @@ function NameDialogForm({
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
-        submit();
+        submit(name);
       }}
     >
       <label className="sr-only" htmlFor={`${id}-name`}>

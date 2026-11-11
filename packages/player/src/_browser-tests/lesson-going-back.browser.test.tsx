@@ -1,3 +1,4 @@
+import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import {
   activityContentFixtures,
   engineModeFixtures,
@@ -6,12 +7,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
+  expectCount,
   expectSideBySide,
   expectVerdict,
   pressOnSlider,
   sortCard,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import {
@@ -73,12 +76,43 @@ function letter({ audioUrl, symbol }: { audioUrl: string | null; symbol: string 
   });
 }
 
+const SINE_MAP: LessonMap = {
+  ideas: [{ label: "Sine", text: "Sine is the height." }],
+  shape: "nested",
+};
+
+const DOUBLED_LINE = "const doubled = numbers.map((n) => n + n);";
+
+const javascriptRunner = {
+  ...activityContentFixtures.codeRunner,
+  fields: {
+    editableLines: [2],
+    expectedOutput: "[ 2, 4, 6 ]",
+    language: "javascript",
+    mistakes: [],
+    solution:
+      "const numbers = [1, 2, 3];\nconst doubled = numbers.map((n) => n * 2);\nconsole.log(doubled);",
+    starterCode:
+      "const numbers = [1, 2, 3];\nconst doubled = numbers.map((n) => n);\nconsole.log(doubled);",
+  },
+  prompt: "Double every number.",
+};
+
 function playLesson(steps: Parameters<typeof buildLesson>[0]) {
   renderLessonPlayer({ lesson: buildLesson(steps) });
 }
 
 function activity(content: ActivityContent = activityContentFixtures.categorize) {
   return activityStep({ content });
+}
+
+function unitCircle() {
+  return activity(activityContentFixtures.unitCircle);
+}
+
+async function turnToThirtyDegrees() {
+  await pressOnSlider("Point on the circle", "ArrowRight", 6);
+  await expect.element(valueInput()).toHaveValue("0.5");
 }
 
 async function goBackAndReturn() {
@@ -129,6 +163,72 @@ describe("going back to reread", () => {
     await expect.element(valueInput()).toHaveValue(typed);
     await checkActivity();
     await expectVerdict("Not quite");
+  });
+
+  it("brings a checked code runner back with the code that printed its output", async () => {
+    playLesson([activity(javascriptRunner), reading]);
+    const line = page.getByRole("textbox", { name: "Line 2, yours to edit" });
+    await line.fill(DOUBLED_LINE);
+    await page.getByRole("button", { name: "Run" }).click();
+    await expectCount(page.getByText("[ 2, 4, 6 ]", { exact: true }), 2);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expectVerdict("Correct!");
+    await expect.element(line).toHaveValue(DOUBLED_LINE);
+  });
+
+  it("shows a missed activity's first attempt where the learner left it, after its retry starts over", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+    playLesson([reading, activity({ ...calculator, template: "formulaModel" })]);
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await pressOnSlider("Extra per month", "ArrowRight", 2);
+    await checkActivity();
+    await expectVerdict("Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).not.toHaveAttribute("aria-valuenow", "100");
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expectVerdict("Not quite");
+    await expect.element(slider).toHaveAttribute("aria-valuenow", "100");
+  });
+
+  it("brings a checked canvas back as the learner left it from the lesson map", async () => {
+    renderLessonPlayer({ lesson: buildLesson([unitCircle()], { summary: SINE_MAP }) });
+    await turnToThirtyDegrees();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson map" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Point on the circle" }))
+      .toHaveAttribute("aria-valuenow", "30");
+  });
+
+  it("scrolls to each verdict while earlier checked screens stay kept", async () => {
+    await atViewport({ height: 700, width: 1368 }, async () => {
+      playLesson([unitCircle(), unitCircle()]);
+      await turnToThirtyDegrees();
+      await checkActivity();
+      await expectVerdict("Correct!");
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await turnToThirtyDegrees();
+      await checkActivity();
+
+      await expect
+        .element(page.getByRole("region", { name: "Answer feedback" }))
+        .toBeInViewport({ ratio: 1 });
+    });
   });
 
   it("shows a finished match board with each word beside its match", async () => {

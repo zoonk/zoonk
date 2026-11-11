@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { describe, expect, it } from "vitest";
 import {
   setupPlayableLesson,
@@ -13,7 +13,10 @@ import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
 
-async function playLessonBlock({ energy }: { energy?: number } = {}) {
+async function playLessonBlock({
+  carried = false,
+  energy,
+}: { carried?: boolean; energy?: number } = {}) {
   const { lesson, skill, steps, user } = await setupPlayableLesson({
     steps: ["hook", "explanation", "check", "summary"],
   });
@@ -27,6 +30,7 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
   const goal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
 
   const {
+    id: planId,
     items: [planItem],
   } = await planFixture({
     goalId: goal.id,
@@ -35,6 +39,15 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
       { kind: "boss", position: 100, status: "done" },
     ],
   });
+
+  if (carried) {
+    await planChangeFixture({
+      kind: "missedDays",
+      payload: { carriedItemIds: [planItem?.id], days: 1, source: "system" },
+      planId,
+      status: "applied",
+    });
+  }
 
   const today = await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });
   const session = today.status === "ready" ? today.session : null;
@@ -105,6 +118,23 @@ describe("a lesson played as a session block", () => {
     await expect(
       prisma.planItem.findUniqueOrThrow({ where: { id: planItem?.id ?? "" } }),
     ).resolves.toMatchObject({ status: "done" });
+  });
+
+  it("ends the day's progress complete and counts a carried lesson as caught up today", async () => {
+    const { complete } = await playLessonBlock({ carried: true });
+
+    await expect(complete()).resolves.toMatchObject({
+      completion: {
+        studyBlock: {
+          dayProgress: {
+            catchUp: { doneToday: 1, lessonsLeft: 0 },
+            lead: "complete",
+            lessonsComing: false,
+            percent: 100,
+          },
+        },
+      },
+    });
   });
 
   it("says the tenth of Energy the lesson reached once, not on a retry", async () => {

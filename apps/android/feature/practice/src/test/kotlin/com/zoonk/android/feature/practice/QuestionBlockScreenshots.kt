@@ -21,10 +21,17 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.practice.block.BlockFinished
 import com.zoonk.android.feature.practice.block.Runner
+import com.zoonk.android.feature.session.blockId
+import com.zoonk.android.feature.session.studyBlocks
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.StudyBlock.Kind.LEARN
+import com.zoonk.api.models.StudyBlock.Kind.PRACTICE
+import com.zoonk.api.models.StudyBlock.Kind.REVIEW
+import com.zoonk.api.models.StudyBlock.Status.COMPLETED
+import com.zoonk.api.models.StudyBlock.Status.PENDING
 import com.zoonk.api.models.StudyBlockCompletion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -233,6 +240,7 @@ class QuestionBlockScreenshots {
         fold: Boolean = false,
         dark: Boolean = false,
         direction: LayoutDirection = LayoutDirection.Ltr,
+        day: Array<Pair<String, Any?>> = emptyArray(),
     ) {
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
@@ -246,6 +254,10 @@ class QuestionBlockScreenshots {
                             "level" to JsonObject(mapOf("color" to JsonPrimitive("yellow"), "level" to JsonPrimitive(3))),
                         ),
                     ),
+                "blocks" to studyBlocks(PRACTICE to COMPLETED, LEARN to PENDING, REVIEW to PENDING),
+                "blockId" to blockId(0).toString(),
+                "nextBlockId" to blockId(1).toString(),
+                *day,
             )
         val cache =
             AppCache(
@@ -274,6 +286,29 @@ class QuestionBlockScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() = showDone("phone-block-done")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDonePastMidpointCatchingUp() =
+        showDone(
+            "block-past-midpoint-catchup-some",
+            day =
+                arrayOf(
+                    "sessionBar" to JsonObject(mapOf("completed" to JsonPrimitive(5), "total" to JsonPrimitive(8))),
+                    "blocks" to studyBlocks(*Array(8) { (if (it % 3 == 2) REVIEW else LEARN) to if (it < 5) COMPLETED else PENDING }),
+                    "blockId" to blockId(4).toString(),
+                    "nextBlockId" to blockId(5).toString(),
+                    "dayProgress" to
+                        JsonObject(
+                            mapOf(
+                                "catchUp" to JsonObject(mapOf("doneToday" to JsonPrimitive(2), "lessonsLeft" to JsonPrimitive(22))),
+                                "lead" to JsonPrimitive("left"),
+                                "lessonsComing" to JsonPrimitive(false),
+                                "percent" to JsonPrimitive(62),
+                            ),
+                        ),
+                ),
+        )
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")

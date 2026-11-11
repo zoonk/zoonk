@@ -54,6 +54,11 @@
         <item quantity="one">%d done</item>
         <item quantity="other">%d done</item>
     </plurals>
+    <!-- %d is how many of today's session steps the learner skipped; shown alone or after "2 done ·". -->
+    <plurals name="today_skipped_count">
+        <item quantity="one">%d skipped</item>
+        <item quantity="other">%d skipped</item>
+    </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d more</item>
         <item quantity="other">+%d more</item>
@@ -145,13 +150,6 @@
     <string name="today_quick_explanation">Quick explanation</string>
     <string name="today_continue_explanation">Continue explanation</string>
     <string name="today_week_title">This week</string>
-    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
-    <plurals name="today_week_days">
-        <item quantity="one">%1$s of %2$d day</item>
-        <item quantity="other">%1$s of %2$d days</item>
-    </plurals>
-    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
-    <string name="today_week_time">%1$s of %2$s studied this week</string>
     <!-- Read by TalkBack for each day of the week: "Monday: daily time met". -->
     <string name="today_week_day">%1$s: %2$s</string>
     <!-- "Saturday: weekly challenge, not studied". -->

@@ -561,12 +561,25 @@ private struct BlockFinishedView: View {
   let close: () -> Void
 
   var body: some View {
+    let moment = try? StudyJSON.recode(completion, as: BlockMoment.self)
+
     PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(title: title)
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
-        brainPower: completion.ownBrainPower,
-        day: (try? StudyJSON.recode(completion, as: BlockMoment.self))?.day)
+        brainPower: completion.ownBrainPower)
+
+      if let moment {
+        if let catchUp = moment.dayProgress.catchUp {
+          CatchUpLine(catchUp: catchUp)
+        }
+
+        DayProgressBlock(moment: moment)
+
+        if !moment.day.isEmpty {
+          DayMomentSections(result: moment.day)
+        }
+      }
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(

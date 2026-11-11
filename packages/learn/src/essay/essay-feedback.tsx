@@ -313,7 +313,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
             </p>
           )}
           {!tooShort && (
-            <div className="flex flex-col lg:hidden">
+            <div className="with-aside:hidden flex flex-col">
               <DetailsDrawer label={t("See comments on every criterion")} title={t("Comments")}>
                 <CriterionComments grade={grade} />
               </DetailsDrawer>

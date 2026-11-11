@@ -16,7 +16,6 @@ import {
 } from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockQuestionSchema } from "./study-block-question";
-import { weeklyStudyTimeSchema } from "./weekly-study-time";
 
 const EXAMPLE_DAILY_MINUTES = 15;
 
@@ -39,11 +38,11 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["dayOver", "nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
@@ -114,7 +113,7 @@ export const studySessionResponseSchema = z
               .min(0)
               .meta({
                 description:
-                  "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                  "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                 examples: [EXAMPLE_DAILY_MINUTES],
               }),
             hitGoal: z.boolean(),
@@ -123,7 +122,7 @@ export const studySessionResponseSchema = z
               .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
               .meta({
                 description:
-                  "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
+                  "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
               }),
             minutes: z
               .number()
@@ -131,22 +130,23 @@ export const studySessionResponseSchema = z
               .min(0)
               .meta({
                 description:
-                  "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it",
+                  "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it",
               }),
-            studied: z.boolean().meta({ description: "Any study counts, partial days included" }),
+            studied: z
+              .boolean()
+              .meta({ description: "Any study of this goal counts, partial days included" }),
           }),
         ),
         nextStudyDate: logicalDateSchema
           .nullable()
           .meta({
             description:
-              "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+              "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
           }),
-        time: weeklyStudyTimeSchema,
       })
       .meta({
         description:
-          "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate",
+          "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate",
       }),
   })
   .meta({ id: "StudySession" });

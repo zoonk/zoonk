@@ -1,12 +1,11 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import {
-  type PlanDay,
   type WeekDay,
   getNextStudyDate,
   getWeekDayKind,
@@ -22,89 +21,79 @@ export type StudyWeek = {
   time: WeeklyStudyTime;
 };
 
+type WeekGoal = Pick<
+  Goal,
+  "createdAt" | "dailyMinutes" | "id" | "kind" | "targetDate" | "timezone" | "userId"
+>;
+
 const WEEK_DAYS = 7;
 
-/** Active goals share one daily budget; sum each plan's allocations including rest/light days. */
+async function loadSavedSettings(goalId: string): Promise<unknown> {
+  const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
+  return plan?.settings;
+}
+
+/** One goal's week: its plan's days, its sessions and the time recorded for it, never another goal's. */
 export async function loadStudyWeek({
+  goal,
   localDate,
-  selectedPlan,
-  userId,
+  planSettings,
 }: {
+  goal: WeekGoal;
   localDate: Date;
-  selectedPlan?: { goalId: string; settings: unknown };
-  userId: string;
+  /** The plan the request shows, such as a choice not saved yet; the saved plan's otherwise. */
+  planSettings?: unknown;
 }): Promise<StudyWeek> {
   const weekStart = getStartOfWeek(localDate);
 
   const weekDates = { gte: weekStart, lt: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY) };
+  const where = { goalId: goal.id, localDate: weekDates, userId: goal.userId };
 
-  const [days, sessions, goals] = await Promise.all([
-    prisma.dailyProgress.findMany({
-      select: { date: true, timeSpentSeconds: true },
-      where: { date: weekDates, userId },
+  const [days, sessions, settings] = await Promise.all([
+    // Session rows repeat their blocks' seconds.
+    prisma.learningEvent.groupBy({
+      _sum: { seconds: true },
+      by: ["localDate"],
+      where: { ...where, kind: { not: "session" } },
     }),
     prisma.studySession.findMany({
-      select: { endedAt: true, goalId: true, localDate: true, plannedMinutes: true },
-      where: { localDate: weekDates, userId },
+      select: { endedAt: true, localDate: true, plannedMinutes: true },
+      where,
     }),
-    prisma.goal.findMany({
-      include: { plan: { select: { settings: true } } },
-      where: { status: "active", userId },
-    }),
+    planSettings === undefined ? loadSavedSettings(goal.id) : Promise.resolve(planSettings),
   ]);
 
-  // Adding more time can reopen a completed session; its original completion still counts.
-  const completed = sessions.filter((day) => day.endedAt !== null);
+  // Dates before the goal existed must not appear as missed study or chosen rest days.
+  const startDate = getDateInTimeZone({
+    date: goal.createdAt,
+    timeZone: getAnswerTimeZone({ goal }),
+  });
 
   /** Past days keep the budget their saved session requested, regardless of later setting changes. */
-  const getPastMinutes = (goalId: string, date: Date): number | null => {
-    const asked = sessions.find(
-      (day) => day.goalId === goalId && day.localDate.getTime() === date.getTime(),
-    )?.plannedMinutes;
-
-    return date < localDate && asked ? asked : null;
+  const getPastMinutes = (date: Date): number | null => {
+    const session = sessions.find((day) => day.localDate.getTime() === date.getTime());
+    return date < localDate && session?.plannedMinutes ? session.plannedMinutes : null;
   };
-
-  const started = goals.map((goal) => ({
-    goal,
-    isExam: goal.kind === "exam",
-    planSettings: selectedPlan?.goalId === goal.id ? selectedPlan.settings : goal.plan?.settings,
-    startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: getAnswerTimeZone({ goal }) }),
-    targetDate: goal.targetDate,
-  }));
-
-  // Dates before a goal existed must not appear as missed study or chosen rest days.
-  const getGoalMinutes = (
-    { goal, planSettings, startDate }: (typeof started)[number],
-    date: Date,
-  ): number =>
-    date < startDate
-      ? 0
-      : (getPastMinutes(goal.id, date) ?? getGoalDayMinutes({ date, goal, planSettings }));
 
   const getDayMinutes = (date: Date): number =>
-    started.reduce((sum, entry) => sum + getGoalMinutes(entry, date), 0);
+    date < startDate
+      ? 0
+      : (getPastMinutes(date) ?? getGoalDayMinutes({ date, goal, planSettings: settings }));
 
-  const hasFinished = (goalId: string, date: Date): boolean =>
-    completed.some((day) => day.goalId === goalId && day.localDate.getTime() === date.getTime());
+  const weekGoal = { isExam: goal.kind === "exam", startDate, targetDate: goal.targetDate };
 
-  const isDayFinished = (date: Date): boolean =>
-    started
-      .filter((entry) => getGoalMinutes(entry, date) > 0)
-      .every(({ goal }) => hasFinished(goal.id, date));
+  // Adding more time can reopen a completed session; its original completion still counts.
+  const finishedDates = sessions.flatMap((day) => (day.endedAt ? [day.localDate] : []));
 
-  const getPlanDay = (date: Date): PlanDay => {
-    const goalMinutes = getDayMinutes(date);
-    return { goalMinutes, kind: getWeekDayKind({ date, goalMinutes, goals: started }) };
-  };
-
-  const studiedDates = completed.map((day) => day.localDate);
+  const studied = days.map((day) => ({ date: day.localDate, seconds: day._sum.seconds ?? 0 }));
 
   const week = getWeekDays({
-    days: days.map((day) => ({ date: day.date, seconds: day.timeSpentSeconds })),
-    finishedDates: studiedDates.filter((date) => isDayFinished(date)),
-    getPlanDay,
-    studiedDates,
+    days: studied,
+    finishedDates,
+    getPlanDay: (date) => {
+      const goalMinutes = getDayMinutes(date);
+      return { goalMinutes, kind: getWeekDayKind({ date, goal: weekGoal, goalMinutes }) };
+    },
     today: localDate,
   });
 
@@ -112,9 +101,7 @@ export async function loadStudyWeek({
     days: week,
     nextStudyDate: getNextStudyDate({ getMinutes: getDayMinutes, today: localDate }),
     time: {
-      studiedMinutes: toStudiedMinutes(
-        days.reduce((total, day) => total + day.timeSpentSeconds, 0),
-      ),
+      studiedMinutes: toStudiedMinutes(studied.reduce((total, day) => total + day.seconds, 0)),
       targetMinutes: week.reduce((total, day) => total + day.goalMinutes, 0),
     },
   };

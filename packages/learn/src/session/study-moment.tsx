@@ -22,6 +22,7 @@ import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { MomentHeader } from "./moment-header";
+import { MomentCatchUp, MomentToday } from "./moment-today";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -40,21 +41,19 @@ function MomentEarned({
   moment: StudyMomentView;
 }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
     studied,
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
-    moment.deferredLessonsCount > 0 &&
-      t(
-        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
-        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
-      ),
   ];
 
-  return <MomentReadouts brainPower={brainPower} facts={facts} />;
+  return (
+    <MomentReadouts brainPower={brainPower} facts={facts}>
+      <MomentCatchUp catchUp={moment.dayProgress.catchUp} />
+    </MomentReadouts>
+  );
 }
 
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
@@ -64,7 +63,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
 
   return (
     <section
-      className={cn("flex flex-col gap-2", !subject && "lg:hidden")}
+      className={cn("flex flex-col gap-2", !subject && "with-aside:hidden")}
       data-slot="study-moment-next"
     >
       <PageSectionLabel>{t("Up next")}</PageSectionLabel>
@@ -206,6 +205,8 @@ export function StudyMoment({
           <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
+        <MomentToday moment={moment} rows={queue.rows} />
+
         <DayMoment
           buddy={buddy}
           ceremony={moment.ceremony}
@@ -252,7 +253,7 @@ export function StudyMoment({
 
   return (
     <SessionFrame aside={aside}>
-      <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
+      <SessionHeader exitHref={exitHref} />
       {content}
     </SessionFrame>
   );

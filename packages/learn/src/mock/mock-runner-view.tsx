@@ -55,7 +55,7 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
         data-slot="mock-meta"
       >
         <span aria-hidden="true" className="min-w-0 truncate">
-          <span className="lg:hidden">
+          <span className="with-aside:hidden">
             {title(runner.view)}
             {question.area && " · "}
           </span>
@@ -184,9 +184,9 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
       <div className="flex flex-col gap-2.5">
-        <MockQuestionMap className="lg:hidden" />
+        <MockQuestionMap className="with-aside:hidden" />
         <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend className="lg:hidden" />
+          <SheetLegend className="with-aside:hidden" />
           <MovesNote />
         </div>
       </div>
