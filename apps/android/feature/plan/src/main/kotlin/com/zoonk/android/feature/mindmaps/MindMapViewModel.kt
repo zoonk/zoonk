@@ -47,9 +47,9 @@ class MindMapViewModel(
     @Volatile private var createAllFailedSince = Long.MAX_VALUE
 
     private val stopWatching =
-        store.watchReads(goalId) { chapterIds, started ->
+        store.watchReads(goalId) { chapterIds, started, wholeList ->
             locals.update { current -> current.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
-            if (createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
+            if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
 
     private val saved = MutableStateFlow<PictureSave?>(null)

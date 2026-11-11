@@ -178,13 +178,13 @@ class MindMapStore(
     val list: KeyedResources<UUID, GoalMindMaps> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId ->
             session?.let {
-                read(goalId, { maps -> maps.chapters.map { it.chapterId } }) { api.list(it, goalId) }
+                read(goalId, wholeList = true, { maps -> maps.chapters.map { it.chapterId } }) { api.list(it, goalId) }
             }
         }
 
     val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key ->
-            session?.let { read(key.goalId, { listOf(key.chapterId) }) { api.chapter(it, key) } }
+            session?.let { read(key.goalId, wholeList = false, { listOf(key.chapterId) }) { api.chapter(it, key) } }
         }
 
     /** A chapter's lesson maps, read when a deck or a row reaches them. */
@@ -245,12 +245,13 @@ class MindMapStore(
     fun readMark(): Long = readsStarted.get()
 
     /**
-     * Tells [arrived] of each read of [goalId]'s maps that comes through: the chapters it read and the
-     * number it started with. Returns what stops it.
+     * Tells [arrived] of each read of [goalId]'s maps that comes through: the chapters it read, the
+     * number it started with, and whether it read the goal's whole list or one chapter. Returns what
+     * stops it.
      */
     fun watchReads(
         goalId: UUID,
-        arrived: (chapterIds: List<UUID>, started: Long) -> Unit,
+        arrived: (chapterIds: List<UUID>, started: Long, wholeList: Boolean) -> Unit,
     ): () -> Unit {
         val watcher = ReadWatcher(goalId, arrived)
         watchers += watcher
@@ -259,11 +260,12 @@ class MindMapStore(
 
     private suspend fun <T> read(
         goalId: UUID,
+        wholeList: Boolean,
         chapters: (T) -> List<UUID>,
         fetch: suspend () -> T,
     ): T {
         val started = readsStarted.incrementAndGet()
-        return fetch().also { value -> watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started) } }
+        return fetch().also { value -> watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started, wholeList) } }
     }
 
     /** Null when the session changed meanwhile. The reads say what came of it; nothing is written into them. */
@@ -367,7 +369,7 @@ private val String?.limitSubject: LimitSubject
 
 private class ReadWatcher(
     val goalId: UUID,
-    val arrived: (chapterIds: List<UUID>, started: Long) -> Unit,
+    val arrived: (chapterIds: List<UUID>, started: Long, wholeList: Boolean) -> Unit,
 )
 
 /** A refusal's `details.limit.resource`: what ran out. */

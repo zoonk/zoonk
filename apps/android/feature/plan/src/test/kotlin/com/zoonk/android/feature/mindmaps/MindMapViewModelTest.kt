@@ -614,6 +614,24 @@ class MindMapViewModelTest {
             shown.cancel()
         }
 
+    @Test
+    fun aChaptersReadLeavesTheCreateAllErrorUntilTheListReadsAgain() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            store.list[goalId].load()
+            api.mindMaps = { throw ApiException(ApiError.Network) }
+            maps.createAll()
+            advanceUntilIdle()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+
+            store.chapter[key].load()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+
+            api.mindMaps = { goalMindMaps() }
+            store.list[goalId].refresh()
+            assertNull(maps.createAll.value)
+        }
+
     private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
