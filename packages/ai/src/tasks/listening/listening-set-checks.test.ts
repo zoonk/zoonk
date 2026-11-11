@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findListeningSetProblems, repairListeningSet } from "./listening-set-checks";
-import { type ListeningQuestion, type ListeningSet } from "./listening-set-schema";
+import { type ListeningQuestion, type ListeningSet, toListeningItem } from "./listening-set-schema";
 
 const REQUEST = {
   count: 2,
@@ -35,9 +35,12 @@ function choice(evidence: string, question: string): ListeningQuestion {
   };
 }
 
-function typed(evidence: string, answer: string): ListeningQuestion {
+type TypedQuestion = Extract<ListeningQuestion, { format: "typed" }>;
+
+function typed(evidence: string, answer: string): TypedQuestion {
   return {
     acceptedAnswers: [answer],
+    answerLimit: { plusNumber: false, words: 1 },
     context: "Booking form. Surname: ____",
     difficulty: "easy",
     evidence,
@@ -157,7 +160,105 @@ describe(repairListeningSet, () => {
   });
 });
 
+function gap({
+  acceptedAnswers,
+  context,
+  plusNumber,
+  sampleAnswer,
+}: {
+  acceptedAnswers: string[];
+  context: string;
+  plusNumber: boolean;
+  sampleAnswer: string;
+}): ListeningQuestion {
+  return {
+    ...typed("It's Hadley, H-A-D-L-E-Y.", sampleAnswer),
+    acceptedAnswers,
+    answerLimit: { plusNumber, words: 1 },
+    context,
+    question: plusNumber ? "Write ONE WORD AND/OR A NUMBER." : "Write ONE WORD ONLY.",
+  };
+}
+
+describe(toListeningItem, () => {
+  it("keeps only answers within the stated limit that don't repeat the word beside the gap", () => {
+    const item = toListeningItem(
+      gap({
+        acceptedAnswers: ["towel", "a towel"],
+        context: "Exercise classes: bring a ______",
+        plusNumber: false,
+        sampleAnswer: "a towel",
+      }),
+    );
+
+    expect(item).toMatchObject({ acceptedAnswers: ["towel"], sampleAnswer: "towel" });
+  });
+
+  it("reads the gap's neighbors only within its own sentence or field", () => {
+    const item = toListeningItem(
+      gap({
+        acceptedAnswers: ["write", "spell"],
+        context: "At the workshop, children learn how to ______. Write carefully.",
+        plusNumber: false,
+        sampleAnswer: "write",
+      }),
+    );
+
+    expect(item).toMatchObject({ acceptedAnswers: ["write", "spell"], sampleAnswer: "write" });
+  });
+
+  it("counts a number written in digits as the number and a number written in words as words", () => {
+    const item = toListeningItem(
+      gap({
+        acceptedAnswers: ["9:30", "9.30 a.m.", "nine thirty", "07702 554190", "4 nights", "£68"],
+        context: "Departure time: (3) ______",
+        plusNumber: true,
+        sampleAnswer: "nine thirty",
+      }),
+    );
+
+    expect(item).toMatchObject({
+      acceptedAnswers: ["9:30", "9.30 a.m.", "07702 554190", "4 nights", "£68"],
+      sampleAnswer: "9:30",
+    });
+  });
+});
+
 describe(findListeningSetProblems, () => {
+  it("hears a number answer through the sample's spoken words when only digits fit the limit", () => {
+    const set = setOf({
+      questions: [
+        choice("Thursday the twelfth would be best", "Which day does Tom want the hall?"),
+        gap({
+          acceptedAnswers: ["12", "12th"],
+          context: "Day booked: Thursday ______",
+          plusNumber: true,
+          sampleAnswer: "the twelfth",
+        }),
+      ],
+    });
+
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
+  });
+
+  it("flags a typed question none of whose accepted answers fits its limit and gap", () => {
+    const set = setOf({
+      questions: [
+        choice("Thursday the twelfth would be best", "Which day does Tom want the hall?"),
+        gap({
+          acceptedAnswers: ["a Thursday", "Thursday the twelfth"],
+          context: "Day booked: a ______",
+          plusNumber: false,
+          sampleAnswer: "Thursday the twelfth",
+        }),
+      ],
+    });
+
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([
+      `"Write ONE WORD ONLY.": none of its accepted answers fits its word limit and gap.`,
+    ]);
+  });
+
   it("finds no problem in a clean set", () => {
     const set = repairListeningSet(setOf(), REQUEST);
     expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([]);
