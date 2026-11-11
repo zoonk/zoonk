@@ -310,7 +310,7 @@ struct MindMapRow: View {
     if place == .library {
       router.open(
         .mindMapStudy(
-          tab: .chapters,
+          goalId: goalId, tab: .chapters,
           start: MindMapPosition(
             chapterId: map.chapterId, key: MindMapKey(kind: .chapter, targetId: map.chapterId))))
     } else {

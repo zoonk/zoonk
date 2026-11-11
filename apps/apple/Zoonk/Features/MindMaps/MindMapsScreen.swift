@@ -119,7 +119,7 @@ struct MindMapsScreen: View {
     PageHeader(title, eyebrow: Text(goal.displayName)) {
       if count(tab, maps: maps) > 0 {
         Button {
-          router.open(.mindMapStudy(tab: tab))
+          router.open(.mindMapStudy(goalId: goal.id, tab: tab))
         } label: {
           Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
         }
@@ -385,7 +385,7 @@ private struct MindMapLessonsTab: View {
       }
 
       MindMapIndex(items: groups, subject: \.chapter.subject) { item in
-        LessonGroupRow(item: item)
+        LessonGroupRow(goalId: goalId, item: item)
       }
     }
   }
@@ -402,13 +402,16 @@ private struct LessonGroupItem: Identifiable {
 private struct LessonGroupRow: View {
   @Environment(AppRouter.self) private var router
 
+  let goalId: String
   let item: LessonGroupItem
 
   var body: some View {
     Button {
       if item.group.opens > 0 {
         router.open(
-          .mindMapStudy(tab: .lessons, start: MindMapPosition(chapterId: item.group.chapterId)))
+          .mindMapStudy(
+            goalId: goalId, tab: .lessons,
+            start: MindMapPosition(chapterId: item.group.chapterId)))
       } else {
         router.present(.subscription)
       }
@@ -539,7 +542,7 @@ private struct SavedRow: View {
     Button {
       router.open(
         .mindMapStudy(
-          tab: .saved,
+          goalId: goalId, tab: .saved,
           start: save.chapterId.map { MindMapPosition(chapterId: $0, key: save.key) }))
     } label: {
       MarkedRow(alignment: .center) {

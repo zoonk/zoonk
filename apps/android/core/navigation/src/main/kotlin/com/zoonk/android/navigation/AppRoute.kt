@@ -271,12 +271,13 @@ sealed interface AppRoute : NavKey {
     ) : AppRoute
 
     /**
-     * A tab's maps one at a time, full screen: [tab] is `chapters`, `lessons` or `saved`, and [start]
-     * the map to open at (a chapter's id, then a lesson's after a slash), or none for where this
-     * device stopped.
+     * A goal's tab of maps one at a time, full screen: [tab] is `chapters`, `lessons` or `saved`, and
+     * [start] the map to open at (a chapter's id, then a lesson's after a slash), or none for where
+     * this device stopped.
      */
     @Serializable
     data class MindMapStudy(
+        val goalId: String,
         val tab: String,
         val start: String? = null,
     ) : AppRoute

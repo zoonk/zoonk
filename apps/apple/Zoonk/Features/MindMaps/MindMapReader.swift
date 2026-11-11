@@ -1,15 +1,16 @@
 import SwiftUI
 
-/// Main's study reader: a tab's maps one per screen, in syllabus order, from the tapped map or where
-/// this device last was. The deck is the one the page showed when it opened; a map saved or made
-/// meanwhile doesn't move it. The last map's Next is Done.
+/// Main's study reader: a goal's tab of maps one per screen, in syllabus order, from the tapped map
+/// or where this device last was. The deck is the one the page showed when it opened; a map saved or
+/// made meanwhile, or a goal switched in another window, doesn't move it. The last map's Next is
+/// Done.
 struct MindMapReader: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(AppRouter.self) private var router
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
 
+  let goalId: String
   let tab: GoalMindMaps.Tab
   let start: MindMapPosition?
 
@@ -18,29 +19,25 @@ struct MindMapReader: View {
   @State private var zoomed: ZoomedMap?
 
   var body: some View {
+    let list = store.list(goalId: goalId)
+
     NavigationStack {
       Group {
-        if let goal = learner.summary.value?.shownGoal {
-          let list = store.list(goalId: goal.id)
-
-          Group {
-            if let maps {
-              deck(maps, goalId: goal.id)
-            } else if case .failed = list.state {
-              unreachable { Task { await list.refresh() } }
-            } else {
-              ProgressView()
-            }
-          }
-          .loads(list, refreshable: false)
-          .onChange(of: list.value, initial: true) { _, value in
-            if maps == nil, let value {
-              open(value, goalId: goal.id)
-            }
-          }
-          .mindMapSaveFailureAlert(goalId: goal.id)
+        if let maps {
+          deck(maps)
+        } else if case .failed = list.state {
+          unreachable { Task { await list.refresh() } }
+        } else {
+          ProgressView()
         }
       }
+      .loads(list, refreshable: false)
+      .onChange(of: list.value, initial: true) { _, value in
+        if maps == nil, let value {
+          open(value)
+        }
+      }
+      .mindMapSaveFailureAlert(goalId: goalId)
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
@@ -63,7 +60,7 @@ struct MindMapReader: View {
     }
   }
 
-  private func open(_ value: GoalMindMaps, goalId: String) {
+  private func open(_ value: GoalMindMaps) {
     maps = value
     current = MindMapDeck.start(
       in: MindMapDeck.cards(tab: tab, maps: value),
@@ -71,7 +68,7 @@ struct MindMapReader: View {
   }
 
   @ViewBuilder
-  private func deck(_ maps: GoalMindMaps, goalId: String) -> some View {
+  private func deck(_ maps: GoalMindMaps) -> some View {
     let cards = MindMapDeck.cards(tab: tab, maps: maps)
     let index = current.flatMap { cards.firstIndex(of: $0) }
 
@@ -90,7 +87,7 @@ struct MindMapReader: View {
       ScrollView(.horizontal) {
         LazyHStack(spacing: 0) {
           ForEach(cards, id: \.self) { card in
-            page(card, maps: maps, goalId: goalId)
+            page(card, maps: maps)
               .containerRelativeFrame(.horizontal)
           }
         }
@@ -100,27 +97,25 @@ struct MindMapReader: View {
       .scrollPosition(id: $current)
       .scrollIndicators(.hidden)
       // The chapter of the map shown and the next one, read ahead.
-      .loads(lessonResources(cards, around: index, goalId: goalId), refreshable: false)
+      .loads(lessonResources(cards, around: index), refreshable: false)
       .onChange(of: current, initial: true) { _, card in
         if let card {
           store.remember(MindMapPosition(card), goalId: goalId, tab: tab)
         }
       }
-      .navigationTitle(title(current, maps: maps, goalId: goalId))
-      .navigationSubtitle(context(current, maps: maps, goalId: goalId))
+      .navigationTitle(title(current, maps: maps))
+      .navigationSubtitle(context(current, maps: maps))
       .toolbar {
         ToolbarItem(placement: .primaryAction) {
           menu(cards, maps: maps)
         }
 
-        bottomBar(cards, index: index ?? 0, maps: maps, goalId: goalId)
+        bottomBar(cards, index: index ?? 0, maps: maps)
       }
     }
   }
 
-  private func lessonResources(_ cards: [MindMapCard], around index: Int?, goalId: String)
-    -> [any CachedResource]
-  {
+  private func lessonResources(_ cards: [MindMapCard], around index: Int?) -> [any CachedResource] {
     guard tab != .chapters, let index else {
       return []
     }
@@ -143,7 +138,7 @@ struct MindMapReader: View {
   }
 
   @ViewBuilder
-  private func page(_ card: MindMapCard, maps: GoalMindMaps, goalId: String) -> some View {
+  private func page(_ card: MindMapCard, maps: GoalMindMaps) -> some View {
     switch card {
     case .chapter(let chapterId):
       if let map = maps.chapter(chapterId) {
@@ -258,7 +253,7 @@ struct MindMapReader: View {
   /// Previous, "5 of 12", Save and Next under the thumb; the last map's Next is Done.
   @ToolbarContentBuilder
   private func bottomBar(
-    _ cards: [MindMapCard], index: Int, maps: GoalMindMaps, goalId: String
+    _ cards: [MindMapCard], index: Int, maps: GoalMindMaps
   ) -> some ToolbarContent {
     ToolbarItemGroup(placement: .bottomBar) {
       Button {
@@ -285,7 +280,7 @@ struct MindMapReader: View {
 
       Spacer()
 
-      if let current, let target = saveTarget(current, maps: maps, goalId: goalId) {
+      if let current, let target = saveTarget(current, maps: maps) {
         MindMapSaveButton(target: target.target, goalId: goalId, server: target.server)
           .keyboardShortcut("s", modifiers: [])
       }
@@ -318,9 +313,9 @@ struct MindMapReader: View {
   }
 
   /// What the reader saves, with what the maps read now says of it.
-  private func saveTarget(_ card: MindMapCard, maps: GoalMindMaps, goalId: String)
-    -> (target: SaveTarget, server: Bool)?
-  {
+  private func saveTarget(_ card: MindMapCard, maps: GoalMindMaps) -> (
+    target: SaveTarget, server: Bool
+  )? {
     switch card {
     case .chapter(let chapterId):
       guard
@@ -350,7 +345,7 @@ struct MindMapReader: View {
     }
   }
 
-  private func title(_ card: MindMapCard?, maps: GoalMindMaps, goalId: String) -> String {
+  private func title(_ card: MindMapCard?, maps: GoalMindMaps) -> String {
     guard let card else {
       return ""
     }
@@ -365,7 +360,7 @@ struct MindMapReader: View {
     return maps.chapter(card.chapterId)?.title ?? ""
   }
 
-  private func context(_ card: MindMapCard?, maps: GoalMindMaps, goalId: String) -> String {
+  private func context(_ card: MindMapCard?, maps: GoalMindMaps) -> String {
     guard let card, let chapter = maps.chapter(card.chapterId) else {
       return ""
     }

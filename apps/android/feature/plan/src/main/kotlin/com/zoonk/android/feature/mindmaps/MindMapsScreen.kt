@@ -131,6 +131,7 @@ internal fun MindMapsContent(
                             createAll = maps::createAll,
                             save = maps::save,
                             navigate = navigator::open,
+                            study = { tab, place -> navigator.open(AppRoute.MindMapStudy(goalId.toString(), tab.key, place?.start)) },
                         ),
                     subject = subject,
                 )
@@ -207,12 +208,8 @@ internal data class MindMapsActions(
     val navigate: (AppRoute) -> Unit,
     val createAll: () -> Unit = {},
     val save: (target: MindMapTarget, chapterId: UUID?, saved: Boolean) -> Unit = { _, _, _ -> },
-) {
-    fun study(
-        tab: StudyTab,
-        place: MapPlace? = null,
-    ) = navigate(AppRoute.MindMapStudy(tab.key, place?.start))
-}
+    val study: (tab: StudyTab, place: MapPlace?) -> Unit = { _, _ -> },
+)
 
 /**
  * Main's Mind maps page: the goal, Study, and three tabs (chapters' maps, lessons' maps and the saved
@@ -252,7 +249,7 @@ internal fun MindMapsPage(
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
                     item(key = "hero", contentType = "hero") {
-                        MindMapsHeader(mindMaps, study = { actions.study(tab) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
+                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
 

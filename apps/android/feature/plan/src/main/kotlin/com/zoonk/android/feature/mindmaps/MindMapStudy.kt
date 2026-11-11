@@ -105,8 +105,9 @@ internal data class StudyOpening(
 )
 
 /**
- * Study: a tab's maps one at a time, full screen. The deck opens at the tapped map, or where this
- * device stopped in this goal's tab, and keeps that place on the device as the learner moves.
+ * Study: a goal's tab of maps one at a time, full screen. The deck opens at the tapped map, or where
+ * this device stopped in this goal's tab, and keeps that place on the device as the learner moves.
+ * It stays on the goal it opened with, whatever goal becomes active meanwhile.
  */
 @Composable
 fun MindMapStudyScreen(
@@ -116,18 +117,20 @@ fun MindMapStudyScreen(
 ) {
     val close: () -> Unit = { navigator.closeTask() }
 
-    WithPlanGoal(app.learnerSummary.summary, navigator, frame = { TaskScaffold(onClose = close, content = it) }) { goal ->
+    val goalId = remember(route.goalId) { runCatching { UUID.fromString(route.goalId) }.getOrNull() }
+
+    WithPlanGoal(app.learnerSummary.summary, navigator, frame = { TaskScaffold(onClose = close, content = it) }) { _ ->
         val host = mindMapsHost(app)
         val tab = StudyTab.of(route.tab)
-        if (host == null || tab == null) {
+        if (host == null || tab == null || goalId == null) {
             TaskNotFound(navigator)
             return@WithPlanGoal
         }
 
         val store = host.store
-        val list by store.list[goal.id].collectShown()
+        val list by store.list[goalId].collectShown()
         val handle =
-            remember(host.session, goal.id, tab) { app.drafts.open(host.session, studyPlaceKey(goal.id, tab), MapPlace.serializer()) }
+            remember(host.session, goalId, tab) { app.drafts.open(host.session, studyPlaceKey(goalId, tab), MapPlace.serializer()) }
         var saved by rememberSaveable { mutableStateOf<String?>(null) }
         val opening = remember(saved) { saved?.let { ApiJson.decodeFromString(StudyOpening.serializer(), it) } }
         val maps = list.value
@@ -153,7 +156,7 @@ fun MindMapStudyScreen(
                     } else {
                         TaskScaffold(onClose = close) { padding ->
                             LoadFailedMessage(
-                                onRetry = { scope.launch { store.list[goal.id].refresh() } },
+                                onRetry = { scope.launch { store.list[goalId].refresh() } },
                                 modifier = Modifier.padding(padding),
                             )
                         }
@@ -172,14 +175,14 @@ fun MindMapStudyScreen(
             return@WithPlanGoal
         }
 
-        val viewModel = host.maps(goal.id)
+        val viewModel = host.maps(goalId)
         val saves by viewModel.saves.collectAsStateWithLifecycle()
 
         CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
             MindMapStudy(
                 deck = opening.deck,
                 start = opening.start,
-                slide = { slot -> slideOf(slot, maps, goal.id, app) },
+                slide = { slot -> slideOf(slot, maps, goalId, app) },
                 saves = saves,
                 actions =
                     StudyActions(
