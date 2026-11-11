@@ -1,12 +1,13 @@
 "use client";
 
-import { setGoalCountryAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
+import { applyGoalCountryAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { getLearnerGeneration, mergeLearnerSummary } from "@/lib/learner/learner-store";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
@@ -53,13 +54,15 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
         getGoalRegion: (id) => goals?.find((goal) => goal.id === id)?.targetRegion ?? null,
         hrefs: TOOL_HREFS,
         setGoalRegion: async ({ goalId: id, region }) => {
-          const saved = await setGoalCountryAction(id, region);
+          const generation = getLearnerGeneration();
+          const summary = await applyGoalCountryAction(id, region);
+          mergeLearnerSummary({ generation, summary });
 
-          if (saved) {
+          if (summary) {
             router.refresh();
           }
 
-          return saved;
+          return summary !== null;
         },
         startConversation: ({ chapterId, goalId: callGoalId, minutes }) =>
           startConversation({ chapterId, goalId: callGoalId, kind: "practice", minutes }),

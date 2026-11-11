@@ -5,7 +5,7 @@ import { formatLevels } from "../../../language/levels/skill-level-rules";
 
 const MAX_KNOWN_WORDS = 80;
 
-type LanguageLessonInputs = {
+export type LanguageLessonInputs = {
   learnerLanguage: string;
   skillId: string | null;
   targetLanguage: string;

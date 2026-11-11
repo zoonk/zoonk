@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseChapterFixture,
@@ -208,6 +209,28 @@ test.describe("public Library lesson page", () => {
 
     await page.getByRole("button", { name: "Next" }).click();
     await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
+  });
+
+  test("starts the lesson from a Start pressed before the page hydrates, once it does", async ({
+    page,
+  }) => {
+    const { unwritten, unwrittenPath } = await createLibraryCourse();
+    const { asked, runId } = await writeLessonWhenFollowed({ lessonId: unwritten.id, page });
+
+    const release = await holdScripts(page);
+    await page.goto(unwrittenPath, { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: "Start this lesson" }).click();
+    await release();
+
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/learn/${unwritten.id}\\?generation=${runId}&from=${encodeURIComponent(unwrittenPath)}$`,
+        "u",
+      ),
+    );
+
+    await expect(page.getByText(playableStepContent.explanation.title)).toBeVisible();
+    expect(asked).toHaveLength(1);
   });
 });
 
