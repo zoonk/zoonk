@@ -127,7 +127,7 @@ class MakeRoomScreenshots {
              "id":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a$number","isActive":${number == 1},"isSettingUp":false,
              "kind":"${if (flag == null) "learn" else "language"}","languageFlag":${flag?.let { "\"$it\"" }},"status":"active",
              "targetDate":null,"targetLanguage":${flag?.let { "\"es\"" }},"targetRegion":${flag?.let { "\"$it\"" }},
-             "regionChoices":[],"title":"$name","displayName":"$name"}
+             "regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"title":"$name","displayName":"$name"}
             """.trimIndent(),
         )
 }

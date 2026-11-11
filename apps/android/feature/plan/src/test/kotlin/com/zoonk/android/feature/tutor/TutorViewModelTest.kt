@@ -811,14 +811,14 @@ class TutorViewModelTest {
             val vm = conversation()
 
             vm.applyVariety("q1", goal, "CA")
-            assertEquals(VarietySave.Saving, vm.varietySave("q1", goal, "CA"))
+            assertEquals(OfferSave.Saving, vm.varietySave("q1", goal, "CA"))
             advanceUntilIdle()
-            assertEquals(VarietySave.Saved, vm.varietySave("q1", goal, "CA"))
+            assertEquals(OfferSave.Saved, vm.varietySave("q1", goal, "CA"))
 
             vm.applyVariety("q2", goal, "AU")
             advanceUntilIdle()
             assertNull("the earlier card offers its country again", vm.varietySave("q1", goal, "CA"))
-            assertEquals(VarietySave.Saved, vm.varietySave("q2", goal, "AU"))
+            assertEquals(OfferSave.Saved, vm.varietySave("q2", goal, "AU"))
         }
 
     private val proposed = planChange(status = "proposed").copy(id = UUID.fromString(OTHER_CHANGE))

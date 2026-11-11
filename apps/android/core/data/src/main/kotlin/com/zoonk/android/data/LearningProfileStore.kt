@@ -1,5 +1,9 @@
 package com.zoonk.android.data
 
+import com.zoonk.android.feature.country.CountryChoice
+import com.zoonk.android.feature.country.shownLanguage
+import com.zoonk.api.apis.AccountApi.LanguageGetCurrentUserLearningProfile
+import com.zoonk.api.apis.AccountApi.LanguageUpdateCurrentUserLearningProfile
 import com.zoonk.api.models.Buddy
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.sync.Mutex
@@ -21,19 +25,30 @@ interface LearningProfileApi {
     ): LearningProfile
 }
 
+/** Countries come named in the app's language, which Settings shows them in. */
 class LiveLearningProfileApi(
     private val api: ApiClients,
 ) : LearningProfileApi {
     override suspend fun profile(session: AuthenticatedSession): LearningProfile =
-        perform { api.clients(session).account.getCurrentUserLearningProfile() }.profile
+        perform {
+            api.clients(session).account.getCurrentUserLearningProfile(
+                LanguageGetCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() } ?: LanguageGetCurrentUserLearningProfile.EN,
+            )
+        }.profile
 
     override suspend fun update(
         session: AuthenticatedSession,
         change: JsonObject,
-    ): LearningProfile = perform { api.clients(session).account.updateCurrentUserLearningProfile(change) }.profile
+    ): LearningProfile =
+        perform {
+            api.clients(session).account.updateCurrentUserLearningProfile(
+                change,
+                LanguageUpdateCurrentUserLearningProfile.entries.firstOrNull { it.value == shownLanguage() } ?: LanguageUpdateCurrentUserLearningProfile.EN,
+            )
+        }.profile
 }
 
-/** The learner's preferences (sounds, usage data, buddy, daily limit, active goal): one read every screen shares. */
+/** The learner's preferences (sounds, usage data, buddy, daily limit, active goal, where they live): one read every screen shares. */
 class LearningProfileStore(
     private val api: LearningProfileApi,
     private val cache: AppCache,
@@ -51,6 +66,13 @@ class LearningProfileStore(
 
     suspend fun setActiveGoal(goalId: UUID): Boolean =
         update({ it.copy(activeGoalId = goalId) }, buildJsonObject { put("activeGoalId", goalId.toString()) })
+
+    /** Null clears it. New goals and examples follow it; no plan the learner has changes. */
+    suspend fun setHomeCountry(country: CountryChoice?): Boolean =
+        update(
+            { it.copy(homeCountry = country?.code, homeCountryName = country?.name) },
+            buildJsonObject { put("homeCountry", country?.code) },
+        )
 
     /** [name] null keeps the buddy's own name. */
     suspend fun setBuddy(

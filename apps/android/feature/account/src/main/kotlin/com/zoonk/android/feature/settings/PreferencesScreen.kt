@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.settings
 
+import java.util.Locale
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -46,6 +47,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
+import com.zoonk.android.feature.country.CountryChoice
+import com.zoonk.android.feature.country.CountrySheet
+import com.zoonk.android.feature.country.choices
+import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LearningProfileStore
@@ -104,6 +109,8 @@ class PreferencesViewModel(
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
 
     fun setShareUsageData(share: Boolean) = save { profile.setShareUsageData(share) }
+
+    fun setHomeCountry(country: CountryChoice?) = save { profile.setHomeCountry(country) }
 
     fun setBuddy(
         kind: BuddyKind,
@@ -196,7 +203,7 @@ fun PreferencesScreen(
                     LoadState.Idle, LoadState.Empty -> {}
                 }
 
-                LanguageSection()
+                LanguageSection((profile as? LoadState.Loaded)?.value, preferences)
             }
         }
     }
@@ -297,20 +304,74 @@ private fun SettingValue(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** Android keeps each app's language itself from API 33; below it the app follows the system's. */
+/**
+ * The app's language, which Android keeps per app from API 33 (below it the app follows the system's),
+ * then where the learner lives, for a learner with a profile: the fix for a language's country sits
+ * right under it.
+ */
 @Composable
-private fun LanguageSection() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+private fun LanguageSection(
+    profile: LearningProfile?,
+    preferences: PreferencesViewModel,
+) {
+    val perAppLanguage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    if (!perAppLanguage && profile == null) return
     val context = LocalContext.current
-    val locale = currentLocale()
 
     SettingsSection(stringResource(R.string.settings_preferences_language)) {
-        ListRow(
-            headline = { Text(stringResource(R.string.settings_preferences_app_language)) },
-            supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
-            trailing = { SettingValue(locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }) },
-            onClick = { context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri())) },
-            chevron = true,
+        Column {
+            if (perAppLanguage) {
+                ListRow(
+                    headline = { Text(stringResource(R.string.settings_preferences_app_language)) },
+                    supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
+                    trailing = { SettingValue(appLanguageName(currentLocale())) },
+                    onClick = { context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri())) },
+                    chevron = true,
+                )
+            }
+            profile?.let { HomeCountryRow(it, preferences) }
+        }
+    }
+}
+
+/** Where the learner lives: a pick saves at once, and "Not set" clears it. New goals and examples follow it; no plan changes. */
+@Composable
+private fun HomeCountryRow(
+    profile: LearningProfile,
+    preferences: PreferencesViewModel,
+) {
+    var choosing by rememberSaveable { mutableStateOf(false) }
+    val title = stringResource(R.string.settings_home_country)
+
+    ListRow(
+        headline = { Text(title) },
+        supporting = { Text(stringResource(R.string.settings_home_country_description)) },
+        trailing = { SettingValue(profile.homeCountryName ?: stringResource(R.string.settings_home_country_none)) },
+        onClick = { choosing = true },
+        chevron = true,
+    )
+    if (choosing) {
+        CountrySheet(
+            title = title,
+            suggested = profile.suggested.choices(),
+            language = shownLanguage(),
+            selected = profile.homeCountry,
+            onPick = {
+                choosing = false
+                preferences.setHomeCountry(it)
+            },
+            onDismiss = { choosing = false },
+            allowNone = true,
         )
     }
 }
+
+/** As each language names itself, with the country Zoonk writes it for where it has more than one. */
+@Composable
+internal fun appLanguageName(locale: Locale): String =
+    when (locale.language) {
+        "en" -> stringResource(R.string.settings_app_language_en)
+        "es" -> stringResource(R.string.settings_app_language_es)
+        "pt" -> stringResource(R.string.settings_app_language_pt)
+        else -> locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }
+    }

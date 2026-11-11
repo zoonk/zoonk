@@ -13,6 +13,7 @@ import com.zoonk.android.ui.format.formatTimeOfDay
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.format.varietyName
 import com.zoonk.api.models.Goal
+import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
 import com.zoonk.api.models.LanguageAim
@@ -31,7 +32,7 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-enum class EditorKind { Text, Date, Time, Region }
+enum class EditorKind { Text, Date, Time, Region, Country }
 
 enum class EditableField(
     val key: String,
@@ -47,6 +48,7 @@ enum class EditableField(
     TargetScore("targetScore", EditorKind.Text),
     StudyTime("studyTime", EditorKind.Time),
     TargetRegion("targetRegion", EditorKind.Region),
+    ContentCountry("contentCountry", EditorKind.Country),
 }
 
 data class RowSource(
@@ -123,6 +125,7 @@ class UnderstoodRows(
                 editable = EditableField.DisplayName,
             ),
             dateRow(draft, goal.examDates),
+            countryRow(goal),
         ) + languageRows(goal.facts(), keepLanguage) + detailRows(goal.facts(), goal.cutoff, goal.languageAim) +
             listOfNotNull(
                 levelNote?.let {
@@ -134,6 +137,32 @@ class UnderstoodRows(
                     )
                 },
             )
+    }
+
+    /**
+     * A country-dependent goal's country, from the learner's words or where they live, which they can
+     * change here before anything is built; a foreign exam's, which they can't. Shown even when the
+     * title names it: this row is where it changes. A goal whose country is unknown is asked next.
+     */
+    fun countryRow(goal: UnderstoodGoal): UnderstoodRow? {
+        val country = goal.contentCountry ?: return null
+        val exam = country.kind == GoalContentCountry.Kind.EXAM
+        return UnderstoodRow(
+            "contentCountry",
+            text(if (exam) R.string.country_exam_label else R.string.country_content_label),
+            country.name,
+            badge =
+                when (country.source) {
+                    GoalContentCountry.Source.SAID -> text(R.string.onboarding_row_you_said)
+                    GoalContentCountry.Source.HOME -> text(R.string.onboarding_country_from_home)
+                    else -> null
+                },
+            note =
+                country.lessonVariety?.let {
+                    text(R.string.country_lesson_language_value, varietyName(it.language, it.region, locale))
+                },
+            editable = EditableField.ContentCountry.takeIf { country.editable && !exam },
+        )
     }
 
     /** Whether the learner gave a time a day: otherwise the default isn't shown as theirs. */

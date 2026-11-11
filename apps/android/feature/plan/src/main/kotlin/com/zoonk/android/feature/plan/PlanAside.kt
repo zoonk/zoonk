@@ -35,7 +35,9 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.varietyName
+import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
 import com.zoonk.api.models.PlanPhase
@@ -255,6 +257,7 @@ internal fun PlanProperties(
                     onClickLabel = adjust,
                 )
             }
+            CountryRows(page.goal, onOpen?.let { { it(PlanSection.Country) } }, adjust)
             if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
                 val skipped =
                     page.plan.steering.skippedActivities
@@ -278,7 +281,31 @@ internal fun PlanProperties(
     }
 }
 
-enum class PlanSection { Language, Date, Time, Days, Choices, Practice }
+enum class PlanSection { Language, Country, Date, Time, Days, Choices, Practice }
+
+/**
+ * The goal's one country row in the Language row's slot: a country-dependent goal's content country
+ * (with the lesson language when core discloses one), a foreign exam's country, or the country a
+ * general course takes its examples from. Only the content country opens Adjust plan.
+ */
+@Composable
+private fun CountryRows(
+    goal: LearnerSummaryGoal,
+    onOpen: (() -> Unit)?,
+    adjust: String,
+) {
+    goal.contentCountry?.let { country ->
+        val editable = goal.editableCountry != null
+        PropertyRow(
+            stringResource(if (country.kind == GoalContentCountry.Kind.EXAM) R.string.country_exam_label else R.string.country_content_label),
+            country.name,
+            onOpen.takeIf { editable },
+            onClickLabel = adjust,
+        )
+        country.lessonVariety?.let { PropertyRow(stringResource(R.string.country_lesson_language_label), lessonVarietyName(it), null) }
+    }
+    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), it.name, null) }
+}
 
 @Composable
 private fun PropertyRow(

@@ -92,6 +92,7 @@ import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.country.LocalCountryCatalog
 import com.zoonk.android.feature.account.AccountMenu
 import com.zoonk.android.feature.buddy.BuddyTabIcon
 import com.zoonk.android.feature.buddy.buddyTabMissions
@@ -180,6 +181,7 @@ fun ZoonkApp(
         LocalUriHandler provides links,
         LocalTabRootBar provides rememberTabRootBar(app, navigator),
         LocalEventTracker provides app.analytics,
+        LocalCountryCatalog provides app.countries.catalog,
     ) {
         val sendFeedback = rememberSendFeedback(app, "sidebar")
 

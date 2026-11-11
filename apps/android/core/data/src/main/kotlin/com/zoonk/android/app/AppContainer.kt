@@ -44,6 +44,8 @@ import com.zoonk.android.feature.buddy.EarlierQuestionsStore
 import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
+import com.zoonk.android.feature.country.CountryStore
+import com.zoonk.android.feature.country.LiveCountryApi
 import com.zoonk.android.feature.ceremonies.MilestoneViews
 import com.zoonk.android.feature.certificates.CertificateFiles
 import com.zoonk.android.feature.certificates.CertificateStore
@@ -246,7 +248,17 @@ class AppContainer private constructor(
                 },
         )
 
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::setRegion, plans::decideChange)
+    val tutor =
+        TutorStore(
+            LiveTutorApi(api),
+            cache,
+            sessions,
+            memory::undo,
+            plans::setRegion,
+            plans::setContentCountry,
+            learningProfile::setHomeCountry,
+            plans::decideChange,
+        )
     val earlierQuestions =
         EarlierQuestionsStore(
             api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },
@@ -345,6 +357,7 @@ class AppContainer private constructor(
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
+    val countries = CountryStore(LiveCountryApi(api), cache)
     val stats = StatsStore(LiveStatsApi(api), cache)
 
     // Exams and mocks (L7).

@@ -107,6 +107,8 @@ internal data class PlanEdits(
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
     val setRegion: (String?, () -> Unit) -> Unit = { _, _ -> },
+    val setContentCountry: (String, () -> Unit) -> Unit = { _, _ -> },
+    val retryCountryRebuild: () -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
@@ -312,6 +314,17 @@ internal fun ColumnScope.PlanEditorBody(
                 modifier = Modifier.section(PlanSection.Language),
             )
         }
+        page.goal.editableCountry?.let { country ->
+            ContentCountryRow(
+                page.goal,
+                country,
+                onPick = edits.setContentCountry,
+                pending = edits.isPending(PlanPart.Country),
+                failed = edits.hasFailed(PlanPart.Country),
+                modifier = Modifier.section(PlanSection.Country),
+            )
+        }
+        CountryFacts(page.goal)
         PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(
             page,

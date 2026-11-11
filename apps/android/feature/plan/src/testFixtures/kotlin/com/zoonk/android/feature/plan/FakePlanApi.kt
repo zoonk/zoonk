@@ -141,6 +141,12 @@ class FakePlanApi : PlanApi {
         region: String?,
     ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
 
+    override suspend fun setContentCountry(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        country: String?,
+    ) = examGoal()
+
     override suspend fun change(
         session: AuthenticatedSession,
         goalId: UUID,

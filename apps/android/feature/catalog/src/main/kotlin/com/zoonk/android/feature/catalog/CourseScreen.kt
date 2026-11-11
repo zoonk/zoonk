@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.feature.country.countryDisclosure
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
@@ -239,6 +240,11 @@ private fun CourseHero(
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
             Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
+        }
+
+        course.contentCountry?.let {
+            Spacer(Modifier.size(8.dp))
+            Text(countryDisclosure(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
 
         Spacer(Modifier.size(16.dp))

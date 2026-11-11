@@ -18,6 +18,7 @@ import com.zoonk.android.feature.account.AccountAvatar
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.GoalExamCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MeUser
 import org.junit.Assume.assumeTrue
@@ -63,6 +64,12 @@ class LetterMarkTest {
                 kind = LearnerSummaryGoal.Kind.EXAM,
                 languageFlag = null,
                 regionChoices = emptyList(),
+                contentCountry = null,
+                countryDependent = false,
+                examCountry = null,
+                examplesCountry = null,
+                languageCountry = GoalExamCountry("US", "United States"),
+                suggested = emptyList(),
                 status = LearnerSummaryGoal.Status.ACTIVE,
                 targetDate = null,
                 targetLanguage = null,

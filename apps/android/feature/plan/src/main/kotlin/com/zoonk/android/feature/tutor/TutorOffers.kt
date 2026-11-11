@@ -45,6 +45,7 @@ import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.feature.conversation.PracticeCallSheet
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
+import com.zoonk.android.feature.country.lessonLanguageLine
 import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
@@ -67,6 +68,7 @@ import com.zoonk.api.models.TutorToolOfferOneOf5
 import com.zoonk.api.models.TutorToolOfferOneOf6
 import com.zoonk.api.models.TutorToolOfferOneOf7
 import com.zoonk.api.models.TutorToolOfferOneOf8
+import com.zoonk.api.models.TutorToolOfferOneOf9
 import com.zoonk.api.models.TutorToolOfferOneOfCourse
 
 /** A place or practice the buddy offers under its answer; each opens only from the learner's tap. */
@@ -74,8 +76,8 @@ import com.zoonk.api.models.TutorToolOfferOneOfCourse
 internal fun TutorOffer(
     offer: TutorToolOffer,
     routes: TutorRoutes,
-    variety: VarietySave?,
-    onApplyVariety: (TutorToolOfferOneOf8) -> Unit,
+    save: OfferSave?,
+    onApply: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (offer) {
@@ -117,10 +119,14 @@ internal fun TutorOffer(
         }
 
         is TutorToolOffer.TutorToolOfferOneOf8Value -> {
-            VarietyOffer(offer.value, variety, { onApplyVariety(offer.value) }, modifier)
+            VarietyOffer(offer.value, save, onApply, modifier)
         }
 
         is TutorToolOffer.TutorToolOfferOneOf9Value -> {
+            CountryOffer(offer.value, save, onApply, modifier)
+        }
+
+        is TutorToolOffer.TutorToolOfferOneOf10Value -> {
             PlaceOffer(
                 R.string.tutor_offer_stats,
                 R.string.tutor_offer_stats_description,
@@ -131,7 +137,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf10Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf11Value -> {
             PlaceOffer(
                 R.string.tutor_offer_logbook,
                 R.string.tutor_offer_logbook_description,
@@ -142,7 +148,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf11Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf12Value -> {
             PlaceOffer(
                 R.string.tutor_offer_memory,
                 R.string.tutor_offer_memory_description,
@@ -153,7 +159,7 @@ internal fun TutorOffer(
             )
         }
 
-        is TutorToolOffer.TutorToolOfferOneOf12Value -> {
+        is TutorToolOffer.TutorToolOfferOneOf13Value -> {
             val subscribed = offer.value.subscribed
             OfferCard(
                 title = stringResource(R.string.tutor_offer_plus),
@@ -381,15 +387,12 @@ private fun PronunciationOffer(
 @Composable
 private fun VarietyOffer(
     offer: TutorToolOfferOneOf8,
-    save: VarietySave?,
+    save: OfferSave?,
     onApply: () -> Unit,
     modifier: Modifier,
 ) {
     val locale = currentLocale()
-    val card = remember { BringIntoViewRequester() }
-    LaunchedEffect(save) { if (save == VarietySave.Failed) card.bringIntoView() }
-
-    OfferCard(
+    SettingOffer(
         title = varietyName(offer.targetLanguage, offer.targetRegion, locale),
         description =
             varietyNote(LocalResources.current, locale, offer.targetLanguage, offer.targetRegion, offer.taughtRegion)
@@ -397,25 +400,82 @@ private fun VarietyOffer(
                     R.string.tutor_offer_variety_description,
                     varietyNameInSentence(offer.targetLanguage, offer.targetRegion, locale),
                 ),
-        tile = {
-            offer.languageFlag
-                ?.let(
-                    ::flagEmoji,
-                )?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) }
-        },
+        flag = offer.languageFlag,
+        save = save,
+        button = stringResource(R.string.tutor_plan_change_apply),
+        saved = stringResource(R.string.tutor_offer_variety_applied),
+        onApply = onApply,
+        modifier = modifier,
+    )
+}
+
+/** The goal's content country, which rebuilds the plan for it, or where the learner lives, which changes no plan. */
+@Composable
+private fun CountryOffer(
+    offer: TutorToolOfferOneOf9,
+    save: OfferSave?,
+    onApply: () -> Unit,
+    modifier: Modifier,
+) {
+    if (offer.kind == TutorToolOfferOneOf9.Kind.HOME_COUNTRY) {
+        SettingOffer(
+            title = stringResource(R.string.tutor_offer_home_country_title, offer.countryName),
+            description = stringResource(R.string.settings_home_country_description),
+            flag = offer.languageFlag,
+            save = save,
+            button = stringResource(R.string.settings_save),
+            saved = stringResource(R.string.tutor_offer_home_country_saved),
+            onApply = onApply,
+            modifier = modifier,
+        )
+    } else {
+        SettingOffer(
+            title = stringResource(R.string.country_content_value, offer.countryName),
+            description =
+                listOfNotNull(stringResource(R.string.tutor_offer_country_description), lessonLanguageLine(offer.lessonVariety))
+                    .joinToString("\n"),
+            flag = offer.languageFlag,
+            save = save,
+            button = stringResource(R.string.tutor_plan_change_apply),
+            saved = stringResource(R.string.tutor_offer_country_applied),
+            onApply = onApply,
+            modifier = modifier,
+        )
+    }
+}
+
+/** A setting saved with one tap, as the plan's changes apply: the button gives way to [saved], and a failure brings the card back into view. */
+@Composable
+private fun SettingOffer(
+    title: String,
+    description: String,
+    flag: String?,
+    save: OfferSave?,
+    button: String,
+    saved: String,
+    onApply: () -> Unit,
+    modifier: Modifier,
+) {
+    val card = remember { BringIntoViewRequester() }
+    LaunchedEffect(save) { if (save == OfferSave.Failed) card.bringIntoView() }
+
+    OfferCard(
+        title = title,
+        description = description,
+        tile = { flag?.let(::flagEmoji)?.let { Text(it, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium) } },
         modifier = modifier.bringIntoViewRequester(card),
     ) {
-        if (save == VarietySave.Saved) {
+        if (save == OfferSave.Saved) {
             Text(
-                stringResource(R.string.tutor_offer_variety_applied),
+                saved,
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            OfferButton(stringResource(R.string.tutor_plan_change_apply), busy = save == VarietySave.Saving, onClick = onApply)
+            OfferButton(button, busy = save == OfferSave.Saving, onClick = onApply)
         }
-        if (save == VarietySave.Failed) {
+        if (save == OfferSave.Failed) {
             Text(
                 stringResource(R.string.tutor_plan_change_failed),
                 Modifier.semantics { liveRegion = LiveRegionMode.Assertive },

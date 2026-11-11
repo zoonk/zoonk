@@ -51,6 +51,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
@@ -78,6 +79,7 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
 import com.zoonk.api.models.TutorToolOffer
+import com.zoonk.api.models.TutorToolOfferOneOf9
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -325,15 +327,8 @@ private fun TurnView(
                 )
             }
             turn.toolOffer?.let { offer ->
-                val variety =
-                    (offer as? TutorToolOffer.TutorToolOfferOneOf8Value)?.value?.let {
-                        vm.varietySave(
-                            turn.id,
-                            it.goalId,
-                            it.targetRegion,
-                        )
-                    }
-                TutorOffer(offer, routes, variety, onApplyVariety = { vm.applyVariety(turn.id, it.goalId, it.targetRegion) })
+                val (save, apply) = settingOffer(vm, turn.id, offer)
+                TutorOffer(offer, routes, save, apply)
             }
         }
         state.memoryChanges[turn.id]?.let { changes ->
@@ -675,3 +670,31 @@ private val BUBBLE_SHAPE =
 private val EMPTY_AVATAR_SIZE = 48.dp
 private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp
+
+/** A card that saves a setting: what its save shows, and its tap; other cards save nothing. */
+private fun settingOffer(
+    vm: TutorViewModel,
+    turnId: String,
+    offer: TutorToolOffer,
+): Pair<OfferSave?, () -> Unit> =
+    when (offer) {
+        is TutorToolOffer.TutorToolOfferOneOf8Value -> {
+            val variety = offer.value
+            vm.varietySave(turnId, variety.goalId, variety.targetRegion) to
+                { vm.applyVariety(turnId, variety.goalId, variety.targetRegion) }
+        }
+
+        is TutorToolOffer.TutorToolOfferOneOf9Value -> {
+            val country = offer.value
+            if (country.kind == TutorToolOfferOneOf9.Kind.HOME_COUNTRY) {
+                vm.homeCountrySave(turnId, country.country) to { vm.applyHomeCountry(turnId, CountryChoice(country.country, country.countryName)) }
+            } else {
+                vm.contentCountrySave(turnId, country.goalId, country.country) to
+                    { vm.applyContentCountry(turnId, country.goalId, country.country) }
+            }
+        }
+
+        else -> {
+            null to {}
+        }
+    }
