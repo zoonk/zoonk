@@ -121,9 +121,9 @@ export async function ExamSection() {
       })}
       lead={t({
         description:
-          "{exams} lists the exams people in your country study for, such as “Enem, vestibular, concurso ou OAB”, and opens the sentence. In Brazilian Portuguese: “{exams}: o plano segue as matérias e os tópicos da sua prova. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”",
+          "{exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola: o plano segue as matérias e os tópicos dela. Na reta final, simulados no formato e no tempo da prova real mostram uma estimativa da sua pontuação e o que ainda falta.”",
         message:
-          "{exams}: your plan follows your exam's subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing.",
+          "Any exam, such as {exams}: your plan follows its subjects and topics. In the final stretch, mock exams in the real exam's format and time show an estimate of your score and what's still missing.",
         values: { exams },
       })}
       subject="exams"

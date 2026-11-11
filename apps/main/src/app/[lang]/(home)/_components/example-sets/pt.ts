@@ -1,4 +1,3 @@
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type ExampleSet } from "../example-set";
 
 export const pt: ExampleSet = {
@@ -15,41 +14,42 @@ export const pt: ExampleSet = {
     ],
   },
   exam: {
-    course: { brandSlug: AI_ORG_SLUG, courseSlug: "enem-pt" },
     day: [
       {
         detail: "Revisão do que mais cai",
         kind: "review",
         minutes: 6,
-        title: "Porcentagem e juros",
+        title: "Concordância verbal",
       },
       {
-        detail: "Ciências da Natureza",
+        detail: "Direito Administrativo",
         kind: "practice",
         minutes: 7,
-        title: "Questões de ecologia",
+        title: "Questões de atos administrativos",
       },
-      { detail: "Revisão do que mais cai", kind: "review", minutes: 4, title: "Era Vargas" },
-      { detail: "Redação", kind: "essay", minutes: 8, title: "Proposta de intervenção" },
+      {
+        detail: "Revisão do que mais cai",
+        kind: "review",
+        minutes: 4,
+        title: "Direitos fundamentais",
+      },
+      { detail: "Discursiva", kind: "essay", minutes: 8, title: "Introdução e tese" },
     ],
-    goal: (month) => `passar no Enem em ${month}`,
-    headline: "Passar no Enem",
+    goal: "passar no concurso do INSS",
+    headline: "Passar no concurso",
     mock: {
-      details: "90 questões · 5 h",
-      firm: ["Ecologia", "Ondas", "Porcentagem"],
-      mistakes: 7,
-      name: "2º dia do Enem",
-      review: ["Eletricidade", "Geometria espacial"],
+      details: "120 questões · 3 h 30 min",
+      firm: ["Concordância verbal", "Direitos fundamentais", "Raciocínio lógico"],
+      mistakes: 9,
+      name: "Técnico do INSS",
+      review: ["Direito Previdenciário", "Atos administrativos"],
       scores: [
-        { label: "Ciências da Natureza", range: "610–690" },
-        { label: "Matemática", range: "640–720" },
+        { label: "Conhecimentos básicos", range: "68–76%" },
+        { label: "Conhecimentos específicos", range: "61–70%" },
       ],
     },
-    name: "Enem",
-    sittings: ["2026-11-08", "2026-11-15"],
-    timeZone: "America/Sao_Paulo",
   },
-  exams: "Enem, vestibular, concurso ou OAB",
+  exams: "concurso, Enem, OAB, vestibular ou prova da escola",
   move: "london",
   topic: {
     chapters: [

@@ -30,11 +30,11 @@ export const it: ExampleSet = {
       review: ["Derivate", "Limiti"],
       scores: [{ label: "Seconda prova", range: "14–16/20" }],
     },
-    name: "Maturità",
     sittings: ["2027-06-16"],
     timeZone: "Europe/Rome",
   },
-  exams: "La maturità, il test di medicina, un concorso pubblico o l’esame della patente",
+  exams:
+    "la maturità, il test di medicina, un concorso pubblico, l’esame della patente o una verifica a scuola",
   move: "london",
   topic: {
     chapters: [
