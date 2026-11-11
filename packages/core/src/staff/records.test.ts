@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { safeAsync } from "@zoonk/utils/error";
 import { logInfo } from "@zoonk/utils/logger";
+import { notFound } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStaffModels } from "./models";
 import { staffRead, staffTransaction } from "./read";
@@ -18,7 +20,7 @@ const { actor } = vi.hoisted(() => ({
     >(),
 }));
 
-// Auth owns this provider boundary and has not landed yet; all persistence below is real.
+// The API route suite verifies real CLI tokens; these tests isolate the data boundary.
 vi.mock("./get-staff-actor", () => ({ getStaffActor: actor }));
 
 function ready<T extends { status: string }>(result: T): Extract<T, { status: "ready" }> {
@@ -35,6 +37,13 @@ function ready<T extends { status: string }>(result: T): Extract<T, { status: "r
 describe("staff reads", () => {
   beforeEach(() => {
     actor.mockResolvedValue({ clientId: "zoonk-cli", status: "ready", userId: "staff-fixture" });
+  });
+
+  it("propagates Next.js control flow before recording a result", async () => {
+    const { error } = await safeAsync(async () => notFound());
+    actor.mockRejectedValueOnce(error);
+    await expect(getStaffModels()).rejects.toBe(error);
+    expect(logInfo).not.toHaveBeenCalled();
   });
 
   it.each(["unauthorized", "forbidden"] as const)(
@@ -239,15 +248,18 @@ describe("staff reads", () => {
 
     expect(log).toHaveBeenCalledOnce();
 
-    expect(log).toHaveBeenLastCalledWith(
-      "[Staff read]",
-      expect.objectContaining({
-        actorUserId: "staff-fixture",
-        filters: [{ field: "email", op: "eq" }],
-        outcome: "ready",
-        rowCount: 1,
-      }),
-    );
+    expect(log).toHaveBeenLastCalledWith(expect.any(String));
+    const [line] = log.mock.calls[0] ?? [];
+    expect(line).not.toContain("\n");
+    const entry: unknown = JSON.parse(String(line));
+
+    expect(entry).toMatchObject({
+      actorUserId: "staff-fixture",
+      event: "staff.read",
+      filters: [{ field: "email", op: "eq" }],
+      outcome: "ready",
+      rowCount: 1,
+    });
 
     await findStaffUser({ query: user.email });
     await searchStaffUsers({ query: user.name });

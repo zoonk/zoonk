@@ -4,7 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { findStaffUser, searchStaffUsers } from "./users";
 
-// Auth's provider boundary has not landed; the capability's queries use the real database.
+// The API route suite verifies real CLI tokens; these tests isolate user lookup rules.
 vi.mock("./get-staff-actor", () => ({
   getStaffActor: async () => ({ clientId: "zoonk-cli", status: "ready", userId: "staff-fixture" }),
 }));

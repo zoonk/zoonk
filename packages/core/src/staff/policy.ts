@@ -1,4 +1,16 @@
-const excludedModels = ["Verification", "RestoreKey", "AppAttestKey"];
+const excludedModels = [
+  "Verification",
+  "RestoreKey",
+  "AppAttestKey",
+  "OauthClient",
+  "OauthResource",
+  "OauthClientResource",
+  "OauthRefreshToken",
+  "OauthAccessToken",
+  "OauthConsent",
+  "OauthClientAssertion",
+  "DeviceCode",
+];
 
 const strippedFields: Readonly<Record<string, readonly string[]>> = {
   Account: ["accessToken", "refreshToken", "idToken", "password"],

@@ -7,7 +7,7 @@ import { countStaffRecords, getStaffRecord, listStaffRecords } from "./records";
 
 const { excludedModels, strippedFields } = staffCredentialPolicy;
 
-// Auth's provider boundary has not landed; queries and scalar validation use the real client.
+// The API route suite verifies real CLI tokens; these tests isolate scalar queries.
 vi.mock("./get-staff-actor", () => ({
   getStaffActor: async () => ({ clientId: "zoonk-cli", status: "ready", userId: "staff-fixture" }),
 }));

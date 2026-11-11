@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logInfo } from "@zoonk/utils/logger";
+import { unstable_rethrow } from "next/navigation";
 import { getStaffActor } from "./get-staff-actor";
 import { StaffInputError } from "./input";
 import { readableFields, readableModels } from "./registry";
@@ -64,18 +65,21 @@ function logCall({
     ?.filter((filter) => fields.some((field) => field.name === filter.field))
     .map((filter) => ({ field: filter.field, op: filter.op }));
 
-  logInfo("[Staff read]", {
-    actorUserId: actor?.userId ?? null,
-    clientId: actor?.clientId ?? null,
-    durationMs: Math.round(performance.now() - started),
-    filters: filters ?? [],
-    model: model?.name ?? null,
-    outcome: result.status,
-    recordId:
-      call.verb === "get" && ["ready", "notFound"].includes(result.status) ? call.id : undefined,
-    rowCount: rows,
-    verb: call.verb,
-  });
+  logInfo(
+    JSON.stringify({
+      actorUserId: actor?.userId ?? null,
+      clientId: actor?.clientId ?? null,
+      durationMs: Math.round(performance.now() - started),
+      event: "staff.read",
+      filters: filters ?? [],
+      model: model?.name ?? null,
+      outcome: result.status,
+      recordId:
+        call.verb === "get" && ["ready", "notFound"].includes(result.status) ? call.id : undefined,
+      rowCount: rows,
+      verb: call.verb,
+    }),
+  );
 }
 
 export async function staffRead<T extends object>({
@@ -87,6 +91,10 @@ export async function staffRead<T extends object>({
 }): Promise<StaffResult<T>> {
   const started = performance.now();
   const { data: actor, error: actorError } = await safeAsync(getStaffActor);
+
+  if (actorError) {
+    unstable_rethrow(actorError);
+  }
 
   if (actorError || !actor || actor.status !== "ready") {
     const result = actorError || !actor ? { status: "error" as const } : actor;

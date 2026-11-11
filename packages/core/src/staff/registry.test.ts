@@ -8,6 +8,24 @@ import { serializeStaffValue } from "./serialize";
 const { excludedModels, reviewedFields, strippedFields } = staffCredentialPolicy;
 
 describe("staff registry", () => {
+  it("includes OAuth token, secret and device-code columns in its DMMF review", () => {
+    const credentials = databaseSchema.models.flatMap((model) =>
+      model.fields
+        .filter((field) => field.kind !== "object" && /token|secret|code/iu.test(field.name))
+        .map((field) => `${model.name}.${field.name}`),
+    );
+
+    expect(credentials).toStrictEqual(
+      expect.arrayContaining([
+        "OauthClient.clientSecret",
+        "OauthRefreshToken.token",
+        "OauthAccessToken.token",
+        "DeviceCode.deviceCode",
+        "DeviceCode.userCode",
+      ]),
+    );
+  });
+
   it("requires a credential review for every suspicious scalar in the Prisma DMMF", () => {
     const unreviewed = databaseSchema.models.flatMap((model) => {
       if (excludedModels.includes(model.name)) {
