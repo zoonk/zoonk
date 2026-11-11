@@ -785,6 +785,13 @@ private struct DateQuestion: View {
           }
 
           noSittingRows(for: date)
+
+          Button {
+            self.date = nil
+          } label: {
+            Text("Remove date", tableName: "Onboarding", comment: "Clears the goal's date")
+              .underline()
+          }
         } else {
           Button {
             date = Calendar.isoLocal.date(byAdding: .month, value: 3, to: .now)
@@ -802,16 +809,15 @@ private struct DateQuestion: View {
       .locksWhileSaving()
 
       StepButtons(
-        canContinue: date != nil,
-        skipLabel: Text(
-          "No date, study everything", tableName: "Onboarding", comment: "Skips the goal's date"),
-        skipIcon: nil
+        continueLabel: date == nil
+          ? Text(
+            "Continue without a date", tableName: "Onboarding",
+            comment: "Saves the goal without a date")
+          : nil
       ) {
-        if let date {
-          onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
-        }
-      } onSkip: {
-        onAnswer(["question": "targetDate", "targetDate": NSNull()])
+        onAnswer([
+          "question": "targetDate", "targetDate": date.map { isoDay($0) as Any } ?? NSNull(),
+        ])
       }
     }
   }

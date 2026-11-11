@@ -10132,14 +10132,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "日付を決めなければ、自分のペースですべて学べます。それぞれの節目にいつ到達するかも表示します。"
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "日付を決めずにすべて学ぶ"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "日付を設定せずに続ける"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "目標日はありますか？"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "日付を削除する"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"

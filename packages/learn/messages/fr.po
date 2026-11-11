@@ -10132,14 +10132,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "Sans date, tu étudies tout à ton rythme et nous t’indiquons quand tu atteins chaque étape."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "Pas de date, tout étudier"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "Continuer sans date"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Tu vises une date précise ?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "Supprimer la date"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"

@@ -54,11 +54,12 @@
   "onboarding_course_starting": "518a65c7afdfa0096a0daf6739e62c5bc38002b1de9e0677cbc85882d25b3363",
   "onboarding_create_account": "ac27f94ba2e9fb3763e2eb55408c08646c6dd14d676ae3845512812e31ec3848",
   "onboarding_create_account_short": "dcd1dc6344997a95fb2e4346e7eb2016ee36ad5096ec47b737000c075e2e2e29",
+  "onboarding_date_continue_without": "e7256ba812f1ff56acefd4febec4cfaf63f18ee76c4d9dcc1b416d4a5c4479d5",
   "onboarding_date_description": "ed8a9ea691509cdfafcf2fe2cdc190fcbc335af04362f2a287be8db63b549689",
   "onboarding_date_is_today": "ae1fd3f636a268e8d7b7b14d5910eb2fa8fe7597b36200a6a594ff33ad622a96",
   "onboarding_date_label": "753446bb6bc9baccedb47dd621c10f3a563c34bb6691b842e48bdf8201f00699",
-  "onboarding_date_none": "c95c96c5656cd6c7a63230278d02cfe255a6ddfb29407881dd43ef5e48ee9f44",
   "onboarding_date_passed": "aefa9fe122f55f592ca34df3a4a0601e13406142577b58ed6a60934fa84499d9",
+  "onboarding_date_remove": "123e999d65750cb49d9b218aa373d70ef703959201066687960d78d52e7c1442",
   "onboarding_date_title": "c7fc37985846506e6ac0a9589f324595da48781c24509ffadeb6a2dab1ed10d0",
   "onboarding_day_too_short": "5efcc947b5edc8c7f3186e3cd59a2f7947f7932bbe10f363676fcefa3bd9a920",
   "onboarding_days": "ca4a5780553711cc9bb6209dafc173716db3e96d7c65df9422c6ac7e6169cbb0",
@@ -530,6 +531,12 @@
     <string name="onboarding_understood_locked_goal">Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Mit kostenlosem Konto verfügbar</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.</string>
     <string name="onboarding_looks_right">Das stimmt so</string>
     <string name="onboarding_fix_something">Etwas ändern</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -957,7 +964,8 @@
     <string name="onboarding_another_date">Ein anderes Datum</string>
     <string name="onboarding_date_title">Strebst du ein bestimmtes Datum an?</string>
     <string name="onboarding_date_description">Ohne Datum lernst du alle Inhalte in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst.</string>
-    <string name="onboarding_date_none">Kein Datum, alle Inhalte lernen</string>
+    <string name="onboarding_date_continue_without">Ohne Termin fortfahren</string>
+    <string name="onboarding_date_remove">Termin entfernen</string>
     <string name="onboarding_date_label">Datum</string>
     <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
     <string name="onboarding_no_date">Kein Datum</string>
@@ -1092,12 +1100,6 @@
     </plurals>
     <string name="onboarding_reason_choices">Warum du die Sprache lernst</string>
     <string name="onboarding_aim_description">Dein Kursziel bestimmt, wie lange dein Plan dauert.</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">Mit kostenlosem Konto verfügbar</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Land</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
