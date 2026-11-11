@@ -10,8 +10,7 @@ type Screen = QuickExplanation["screens"][number];
 type CheckOption = QuickExplanation["check"]["options"][number];
 
 function toExplanationScreen(screen: Screen) {
-  const image = screen.imagePrompt ? { alt: screen.title, prompt: screen.imagePrompt } : undefined;
-  return { image, text: screen.text, title: screen.title };
+  return { image: screen.image ?? undefined, text: screen.text, title: screen.title };
 }
 
 function toCheckOption(option: CheckOption, index: number) {

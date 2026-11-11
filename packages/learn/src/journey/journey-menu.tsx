@@ -14,18 +14,15 @@ import {
   GraduationCapIcon,
   LibraryIcon,
   MessageCircleQuestionIcon,
-  PencilIcon,
   Share2Icon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { useContentFeedback } from "../feedback/feedback-context";
 import { LearnLink } from "../learn-link";
 import { type PlanTutor, usePlanScreen } from "../plan/plan-context";
 import { useSharePlan } from "../plan/use-share-plan";
-import { type GoalStatusChange, type GoalStatusControl, GoalStatusItems } from "./goal-actions";
-import { RenameGoalDialog } from "./rename-goal-dialog";
+import { type GoalMenu, GoalMenuItems } from "./goal-actions";
 
 function ReportItem() {
   const t = useExtracted("feedback");
@@ -66,12 +63,6 @@ function AskTutorItem({ tutor }: { tutor: PlanTutor }) {
   );
 }
 
-type JourneyMenuGoal = {
-  control: GoalStatusControl;
-  onArchive: () => void;
-  onSetStatus: (status: GoalStatusChange) => void;
-};
-
 export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
@@ -82,6 +73,34 @@ export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   );
 }
 
+function PlanMenuTrigger({ busy }: { busy: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <DropdownMenuTrigger
+      render={<Button busy={busy} className="size-7.5" size="icon-sm" variant="outline" />}
+    >
+      <EllipsisIcon aria-hidden="true" />
+      <span className="sr-only">{t("Plan options")}</span>
+    </DropdownMenuTrigger>
+  );
+}
+
+const MENU_CLASS = "w-60";
+
+/** For a goal without a plan yet: only what acts on the goal itself. */
+export function GoalOnlyMenu({ goal }: { goal: GoalMenu }) {
+  return (
+    <DropdownMenu>
+      <PlanMenuTrigger busy={goal.isPending} />
+
+      <DropdownMenuContent align="end" className={MENU_CLASS}>
+        <GoalMenuItems menu={goal} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function JourneyMenu({
   courseHref,
   examHref,
@@ -89,74 +108,49 @@ export function JourneyMenu({
 }: {
   courseHref: string | null;
   examHref: string | null;
-  goal: JourneyMenuGoal | null;
+  goal: GoalMenu;
 }) {
   const t = useExtracted();
   const share = useSharePlan();
-  const { tutor, goal: planGoal } = usePlanScreen();
-  const [renaming, setRenaming] = useState(false);
+  const { tutor } = usePlanScreen();
 
   return (
-    <>
-      {renaming && goal?.control.onRename && (
-        <RenameGoalDialog
-          displayName={planGoal.displayName}
-          onRename={goal.control.onRename}
-          onClose={() => setRenaming(false)}
-        />
-      )}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={<Button className="size-7.5" size="icon-sm" variant="outline" />}
-        >
-          <EllipsisIcon aria-hidden="true" />
-          <span className="sr-only">{t("Plan options")}</span>
-        </DropdownMenuTrigger>
+    <DropdownMenu>
+      <PlanMenuTrigger busy={goal.isPending} />
 
-        <DropdownMenuContent align="end" className="w-60">
-          {examHref && (
-            <DropdownMenuItem render={<LearnLink href={examHref} />}>
-              <GraduationCapIcon aria-hidden="true" />
-              {t("About the exam")}
-            </DropdownMenuItem>
-          )}
-
-          {courseHref && (
-            <DropdownMenuItem render={<LearnLink href={courseHref} />}>
-              <LibraryIcon aria-hidden="true" />
-              {t("See the full course")}
-            </DropdownMenuItem>
-          )}
-
-          {(examHref || courseHref) && <DropdownMenuSeparator />}
-
-          <DropdownMenuItem onClick={() => void share()}>
-            <Share2Icon aria-hidden="true" />
-            {t("Share the plan")}
+      <DropdownMenuContent align="end" className={MENU_CLASS}>
+        {examHref && (
+          <DropdownMenuItem render={<LearnLink href={examHref} />}>
+            <GraduationCapIcon aria-hidden="true" />
+            {t("About the exam")}
           </DropdownMenuItem>
+        )}
 
-          {tutor && <AskTutorItem tutor={tutor} />}
+        {courseHref && (
+          <DropdownMenuItem render={<LearnLink href={courseHref} />}>
+            <LibraryIcon aria-hidden="true" />
+            {t("See the full course")}
+          </DropdownMenuItem>
+        )}
 
-          <ReportItem />
+        {(examHref || courseHref) && <DropdownMenuSeparator />}
 
-          {goal && (
-            <>
-              <DropdownMenuSeparator />
-              {goal.control.onRename && planGoal.kind !== "explain" && (
-                <DropdownMenuItem onClick={() => setRenaming(true)}>
-                  <PencilIcon aria-hidden="true" />
-                  {t("Rename goal")}
-                </DropdownMenuItem>
-              )}
-              <GoalStatusItems
-                control={goal.control}
-                onArchive={goal.onArchive}
-                onSetStatus={goal.onSetStatus}
-              />
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        <DropdownMenuItem onClick={() => void share()}>
+          <Share2Icon aria-hidden="true" />
+          {t("Share the plan")}
+        </DropdownMenuItem>
+
+        {tutor && <AskTutorItem tutor={tutor} />}
+
+        <ReportItem />
+
+        {goal.control && (
+          <>
+            <DropdownMenuSeparator />
+            <GoalMenuItems menu={goal} />
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { imageRequestSchema } from "../images/image-request-schema";
 import {
   QUICK_EXPLANATION_MAX_SCREENS,
   QUICK_EXPLANATION_MIN_SCREENS,
@@ -28,10 +29,11 @@ const MAX_CHECK_OPTIONS = 4;
 const MAX_RELATED_QUESTIONS = 3;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order; the story comes before the check and the ending. */
-const schema = z.object({
+export const quickExplanationSchema = z.object({
   title: z.string(),
+  description: z.string(),
   screens: z
-    .array(z.object({ title: z.string(), text: z.string(), imagePrompt: z.string().nullable() }))
+    .array(z.object({ title: z.string(), text: z.string(), image: imageRequestSchema }))
     .min(QUICK_EXPLANATION_MIN_SCREENS)
     .max(QUICK_EXPLANATION_MAX_SCREENS),
   check: z.object({
@@ -49,7 +51,7 @@ const schema = z.object({
 });
 /* oxlint-enable eslint/sort-keys */
 
-export type QuickExplanation = z.infer<typeof schema>;
+export type QuickExplanation = z.infer<typeof quickExplanationSchema>;
 
 export type QuickExplanationParams = {
   question: string;
@@ -88,7 +90,7 @@ ${formatUntrustedInput({ QUESTION: question })}
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: quickExplanationSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,

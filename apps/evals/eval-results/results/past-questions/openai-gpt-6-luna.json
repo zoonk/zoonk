@@ -276,36 +276,36 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Independent calculations confirm only 150 A, 167 A and 180 C. The keys for 138, 158 and 160 contradict both the mathematics and the supplied official key. The wrong-key cap of 5 applies; three incorrect keys out of six warrant a lower score.",
-          "score": 3,
+          "reasoning": "Two of six keys are wrong, triggering the maximum score of 5. Question 138 requires 64 additional white balls, not 80; question 160 has the most possibilities for type I, not type II. The other keys are correct: 137 gives R$ 3,250; 150 gives C = 0.9q; 167 requires approximately 5.17%; and 180 has its maximum two-month average in December–January.",
+          "score": 4,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "All selected questions are within Mathematics, fit their tagged skills and are answerable without unavailable visual information. However, eligible questions are omitted without explanation while only six slots are used: 137 has a complete salary table, 143 tests percentage changes, and 161 tests compound interest. The omission cap of 8 applies.",
+          "reasoning": "All six selected questions are mathematics items aligned with their tagged skills, and their numerical data are available without missing images. The annulled question is excluded. However, eligible questions such as 143 and 168 are omitted without explanation despite unused capacity, triggering the maximum score of 8. Returning fewer than ten is not itself a violation.",
           "score": 8,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Every option has Portuguese feedback, generally addressing the learner as você, and several explanations are useful. However, the feedback for 138 ignores the existing white balls, 158 misreads the catch increase, and 160 falsely compares password counts. These errors actively teach incorrect methods and reject correct choices. Some misconception labels also describe choices rather than diagnose mistakes, triggering the generic-misconception cap of 7.",
+          "reasoning": "Every option has feedback, and most explanations use Portuguese and address the learner directly. However, the explanations systematically teach incorrect reasoning in questions 138 and 160. Question 167 introduces a nonexistent 20% increase, and question 150 misidentifies the complementary percentage. Several misconception labels merely describe failing to meet a limit or using an incorrect total, triggering the generic-feedback cap of 7. These substantive inaccuracies warrant a lower score.",
           "score": 4,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "Every citation identifies Enem 2023, the second day and the question number. The copied wording and options follow the supplied paper text, glued words have been separated, and question 150 retains its source credit. No applicable citation or credit cap is triggered.",
-          "score": 10,
+          "reasoning": "All citations identify Enem 2023, the second day, and the question number. Word spacing is restored, and question 150 retains its source credit. However, question 137 drops the entire original paragraph explaining the two sectors and equal salaries within each sector, so its context is not copied completely.",
+          "score": 7,
           "label": "Citation, credit and copy",
           "weight": 20
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "6 of 7 parts passed. Question 137: Shows table pipes as text, since the rows have no header and |---| line: \"| Setor | Quantidade de funcionários | Salário (em real) |\". Question 137: Shows table pipes as text, since the rows have no header and |---| line: \"| Produção | 75 | 2 000,00 |\". Question 137: Shows table pipes as text, since the rows have no header and |---| line: \"| Administração | 25 | 7 000,00 |\".",
+          "reasoning": "6 of 7 parts passed. Question 161: The command isn't in the paper as printed.",
           "score": 8.714285714285714,
           "weight": 30
         }
@@ -316,9 +316,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 1172,
-          "inputTokens": 29999,
-          "outputTokens": 1454,
-          "reasoningTokens": 453
+          "inputTokens": 29737,
+          "outputTokens": 1521,
+          "reasoningTokens": 332
         }
       },
       "keyFlaws": [
@@ -326,34 +326,40 @@
           "itemLocator": "questions[1].item (question 138)",
           "keyedAnswer": "E — 80",
           "kind": "wrongKey",
-          "workedAnswer": "Four black balls at a 25% probability mean urn B initially contains 16 balls, including 12 white ones. Adding x white balls requires 0.20 × 4/(16 + x) ≤ 0.01, giving x ≥ 64. The correct answer is C."
+          "workedAnswer": "Initially urna B contains 4/0.25 = 16 balls, including 12 white balls. Adding x white balls gives a winning probability of 0.20 × 4/(16 + x). Requiring this to be at most 0.01 yields x ≥ 64. Therefore C is correct."
         },
         {
-          "itemLocator": "questions[3].item (question 158)",
-          "keyedAnswer": "B — 2.",
-          "kind": "wrongKey",
-          "workedAnswer": "With n helpers, the catch is 300 + 100(n − 1) kg. Revenue is 1000 + 500n reais, and profit is 0.96(1000 + 500n) − 900 − 250n = 60 + 230n. Three helpers yield R$750; four yield R$980. The minimum is four helpers, D."
+          "itemLocator": "questions[2].item (question 150)",
+          "keyedAnswer": "A — C = 0,9q",
+          "kind": "factualError",
+          "workedAnswer": "The key is correct because 90% of q is 0.9q. However, option B's explanation calls 10% the amount remaining after the reduction. Under the stated model, 90% remains represented by C; the complementary 10% is the reduction, not the remaining amount."
         },
         {
-          "itemLocator": "questions[4].item (question 160)",
+          "itemLocator": "questions[3].item (question 160)",
           "keyedAnswer": "C — tipo II, pois tem maior quantidade de letras.",
           "kind": "wrongKey",
-          "workedAnswer": "Using the stated six special characters, the password counts are N1 = 68×67×66×65 = 19,545,240; N2 = 52×51×50×10×6 = 7,956,000; and N3 = 52×51×10×9×6×5 = 7,160,400. Since each probability is 1/N, p1 < p2 < p3. The correct answer is A, type I."
+          "workedAnswer": "There are 68 permitted characters. Type I has 68 × 67 × 66 × 65 = 19,545,240 passwords; type II has 52 × 51 × 50 × 10 × 6 = 7,956,000; type III has 52 × 51 × 10 × 9 × 6 × 5 = 7,160,400. Taking reciprocals gives p1 < p2 < p3, so A is correct."
+        },
+        {
+          "itemLocator": "questions[5].item (question 167)",
+          "keyedAnswer": "A — (5,0 ; 5,5).",
+          "kind": "factualError",
+          "workedAnswer": "The correct calculation is 6,000/1,200 = 5 sheets per student, requiring 5,750 sheets, or 58 packages costing R$232. The discount is 12/232 × 100 ≈ 5.17%, confirming A. However, option D's explanation invents a 20% increase in sheets per student; the per-student allocation is unchanged."
         }
       ],
       "steps": [
         {
-          "conclusion": "Three of the six questions have wrong keys and misleading explanations: question 138 requires 64 additional balls (C), question 158 requires four helpers (D), and question 160 favors password type I (A). The selection also omits eligible, self-contained questions without explanation, including 137, 143 and 161, despite returning only six questions.",
+          "conclusion": "Questions 138 and 160 have wrong keys and misleading explanations: their correct answers are C (64 additional balls) and A (type I), respectively. Question 167 invents a 20% increase in sheets per student, and question 150 incorrectly describes the complementary 10% as the amount remaining.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Some misconception labels describe an unsuccessful choice rather than identify its underlying mistake. For example, question 180's November label merely describes choosing a pair with lower precipitation.",
+          "conclusion": "Question 137 omits the original introductory paragraph. Several distractor explanations use generic diagnoses such as an incorrect calculation base rather than identifying the actual mistake. Question 138's wrong-option feedback does not address the learner as 'você'.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Show the actual password counts in question 160 and a short helper-count/profit comparison in question 158. Make distractor feedback distinguish the mathematical error that produces each choice, rather than simply saying that another choice works better.",
+          "conclusion": "Use the remaining capacity for eligible questions, notably question 143 on percentage changes and question 168 on probability. Show all three password counts in question 160 and distinguish existing, added, and final ball counts in question 138.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -392,28 +398,28 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "The sole included question is correctly keyed to Dylan. Increasing by 5% each month multiplies the current amount by 1.05, whereas the other scenarios specify constant additive changes.",
-          "score": 10,
+          "reasoning": "Questions 3, 4, and 7 have correct keys: constant 5% growth is exponential; Andrea's mean is 85.75 versus Joe's 82.5 while Joe has greater spread; and (60 − 12)/(12 − 4) = 6. Question 14's rational answer correctly solves the corrupted displayed stem, but disagrees with the original exam answer identified by the expectations. The requirement to preserve the paper's key therefore triggers the cap of 5.",
+          "score": 5,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "Question 3 correctly tests skill 1, and no ineligible questions are included. However, eligible questions 4 and 7 are omitted without reason, triggering the maximum score of 8. These omissions leave skills 2 and 3 unassessed. Leaving skill 4 without a question is appropriate.",
-          "score": 8,
+          "reasoning": "All three eligible questions are included and correctly tagged. Missing-figure and other garbled questions are otherwise excluded. However, question 14 is expressly prohibited because its radicals are missing. Including it triggers the cap of 6.",
+          "score": 6,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Every option has learner-directed US English feedback. The wrong-option explanations identify constant-amount versus constant-percent confusion, and their misconception labels are specific and neutral. The correct explanation states the defining exponential relationship. The minor weakness is describing Kirsten’s decreasing quantity as 'exponential growth' rather than 'exponential change.'",
-          "score": 8,
+          "reasoning": "Most explanations are accurate, learner-directed, and identify useful distinctions or calculation errors. However, the misconception for question 7's option 58 merely labels the rate as inconsistent with the table rather than identifying a specific mistake, triggering the generic-misconception cap of 7. That option's explanation also omits direct address to the learner.",
+          "score": 7,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "The citation identifies the Algebra I Regents examination, June 2025, and question 3. The stem and all four options faithfully reproduce the supplied wording without option numbers or glued words. No support-text credit is missing.",
+          "reasoning": "Every citation names the Regents Examination in Algebra I, June 2025, and the original question number. Quoted wording matches the supplied text, options omit their numbers and retain the correct associations, and both tables have headers, separator lines, and separate data rows. The computation-space notes are omitted, with no glued words or missing source credits.",
           "score": 10,
           "label": "Citation, credit and copy",
           "weight": 20
@@ -421,42 +427,42 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "1 of 3 parts passed. Question 4: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table. Question 4: The support text isn't in the paper as printed. Question 7: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table. Question 7: The support text isn't in the paper as printed.",
-          "score": 4,
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
-      "itemsScored": 1,
+      "itemsScored": 4,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 1117,
-          "cacheWriteTokens": 0,
-          "inputTokens": 7425,
-          "outputTokens": 710,
-          "reasoningTokens": 215
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1150,
+          "inputTokens": 9001,
+          "outputTokens": 950,
+          "reasoningTokens": 325
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Questions 4 and 7 are missing without justification. Both are explicitly required, have readable tables, and test listed skills. The result therefore provides only one of the three eligible questions.",
+          "conclusion": "Question 14 is included despite the explicit requirement to omit it because its square roots were lost. Keying the corrupted question as rational makes the displayed arithmetic correct, but changes the original exam answer. Only questions 3, 4, and 7 should have been retained, with skill 4 unrepresented.",
           "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Question 7's feedback for 58 disproves the answer but does not identify a specific underlying mistake. Its misconception label is generic, and this explanation does not address the learner as \"you.\"",
+          "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "The feedback for Kirsten’s option calls a weekly loss 'exponential growth.' Use 'exponential change' instead so the explanation isolates the actual mistake: confusing a constant amount with a constant percent.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "None",
+          "conclusion": "Question 4's feedback could make the spread comparison more concrete by giving the standard deviations or illustrating how Joe's scores deviate farther from their mean.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
+        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Question 4 copies its scores as a table that shows as one (the header row, a --- line, then one row per line), without the page's \"Use this space for computations.\" note. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
         "id": "en-algebra-one-regents-june-2025-full-1",
         "userInput": {
           "count": 10,

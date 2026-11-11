@@ -152,6 +152,7 @@ msgstr "Günlük çalışma süresi"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -2402,7 +2403,6 @@ msgid "Chapter options"
 msgstr "Ünite seçenekleri"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -4536,6 +4536,12 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "Ücretsiz pakette aynı anda tek hedef üzerinde çalışabilirsin. Bu hedefe devam etmek için diğer hedefini duraklat veya daha fazla hedef için Plus’a geç."
 
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "Hedefin adını değiştir"
+
+#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "Bu hedefi duraklat"
@@ -4556,6 +4562,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} hedefine devam etmek ister misin?"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Devam et"
@@ -4576,11 +4583,13 @@ msgid "Archive"
 msgstr "Arşivle"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "{goal} hedefin duraklatıldı"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4730,12 +4739,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "Planı paylaş"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "Hedefin adını değiştir"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4816,12 +4819,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "Deneme sınavı"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "Planından önce birkaç soru"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "Soruları cevapla, hedefine ulaşana kadar günlük planını hazırlayacağız."
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · Planını hazırlıyoruz"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "Genellikle bir iki dakika sürer. Planın hazır olur olmaz burada açılır."
@@ -14085,6 +14098,11 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "Bir hedefi duraklat veya Plus’a geç"
+
+#: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
 msgid "Starts with Plus"
 msgstr "Plus ile başlar"
@@ -14125,6 +14143,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "Hedefini değiştiremedik. Tekrar dene."
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "Bu hedefi başlatamadık. Tekrar dene."
@@ -14135,6 +14154,7 @@ msgid ", current goal. Switch goal"
 msgstr ", şu anki hedefin. Hedef değiştir"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "Hedeflerin"
@@ -14168,6 +14188,31 @@ msgstr "{done, plural, =0 {Bugün # / {total} görev} other {Bugün # / {total} 
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Öğrenme sekmeleri"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "Duraklat"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "{goal} için yer aç"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "Ücretsiz paketteki hedef sınırına ulaştın. {goal} hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin."
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "Kapat"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus’a geç"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx

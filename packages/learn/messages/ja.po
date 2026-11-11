@@ -152,6 +152,7 @@ msgstr "1日の学習時間"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -2402,7 +2403,6 @@ msgid "Chapter options"
 msgstr "章のオプション"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -4536,6 +4536,12 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "無料プランで進められる目標は一度に1つです。この目標を再開するには、ほかの目標を一時停止するか、複数の目標を進められるPlusに登録してください。"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "目標の名前を変更"
+
+#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "この目標を一時停止する"
@@ -4556,6 +4562,7 @@ msgid "Resume your {goal} goal?"
 msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "再開する"
@@ -4576,11 +4583,13 @@ msgid "Archive"
 msgstr "アーカイブする"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "目標「{goal}」は一時停止中です"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4730,12 +4739,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "学習計画を共有する"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "目標の名前を変更"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4816,12 +4819,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "模試"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "学習計画を作る前に、いくつか質問があります"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "質問への回答をもとに、目標達成までの毎日の学習計画を立てます。"
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · 学習計画を作成しています"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "通常は1〜2分かかります。学習計画ができ次第、ここに表示されます。"
@@ -14085,6 +14098,11 @@ msgid ", {variety}"
 msgstr "、{variety}"
 
 #: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "目標を一時停止するか、Plusに登録する"
+
+#: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.MIqzZd"
 msgid "Starts with Plus"
 msgstr "Plusで始められます"
@@ -14125,6 +14143,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "目標を切り替えられませんでした。もう一度試してください。"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "この目標を始められませんでした。もう一度お試しください。"
@@ -14135,6 +14154,7 @@ msgid ", current goal. Switch goal"
 msgstr "、現在の目標。目標を切り替える"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "目標"
@@ -14168,6 +14188,31 @@ msgstr "{done, plural, =0 {今日は#件のミッションが完了（全{total}
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "学習タブ"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "一時停止"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "{goal}を始めるには"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "無料プランで同時に進められる目標数の上限に達しています。{goal}を始めるには、目標を1つ一時停止してください。一時停止した目標は、あとで再開できます。"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "閉じる"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plusに登録する"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx

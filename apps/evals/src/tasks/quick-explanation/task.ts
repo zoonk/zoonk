@@ -4,15 +4,21 @@ import {
   type QuickExplanation,
   type QuickExplanationParams,
   generateQuickExplanation,
+  quickExplanationSchema,
 } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { checkQuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation-checks";
+import { z } from "zod";
 import { QUICK_EXPLANATION_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
 const QUICK_EXPLANATION_LATENCY_BUDGET = { p50: 12, p95: 18 };
 
 function checkOutput(output: string): CodeCheckResult {
-  const problems = checkQuickExplanation(JSON.parse(output) as QuickExplanation);
+  const parsed = quickExplanationSchema.safeParse(JSON.parse(output));
+
+  const problems = parsed.success
+    ? checkQuickExplanation(parsed.data)
+    : [`The output doesn't match the task's schema: ${z.prettifyError(parsed.error)}`];
 
   return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
 }

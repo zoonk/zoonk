@@ -32,8 +32,7 @@ import {
   decidePlanChangeAction,
   previewPlanChangeAction,
 } from "./journey-actions";
-import { JourneyBuildingClient, JourneyClient } from "./journey-client";
-import { JourneySetup } from "./journey-setup";
+import { JourneyBuildingClient, JourneyClient, JourneySetupClient } from "./journey-client";
 import { PlanNoGoal } from "./plan-no-goal";
 import { PlanSkeleton } from "./plan-skeleton";
 
@@ -104,18 +103,22 @@ async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" |
   return hasOnboardingQuestions(steps) ? "setup" : "building";
 }
 
-async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
-  const stage = await loadPlanlessStage(goalId);
+async function JourneyWithoutPlan({
+  goal,
+}: {
+  goal: { displayName: string; id: string; status: string };
+}) {
+  const stage = await loadPlanlessStage(goal.id);
 
   if (!stage) {
     return <PlanNoGoal />;
   }
 
-  if (stage === "setup") {
-    return <JourneySetup goalId={goalId} goalTitle={goalTitle} />;
-  }
+  const Planless = stage === "setup" ? JourneySetupClient : JourneyBuildingClient;
 
-  return <JourneyBuildingClient goalId={goalId} goalTitle={goalTitle} />;
+  return (
+    <Planless goalId={goal.id} goalStatus={getGoalStatus(goal)} goalTitle={goal.displayName} />
+  );
 }
 
 async function JourneyContent() {
@@ -145,11 +148,7 @@ async function JourneyContent() {
   }
 
   if (result.status !== "ready" || !result.view.plan.ready) {
-    return activeGoal ? (
-      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.displayName} />
-    ) : (
-      <PlanNoGoal />
-    );
+    return activeGoal ? <JourneyWithoutPlan goal={activeGoal} /> : <PlanNoGoal />;
   }
 
   const { goal, plan } = result.view;

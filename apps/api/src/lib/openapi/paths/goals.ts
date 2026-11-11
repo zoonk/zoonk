@@ -42,7 +42,7 @@ export const goalPaths = {
     },
     post: {
       description:
-        "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free learners follow one active goal); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). The first new goal becomes the one the tabs show. Research starts for exam and learn goals.",
+        "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free learners follow one active goal); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). `pauseGoalId` makes room by pausing one of the learner's active goals in the same write, so a refused start pauses nothing. The first new goal becomes the one the tabs show. Research starts for exam and learn goals.",
       operationId: "createGoals",
       requestBody: {
         content: { "application/json": { schema: goalCreateInputSchema } },

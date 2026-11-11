@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { endLessonsAsk } from "../../lookahead/lessons-ask";
 import { keepPaceOwn } from "../../plans/_test-utils/keep-pace-own";
@@ -269,7 +270,7 @@ describe(chooseExamOption, () => {
   });
 
   it("keeps the option for the planner when the plan isn't built yet", async () => {
-    const { goal, plan } = await setup({ built: false });
+    const { goal, plan, user } = await setup({ built: false });
 
     await expect(chooseExamOption({ goalId: goal.id, input: spanish })).resolves.toStrictEqual({
       change: null,
@@ -279,6 +280,8 @@ describe(chooseExamOption, () => {
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
       { group: FOREIGN, subjects: [SPANISH] },
     ]);
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
   });
 
   it("refuses an option the exam doesn't offer, and a choice it doesn't have", async () => {

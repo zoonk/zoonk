@@ -3,7 +3,7 @@ import { type QuickExplanation } from "./quick-explanation";
 import { checkQuickExplanation } from "./quick-explanation-checks";
 
 function screen(index: number) {
-  return { imagePrompt: null, text: `Idea number ${index}.`, title: `Idea ${index}` };
+  return { image: null, text: `Idea number ${index}.`, title: `Idea ${index}` };
 }
 
 const validExplanation: QuickExplanation = {
@@ -15,6 +15,7 @@ const validExplanation: QuickExplanation = {
     ],
     question: "What gets hot first?",
   },
+  description: "Why food in a microwave gets hot while the plate stays cool.",
   goFurther: {
     overviewCourse: "Physics",
     relatedQuestions: ["Why does metal spark?", "Is it safe?"],
@@ -94,6 +95,24 @@ describe(checkQuickExplanation, () => {
     expect(checkQuickExplanation(explanation)).toStrictEqual([
       "Two screens share a title.",
       "Two recap bullets are the same.",
+    ]);
+  });
+
+  it("requires a description and alt text on every picture", () => {
+    const blank = {
+      ...validExplanation,
+      description: " ",
+      screens: [
+        { ...screen(1), image: { alt: " ", prompt: "A bowl of soup in a microwave" } },
+        screen(2),
+        screen(3),
+        screen(4),
+      ],
+    };
+
+    expect(checkQuickExplanation(blank)).toStrictEqual([
+      "The description is empty.",
+      "A picture has an empty prompt or alt text.",
     ]);
   });
 });

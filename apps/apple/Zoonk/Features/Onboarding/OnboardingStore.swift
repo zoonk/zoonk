@@ -169,10 +169,14 @@ final class OnboardingStore {
         timeZone: timeZone))
   }
 
-  func startWaitingGoal(_ goal: LearnerWaitingGoal) async throws -> String {
+  /// `pausing` pauses that goal in the same write; a start the server refuses pauses nothing.
+  func startWaitingGoal(_ goal: LearnerWaitingGoal, pausing pausedGoalID: String? = nil)
+    async throws -> String
+  {
     var input: Components.Schemas.GoalCreateInput = try PracticeJSON.recode(goal.input)
     input.timeZone = TimeZone.current.identifier
-    return try await create(input)
+    input.pauseGoalId = pausedGoalID
+    return try await create(input, alsoInvalidating: pausedGoalID == nil ? [] : [.learnerModel])
   }
 
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
@@ -463,8 +467,12 @@ final class OnboardingStore {
     onboarding(goalID: goalID).invalidate()
   }
 
-  private func create(_ input: Components.Schemas.GoalCreateInput) async throws -> String {
-    let response = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+  private func create(
+    _ input: Components.Schemas.GoalCreateInput, alsoInvalidating domains: Set<DataDomain> = []
+  ) async throws -> String {
+    let response = try await cache.onboardingWrite(
+      invalidating: domains.union([.goals, .learningProfile])
+    ) {
       [api] identity in
       try await api.createGoals(input, token: identity.bearerToken)
     }

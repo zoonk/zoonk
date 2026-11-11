@@ -26,15 +26,15 @@ export const QUICK_EXPLANATION_SCORE_CATEGORIES = defineScoreCategories([
     weight: 15,
   },
   {
-    expectations: `The single check makes the reader use the main idea in a new situation rather than repeat a sentence, has one clearly correct option, options similar in length and tone, and feedback that says why each option is right or wrong.`,
+    expectations: `The single check makes the reader use the main idea in a new situation rather than repeat a sentence, has one clearly correct option, options similar in length and tone, and feedback that says why each option is right or wrong. Score at most 5 when the right option restates the situation the question describes in other words, so a reader can pick it by matching words without using the idea.`,
     id: "check",
     label: "The check",
     weight: 10,
   },
   {
-    expectations: `The "Now you know" recap has 3 short bullets that match what the story taught, in order. "Want to go further?" names a sensible broad beginner course for the question and 2 or 3 natural follow-up questions. The title is short, neutral and recognizable by anyone asking the same thing.`,
+    expectations: `The "Now you know" recap has 3 short bullets that match what the story taught, in order. "Want to go further?" names a sensible broad beginner course for the question and 2 or 3 natural follow-up questions. The title is short, neutral and recognizable by anyone asking the same thing, and the description is one plain sentence saying what the explanation answers, not a screen's title or the question's personal wording. Every picture's alt text says in one sentence what that picture shows, for someone who can't see it; score at most 6 when an alt only repeats its screen's title.`,
     id: "ending",
-    label: "Recap, go further and title",
+    label: "Recap, go further, title, description and alt text",
     weight: 10,
   },
 ]);
