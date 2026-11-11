@@ -1,0 +1,14 @@
+{
+  "lesson-spec": {
+    "carbon": 3,
+    "openai-gpt-6.1-sol": 1
+  },
+  "challenge-case": {
+    "openai-gpt-6.1-sol": 1,
+    "carbon": 5
+  },
+  "lesson-fix": {
+    "tie": 4,
+    "carbon": 2
+  }
+}

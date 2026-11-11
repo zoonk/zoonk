@@ -1,0 +1,23 @@
+
+=== Starting Battle Mode for task: Lesson Writer ===
+
+Ranking 3 models
+
+=== Battle Mode Complete ===
+Top 3 models:
+
+### Lesson Writer (lesson-writer), battle on 4 case-runs (saved)
+
+| Model | Average | by claude-opus-5.5 | by gemini-4-argon | by gpt-6-astra | Accuracy | Engaging, not a textbook | Clarity | Checks & feedback | Level, hook & application | Failed | p50 | Cost |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Head to head, inside each judge's panel (first minus second; a case's runs averaged first):
+
+| Judge | First vs second | Wins / ties / losses | Difference | ±95% | Δ Accuracy | Δ Engaging, not a textbook | Δ Clarity | Δ Checks & feedback | Δ Level, hook & application | Cases |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+No saved judgment for these outputs and models: en-ux-goals-spot-ai-1, pt-camaras-do-coracao-beginner-1, en-major-minor-by-ear-1, pt-demanda-ovos-deslocamento-1.
+
+Writing: $0.9094. Judges: $0.0000.
+
+Saved runs cost: $0.9094.

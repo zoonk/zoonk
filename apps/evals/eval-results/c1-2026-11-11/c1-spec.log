@@ -1,0 +1,109 @@
+$ tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts --task lesson-spec --model google/gemini-4-carbon --model openai/gpt-6.1-sol --model openai/gpt-6.1-terra --model anthropic/claude-opus-5.5 --limit 4 --fresh
+
+Generating outputs for task: Lesson Spec, model: [google/gemini-4-carbon]
+Total test cases: 4 (4 runs)
+Found 0 existing outputs
+Generating 4 new outputs
+Generating output for: en-tax-deadlines-sourced (run 1)
+Generating output for: pt-estabilidade-sourced (run 1)
+Generating output for: es-tablas-dinamicas-beginner (run 1)
+Generating output for: pt-enzimas-exam-prep-activities (run 1)
+Saved 4 total outputs
+
+Starting eval for task: Lesson Spec, model: [google/gemini-4-carbon]
+Found 4 outputs to score
+Found 0 existing scored results
+Scoring 4 outputs
+Scoring output: en-tax-deadlines-sourced-1
+Scoring output: pt-estabilidade-sourced-1
+Scoring output: es-tablas-dinamicas-beginner-1
+Scoring output: pt-enzimas-exam-prep-activities-1
+Score: 6.884615384615385
+Score: 9.076923076923077
+Score: 8.23076923076923
+Score: 7.769230769230769
+Saved 4 total scored results
+
+Generating outputs for task: Lesson Spec, model: [openai/gpt-6.1-sol]
+Total test cases: 4 (4 runs)
+Found 38 existing outputs
+Generating 4 new outputs
+Generating output for: en-tax-deadlines-sourced (run 1)
+Generating output for: pt-estabilidade-sourced (run 1)
+Generating output for: es-tablas-dinamicas-beginner (run 1)
+Generating output for: pt-enzimas-exam-prep-activities (run 1)
+Saved 42 total outputs
+
+Starting eval for task: Lesson Spec, model: [openai/gpt-6.1-sol]
+Found 42 outputs to score
+Found 38 existing scored results
+Scoring 4 outputs
+Scoring output: en-tax-deadlines-sourced-1
+Scoring output: pt-estabilidade-sourced-1
+Scoring output: es-tablas-dinamicas-beginner-1
+Scoring output: pt-enzimas-exam-prep-activities-1
+Score: 8.923076923076923
+Score: 9.615384615384615
+Score: 8.73076923076923
+Score: 9.615384615384615
+Saved 42 total scored results
+
+Generating outputs for task: Lesson Spec, model: [openai/gpt-6.1-terra]
+Total test cases: 4 (4 runs)
+Found 51 existing outputs
+Generating 4 new outputs
+Generating output for: en-tax-deadlines-sourced (run 1)
+Generating output for: pt-estabilidade-sourced (run 1)
+Generating output for: es-tablas-dinamicas-beginner (run 1)
+Generating output for: pt-enzimas-exam-prep-activities (run 1)
+Saved 55 total outputs
+
+Starting eval for task: Lesson Spec, model: [openai/gpt-6.1-terra]
+Found 55 outputs to score
+Found 48 existing scored results
+Scoring 4 outputs
+Scoring output: en-tax-deadlines-sourced-1
+Scoring output: pt-estabilidade-sourced-1
+Scoring output: es-tablas-dinamicas-beginner-1
+Scoring output: pt-enzimas-exam-prep-activities-1
+Score: 9.461538461538462
+Score: 9.384615384615385
+Score: 8.846153846153847
+Score: 8.884615384615385
+Saved 52 total scored results
+
+Generating outputs for task: Lesson Spec, model: [anthropic/claude-opus-5.5]
+Total test cases: 4 (4 runs)
+Found 12 existing outputs
+Generating 4 new outputs
+Generating output for: en-tax-deadlines-sourced (run 1)
+Generating output for: pt-estabilidade-sourced (run 1)
+Generating output for: es-tablas-dinamicas-beginner (run 1)
+Generating output for: pt-enzimas-exam-prep-activities (run 1)
+Saved 16 total outputs
+
+Starting eval for task: Lesson Spec, model: [anthropic/claude-opus-5.5]
+Found 16 outputs to score
+Found 12 existing scored results
+Scoring 4 outputs
+Scoring output: en-tax-deadlines-sourced-1
+Scoring output: pt-estabilidade-sourced-1
+Scoring output: es-tablas-dinamicas-beginner-1
+Scoring output: pt-enzimas-exam-prep-activities-1
+Score: 6
+Score: 8.26923076923077
+Score: 9.076923076923077
+Score: 8.423076923076923
+Saved 16 total scored results
+
+### Lesson Spec (lesson-spec)
+
+Recorded attempts are a lower bound for historical runs: older failures may not have been saved.
+| Model | Kind | Scored / sampled | Attempted (recorded) | Generated | Generation failures | Judge-flagged key flaws | Avg score (scored outputs) | Accuracy | Per label (correct/total) | EN | PT | p50 | p95 | Spent | Cost / 1k runs | Case links |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gemini-4-carbon | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 7.99 | — | — | 9.08 (1) | 8.00 (2) | 267.35s | 1121.91s | $1.67 | $268.16 | [en-tax-deadlines-sourced-1](/tasks/lesson-spec/google%2Fgemini-4-carbon#case-en-tax-deadlines-sourced-1), [pt-estabilidade-sourced-1](/tasks/lesson-spec/google%2Fgemini-4-carbon#case-pt-estabilidade-sourced-1), [es-tablas-dinamicas-beginner-1](/tasks/lesson-spec/google%2Fgemini-4-carbon#case-es-tablas-dinamicas-beginner-1), [pt-enzimas-exam-prep-activities-1](/tasks/lesson-spec/google%2Fgemini-4-carbon#case-pt-enzimas-exam-prep-activities-1) |
+| gpt-6.1-sol | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 9.22 | — | — | 9.62 (1) | 9.27 (2) | 102.34s | 213.66s | $0.9185 | $81.79 | [en-tax-deadlines-sourced-1](/tasks/lesson-spec/openai%2Fgpt-6.1-sol#case-en-tax-deadlines-sourced-1), [pt-estabilidade-sourced-1](/tasks/lesson-spec/openai%2Fgpt-6.1-sol#case-pt-estabilidade-sourced-1), [es-tablas-dinamicas-beginner-1](/tasks/lesson-spec/openai%2Fgpt-6.1-sol#case-es-tablas-dinamicas-beginner-1), [pt-enzimas-exam-prep-activities-1](/tasks/lesson-spec/openai%2Fgpt-6.1-sol#case-pt-enzimas-exam-prep-activities-1) |
+| gpt-6.1-terra | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 9.14 | — | — | 9.46 (1) | 8.87 (2) | 33.51s | 41.12s | $0.6833 | $24.76 | [en-tax-deadlines-sourced-1](/tasks/lesson-spec/openai%2Fgpt-6.1-terra#case-en-tax-deadlines-sourced-1), [pt-estabilidade-sourced-1](/tasks/lesson-spec/openai%2Fgpt-6.1-terra#case-pt-estabilidade-sourced-1), [es-tablas-dinamicas-beginner-1](/tasks/lesson-spec/openai%2Fgpt-6.1-terra#case-es-tablas-dinamicas-beginner-1), [pt-enzimas-exam-prep-activities-1](/tasks/lesson-spec/openai%2Fgpt-6.1-terra#case-pt-enzimas-exam-prep-activities-1) |
+| claude-opus-5.5 | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 7.94 | — | — | 9.08 (1) | 8.35 (2) | 119.00s | 200.19s | $1.89 | $365.14 | [en-tax-deadlines-sourced-1](/tasks/lesson-spec/anthropic%2Fclaude-opus-5.5#case-en-tax-deadlines-sourced-1), [pt-estabilidade-sourced-1](/tasks/lesson-spec/anthropic%2Fclaude-opus-5.5#case-pt-estabilidade-sourced-1), [es-tablas-dinamicas-beginner-1](/tasks/lesson-spec/anthropic%2Fclaude-opus-5.5#case-es-tablas-dinamicas-beginner-1), [pt-enzimas-exam-prep-activities-1](/tasks/lesson-spec/anthropic%2Fclaude-opus-5.5#case-pt-enzimas-exam-prep-activities-1) |
+
+Prices from the gateway list saved at 2026-11-11T02:17:45.697Z. Total spent: $5.16.

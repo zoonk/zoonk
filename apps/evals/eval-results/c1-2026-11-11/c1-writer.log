@@ -1,0 +1,75 @@
+$ tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts --task lesson-writer --model anthropic/claude-fable-5.2 --model google/gemini-4-carbon --model google/gemini-4-argon --model anthropic/claude-opus-5.5 --limit 4 --battle
+
+Generating outputs for task: Lesson Writer, model: [anthropic/claude-fable-5.2]
+Total test cases: 4 (4 runs)
+
+Generating outputs for task: Lesson Writer, model: [google/gemini-4-carbon]
+Total test cases: 4 (4 runs)
+
+Generating outputs for task: Lesson Writer, model: [google/gemini-4-argon]
+Total test cases: 4 (4 runs)
+
+Generating outputs for task: Lesson Writer, model: [anthropic/claude-opus-5.5]
+Total test cases: 4 (4 runs)
+Found 0 existing outputs
+Generating 4 new outputs
+Generating output for: en-ux-goals-spot-ai (run 1)
+Generating output for: pt-camaras-do-coracao-beginner (run 1)
+Generating output for: en-major-minor-by-ear (run 1)
+Generating output for: pt-demanda-ovos-deslocamento (run 1)
+Found 0 existing outputs
+Generating 4 new outputs
+Generating output for: en-ux-goals-spot-ai (run 1)
+Generating output for: pt-camaras-do-coracao-beginner (run 1)
+Generating output for: en-major-minor-by-ear (run 1)
+Generating output for: pt-demanda-ovos-deslocamento (run 1)
+Found 32 existing outputs
+Generating 1 new outputs
+Generating output for: pt-camaras-do-coracao-beginner (run 1)
+Found 53 existing outputs
+Generating 0 new outputs
+All outputs already generated
+Saved 33 total outputs
+(node:19697) Warning: AI SDK Warning System: To turn off warning logging, set the AI_SDK_LOG_WARNINGS global to false.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19697) Warning: AI SDK Warning (gateway / anthropic/claude-fable-5.2): The feature "responseFormat" is not supported. JSON response format requires a schema. The response format is ignored.
+(node:19697) Warning: AI SDK Warning (gateway / anthropic/claude-fable-5.2): The feature "responseFormat" is not supported. JSON response format requires a schema. The response format is ignored.
+(node:19697) Warning: AI SDK Warning (gateway / anthropic/claude-fable-5.2): The feature "responseFormat" is not supported. JSON response format requires a schema. The response format is ignored.
+(node:19697) Warning: AI SDK Warning (gateway / anthropic/claude-fable-5.2): The feature "responseFormat" is not supported. JSON response format requires a schema. The response format is ignored.
+Saved 4 total outputs
+Saved 4 total outputs
+
+=== Starting Battle Mode for task: Lesson Writer ===
+
+Ranking 4 models
+Battle complete for en-major-minor-by-ear-1
+Battle complete for en-ux-goals-spot-ai-1
+Battle complete for pt-camaras-do-coracao-beginner-1
+Battle complete for pt-demanda-ovos-deslocamento-1
+
+=== Battle Mode Complete ===
+Top 3 models:
+  1. claude-fable-5.2: 8.52 average
+  2. claude-opus-5.5: 8.44 average
+  3. gemini-4-carbon: 7.65 average
+
+### Lesson Writer (lesson-writer), battle on 4 case-runs
+
+| Model | Average | by claude-opus-5.5 | by gemini-4-argon | by gpt-6-astra | Accuracy | Engaging, not a textbook | Clarity | Checks & feedback | Level, hook & application | Code checks | Failed | p50 | Cost |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| claude-fable-5.2 | 8.52 | — | 8.86 | 8.18 | 9.5 | 8.3 | 8.1 | 8.4 | 8.0 | 24/24 parts, 0 problems | 0 | 102.24s | $2.82 |
+| claude-opus-5.5 | 8.44 | — | 8.65 | 8.24 | 9.1 | 8.6 | 7.8 | 8.1 | 8.3 | 24/24 parts, 0 problems | 0 | 40.54s | $0.6190 |
+| gemini-4-carbon | 7.65 | 7.48 | — | 7.83 | 8.5 | 7.5 | 7.0 | 7.8 | 7.3 | 21/24 parts, 3 problems | 0 | 123.96s | $0.6231 |
+
+Head to head, inside each judge's panel (first minus second; a case's runs averaged first):
+
+| Judge | First vs second | Wins / ties / losses | Difference | ±95% | Δ Accuracy | Δ Engaging, not a textbook | Δ Clarity | Δ Checks & feedback | Δ Level, hook & application | Cases |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gemini-4-argon | claude-fable-5.2 vs claude-opus-5.5 | 3 / 0 / 1 | +0.21 | 0.85 | +1.00 | -0.50 | +0.25 | +0.50 | -0.25 | 4 |
+| gpt-6-astra | claude-fable-5.2 vs claude-opus-5.5 | 1 / 0 / 3 | -0.06 | 0.18 | -0.25 | -0.25 | +0.50 | +0.00 | -0.25 | 4 |
+| gpt-6-astra | claude-fable-5.2 vs gemini-4-carbon | 3 / 0 / 1 | +0.35 | 0.66 | +0.50 | +0.00 | +0.75 | +0.00 | +0.50 | 4 |
+| gpt-6-astra | claude-opus-5.5 vs gemini-4-carbon | 3 / 0 / 1 | +0.41 | 0.55 | +0.75 | +0.25 | +0.25 | +0.00 | +0.75 | 4 |
+
+Writing: $3.48. Judges: $1.25.
+
+Total spent: $4.73.
