@@ -3,7 +3,7 @@
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { Page, PageEyebrow, PageHeaderContent, PageTitle } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
 import { type GenerationRun } from "../generation/generation-run";
@@ -20,6 +20,7 @@ import {
 } from "../plan/plan-context";
 import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
+import { PlanFocusTest, type SetTestQuestions } from "../plan/plan-focus-test";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
@@ -27,13 +28,7 @@ import { type PlanEnd } from "../plan/plan-suggestion-context";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
-import {
-  ArchiveGoalDialog,
-  type GoalStatusChange,
-  type GoalStatusControl,
-  ResumeGoalDialog,
-  useSetGoalStatus,
-} from "./goal-actions";
+import { ArchiveGoalDialog, type GoalStatusControl, ResumeGoalDialog } from "./goal-actions";
 import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
@@ -41,6 +36,7 @@ import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet, PlanPlaceRows } from "./plan-sections";
+import { useGoalMenu, usePlanEditor } from "./use-journey-sheets";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -105,56 +101,12 @@ export function JourneyBuilding({
   );
 }
 
-function useGoalMenu(control: GoalStatusControl | null) {
-  const [archiving, setArchiving] = useState(false);
-  const [resuming, setResuming] = useState(false);
-  const { setStatus } = useSetGoalStatus(control?.onSetStatus ?? null);
-  const resumePreview = control?.resume ?? false;
-
-  const archive = () => {
-    setArchiving(false);
-    setStatus("archived");
-  };
-
-  const resume = () => {
-    setResuming(false);
-    setStatus("active");
-  };
-
-  const onSetStatus = (status: GoalStatusChange) => {
-    if (status === "active" && resumePreview) {
-      setResuming(true);
-      return;
-    }
-
-    setStatus(status);
-  };
-
-  const goal = control && { control, onArchive: () => setArchiving(true), onSetStatus };
-
-  return { archive, archiving, goal, resume, resumePreview, resuming, setArchiving, setResuming };
-}
-
-function usePlanEditor(arrival: boolean | PlanEditorSection) {
-  const at = typeof arrival === "string" ? arrival : null;
-  const arrived = { open: arrival !== false, section: at };
-  const [editor, setEditor] = useState<typeof arrived | null>(null);
-
-  // Activity keeps state while the page hides, so a later arrival starts from its requested view.
-  useLayoutEffect(() => () => setEditor(null), []);
-
-  return {
-    editor: editor ?? arrived,
-    open: (section: PlanEditorSection | null = null) => setEditor({ open: true, section }),
-    setOpen: (open: boolean) => setEditor({ open, section: (editor ?? arrived).section }),
-  };
-}
-
 function JourneyBody({
   alphabet,
   end,
   goalStatus,
   links,
+  onSetTestQuestions,
   openAdjust,
   standing,
   syllabus,
@@ -163,6 +115,7 @@ function JourneyBody({
   end: PlanEnd;
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
+  onSetTestQuestions?: SetTestQuestions;
   openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
   syllabus: SyllabusSectionView | null;
@@ -176,6 +129,7 @@ function JourneyBody({
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
   const paused = goalStatus?.status === "paused";
+  const focusTest = <PlanFocusTest onSetTestQuestions={onSetTestQuestions} />;
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
     standing && (
@@ -232,6 +186,7 @@ function JourneyBody({
 
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
+              {focusTest}
               <PlanPlaceRows links={links} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
@@ -241,7 +196,9 @@ function JourneyBody({
               />
             </SyllabusSection>
           ) : (
-            <PathSection alphabet={alphabet} courseHref={courseHref} links={links} />
+            <PathSection alphabet={alphabet} courseHref={courseHref} links={links}>
+              {focusTest}
+            </PathSection>
           )}
         </Page>
 
@@ -279,6 +236,7 @@ export function JourneyScreen({
   goal,
   goalStatus = null,
   links,
+  onSetTestQuestions,
   openAdjust = false,
   openFocus = false,
   openFullCourse = false,
@@ -295,6 +253,8 @@ export function JourneyScreen({
   goal: PlanGoal;
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
+  /** The switch for the Focus test's questions inside sessions, on an exam goal's plan. */
+  onSetTestQuestions?: SetTestQuestions;
   openAdjust?: boolean | PlanEditorSection;
   openFocus?: boolean;
   openFullCourse?: boolean;
@@ -322,6 +282,7 @@ export function JourneyScreen({
           end={end}
           goalStatus={goalStatus}
           links={links}
+          onSetTestQuestions={onSetTestQuestions}
           openAdjust={openAdjust}
           standing={standing}
           syllabus={syllabus}

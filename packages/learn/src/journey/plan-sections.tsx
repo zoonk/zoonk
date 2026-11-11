@@ -143,10 +143,12 @@ export function PlanPlaceRows({
 
 export function PathSection({
   alphabet,
+  children,
   courseHref,
   links,
 }: {
   alphabet: { link: AlphabetLink; onSkip: () => Promise<boolean> } | null;
+  children?: React.ReactNode;
   courseHref: string | null;
   links: PathLinks;
 }) {
@@ -159,6 +161,7 @@ export function PathSection({
         <PathDetail />
       </PageSectionHeader>
 
+      {children}
       <PlanPlaceRows links={links} />
       {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
 

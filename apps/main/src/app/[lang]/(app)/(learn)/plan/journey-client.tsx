@@ -9,6 +9,7 @@ import { claimCourseCertificateAction } from "@/components/learn/certificate-act
 import { SessionCertificates } from "@/components/learn/session-ceremony";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
+import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
@@ -32,6 +33,7 @@ import {
 } from "@zoonk/learn/journey";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useSyncExternalStore } from "react";
 
 /** "Try again" starts the run only on the learner's tap. */
@@ -254,6 +256,9 @@ export function JourneyClient({
         }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
+        onSetTestQuestions={(sessionQuestions) =>
+          updateFocusTestAction(goalId, { sessionQuestions, timeZone: getLocalTimeZone() })
+        }
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}

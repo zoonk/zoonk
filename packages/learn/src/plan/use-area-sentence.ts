@@ -24,7 +24,9 @@ export function useAreaSentence() {
 
     switch (operation.kind) {
       case "focusAreas":
-        return t("More time for {areas}.", { areas });
+        return names.length > 0
+          ? t("More time for {areas}.", { areas })
+          : t("Your plan has no focus.");
       case "reduceAreas":
         return t("Less time for {areas}.", { areas });
       case "skipAreas":

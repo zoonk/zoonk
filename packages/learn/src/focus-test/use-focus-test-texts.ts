@@ -3,6 +3,7 @@
 import {
   type FocusRow,
   type FocusTestSubject,
+  type FocusTestSummary,
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
@@ -71,5 +72,44 @@ export function useSittingFacts() {
     about: (minutes: number): string => t("About {time}", { time: formatDuration(minutes) }),
     upTo: (questions: number): string =>
       t("{count, plural, one {Up to # question} other {Up to # questions}}", { count: questions }),
+  };
+}
+
+/** The test's state as a row's facts: "Not started", "Continue" with what's left, or its last result. */
+export function useFocusTestStateFacts() {
+  const t = useExtracted();
+  const { about } = useSittingFacts();
+
+  return ({ offer, state, subjects }: FocusTestSummary): string[] => {
+    if (state === "notStarted") {
+      return [t("Not started"), ...(offer ? [about(offer.minutes)] : [])];
+    }
+
+    if (state === "sitting" && offer) {
+      return [
+        t("Continue"),
+        t("{count, plural, one {# question left} other {# questions left}}", {
+          count: offer.questions,
+        }),
+      ];
+    }
+
+    const result = subjects
+      ? t(
+          "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}",
+          subjects,
+        )
+      : t("Your answers are in your plan");
+
+    return [
+      result,
+      ...(offer
+        ? [
+            t("{count, plural, one {Up to # more question} other {Up to # more questions}}", {
+              count: offer.questions,
+            }),
+          ]
+        : []),
+    ];
   };
 }

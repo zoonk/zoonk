@@ -7,11 +7,13 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
+  SuggestionLinkAction,
 } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { getLongerTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
+import { useCheckFocusLabel, useFocusTestOffer } from "./plan-focus-test";
 import { useFullCourse } from "./plan-full-course";
 import {
   CheckingChange,
@@ -141,6 +143,8 @@ function CoverageBody({
   const { requestPreview } = usePlanSuggestionSlot();
   const fullCourse = useFullCourse();
   const studyEverything = useStudyEverythingFromSuggestion();
+  const focusTest = useFocusTestOffer();
+  const checkFocusLabel = useCheckFocusLabel();
   const { findsTime, moveDate, pending, retry } = flags;
 
   if (preview.status !== "idle" && offer) {
@@ -181,6 +185,12 @@ function CoverageBody({
         <SuggestionAction key="find" onClick={() => studyEverything(fullCourse)}>
           {t("Study everything, even after the exam")}
         </SuggestionAction>
+      )}
+
+      {focusTest && (
+        <SuggestionLinkAction href={focusTest.href} variant="outline">
+          {checkFocusLabel(focusTest.minutes)}
+        </SuggestionLinkAction>
       )}
 
       {coverage && (

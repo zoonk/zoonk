@@ -1,5 +1,6 @@
 "use client";
 
+import { type FocusTestSummary } from "@zoonk/core/learner/placement/focus-test-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import {
@@ -15,8 +16,9 @@ import { CheckIcon, ChevronRightIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
-import { KindDot } from "../_components/kind-tile";
 import { ChangeSaveError } from "../_components/save-error";
+import { FactSegments } from "../_components/task-meta";
+import { useFocusTestStateFacts } from "../focus-test/use-focus-test-texts";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { PlanBases } from "./plan-bases";
@@ -53,18 +55,21 @@ function sameAreas(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((area) => b.includes(area));
 }
 
-function FocusTestLink({ href }: { href: string }) {
+function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href: string }) {
   const t = useExtracted();
+  const stateFacts = useFocusTestStateFacts();
 
   return (
     <LearnLink
       className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 rounded-option flex min-h-14 items-center gap-3 px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
       href={href}
     >
-      <KindDot kind="challenge" />
+      <CrosshairIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm font-medium">{t("Take a short test")}</span>
-        <span className="text-muted-foreground text-xs">{t("Your answers choose for you")}</span>
+        <span className="text-sm font-medium">{t("Focus test")}</span>
+        <span className="text-muted-foreground text-xs">
+          <FactSegments facts={stateFacts(focusTest)} />
+        </span>
       </span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
     </LearnLink>
@@ -117,6 +122,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
   const formId = useId();
   const format = useFormatter();
   const { focusTestHref, plan } = usePlanScreen();
+  const testHref = plan.focusTest ? focusTestHref : undefined;
   const { change, failed, isPending } = usePlanChange();
   const areas = listFocusChoices(plan.areas);
   const current = areas.filter((area) => area.focused).map((area) => area.name);
@@ -156,7 +162,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
                 )}
           </p>
         )}
-        {focusTestHref && <FocusTestLink href={focusTestHref} />}
+        {plan.focusTest && testHref && <FocusTestLink focusTest={plan.focusTest} href={testHref} />}
         <form
           id={formId}
           onSubmit={(event) => {
@@ -166,11 +172,9 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         >
           <fieldset className="flex flex-col gap-2">
             <legend
-              className={
-                focusTestHref ? "text-muted-foreground pb-1 text-sm font-medium" : "sr-only"
-              }
+              className={testHref ? "text-muted-foreground pb-1 text-sm font-medium" : "sr-only"}
             >
-              {focusTestHref ? t("Or choose them yourself") : t("Subjects to focus on")}
+              {testHref ? t("Or choose them yourself") : t("Subjects to focus on")}
             </legend>
             {areas.map((area) => (
               <AreaChoice
@@ -197,13 +201,13 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
         <Button
           busy={isPending}
-          disabled={chosen.length === 0 || sameAreas(chosen, current) || unchanged !== null}
+          disabled={sameAreas(chosen, current) || unchanged !== null}
           focusableWhenDisabled
           form={formId}
           icon={<CheckIcon aria-hidden="true" />}
           type="submit"
         >
-          {t("Focus on these")}
+          {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
         </Button>
 
         {failed && <ChangeSaveError />}
