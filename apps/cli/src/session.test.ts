@@ -351,12 +351,13 @@ describe(sendAuthorized, () => {
     expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 
-  it.each([
-    [429, { error: "temporarily_unavailable" }],
-    [503, {}],
-  ])("keeps the login when a refresh fails with HTTP %i", async (status, body) => {
+  it("keeps the login when a refresh is rate limited", async () => {
     const file = createCredentialsFile();
-    const api = await startFakeApi({ acceptedToken: "access-new", refresh: { body, status } });
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: { error: "temporarily_unavailable" }, status: 429 },
+    });
 
     await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
@@ -367,16 +368,23 @@ describe(sendAuthorized, () => {
     expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 
-  it.each([502, 504])("forgets the login when a refresh ends in HTTP %i", async (status) => {
-    const file = createCredentialsFile();
-    const api = await startFakeApi({ acceptedToken: "access-new", refresh: { body: {}, status } });
+  it.each([500, 502, 503, 504])(
+    "forgets the login when a refresh ends in HTTP %i",
+    async (status) => {
+      const file = createCredentialsFile();
 
-    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+      const api = await startFakeApi({
+        acceptedToken: "access-new",
+        refresh: { body: {}, status },
+      });
 
-    await expect(
-      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
-    ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+      await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
-    expect(readLogin({ file, origin: api.origin })).toBeNull();
-  });
+      await expect(
+        sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+      ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+
+      expect(readLogin({ file, origin: api.origin })).toBeNull();
+    },
+  );
 });
