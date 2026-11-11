@@ -6167,28 +6167,28 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "Each lesson has a coherent focus: checking cooling limits or setting up cooling. Both skills begin with action verbs and include a topic, a one-sentence description, a concrete example, and a workplace use. The split follows an understandable boundary and preserves the teaching order; neither lesson bundles unrelated ideas.",
-          "score": 9,
+          "reasoning": "Both lessons have coherent clusters of closely linked, verb-first skills, with topics, descriptions, examples, and workplace uses. Separating checking and recovery from setup and logging is understandable. However, 'Log cooling temperatures at checkpoints' has an example that supplies only appointment times, not temperature entries, making this one weakly realized skill and triggering the cap of 8.",
+          "score": 8,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The first lesson starts with a relevant scene and places a guess immediately after its first explanation. Most temperature decisions have concrete values and plausible wrong answers. However, its application is too vague to write as a decision screen, triggering the cap of 7 for vague briefs. The second lesson lacks the required immediate guess and has a weak hook. The logging check is mostly recall, the two-stage worked example lacks a comparable follow-up, and the specified 80°F-at-two-hours trap is not fully implemented.",
+          "reasoning": "Both lessons open with relevant scenes, place guesses immediately after the first explanation, and provide worked examples followed by less-supported practice. Checks generally require decisions and name tempting mistakes. However, the first application is too underspecified to write from: it references unidentified batches and an absent dataset. The final applications also miss the required own-line cooling-log decision, and no check explicitly presents the required 80°F-at-two-hours/four-hours-left trap. The vague application brief triggers the cap of 7.",
           "score": 7,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "There are appropriately no teaching pictures or forced activity templates. However, every screen remains text-only, including the worked cooling sheet and final cooling-log application. Exact readings are supplied, but the briefs never direct the app to draw their required table or line chart. This leaves the lesson's central visual evidence undisplayed throughout, triggering the cap of 6 for a lesson about something visual with no visual.",
-          "score": 6,
+          "reasoning": "The result correctly avoids teaching pictures and selects a table for the cooling-log application, but never provides the table’s exact values. Consequently, a question requiring comparison of batches cannot be answered as planned, triggering the cap of 7. The matching activity is also a weak fit because its situations overlap and can require several of the listed actions rather than distinct one-to-one matches.",
+          "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The wording is accessible US English and appropriate for a beginning line cook. The temperature limits, corrective reheating temperature, pan depth, stirring interval, and prohibition on cooling a full stockpot in the walk-in agree with the handbook. The scope stays focused on cooling, but omitting the explicitly required handbook memory aid is a concrete coverage gap. The expected mnemonic should be retained rather than replaced solely by separate explanations of the stages.",
+          "reasoning": "The language is accessible US English suitable for a beginning line cook. The two-stage limits, first-stage recovery, shallow-pan depth, ice bath, stirring interval, and stockpot restriction agree with the handbook. However, the required memory aid is omitted, and the logging examples introduce an ambiguous 'ready' starting point instead of anchoring time zero to 135°F. These are concrete handbook-fit weaknesses despite otherwise appropriate scope and language.",
           "score": 8,
           "label": "Level, scope & language",
           "weight": 25
@@ -6206,24 +6206,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 9433,
-          "outputTokens": 1158,
-          "reasoningTokens": 398
+          "inputTokens": 10040,
+          "outputTokens": 1254,
+          "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "The handbook's memory aid is omitted. The required six-hour-budget trap is not fully planned: the check uses 72°F rather than the specified 80°F at two hours and never explicitly challenges the claim that four hours remain. No cooling log is specified as an app-drawn table or line chart, despite that explicit requirement. The first lesson's application supplies neither readings nor a decision, and the second does not clearly ask the learner what to do with a batch on their own line.",
+          "conclusion": "The first lesson’s application refers to a table and batch B without supplying the table’s exact times and temperatures, so it cannot be implemented or answered as planned. Neither application provides the required decision about a batch on the learner’s own line using its cooling log. The plan also omits the handbook’s memory aid and the specifically required check featuring 80°F after 2 hours with 4 hours remaining; its other first-stage checks address the misconception only partially.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The second lesson's hook is a generic use-case sentence rather than an everyday scene ending with the lesson's question, and its first explanation has no immediate unscored guess. The first lesson's missing-log-entry check largely tests recall of the logging schedule. Its worked example evaluates both stages, but the follow-up tests only a first-stage failure rather than offering a comparable two-stage judgment with less help.",
+          "conclusion": "The logging skill promises recording temperatures, but its example and practice primarily teach scheduling clock times. Those examples start when a batch is 'ready' rather than explicitly when it reaches 135°F, leaving the cooling clock’s starting point ambiguous. Neither guess brief explicitly establishes that the prediction does not count.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Consider combining the closely linked limits and cooling methods into one compact lesson. Replace repeated setup instructions with a concrete decision, and make the final application integrate the learner's own batch, its displayed log, the appropriate action, and a handbook-approved cooling method.",
+          "conclusion": "Reduce repetition between explanations and nearly identical worked examples. Replace the setup matching exercise with a concrete choice between cooling plans: large batches, soups, and full stockpots are overlapping situations, so their safe actions are not naturally exclusive pairs.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -6423,28 +6423,28 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "Both skills are verb-first actions with canonical topics, concrete examples, and professional uses. However, separating these closely linked methods is unnecessary for the supplied scope, and the second lesson's application crosses its stated skill boundary by testing macrogotas too. This weak boundary triggers the cap of 8.",
-          "score": 8,
+          "reasoning": "The lesson coherently teaches one practical idea: calculating an infusion's drip rate for either set. Its two closely linked skills start with action verbs and each has a canonical topic, a one-sentence explanation, a correct concrete example and a nursing use case. The title, description and can-do line are appropriately scoped.",
+          "score": 10,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "Both methods have correct worked examples followed by less-supported calculations. Checks explicitly target forgetting or incorrectly adding the factor 3, and one checks rounding a noninteger result. However, the first application and second hook are generic use-case statements rather than writable scenarios; the second lesson also lacks the required prediction after its first explanation. The vague-brief cap of 7 applies. The final combined application is concrete and correct but does not repair these earlier omissions.",
-          "score": 7,
+          "reasoning": "The opening is a realistic shift scene ending in the lesson's question. A fresh prediction follows the first explanation, and each worked calculation has a less-supported follow-up with a named factor-of-three trap. All stated arithmetic is correct. The final prescription application includes both sets and correctly rounds 500 ÷ 21 to 24 and 500 ÷ 7 to 71. However, the prediction brief does not explicitly say that the guess does not count, leaving this required behavior unspecified. The standalone rounding check could also require a full calculation rather than only rounding a supplied result.",
+          "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "No question depends on an unseen arrangement, diagram, or physical appearance. Text is sufficient for these numerical calculations, and no decorative or teaching pictures are introduced. Activities are optional under the rubric, so the absence of an interactive formula model is not a defect.",
+          "reasoning": "Text-only treatment is appropriate for these short calculations: no answer depends on unseen equipment arrangements, labels or other visual information. There are no unnecessary teaching pictures or decorative visuals, and no activity template is needed to make these checks usable.",
           "score": 10,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The language is Brazilian Portuguese and appropriate for a beginner nursing technician student. Concrete drop-to-volume relationships precede the necessary formulas, and the content stays within infusion-rate calculation. Nevertheless, the explicitly required teacher's memory aid from the student's notebook is absent, so fidelity to the supplied material is incomplete.",
+          "reasoning": "The Brazilian Portuguese is suitable for a beginning nursing technician student. Concrete quantities precede formulas, the notation is necessary to the task, and the lesson preserves the notebook's formulas, units, worked example, rounding and prescription checks. However, it omits the explicitly required teacher's memory aid, weakening fidelity to the student's own notebook.",
           "score": 8,
           "label": "Level, scope & language",
           "weight": 25
@@ -6452,7 +6452,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
+          "reasoning": "All 1 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -6462,26 +6462,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 9561,
-          "outputTokens": 961,
-          "reasoningTokens": 289
+          "inputTokens": 9127,
+          "outputTokens": 939,
+          "reasoningTokens": 343
         }
       },
       "steps": [
         {
-          "conclusion": "The teacher's required memory aid, “macro divide por 3, micro não divide,” is omitted. The first lesson's application supplies neither prescription values nor a concrete drip-rate question. The second lesson opens with a generic objective rather than a scene ending in a question, and has no ungraded prediction immediately after its first explanation. These are substantive omissions despite correct formulas, worked examples, trap checks, rounding checks, and final application calculations.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "The split creates a weak boundary: these two closely linked calculations could be taught together, and the second lesson's final application requires both despite its skill list covering only microgotas. The standalone macrogotas lesson also ends without explicitly requiring the prescription check taught later.",
+          "conclusion": "The teacher's required memory aid, “macro divide por 3, micro não divide,” is omitted, although both formulas and their associated error traps are correct. The prediction immediately after the first explanation is appropriate but is not explicitly designated as ungraded.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Combine the two methods into one lesson with two skills, preserving the worked-example-to-practice sequences. Place the teacher's exact memory aid beside the formula comparison and carry prescription verification into the final shift scenario. If retaining two lessons, give each a concrete opening, an ungraded prediction, and a fully specified application.",
+          "conclusion": "Strengthen the dedicated rounding check by supplying a volume, duration and set rather than an already calculated 23.6 gotas/min. This would practice calculating and rounding together; the final application already provides valid non-even divisions.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -6680,28 +6680,28 @@
       "categoryScores": [
         {
           "categoryId": "oneIdea",
-          "reasoning": "Both lessons have coherent action-worded skills, canonical topics, examples, and real-life uses. However, the split is weakly justified: the two closely linked skills naturally deliver one cost-to-price outcome, and the first lesson's opening promises pricing that it does not teach. This weak boundary limits the score to 8.",
-          "score": 8,
+          "reasoning": "The two action-worded skills form one coherent pricing idea: calculate unit cost, then use it to set a target-margin price. Both have canonical topics, one-sentence descriptions, concrete examples, and real-life uses. The title, description, and can-do line are scoped to that idea.",
+          "score": 10,
           "label": "One idea",
           "weight": 25
         },
         {
           "categoryId": "screenPlan",
-          "reasoning": "The numerical explanations are concrete, all stated calculations are correct, and both worked examples have similar follow-up problems with tempting wrong answers. However, the second hook is an instructional statement rather than a scene ending in a question, and its first explanation is not followed by a prediction. The first application is too vague to write as a realistic task. These weaknesses warrant 7 despite the sound worked-example sequences.",
-          "score": 7,
+          "reasoning": "The opening is a scene ending in the lesson’s question, explanations precede checks, and both hard skills have worked examples followed by similar problems with less help. Margin proceeds from concrete profit amounts to its name and then a formula. However, the first guess is a calculation rather than a genuine ungraded prediction, triggering the weak-check cap of 8. The application combines the skills but does not fully fit the required online-shop setting, and the markup check does not use the specified 40% case.",
+          "score": 8,
           "label": "Screen plan",
           "weight": 35
         },
         {
           "categoryId": "activitiesAndVisuals",
-          "reasoning": "The formulaModel appropriately lets the learner explore how cost and target margin affect price, and there are no decorative pictures. However, the cost-component breakdowns and markup-versus-target-price comparison are left in prose rather than planned as tables or charts. The later numerical application also supplies no structured display. Several missing comparison displays trigger the cap of 7.",
+          "reasoning": "The opening appropriately stays text-only, and there are no decorative pictures or unsuitable activities. However, every screen remains text-only, including multi-item cost breakdowns and price comparisons that the task explicitly requires to be shown in tables, charts, or an exploration template. These repeated missing data displays trigger the cap of 7 for several missing visuals.",
           "score": 7,
           "label": "Activities & visuals",
           "weight": 15
         },
         {
           "categoryId": "levelAndScope",
-          "reasoning": "The language is US English and generally beginner-friendly. Margin is correctly introduced as a share of selling price before the formula appears. The main scope weakness is the shift from the learner's online-shop cost case to generic production costing: the required marketplace fee and itemized material amounts are absent, while batch losses, labor, and overhead receive substantial attention. This task-specific scope mismatch limits the score to 8.",
+          "reasoning": "The language is US English and suitable for beginners. The pricing formula follows an intuitive explanation of the share left to cover costs, and there are no filler screens. However, the lesson scopes costs around production and labor for a third-person market seller rather than the learner’s online shop, omitting marketplace fees throughout. This is a meaningful audience-and-scope slip, so the score is capped at 8.",
           "score": 8,
           "label": "Level, scope & language",
           "weight": 25
@@ -6709,7 +6709,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
+          "reasoning": "All 1 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -6719,24 +6719,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 9058,
-          "outputTokens": 1181,
-          "reasoningTokens": 488
+          "inputTokens": 8736,
+          "outputTokens": 933,
+          "reasoningTokens": 230
         }
       },
       "steps": [
         {
-          "conclusion": "The required shop-specific costing case is missing: wax, wick, jar, fragrance, and the marketplace fee never receive individual amounts that add to one candle's cost. Instead, generic supplies, labor, and overhead replace that breakdown, and the marketplace fee is omitted entirely. The second lesson also lacks the required opening scene and immediate post-explanation prediction.",
+          "conclusion": "The lesson replaces the learner’s own online candle shop with Fatima’s weekend-market business and never includes the marketplace fee. This makes its cost-to-price model incomplete for the required setting. Numerical comparisons are presented only as prose, with no required tables, charts, or exploration template. The markup check uses 30%, not the explicitly requested 40% trap.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The first lesson ends with a general instruction rather than a concrete application. Several cost breakdowns and price comparisons lack the required table or chart. The markup distractor correctly tests a 20% target, but the explicitly requested trap about adding 40% to cost is not planned.",
+          "conclusion": "The first guess is an exact addition question rather than a prediction explicitly identified as not counting. The final application also omits fragrance and the marketplace fee, weakening its usefulness as a complete shop-pricing task. All stated arithmetic and margin calculations are correct.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Combine the closely linked skills into one cost-to-price lesson unless a split is necessary. Carry one itemized example from the learner's online shop through the worked calculation, then use a new candle for independent application. Retain the useful formula model and explicitly define whether its margin input uses percentage points or decimal shares.",
+          "conclusion": "Carry one complete cost breakdown from the learner’s shop through the explanation and pricing example. Use tables for the cost breakdowns and price comparisons, and make the first guess a low-stakes prediction. In the final application, specify the expected calculation and a tempting markup-based wrong answer so the writer can provide targeted feedback.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -6933,21 +6933,68 @@
       }
     },
     {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The lesson consistently develops one action: applying the right of withdrawal. Eligibility, timing, justification and reimbursement are closely linked parts of that decision. The verb-first skill includes a canonical topic, one-sentence idea, concrete example and practical use.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The opening is a realistic scene ending in the lesson's question, and the first explanation is immediately followed by a prediction. Concrete checks address both required traps, and the worked example has a similar follow-up. However, neither the worked example nor the application asks for a deadline calculation. The final application lacks actual dates and an 'until when' question, triggering the weak-application cap of 8; the omission across the plan warrants 7 because deadline determination is central to the requested outcome.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The planned interactions are verbal legal decisions that can be answered from the supplied text without picturing a spatial arrangement or unseen setup. Keeping these screens text-only is appropriate, and there are no decorative teaching pictures or unsuitable activity templates. The missing deadline exercise is a screen-plan failure rather than an existing visually dependent question lacking its display.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text uses Brazilian Portuguese and accessible examples suitable for a beginner law student. Legal terms are introduced through ordinary purchases, monetary correction is explained plainly, and art. 26 is kept to the relevant contrast rather than expanded into another lesson. There are no filler screens or unsupported claims of overlap with neighboring lessons.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 9016,
+          "outputTokens": 1029,
+          "reasoningTokens": 407
+        }
+      },
       "steps": [
         {
-          "conclusion": "No part passed the code checks. Lesson 1 (\"Direito de arrependimento\"): Takes about 6 minutes; the limit is 5.",
+          "conclusion": "The application fails the explicit requirement to give purchase dates and ask whether—and until when—the buyer can withdraw. It only says the backpack arrived four days ago and asks when the period starts. No screen demonstrates calculating the final date, leaving a central part of the requested can-do untrained.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. Lesson 1 (\"Direito de arrependimento\"): Takes about 6 minutes; the limit is 5.",
+          "conclusion": "The guess attaches the rationale 'counting from the purchase' to the opening-the-box distractor rather than to order confirmation. This gives the writer mismatched feedback for a likely misconception.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "No part passed the code checks. Lesson 1 (\"Direito de arrependimento\"): Takes about 6 minutes; the limit is 5.",
+          "conclusion": "Add a worked deadline calculation using an app-drawn timeline or small table with exact dates, followed by a less-supported dated purchase problem. Carry that calculation into the final application while retaining the effective physical-store and art. 26 checks.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
