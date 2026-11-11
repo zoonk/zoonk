@@ -4,6 +4,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type MemoryFactText, formatMemoryFactList } from "./memory-facts";
 import planChangePrompt from "./memory-insight-plan-change.prompt.md";
@@ -114,6 +115,8 @@ export async function generateMemoryInsight(params: MemoryInsightParams) {
     systemPrompt: instructions,
     task: "memory-insight",
   });
+
+  assertLearnerLanguage({ input: userPrompt, language: params.language, value: result.output });
 
   return {
     data: result.output,

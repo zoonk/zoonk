@@ -4,6 +4,7 @@ import { Output, generateText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { scenarioSchema } from "./_utils/scenario-schema";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
@@ -71,6 +72,13 @@ export async function generateSpeakingMockScenario(params: GenerateSpeakingMockS
       }),
     systemPrompt,
     task: "speaking-mock-scenario",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.learnerLanguage,
+    otherLanguages: [params.targetLanguage],
+    value: result.output,
   });
 
   const data: GenerateConversationScenarioSchema = result.output;

@@ -4,49 +4,12 @@ const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
 const QUOTED =
   /"[^"]*"|“[^”]*”|«[^»]*»|(?<!\p{L})'(?:[^']|(?<=\p{L})'(?=\p{L}))*'(?!\p{L})|‘(?:[^’]|(?<=\p{L})’(?=\p{L}))*’/gu;
 
-const ACCENTED_WORDS = new Set([
-  "alem",
-  "apos",
-  "ate",
-  "ciencia",
-  "competencia",
-  "consequencia",
-  "entao",
-  "estao",
-  "frequencia",
-  "importancia",
-  "ja",
-  "nao",
-  "numero",
-  "porem",
-  "possivel",
-  "resistencia",
-  "sao",
-  "tambem",
-  "tres",
-  "voce",
-  "voces",
-]);
-
-const UNACCENTED_ENDING = /(?:cao|coes)$/u;
-
+/** Portuguese dropped the diaeresis in 2009 ("tranquilo", not "tranqüilo"). */
 const DIAERESIS = /[äëïöü]/iu;
 
-function isMisaccented(word: string): boolean {
-  return (
-    ACCENTED_WORDS.has(word) ||
-    (word.length > 4 && UNACCENTED_ENDING.test(word)) ||
-    DIAERESIS.test(word)
-  );
-}
-
-function findMisaccentedWord(text: string): string | null {
-  const words = text
-    .replaceAll(QUOTED, " ")
-    .toLowerCase()
-    .split(/[^\p{L}]+/u);
-
-  return words.find((word) => isMisaccented(word)) ?? null;
+function findDiaeresisWord(text: string): string | null {
+  const words = text.replaceAll(QUOTED, " ").split(/[^\p{L}]+/u);
+  return words.find((word) => DIAERESIS.test(word)) ?? null;
 }
 
 export function findFeedbackWritingIssue({
@@ -64,8 +27,8 @@ export function findFeedbackWritingIssue({
     return "HTML entity in the text";
   }
 
-  const misaccented = language === "pt" ? findMisaccentedWord(feedback) : null;
-  return misaccented ? `"${misaccented}" written without its right accent` : null;
+  const diaeresis = language === "pt" ? findDiaeresisWord(feedback) : null;
+  return diaeresis ? `"${diaeresis}" written with a diaeresis Portuguese no longer uses` : null;
 }
 
 const PRAISE_OPENING =

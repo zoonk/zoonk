@@ -7,6 +7,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { scenarioSchema } from "./_utils/scenario-schema";
@@ -76,6 +77,13 @@ export async function generateConversationScenario(params: GenerateConversationS
     libraryInput: true,
     systemPrompt,
     task: "conversation-scenario",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.learnerLanguage,
+    otherLanguages: [params.targetLanguage],
+    value: result.output,
   });
 
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };

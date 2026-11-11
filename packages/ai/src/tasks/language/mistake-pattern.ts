@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { normalizeMistakePattern } from "./mistake-pattern-rules";
 import promptTemplate from "./mistake-pattern.prompt.md";
@@ -90,6 +91,13 @@ export async function findMistakePattern(params: FindMistakePatternParams) {
       }),
     systemPrompt,
     task: "mistake-pattern",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.learnerLanguage,
+    otherLanguages: [params.targetLanguage],
+    value: result.output,
   });
 
   const data = normalizeMistakePattern({

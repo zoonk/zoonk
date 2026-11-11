@@ -372,6 +372,27 @@ describe(gradeTypedAnswer, () => {
     ).rejects.toThrow("grade every key point");
   });
 
+  it("fails instead of showing feedback written without the learner's accents", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({
+        corrections: [],
+        feedback:
+          "Voce mencionou o citoplasma, mas ele fica no espaco interno e nao do lado de fora da celula.",
+        isCorrect: false,
+        keyPoints: [{ met: false, number: 1 }],
+      }),
+    );
+
+    await expect(
+      gradeTypedAnswer({
+        answer: "O citoplasma fica fora da membrana.",
+        keyPoints: ["Coloca o citoplasma dentro da membrana"],
+        language: "pt",
+        question: "Onde fica o citoplasma?",
+      }),
+    ).rejects.toThrow('"Voce"');
+  });
+
   it("fails instead of grading when the model grades a key point twice", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({

@@ -11,11 +11,13 @@ export const SPEAKING_MOCK_EXAMS = ["ielts", "toefl"] as const;
 
 export type SpeakingMockExam = (typeof SPEAKING_MOCK_EXAMS)[number];
 
-export const SPEAKING_EXAM_LANGUAGES: Readonly<Record<SpeakingExam, string>> = {
+export const SPEAKING_EXAM_LANGUAGES: Readonly<Record<SpeakingExam | SpeakingMockExam, string>> = {
   cambridge: "en",
   dele: "es",
   delf: "fr",
   goethe: "de",
+  ielts: "en",
+  toefl: "en",
 };
 
 /**

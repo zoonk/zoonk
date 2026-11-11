@@ -8,6 +8,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatCast } from "../_utils/cast";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import taskPrompt from "./exam-speaking-card.prompt.md";
@@ -182,6 +183,13 @@ export async function generateExamSpeakingCard(params: GenerateExamSpeakingCardP
       }),
     systemPrompt,
     task: "exam-speaking-card",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.learnerLanguage,
+    otherLanguages: [SPEAKING_EXAM_LANGUAGES[params.exam]],
+    value: result.output,
   });
 
   const data = repairCard({ card: result.output, stimulus: params.task.stimulus });

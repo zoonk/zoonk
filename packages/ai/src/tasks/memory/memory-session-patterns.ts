@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./memory-session-patterns.prompt.md";
 
@@ -63,6 +64,8 @@ export async function findSessionPatterns({
     systemPrompt,
     task: "memory-session-patterns",
   });
+
+  assertLearnerLanguage({ input: userPrompt, language: params.language, value: result.output });
 
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

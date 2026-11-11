@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import {
   AREA_STARTS,
@@ -168,6 +169,8 @@ export async function interpretPlanEdit(
     systemPrompt,
     task: "plan-edit-intent",
   });
+
+  assertLearnerLanguage({ input: userPrompt, language: params.language, value: result.output });
 
   const data = normalizePlanEdit({ input: params, raw: result.output });
 

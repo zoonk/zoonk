@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { decodeHtmlEntities } from "../_utils/html-entities";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import languagePracticePrompt from "./grade-typed-answer-language-practice.prompt.md";
@@ -258,6 +259,13 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
       }),
     systemPrompt,
     task: "grade-typed-answer",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.language,
+    otherLanguages: params.practicedLanguage ? [params.practicedLanguage] : [],
+    value: result.output,
   });
 
   if (!gradesEveryKeyPoint({ graded: result.output.keyPoints, keyPointCount: keyPoints.length })) {

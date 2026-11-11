@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
@@ -220,6 +221,8 @@ export async function gradeEssay(params: GradeEssayParams) {
     systemPrompt,
     task: "grade-essay",
   });
+
+  assertLearnerLanguage({ input: userPrompt, language: params.language, value: result.output });
 
   return {
     data: buildEssayGrade({ essay, output: result.output, rubric }),

@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import {
   QUICK_EXPLANATION_MAX_SCREENS,
@@ -89,6 +90,8 @@ ${formatUntrustedInput({ QUESTION: question })}
     systemPrompt,
     task: "quick-explanation",
   });
+
+  assertLearnerLanguage({ input: userPrompt, language, value: result.output });
 
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

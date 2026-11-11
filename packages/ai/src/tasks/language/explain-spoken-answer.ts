@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import taskPrompt from "./explain-spoken-answer.prompt.md";
@@ -81,6 +82,13 @@ ${formatUntrustedInput({ HEARD: heard, WORDS_TO_EXPLAIN: words.map((word) => for
       }),
     systemPrompt,
     task: "explain-spoken-answer",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: learnerLanguage,
+    otherLanguages: [targetLanguage],
+    value: result.output,
   });
 
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };

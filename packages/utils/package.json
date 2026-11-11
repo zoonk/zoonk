@@ -37,6 +37,7 @@
     "./interleave": "./src/interleave.ts",
     "./json": "./src/json.ts",
     "./language-flags": "./src/language-flags.ts",
+    "./language-flaws": "./src/language-flaws.ts",
     "./language-regions": "./src/language-regions.ts",
     "./languages": "./src/languages.ts",
     "./logger": "./src/logger.ts",

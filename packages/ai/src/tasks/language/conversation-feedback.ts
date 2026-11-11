@@ -6,6 +6,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { assertLearnerLanguage } from "../_utils/learner-language";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
@@ -110,6 +111,13 @@ export async function writeConversationFeedback(params: WriteConversationFeedbac
       }),
     systemPrompt,
     task: "conversation-feedback",
+  });
+
+  assertLearnerLanguage({
+    input: userPrompt,
+    language: params.learnerLanguage,
+    otherLanguages: [params.targetLanguage],
+    value: result.output,
   });
 
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
