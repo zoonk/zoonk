@@ -81,8 +81,7 @@ struct StepLoading: View {
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
   .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
   .buddy, .placement, .addressForm, .work, .tools, .studies, .watch, .listen, .play, .read,
-  .activities,
-  .conditions, .learningSupport,
+  .activities, .conditions, .learningSupport,
 ]
 
 extension [Components.Schemas.OnboardingStep] {
