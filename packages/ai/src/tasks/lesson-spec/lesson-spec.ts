@@ -204,33 +204,26 @@ async function planLesson({
 
 type LessonPlan = Awaited<ReturnType<typeof planLesson>>;
 
-function findPlanProblems({
-  data,
-  level,
-  novice,
-}: {
-  data: LessonSpecResult;
-  level: CourseLevel;
-  novice: boolean;
-}): string[] {
+function findPlanProblems({ data, novice }: { data: LessonSpecResult; novice: boolean }): string[] {
   return data.lessons.flatMap((spec) =>
-    getLessonSpecIssues({ level, novice, spec }).map((issue) => `"${spec.title}": ${issue.detail}`),
+    getLessonSpecIssues({ novice, spec }).map((issue) => `"${spec.title}": ${issue.detail}`),
   );
 }
 
 /**
- * Code can't write a lesson's hook or application, so a plan that breaks a rule, size included, is
- * planned once more, told what broke, and the one with fewer broken rules is kept.
+ * A plan that breaks a shape rule is planned once more, told what broke, and the one with fewer
+ * broken rules is kept. The planner splits a lesson that doesn't fit; code never does, since it
+ * can't write the new lessons' hooks and applications.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
-  const rules = { level: params.level, novice: readsNoviceRules(params) };
+  const novice = readsNoviceRules(params);
 
   return draftAgainWhenFlawed<LessonPlan>({
-    countProblems: ({ data }) => findPlanProblems({ data, ...rules }).length,
+    countProblems: ({ data }) => findPlanProblems({ data, novice }).length,
     draft: (previous) =>
       planLesson({
         params,
-        problems: previous ? findPlanProblems({ data: previous.data, ...rules }) : [],
+        problems: previous ? findPlanProblems({ data: previous.data, novice }) : [],
       }),
   });
 }
