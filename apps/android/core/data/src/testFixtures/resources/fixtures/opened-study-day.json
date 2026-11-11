@@ -30,10 +30,7 @@
     "sessionBar": { "completed": 0, "total": 0 },
     "state": "rest",
     "status": "planned",
-    "week": {
-      "days": [],
-      "nextStudyDate": null
-    }
+    "week": { "days": [], "nextStudyDate": null }
   },
   "sessionId": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00",
   "status": "opened",

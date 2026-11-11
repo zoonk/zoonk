@@ -18,10 +18,7 @@
   "pauseSuggested": false,
   "plusLessons": [],
   "sessionBar": { "completed": 0, "total": 0 },
-  "week": {
-    "days": [],
-    "nextStudyDate": null
-  },
+  "week": { "days": [], "nextStudyDate": null },
   "blocks": [],
   "catchUp": null,
   "missions": [],
