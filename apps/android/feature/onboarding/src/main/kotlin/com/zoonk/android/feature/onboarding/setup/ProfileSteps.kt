@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
 import com.zoonk.android.feature.profile.profileJobPrefill
 import com.zoonk.android.feature.profile.profileQuestion
@@ -52,18 +53,27 @@ internal fun ColumnScope.ProfileStep(
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
     val order = (vm.flow.history + step + view.steps).filter { it.profileQuestion != null }.distinct()
     val wait = LocalSetupWait.current
-    val supportNext = view.steps.dropWhile { it != step }.getOrNull(1) == OnboardingStep.LEARNING_SUPPORT
     var startingLesson by rememberSaveable(id) { mutableStateOf(false) }
     LaunchedEffect(vm.isSaving) { if (!vm.isSaving) startingLesson = false }
 
     StepForm(
         title = profileQuestionTitle(id),
-        description = profileQuestionDescription(id, supportNext),
+        description = profileQuestionDescription(id),
         subject = stringResource(R.string.profile_questions_progress, order.indexOf(step) + 1, order.size),
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },
-        onSkip = { vm.answer(profileSkip(id)) },
+        onSkip = {
+            vm.answer(
+                if (id ==
+                    ProfileQuestion.CONDITIONS
+                ) {
+                    ProfileDraft(declined = true).onboardingInput(id, memory)
+                } else {
+                    profileSkip(id)
+                },
+            )
+        },
         notice = {
             if (view.goal.kind == Goal.Kind.LEARN && wait.firstLesson?.ready == true && wait.onStartLesson != null) {
                 FlowRow(

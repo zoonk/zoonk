@@ -42,11 +42,8 @@
     <string name="profile_questions_activities_favorites">Anything else you\'re into? (optional)</string>
     <string name="profile_questions_activities_placeholder">E.g., baking bread, cars, astronomy</string>
     <string name="profile_questions_conditions_title">Do any of these apply to you?</string>
-    <string name="profile_questions_conditions_description">Optional. Nothing here is saved unless you choose to.</string>
-    <string name="profile_questions_conditions_next">Optional. We\'ll suggest what often helps on the next screen. Nothing here is saved unless you choose to.</string>
+    <string name="profile_questions_conditions_description">Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.</string>
     <string name="profile_questions_condition_note">What should we know?</string>
-    <string name="profile_questions_consent">Save this to my profile</string>
-    <string name="profile_questions_consent_help">Zoonk uses it to adapt to you, now and over time. It\'s never shared or used in lesson examples. Remove it anytime in Settings.</string>
     <string name="profile_questions_support_title">What helps you learn?</string>
     <string name="profile_questions_support_description">Pick anything that helps. No label or diagnosis needed.</string>
     <string name="profile_questions_suggested">We checked what often helps with what you picked. Change anything you like.</string>

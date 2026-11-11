@@ -251,8 +251,11 @@ internal class GoalSetupViewModel(
                 is WriteOutcome.Done -> {
                     drafts?.words(answeredGoal, step.value)?.remove()
                     step.profileQuestion?.takeIf { profileAnswer == null }?.let {
-                        profileDrafts = profileDrafts - it
+                        // Skipping conditions takes back the supports their picks prechecked.
+                        val unchecks = it == ProfileQuestion.CONDITIONS && supportsSuggested
+                        profileDrafts = profileDrafts - it - if (unchecks) setOf(ProfileQuestion.LEARNING_SUPPORT) else emptySet()
                         savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+                        if (unchecks) supportsSuggested = false
                     }
                     if (step == OnboardingStep.CONDITIONS && profileAnswer != null && flow.current == step &&
                         outcome.value.steps.firstOrNull() == OnboardingStep.LEARNING_SUPPORT

@@ -7,12 +7,9 @@
   "profile_questions_add": "0fd998da3b65a469530a359efff2e62a65379c76926359b53cf3953868dd2ad2",
   "profile_questions_cap": "b5c73dbd62eca612e60bbda65c13d9dddaee0e418058d73ce2538bd9d014e1c8",
   "profile_questions_condition_note": "625f2c3951e7ca14d6ae7d21ac4931686d36a8218e0ee75f2128c8132eeb1918",
-  "profile_questions_conditions_description": "8f4b17a8b8ebbab2b334fcb4586990f176f44696b827a96a0cbb1bf21f517498",
-  "profile_questions_conditions_next": "f08539fd13326c24ba4bfc194f8091e45962fc482e1ba75e4c4a1025957863a9",
+  "profile_questions_conditions_description": "7dd17b5760d91c8d475780774dccc14e59e882f9a8bcd48df4a2299e236ddbf5",
   "profile_questions_conditions_saved": "944d126cd6ba0141843292a67d85e1141e4614a820ac9c1adb66e49148bdb5c5",
   "profile_questions_conditions_title": "815ebe52dfd6c6856aca732b9d141ae918633c5a3f254418328ec1a27ff72c92",
-  "profile_questions_consent": "40dacd6f53b156b06684003d2a9ac22346212383c025e80ebb753dc6270d16d4",
-  "profile_questions_consent_help": "be5a9803d68fb28c665e8c61d3676d7e254119307de0f8ca52a21808675bdb01",
   "profile_questions_description": "f305602c8c7b6094f60892a2853f7b43b66eaa039ae42743b7f7389ef7f935f8",
   "profile_questions_earlier_answer": "45259297f910641d7eb6b04c9c733f2ef9cea9e2beed9bf7e62c7ae85536b659",
   "profile_questions_for_fun": "792fbce0db2fb8226c862656650022a47bf82b04bb05c8bfc48245460ab45b82",
@@ -123,11 +120,8 @@
     <string name="profile_questions_activities_favorites">Hai altri interessi? (facoltativo)</string>
     <string name="profile_questions_activities_placeholder">Es. fare il pane, auto, astronomia</string>
     <string name="profile_questions_conditions_title">Qualcuna di queste condizioni ti riguarda?</string>
-    <string name="profile_questions_conditions_description">Facoltativo. Salviamo queste informazioni solo se lo decidi tu.</string>
-    <string name="profile_questions_conditions_next">Facoltativo. Nella prossima schermata ti suggeriremo alcune opzioni che spesso aiutano. Salviamo queste informazioni solo se lo decidi tu.</string>
+    <string name="profile_questions_conditions_description">Facoltativo. Le tue scelte vengono salvate nel tuo profilo, così il tuo compagno può adattarsi a te. Puoi rimuoverle in qualsiasi momento dalle Impostazioni.</string>
     <string name="profile_questions_condition_note">Cosa dovremmo sapere?</string>
-    <string name="profile_questions_consent">Salva queste informazioni nel mio profilo</string>
-    <string name="profile_questions_consent_help">Zoonk le usa per adattarsi a te, ora e nel tempo. Non vengono mai condivise né usate negli esempi delle lezioni. Puoi eliminarle quando vuoi in Impostazioni.</string>
     <string name="profile_questions_support_title">Cosa ti aiuta a imparare?</string>
     <string name="profile_questions_support_description">Scegli tutto ciò che ti aiuta. Non servono etichette o diagnosi.</string>
     <string name="profile_questions_suggested">Abbiamo verificato cosa aiuta di solito in base alle tue scelte. Cambia quello che vuoi.</string>

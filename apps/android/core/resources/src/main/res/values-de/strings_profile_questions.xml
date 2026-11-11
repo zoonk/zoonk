@@ -7,12 +7,9 @@
   "profile_questions_add": "a4834ff8cdd6ef4db326f67bf4717fdefbbc98906054c9663d63122f92ec0347",
   "profile_questions_cap": "676dac0fdd74598ea0f78b435fe5b730bd9f4693888bddc24a9d3fcf0e5a9e2b",
   "profile_questions_condition_note": "3755ca4e26ecc66304955e5ac8b631939a662645b59b3861896f4b6875c93337",
-  "profile_questions_conditions_description": "5947d96fce09ef37570f680cfb8659abb7789b214e70c0e40c12c56b9dd0d559",
-  "profile_questions_conditions_next": "00db986648945b9d82e824b9766bc8ea42f46ee3c1da7059cf89c6911885e1e6",
+  "profile_questions_conditions_description": "495b707a386d3d5100e4d9649f9e0eb89542e8719ea591d8b08901b820e6df03",
   "profile_questions_conditions_saved": "aab2c5c87dbcceadc28c28fb26535f0905f5a37d283e8cff168f332fb5c2ee37",
   "profile_questions_conditions_title": "ef93abd7458af85bb6ece2f06c99891f0ac6f1978bbaf78f068268f5536d0ac4",
-  "profile_questions_consent": "6ed291ac6adbb9d32165ae300fa3c0c88f7354b50cbef34b419d3a64f8734c5d",
-  "profile_questions_consent_help": "f0d18d8bc35908d6f2e61ecf827c9509a5af61f87f54abc7806a990dd926fd1d",
   "profile_questions_description": "95cd7e28d4db70e734b891dfbe1edc8545e2572a9e865856c55111d1fde15748",
   "profile_questions_earlier_answer": "a86197e622ef28ba27096f566be987bb4b56efd8334bee55631f22cf8bd660e2",
   "profile_questions_for_fun": "6f8248563a67e46dd041c7f63a828ae91fb42855b3a377e7f5f5c86194e9c5de",
@@ -123,11 +120,8 @@
     <string name="profile_questions_activities_favorites">Was interessiert dich sonst noch? (optional)</string>
     <string name="profile_questions_activities_placeholder">Z. B. Brot backen, Autos, Astronomie</string>
     <string name="profile_questions_conditions_title">Trifft etwas davon auf dich zu?</string>
-    <string name="profile_questions_conditions_description">Freiwillig. Nichts davon wird ohne deine Zustimmung gespeichert.</string>
-    <string name="profile_questions_conditions_next">Freiwillig. Auf der nächsten Seite zeigen wir dir Vorschläge, die oft helfen. Nichts davon wird ohne deine Zustimmung gespeichert.</string>
+    <string name="profile_questions_conditions_description">Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
     <string name="profile_questions_condition_note">Was sollten wir wissen?</string>
-    <string name="profile_questions_consent">In meinem Profil speichern</string>
-    <string name="profile_questions_consent_help">Zoonk nutzt diese Angaben, um sich jetzt und auch in Zukunft an dich anzupassen. Sie werden nie weitergegeben oder in Beispielen für Lektionen verwendet. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
     <string name="profile_questions_support_title">Was hilft dir beim Lernen?</string>
     <string name="profile_questions_support_description">Wähl alles aus, was dir hilft. Du brauchst dafür keine Einordnung oder Diagnose.</string>
     <string name="profile_questions_suggested">Wir haben geprüft, was bei deiner Auswahl oft hilft. Pass alles so an, wie du möchtest.</string>

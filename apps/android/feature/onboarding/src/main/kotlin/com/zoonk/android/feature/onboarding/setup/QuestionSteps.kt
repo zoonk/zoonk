@@ -48,7 +48,6 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
-import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.toggled
@@ -122,8 +121,8 @@ internal fun ColumnScope.StepForm(
 
         StepHeading(title, description, subject)
         content(continueStep)
-        OnboardingActions {
-            PlanStartNotice()
+        PlanStartNotice()
+        PageWaitActions {
             notice?.invoke()
             Button(
                 busy = pending && sender == StepSender.Continue,
