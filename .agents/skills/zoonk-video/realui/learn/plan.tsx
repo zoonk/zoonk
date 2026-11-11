@@ -139,6 +139,7 @@ function basePlan(input: {
     numbers: null,
     examChoices: [],
     examDocument: "notice",
+    focusTest: null,
     feasibility: input.feasibility,
     end: null,
     goalId: input.goalId,

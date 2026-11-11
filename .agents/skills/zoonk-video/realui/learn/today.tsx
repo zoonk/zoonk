@@ -226,6 +226,7 @@ function buildToday({
     earlierWork: [],
     exam: null,
     examChoice: null,
+    focusTest: null,
     goal: {
       dateEstimated: false,
       daysLeft,
@@ -351,7 +352,9 @@ const ACTIONS = {
   continueHref: null,
   continueSession: async () => true,
   decidePlanChange: async () => null,
+  dismissFocusTest: async () => true,
   examHref: "/exam",
+  focusTestHref: "/focus-test",
   lessonAgainHref: (id: string) => `/learn/${id}`,
   missionLinks: {
     hrefs: {
