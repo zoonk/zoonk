@@ -20,10 +20,18 @@ import { markAndDraw } from "./mark-and-draw";
 import { readLessonLaws } from "./read-lesson-laws";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
+import {
+  fixLanguageDraftStep,
+  holdBackLanguageDraftStep,
+  publishLanguageDraftStep,
+  reviewLanguageDraftStep,
+  reviewLanguageFixStep,
+} from "./steps/language-draft-steps";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
 import { completeLessonContentStep } from "./steps/lesson-ready-steps";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
 import {
+  type LanguageDraftStage,
   type LessonWriteOutcome,
   type LessonWriteStage,
   type WriteInput,
@@ -137,9 +145,53 @@ async function checkDraft({
     : checked;
 }
 
+/**
+ * A language lesson is reviewed before anyone sees it: its screens point at words and sentences
+ * every version shares, so a fix published later would break a lesson a learner has open.
+ */
+async function reviewLanguageDraft({
+  input,
+  stage,
+}: {
+  input: WriteInput;
+  stage: LanguageDraftStage;
+}): Promise<LessonWriteOutcome> {
+  const { draft } = stage;
+  const problems = await reviewLanguageDraftStep(stage);
+
+  if (problems.length === 0) {
+    return publishLanguageDraftStep({ draft, input });
+  }
+
+  const fix = await fixLanguageDraftStep({ problems, stage });
+
+  if (fix.status === "unchanged") {
+    return publishLanguageDraftStep({ draft, input });
+  }
+
+  if (fix.status === "unfixed") {
+    return holdBackLanguageDraftStep({ draft, input, problems });
+  }
+
+  const remaining = await reviewLanguageFixStep({
+    fixed: fix.draft,
+    flaggedScreens: problems.map((problem) => problem.screen),
+    stage,
+  });
+
+  return remaining.length > 0
+    ? holdBackLanguageDraftStep({ draft: fix.draft, input, problems: remaining })
+    : publishLanguageDraftStep({ draft: fix.draft, input });
+}
+
 async function writeLesson(input: WriteInput): Promise<LessonWriteOutcome> {
   const stage = await writeLessonContentStep(input);
-  return stage.status === "drafted" ? checkDraft({ input, stage }) : stage;
+
+  if (stage.status === "drafted") {
+    return checkDraft({ input, stage });
+  }
+
+  return stage.status === "languageDrafted" ? reviewLanguageDraft({ input, stage }) : stage;
 }
 
 async function redraft({

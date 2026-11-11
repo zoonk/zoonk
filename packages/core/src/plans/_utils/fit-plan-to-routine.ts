@@ -8,7 +8,7 @@ import { type PlanState } from "../planner/plan-state";
 import { applyChangeNow, isPlanReady } from "./apply-plan-change";
 import { type PlanContext, getPlanState } from "./plan-context";
 import { toPlanEditInput } from "./plan-edit-input";
-import { type PlanMemorySearch, searchPlanMemory, selectPlanMemory } from "./plan-memory";
+import { selectPlanMemory } from "./plan-memory";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./plan-setup-tasks";
 import { loadPlanAtToken } from "./plan-token";
 
@@ -41,7 +41,7 @@ async function readRoutine({ context, memory }: { context: PlanContext; memory: 
 }
 
 /** Null when the plan has nothing to fit, which ends the task. */
-export async function searchRoutineMemory(goalId: string): Promise<PlanMemorySearch | null> {
+export async function selectRoutineMemory(goalId: string): Promise<string[] | null> {
   const plan = await prisma.plan.findUnique({ include: { goal: true }, where: { goalId } });
 
   if (!plan?.setupTasks.includes("routine")) {
@@ -50,27 +50,16 @@ export async function searchRoutineMemory(goalId: string): Promise<PlanMemorySea
 
   const { goal } = plan;
 
-  const search = fitsRoutine({ goal, state: getPlanState({ goal, plan }) })
-    ? await searchPlanMemory({ goal, need: ROUTINE_NEED })
-    : { memory: [] };
+  const memory = fitsRoutine({ goal, state: getPlanState({ goal, plan }) })
+    ? await selectPlanMemory({ goal, need: ROUTINE_NEED })
+    : [];
 
-  if ("terms" in search || search.memory.length > 0) {
-    return search;
+  if (memory.length > 0) {
+    return memory;
   }
 
   await endPlanSetupTask({ goalId, task: "routine" });
   return null;
-}
-
-export async function selectRoutineMemory({
-  goalId,
-  terms,
-}: {
-  goalId: string;
-  terms: string[];
-}): Promise<string[]> {
-  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-  return goal ? selectPlanMemory({ goal, need: ROUTINE_NEED, terms }) : [];
 }
 
 /**

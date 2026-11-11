@@ -22,10 +22,12 @@ export async function wordPronunciationFixture(attrs: {
   wordId: string;
   userLanguage?: string;
   pronunciation?: string;
+  tip?: string | null;
 }) {
   return prisma.wordPronunciation.create({
     data: {
       pronunciation: attrs.pronunciation ?? "test-pronunciation",
+      tip: attrs.tip ?? null,
       userLanguage: attrs.userLanguage ?? "en",
       wordId: attrs.wordId,
     },

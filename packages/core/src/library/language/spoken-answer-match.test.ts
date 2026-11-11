@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  hasTranscribedLetterNames,
-  matchSpokenAnswer,
-  pickWordsToExplain,
-} from "./spoken-answer-match";
+import { matchSpokenAnswer, needsWordByWordCheck, pickWordsToExplain } from "./spoken-answer-match";
 
 describe(matchSpokenAnswer, () => {
   it("accepts the sentence regardless of case and punctuation", () => {
@@ -55,6 +51,48 @@ describe(matchSpokenAnswer, () => {
     });
 
     expect(match.isCorrect).toBe(true);
+  });
+
+  it("accepts an 's or 'd contraction said in full, in either of its long forms", () => {
+    const pairs = [
+      ["What's your phone number?", "What is your phone number?"],
+      ["She's been here before.", "She has been here before."],
+      ["I'd like a coffee.", "I would like a coffee."],
+      ["We'd already left.", "We had already left."],
+      ["What is your name?", "What's your name?"],
+      ["She's here and she is happy.", "She is here and she is happy."],
+      ["She is here and she's happy.", "She's here and she's happy."],
+      ["She's happy because she's won.", "She is happy because she has won."],
+      ["I'd go if I'd finished.", "I would go if I had finished."],
+    ];
+
+    for (const [expected = "", heard = ""] of pairs) {
+      expect(matchSpokenAnswer({ expected, heard, language: "en" }).isCorrect).toBe(true);
+    }
+  });
+
+  it("compares words that are also names of built-in object properties", () => {
+    const match = matchSpokenAnswer({
+      expected: "The constructor works.",
+      heard: "The constructor works.",
+      language: "en",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
+
+  it("still flags another word in place of an 's contraction", () => {
+    const match = matchSpokenAnswer({
+      expected: "What's your name?",
+      heard: "What was your name?",
+      language: "en",
+    });
+
+    expect(match.words[0]).toStrictEqual({
+      heard: "what was",
+      status: "different",
+      text: "What's",
+    });
   });
 
   it("shows what was heard of a word that was only partly said", () => {
@@ -159,9 +197,19 @@ describe(matchSpokenAnswer, () => {
 
     expect(match.isCorrect).toBe(true);
   });
+
+  it("reads digit groups joined by hyphens as the same digits written apart", () => {
+    const match = matchSpokenAnswer({
+      expected: "My phone number is 234-555-0123",
+      heard: "My phone number is 234 555 0123.",
+      language: "en",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
 });
 
-function hasLetterNames({
+function needsListening({
   expected,
   heard,
   language,
@@ -171,13 +219,13 @@ function hasLetterNames({
   language: string;
 }) {
   const { words } = matchSpokenAnswer({ expected, heard, language });
-  return hasTranscribedLetterNames({ language, words });
+  return needsWordByWordCheck({ expected, heard, language, words });
 }
 
-describe(hasTranscribedLetterNames, () => {
+describe(needsWordByWordCheck, () => {
   it("finds letter names the transcript wrote as bare letters", () => {
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Emma si scrive: e, emme, emme, a",
         heard: "Emma si scrive E, M, M, A.",
         language: "it",
@@ -185,7 +233,7 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
 
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Wes is spelled double-u, e, s",
         heard: "Wes is spelled W-E-S.",
         language: "en",
@@ -195,7 +243,7 @@ describe(hasTranscribedLetterNames, () => {
 
   it("finds a letter whose name is two words, one of them a letter", () => {
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Wes is spelled double u, e, s",
         heard: "Wes is spelled W-E-S.",
         language: "en",
@@ -203,7 +251,7 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
 
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Wendy se escribe: uve doble, e, ene, de, i griega",
         heard: "Wendy se escribe W, E, N, D, Y.",
         language: "es",
@@ -211,7 +259,7 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
 
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Yago se escribe: i griega, a, ge, o",
         heard: "Yago se escribe Y, A, G, O.",
         language: "es",
@@ -221,7 +269,7 @@ describe(hasTranscribedLetterNames, () => {
 
   it("finds a letter name next to another mistake", () => {
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Il codice è emme uno",
         heard: "Il codice è M 1",
         language: "it",
@@ -229,7 +277,7 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
 
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "The code is one double u",
         heard: "The code is 1 W",
         language: "en",
@@ -237,9 +285,53 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
   });
 
+  it("finds a number the transcript wrote differently from the sentence", () => {
+    expect(
+      needsListening({
+        expected: "My phone number is 234-555-0123",
+        heard: "My phone number is two three four five five five one, zero one two three.",
+        language: "en",
+      }),
+    ).toBe(true);
+
+    expect(
+      needsListening({
+        expected: "Did you say 312?",
+        heard: "Did you say three one two?",
+        language: "en",
+      }),
+    ).toBe(true);
+
+    expect(
+      needsListening({
+        expected: "I have three brothers.",
+        heard: "I have 3 brothers.",
+        language: "en",
+      }),
+    ).toBe(true);
+
+    expect(needsListening({ expected: "我有三个哥哥", heard: "我有3个哥哥", language: "zh" })).toBe(
+      true,
+    );
+
+    expect(
+      needsListening({
+        expected: "My phone number is 234-555-0123",
+        heard: "My phone number is 234-555-555-0123.",
+        language: "en",
+      }),
+    ).toBe(true);
+  });
+
+  it("leaves a mistake beside a number heard right to the transcript", () => {
+    expect(needsListening({ expected: "我有3个哥哥", heard: "我有3个姐姐", language: "zh" })).toBe(
+      false,
+    );
+  });
+
   it("leaves letters to the transcript when the sentence writes them as letters", () => {
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "Emma si scrive: E, M, M, A",
         heard: "Emma si scrive E, N, M, A.",
         language: "it",
@@ -249,7 +341,7 @@ describe(hasTranscribedLetterNames, () => {
 
   it("leaves ordinary mistakes to the transcript", () => {
     expect(
-      hasLetterNames({
+      needsListening({
         expected: "How much is the rent?",
         heard: "How much is the hent?",
         language: "en",
@@ -258,7 +350,7 @@ describe(hasTranscribedLetterNames, () => {
   });
 
   it("doesn't take a Chinese character heard for a word as a letter", () => {
-    expect(hasLetterNames({ expected: "你好", heard: "你", language: "zh" })).toBe(false);
+    expect(needsListening({ expected: "你好", heard: "你", language: "zh" })).toBe(false);
   });
 });
 

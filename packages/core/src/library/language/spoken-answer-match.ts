@@ -1,6 +1,11 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { Converter as createChineseConverter } from "opencc-js/t2cn";
+import {
+  expandContractions,
+  isSameSpokenWord,
+  joinContractions,
+} from "./_utils/english-contractions";
 import { alignWords } from "./_utils/word-alignment";
 
 type SpokenWordStatus = "correct" | "different" | "missed";
@@ -16,27 +21,8 @@ export type SpokenAnswerMatch = {
 
 const MAX_WORDS_TO_EXPLAIN = 2;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
-
-const ENGLISH_CONTRACTIONS: readonly [RegExp, string][] = [
-  [/\bcan't\b/gu, "can not"],
-  [/\bwon't\b/gu, "will not"],
-  [/n't\b/gu, " not"],
-  [/'re\b/gu, " are"],
-  [/'ve\b/gu, " have"],
-  [/'m\b/gu, " am"],
-  [/'ll\b/gu, " will"],
-];
-
-function expandContractions({ language, text }: { language: string; text: string }): string {
-  if (!language.startsWith("en")) {
-    return text;
-  }
-
-  return ENGLISH_CONTRACTIONS.reduce(
-    (expanded, [pattern, replacement]) => expanded.replaceAll(pattern, replacement),
-    text,
-  );
-}
+const DIGIT_RUN = /\p{Nd}+/gu;
+const DIGIT_GROUP = /^\p{Nd}+$/u;
 
 /** Speech recognition may return either Chinese script; compare in simplified characters. */
 const toSimplifiedChinese = createChineseConverter({ from: "t", to: "cn" });
@@ -61,9 +47,14 @@ function isLoneLetter(token: string): boolean {
   return LONE_LETTER.test(token);
 }
 
-function splitSpelledLetters(token: string): string[] {
+function splitSpelledOut(token: string): string[] {
   const parts = token.split("-");
-  return parts.length > 1 && parts.every((part) => isLoneLetter(part)) ? parts : [token];
+
+  const isSpelledOut =
+    parts.length > 1 &&
+    (parts.every((part) => isLoneLetter(part)) || parts.every((part) => DIGIT_GROUP.test(part)));
+
+  return isSpelledOut ? parts : [token];
 }
 
 function toTokens({ language, text }: { language: string; text: string }): string[] {
@@ -83,20 +74,26 @@ function toTokens({ language, text }: { language: string; text: string }): strin
   return normalized
     .split(" ")
     .filter(Boolean)
-    .flatMap((token) => splitSpelledLetters(token));
+    .flatMap((token) => splitSpelledOut(token));
 }
 
 function getTokenSeparator(language: string): string {
   return getUnspacedSegmenter(language) ? "" : " ";
 }
 
-type ExpectedWord = { text: string; tokens: string[] };
+type ExpectedWord = { text: string; tokens: readonly string[] };
 
-function toExpectedWords({ expected, language }: { expected: string; language: string }) {
+function toExpectedWords({
+  expected,
+  language,
+}: {
+  expected: string;
+  language: string;
+}): ExpectedWord[] {
   return expected
     .split(/\s+/u)
     .map((text) => ({ text, tokens: toTokens({ language, text }) }))
-    .filter((word): word is ExpectedWord => word.tokens.length > 0);
+    .filter((word) => word.tokens.length > 0);
 }
 
 type TokenOutcome = { heardIndex: number | null; matched: boolean };
@@ -111,7 +108,7 @@ function getTokenOutcomes({
   const outcomes = new Map<number, TokenOutcome>();
   let heardIndex = 0;
 
-  for (const step of alignWords(expected, heard)) {
+  for (const step of alignWords({ expected, heard, isSameWord: isSameSpokenWord })) {
     if (step.kind === "match") {
       outcomes.set(step.expected, { heardIndex, matched: true });
       heardIndex += 1;
@@ -151,9 +148,9 @@ function toWordResult({
     return { heard: null, status: "missed", text: word.text };
   }
 
-  const heard = heardTokens
-    .slice(Math.min(...heardIndexes), Math.max(...heardIndexes) + 1)
-    .join(separator);
+  const heard = joinContractions(
+    heardTokens.slice(Math.min(...heardIndexes), Math.max(...heardIndexes) + 1).join(separator),
+  );
 
   return { heard, status: "different", text: word.text };
 }
@@ -199,7 +196,7 @@ export function matchSpokenAnswer({
 
   return {
     isCorrect: words.length > 0 && correctCount === words.length,
-    normalizedHeard: heardTokens.join(separator),
+    normalizedHeard: joinContractions(heardTokens.join(separator)),
     score: words.length === 0 ? 0 : correctCount / words.length,
     words,
   };
@@ -236,11 +233,7 @@ function isLetterNameHeardAsLetters({
   return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));
 }
 
-/**
- * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), so its
- * transcript can't tell whether the name said was the one expected.
- */
-export function hasTranscribedLetterNames({
+function hasTranscribedLetterNames({
   language,
   words,
 }: {
@@ -253,6 +246,32 @@ export function hasTranscribedLetterNames({
   }
 
   return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
+}
+
+function toDigitRuns(text: string): string {
+  return [...text.matchAll(DIGIT_RUN)].join(" ");
+}
+
+/**
+ * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), and a number
+ * as digits or words whichever way it likes ("3" for "three", "two three four" for "234"), so when
+ * its letters or digits differ from the sentence's, its transcript can't tell whether they were
+ * said right. The word-by-word check, which hears the recording against the sentence, can.
+ */
+export function needsWordByWordCheck({
+  expected,
+  heard,
+  language,
+  words,
+}: {
+  expected: string;
+  heard: string;
+  language: string;
+  words: readonly SpokenWordResult[];
+}): boolean {
+  return (
+    toDigitRuns(expected) !== toDigitRuns(heard) || hasTranscribedLetterNames({ language, words })
+  );
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {

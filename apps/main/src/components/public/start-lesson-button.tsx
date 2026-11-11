@@ -4,7 +4,7 @@ import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { useRouter } from "@/i18n/navigation";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
-import { ORIGIN_PARAM, withOrigin } from "@/lib/public/public-hrefs";
+import { withOrigin } from "@/lib/public/public-hrefs";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { LogInIcon, PlayIcon } from "lucide-react";
@@ -91,15 +91,13 @@ function StartFailure() {
   );
 }
 
-/** Without JavaScript it's a form that opens the player, which has its own start button. */
+/** A form, so React keeps a press made before the page hydrates and starts the lesson once it does. */
 export function StartLessonButton({
-  action,
   children,
   className,
   lessonId,
   origin,
 }: {
-  action: string;
   children: ReactNode;
   className?: string;
   lessonId: string;
@@ -109,17 +107,7 @@ export function StartLessonButton({
   const { failed, pending, start } = useLessonStart({ lessonId, origin });
 
   return (
-    <form
-      action={action}
-      className="flex flex-col gap-3 sm:items-start"
-      method="get"
-      onSubmit={(event) => {
-        event.preventDefault();
-        void start();
-      }}
-    >
-      <input name={ORIGIN_PARAM} type="hidden" value={origin} />
-
+    <form action={() => void start()} className="flex flex-col gap-3 sm:items-start">
       <Button
         busy={pending}
         className={getStartControlClassName(className)}

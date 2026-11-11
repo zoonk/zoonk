@@ -13,6 +13,8 @@ import {
 import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
+import fixPrompt from "./language-lesson-fix.prompt.md";
 import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
 import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
 import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
@@ -136,7 +138,7 @@ const schema = z.object({
 
 export type LanguageLessonContent = z.infer<typeof schema>;
 
-export type LanguageLessonParams = {
+export type LanguageLessonInputs = {
   learnerLanguage: string;
   targetLanguage: string;
   /** A CEFR level ("A2") or band ("A1–A2"). */
@@ -148,6 +150,9 @@ export type LanguageLessonParams = {
   lessonCanDo?: string | null;
   /** Words taught earlier in the course: reused in sentences, never taught again. */
   knownWords?: string[];
+};
+
+export type LanguageLessonParams = LanguageLessonInputs & {
   model?: string;
   serviceTier?: ServiceTier;
   speed?: ServedSpeed;
@@ -160,7 +165,7 @@ function formatList(values: readonly string[] | undefined): string {
   return values && values.length > 0 ? values.map((value) => `- ${value}`).join("\n") : "none";
 }
 
-function buildUserPrompt(params: LanguageLessonParams): string {
+export function formatLanguageLessonInputs(params: LanguageLessonInputs): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
     userLanguage: params.learnerLanguage,
@@ -183,11 +188,17 @@ ${formatList(params.knownWords)}
   `;
 }
 
-/**
- * Target-language words and sentences are stored once per target language and reused by every
- * pair; everything else belongs to the pair.
- */
-export async function generateLanguageLesson(params: LanguageLessonParams) {
+async function runLanguageLessonTask({
+  instructions,
+  params,
+  task,
+  userPrompt,
+}: {
+  instructions: string;
+  params: LanguageLessonParams;
+  task: string;
+  userPrompt: string;
+}) {
   const {
     analytics,
     model = defaultModel,
@@ -196,9 +207,6 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
     speed,
     useFallback = true,
   } = params;
-
-  const systemPrompt = getSystemPrompt(params);
-  const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({
     fallbackModels,
@@ -212,7 +220,7 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
     analytics,
     generate: () =>
       generateText({
-        instructions: systemPrompt,
+        instructions,
         model,
         output: Output.object({ schema }),
         prompt: userPrompt,
@@ -220,9 +228,59 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
         reasoning,
       }),
     libraryInput: true,
-    systemPrompt,
-    task: "language-lesson",
+    systemPrompt: instructions,
+    task,
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data: result.output,
+    provenance,
+    systemPrompt: instructions,
+    usage: result.usage,
+    userPrompt,
+  };
+}
+
+/**
+ * Target-language words and sentences are stored once per target language and reused by every
+ * pair; everything else belongs to the pair.
+ */
+export async function generateLanguageLesson(params: LanguageLessonParams) {
+  return runLanguageLessonTask({
+    instructions: getSystemPrompt(params),
+    params,
+    task: "language-lesson",
+    userPrompt: formatLanguageLessonInputs(params),
+  });
+}
+
+export type FixLanguageLessonParams = LanguageLessonParams & {
+  lesson: LanguageLessonContent;
+  /** The screens the reviewer numbered, in the order learners see them. */
+  screens: readonly { kind: string; content: unknown }[];
+  /** `screen` indexes `screens`, or is null for the whole lesson. */
+  problems: readonly LessonProblem[];
+};
+
+/** Returns the whole lesson; the writer may leave it unchanged when it finds a problem isn't real. */
+export async function fixLanguageLesson(params: FixLanguageLessonParams) {
+  const screens = params.screens.map((screen, index) => ({ screen: index + 1, ...screen }));
+
+  const userPrompt = `${formatLanguageLessonInputs(params)}
+LESSON:
+${JSON.stringify(params.lesson, null, 1)}
+
+SCREENS:
+${JSON.stringify(screens, null, 1)}
+
+PROBLEMS:
+${formatLessonProblems(params.problems)}
+`;
+
+  return runLanguageLessonTask({
+    instructions: `${getSystemPrompt(params)}\n${fixPrompt}`,
+    params,
+    task: "language-lesson-fix",
+    userPrompt,
+  });
 }
