@@ -9,25 +9,21 @@ import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph"
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
-import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
-/** Read-only; answer can include the placement evidence just recorded inside a first-week session. */
 export async function loadPlacement({
-  answer = null,
   goalId,
   plan,
   userId,
   tx = prisma,
 }: {
-  answer?: PlacementEvidence | null;
   goalId: string;
   plan?: GoalPlan;
   userId: string;
   tx?: TransactionClient;
 }): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
-  const state = await loadPlacementState({ answer, goalId, plan: goalPlan, tx, userId });
+  const state = await loadPlacementState({ goalId, plan: goalPlan, tx, userId });
 
   const pastBasicsAreas = await listPlacementListeningAreas({
     goalId,
@@ -43,8 +39,8 @@ export async function loadPlacement({
 /** Announces skipped items with an undo; changeId is null when nothing can be announced yet. */
 export async function applyPlacement({
   announceAlso,
-  answer = null,
   extraWrites,
+  followToday = true,
   goalId,
   now,
   plan,
@@ -54,10 +50,9 @@ export async function applyPlacement({
 }: {
   /** Items tested out earlier and never announced (see `applyPlacementToNewPlan`). */
   announceAlso?: readonly string[];
-  /** The placement question a first-week session just asked, answered (see `loadPlacementState`). */
-  answer?: PlacementEvidence | null;
   /** Other writes that must land with the announcement. */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
+  followToday?: boolean;
   goalId: string;
   now: Date;
   plan?: GoalPlan;
@@ -71,12 +66,7 @@ export async function applyPlacement({
   state: PlacementState;
   testedOutPlanItemIds: string[];
 }> {
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({
-    answer,
-    goalId,
-    plan,
-    userId,
-  });
+  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, plan, userId });
 
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
@@ -88,7 +78,7 @@ export async function applyPlacement({
   } = await markPlanItemsTestedOut({
     announceAlso,
     extraWrites,
-    followToday: answer === null,
+    followToday,
     goalId,
     items: goalPlan.items,
     knownSkillIds: new Set(state.knownSkillIds),

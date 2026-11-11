@@ -189,7 +189,6 @@ export async function answerStudyQuestion({
     blank,
     block,
     drilled,
-    format: row.format,
     graded,
     input,
     item,

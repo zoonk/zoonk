@@ -5,7 +5,6 @@ import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
-import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
 import { listKnownByMeasuredLevel, listKnownSkillIds } from "../placement-known";
@@ -116,8 +115,6 @@ type PlacementLoad = {
 };
 
 type PlacementRead = {
-  /** Include a placement question answered inside a first-week session. */
-  answer?: PlacementEvidence | null;
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
@@ -192,7 +189,6 @@ async function loadPlacementFacts({
 
 /** Uses all answers, not only placement's; today applies the learner-local daily budget. */
 export async function loadPlacementWithSummary({
-  answer: sessionAnswer = null,
   goalId,
   ownLevel: requestedLevel,
   plan,
@@ -223,7 +219,6 @@ export async function loadPlacementWithSummary({
     : null;
 
   const budget = getAskingBudget({ attempts, today, turn });
-  const answers = sessionAnswer ? [...placementAnswers, sessionAnswer] : placementAnswers;
 
   const measuredKnown = new Set(
     listKnownByMeasuredLevel({ evidence, level: exam.measuredLevel, skills }),
@@ -231,7 +226,7 @@ export async function loadPlacementWithSummary({
 
   const { questionStatuses, statuses } = readStatuses({
     answeredOnly,
-    answers,
+    answers: placementAnswers,
     evidence,
     focusedSkillIds,
     knownAreas,
@@ -294,7 +289,7 @@ export async function loadPlacementWithSummary({
       focusTest: focusTest?.view ?? null,
       knownSkillIds: [
         ...new Set([
-          ...listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }),
+          ...listKnownSkillIds({ answers: placementAnswers, evidence, focusedSkillIds, skillIds }),
           ...measuredKnown,
         ]),
       ],
