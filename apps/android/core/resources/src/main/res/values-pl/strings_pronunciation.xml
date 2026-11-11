@@ -2,13 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "pronunciation_accent": "f9cc7974a0e5a875027ca51891168023e873fd6c94535446e56974d7c7b3b74d",
-  "pronunciation_comes_back": "9e274afc29cde6fc2b789630ab6cb529f5b2b48ee31255c14fac452e0713c8f3",
   "pronunciation_continue": "7e051510faf0bf48f0dec4ff82a40a92fb8df56b32a0b9b2e5b62dce8c51910d",
   "pronunciation_done": "50eaa4b0dc3fad50c09e56b44407fb995ef11e76d32226f5b726777dd4973e5f",
   "pronunciation_failed": "6dd05364a9db1e7d9b53bf6f52560960480612f405c68b79dad4039f91899dad",
   "pronunciation_grading": "ad62b74f06c80fdaa4ca52096f75d83d16b85ca0eff4f7b9e2a097a12401abed",
   "pronunciation_heard": "14c3be5773f27efb90c3a90a7d02dc2e74f80c75c4fe5c9982a86207bdcd6e46",
-  "pronunciation_learned": "4348106810b7d9e50c2f74fe14ec42cdb84f0a6603c20dfc2738c13b5459acb6",
   "pronunciation_listen": "dc1412771df8fb35e0dda947f3e29d7c49a74fb84edede5352bdce4c0e5703f1",
   "pronunciation_listen_slowly": "8494b3eb33ef650a7649537d5d4a46c860c5857b448cf27411670f345005974f",
   "pronunciation_microphone_off": "776f3b473a3f2705a6e1fc438152c002aa12e460d449233a03ad3c87dd5be427",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">To brzmiało dobrze</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Usłyszeliśmy „%1$s”</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">Wróci %1$s.</string>
-    <string name="pronunciation_learned">To słowo masz już opanowane. Nie wróci do powtórek.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Spróbuj ponownie</string>
     <!-- Goes on to the next word. -->

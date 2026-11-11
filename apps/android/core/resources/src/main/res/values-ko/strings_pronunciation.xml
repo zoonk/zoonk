@@ -2,13 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "pronunciation_accent": "44ca10c777552b2081529f6a8911f1f202daa210e85deaf2a35c77bcd1d4869d",
-  "pronunciation_comes_back": "80d59a179e20bcc47f550a8275669a2313ec62b89e7fe9d313702937fa569846",
   "pronunciation_continue": "675a5075e56bcc471f5b282815d4f8798888424c46eea0ec5b1b356ac0f834f9",
   "pronunciation_done": "2ef3402a4d866f88bad16206619edfaaaa207ab3b06f8a3018b88f2609aab9e5",
   "pronunciation_failed": "ac1ef3bee8a84efa3dc6714e2995bac7345a926ca2a086cb2fbed350b6cd2b00",
   "pronunciation_grading": "7b20ed44bd9a6b4ec35748ea2ecff4134091ca227e6fac475617f767873eba91",
   "pronunciation_heard": "d651ef11e1300bd85031742329ed2429a87508ba64a78f9812d1b64602849f76",
-  "pronunciation_learned": "68c2be72ecdb1d5208c3101059e7e27ee63bddd0f21c213a86837df092a85c69",
   "pronunciation_listen": "b92162f2d5e2ff9435ca627e1e4e72862ba80afa3dfb321dfb1b9876b7d1cdab",
   "pronunciation_listen_slowly": "905e07e7752d2569f01beeef3abc59404390f6d8aaac311a0449ad920fa43fec",
   "pronunciation_microphone_off": "c60b3bbfa95574ab8cea34a2d7e819abe731722aea9d10328d06b9b8ab1377b9",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">발음이 정확했어요</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">이렇게 들렸어요: “%1$s”</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">%1$s에 다시 나와요.</string>
-    <string name="pronunciation_learned">이 단어는 잘 익혔어요. 다시 나오지 않아요.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">다시 말하기</string>
     <!-- Goes on to the next word. -->

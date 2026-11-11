@@ -2,13 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "pronunciation_accent": "af553ffbe50f2f9f6dce45a8def06fc08ce8044bbf01b8fe58bad3fd2ed78712",
-  "pronunciation_comes_back": "a2b2f659de676c42933511caa1330c503d33ef8cdfc0fcc7010e3842f542e7da",
   "pronunciation_continue": "437d63fa59b4ddecbdac606d02dd349ee94c080191ebfcad99f5ed699ce72461",
   "pronunciation_done": "64d3a09fbe9a62fd707b3342cd7c23545698be1d360aa6e260d0c4014a891cb9",
   "pronunciation_failed": "17b6eb594d07140ddc2af43fdee2551a1d41fa2b3b129ac14a2aa5442e2f5537",
   "pronunciation_grading": "d137cf7af633132c4383e76dfe1cf82837a4f30faef65c83ed1ca4333a02bfcc",
   "pronunciation_heard": "dc9f23ba9ed730db88dab584aaadd17d89cc8b1ba04c6bd52fc2cfddf83c7acb",
-  "pronunciation_learned": "a31ba4c45e00a7a8278aa98003a2ea42c7e2626301006c2a78baa80f9f56a1dc",
   "pronunciation_listen": "ef9d3a929ed579fd17e91b15fbbbb81f003758fd7852eb6d71d294117875f829",
   "pronunciation_listen_slowly": "f9c4a08cb595bee01aba31fa3d3cbcb1882badd0f931921169348204bcde065a",
   "pronunciation_microphone_off": "03670c712fd1b501c927d82e308ef8d4a02122973a704db8a923c1f6f29a0384",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">Soou certo</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">A gente ouviu “%1$s”</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">Ela volta %1$s.</string>
-    <string name="pronunciation_learned">Você aprendeu esta palavra. Ela não vai voltar.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Tentar de novo</string>
     <!-- Goes on to the next word. -->

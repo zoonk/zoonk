@@ -2,13 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "pronunciation_accent": "943e4b448f57a4825315a27ea4051d485fe549ee9cc53dd54d0dd8f9dc2f533c",
-  "pronunciation_comes_back": "95f21cd774f7a486221bcc3d57162faf2b8daf76d8b092bcba34f4da768755ce",
   "pronunciation_continue": "5762591155750dda0e71f71361d18c68169097e9ff88fbf042e52ce24cf904b1",
   "pronunciation_done": "5e7563819b0feeda1bd9a67f1e0cf33a4c2ea3d3d032680e4880d1f76177dfc3",
   "pronunciation_failed": "6e417f6536e4902fe1343f995375a043d3601525dc40b49e41b493d770cba9ea",
   "pronunciation_grading": "46f419d628b857b10774f7684d3feb7fe66d679a1c3b067cc65baaafc67ab32a",
   "pronunciation_heard": "8afede0cc76507a1a657aba35bb697925531ec0921b36b569cbb24ae95c97ecc",
-  "pronunciation_learned": "3b64568e11a3adacbb2355d42531cd6db8e6fa318564f048d0730805c591cbda",
   "pronunciation_listen": "f06d7cdce56dfdb0b09b82f165ae645ae5b3f941eb44aa01fc965d8c366a93c4",
   "pronunciation_listen_slowly": "ae53e800370a536a48b82b4dba1a4bfc01e70c7e2845025a584e7eb337227dac",
   "pronunciation_microphone_off": "4ef2022e774c50287b2d625f58df67fb1eba4183563cb6667bd88c8505d228b9",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">Ça sonnait juste</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">On a entendu « %1$s »</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">Il reviendra %1$s.</string>
-    <string name="pronunciation_learned">Tu maîtrises ce mot. Il ne reviendra plus.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Réessayer</string>
     <!-- Goes on to the next word. -->

@@ -2,13 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "pronunciation_accent": "25e22f108095ea9f3df5445f58eecf4b4567c05862c32caba5bdda79b9b97325",
-  "pronunciation_comes_back": "1655e40c98a6106faf4d9b7e4f058028b9bd8d87360f1c339a1c40f92640170e",
   "pronunciation_continue": "1d4bc5aa06214fdc0e27bc57a021bb5b8aed1197de0be82d4e7af1a6a63311fe",
   "pronunciation_done": "e07026a59d4033cdbb71cac7bb450e8b00add9fc10847cf925f95fc83f3312fe",
   "pronunciation_failed": "181850714e77bde6b8f0ba08739c1114f0e8ec5846f17c5d99b5a247ff4c3f6e",
   "pronunciation_grading": "ad7a44fc06389a83bb73c2848eaff97b5d20a0e30e024c15b7936ab5380da7ea",
   "pronunciation_heard": "8be4101531f5ad3d41c55f49c5a533f8b9ce189efad384829cd39f04e0adb6c4",
-  "pronunciation_learned": "27fa854736e83a8a45c045592c9f53c0d494c76bc52141aead02244a5224519f",
   "pronunciation_listen": "cefed615e5ab62605620d1c986a01e0e590622a274d37a47978da5eb452edee8",
   "pronunciation_listen_slowly": "e25158e8d11666ef56743ba33e2636b088bfcd67074d319ac435c88369d83427",
   "pronunciation_microphone_off": "07a9cf63b755bc71d6ca5f8a2df2b4dc00724fc9a6befbe4dfc36292617e2a4a",
@@ -49,9 +47,6 @@
     <string name="pronunciation_sounded_right">Sonó bien</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">Escuchamos “%1$s”</string>
-    <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
-    <string name="pronunciation_comes_back">Vuelve el %1$s.</string>
-    <string name="pronunciation_learned">Esta ya te sale bien. No volverá a aparecer.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Volver a intentarlo</string>
     <!-- Goes on to the next word. -->
