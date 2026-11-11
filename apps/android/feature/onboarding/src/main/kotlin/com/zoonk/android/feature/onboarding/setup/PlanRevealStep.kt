@@ -136,16 +136,12 @@ internal fun ColumnScope.PlanRevealStep(
                 starting = true
             }
         try {
-            prepareToday()
+            openRevealedPlan(navigator, here, prepareToday)
         } finally {
             progress.cancel()
             starting = false
         }
         opening = false
-        if (navigator.currentRoute == here) {
-            navigator.closeSection()
-            navigator.open(AppRoute.Today)
-        }
     }
 
     when {
@@ -211,6 +207,20 @@ internal fun ColumnScope.PlanRevealStep(
 
 /** Where the learner goes once the plan is ready: the time question, or the plan itself. */
 internal enum class PlanNext { TimeQuestion, Plan }
+
+internal suspend fun openRevealedPlan(
+    navigator: AppNavigator,
+    here: AppRoute,
+    prepareToday: suspend () -> Unit,
+    destination: AppRoute? = null,
+) {
+    prepareToday()
+    if (navigator.currentRoute == here) {
+        navigator.closeSection()
+        navigator.open(AppRoute.Today)
+        destination?.let(navigator::open)
+    }
+}
 
 @Composable
 internal fun ColumnScope.PlanBuilding(
@@ -380,6 +390,7 @@ private fun ColumnScope.RevealBody(
                     Text(stringResource(R.string.onboarding_reveal_adjust))
                 }
                 Button(
+                    enabled = openingStep == null,
                     busy = starting,
                     onClick = onStart,
                     modifier = Modifier.weight(2f),

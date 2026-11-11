@@ -192,15 +192,14 @@ internal class GoalSetupViewModel(
         step: DayStep,
         open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
         isCurrent: () -> Boolean = { true },
-        onOpened: (AppRoute) -> Unit,
+        onOpened: suspend (AppRoute) -> Unit,
     ) {
-        if (step.isFinished || step.waitReason != null) return
         val tappedGoal = java.util.UUID.fromString(goalId)
         reveal(step.position) {
             if (!isCurrent()) return@reveal true
             when (val result = open(day, step, tappedGoal)) {
                 is MutationResult.Done -> {
-                    result.value?.let(onOpened)
+                    result.value?.let { onOpened(it) }
                     true
                 }
 
@@ -226,20 +225,17 @@ internal class GoalSetupViewModel(
         clearFailure()
         val revealingGoal = goalId
         viewModelScope.launch {
-            try {
-                val failed =
-                    when (store.markPlanRevealed(revealingGoal)) {
-                        is WriteOutcome.Done -> !onSaved()
-                        WriteOutcome.Obsolete -> false
-                        else -> true
-                    }
-                if (failed) {
-                    if (position == null) saveFailed = true else failedStep = position
+            val failed =
+                when (store.markPlanRevealed(revealingGoal)) {
+                    is WriteOutcome.Done -> !onSaved()
+                    WriteOutcome.Obsolete -> false
+                    else -> true
                 }
-            } finally {
-                openingStep = null
-                isSaving = false
+            if (failed) {
+                if (position == null) saveFailed = true else failedStep = position
             }
+            openingStep = null
+            isSaving = false
         }
     }
 

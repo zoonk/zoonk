@@ -194,7 +194,7 @@ internal fun RevealToday(
                 day,
                 step,
                 tagged,
-                onOpen = onOpenStep?.takeIf { !step.isFinished && step.waitReason == null }?.let { { it(day, step) } },
+                onOpen = onOpenStep?.takeIf { step.canOpen }?.let { { it(day, step) } },
                 busy = openingStep == step.position,
                 openFailed = failedStep == step.position,
                 divider = index != ordered.lastIndex,

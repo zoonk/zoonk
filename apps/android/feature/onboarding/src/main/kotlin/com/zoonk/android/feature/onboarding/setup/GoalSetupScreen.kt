@@ -570,11 +570,7 @@ private fun ColumnScope.QuestionStep(
                                 open,
                                 isCurrent = { navigator.currentRoute == route },
                             ) { destination ->
-                                if (navigator.currentRoute == route) {
-                                    navigator.closeSection()
-                                    navigator.open(AppRoute.Today)
-                                    navigator.open(destination)
-                                }
+                                openRevealedPlan(navigator, route, prepareToday, destination)
                             }
                         }
                     },

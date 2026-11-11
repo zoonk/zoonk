@@ -1,7 +1,10 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -18,8 +21,9 @@ import com.zoonk.android.feature.onboarding.revealTodayOf
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.api.models.StudyBlock
+import com.zoonk.android.navigation.AppTab
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -159,22 +163,38 @@ class RevealStepTest {
     }
 
     @Test
-    fun finishedAndWaitingStepsNeverMarkOrOpen() {
-        var marks = 0
-        check(mark = { marks++ }) { vm, day ->
-            val step = day.steps.first()
-            val plain =
-                listOf(
-                    step.copy(status = StudyBlock.Status.COMPLETED),
-                    step.copy(status = StudyBlock.Status.SKIPPED),
-                    step.copy(waitReason = StudyBlock.WaitReason.entries.first()),
+    fun rowWaitsForTodayBeforeNavigatingAndKeepsALaterBackNavigation() {
+        check { vm, day ->
+            val navigator =
+                AppNavigator(
+                    stacks = AppTab.entries.associateWith { NavBackStack<NavKey>(it.root) },
+                    selected = mutableStateOf(AppTab.Today),
+                    tasks = NavBackStack(),
+                    openWebPage = {},
                 )
-            plain.forEach {
-                vm.openRevealStep(day, it, { _, _, _ -> error("Must not open") }) { error("Must not navigate") }
+            val here = AppRoute.GoalSetup(GOAL_ID)
+            val lesson = AppRoute.Lesson(UUID.randomUUID().toString())
+            val step = day.steps.first()
+            for (leave in listOf(false, true)) {
+                val prepared = CompletableDeferred<Unit>()
+                navigator.open(here)
+                vm.openRevealStep(day, step, { _, _, _ -> MutationResult.Done(lesson) }) { destination ->
+                    openRevealedPlan(navigator, here, { prepared.await() }, destination)
+                }
+                runCurrent()
+                assertEquals(here, navigator.currentRoute)
+                assertTrue(vm.isSaving)
+                assertEquals(step.position, vm.openingStep)
+                if (leave) navigator.back()
+                prepared.complete(Unit)
+                runCurrent()
+                assertEquals(if (leave) AppRoute.Today else lesson, navigator.currentRoute)
+                assertFalse(vm.isSaving)
+                if (!leave) {
+                    navigator.back()
+                    assertEquals(AppRoute.Today, navigator.currentRoute)
+                }
             }
-            runCurrent()
-            assertEquals(0, marks)
-            assertFalse(vm.isSaving)
         }
     }
 }
