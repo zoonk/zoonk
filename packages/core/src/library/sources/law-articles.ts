@@ -4,7 +4,7 @@ const SUFFIX = String.raw`(?:-[A-Z]{1,2}\b|[^\S\n]+(?:bis|ter|quater)\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
 const CJK_SUFFIX = String.raw`[の之][\d${CJK_NUMERALS}]+`;
 const HINT_SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
-const DIGITS = String.raw`\d+(?:\.\d+)*`;
+const DIGITS = String.raw`\d+(?:[.-]\d+)*`;
 
 /**
  * The first family the text uses heads its articles. Brazilian laws open paragraphs with "§", which
@@ -76,14 +76,17 @@ function toSuffix(suffix: string): string {
   return suffix.replaceAll(/[\s-]+/gu, "").toUpperCase();
 }
 
-/** "107.51" is section 51 of part 107, so numbering goes on within the part. */
+/**
+ * "107.51" is section 51 of part 107 and "515-14" an article inserted after 515: each keeps its
+ * whole number, and numbering goes on within the part.
+ */
 function toNumber(groups: Record<string, string | undefined>): { number: string; value: number } {
   const numeral = groups.number ?? "";
-  const parts = /^\d/u.test(numeral) ? numeral.split(".").map((part) => Number(part)) : null;
-  const value = parts?.[0] ?? parseCjkNumber(numeral);
-  const suffix = toSuffix(groups.suffix ?? "");
+  const isDigits = /^\d/u.test(numeral);
+  const value = isDigits ? Number(numeral.split(/[.-]/u)[0]) : parseCjkNumber(numeral);
+  const number = isDigits ? numeral.replaceAll(/\d+/gu, (part) => String(Number(part))) : value;
 
-  return { number: `${parts?.join(".") ?? value}${suffix}`, value };
+  return { number: `${number}${toSuffix(groups.suffix ?? "")}`, value };
 }
 
 function toHeading(match: RegExpMatchArray): Heading {

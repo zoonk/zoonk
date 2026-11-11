@@ -210,6 +210,14 @@ describe(toArticleNumber, () => {
     expect(toArticleNumber("o caput")).toBeNull();
   });
 
+  it("keeps a hyphenated article number whole, but not a dash after it", () => {
+    expect(headings("Article 515-13 A.\nArticle 515-14 B.\nArt. 1º - Texto.")).toStrictEqual([
+      ["Article 515-13", "515-13"],
+      ["Article 515-14", "515-14"],
+      ["Art. 1º", "1"],
+    ]);
+  });
+
   it("names the same article a heading with a letter suffix heads, however the hint writes it", () => {
     const cases = [
       {
@@ -221,6 +229,10 @@ describe(toArticleNumber, () => {
       {
         hints: ["12 bis", "12bis", "Artículo 12 bis"],
         text: "Artículo 12. A.\nArtículo 12 bis. B.",
+      },
+      {
+        hints: ["515-14", "Article 515-14"],
+        text: "Article 515-13 A.\nArticle 515-14 B.\nArticle 516 C.",
       },
       {
         hints: ["三十二の二", "32の2", "第三十二条の二", "三十二条之二"],
