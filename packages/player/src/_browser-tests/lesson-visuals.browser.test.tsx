@@ -209,6 +209,50 @@ describe("lesson visuals", () => {
     });
   });
 
+  it("scales a chart with a larger browser text size, so its labels don't overlap", async () => {
+    const days: LessonVisual = {
+      ...lettersChart,
+      categories: ["Norte", "Sudeste", "Nordeste", "Centro"],
+      series: [{ name: "Ofícios respondidos", values: [18, 42, 64, 30] }],
+      title: "Ofícios respondidos por zona",
+    };
+
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check({ visual: days })]) });
+
+      const chart = page.getByRole("figure", { name: days.title });
+      await expect.element(chart).toBeVisible();
+
+      const overlappingLabels = () => {
+        const boxes = [...chart.element().querySelectorAll("svg text")].map((text) => ({
+          box: text.getBoundingClientRect(),
+          label: text.textContent,
+        }));
+
+        return boxes.flatMap((a, index) =>
+          boxes
+            .slice(index + 1)
+            .filter(
+              (b) =>
+                a.box.left < b.box.right &&
+                b.box.left < a.box.right &&
+                a.box.top < b.box.bottom &&
+                b.box.top < a.box.bottom,
+            )
+            .map((b) => `${a.label} / ${b.label}`),
+        );
+      };
+
+      await expect.poll(overlappingLabels).toStrictEqual([]);
+    });
+  });
+
   it("starts a chart's axis where a screen about a cropped axis says", async () => {
     const cropped: LessonVisual = {
       ...lettersChart,

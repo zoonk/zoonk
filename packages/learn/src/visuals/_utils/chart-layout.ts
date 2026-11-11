@@ -184,7 +184,7 @@ function getRowLayout({
 }): RowLayout {
   const origin = Math.max(axis.domain[0], 0);
   const room = getValueRoom({ formatValue, origin, values: axis.values });
-  const showValues = room.left + room.right <= width * MAX_VALUE_SHARE;
+  const showValues = Math.max(room.left, room.right) <= width * MAX_VALUE_SHARE;
   const range = showValues ? ([room.left, width - room.right] as const) : ([0, width] as const);
   const x = createLinearScale({ domain: axis.domain, range });
 

@@ -17,6 +17,7 @@ import {
   getLayout,
 } from "./_utils/chart-layout";
 import { getTone } from "./_utils/series-tones";
+import { LABEL_FONT_SIZE, useTextScale } from "./_utils/use-text-scale";
 import { BarRows } from "./chart-bar-rows";
 
 const FALLBACK_WIDTH = 318;
@@ -258,7 +259,9 @@ export function ChartVisualView({
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width: boxWidth } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const scale = useTextScale(ref);
+  const width = boxWidth / scale;
   const { numberUnit, valueLabel } = placeChartUnit(visual);
 
   const layout = getLayout({
@@ -286,13 +289,14 @@ export function ChartVisualView({
           {sideways ? visual.categoryLabel : valueLabel}
         </p>
 
-        <div className="w-full" ref={ref}>
+        <div className="w-full text-xs" ref={ref}>
           <svg
             aria-hidden="true"
-            className="block overflow-visible text-xs tabular-nums select-none"
-            height={layout.height}
+            className="block overflow-visible tabular-nums select-none"
+            fontSize={LABEL_FONT_SIZE}
+            height={layout.height * scale}
             viewBox={`0 0 ${width} ${layout.height}`}
-            width={width}
+            width={boxWidth}
           >
             {layout.orientation === "horizontal" ? (
               <BarRows layout={layout} unit={numberUnit} visual={visual} width={width} />

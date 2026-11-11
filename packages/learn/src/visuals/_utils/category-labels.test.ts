@@ -4,6 +4,7 @@ import {
   fitsUnderBars,
   getCategoryLabels,
   getLabelWidth,
+  wrapLabel,
 } from "./category-labels";
 
 const DAYS = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira"];
@@ -48,6 +49,22 @@ describe(getCategoryLabels, () => {
       lines: [["Segunda-", "feira"], ["Terça-feira"], ["Quarta-", "feira"], ["Quinta-", "feira"]],
       step: 2,
     });
+  });
+
+  it("never gives a name more room than the whole chart", () => {
+    const { step } = getCategoryLabels({ band: 20, categories: ["Rindfleischetikettierung", "B"] });
+    expect(step).toBe(2);
+  });
+});
+
+describe(wrapLabel, () => {
+  it("breaks a word between letters only when it is wider than the whole room", () => {
+    const word = "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz";
+    const lines = wrapLabel({ label: `Lei ${word}`, room: 254 });
+
+    expect(lines[0]).toBe("Lei");
+    expect(lines.join("")).toBe(`Lei${word}`);
+    expect(lines.every((line) => getLabelWidth(line) <= 254)).toBe(true);
   });
 });
 

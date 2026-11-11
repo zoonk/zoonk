@@ -184,6 +184,31 @@ describe(getLayout, () => {
     expect(layout.x.range).toStrictEqual([0, NARROW]);
   });
 
+  it("keeps values when the widest takes up to a third of the width, even with bars on both sides", () => {
+    const layout = rows(
+      getLayout({
+        formatTick: String,
+        formatValue: (value) => value.toLocaleString("en-US"),
+        visual: {
+          ...visual,
+          categories: REGIONS,
+          series: [{ name: "A", values: [-1_234_567, 1_234_567, 500_000, 0, -500_000] }],
+        },
+        width: NARROW,
+      }),
+    );
+
+    expect(layout.showValues).toBe(true);
+  });
+
+  it("keeps a name longer than the chart inside it, broken between letters", () => {
+    const word = "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz";
+    const layout = rows(layoutFor({ ...visual, categories: [word, "Sul"] }, NARROW));
+
+    expect(layout.rows[0]?.lines.join("")).toBe(word);
+    expect(layout.rows[0]?.lines.every((line) => getLabelWidth(line) <= NARROW)).toBe(true);
+  });
+
   it("keeps every other tick under sideways bars when their labels would overlap", () => {
     const layout = rows(
       getLayout({
