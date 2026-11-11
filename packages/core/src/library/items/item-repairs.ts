@@ -1,5 +1,7 @@
+import { fitOptions } from "@zoonk/ai/tasks/fit-options";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
-import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { type GeneratedItem, MAX_OPTIONS } from "@zoonk/ai/tasks/items/schemas";
+import { fitVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { normalizeString } from "@zoonk/utils/string";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { stripOptionLabels } from "../_utils/answer-options";
@@ -31,11 +33,11 @@ function repairOptions({
 }): ItemOf<"multipleChoice"> {
   const options = stripOptionLabels(item.options);
   const distinct = dropEquivalentOptions({ language, options });
+  const fitted = fitOptions(distinct, optionCount ?? MAX_OPTIONS);
 
-  const whole =
-    optionCount === null ? distinct.length >= MIN_CHOICES : distinct.length === optionCount;
+  const whole = optionCount === null ? fitted.length >= MIN_CHOICES : fitted.length === optionCount;
 
-  return distinct.length < options.length && whole ? { ...item, options: distinct } : item;
+  return fitted.length < options.length && whole ? { ...item, options: fitted } : item;
 }
 
 function repeats(value: number, other: number | null): boolean {
@@ -149,5 +151,10 @@ export function repairItem<TItem extends GeneratedItem>({
 }): TItem {
   const written = mapItemWriting(item, ({ layout, text }) => repairMarkdown({ layout, text }));
 
-  return { ...item, ...repairAnswers({ item: written, language, optionCount }) };
+  const repaired = repairAnswers({ item: written, language, optionCount });
+
+  const visual =
+    "visual" in repaired && repaired.visual ? { visual: fitVisual(repaired.visual) } : {};
+
+  return { ...item, ...repaired, ...visual };
 }

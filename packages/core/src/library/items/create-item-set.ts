@@ -1,4 +1,5 @@
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/items/schemas";
+import { fitVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { type Item, type ItemSet, type ItemSetKind, prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { type KeyCheckedItem, type KeyedFormat } from "./check-item-keys";
@@ -41,7 +42,10 @@ export async function createItemSet({
   rejected: RejectedItem[];
   set: (ItemSet & { items: Item[] }) | null;
 }> {
-  parseItemSetContent({ content, kind });
+  const parsed = parseItemSetContent({ content, kind });
+
+  const stored =
+    parsed.kind === "chart" ? { ...content, visual: fitVisual(parsed.content.visual) } : content;
 
   const checked = items.map(({ format, item, skillId }, index) => ({
     ...toCheckedItem({
@@ -71,7 +75,7 @@ export async function createItemSet({
   const set = await prisma.$transaction(async (transaction) => {
     const existing = await transaction.itemSet.findFirst({
       include: { items: { orderBy: { setPosition: "asc" } } },
-      where: { content: { equals: content }, examBlueprintId, kind, runId: provenance.runId },
+      where: { content: { equals: stored }, examBlueprintId, kind, runId: provenance.runId },
     });
 
     if (existing) {
@@ -81,7 +85,7 @@ export async function createItemSet({
     return transaction.itemSet.create({
       data: {
         ...shared,
-        content,
+        content: stored,
         items: {
           create: passing.map(({ item, skillId }, position) => ({
             ...toStoredItem(item, {}),

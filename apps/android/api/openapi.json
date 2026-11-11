@@ -37047,7 +37047,6 @@
                   },
                   "categories": {
                     "minItems": 2,
-                    "maxItems": 12,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -37056,7 +37055,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -37067,7 +37065,6 @@
                         },
                         "values": {
                           "minItems": 2,
-                          "maxItems": 12,
                           "type": "array",
                           "items": {
                             "type": "number"
@@ -37116,7 +37113,6 @@
                   },
                   "events": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -37208,7 +37204,6 @@
               },
               "categories": {
                 "minItems": 2,
-                "maxItems": 12,
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -37217,7 +37212,6 @@
               },
               "series": {
                 "minItems": 1,
-                "maxItems": 3,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -37228,7 +37222,6 @@
                     },
                     "values": {
                       "minItems": 2,
-                      "maxItems": 12,
                       "type": "array",
                       "items": {
                         "type": "number"
@@ -37277,7 +37270,6 @@
               },
               "events": {
                 "minItems": 2,
-                "maxItems": 8,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -61394,7 +61386,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -61403,7 +61394,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -61414,7 +61404,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -61463,7 +61452,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66324,7 +66312,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -66333,7 +66320,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66344,7 +66330,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -66393,7 +66378,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -66814,7 +66798,6 @@
                               },
                               "categories": {
                                 "minItems": 2,
-                                "maxItems": 12,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
@@ -66823,7 +66806,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -66834,7 +66816,6 @@
                                     },
                                     "values": {
                                       "minItems": 2,
-                                      "maxItems": 12,
                                       "type": "array",
                                       "items": {
                                         "type": "number"
@@ -66883,7 +66864,6 @@
                               },
                               "events": {
                                 "minItems": 2,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -67013,7 +66993,6 @@
                               },
                               "categories": {
                                 "minItems": 2,
-                                "maxItems": 12,
                                 "type": "array",
                                 "items": {
                                   "type": "string",
@@ -67022,7 +67001,6 @@
                               },
                               "series": {
                                 "minItems": 1,
-                                "maxItems": 3,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -67033,7 +67011,6 @@
                                     },
                                     "values": {
                                       "minItems": 2,
-                                      "maxItems": 12,
                                       "type": "array",
                                       "items": {
                                         "type": "number"
@@ -67082,7 +67059,6 @@
                               },
                               "events": {
                                 "minItems": 2,
-                                "maxItems": 8,
                                 "type": "array",
                                 "items": {
                                   "type": "object",
@@ -70960,7 +70936,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -70969,7 +70944,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -70980,7 +70954,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -71029,7 +71002,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -71418,7 +71390,6 @@
                           },
                           "categories": {
                             "minItems": 2,
-                            "maxItems": 12,
                             "type": "array",
                             "items": {
                               "type": "string",
@@ -71427,7 +71398,6 @@
                           },
                           "series": {
                             "minItems": 1,
-                            "maxItems": 3,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -71438,7 +71408,6 @@
                                 },
                                 "values": {
                                   "minItems": 2,
-                                  "maxItems": 12,
                                   "type": "array",
                                   "items": {
                                     "type": "number"
@@ -71487,7 +71456,6 @@
                           },
                           "events": {
                             "minItems": 2,
-                            "maxItems": 8,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -87207,7 +87175,6 @@
                   },
                   "categories": {
                     "minItems": 2,
-                    "maxItems": 12,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -87216,7 +87183,6 @@
                   },
                   "series": {
                     "minItems": 1,
-                    "maxItems": 3,
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -87227,7 +87193,6 @@
                         },
                         "values": {
                           "minItems": 2,
-                          "maxItems": 12,
                           "type": "array",
                           "items": {
                             "type": "number"
@@ -87276,7 +87241,6 @@
                   },
                   "events": {
                     "minItems": 2,
-                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "object",
