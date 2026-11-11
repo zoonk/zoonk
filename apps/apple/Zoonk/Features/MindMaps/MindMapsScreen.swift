@@ -291,8 +291,8 @@ private struct MindMapCreateSection: View {
   /// The one line under the button: the first of these that applies.
   private enum Line {
     case unreachable
-    case stopped(MindMapLimit)
     case onTheWay(Int)
+    case stopped(MindMapLimit)
     case fewer(Int)
     case needLessons(Int)
   }
@@ -304,13 +304,12 @@ private struct MindMapCreateSection: View {
       return .unreachable
     }
 
-    // With no chapter ready to make, maps on their way come first: the learner just started them.
-    if offer.startable == 0, let stop = offer.stop, offer.eligible > 0 || onTheWay == 0 {
-      return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
-    }
-
     if onTheWay > 0 {
       return .onTheWay(onTheWay)
+    }
+
+    if offer.startable == 0, let stop = offer.stop {
+      return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
     if offer.startable < offer.eligible {
