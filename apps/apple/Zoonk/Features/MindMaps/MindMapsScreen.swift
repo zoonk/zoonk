@@ -232,6 +232,7 @@ private struct MindMapCreateSection: View {
   var body: some View {
     let offer = maps.createOffer
     let line = line(offer)
+    let canStart = offer.startable > 0 || offer.stop == nil
 
     Section {
       if offer.startable > 0 || line != nil {
@@ -256,7 +257,7 @@ private struct MindMapCreateSection: View {
       }
 
       DisclosureGroup(isExpanded: $showsChapters) {
-        if showsLessonsNote {
+        if canStart, showsLessonsNote {
           Text(
             "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
             comment:
@@ -267,7 +268,7 @@ private struct MindMapCreateSection: View {
         }
 
         ForEach(notMade) { map in
-          MindMapRow(goalId: goalId, map: map, place: .library)
+          MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
         }
       } label: {
         LabeledContent {
