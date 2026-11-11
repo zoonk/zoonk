@@ -21,14 +21,12 @@ export type MockChooserStatus =
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
   | { kind: "refused"; limit: HelpLimit };
 
-export function MockPlusNotice({ placement = false }: { placement?: boolean }) {
+export function MockPlusNotice() {
   const t = useExtracted();
 
   return (
     <PlusNotice cta={false}>
-      {placement
-        ? t("Mock exams come with Plus. Without it, the quick questions find your starting point.")
-        : t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
+      {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
     </PlusNotice>
   );
 }
