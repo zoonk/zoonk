@@ -5,6 +5,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 import { type ItemExamFormat } from "./generate-items";
@@ -12,6 +13,7 @@ import { withItemRules } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
+import { formatUsedSituations } from "./used-situations";
 import taskPrompt from "./write-item-set.prompt.md";
 
 /**
@@ -30,7 +32,12 @@ export type ItemSetFormat = "multipleChoice" | "trueFalse";
 
 const ITEM_SET_KINDS = ["text", "case", "chart"] as const;
 
-type ItemSetSkill = { name: string; description: string; level: CourseLevel };
+type ItemSetSkill = {
+  name: string;
+  description: string;
+  level: CourseLevel;
+  usedSituations?: readonly string[];
+};
 
 export type WriteItemSetParams = {
   /** Two to four skills of one subject. */
@@ -94,7 +101,7 @@ function formatSkills(skills: readonly ItemSetSkill[]): string {
   return skills
     .map(
       (skill, index) =>
-        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}`,
+        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}${formatUsedSituations({ indent: "   ", situations: skill.usedSituations })}`,
     )
     .join("\n");
 }
@@ -139,11 +146,17 @@ export async function writeItemSet(params: WriteItemSetParams) {
   } = params;
 
   // The questions share the stimulus's chart; the prompt's own rules describe it.
-  const systemPrompt = withItemRules(taskPrompt, {
+  const setPrompt = selectPromptVariants({
+    template: taskPrompt,
+    variants: { usedTitles: Boolean(params.usedTitles?.length) },
+  });
+
+  const systemPrompt = withItemRules(setPrompt, {
     field: false,
     formats: [format],
     languageGoal: Boolean(params.targetLanguage),
     pictures: false,
+    usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
   });
 
   const userPrompt = buildUserPrompt(params);

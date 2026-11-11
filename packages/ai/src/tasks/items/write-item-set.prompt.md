@@ -13,6 +13,9 @@ Write one set in `LANGUAGE` that looks, reads and scores like `EXAM`: a stimulus
 - It is one stimulus that every question reads: one text, one situation or one chart, never a list of unrelated short cases, one per question.
 - Write it yourself, as an original in the exam's style. Never copy a real text or attribute it to a real author, outlet, book or study, and never present invented facts about real places, people, governments or companies: a case's people, towns, agencies and companies come from `CAST` or are plainly fictional, and a chart of invented data has `source` null and its title says what it shows.
 - `title`: a short title, or null when the exam prints none.
+{{#usedTitles}}
+- `USED_TITLES` are the titles of the exam's sets the app already has. Write about another subject, never one of those again under another title.
+{{/usedTitles}}
 - Long enough that every question needs it, and no longer: 120 to 350 words for a text, 80 to 250 for a case. Plain paragraphs; a case may give its facts as a short list, and data read in rows and columns goes in `text` as a GFM pipe table.
 
 # The questions

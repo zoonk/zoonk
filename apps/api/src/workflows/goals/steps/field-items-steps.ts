@@ -70,7 +70,7 @@ async function writeFieldItemsStep({
 }: FieldItemsWrite): Promise<{ items: GeneratedItem[]; provenance: WrittenItems["provenance"] }> {
   "use step";
 
-  const { field, skill } = target;
+  const { field, skill, usedSituations } = target;
 
   const { data, provenance } = await generateItems({
     analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
@@ -80,6 +80,7 @@ async function writeFieldItemsStep({
     language: skill.language,
     level: skill.level ?? "beginner",
     skill: { description: skill.description, example: skill.example, name: skill.name },
+    usedSituations,
   });
 
   return { items: data.items, provenance };

@@ -6,7 +6,6 @@ import {
   type ItemFormat,
   prisma,
 } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
@@ -24,6 +23,7 @@ import {
 } from "../learner/placement/placement-quick-format";
 import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../library/items/item-field";
+import { toUsedSituations } from "../library/items/used-situations";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
@@ -42,30 +42,6 @@ export type PlacementItemSkill = {
   /** Openings of every question the goal's learner can be served for the skill, so new cases do not repeat one under other names. */
   usedSituations: string[];
 };
-
-const MAX_USED_SITUATIONS = 8;
-const MAX_SITUATION_LENGTH = 200;
-
-function getItemSituation(content: unknown): string | null {
-  const fields = isJsonObject(content) ? content : {};
-
-  const text = [fields.context, fields.question, fields.statement].find(
-    (value): value is string => typeof value === "string" && value.trim().length > 0,
-  );
-
-  return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
-}
-
-/** Prioritize already-answered situations so mocks cannot recreate a case the learner saw in placement. */
-function getUsedSituations(items: readonly SkillItem[]): string[] {
-  const ordered = [
-    ...items.filter((item) => isAnswered(item)),
-    ...items.filter((item) => !isAnswered(item)),
-  ];
-
-  const situations = ordered.flatMap((item) => getItemSituation(item.content) ?? []);
-  return [...new Set(situations)].slice(0, MAX_USED_SITUATIONS);
-}
 
 type PickingGoal = Pick<Goal, "details"> & {
   examBlueprint: ExamBlueprint | null;
@@ -170,7 +146,7 @@ function toPick({
     needsTyped: writesTyped && !formats.has("typed"),
     ownerId: row.ownerId,
     targetLanguage: row.targetLanguage,
-    usedSituations: getUsedSituations(row.items),
+    usedSituations: toUsedSituations(row.items),
   };
 }
 

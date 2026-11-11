@@ -177,6 +177,26 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
+    expectations: `Cebraspe-style true/false items in Brazilian Portuguese on the Access to Information Law (Lei 12.527/2011). The skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new item may use one of those situations again with other names, agencies or numbers (a request answered with partial access because part of a document is classified; an agency extending the 20-day answer deadline by 10 days), and the three items use different situations from each other. False items must hide one realistic trap. Check the legal accuracy of every statement against Law 12.527/2011.`,
+    id: "pt-cebraspe-acesso-informacao-avoids-used-situations",
+    userInput: {
+      count: ITEMS_PER_CASE,
+      examFormat: CEBRASPE,
+      format: "trueFalse",
+      language: "pt",
+      level: "intermediate",
+      skill: {
+        description:
+          "Aplicar a Lei de Acesso à Informação (Lei 12.527/2011) a pedidos de informação: prazos, acesso parcial, sigilo e recursos.",
+        name: "Lei de Acesso à Informação",
+      },
+      usedSituations: [
+        "Rodrigo pediu à secretaria municipal de obras cópia de um contrato; parte do documento é sigilosa, e o órgão entregou o restante com a parte sigilosa ocultada.",
+        "Um órgão federal recebeu um pedido de informação e, sem conseguir responder em 20 dias, prorrogou o prazo por mais 10 dias, avisando o requerente.",
+      ],
+    },
+  },
+  {
     expectations: `Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.`,
     id: "en-cebraspe-annulment-revocation-administrative-acts",
     userInput: {

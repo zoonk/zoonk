@@ -4,6 +4,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { namesMatch } from "../exams/_utils/name-match";
 import { getExamScale } from "../exams/scoring/exam-scales";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
+import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { toItemExam } from "./item-exam";
@@ -125,7 +126,13 @@ export async function pickFreeResponseSkills({
   goalId: string;
 }): Promise<PlacementItemSkill[]> {
   const goal = await prisma.goal.findUnique({
-    select: { examBlueprint: true, kind: true, plan: { select: { graph: true } }, title: true },
+    select: {
+      examBlueprint: true,
+      kind: true,
+      plan: { select: { graph: true } },
+      title: true,
+      userId: true,
+    },
     where: { id: goalId },
   });
 
@@ -161,11 +168,23 @@ export async function pickFreeResponseSkills({
 
   const exam = toItemExam(blueprint);
 
-  return ranked
+  const picked = ranked
     .flatMap((id) => skills.find((skill) => skill.id === id) ?? [])
-    .slice(0, FREE_RESPONSE_SKILLS)
-    .map((skill) => {
-      const style = picks.find((pick) => pick.skill.skillId === skill.id)?.style;
-      return { ...skill, exam: style ? { ...exam, style } : exam, usedSituations: [] };
-    });
+    .slice(0, FREE_RESPONSE_SKILLS);
+
+  const usedSituations = await loadUsedSituations({
+    examBlueprintId: blueprint.id,
+    skillIds: picked.map((skill) => skill.id),
+    userId: goal?.userId,
+  });
+
+  return picked.map((skill) => {
+    const style = picks.find((pick) => pick.skill.skillId === skill.id)?.style;
+
+    return {
+      ...skill,
+      exam: style ? { ...exam, style } : exam,
+      usedSituations: usedSituations.get(skill.id) ?? [],
+    };
+  });
 }
