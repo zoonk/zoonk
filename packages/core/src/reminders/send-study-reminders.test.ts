@@ -326,6 +326,31 @@ describe("reading a study reminder's delivery", () => {
       }),
     ).resolves.toBeNull();
   });
+
+  it("sends nothing once the learner started studying after the claim, as on a retried send", async () => {
+    const { goal, user } = await learnerWithReminder();
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: TODAY,
+      userId: user.id,
+    });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      sessionId: session.id,
+      startedAt: new Date(AT_SEVEN_TEN.getTime() - MINUTE_MS),
+    });
+
+    await expect(
+      readStudyReminderDelivery({
+        channel: "email",
+        claim: CLAIM,
+        now: AT_SEVEN_TEN,
+        userId: user.id,
+      }),
+    ).resolves.toBeNull();
+  });
 });
 
 describe("before a plan's first day", () => {

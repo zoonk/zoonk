@@ -182,8 +182,9 @@ async function findDestination({
 }
 
 /**
- * Each channel checks again before sending: still on, same destination, work left. Past the
- * claimed window's end, which is never later than that day's midnight, it sends nothing.
+ * Each channel checks again before sending, retries included: still on, same destination, work
+ * left, not studying right now. Past the claimed window's end, which is never later than that
+ * day's midnight, it sends nothing.
  */
 export async function readStudyReminderDelivery({
   channel,
@@ -200,14 +201,15 @@ export async function readStudyReminderDelivery({
     return null;
   }
 
-  const [found, goals] = await Promise.all([
+  const [found, goals, studying] = await Promise.all([
     findDestination({ channel, now, userId }),
     findGoalsWithWork({ now, userId }),
+    hasStudiedRecently({ now, userId }),
   ]);
 
   const [first, ...rest] = goals;
 
-  if (!found || !first) {
+  if (!found || !first || studying) {
     return null;
   }
 
