@@ -8,10 +8,12 @@ import { getGoalPlan } from "../../plans/get-goal-plan";
 import { getPlanTimeAdvice } from "../../plans/get-time-advice";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
+import { getTodayView } from "../../view-models/today/get-today-view";
 import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { readFocusTestRecord } from "./focus-test-state";
+import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 const DONT_KNOW = { dontKnow: true } as const;
@@ -203,6 +205,49 @@ describe("the Focus test on a plan whose time is short", () => {
       });
     },
   );
+
+  it("keeps a device-zone proposal applicable when the goal has no stored time zone", async () => {
+    const timeZone = "America/Sao_Paulo";
+
+    const { goal, plan } = await shortPlanExamGoalFixture({
+      goal: { ...PLAN_SHOWN, timezone: null },
+    });
+
+    const first = await startSitting(goal.id);
+
+    await answerPlacementQuestion({
+      goalId: goal.id,
+      input: { answer: DONT_KNOW, durationMs: 20_000, itemId: first.next?.itemId ?? "", timeZone },
+    });
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: { timeZone } });
+
+    const proposal = await prisma.planChange.findFirstOrThrow({
+      where: { planId: plan.id, status: "proposed" },
+    });
+
+    expect(proposal.payload).toMatchObject({ previewBasis: { timeZone } });
+
+    expect(result).toMatchObject({
+      completion: { focusTest: { checkpoint: { focus: { proposal: { canApply: true } } } } },
+    });
+
+    await expect(getGoalPlacement({ goalId: goal.id, timeZone })).resolves.toMatchObject({
+      placement: { focusTest: { checkpoint: { focus: { proposal: { canApply: true } } } } },
+    });
+
+    await expect(getTodayView({ goalId: goal.id, timeZone })).resolves.toMatchObject({
+      today: { planChange: { canApply: true } },
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: proposal.id,
+        goalId: goal.id,
+        input: { status: "applied", timeZone },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+  });
 
   it("proposes when the daily time was saved but the learner hasn't passed the reveal", async () => {
     const { goal } = await shortPlanExamGoalFixture({

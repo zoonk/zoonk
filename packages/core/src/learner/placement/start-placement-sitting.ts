@@ -43,7 +43,13 @@ export async function startPlacementSitting({
   const today = getDateInTimeZone({ date: now, timeZone });
 
   const read = async () =>
-    loadPlacementWithSummary({ goalId, plan: await loadPlacementPlan(goalId), today, userId });
+    loadPlacementWithSummary({
+      goalId,
+      plan: await loadPlacementPlan(goalId),
+      timeZone,
+      today,
+      userId,
+    });
 
   const open = await read();
   const sitting = open.state.focusTest?.sitting;
@@ -73,6 +79,7 @@ export async function startPlacementSitting({
   const opened = await saveTestSummary({
     goalId,
     plan: await loadPlacementPlan(goalId),
+    timeZone,
     today,
     userId,
   });

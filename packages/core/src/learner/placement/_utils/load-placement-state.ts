@@ -128,6 +128,7 @@ type PlacementRead = {
   ownLevel?: OwnLevel | null;
   plan: GoalPlan;
   today?: Date | null;
+  timeZone?: string;
   userId: string;
   tx?: TransactionClient;
 };
@@ -201,6 +202,7 @@ export async function loadPlacementWithSummary({
   ownLevel: requestedLevel,
   plan,
   today = null,
+  timeZone,
   userId,
   tx = prisma,
 }: PlacementRead): Promise<PlacementLoad> {
@@ -280,6 +282,7 @@ export async function loadPlacementWithSummary({
       waiting: found.waiting,
     },
     plan,
+    timeZone,
     today,
     turn,
     tx,

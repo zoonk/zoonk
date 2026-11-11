@@ -10,6 +10,7 @@ import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 export function proposeAfterSession(session: {
   goalId: string | null;
   sessionId: string;
+  timeZone?: string;
   userId: string;
 }): void {
   after(async () => {

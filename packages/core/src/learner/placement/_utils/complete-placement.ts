@@ -86,7 +86,12 @@ export async function completePlacement({
   await owePlanStartLessons({ goalId, userId });
 
   const state = tested
-    ? await settleFocusTest({ goalId, today: getDateInTimeZone({ date: now, timeZone }), userId })
+    ? await settleFocusTest({
+        goalId,
+        timeZone,
+        today: getDateInTimeZone({ date: now, timeZone }),
+        userId,
+      })
     : applied.state;
 
   return {

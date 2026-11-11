@@ -188,6 +188,7 @@ export async function answerPlacementQuestion({
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
     plan,
+    timeZone,
     today: getDateInTimeZone({ date: new Date(), timeZone }),
     userId: owned.userId,
   });

@@ -21,6 +21,7 @@ export async function proposePlanChange({
   reason,
   retryOnConflict = true,
   source,
+  timeZone,
 }: {
   /** "always" asks the learner even for a change small enough to apply at once. */
   approval?: "always" | "whenLarge";
@@ -31,9 +32,10 @@ export async function proposePlanChange({
   reason: string;
   retryOnConflict?: boolean;
   source: string;
+  timeZone?: string;
 }): Promise<PlanProposalResult> {
   const propose = async (): Promise<PlanProposalResult> => {
-    const context = await loadPlanAtToken(goalId);
+    const context = await loadPlanAtToken(goalId, { timeZone });
 
     if (!context) {
       return { status: "notFound" };

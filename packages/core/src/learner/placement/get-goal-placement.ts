@@ -36,6 +36,7 @@ export async function getGoalPlacement({
     goalId,
     ownLevel: getOwnLevel({ goal: owned.goal, level }),
     plan,
+    timeZone,
     today: getDateInTimeZone({
       date: now,
       timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone }),

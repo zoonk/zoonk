@@ -87,7 +87,7 @@ export async function stopStudySession({
     const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
     if (refreshed) {
-      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, userId });
+      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
     }
   }
 

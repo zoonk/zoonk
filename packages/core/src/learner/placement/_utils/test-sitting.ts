@@ -163,6 +163,7 @@ export async function saveTestSummary({
   ownLevel,
   plan,
   today,
+  timeZone,
   userId,
 }: {
   goalId: string;
@@ -170,10 +171,20 @@ export async function saveTestSummary({
   ownLevel?: OwnLevel | null;
   plan: GoalPlan;
   today?: Date;
+  timeZone?: string;
   userId: string;
 }) {
   const saved = await writeLearnerChange({ userId }, async (tx) => {
-    const read = await loadPlacementWithSummary({ goalId, ownLevel, plan, today, tx, userId });
+    const read = await loadPlacementWithSummary({
+      goalId,
+      ownLevel,
+      plan,
+      timeZone,
+      today,
+      tx,
+      userId,
+    });
+
     const { focusTest, state } = read;
 
     if (focusTest) {

@@ -36,14 +36,16 @@ export async function startFocusTestSummary(goalId: string): Promise<void> {
 export async function settleFocusTest({
   goalId,
   today,
+  timeZone,
   userId,
 }: {
   goalId: string;
   today: Date;
+  timeZone: string;
   userId: string;
 }): Promise<PlacementState> {
   const plan = await loadPlacementPlan(goalId);
-  const { focusTest, state } = await saveTestSummary({ goalId, plan, today, userId });
+  const { focusTest, state } = await saveTestSummary({ goalId, plan, timeZone, today, userId });
 
   if (!focusTest) {
     return state;
@@ -61,6 +63,7 @@ export async function settleFocusTest({
     operations: [{ areas, kind: "focusAreas" }],
     reason: "",
     source: FOCUS_TEST_SOURCE,
+    timeZone,
   });
 
   // A focus that wouldn't move the plan is already in it; anything else is tried again later.
@@ -68,16 +71,18 @@ export async function settleFocusTest({
     await keepHandledSuggestion({ areas, goalId, inPlan: proposed.status === "unchanged", userId });
   }
 
-  return loadPlacementState({ goalId, plan, today, userId });
+  return loadPlacementState({ goalId, plan, timeZone, today, userId });
 }
 
 async function settleAfterSession({
   goalId,
   sessionId,
+  timeZone: requestedTimeZone,
   userId,
 }: {
   goalId: string;
   sessionId: string;
+  timeZone?: string;
   userId: string;
 }): Promise<void> {
   const [goal, answers] = await Promise.all([
@@ -89,8 +94,9 @@ async function settleAfterSession({
     return;
   }
 
-  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
-  await settleFocusTest({ goalId, today, userId });
+  const timeZone = getAnswerTimeZone({ goal, timeZone: requestedTimeZone });
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
+  await settleFocusTest({ goalId, timeZone, today, userId });
 }
 
 /**
@@ -100,6 +106,7 @@ async function settleAfterSession({
 export async function settleFocusTestAfterSession(input: {
   goalId: string | null;
   sessionId: string;
+  timeZone?: string;
   userId: string;
 }): Promise<void> {
   const { goalId } = input;

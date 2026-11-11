@@ -46,12 +46,14 @@ async function loadFocusFacts({
   asks,
   setup,
   suggested,
+  timeZone,
   tx,
 }: {
   /** The checkpoint shows a focus, so a proposal matters. */
   asks: boolean;
   setup: TestSetup;
   suggested: string[];
+  timeZone: string;
   tx: TransactionClient;
 }): Promise<FocusFacts> {
   const { coveredShare, focusAreas, id } = setup.plan;
@@ -84,7 +86,7 @@ async function loadFocusFacts({
     covered: settled && handled.inPlan,
     due: due ? suggested : null,
     focusAreas,
-    proposal: waiting ? await loadPlanChangeView(waiting.id) : null,
+    proposal: waiting ? await loadPlanChangeView(waiting.id, { timeZone }) : null,
     timeSaved,
     timeShort,
   };
@@ -112,6 +114,7 @@ type FocusTestRead = {
   };
   plan: GoalPlan;
   today: Date | null;
+  timeZone?: string;
   tx: TransactionClient;
 };
 
@@ -121,6 +124,7 @@ async function loadTurnFocusTest({
   found,
   plan,
   today,
+  timeZone: requestedTimeZone,
   turn,
   tx,
 }: FocusTestRead & { turn: TestTurn }): Promise<FocusTestLoad> {
@@ -128,7 +132,7 @@ async function loadTurnFocusTest({
   const { goal, record } = setup;
   const dated = goal.targetDate !== null;
   const settled = found.openSubjects === 0;
-  const timeZone = getAnswerTimeZone({ goal });
+  const timeZone = getAnswerTimeZone({ goal, timeZone: requestedTimeZone });
   const day = today ?? getDateInTimeZone({ date: new Date(), timeZone });
 
   const rows = listFocusRows({
@@ -142,6 +146,7 @@ async function loadTurnFocusTest({
     asks: dated && progress.answers > 0 && rows.length > 0,
     setup,
     suggested: rows.flatMap((row) => row.areas),
+    timeZone,
     tx,
   });
 

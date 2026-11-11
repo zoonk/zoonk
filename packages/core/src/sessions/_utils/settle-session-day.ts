@@ -174,7 +174,7 @@ async function completeIfFinished({
     const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
     if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
-      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, userId });
+      proposeAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
     }
   }
 
