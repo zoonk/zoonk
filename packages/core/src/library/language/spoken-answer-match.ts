@@ -252,26 +252,25 @@ function toDigitRuns(text: string): string {
   return [...text.matchAll(DIGIT_RUN)].join(" ");
 }
 
-function isNumberWrittenOtherwise(word: SpokenWordResult): boolean {
-  return word.status !== "correct" && toDigitRuns(word.text) !== toDigitRuns(word.heard ?? "");
-}
-
 /**
  * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), and a number
- * as digits or words whichever way the sentence doesn't ("3" for "three", "two three four" for
- * "234"), so its transcript can't tell whether those were said right. The word-by-word check,
- * which hears the recording against the sentence, can.
+ * as digits or words whichever way it likes ("3" for "three", "two three four" for "234"), so when
+ * its letters or digits differ from the sentence's, its transcript can't tell whether they were
+ * said right. The word-by-word check, which hears the recording against the sentence, can.
  */
 export function needsWordByWordCheck({
+  expected,
+  heard,
   language,
   words,
 }: {
+  expected: string;
+  heard: string;
   language: string;
   words: readonly SpokenWordResult[];
 }): boolean {
   return (
-    words.some((word) => isNumberWrittenOtherwise(word)) ||
-    hasTranscribedLetterNames({ language, words })
+    toDigitRuns(expected) !== toDigitRuns(heard) || hasTranscribedLetterNames({ language, words })
   );
 }
 

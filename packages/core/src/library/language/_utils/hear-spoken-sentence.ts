@@ -103,7 +103,12 @@ export async function hearSpokenSentence({
 
   if (
     check === "fast" &&
-    needsWordByWordCheck({ language: input.language, words: heard.match.words })
+    needsWordByWordCheck({
+      expected: input.expected,
+      heard: heard.transcript,
+      language: input.language,
+      words: heard.match.words,
+    })
   ) {
     return assessWordByWord(input);
   }

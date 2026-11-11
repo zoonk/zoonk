@@ -219,7 +219,7 @@ function needsListening({
   language: string;
 }) {
   const { words } = matchSpokenAnswer({ expected, heard, language });
-  return needsWordByWordCheck({ language, words });
+  return needsWordByWordCheck({ expected, heard, language, words });
 }
 
 describe(needsWordByWordCheck, () => {
@@ -313,6 +313,14 @@ describe(needsWordByWordCheck, () => {
     expect(needsListening({ expected: "我有三个哥哥", heard: "我有3个哥哥", language: "zh" })).toBe(
       true,
     );
+
+    expect(
+      needsListening({
+        expected: "My phone number is 234-555-0123",
+        heard: "My phone number is 234-555-555-0123.",
+        language: "en",
+      }),
+    ).toBe(true);
   });
 
   it("leaves a mistake beside a number heard right to the transcript", () => {
