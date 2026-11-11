@@ -73,7 +73,6 @@ function useFocusTradeOff(): string | null {
   });
 }
 
-/** The focus the plan follows, with what it leaves out, how to change it and where it came from. */
 function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text: string }) {
   const t = useExtracted();
   const { focusTestHref, plan } = usePlanScreen();

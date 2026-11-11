@@ -253,7 +253,6 @@ export function JourneyScreen({
   goal: PlanGoal;
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
-  /** The switch for the Focus test's questions inside sessions, on an exam goal's plan. */
   onSetTestQuestions?: SetTestQuestions;
   openAdjust?: boolean | PlanEditorSection;
   openFocus?: boolean;

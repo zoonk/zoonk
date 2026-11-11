@@ -202,11 +202,9 @@ export function PlacementQuestionScreen({
   /** 0 to 1. */
   progress: number;
   question: PlacementQuestion;
-  /** Said right above Stop, when stopping is worth suggesting. */
   stopHint?: string;
   stopLabel?: string;
   subject?: string;
-  /** The count promised up front, when the test has one. */
   total?: number;
   trueFalseLabels?: TrueFalseLabels;
 }) {

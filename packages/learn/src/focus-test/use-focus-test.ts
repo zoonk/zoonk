@@ -34,7 +34,6 @@ function countFailure({
     : current;
 }
 
-/** Reads the test as it opens, and checks again while its questions are still being written. */
 function useTestState({ actions, run }: { actions: FocusTestActions; run: GenerationRun | null }) {
   const [phase, setPhase] = useState<FocusTestPhase>({ kind: "loading" });
   const [buildFailed, setBuildFailed] = useState(false);
@@ -168,7 +167,6 @@ export function useFocusTest({
   return {
     answer,
     buildFailed,
-    /** Shows the questions that arrived during a wait. */
     continueWait: () => {
       if (arrived) {
         setArrived(null);

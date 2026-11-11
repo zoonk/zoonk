@@ -30,7 +30,6 @@ import { getSubjectName, useFocusReasonText } from "./use-focus-test-texts";
 type Proposal = NonNullable<FocusTestFocus["proposal"]>;
 type Decision = "applied" | "declined" | "undone";
 
-/** What a checkpoint on a plan the learner already has can do about its focus. */
 export type FocusTestPlanActions = {
   changeFocusHref: string;
   /** False when it wasn't saved. */
@@ -304,7 +303,6 @@ function SuggestedFocus({
   );
 }
 
-/** "Your starting plan" without its title and actions: the checkpoint's screen and its sheet. */
 export function FocusTestResult({
   focusTest,
   plan = null,

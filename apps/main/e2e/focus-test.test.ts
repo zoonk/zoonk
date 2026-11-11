@@ -12,7 +12,6 @@ const QUESTIONS_PER_SUBJECT = 2;
 const DAYS_TO_EXAM = 60;
 const MS_PER_DAY = 86_400_000;
 
-/** An exam goal whose onboarding has reached the Focus test, with questions ready on every subject. */
 async function createExamGoalAtFocusTest(userId: string) {
   const suffix = randomUUID().slice(0, 6);
 
@@ -84,7 +83,6 @@ async function createExamGoalAtFocusTest(userId: string) {
   return goal;
 }
 
-/** The first answer reaches the server, but its response never comes back. */
 async function dropFirstAnswerResponse(page: Page) {
   let dropped = false;
 

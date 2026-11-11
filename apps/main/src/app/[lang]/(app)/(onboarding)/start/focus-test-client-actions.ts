@@ -7,7 +7,6 @@ import {
   startPlacementSittingAction,
 } from "./onboarding-actions";
 
-/** The same test from onboarding's step and from a plan: both read and write the goal's placement. */
 export function getFocusTestActions(goalId: string): FocusTestActions {
   return {
     answer: (input) => answerPlacementAction({ ...input, goalId, timeZone: getLocalTimeZone() }),

@@ -32,7 +32,6 @@ import { FocusTestSubjectsSheet } from "./focus-test-subjects";
 import { type Pressed } from "./use-focus-test";
 import { useSittingFacts } from "./use-focus-test-texts";
 
-/** Where the test runs: inside onboarding, before the plan is shown, or on a plan already there. */
 export type FocusTestHost = "onboarding" | "plan";
 
 /** The time is the screen's one big number: it's what decides whether someone starts. */

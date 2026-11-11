@@ -4,7 +4,6 @@ import { type PlanTimeAdvice } from "@zoonk/core/plans/time-advice-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 
-/** Where a time that doesn't cover everything should go, for a learner whose Focus test has answers. */
 export function ScheduleFocusLine({
   advice,
   updating,

@@ -77,7 +77,6 @@ function TestQuestionsSwitch({
   );
 }
 
-/** The Focus test's place on the plan: its state, a way in, and its questions' switch. */
 export function PlanFocusTest({ onSetTestQuestions }: { onSetTestQuestions?: SetTestQuestions }) {
   const t = useExtracted();
   const stateFacts = useFocusTestStateFacts();

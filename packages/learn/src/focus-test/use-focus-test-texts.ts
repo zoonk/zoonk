@@ -73,7 +73,6 @@ export function useFocusReasonText() {
   };
 }
 
-/** A sitting's size as its facts: "Up to 15 questions" and "About 15 min". */
 export function useSittingFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -85,7 +84,6 @@ export function useSittingFacts() {
   };
 }
 
-/** The test's state as a row's facts: "Not started", "Continue" with what's left, or its last result. */
 export function useFocusTestStateFacts() {
   const t = useExtracted();
   const { about } = useSittingFacts();

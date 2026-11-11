@@ -232,7 +232,6 @@ export function SyllabusTopicsSheet({
   label,
   syllabus,
 }: {
-  /** "See topics" unless the place that opens it asks something more specific. */
   label?: string;
   syllabus: SyllabusView;
 }) {
