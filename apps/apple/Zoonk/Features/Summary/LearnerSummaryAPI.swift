@@ -5,7 +5,7 @@ struct LearnerSummary: Equatable, Sendable {
   var analytics: LearnerAnalytics
   let buddy: BuddyLook
   let buddyName: String?
-  let goals: [LearnerGoal]
+  var goals: [LearnerGoal]
   let identity: LearnerIdentity
   let level: LearnerLevel?
   /// When the summary changes without a write: the next midnight, the subscription's next change or

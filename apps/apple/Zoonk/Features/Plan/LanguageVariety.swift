@@ -5,7 +5,7 @@ import SwiftUI
 struct LanguageVariety: Equatable, Sendable {
   let language: String
   /// Only when the learner asked for one.
-  let region: String?
+  var region: String?
   /// Sorted by name, in the learner's language.
   let choices: [Components.Schemas.RegionChoice]
 

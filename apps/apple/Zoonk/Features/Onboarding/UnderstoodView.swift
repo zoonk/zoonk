@@ -276,6 +276,11 @@ private struct UnderstoodCard: View {
     } catch is CancellationError {
       return true
     } catch {
+      // One that timed out may have landed, and the screen must show what the draft now says.
+      if let fresh = try? await onboarding.understanding(id: draft.id) {
+        onDraft(fresh)
+      }
+
       return false
     }
   }

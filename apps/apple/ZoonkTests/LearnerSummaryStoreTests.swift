@@ -50,6 +50,36 @@ final class LearnerSummaryStoreTests: XCTestCase {
     XCTAssertEqual(requestCount, 2)
   }
 
+  func testASavedCountryStaysShownWhenTheSummaryCantBeReadAgain() async {
+    let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture], region: "AR")
+    let store = LearnerSummaryStore(
+      api: api,
+      cache: AppCache(session: .preview(account: .summaryTestAccount)))
+
+    await store.summary.load()
+    await api.failReads()
+    let saved = await store.setTargetRegion("ES", goalID: "goal")
+    await store.summary.refresh()
+
+    XCTAssertTrue(saved)
+    XCTAssertEqual(store.summary.value?.goals.first?.variety?.region, "ES")
+  }
+
+  func testACountrySaveThatTimesOutReadsTheGoalAgainSinceItMayHaveLanded() async {
+    let api = LearnerSummaryAPIStub(
+      nextChanges: [.distantFuture, .distantFuture], region: "AR", landsThenTimesOut: true)
+    let store = LearnerSummaryStore(
+      api: api,
+      cache: AppCache(session: .preview(account: .summaryTestAccount)))
+
+    await store.summary.load()
+    let saved = await store.setTargetRegion("ES", goalID: "goal")
+    await store.summary.load()
+
+    XCTAssertFalse(saved)
+    XCTAssertEqual(store.summary.value?.goals.first?.variety?.region, "ES")
+  }
+
   func testSignedOutLearnerHasNoSummaryRequest() async {
     let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture])
     let store = LearnerSummaryStore(api: api, cache: AppCache(session: .preview()))
@@ -63,21 +93,44 @@ final class LearnerSummaryStoreTests: XCTestCase {
 }
 
 private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
-  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
-    true
-  }
-
   private var nextChanges: [Date]
   private let switchError: APIError?
+  /// The country the server has for the one language goal; no goal without it.
+  private var region: String??
+  private let landsThenTimesOut: Bool
+  private var readsFail = false
   private(set) var requestCount = 0
 
-  init(nextChanges: [Date], switchError: APIError? = nil) {
+  init(
+    nextChanges: [Date], switchError: APIError? = nil, region: String?? = .none,
+    landsThenTimesOut: Bool = false
+  ) {
     self.nextChanges = nextChanges
     self.switchError = switchError
+    self.region = region
+    self.landsThenTimesOut = landsThenTimesOut
+  }
+
+  func failReads() {
+    readsFail = true
+  }
+
+  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
+    self.region = .some(region)
+
+    if landsThenTimesOut {
+      throw APIError.network
+    }
+
+    return true
   }
 
   func getSummary(token: String) async throws -> LearnerSummary {
     requestCount += 1
+
+    if readsFail {
+      throw APIError.network
+    }
 
     return LearnerSummary(
       activeGoalID: nil,
@@ -86,7 +139,18 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
         username: nil),
       buddy: BuddyLook(),
       buddyName: nil,
-      goals: [],
+      goals: region.map { region in
+        [
+          LearnerGoal(
+            dailyMinutes: 15, id: "goal", kind: .language, status: .active, targetDate: nil,
+            displayName: "Spanish", title: "Learn Spanish",
+            variety: LanguageVariety(
+              language: "es", region: region,
+              choices: ["AR", "ES", "MX"].map {
+                Components.Schemas.RegionChoice(code: $0, name: $0, taught: $0 == "MX")
+              }))
+        ]
+      } ?? [],
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
       level: nil,
       nextChangeAt: nextChanges.removeFirst(),

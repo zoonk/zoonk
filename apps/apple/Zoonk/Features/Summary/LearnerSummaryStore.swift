@@ -71,16 +71,26 @@ final class LearnerSummaryStore {
     return result
   }
 
-  /// Done once the summary is read again with the goal's new country. False when it didn't save,
-  /// such as a country the goal's language doesn't offer.
+  /// False when it didn't save, such as a country the goal's language doesn't offer.
   func setTargetRegion(_ region: String?, goalID: String) async -> Bool {
-    let result = await cache.mutate(invalidating: [.goals]) { identity in
+    let result = await cache.mutate { identity in
       try await api.setTargetRegion(token: identity.bearerToken, goalID: goalID, region: region)
     }
 
     switch result {
     case .done(true):
-      await summary.refresh()
+      // Shown before the goals are read again, so a read that fails can't bring back the old one.
+      summary.update { summary in
+        var summary = summary
+
+        if let index = summary.goals.firstIndex(where: { $0.id == goalID }) {
+          summary.goals[index].variety?.region = region
+        }
+
+        return summary
+      }
+
+      cache.invalidate([.goals])
       return true
     case .done(false):
       return false
