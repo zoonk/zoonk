@@ -122,6 +122,56 @@ describe("progress of missions done outside the day's blocks", () => {
   });
 });
 
+describe("progress of a pattern drill both goals offered", () => {
+  it("counts the drill only for the goal it was practiced for", async () => {
+    const user = await userFixture();
+
+    const [mine, other] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const pattern = await prisma.mistakePattern.create({
+      data: {
+        content: {},
+        kind: "pattern",
+        language: "es",
+        model: "test",
+        practicedAt: new Date(),
+        promptVersion: "test",
+        runId: "test",
+        title: "Ser and estar",
+        userId: user.id,
+      },
+    });
+
+    const missions = {
+      picks: [{ anchor: { patternId: pattern.id }, kind: "pattern", total: 1 }],
+      version: 1,
+    };
+
+    const [mineDay, otherDay] = await Promise.all([
+      studySessionFixture({ goalId: mine.id, missions, userId: user.id }),
+      studySessionFixture({ goalId: other.id, missions, userId: user.id }),
+      learningEventFixture({
+        contentIds: { mistakePatternId: pattern.id, patternDrillId: crypto.randomUUID() },
+        goalId: mine.id,
+        kind: "questions",
+        lessonKind: "patternDrill",
+        userId: user.id,
+      }),
+    ]);
+
+    const [mineMissions, otherMissions] = await Promise.all([
+      readMissions(mineDay.id),
+      readMissions(otherDay.id),
+    ]);
+
+    expect(mineMissions).toMatchObject([{ kind: "pattern", status: "done" }]);
+    expect(otherMissions).toMatchObject([{ kind: "pattern", status: "todo" }]);
+  });
+});
+
 describe("progress of saved plan-anchored missions", () => {
   it.each([
     ["review", "review"],

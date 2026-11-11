@@ -97,8 +97,9 @@ export async function queryDayProgress(
       )}::int AS fixed,
       ${
         kinds.has("pattern")
-          ? sql`ARRAY(SELECT id::text FROM mistake_patterns WHERE user_id = ${userId}::uuid
-              AND practiced_at >= ${from} AND practiced_at < ${to})`
+          ? sql`ARRAY(SELECT content_ids->>'mistakePatternId' FROM learning_events
+              WHERE user_id = ${userId}::uuid AND goal_id = ${goalId}::uuid
+              AND lesson_kind = 'patternDrill' AND ended_at >= ${from} AND ended_at < ${to})`
           : sql`'{}'::text[]`
       } AS patterns,
       ${counted(
