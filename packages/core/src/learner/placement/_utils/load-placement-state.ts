@@ -5,8 +5,6 @@ import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
-import { type FocusTestSummaryRecord } from "../focus-test-state";
-import { type FocusPlan } from "../focus-test-view";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
@@ -113,13 +111,7 @@ function getStatus({
 
 type PlacementLoad = {
   /** What an exam goal's writes need beside the state; null for other goals. */
-  focusTest: {
-    dueFocus: string[] | null;
-    inputVersion: number;
-    plan: FocusPlan;
-    sittingId: string | null;
-    summary: FocusTestSummaryRecord;
-  } | null;
+  focusTest: Awaited<ReturnType<typeof loadFocusTest>>;
   state: PlacementState;
 };
 
@@ -292,13 +284,7 @@ export async function loadPlacementWithSummary({
   });
 
   return {
-    focusTest: focusTest && {
-      dueFocus: focusTest.dueFocus,
-      inputVersion: focusTest.inputVersion,
-      plan: focusTest.plan,
-      sittingId: focusTest.sittingId,
-      summary: focusTest.summary,
-    },
+    focusTest,
     state: {
       answered,
       areas: getAreaStarts({ skills, statuses }),

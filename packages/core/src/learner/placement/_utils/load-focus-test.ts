@@ -97,6 +97,7 @@ async function loadFocusFacts({
 }
 
 type FocusTestLoad = {
+  planId: string;
   plan: FocusPlan;
   inputVersion: number;
   sittingId: string | null;
@@ -166,6 +167,7 @@ async function loadTurnFocusTest({
     dueFocus: focusPlan.due,
     inputVersion: setup.plan.inputVersion,
     plan: focusPlan,
+    planId: setup.plan.id,
     sittingId: progress.sitting?.id ?? null,
     summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
     view: toFocusTestView({

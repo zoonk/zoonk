@@ -30,14 +30,16 @@ export async function openTestSitting({
   goal,
   now,
   offer,
+  planId,
 }: {
   goal: Pick<Goal, "details" | "id" | "userId">;
   now: Date;
   offer: Pick<FocusTestOffer, "kind" | "questions">;
+  planId: string;
 }): Promise<void> {
   const at = now.toISOString();
 
-  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
+  await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
     const { before } = await changeFocusTestRecord({
       change: (record) =>
         record.sitting
