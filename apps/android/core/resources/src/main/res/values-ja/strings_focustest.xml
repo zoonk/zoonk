@@ -18,6 +18,7 @@
   "focustest_evidence": "6460d3e8ef8048e7c307920c9caf3d16590647ad1a1edefe3ae6cc1281f97c11",
   "focustest_focus_already_fits": "b590f755f63fb2c0db41814b97702a069002cdf3bfe8b025f7bdeb74db222238",
   "focustest_focus_current": "112de74c33c47331adf534e5e736d1f9299eb393a4cb9bbe7e5cc17cabb488fa",
+  "focustest_focus_declined": "f3bbeb13bb275aaad3b60b022789f9463e0533b73f6b87562aae21dc25c30e78",
   "focustest_focus_hand_picked": "b59fd9ad292719f5c874405d6efbd3570419628341bde2bb710a5b5c79d29f80",
   "focustest_focus_if_short": "07d7bbf182d47c83d2b106deb7204f4afa3f7c46803697ff9c4bc709be80e322",
   "focustest_focus_importance": "087d2ad83c7817a5c2f2eaa809b7bc3322f0eb57954c00f133a76fb06a325ee0",
@@ -48,7 +49,7 @@
   "focustest_proposal_undone": "a73afcd4807c178f40f981631a2b9f22bbedd53cb632a467090d23cec9f8a791",
   "focustest_question_number": "94b98b270889ba2813b51a974e5c7dac5b4d75b5893e4f18f46f34cd590b4409",
   "focustest_questions_left": "5036104e1563cabf490c4e1407c18af20a1244ba2031f1cb3260fcd23b0be7de",
-  "focustest_reason_answers": "af5a7bdebb10c934b4ec0b82f034cb4e5191e8c5541d3ac6e20e79ca1657ee40",
+  "focustest_reason_answers": "a50e133c0cc09bd732f2f4ac4000542bc16ac8e32ac31dce216bf90c149ac607",
   "focustest_reason_minimum_score": "5f26573b233f7b896ce84f9103a1081a8f92cec7bcee35baea9bd331c1687739",
   "focustest_reason_not_asked": "2f221d7662bdb53bfebea2ff4d2a77fcd05b9d81a68738b2dbaa66b05047bf24",
   "focustest_reason_not_checked": "ec8e19e70a49b4ff369c7e6b2164877be764cfacd69555ab58767e3cf171d891",
@@ -158,10 +159,12 @@
     <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
     <string name="focustest_focus_already_fits">これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。</string>
     <string name="focustest_focus_hand_picked">学習計画では、自分で選んだ重点科目を引き続き優先します。こちらはテスト結果からの提案です。</string>
+    <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
+    <string name="focustest_focus_declined">学習計画をそのままにしました。</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">今のところ、主に試験での配点が高い科目を優先しています。</string>
-    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
-    <string name="focustest_reason_answers">回答内容から、この科目にはもう少し時間をかけるとよさそうです。</string>
+    <!-- A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”. -->
+    <string name="focustest_reason_answers">回答から、この科目を重点的に学ぶことをおすすめします。</string>
     <string name="focustest_reason_minimum_score">このパートには最低スコアが設定されています。</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">このパートは配点が高いですが、ここでは診断できません。</string>

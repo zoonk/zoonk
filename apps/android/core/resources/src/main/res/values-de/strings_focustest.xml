@@ -18,6 +18,7 @@
   "focustest_evidence": "30e0557822d3d27cc3b640c869822ae85fb8bf1d9e65dbaae95bc4a78ddf000d",
   "focustest_focus_already_fits": "e1bb0470bfca116825abee1315e7bce6e8d0bce909856b56f680d1ac8a9a65d7",
   "focustest_focus_current": "5a3680abe702e273d88c803624705eceb467d07be9413a965492f49d0a79c8a4",
+  "focustest_focus_declined": "57cde20c14e28d72dfc92fc2111befde908b2bebfec1212d73ab0f2fbfee80b5",
   "focustest_focus_hand_picked": "3cfd476dc44c4e5233e2347782eb9e8832dc84672c1464a444b14c03808b357c",
   "focustest_focus_if_short": "d1ed37e29eccd6e753ee33c3bc493355128642cec61ec3b14039f95d1cd10b7a",
   "focustest_focus_importance": "a3a916ac1fde9093f625f8ed16ae64a16fd394173cfb0ca1eba4e18b0ca207b2",
@@ -48,7 +49,7 @@
   "focustest_proposal_undone": "04cb5c9ec77314e2f8bf625e7bc9438c4b46d6458461c8785492f92d6f73ca46",
   "focustest_question_number": "7e6041c14db5c1329f19bed2744b809eae99f0bea4ce8ddc9c1bc5aabbeaa248",
   "focustest_questions_left": "6b417433f7d4415684ce31dc321c105f351928e5f22414549c434d69bcaf75a5",
-  "focustest_reason_answers": "38358a0979e8df7095bd19f650c1361f90570fad8bf6fefe4112e011d57135fe",
+  "focustest_reason_answers": "55467ff4046646d09987d922aa90f528e2c43d984945807f6da340c77e50f2bf",
   "focustest_reason_minimum_score": "93d5f48a2ee48d799714d0ca85ebf33c6cba83707ea3afdfd76b252482aaac4e",
   "focustest_reason_not_asked": "e0effba46377b43ee819287cd9272737c9c864e78cdb4e57b008f3c31e68f70f",
   "focustest_reason_not_checked": "da988292a495950aaf54190bf10a3f0300fe1b2380f320c5b904981fa59d8c5e",
@@ -166,10 +167,12 @@
     <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
     <string name="focustest_focus_already_fits">Dein Plan sieht für diese Fächer schon genug Zeit vor, daher ist kein Schwerpunkt nötig.</string>
     <string name="focustest_focus_hand_picked">Du hast deine Schwerpunkte selbst gewählt und dein Plan behält sie bei. Das schlägt der Test vor.</string>
+    <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
+    <string name="focustest_focus_declined">Du hast deinen Plan unverändert gelassen.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">Vorerst richtet sich das vor allem danach, was in deiner Prüfung am meisten zählt.</string>
-    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
-    <string name="focustest_reason_answers">Deine Antworten sprechen dafür, mehr Zeit für dieses Fach einzuplanen.</string>
+    <!-- A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”. -->
+    <string name="focustest_reason_answers">Deine Antworten sprechen für diesen Schwerpunkt.</string>
     <string name="focustest_reason_minimum_score">Für diesen Teil brauchst du einen Mindestscore.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">Dieser Teil zählt besonders viel; er wird hier nicht geprüft.</string>

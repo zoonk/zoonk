@@ -18,6 +18,7 @@
   "focustest_evidence": "bec147c34f3b64b7ac34db67a113ed1d8307b9b8a6df60d7daf7b21c4c87cf40",
   "focustest_focus_already_fits": "7117d09ae4e0043d3211f900a16cda4e17cf0bbda7f90a492d80be3ca639b9c3",
   "focustest_focus_current": "f4feee08b94a974c4f938f4f2473e3c5138052e107ad30a9ca75cae3411a3471",
+  "focustest_focus_declined": "11451b1a923477a25d0255d74b345f21ac6ada7e5799041fa6df94b14166798b",
   "focustest_focus_hand_picked": "3561a5b30a44e6c8d25e919fa651666c20befb4970d999f7957b09c20e16de19",
   "focustest_focus_if_short": "7518f652300d5e4d8856917294b5b26fb01ef7184a30185f5280014fc17539e1",
   "focustest_focus_importance": "308c42a295d07e6d8139cbf068ed685a1b9494ff4916551b2c67cfc89daf8659",
@@ -48,7 +49,7 @@
   "focustest_proposal_undone": "aeb4a9de4e06a6428e1fee3d485a11c2fa511c1ef58c20895dc6bd1d7aa9ee69",
   "focustest_question_number": "81de4b331c785dd940dc08df886b97f9e91187a5ee113952bca639c41dac1ac4",
   "focustest_questions_left": "f93c7d2ed0e9a249426171373b01f2a61e35127aacf07c4b787852a030fe1b3a",
-  "focustest_reason_answers": "47c779570170955374b86f16a72b1838d2e9e175d7b72ceaf900f1db5b834059",
+  "focustest_reason_answers": "6db1996952c0e19b16c78b26dbef2f98412c9669d84b473aca09ac4058069c0e",
   "focustest_reason_minimum_score": "d131efe18948cba9e01f0669dcf9327dcb0dbf747a2d62c04b2f0493bf0e5a7a",
   "focustest_reason_not_asked": "dd41c4ba3f6be190a545073ae191dbf3813630ba89def06bd24be1d085c39b4e",
   "focustest_reason_not_checked": "5b7be7d76d7d663c641cd9bedc5954814ef070ea22299c31c1c3522bff87a95a",
@@ -166,10 +167,12 @@
     <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
     <string name="focustest_focus_already_fits">Planında bunlar için zaten zaman var, bu yüzden ek süreye gerek yok.</string>
     <string name="focustest_focus_hand_picked">Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor. Testin önerisi bu.</string>
+    <!-- Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged. -->
+    <string name="focustest_focus_declined">Planını olduğu gibi bıraktın.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">Şimdilik bu öneri, daha çok sınavında ağırlığı en yüksek olan alanlara dayanıyor.</string>
-    <!-- A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.” -->
-    <string name="focustest_reason_answers">Cevaplarına göre bu branşa daha fazla zaman ayırman iyi olur.</string>
+    <!-- A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”. -->
+    <string name="focustest_reason_answers">Cevaplarına göre bu branşa odaklanman iyi olur.</string>
     <string name="focustest_reason_minimum_score">Bu bölümde minimum puan şartı var.</string>
     <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
     <string name="focustest_reason_not_checked">Bu bölümün puana etkisi büyük; burada değerlendirilmiyor.</string>
