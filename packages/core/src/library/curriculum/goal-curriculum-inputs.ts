@@ -226,14 +226,16 @@ export function getReferenceSyllabusNeed(
 
 function toStartedCourse({
   country,
+  kind,
   course,
   details,
 }: {
   country: string | null;
+  kind: Goal["kind"];
   course: Pick<Course, "country" | "id" | "title" | "userId" | "visibility"> | null;
   details: Details;
 }): StartedCourse | null {
-  if (!course || course.country !== country || !readCourseStart(details)) {
+  if (!course || (kind === "learn" && course.country !== country) || !readCourseStart(details)) {
     return null;
   }
 
@@ -327,7 +329,12 @@ export async function loadGoalCurriculumInputs(
     productChecked: goal.productCheckedAt !== null,
     references,
     sharedContext: toSharedContext(details),
-    startedCourse: toStartedCourse({ country, course: goal.primaryCourse, details }),
+    startedCourse: toStartedCourse({
+      country,
+      course: goal.primaryCourse,
+      details,
+      kind: goal.kind,
+    }),
     unansweredQuestions: getUnansweredQuestions(goal, details),
     usesTools: usesTools({ examStructure: goal.examBlueprint?.structure ?? null, kind: goal.kind }),
   };

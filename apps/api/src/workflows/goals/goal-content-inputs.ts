@@ -66,14 +66,21 @@ export async function waitForContentCountry(
     return initial;
   }
 
-  await repeatUntil({
+  const waited = await repeatUntil({
     done: (inputs) => !inputs || !inputs.unansweredQuestions.includes("contentCountry"),
     run: () => loadGoalCurriculumStep(initial.goal.id),
     times: MAX_ANSWERS_POLLS,
     wait: () => sleep(ANSWERS_POLL),
   });
 
-  const inputs = await loadGoalCurriculumStep(initial.goal.id);
+  if (!waited?.unansweredQuestions.includes("contentCountry")) {
+    return waited;
+  }
+
+  const inputs = await beginGoalCurriculumStep({
+    goalId: initial.goal.id,
+    scope: { ownerId: null },
+  });
 
   if (inputs?.unansweredQuestions.includes("contentCountry")) {
     throw new Error("Choose the content country before preparing these lessons.");

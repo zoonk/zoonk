@@ -1,7 +1,7 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { countryCodeSchema } from "../goals/country-contract";
+import { type SuggestedCountry, countryCodeSchema } from "../goals/country-contract";
 import { BUDDY_NAME_MAX_LENGTH } from "./buddy-name-limit";
 import { type ResolvedBuddy } from "./default-buddy";
 
@@ -48,7 +48,13 @@ export const learningProfileUpdateSchema = z
       .nullable()
       .optional()
       .meta({ description: "The learner's buddy choice, or null to return to the default buddy" }),
-    homeCountry: countryCodeSchema.nullable().optional(),
+    homeCountry: countryCodeSchema
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "Where the learner says they live, or null to clear it. Used for new goals and personal examples; existing plans keep their content country.",
+      }),
     shareUsageData: z
       .boolean()
       .optional()
@@ -66,6 +72,8 @@ export type LearningProfileUpdateInput = z.infer<typeof learningProfileUpdateSch
 
 export type LearningProfileView = {
   homeCountry: string | null;
+  homeCountryName: string | null;
+  suggested: SuggestedCountry[];
   activeGoalId: string | null;
   availableGlasses: BuddyGlasses[];
   buddy: ResolvedBuddy;

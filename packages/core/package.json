@@ -132,6 +132,8 @@
     "./follow-ups/starter": "./src/follow-ups/follow-up-starter.ts",
     "./goals/active-goal": "./src/goals/get-active-goal-id.ts",
     "./goals/continue-next-level": "./src/goals/continue-goal-at-next-level.ts",
+    "./goals/countries": "./src/goals/country-catalog.ts",
+    "./goals/country-contract": "./src/goals/country-contract.ts",
     "./goals/contract": "./src/goals/goal-contract.ts",
     "./goals/course-quick-test": "./src/goals/course-quick-test.ts",
     "./goals/course-start-contract": "./src/goals/course-start-contract.ts",

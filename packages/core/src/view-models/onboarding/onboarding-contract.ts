@@ -6,7 +6,11 @@ import {
   examChoicePickSchema,
 } from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
-import { type GoalContentCountry, countryCodeSchema } from "../../goals/country-contract";
+import {
+  type GoalContentCountry,
+  type SuggestedCountry,
+  countryCodeSchema,
+} from "../../goals/country-contract";
 import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
@@ -77,6 +81,7 @@ export type OnboardingExamDate = {
 /** Confirmed drafts can create goals; targets remain learner choices rather than promises. */
 export type UnderstoodGoalView = {
   contentCountry?: GoalContentCountry | null;
+  suggested?: SuggestedCountry[];
   countryDependent?: boolean;
   /** Stored public cutoff only; null when prior research has not found it. */
   cutoff: TargetCutoff | null;
@@ -172,6 +177,10 @@ export type OnboardingFirstLesson = {
 };
 
 export type OnboardingView = {
+  contentCountry: {
+    defaultCountry: { code: string; name: string } | null;
+    suggested: SuggestedCountry[];
+  };
   profile: ProfileQuestionsView;
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
   dateProblem: OnboardingDateProblem | null;

@@ -51,3 +51,33 @@ describe(getCourseDetail, () => {
     await expect(getCourseDetail({ courseId: course.id })).resolves.toBeNull();
   });
 });
+
+describe("course country disclosure", () => {
+  it.each([
+    { country: "PT", name: "Portugal", variety: { language: "pt", region: "BR" } },
+    { country: "DE", name: "Alemanha", variety: null },
+  ])(
+    "describes the content country and its lesson variety: $country",
+    async ({ country, name, variety }) => {
+      const organization = await organizationFixture({ kind: "brand" });
+
+      const course = await courseFixture({
+        country,
+        isPublished: true,
+        language: "pt",
+        organizationId: organization.id,
+        visibility: "public",
+      });
+
+      await expect(getCourseDetail({ courseId: course.id })).resolves.toMatchObject({
+        contentCountry: {
+          code: country,
+          editable: false,
+          kind: "content",
+          lessonVariety: variety,
+          name,
+        },
+      });
+    },
+  );
+});

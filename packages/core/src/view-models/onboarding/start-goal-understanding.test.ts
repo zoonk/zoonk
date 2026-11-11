@@ -122,7 +122,10 @@ describe(startGoalUnderstanding, () => {
       language: "en",
       status: "understood",
       timeZone: "America/Sao_Paulo",
-      understanding,
+      understanding: {
+        ...understanding,
+        goals: understanding.goals.map(({ suggested: _suggested, ...view }) => view),
+      },
       userId: user.id,
     });
   });

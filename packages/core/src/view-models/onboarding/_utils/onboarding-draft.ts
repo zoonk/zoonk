@@ -1,6 +1,7 @@
 import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
+import { getLanguageCountry } from "@zoonk/utils/countries";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { after } from "next/server";
@@ -13,6 +14,11 @@ import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../../cache/tags";
 import { countActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
+import { toContentCountryView } from "../../../goals/_utils/content-country-view";
+import {
+  getCountrySuggestions,
+  loadRecentCountries,
+} from "../../../goals/_utils/country-suggestions";
 import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
@@ -98,6 +104,60 @@ function withPlannableDates({
   };
 }
 
+async function withDraftCountries({
+  understanding,
+  userId,
+}: {
+  understanding: GoalUnderstandingView | null;
+  userId: string;
+}): Promise<GoalUnderstandingView | null> {
+  if (understanding?.status !== "goals") {
+    return understanding;
+  }
+
+  const [profile, recent, blueprints] = await Promise.all([
+    prisma.userLearningProfile.findUnique({ where: { userId } }),
+    loadRecentCountries(userId),
+    prisma.examBlueprint.findMany({
+      select: { country: true, id: true },
+      where: {
+        id: { in: understanding.goals.flatMap((goal) => goal.draft.examBlueprintId ?? []) },
+      },
+    }),
+  ]);
+
+  return {
+    ...understanding,
+    goals: understanding.goals.map((goal) => {
+      const { language } = goal.draft;
+
+      const examCode =
+        blueprints.find((row) => row.id === goal.draft.examBlueprintId)?.country ?? null;
+
+      const exam =
+        goal.draft.kind === "exam" && examCode !== getLanguageCountry(language)
+          ? toContentCountryView({
+              code: examCode,
+              editable: false,
+              kind: "exam",
+              language,
+              source: "said",
+            })
+          : null;
+
+      return {
+        ...goal,
+        contentCountry: goal.draft.kind === "exam" ? exam : (goal.contentCountry ?? null),
+        suggested: getCountrySuggestions({
+          homeCountry: profile?.homeCountry ?? null,
+          language,
+          recent,
+        }),
+      };
+    }),
+  };
+}
+
 /** The lock follows the learner's plan and goals as they are now, so subscribing or pausing a goal unlocks more of the card. */
 export async function toDraftView({
   draft,
@@ -111,7 +171,11 @@ export async function toDraftView({
 
   const [viewer, now] = await Promise.all([readEntitlementViewer(), getRequestInstant()]);
   const today = toIsoDate(getDateInTimeZone({ date: now, timeZone: draft.timeZone }));
-  const understanding = stored && withPlannableDates({ today, understanding: stored });
+
+  const understanding = await withDraftCountries({
+    understanding: stored && withPlannableDates({ today, understanding: stored }),
+    userId: draft.userId,
+  });
 
   const activeGoalsLeft = await countActiveGoalsLeft({
     tier: viewer?.tier ?? "guest",

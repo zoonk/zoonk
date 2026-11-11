@@ -1,3 +1,4 @@
+import { countryLanguageQuerySchema } from "@zoonk/core/goals/countries";
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { accessErrorCodes } from "../../access-error-codes";
 import { allowanceResponseSchema } from "../schemas/allowance";
@@ -31,6 +32,7 @@ export const learnerProfilePaths = {
   "/me/learning-profile": {
     get: {
       operationId: "getCurrentUserLearningProfile",
+      requestParams: { query: countryLanguageQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: learningProfileResponseSchema } },
@@ -49,6 +51,7 @@ export const learnerProfilePaths = {
         content: { "application/json": { schema: learningProfileUpdateSchema } },
         required: true,
       },
+      requestParams: { query: countryLanguageQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: learningProfileResponseSchema } },

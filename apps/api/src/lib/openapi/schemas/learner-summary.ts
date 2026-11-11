@@ -1,4 +1,5 @@
 import { goalCreateInputSchema, regionChoiceSchema } from "@zoonk/core/goals/contract";
+import { countryCodeSchema, goalCountryFieldsSchema } from "@zoonk/core/goals/country-contract";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { BuddyGlasses, BuddyKind, CourseLevel, GoalKind, GoalStatus } from "@zoonk/db";
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
@@ -10,6 +11,7 @@ const millisecondsSchema = z.int().meta({ description: "Milliseconds since the e
 
 const learnerSummaryGoalSchema = z
   .object({
+    ...goalCountryFieldsSchema.shape,
     courseChapterId: uuidSchema()
       .nullable()
       .meta({
@@ -119,6 +121,7 @@ const learnerSummarySchema = z
     goals: z
       .array(learnerSummaryGoalSchema)
       .meta({ description: "Goals not archived, the active one first, then oldest first" }),
+    homeCountry: countryCodeSchema.nullable(),
     identity: z.object({
       expiresAt: millisecondsSchema.meta({ description: "When the session ends" }),
       isAnonymous: z.boolean().meta({ description: "A guest without an account yet" }),

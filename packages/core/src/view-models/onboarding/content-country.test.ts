@@ -62,6 +62,26 @@ describe("content country question", () => {
     ).resolves.toBe(0);
   });
 
+  it("owes the initial build when a country answer arrives after the run stopped waiting", async () => {
+    const user = await userFixture();
+
+    const current = await goalFixture({
+      curriculumQuestions: ["contentCountry"],
+      details: { answered: [], countryDependent: true },
+      userId: user.id,
+    });
+
+    await planFixture({ buildFailedAt: new Date(), goalId: current.id });
+
+    await expect(
+      saveAnswerInputs({ goal: current, input: { country: "PT", question: "contentCountry" } }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(
+      prisma.followUp.findMany({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
+    ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
+  });
+
   it("resolves the reading before home country and keeps the decision server-owned", async () => {
     const user = await userFixture();
     await learningProfileFixture({ homeCountry: "PT", userId: user.id });

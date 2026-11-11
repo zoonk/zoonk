@@ -257,10 +257,10 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
     exam,
     goal: {
       ...toGoalContext({ cutoff, dailyMinutes: goal.dailyMinutes, goal }),
-      contentCountry: countries.contentCountry,
+      ...(countries.contentCountry && { contentCountry: countries.contentCountry }),
     },
     language: goal.language,
-    learnerHomeCountry: countries.learnerHomeCountry,
+    ...(countries.learnerHomeCountry && { learnerHomeCountry: countries.learnerHomeCountry }),
     mistakes: [],
     next: [],
     phase: null,
@@ -307,6 +307,14 @@ export async function buildPlanContextSnapshot(
       loadGoalCutoff(goal),
     ]);
 
+  const contentCountry = toCountryChoice({
+    code:
+      countries.blueprint?.country ??
+      getGoalContentCountry({ existingCountry: sourceCountry, goal }) ??
+      getLanguageCountry(goal.language),
+    language: "en",
+  })?.name;
+
   return {
     course,
     ...day,
@@ -314,16 +322,10 @@ export async function buildPlanContextSnapshot(
     exam,
     goal: {
       ...toGoalContext({ cutoff, dailyMinutes: plan.schedule.dailyMinutes, goal }),
-      contentCountry: toCountryChoice({
-        code:
-          countries.blueprint?.country ??
-          getGoalContentCountry({ existingCountry: sourceCountry, goal }) ??
-          getLanguageCountry(goal.language),
-        language: "en",
-      })?.name,
+      ...(contentCountry && { contentCountry }),
     },
     language: goal.language,
-    learnerHomeCountry: countries.learnerHomeCountry,
+    ...(countries.learnerHomeCountry && { learnerHomeCountry: countries.learnerHomeCountry }),
     mistakes,
     next: toNextDays(plan),
     phase: toPhase(plan),

@@ -13,6 +13,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { followsCourse } from "../../goals/_utils/follows-course";
+import { loadGoalCountryViews } from "../../goals/_utils/goal-country-views";
 import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
 import { getGoalRegionChoices } from "../../goals/_utils/goal-region";
 import {
@@ -56,22 +57,23 @@ function findActiveGoal({
 
 function toSummaryGoals({
   activeGoalId,
-  goals,
+  countries,
   phaseFacts,
 }: {
   activeGoalId: string | null;
-  goals: readonly Goal[];
+  countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
   phaseFacts: readonly PlanPhaseFacts[];
 }): LearnerSummaryGoal[] {
-  return goals
-    .filter((goal) => goal.status !== "archived")
-    .toSorted((a, b) => Number(b.id === activeGoalId) - Number(a.id === activeGoalId))
-    .map((goal) => {
+  return countries
+    .filter(({ goal }) => goal.status !== "archived")
+    .toSorted((a, b) => Number(b.goal.id === activeGoalId) - Number(a.goal.id === activeGoalId))
+    .map(({ countries: countryView, goal }) => {
       const next = followsCourse(goal)
         ? phaseFacts.find((facts) => facts.goalId === goal.id)
         : undefined;
 
       return {
+        ...countryView,
         courseChapterId: next?.nextChapterId ?? null,
         courseId: followsCourse(goal) ? goal.primaryCourseId : null,
         courseLevel: next?.nextLevel ?? null,
@@ -223,7 +225,8 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const activeGoalId = activeGoal?.id ?? null;
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
-  const listed = toSummaryGoals({ activeGoalId, goals, phaseFacts });
+  const countries = await loadGoalCountryViews({ goals, profile });
+  const listed = toSummaryGoals({ activeGoalId, countries, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
   const tier = getTier({ isAnonymous, subscription });
@@ -257,6 +260,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     ...getSummaryProgress({ facts, localDate, profile, timeZone }),
     day: activeGoal ? { goalId: activeGoal.id, localDate: toIsoDate(goalDay.dayDate) } : null,
     goals: listed,
+    homeCountry: profile?.homeCountry ?? null,
     identity: {
       expiresAt: session.session.expiresAt.getTime(),
       isAnonymous,

@@ -7,6 +7,7 @@ import {
 } from "@zoonk/db/enums";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
+import { type GoalCountryFields } from "../../goals/country-contract";
 import { type GoalCreateInput } from "../../goals/goal-contract";
 
 /** Timestamps are epoch milliseconds; signedInAt distinguishes separate sessions for the same learner. */
@@ -19,7 +20,7 @@ export type LearnerIdentity = {
 
 export type LearnerTier = "free" | "guest" | "plus";
 
-export type LearnerSummaryGoal = {
+export type LearnerSummaryGoal = GoalCountryFields & {
   displayName: string;
   /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
@@ -104,6 +105,7 @@ export type LearnerSummary = {
   /** The study day `today` and `missions` describe; null without an active goal. */
   day: LearnerSummaryDay | null;
   goals: LearnerSummaryGoal[];
+  homeCountry: string | null;
   identity: LearnerIdentity;
   /** The belt and level, or null before any learning. */
   level: { color: BeltColor; level: number } | null;

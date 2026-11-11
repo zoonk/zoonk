@@ -116,6 +116,7 @@ async function findInvalidField({
 
 export async function updateLearningProfile(
   input: LearningProfileUpdateInput,
+  language = "en",
 ): Promise<LearningProfileUpdateResult> {
   const session = await getSession();
 
@@ -147,5 +148,5 @@ export async function updateLearningProfile(
     revalidateCacheTags([getLearningProfileCacheTag(userId)]);
   }
 
-  return { profile: await findLearningProfileView(userId), status: "updated" };
+  return { profile: await findLearningProfileView(userId, undefined, language), status: "updated" };
 }

@@ -203,6 +203,7 @@ export async function getOnboarding({
 
   return {
     onboarding: {
+      contentCountry: { defaultCountry: view.languageCountry, suggested: view.suggested },
       dateProblem,
       examChoices: notice.choices,
       examDays: notice.examDays,

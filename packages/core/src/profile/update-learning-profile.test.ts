@@ -231,8 +231,10 @@ describe(updateLearningProfile, () => {
       availableGlasses: ["round"],
       buddy: { glasses: "round", kind: "zu", name: null, picked: false },
       homeCountry: null,
+      homeCountryName: null,
       shareUsageData: null,
       soundsEnabled: true,
+      suggested: expect.any(Array),
     });
 
     await expect(
@@ -306,8 +308,10 @@ describe(updateLearningProfile, () => {
         availableGlasses: ["round"],
         buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
         homeCountry: null,
+        homeCountryName: null,
         shareUsageData: null,
         soundsEnabled: true,
+        suggested: expect.any(Array),
       },
       status: "updated",
     });

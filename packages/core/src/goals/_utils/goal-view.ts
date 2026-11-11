@@ -6,7 +6,9 @@ import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-chall
 import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { type GoalCountryFields } from "../country-contract";
 import { type GoalView } from "../goal-contract";
+import { loadGoalCountryViews } from "./goal-country-views";
 import { getGoalLanguageFlag } from "./goal-language-flag";
 import { getGoalRegionChoices } from "./goal-region";
 import {
@@ -110,16 +112,19 @@ function toPlanSummary({
 
 function toGoalView({
   activeGoalId,
+  countries,
   goal,
   plan,
   progress,
 }: {
   activeGoalId: string | null;
+  countries: GoalCountryFields;
   goal: Goal;
   plan: PlanRow | undefined;
   progress: Awaited<ReturnType<typeof loadPlanProgress>>;
 }): GoalView {
   return {
+    ...countries,
     createdAt: goal.createdAt.toISOString(),
     dailyMinutes: goal.dailyMinutes,
     details: isJsonObject(goal.details) ? goal.details : {},
@@ -160,11 +165,15 @@ export async function loadGoalViews({
     where: { goalId: { in: goals.map((goal) => goal.id) } },
   });
 
-  const progress = await loadPlanProgress(plans, readSubscription);
+  const [progress, countries] = await Promise.all([
+    loadPlanProgress(plans, readSubscription),
+    loadGoalCountryViews({ goals }),
+  ]);
 
-  return goals.map((goal) =>
+  return countries.map(({ countries: countryView, goal }) =>
     toGoalView({
       activeGoalId,
+      countries: countryView,
       goal,
       plan: plans.find((plan) => plan.goalId === goal.id),
       progress,
