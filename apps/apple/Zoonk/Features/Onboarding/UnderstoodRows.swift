@@ -99,8 +99,10 @@ struct UnderstoodFacts: Decodable {
 
 /// What the title already says gets no row of its own.
 enum UnderstoodRows {
+  /// `countryAsked` keeps the country's row after the learner clears it, so they can pick again.
   static func rows(
     for goal: Components.Schemas.UnderstoodGoal,
+    countryAsked: Bool = false,
     today: Date = .now,
     locale: Locale = .current
   ) -> [UnderstoodRow] {
@@ -120,7 +122,7 @@ enum UnderstoodRows {
       rows.append(date)
     }
 
-    rows += languageRows(facts: facts, locale: locale)
+    rows += languageRows(facts: facts, countryAsked: countryAsked, locale: locale)
 
     if let target = facts.targetLanguage,
       let index = rows.firstIndex(where: { $0.id == "targetLanguage" })
@@ -206,23 +208,26 @@ enum UnderstoodRows {
     title.localizedStandardContains(value)
   }
 
-  static func languageRows(facts: UnderstoodFacts, locale: Locale) -> [UnderstoodRow] {
+  static func languageRows(facts: UnderstoodFacts, countryAsked: Bool = false, locale: Locale)
+    -> [UnderstoodRow]
+  {
     guard facts.kind == "language", let target = facts.targetLanguage else {
       return []
     }
 
     let language = locale.varietyName(language: target, region: facts.targetRegion)
+    let hasCountry = facts.targetRegion != nil || countryAsked
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
     // A country shows even when the title names the language: its row is where it changes.
-    if facts.targetRegion != nil || !isSaid(language, in: facts.displayName) {
+    if hasCountry || !isSaid(language, in: facts.displayName) {
       rows.append(
         UnderstoodRow(
           id: "targetLanguage",
           label: LocalizedStringResource(
             "Language", table: "Onboarding", comment: "Row with the language a goal learns"),
-          value: language, field: facts.targetRegion == nil ? nil : .targetRegion))
+          value: language, field: hasCountry ? .targetRegion : nil))
     }
 
     rows.append(

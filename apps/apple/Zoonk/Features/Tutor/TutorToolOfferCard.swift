@@ -327,8 +327,8 @@ private struct TutorVarietyApply: View {
   var body: some View {
     if isApplied {
       Text(
-        "Applied. You can change it anytime on your Plan.", tableName: "Tutor",
-        comment: "The learner applied the country the buddy offered; Plan is the Plan tab"
+        "Saved. You can change it in your plan.", tableName: "Tutor",
+        comment: "The learner saved the country the buddy offered; the plan is the Plan tab"
       )
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)

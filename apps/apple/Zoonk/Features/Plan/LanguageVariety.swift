@@ -75,27 +75,31 @@ struct LanguageVarietySheet: View {
 
           ForEach(variety.choices, id: \.code) { choice in
             option(
-              region: choice.code, selected: selected, name: Text(choice.name),
-              detail: choice.taught
-                ? Text(
-                  "Lessons use this variety", tableName: "Plan",
-                  comment: "Under the country whose variety of the language lessons teach")
-                : nil)
+              region: choice.code, selected: selected,
+              name: Text(
+                choice.taught
+                  ? [
+                    choice.name,
+                    String(
+                      localized: "Lessons use this variety", table: "Plan",
+                      comment:
+                        "After the country whose variety of the language lessons teach, as in Mexico · Lessons use this variety"
+                    ),
+                  ].joinedFacts()
+                  : choice.name))
           }
         } header: {
+          // Above the list, which can run past the screen, so a pick's note shows where it's made.
           Text(
-            "Your buddy and practice calls use the country you choose. Lessons stay the same.",
-            tableName: "Plan", comment: "Above the countries a language goal can choose from"
+            shown?.note
+              ?? String(
+                localized:
+                  "Your buddy and practice calls use the country you choose. Lessons stay the same.",
+                table: "Plan", comment: "Above the countries a language goal can choose from")
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
           .textCase(nil)
-        } footer: {
-          if let note = shown?.note {
-            SectionFooter {
-              Text(note)
-            }
-          }
         }
       }
       .disabled(saving != nil)
@@ -127,27 +131,17 @@ struct LanguageVarietySheet: View {
     .presentationDetents([.medium, .large])
   }
 
-  private func option(region: String?, selected: String?, name: Text, detail: Text? = nil)
-    -> some View
-  {
+  private func option(region: String?, selected: String?, name: Text) -> some View {
     let isSelected = region == selected
 
     return Button {
       pick(region)
     } label: {
-      VStack(alignment: .leading, spacing: 2) {
-        name
-          .typeStyle(.rowTitle)
-          .foregroundStyle(Color(.foreground))
-
-        if let detail {
-          detail
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .contentShape(.rect)
+      name
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(.rect)
     }
     .pickedRow(isSelected)
     .accessibilityAddTraits(isSelected ? .isSelected : [])

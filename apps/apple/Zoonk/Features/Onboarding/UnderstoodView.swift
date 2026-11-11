@@ -108,6 +108,7 @@ private struct UnderstoodCard: View {
   @State private var rewriting = false
   @State private var editing: FieldEdit?
   @State private var choosingVariety: VarietyChoice?
+  @State private var countryAsked: Set<Int> = []
 
   private struct FieldEdit: Equatable {
     let goal: Int
@@ -244,7 +245,8 @@ private struct UnderstoodCard: View {
   }
 
   private func rows(goal index: Int) -> [UnderstoodRow] {
-    let rows = UnderstoodRows.rows(for: understood.goals[index])
+    let rows = UnderstoodRows.rows(
+      for: understood.goals[index], countryAsked: countryAsked.contains(index))
 
     guard index == 0,
       let schedule = UnderstoodRows.scheduleRow(understood)
@@ -259,6 +261,10 @@ private struct UnderstoodCard: View {
   private func save(field: UnderstoodField?, goal: Int, value: String?) async -> Bool {
     guard let field else {
       return false
+    }
+
+    if field == .targetRegion {
+      countryAsked.insert(goal)
     }
 
     do {

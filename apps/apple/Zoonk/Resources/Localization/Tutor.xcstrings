@@ -1208,65 +1208,6 @@
         }
       }
     },
-    "Applied. You can change it anytime on your Plan." : {
-      "comment" : "The learner applied the country the buddy offered; Plan is the Plan tab",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übernommen. Du kannst die Auswahl jederzeit unter „Plan“ ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se aplicó. Puedes cambiarlo cuando quieras en tu Plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "C’est fait. Tu peux modifier ce choix à tout moment dans l’onglet Plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fatto. Puoi cambiare questa scelta quando vuoi nella scheda Piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "適用しました。学習計画でいつでも変更できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "적용했어요. 계획 탭에서 언제든 바꿀 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapisano. Możesz to zmienić w każdej chwili na karcie Plan."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aplicado. Você pode mudar isso quando quiser na aba Plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uygulandı. Bunu Plan sekmesinden istediğin zaman değiştirebilirsin."
-          }
-        }
-      }
-    },
     "Apply" : {
       "comment" : "Applies a plan change the buddy proposed",
       "localizations" : {
@@ -5098,6 +5039,65 @@
         }
       }
     },
+    "Saved. You can change it in your plan." : {
+      "comment" : "The learner saved the country the buddy offered; the plan is the Plan tab",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert. Du kannst das in deinem Plan ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardó. Puedes cambiar esta preferencia en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré. Tu peux modifier ce choix dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scelta salvata. Puoi cambiarla nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。学習計画から変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요. 계획에서 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Możesz to zmienić w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo. Você pode mudar isso no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi. Planında değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Say %lld words again" : {
       "comment" : "The buddy offers pronunciation practice",
       "localizations" : {
@@ -8115,7 +8115,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche nutzen %@."
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden %@."
           }
         },
         "es" : {
@@ -8127,7 +8127,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les échanges avec ton compagnon et les appels d’entraînement se font en %@."
+            "value" : "Ton compagnon et tes appels d’entraînement utilisent %@."
           }
         },
         "it" : {
@@ -8145,13 +8145,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짝꿍과 연습 대화에서는 %@을(를) 사용해요."
+            "value" : "짝꿍과 대화 연습에는 %@을(를) 사용해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Język twojego kumpla i rozmów treningowych: %@."
+            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %@."
           }
         },
         "pt" : {

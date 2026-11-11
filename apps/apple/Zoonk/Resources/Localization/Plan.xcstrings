@@ -21202,12 +21202,12 @@
       }
     },
     "Lessons use this variety" : {
-      "comment" : "Under the country whose variety of the language lessons teach",
+      "comment" : "After the country whose variety of the language lessons teach, as in Mexico · Lessons use this variety",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen nutzen diese Sprachvariante"
+            "value" : "Lektionen verwenden diese Variante"
           }
         },
         "es" : {
@@ -21219,43 +21219,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variante utilisée dans les leçons"
+            "value" : "Les leçons utilisent cette variante"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le lezioni usano questa variante"
+            "value" : "Varietà usata nelle lezioni"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスンではこの国の言葉を使います"
+            "value" : "レッスンで使用"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨에서는 이 나라에서 쓰는 말을 배워요"
+            "value" : "레슨에서 사용하는 언어"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na lekcjach używamy tej odmiany"
+            "value" : "Odmiana używana w lekcjach"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variedade usada nas aulas"
+            "value" : "As aulas usam essa variedade"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Derslerde dilin bu ülkedeki kullanımı öğretilir"
+            "value" : "Dersler bu ülkeye göre hazırlanır"
           }
         }
       }
@@ -23638,7 +23638,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune préférence"
+            "value" : "Sans préférence"
           }
         },
         "it" : {
@@ -23656,7 +23656,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선호하는 나라 없음"
+            "value" : "상관없어요"
           }
         },
         "pl" : {
@@ -34243,7 +34243,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche nutzen %1$@. Die Lektionen und ihre Audios sind auf %2$@."
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden %1$@. Die Lektionen und ihre Audioaufnahmen sind auf %2$@."
           }
         },
         "en" : {
@@ -34261,13 +34261,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les échanges avec ton compagnon et les appels d’entraînement se font en %1$@. Les leçons et leur audio sont en %2$@."
+            "value" : "Ton compagnon et tes appels d’entraînement utilisent %1$@. Les leçons et leurs versions audio utilisent %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno e le conversazioni di allenamento usano %1$@. Le lezioni e i relativi audio usano %2$@."
+            "value" : "Il tuo compagno e le conversazioni di allenamento usano %1$@. Le lezioni e il loro audio usano %2$@."
           }
         },
         "ja" : {
@@ -34279,13 +34279,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짝꿍과 연습 대화에서는 %1$@을(를) 사용해요. 레슨과 레슨 오디오에서는 %2$@을(를) 사용해요."
+            "value" : "짝꿍과 대화 연습에는 %1$@을(를) 사용해요. 레슨과 오디오에는 %2$@을(를) 사용해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Język twojego kumpla i rozmów treningowych: %1$@. Język lekcji i nagrań: %2$@."
+            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %1$@. W lekcjach i ich nagraniach używamy odmiany: %2$@."
           }
         },
         "pt" : {
@@ -34297,7 +34297,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %1$@ kullanılır. Derslerde ve derslerin ses kayıtlarında %2$@ kullanılır."
+            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %1$@ kullanılır. Derslerde ve seslendirmelerinde %2$@ kullanılır."
           }
         }
       }
@@ -34308,25 +34308,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche nutzen die Sprachvariante des gewählten Landes. Die Lektionen bleiben gleich."
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden die Sprachvariante des gewählten Landes. Die Lektionen bleiben gleich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones siguen igual."
+            "value" : "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones no cambian."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon et les appels d’entraînement utilisent la variante du pays que tu choisis. Les leçons restent les mêmes."
+            "value" : "Ton compagnon et tes appels d’entraînement utilisent la variante du pays que tu choisis. Les leçons restent les mêmes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno e le conversazioni di allenamento usano la variante del paese che scegli. Le lezioni restano uguali."
+            "value" : "Il tuo compagno e le conversazioni di allenamento usano la varietà del paese che scegli. Le lezioni restano uguali."
           }
         },
         "ja" : {
@@ -34338,25 +34338,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짝꿍과 연습 대화에서는 선택한 나라의 언어를 사용해요. 레슨은 그대로예요."
+            "value" : "짝꿍과 대화 연습에는 선택한 국가의 언어를 사용해요. 레슨은 그대로예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybrany kraj określa odmianę języka twojego kumpla i rozmów treningowych. Lekcje pozostają bez zmian."
+            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz odmiany języka z wybranego kraju. Lekcje pozostają bez zmian."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro e as conversas de prática usam a variedade do país que você escolher. As aulas continuam iguais."
+            "value" : "O país que você escolher vale para seu parceiro e para as conversas de prática. As aulas continuam iguais."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre uyarlanır. Dersler aynı kalır."
+            "value" : "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre ayarlanır. Dersler aynı kalır."
           }
         }
       }
