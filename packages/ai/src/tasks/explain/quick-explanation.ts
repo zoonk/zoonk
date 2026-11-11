@@ -16,8 +16,8 @@ import systemPrompt from "./quick-explanation.prompt.md";
 /**
  * The first screen should show in about 20 seconds. Luna scored 8.68 and Terra 8.89 for eight times
  * the cost, so Terra is the fallback (30 Oct 2026). Since early November Luna's standard tier serves
- * about 95 tokens a second, 15s p50 and 23s p95 here; priority scored the same 8.4 in 9s p50 and 13s
- * p95, at twice the price (11 Nov 2026).
+ * about 95 tokens a second, 15s p50 and 23s p95 here; priority scored the same 8.3 to 8.5 in 9s p50
+ * and 12s to 17s p95, at twice the price (11 Nov 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;
