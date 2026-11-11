@@ -10,6 +10,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { countryCodeSchema } from "./country-contract";
 import {
   MAX_GOAL_DETAILS_LENGTH,
   MAX_GOAL_PROMPT_LENGTH,
@@ -70,6 +71,8 @@ const timeZoneSchema = z
  * and the level test its progress and result, which set the learner's skill levels.
  */
 const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
+  "countryDependent",
+  "contentCountrySource",
   "levelTest",
   "noticeFormats",
   "skillLevels",
@@ -125,6 +128,7 @@ function withTargetRegion<Draft extends DraftLanguage>(goal: Draft): Draft {
 
 export const goalDraftSchema = z
   .object({
+    contentCountry: countryCodeSchema.nullable().optional(),
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
     displayName: z.string().trim().min(1).optional(),

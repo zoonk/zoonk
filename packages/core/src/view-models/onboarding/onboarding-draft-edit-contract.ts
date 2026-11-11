@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { countryCodeSchema } from "../../goals/country-contract";
 import { goalDraftSchema, targetRegionSchema } from "../../goals/goal-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
 
@@ -26,6 +27,13 @@ const draftTextSchema = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGT
 /** Dependent fields follow edits; null dates restore exam dates, while changing the original words needs a new understanding. */
 export const onboardingDraftEditSchema = z
   .discriminatedUnion("field", [
+    z
+      .object({
+        field: z.literal("contentCountry"),
+        goal: draftGoalSchema,
+        value: countryCodeSchema.nullable(),
+      })
+      .strict(),
     z
       .object({
         field: z.enum(["title", "displayName"]),

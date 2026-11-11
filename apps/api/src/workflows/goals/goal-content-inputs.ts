@@ -59,6 +59,29 @@ async function waitForAnswers({
   return beginGoalCurriculumStep({ goalId, scope });
 }
 
+export async function waitForContentCountry(
+  initial: GoalCurriculumInputs,
+): Promise<GoalCurriculumInputs | null> {
+  if (!initial.unansweredQuestions.includes("contentCountry")) {
+    return initial;
+  }
+
+  await repeatUntil({
+    done: (inputs) => !inputs || !inputs.unansweredQuestions.includes("contentCountry"),
+    run: () => loadGoalCurriculumStep(initial.goal.id),
+    times: MAX_ANSWERS_POLLS,
+    wait: () => sleep(ANSWERS_POLL),
+  });
+
+  const inputs = await loadGoalCurriculumStep(initial.goal.id);
+
+  if (inputs?.unansweredQuestions.includes("contentCountry")) {
+    throw new Error("Choose the content country before preparing these lessons.");
+  }
+
+  return inputs;
+}
+
 export function isBuiltBeforeResearch({
   inputs,
   researchId,

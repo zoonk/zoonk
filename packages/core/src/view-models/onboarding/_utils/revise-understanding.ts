@@ -1,4 +1,5 @@
 import "server-only";
+import { isCountryCode } from "@zoonk/utils/countries";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { isGoalRegion } from "../../../goals/_utils/goal-region";
 import { type GoalDraft } from "../../../goals/goal-contract";
@@ -72,6 +73,10 @@ function reviseGoal({
   goal: UnderstoodGoalView;
 }): UnderstoodGoalView | null {
   switch (edit.field) {
+    case "contentCountry":
+      return goal.draft.kind === "learn" && (edit.value === null || isCountryCode(edit.value))
+        ? { ...goal, draft: { ...goal.draft, contentCountry: edit.value } }
+        : null;
     case "displayName":
     case "title":
       return { ...goal, draft: { ...goal.draft, [edit.field]: edit.value } };

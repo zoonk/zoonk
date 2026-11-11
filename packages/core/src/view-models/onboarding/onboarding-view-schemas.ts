@@ -37,6 +37,7 @@ const examDateSchema = z
 
 const understoodGoalSchema = z
   .object({
+    countryDependent: z.boolean().optional(),
     cutoff: targetCutoffSchema
       .nullable()
       .default(null)

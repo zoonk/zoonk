@@ -35,7 +35,7 @@ export async function saveAnswerGoal({
 
   await tx.goal.update({ data, where: { id: current.id } });
 
-  if (!own || current.planRevealedAt) {
+  if (!own || (current.planRevealedAt && input.question !== "contentCountry")) {
     return true;
   }
 
@@ -47,7 +47,9 @@ export async function saveAnswerGoal({
       : null;
 
   const rebuild =
-    current.curriculumQuestions.includes(input.question) &&
+    (current.curriculumQuestions.includes(input.question) ||
+      (input.question === "contentCountry" &&
+        parsePlanGraph(current.plan?.graph).skills.length > 0)) &&
     Object.entries(data).some(([key, value]) =>
       key === "details"
         ? !isDeepStrictEqual(withoutAnswered(value), withoutAnswered(current.details))

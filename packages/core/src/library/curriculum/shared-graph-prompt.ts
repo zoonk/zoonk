@@ -110,6 +110,10 @@ export function getGraphQuestions({
   inputs: GoalCurriculumInputs;
   scope: Pick<CurriculumScope, "ownerId">;
 }): OnboardingQuestion[] {
+  if (inputs.unansweredQuestions.includes("contentCountry")) {
+    return ["contentCountry"];
+  }
+
   if (inputs.hasMaterial || scope.ownerId) {
     return inputs.goal.kind === "exam" && inputs.hasMaterial
       ? [...PRIVATE_GRAPH_QUESTIONS, "targetDate"]
