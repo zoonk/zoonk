@@ -122,7 +122,7 @@ internal fun ColumnScope.StepForm(
         StepHeading(title, description, subject)
         content(continueStep)
         PlanStartNotice()
-        PageWaitActions {
+        PageActions {
             notice?.invoke()
             Button(
                 busy = pending && sender == StepSender.Continue,
