@@ -4176,6 +4176,12 @@ msgctxt "ay-crl"
 msgid "Subjects"
 msgstr "Materie"
 
+#. A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "lJ7_om"
+msgid "Not known yet"
+msgstr "Ancora da imparare"
+
 #. A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.
 #: src/focus-test/use-focus-test-texts.ts
 #: src/questions/test-out-run.tsx
@@ -4195,10 +4201,11 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {Scrittura: non valutata qui} listening {Ascolto: non valutato qui} speaking {Parlato: non valutato qui} other {Parte pratica: non valutata qui}}"
 
+#. A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.”
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "NRNo96"
-msgid "Your answers suggest reviewing this subject."
-msgstr "Le tue risposte suggeriscono di ripassare questa materia."
+msgctxt "KUQKBu"
+msgid "Your answers suggest giving this subject more time."
+msgstr "Le tue risposte suggeriscono di dedicare più tempo a questa materia."
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "51W9Dr"

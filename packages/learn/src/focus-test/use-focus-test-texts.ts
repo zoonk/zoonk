@@ -16,14 +16,24 @@ export function getSubjectName(subject: { name: string; shortName: string | null
 export function useSubjectStateText() {
   const t = useExtracted();
 
-  return (subject: Pick<FocusTestSubject, "asked" | "part" | "right" | "state">): string => {
+  return (
+    subject: Pick<FocusTestSubject, "asked" | "dontKnow" | "part" | "right" | "state">,
+  ): string => {
+    if (subject.state === "answered" && subject.asked === subject.dontKnow) {
+      return t({
+        description:
+          "A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.",
+        message: "Not known yet",
+      });
+    }
+
     if (subject.state === "answered") {
       return t({
         description:
           "A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.",
         message:
           "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}",
-        values: { correct: subject.right, total: subject.asked },
+        values: { correct: subject.right, total: subject.asked - subject.dontKnow },
       });
     }
 
@@ -51,7 +61,11 @@ export function useFocusReasonText() {
   return (reason: FocusRow["reason"]): string => {
     switch (reason) {
       case "answers":
-        return t("Your answers suggest reviewing this subject.");
+        return t({
+          description:
+            "A reason beside a suggested subject. Say “this subject” with the same words as in “This subject counts heavily.”",
+          message: "Your answers suggest giving this subject more time.",
+        });
       case "minimumScore":
         return t("This part has a minimum score.");
       case "notChecked":
