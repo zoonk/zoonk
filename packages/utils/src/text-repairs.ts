@@ -38,10 +38,23 @@ function removeLineMarks(line: string): string {
   return line.replace(HEADING_MARK, "$<indent>").replace(QUOTE_MARK, "$<indent>");
 }
 
+const PLACEHOLDER = /\u{E000}(?<index>\d+)\u{E001}/gu;
+
+/** Each formula stands in as a placeholder, so an edit sees a link around it whole. */
 function editOutsideMath(line: string, edit: (text: string) => string): string {
-  return splitAtMath(line)
-    .map(({ end, kind, start, text }) => (kind === "text" ? edit(text) : line.slice(start, end)))
+  const segments = splitAtMath(line);
+  const formulas = segments.filter(({ kind }) => kind !== "text");
+
+  const masked = segments
+    .map((segment) =>
+      segment.kind === "text" ? segment.text : `\u{E000}${formulas.indexOf(segment)}\u{E001}`,
+    )
     .join("");
+
+  return edit(masked).replaceAll(PLACEHOLDER, (placeholder, index: string) => {
+    const formula = formulas[Number(index)];
+    return formula ? line.slice(formula.start, formula.end) : placeholder;
+  });
 }
 
 function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {

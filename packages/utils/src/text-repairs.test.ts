@@ -88,6 +88,12 @@ describe(repairMarkdown, () => {
     ).toBe(String.raw`Se \(0<a\), veja isto e $b>0$.`);
   });
 
+  it("turns a link whose words hold a formula into plain words, keeping the formula", () => {
+    expect(
+      repairMarkdown({ layout: "blocks", text: "See [the $x^2$ rule](https://example.com)." }),
+    ).toBe("See the $x^2$ rule.");
+  });
+
   it("reads a table cell as the player does, keeping math with an escaped pipe whole", () => {
     const text = String.raw`| Value |
 | --- |
