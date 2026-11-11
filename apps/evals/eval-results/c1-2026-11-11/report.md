@@ -8,7 +8,7 @@ Quality comes first for shared lessons and chapter challenges. All five tasks ru
 
 The writer prompt changed after 8 Nov, so sampled Opus and Argon outputs were regenerated. Writer battle judgments were then rerun against the final output hashes. Fable and Carbon were fresh. Reviewer Astra's recorded-lesson outputs were reused only after verifying its prompt/generate change predates those outputs; its planted cases were regenerated. Spec, fix and challenge incumbents were scheduled fresh. All failures reported here occurred on existing regression inputs; no easier substitute cases or prompt tuning were used.
 
-The first writer battle overlapped an incumbent refresh. It was superseded by c1-writer-final.log, whose four-model panel matches the final outputs. Both rounds' charges count toward spend. Reviewer commands overlapped on disjoint sampled cases; their output and result records were merged by case-run id, preserving all 18 unique cases. The substring filter real- also selects pt-regra-real-brand-failure; it is counted once in the union.
+The first writer battle overlapped an incumbent refresh. It was superseded by the final writer battle (`c1-writer-final.log` in spend.json), whose four-model panel matches the final outputs. Both rounds' charges count toward spend. Reviewer commands overlapped on disjoint sampled cases; their output and result records were merged by case-run id, preserving all 18 unique cases. The substring filter real- also selects pt-regra-real-brand-failure; it is counted once in the union.
 
 ## Decisions
 
