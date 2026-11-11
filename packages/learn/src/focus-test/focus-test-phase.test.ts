@@ -4,7 +4,7 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { describe, expect, it } from "vitest";
 import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onboarding-actions";
-import { getNextSitting, toFocusTestPhase } from "./focus-test-phase";
+import { toFocusTestPhase } from "./focus-test-phase";
 
 const QUESTION: PlacementQuestion = {
   context: null,
@@ -112,14 +112,13 @@ describe(toFocusTestPhase, () => {
     });
   });
 
-  it("offers a sitting left before its first answer again, with its own numbers", () => {
-    const sitting = sittingWith({ left: 12, minutes: 12, questions: 12 });
-    const focusTest = testWith({ sitting });
+  it("invites again when a sitting was left before its first answer", () => {
+    const focusTest = testWith({ offer: OFFER, sitting: sittingWith() });
 
     expect(toFocusTestPhase({ opening: true, outcome: ready(focusTest, QUESTION) })).toStrictEqual({
       focusTest,
       kind: "invitation",
-      next: { minutes: 12, pastCeiling: 0, questions: 12 },
+      next: OFFER,
     });
   });
 
@@ -161,15 +160,5 @@ describe(toFocusTestPhase, () => {
     expect(toFocusTestPhase({ opening: true, outcome: ready(testWith()) })).toStrictEqual({
       kind: "unavailable",
     });
-  });
-});
-
-describe(getNextSitting, () => {
-  it("is nothing while a sitting with answers is open, or once nothing is left to ask", () => {
-    expect(
-      getNextSitting(testWith({ sitting: sittingWith({ answered: 1, left: 14 }) })),
-    ).toBeNull();
-
-    expect(getNextSitting(testWith({ checkpoint: CHECKPOINT }))).toBeNull();
   });
 });

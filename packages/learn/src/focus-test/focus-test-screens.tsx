@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type FocusTestOffer,
   type FocusTestSitting,
   type FocusTestView,
 } from "@zoonk/core/learner/placement/focus-test-contract";
@@ -26,7 +27,7 @@ import {
   type FocusTestPlanActions,
   FocusTestResult,
 } from "./focus-test-checkpoint";
-import { type NextSitting, type SittingEnd, getNextSitting } from "./focus-test-phase";
+import { type SittingEnd } from "./focus-test-phase";
 import { FocusTestSubjectsSheet } from "./focus-test-subjects";
 import { type Pressed } from "./use-focus-test";
 import { useSittingFacts } from "./use-focus-test-texts";
@@ -46,7 +47,7 @@ function SittingSize({ facts, minutes }: { facts: readonly string[]; minutes: nu
   );
 }
 
-function PastCeilingNote({ focusTest, next }: { focusTest: FocusTestView; next: NextSitting }) {
+function PastCeilingNote({ focusTest, next }: { focusTest: FocusTestView; next: FocusTestOffer }) {
   const t = useExtracted();
   const space = useSentenceSpace();
 
@@ -82,7 +83,7 @@ export function FocusTestInvitation({
   failed: boolean;
   focusTest: FocusTestView;
   host: FocusTestHost;
-  next: NextSitting;
+  next: FocusTestOffer;
   onSkip: () => void;
   onStart: () => void;
   pressed: Pressed;
@@ -270,7 +271,7 @@ export function FocusTestCheckpoint({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const next = getNextSitting(focusTest);
+  const next = focusTest.offer;
 
   return (
     <OnboardingColumn>

@@ -8,9 +8,6 @@ import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onb
 
 export type SittingEnd = NonNullable<FocusTestSitting["end"]>;
 
-/** What Start or Continue the test opens: its count and its time, said before the tap. */
-export type NextSitting = Pick<FocusTestOffer, "minutes" | "pastCeiling" | "questions">;
-
 export type QuestionPhase = {
   failures: number;
   kind: "question";
@@ -24,23 +21,10 @@ export type FocusTestPhase =
   | { kind: "loading" | "unavailable" }
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | { answered: boolean; kind: "waiting" }
-  | { focusTest: FocusTestView; kind: "invitation"; next: NextSitting }
+  | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
   | { kind: "resume"; question: QuestionPhase }
   | { end: SittingEnd | null; kind: "ended" }
   | { end: SittingEnd | null; focusTest: FocusTestView; kind: "checkpoint" };
-
-/** A sitting opened and left before its first answer is offered again, with its own numbers. */
-export function getNextSitting(focusTest: FocusTestView): NextSitting | null {
-  const { offer, sitting } = focusTest;
-
-  if (offer) {
-    return offer;
-  }
-
-  return sitting && sitting.answered === 0 && sitting.left > 0
-    ? { minutes: sitting.minutes, pastCeiling: 0, questions: sitting.questions }
-    : null;
-}
 
 /** Null when there's no result to show and nothing to offer. */
 function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
@@ -48,8 +32,7 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
     return { end: null, focusTest, kind: "checkpoint" };
   }
 
-  const next = getNextSitting(focusTest);
-  return next && { focusTest, kind: "invitation", next };
+  return focusTest.offer && { focusTest, kind: "invitation", next: focusTest.offer };
 }
 
 /**
