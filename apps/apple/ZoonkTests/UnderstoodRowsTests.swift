@@ -39,6 +39,24 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertEqual(date.source?.name, "gov.br")
   }
 
+  func testAClearedCountryKeepsItsLanguageRowToPickAgain() throws {
+    let goal = try understoodGoal(draft: [
+      "kind": "language", "language": "en", "prompt": "learn Spanish", "title": "Learn Spanish",
+      "displayName": "Spanish", "targetLanguage": "es",
+    ])
+
+    XCTAssertNil(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "targetLanguage" },
+      "The title already names the language")
+
+    let kept = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, countryAsked: true, today: today).first {
+        $0.id == "targetLanguage"
+      })
+
+    XCTAssertEqual(kept.field, .targetRegion)
+  }
+
   private func examDay(_ date: String) -> [String: Any] {
     [
       "date": date, "estimated": false, "label": "", "registrationClosed": false,

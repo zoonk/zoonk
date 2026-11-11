@@ -78,6 +78,11 @@ struct TutorToolOfferCard: View {
       .frame(maxWidth: .infinity, alignment: .leading)
     } label: {
       HStack {
+        if let flag = content.flag {
+          Text(verbatim: flag)
+            .accessibilityHidden(true)
+        }
+
         content.title
 
         if content.locked {
@@ -134,6 +139,8 @@ struct TutorToolOfferCard: View {
   }
 
   private struct Content {
+    /// Decorative: the title names the country it shows.
+    var flag: String?
     let title: Text
     var description: Text?
     let action: Action?
@@ -242,6 +249,7 @@ struct TutorToolOfferCard: View {
         language: variety.targetLanguage, region: variety.targetRegion)
 
       return Content(
+        flag: variety.languageFlag.flatMap(flagEmoji),
         title: Text(
           Locale.current.varietyName(
             language: variety.targetLanguage, region: variety.targetRegion)),

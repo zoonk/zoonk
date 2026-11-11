@@ -25,8 +25,23 @@ struct LanguageVariety: Equatable, Sendable {
   }
 
   var note: String? {
-    varietyNote(
-      language: language, region: region, taughtRegion: choices.first(where: \.taught)?.code)
+    varietyNote(language: language, region: region, taughtRegion: taughtRegion)
+  }
+
+  /// What the pick changes: the note once it differs from the lessons.
+  var pickerLine: String {
+    note
+      ?? String(
+        localized:
+          "Your buddy and practice calls use the country you choose. Lessons and their audio use \(Locale.current.varietyNameInSentence(language: language, region: taughtRegion)).",
+        table: "Plan",
+        comment:
+          "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'"
+      )
+  }
+
+  private var taughtRegion: String? {
+    choices.first(where: \.taught)?.code
   }
 }
 
@@ -74,32 +89,14 @@ struct LanguageVarietySheet: View {
               comment: "The language goal's choice of no country, as lessons teach it"))
 
           ForEach(variety.choices, id: \.code) { choice in
-            option(
-              region: choice.code, selected: selected,
-              name: Text(
-                choice.taught
-                  ? [
-                    choice.name,
-                    String(
-                      localized: "Lessons use this variety", table: "Plan",
-                      comment:
-                        "After the country whose variety of the language lessons teach, as in Mexico · Lessons use this variety"
-                    ),
-                  ].joinedFacts()
-                  : choice.name))
+            option(region: choice.code, selected: selected, name: Text(choice.name))
           }
         } header: {
           // Above the list, which can run past the screen, so a pick's note shows where it's made.
-          Text(
-            shown?.note
-              ?? String(
-                localized:
-                  "Your buddy and practice calls use the country you choose. Lessons stay the same.",
-                table: "Plan", comment: "Above the countries a language goal can choose from")
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .textCase(nil)
+          Text((shown ?? variety).pickerLine)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .textCase(nil)
         }
       }
       .disabled(saving != nil)

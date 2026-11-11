@@ -21201,65 +21201,6 @@
         }
       }
     },
-    "Lessons use this variety" : {
-      "comment" : "After the country whose variety of the language lessons teach, as in Mexico · Lessons use this variety",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionen verwenden diese Variante"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las lecciones usan esta variante"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les leçons utilisent cette variante"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Varietà usata nelle lezioni"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスンで使用"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨에서 사용하는 언어"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odmiana używana w lekcjach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas usam essa variedade"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dersler bu ülkeye göre hazırlanır"
-          }
-        }
-      }
-    },
     "Lessons you already knew" : {
       "comment" : "Lessons the learner tested out of",
       "localizations" : {
@@ -34302,61 +34243,61 @@
         }
       }
     },
-    "Your buddy and practice calls use the country you choose. Lessons stay the same." : {
-      "comment" : "Above the countries a language goal can choose from",
+    "Your buddy and practice calls use the country you choose. Lessons and their audio use %@." : {
+      "comment" : "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche verwenden die Sprachvariante des gewählten Landes. Die Lektionen bleiben gleich."
+            "value" : "Dein Kumpel und die Übungsgespräche verwenden die Sprachvariante des gewählten Landes. Lektionen und ihre Audios sind auf %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones no cambian."
+            "value" : "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones y su audio usan %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon et tes appels d’entraînement utilisent la variante du pays que tu choisis. Les leçons restent les mêmes."
+            "value" : "Ton compagnon et les appels d’entraînement utilisent la variante du pays que tu choisis. Les leçons et leur audio sont en %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno e le conversazioni di allenamento usano la varietà del paese che scegli. Le lezioni restano uguali."
+            "value" : "Il tuo compagno di studio e le conversazioni di allenamento usano la variante del paese che scegli. Le lezioni e il relativo audio sono in %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンは変わりません。"
+            "value" : "相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンとその音声では%@を使います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짝꿍과 대화 연습에는 선택한 국가의 언어를 사용해요. 레슨은 그대로예요."
+            "value" : "짝꿍과 연습 대화에는 선택한 국가가 반영돼요. 레슨과 오디오에는 %@을(를) 사용해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz odmiany języka z wybranego kraju. Lekcje pozostają bez zmian."
+            "value" : "Wybrany kraj określa odmianę języka używaną przez twojego kumpla i w rozmowach ćwiczeniowych. Język lekcji i nagrań: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O país que você escolher vale para seu parceiro e para as conversas de prática. As aulas continuam iguais."
+            "value" : "O país que você escolher vale para seu parceiro e as conversas de prática. As aulas e seus áudios usam %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre ayarlanır. Dersler aynı kalır."
+            "value" : "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre uyarlanır. Derslerde ve ses kayıtlarında %@ kullanılır."
           }
         }
       }
