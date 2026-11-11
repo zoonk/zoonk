@@ -56,10 +56,13 @@ function PastCeilingNote({ focusTest, next }: { focusTest: FocusTestView; next: 
 
   return (
     <p className="text-muted-foreground text-sm text-pretty">
-      {t(
-        "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked.",
-        { questions: next.questions, subjects: focusTest.counts.total },
-      )}
+      {t({
+        description:
+          "“This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.",
+        message:
+          "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked.",
+        values: { questions: next.questions, subjects: focusTest.counts.total },
+      })}
       {space}
       <FocusTestSubjectsSheet answered={false} subjects={focusTest.subjects} />
     </p>

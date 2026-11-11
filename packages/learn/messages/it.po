@@ -4062,10 +4062,11 @@ msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Interrompi e usa le mie risposte"
 
+#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "J1HRdz"
 msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "Il tuo piano tiene conto di {subjects, plural, one {# materia in totale} other {# materie in totale}}. Questa sessione prevede {questions, plural, one {fino a # domanda} other {fino a # domande}}, quindi potresti non ricevere domande su alcune materie."
+msgstr "Il tuo piano tiene conto di {subjects, plural, one {# materia} other {tutte le # materie}}. Questo test prevede {questions, plural, one {al massimo # domanda} other {al massimo # domande}}, quindi alcune materie potrebbero non essere valutate."
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "QyMX3n"
