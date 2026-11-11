@@ -252,7 +252,7 @@ describe("lesson feedback", () => {
     await next();
 
     await expect.element(wrong).toBeEnabled();
-    await expect.element(wrong).not.toHaveTextContent(/Your answer/u);
+    await expect.element(wrong).not.toMatchTextContent(/Your answer/u);
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeVisible();
   });
 
