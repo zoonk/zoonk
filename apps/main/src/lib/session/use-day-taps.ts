@@ -141,22 +141,39 @@ async function settleEntry({
   }
 }
 
-/** Takes the learner to a step's intro when the step waits for Start there; says whether it did. */
-function useShowIntro(shown: TapDay["shown"]) {
+/**
+ * Takes the learner to a step's intro when the step waits for Start there; says whether it did. Its
+ * entry draws the intro at once from this day while the session screen loads.
+ */
+function useShowIntro(day: TapDay) {
   const router = useRouter();
 
   return useCallback(
-    (step: TapStep): boolean => {
+    ({ next, step }: { next: boolean; step: TapStep }): boolean => {
+      const { shown } = day;
       const href = getStepHref({ goalId: shown.goalId, step });
 
       if (!href || !waitsForStart({ day: shown.day, origin: getCurrentLocation(), step })) {
         return false;
       }
 
+      const focusMain = isFocusOnControl();
       router.push(href);
+
+      beginDayEntry({
+        day,
+        focusMain,
+        here: stayingHere(shown.userId),
+        href,
+        next,
+        step,
+        tappedAt: Date.now(),
+        waiting: true,
+      });
+
       return true;
     },
-    [router, shown],
+    [day, router],
   );
 }
 
@@ -201,7 +218,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     [go, refresh],
   );
 
-  const showIntro = useShowIntro(shown);
+  const showIntro = useShowIntro(day);
 
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
@@ -212,7 +229,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       const href = getStepHref({ goalId: shown.goalId, step });
 
-      if (showIntro(step)) {
+      if (showIntro({ next, step })) {
         return true;
       }
 
@@ -238,6 +255,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           next,
           step,
           tappedAt: Date.now(),
+          waiting: false,
         });
 
         void answer.then((result) => settleEntry({ id: entry.id, learnerHere, origin, result }));

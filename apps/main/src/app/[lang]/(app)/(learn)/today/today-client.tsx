@@ -150,7 +150,7 @@ export function TodayClient({
   const showIntro = useCallback(
     (blockId: string) => {
       const step = steps.find((candidate) => candidate.blockId === blockId);
-      return step ? taps.showIntro(step) : false;
+      return step ? taps.showIntro({ next: false, step }) : false;
     },
     [steps, taps],
   );

@@ -43,7 +43,8 @@ export type NextStopActions = {
 
 export type NextStopTap = {
   focus: boolean;
-  state: "failed" | "opening";
+  /** `waiting`: the tap only brought the step here, and it starts when the learner taps Start. */
+  state: "failed" | "opening" | "waiting";
   /** `Date.now()` of the tap. */
   tappedAt: number;
 };

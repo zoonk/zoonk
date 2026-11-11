@@ -1,3 +1,4 @@
+import { instant } from "@next/playwright";
 import { prisma } from "@zoonk/db";
 import { type Page, expect, test } from "./fixtures";
 import { openAs } from "./study-day";
@@ -58,8 +59,12 @@ test.describe("An unstarted day", () => {
     const shown = await readTodaySteps(page);
     await expect(countSessions(day.user.id)).resolves.toBe(0);
 
-    await page.getByRole("button", { name: "Start session" }).click();
-    await expect(page.getByRole("button", { name: "How reviews work" })).toBeVisible();
+    // Under `instant()` the session screen's read never arrives: the intro draws from Today's day.
+    await instant(page, async () => {
+      await page.getByRole("button", { name: "Start session" }).click();
+      await expect(page.getByRole("button", { name: "How reviews work" })).toBeVisible();
+    });
+
     await expect(countSessions(day.user.id)).resolves.toBe(0);
 
     await page.reload();
