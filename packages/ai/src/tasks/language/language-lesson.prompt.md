@@ -104,7 +104,7 @@ When the lesson is about hearing or saying sounds, a question never asks about a
 
 Every learner of this language at this level reads the lesson, whatever their job or life. The learner's own lines, what they say, write or translate as themselves, never give them a job, field, employer or other personal fact ("my experience in sales", "I work in customer service"): keep them general ("my most recent role", "my last project", "the job I'm applying for"). Other people in the situation, such as a recruiter or a colleague, may have one.
 
-The learner's gender is unknown too, and a screen never says who speaks a sentence or to whom. So no sentence, translation or practice template has a word that agrees with the gender of the person speaking or spoken to ("Sono stanco", "Estoy listo", "Obrigado", "Are you ready?" as "Sei pronto?"): a woman would have to build, say or fill in the man's form, and her own would be marked wrong. Say it in a form that agrees with nothing ("Ho sonno", "Ya terminé"). When the lesson teaches forms that agree (the passato prossimo with "essere", adjectives that describe people), give them to someone the sentence names ("Giulia è uscita", "Mi hermano está cansado"); the learner uses their own form in the writing, whose answers list both.
+The learner's gender is unknown too, and a screen never says who speaks a sentence or to whom. So no sentence, translation or practice template has a word that agrees with the gender of the person speaking or spoken to ("Sono stanco", "Estoy listo", "Obrigado", "Are you ready?" as "Sei pronto?"): a woman would have to build, say or fill in the man's form, and her own would be marked wrong. Say it in a form that agrees with nothing ("Ho sonno", "Ya terminé"). When the lesson teaches forms that agree (the passato prossimo with "essere", adjectives that describe people), give them to someone the sentence names ("Giulia è uscita", "Mi hermano está cansado"); the learner uses their own form in the writing, whose answers list both. Nothing written to the learner agrees with their gender either: notes, tips, speaking prompts and feedback follow the register in "Language rules", passives about the learner included.
 
 # Writing
 
@@ -168,4 +168,4 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 {{/sameLanguage}}
 9. The words and sentences cover every part of `LESSON_CAN_DO`.
 10. In a lesson about sounds, no practice question asks about a sound or a letter in writing.
-11. No sentence, translation or practice template, and nothing written to the learner, has a word that agrees with the learner's gender or with the gender of someone the sentence doesn't name.
+11. No sentence, translation, practice template or speaking prompt, and nothing else written to the learner, has a word that agrees with the learner's gender or with the gender of someone the sentence doesn't name. Only the writing answers may, and then they list both forms.

@@ -63,7 +63,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "university admission exams: the EXANI-II (Ceneval), the UNAM's and the IPN's own (counted in aciertos, correct answers); the EGEL (Ceneval) to graduate, the ENARM for medical residencies, TOEFL and Cambridge exams for English",
     register:
-      'address the reader as "tú" (and "ustedes" for a group, never "vosotros" or "vos"), informal and warm, in Latin American Spanish with Mexico\'s vocabulary (computadora, celular, carro, jugo) and no regional slang; rephrase anything that would assume the reader\'s gender ("¿todo listo?" rather than "¿estás listo?", "te damos la bienvenida" rather than "bienvenido")',
+      'address the reader as "tú" (and "ustedes" for a group, never "vosotros" or "vos"), informal and warm, in Latin American Spanish with Mexico\'s vocabulary (computadora, celular, carro, jugo) and no regional slang; rephrase any word that would agree with the reader\'s gender, the generic masculine included ("¿todo listo?" rather than "¿estás listo?", "te damos la bienvenida" rather than "bienvenido")',
   },
   fr: {
     place: "France",
@@ -79,7 +79,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "the brevet, the baccalauréat (the bac), Parcoursup for university places, concours (grandes écoles, CRPE and CAPES for teachers, the civil service), the code de la route, DELF",
     register:
-      'address the reader as "tu", informal and warm; rephrase anything that would assume the reader\'s gender ("on y va ?" rather than "tu es prêt ?")',
+      'address the reader as "tu", informal and warm; rephrase any word that would agree with the reader\'s gender, the generic masculine included ("on y va ?" rather than "tu es prêt ?")',
   },
   it: {
     place: "Italy",
@@ -97,7 +97,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "the maturità (officially the esame di maturità again since 2026: two written prove and an oral on four subjects), the esame di terza media, INVALSI tests, test d'ingresso such as CISIA's TOLC, the semestre filtro for medicine, dentistry and veterinary (national exams in chemistry, physics and biology after the first semester), concorsi pubblici (concorso scuola, INPS, Agenzia delle Entrate, forze dell'ordine), the esame di avvocato, the patente B theory quiz (30 true/false questions, at most 3 errors), CILS and CELI",
     register:
-      'address the reader as "tu", informal and warm; rephrase anything that would assume the reader\'s gender ("ci sei?" rather than "sei pronto?")',
+      'address the reader as "tu", informal and warm; rephrase any word that would agree with the reader\'s gender, the generic masculine included ("ci sei?" rather than "sei pronto?")',
   },
   ja: {
     place: "Japan",
@@ -168,7 +168,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
     exams:
       "ENEM, vestibulares (Fuvest, Unicamp), concursos públicos (boards such as Cebraspe, FGV, Vunesp and FCC), the OAB exam, CNU, Revalida",
     register:
-      'address the reader as "você", warm and informal, the way people speak in Brazil; rephrase anything that would assume the reader\'s gender ("isso mesmo" or "você acertou" rather than "você está certo" or "certa", "boas-vindas" rather than "bem-vindo")',
+      'address the reader as "você", warm and informal, the way people speak in Brazil; rephrase any word that would agree with the reader\'s gender, the generic masculine included ("isso mesmo" or "você acertou" rather than "você está certo" or "certa", "quando quiser" rather than "quando estiver pronto", "como prefere que te chamem" rather than "como prefere ser chamado", "boas-vindas" rather than "bem-vindo")',
   },
   tr: {
     place: "Türkiye",
@@ -225,7 +225,7 @@ export function formatLocalContext(
 }
 
 const DEFAULT_REGISTER =
-  "address the reader directly, warm and informal; rephrase anything that would assume the reader's gender";
+  "address the reader directly, warm and informal; rephrase any word that would agree with the reader's gender, the generic masculine included";
 
 export function getRegister(language: string): string {
   const locale = getContentLocale(language);
