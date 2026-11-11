@@ -19239,7 +19239,7 @@
         }
       },
       "post": {
-        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, or in onboarding a diagnostic mock as placement (`purpose: placement`, with a `length` from `placement.options`), its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A mock still well short of its questions with nothing to write now answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): start it with `acceptFewer` if the learner wants. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock). A placement mock asks new questions only, grades only the questions answered, so stopping midway keeps them, and its answers set where the plan starts when placement finishes.",
+        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A mock still well short of its questions with nothing to write now answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): start it with `acceptFewer` if the learner wants. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
         "operationId": "startAnytimeMock",
         "security": [
           {
@@ -29923,25 +29923,8 @@
       "AnytimeMockInput": {
         "type": "object",
         "properties": {
-          "length": {
-            "description": "For `placement`: how long, as `placement.options` lists them; the recommended one when left out",
-            "type": "string",
-            "enum": [
-              "short",
-              "medium",
-              "long"
-            ]
-          },
-          "purpose": {
-            "description": "`practice` (the default): one of the goal's options, by `shape`. `placement`: a diagnostic mock in the exam's format in onboarding, instead of the quick placement; its answers set where the plan starts",
-            "type": "string",
-            "enum": [
-              "practice",
-              "placement"
-            ]
-          },
           "shape": {
-            "description": "For `practice`: the option picked from GET /v1/goals/{goalId}/mocks",
+            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
             "allOf": [
               {
                 "$ref": "#/components/schemas/MockShape"
@@ -29953,6 +29936,9 @@
             "type": "boolean"
           }
         },
+        "required": [
+          "shape"
+        ],
         "additionalProperties": false
       },
       "MockShape": {
@@ -29991,25 +29977,8 @@
       "MockQuestionsInput": {
         "type": "object",
         "properties": {
-          "length": {
-            "description": "For `placement`: how long, as `placement.options` lists them; the recommended one when left out",
-            "type": "string",
-            "enum": [
-              "short",
-              "medium",
-              "long"
-            ]
-          },
-          "purpose": {
-            "description": "`practice` (the default): one of the goal's options, by `shape`. `placement`: a diagnostic mock in the exam's format in onboarding, instead of the quick placement; its answers set where the plan starts",
-            "type": "string",
-            "enum": [
-              "practice",
-              "placement"
-            ]
-          },
           "shape": {
-            "description": "For `practice`: the option picked from GET /v1/goals/{goalId}/mocks",
+            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
             "allOf": [
               {
                 "$ref": "#/components/schemas/MockShape"
@@ -30017,6 +29986,9 @@
             ]
           }
         },
+        "required": [
+          "shape"
+        ],
         "additionalProperties": false
       },
       "MockTimeZoneInput": {
@@ -87536,7 +87508,7 @@
               "open",
               "plusRequired"
             ],
-            "description": "`plusRequired`: every mock exam comes with Plus (the placement one included); show the options with what it takes"
+            "description": "`plusRequired`: every mock exam comes with Plus; show the options with what it takes"
           },
           "examDocument": {
             "$ref": "#/components/schemas/ExamDocument"
@@ -87564,59 +87536,6 @@
               "$ref": "#/components/schemas/MockOption"
             },
             "description": "Each exam day in full, half of the day in turn, then each objective subject, biggest first"
-          },
-          "placement": {
-            "nullable": true,
-            "description": "A diagnostic mock in the exam's format, taken in onboarding instead of the quick placement (POST with `purpose: placement` and a `length`): its questions spread over every subject's topics set where the plan starts. Null when the exam has no questions to ask",
-            "type": "object",
-            "properties": {
-              "mock": {
-                "nullable": true,
-                "description": "The goal's placement mock, once started",
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "finished",
-                      "running"
-                    ]
-                  }
-                },
-                "required": [
-                  "id",
-                  "status"
-                ],
-                "additionalProperties": false
-              },
-              "options": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PlacementMockOption"
-                },
-                "description": "Its lengths, shortest first: a quick check, about half an hour, about an hour (fewer when two would ask as many questions)"
-              },
-              "recommended": {
-                "type": "string",
-                "enum": [
-                  "short",
-                  "medium",
-                  "long"
-                ],
-                "description": "The length to suggest first"
-              }
-            },
-            "required": [
-              "mock",
-              "options",
-              "recommended"
-            ],
-            "additionalProperties": false
           },
           "running": {
             "nullable": true,
@@ -87664,7 +87583,6 @@
           "goalId",
           "lastMock",
           "options",
-          "placement",
           "running",
           "sizeSource"
         ],
@@ -87758,56 +87676,6 @@
           "objectiveOnly",
           "questions",
           "written"
-        ],
-        "additionalProperties": false
-      },
-      "PlacementMockOption": {
-        "type": "object",
-        "properties": {
-          "areas": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The notice's subjects it asks: every one, or the ones worth most"
-          },
-          "coversAllAreas": {
-            "type": "boolean",
-            "description": "It asks every subject the plan has; a short one may leave the smallest to the first days' questions"
-          },
-          "estimatedMinutes": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "About how long it takes: learners' real pace on this exam's mocks, or the exam's own pace until there's enough of it; never more than `minutes`"
-          },
-          "length": {
-            "type": "string",
-            "enum": [
-              "short",
-              "medium",
-              "long"
-            ]
-          },
-          "minutes": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "The exam's time for it, which its clock gives"
-          },
-          "questions": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          }
-        },
-        "required": [
-          "areas",
-          "coversAllAreas",
-          "estimatedMinutes",
-          "length",
-          "minutes",
-          "questions"
         ],
         "additionalProperties": false
       },

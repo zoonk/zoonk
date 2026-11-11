@@ -5,11 +5,12 @@ import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
+import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { gradeChoiceAnswer } from "../_utils/choice-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { gradeTypedItemAnswer } from "../_utils/typed-grading";
-import { type TypedItem } from "../_utils/typed-items";
+import { type TypedItem, toTypedSnapshot } from "../_utils/typed-items";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import {
   type LearnerAnswer,
@@ -40,6 +41,7 @@ async function findGoalItem({
   userId: string;
 }): Promise<PlacementItem | null> {
   const item = await prisma.item.findFirst({
+    include: ITEM_IMAGE_INCLUDE,
     where: {
       id: itemId,
       skill: libraryRowsVisibleTo(userId),
@@ -60,9 +62,9 @@ async function gradeTyped({
   item: TypedItem;
   practicedLanguage: string | null;
   userId: string;
-}): Promise<boolean | null> {
+}) {
   if ("dontKnow" in answer) {
-    return false;
+    return { isCorrect: false, snapshot: toTypedSnapshot({ explanation: null, item, text: null }) };
   }
 
   if (!("text" in answer)) {
@@ -76,7 +78,10 @@ async function gradeTyped({
     userId,
   });
 
-  return verdict.isCorrect;
+  return {
+    isCorrect: verdict.isCorrect,
+    snapshot: toTypedSnapshot({ explanation: verdict.feedback, item, text: answer.text }),
+  };
 }
 
 function gradeAnswer({
@@ -89,12 +94,12 @@ function gradeAnswer({
   item: PlacementItem;
   practicedLanguage: string | null;
   userId: string;
-}): Promise<boolean | null> | boolean | null {
+}) {
   if (item.format === "typed") {
     return gradeTyped({ answer, item, practicedLanguage, userId });
   }
 
-  return "text" in answer ? null : gradeChoiceAnswer({ answer, item }).isCorrect;
+  return "text" in answer ? null : gradeChoiceAnswer({ answer, item });
 }
 
 /**
@@ -146,7 +151,7 @@ export async function answerPlacementQuestion({
     }),
   ]);
 
-  const isCorrect = item
+  const graded = item
     ? await gradeAnswer({
         answer: input.answer,
         item,
@@ -155,10 +160,11 @@ export async function answerPlacementQuestion({
       })
     : null;
 
-  if (!item || isCorrect === null) {
+  if (!item || graded === null) {
     return { status: "invalidItem" };
   }
 
+  const { isCorrect, snapshot } = graded;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
   await recordPlacementAnswer({
@@ -167,6 +173,7 @@ export async function answerPlacementQuestion({
     isPlacement: true,
     itemId: item.id,
     language: item.language,
+    mistake: { questionText: snapshot.question, snapshot },
     purpose: "diagnostic",
     skillId: item.skillId,
     timeZone,

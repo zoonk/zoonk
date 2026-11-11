@@ -6,7 +6,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { getUsageRule } from "../../entitlements/limits";
 import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
@@ -14,7 +14,7 @@ import { adaptPlanFromMock } from "./adapt-plan-from-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
-import { type MockShape, type MockView } from "./mock-contract";
+import { type MockShape, type MockView, mockConditionsSchema } from "./mock-contract";
 import { requestMockQuestions } from "./request-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
@@ -177,14 +177,6 @@ describe("mocks taken any time", () => {
           { area: "Mathematics", estimatedMinutes: 12, kind: "area", minutes: 12, questions: 8 },
           { area: "Languages", estimatedMinutes: 12, kind: "area", minutes: 12, questions: 8 },
         ],
-        placement: {
-          mock: null,
-          options: [
-            { coversAllAreas: true, estimatedMinutes: 15, length: "short", questions: 10 },
-            { coversAllAreas: true, estimatedMinutes: 24, length: "long", questions: 16 },
-          ],
-          recommended: "short",
-        },
         running: null,
       },
     });
@@ -235,13 +227,7 @@ describe("mocks taken any time", () => {
       const result = await getMockOptions({ goalId: goal.id });
       const view = result.status === "ready" ? result.view : null;
 
-      return {
-        options: view?.options.map((option) => [option.kind, option.estimatedMinutes]),
-        placement: view?.placement?.options.map((option) => [
-          option.questions,
-          option.estimatedMinutes,
-        ]),
-      };
+      return { options: view?.options.map((option) => [option.kind, option.estimatedMinutes]) };
     }
 
     await expect(estimates()).resolves.toStrictEqual({
@@ -250,10 +236,6 @@ describe("mocks taken any time", () => {
         ["half", 12],
         ["area", 12],
         ["area", 12],
-      ],
-      placement: [
-        [10, 15],
-        [16, 24],
       ],
     });
 
@@ -265,10 +247,6 @@ describe("mocks taken any time", () => {
         ["half", 8],
         ["area", 8],
         ["area", 8],
-      ],
-      placement: [
-        [15, 15],
-        [16, 16],
       ],
     });
   });
@@ -561,7 +539,7 @@ describe("mocks taken any time", () => {
     await prisma.goal.update({ data: { examBlueprintId: null }, where: { id: goal.id } });
 
     await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { options: [], placement: null },
+      view: { options: [] },
     });
 
     const full = { area: null, day: null, kind: "full" } as const;
@@ -766,7 +744,7 @@ describe("repeating mocks", () => {
   });
 });
 
-describe("a mock taken as placement", () => {
+describe("an existing mock taken as placement", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
@@ -776,23 +754,36 @@ describe("a mock taken as placement", () => {
     vi.useRealTimers();
   });
 
-  it("asks every subject in the length picked, and grades only what was answered", async () => {
+  it("keeps playing and grades only what was answered", async () => {
     const { goal, skills } = await anytimeSetup();
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { length: "short", purpose: "placement" },
+      input: { shape: { area: null, day: null, kind: "full" } },
     });
 
     const id = started.status === "started" ? started.id : "";
+    const stored = await prisma.mockExam.findUniqueOrThrow({ where: { id } });
+
+    await prisma.mockExam.update({
+      data: {
+        conditions: {
+          ...mockConditionsSchema.parse(stored.conditions),
+          purpose: "placement",
+          shape: null,
+        },
+      },
+      where: { id },
+    });
+
     const running = await readMock(id);
 
     expect(running).toMatchObject({
       purpose: "placement",
-      questions: 10,
+      questions: 16,
       sections: [
-        { minutes: 8, name: "Mathematics", questions: 5 },
-        { minutes: 8, name: "Languages", questions: 5 },
+        { minutes: 12, name: "Mathematics", questions: 8 },
+        { minutes: 12, name: "Languages", questions: 8 },
       ],
       shape: null,
       status: "running",
@@ -833,58 +824,9 @@ describe("a mock taken as placement", () => {
     expect(finished).toMatchObject({ adapt: null, result: { total: 4 }, status: "finished" });
     expect(attempts).toHaveLength(4);
     expect(mistakes).toBe(0);
-    expect(options).toMatchObject({ view: { placement: { mock: { id, status: "finished" } } } });
-  });
 
-  it("starts the suggested length, the quick check, when none is picked", async () => {
-    const { goal } = await anytimeSetup();
-
-    const started = await startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } });
-
-    await expect(readMock(started.status === "started" ? started.id : "")).resolves.toMatchObject({
-      purpose: "placement",
-      questions: 10,
-    });
-  });
-
-  it("comes with Plus: the free plan and guests see it with what it takes", async () => {
-    const { goal, user } = await anytimeSetup({ plus: false });
-
-    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { access: "plusRequired", placement: { mock: null, recommended: "short" } },
-    });
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { purpose: "placement" } }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
-
-    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-    mockGuestSession(user.id);
-
-    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { access: "plusRequired", placement: { mock: null } },
-    });
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
-  });
-
-  it("has questions written only for the places of topics the bank has none for", async () => {
-    const { goal, skills } = await anytimeSetup({ itemsPerSkill: 3 });
-    const [, second] = skills;
-
-    await prisma.item.deleteMany({ where: { skillId: second?.id } });
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { length: "short", purpose: "placement" } }),
-    ).resolves.toMatchObject({
-      status: "start",
-      writes: [{ questionsPerSkill: 2, skillIds: [second?.id] }],
+    expect(options).toMatchObject({
+      view: { lastMock: { purpose: "placement", total: 4 }, running: null },
     });
   });
 });

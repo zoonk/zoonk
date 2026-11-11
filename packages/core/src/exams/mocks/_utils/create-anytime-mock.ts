@@ -12,14 +12,12 @@ import { markPlannedItems } from "../mock-marking";
 import { planOptionMock } from "../mock-option-plan";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { isMockShort, listShortFormats } from "../mock-shortfall";
-import { planPlacementMock } from "../placement-mock";
 import {
   type AnytimeMockPick,
   type AnytimeMockSetup,
   findRunningAnytimeMock,
   listMissingRecordings,
   loadMockSkillIds,
-  loadPlacementSkills,
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
@@ -47,10 +45,6 @@ function isShortOfNew({
   plan: MockPlan;
   setup: AnytimeMockSetup;
 }) {
-  if (pick.purpose === "placement") {
-    return isMockShort({ option: pick.option, planned: countPlannedQuestions(plan) - plan.reused });
-  }
-
   const mix = getMockFormatMix(setup.structure);
 
   return (
@@ -69,31 +63,17 @@ export async function planFromBank({
   pick: AnytimeMockPick;
   setup: AnytimeMockSetup;
   userId: string;
-}): Promise<{ candidates: MockCandidate[]; missingSkillIds: string[]; plan: MockPlan }> {
-  const [candidates, skills] = await Promise.all([
-    loadMockSkillIds(goal.id).then((skillIds) =>
-      loadMockCandidates({ goal, itemIds: null, skillIds, structure: setup.structure, userId }),
-    ),
-    pick.purpose === "placement" ? loadPlacementSkills(goal.id) : [],
-  ]);
-
-  if (pick.purpose === "placement") {
-    const fresh = candidates.filter((candidate) => !candidate.answered && !candidate.set);
-
-    return {
-      candidates: fresh,
-      ...planPlacementMock({
-        candidates: fresh,
-        option: pick.option,
-        skills,
-        structure: setup.structure,
-      }),
-    };
-  }
+}): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
+  const candidates = await loadMockCandidates({
+    goal,
+    itemIds: null,
+    skillIds: await loadMockSkillIds(goal.id),
+    structure: setup.structure,
+    userId,
+  });
 
   return {
     candidates,
-    missingSkillIds: [],
     plan: planOptionMock({
       candidates,
       essays: setup.essays,
@@ -124,8 +104,8 @@ function toConditions({
 
   return {
     day: plan.day,
-    examQuestions: purpose === "practice" && asked < option.questions ? option.questions : null,
-    fullLength: purpose === "practice" && option.kind === "full",
+    examQuestions: asked < option.questions ? option.questions : null,
+    fullLength: option.kind === "full",
     ...markPlannedItems({
       candidates: [...candidates, ...[...setup.listening.values()].flat()],
       plan,
@@ -136,15 +116,13 @@ function toConditions({
     reused: plan.reused,
     scoring: getMockScoring({ blueprint: setup.blueprint, goal, structure: setup.structure }),
     sections: plan.sections,
-    shape:
-      purpose === "practice" ? { area: option.area, day: option.day, kind: option.kind } : null,
+    shape: { area: option.area, day: option.day, kind: option.kind },
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
-    unpicked:
-      "leftOut" in option
-        ? option.leftOut.flatMap((part) => (part.part === "choice" && part.name ? [part.name] : []))
-        : [],
+    unpicked: option.leftOut.flatMap((part) =>
+      part.part === "choice" && part.name ? [part.name] : [],
+    ),
     wrongPenalty: getWrongPenalty(setup.structure),
   };
 }
@@ -174,7 +152,6 @@ export async function createAnytimeMock({
   const short =
     !acceptFewer &&
     !asksForNew &&
-    pick.purpose === "practice" &&
     planned >= MIN_CHECKPOINT_QUESTIONS &&
     isMockShort({ option: pick.option, planned });
 

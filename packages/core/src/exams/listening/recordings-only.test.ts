@@ -8,10 +8,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { startPlacementSitting } from "../../learner/placement/start-placement-sitting";
 import { getChapterTestOut } from "../../learner/test-out/get-chapter-test-out";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { getMistakePractice } from "../../mistakes/get-mistake-practice";
-import { getFocusTest } from "../../plans/focus-test/get-focus-test";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import {
   SESSION_NOW,
@@ -556,7 +556,6 @@ describe("an exam's listening skills in text tests", () => {
 
     const goal = await goalFixture({
       ...LISTENING_GOAL,
-      details: { placementDeclined: true },
       examBlueprintId: blueprint.id,
       userId: user.id,
     });
@@ -572,7 +571,7 @@ describe("an exam's listening skills in text tests", () => {
       ),
     );
 
-    const plan = await planFixture({ goalId: goal.id });
+    const plan = await planFixture({ goalId: goal.id, placementPreparedAt: new Date() });
 
     await Promise.all([
       setGraphAreas({ planId: plan.id, skills }),
@@ -582,20 +581,19 @@ describe("an exam's listening skills in text tests", () => {
     ]);
 
     mockSession(user.id);
-    const result = await getFocusTest({ goalId: goal.id });
+    const result = await startPlacementSitting({ goalId: goal.id, input: {} });
 
     const listening = new Set(
       skills.filter(({ area }) => area === "Listening").map(({ skill }) => skill.id),
     );
 
     expect(result).toMatchObject({
-      focusTest: { areas: ["Reading", "Vocabulary"] },
+      placement: { focusTest: { counts: { quick: 2, total: 3 } } },
       status: "ready",
     });
 
-    expect(
-      result.status === "ready" &&
-        result.focusTest.questions.filter((question) => listening.has(question.skillId)),
-    ).toStrictEqual([]);
+    const next = result.status === "ready" ? result.placement.next : null;
+    expect(next).not.toBeNull();
+    expect(listening.has(next?.skillId ?? "")).toBe(false);
   });
 });

@@ -5,15 +5,13 @@ import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { loadListeningExam } from "../../listening/listening-exam";
 import { getListeningSkillIds } from "../../listening/listening-skills";
-import { ONE_PICK_MIX, getMockFormatMix } from "../mock-format-mix";
+import { getMockFormatMix } from "../mock-format-mix";
 import { isOptionArea } from "../mock-options";
-import { countPlannedQuestions } from "../mock-plan";
 import {
   type MockFormatShortfall,
   type MockWritingSkill,
   getMockQuestionsShortfall,
 } from "../mock-shortfall";
-import { getPlacementQuestionsShortfall } from "../placement-mock";
 import { type AnytimeMockPick, type AnytimeMockSetup } from "./anytime-mock-setup";
 import { planFromBank } from "./create-anytime-mock";
 
@@ -70,26 +68,14 @@ function listWrites({
   pick: AnytimeMockPick;
   planned: Awaited<ReturnType<typeof planFromBank>>;
 }): MockFormatShortfall[] {
-  if (pick.purpose !== "placement") {
-    return getMockQuestionsShortfall({
-      candidates: planned.candidates,
-      mix,
-      option: pick.option,
-      plan: planned.plan,
-      skills: optionSkills,
-      structure,
-    });
-  }
-
-  const shortfall = getPlacementQuestionsShortfall({
-    missingSkillIds: planned.missingSkillIds,
+  return getMockQuestionsShortfall({
+    candidates: planned.candidates,
+    mix,
     option: pick.option,
-    planned: countPlannedQuestions(planned.plan) - planned.plan.reused,
+    plan: planned.plan,
+    skills: optionSkills,
+    structure,
   });
-
-  return shortfall
-    ? ONE_PICK_MIX.map((format) => ({ ...shortfall, format, target: shortfall.questionsPerSkill }))
-    : [];
 }
 
 export async function planMockWrites({

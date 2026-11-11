@@ -97,7 +97,7 @@ export function getSubjectShares(structure: ExamStructure | null): SubjectShare[
   });
 }
 
-export function getObjectiveSubjects({
+function getObjectiveSubjects({
   goalAreas,
   structure,
 }: {

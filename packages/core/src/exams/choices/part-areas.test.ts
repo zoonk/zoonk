@@ -128,12 +128,11 @@ describe("the language an ENEM learner takes, in their plan's areas", () => {
   });
 
   it("is focused with the languages area", async () => {
-    const goal = await setup();
+    const goal = await setup({ lessons: 20 });
 
     await changeGoalPlan({
       goalId: goal.id,
       input: { operations: [{ areas: [LANGUAGES], kind: "focusAreas" }], timeZone: TIME_ZONE },
-      saveFocusAnyway: true,
     });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -144,13 +143,12 @@ describe("the language an ENEM learner takes, in their plan's areas", () => {
   });
 
   it("leaves the focus with the languages area", async () => {
-    const goal = await setup();
+    const goal = await setup({ lessons: 20 });
 
     const focus = (areas: string[]) =>
       changeGoalPlan({
         goalId: goal.id,
         input: { operations: [{ areas, kind: "focusAreas" }], timeZone: TIME_ZONE },
-        saveFocusAnyway: true,
       });
 
     await focus([LANGUAGES]);

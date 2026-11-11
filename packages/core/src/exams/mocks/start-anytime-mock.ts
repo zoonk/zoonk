@@ -55,9 +55,7 @@ export async function startAnytimeMock({
 
   const pick = resolveAnytimeOption({ choice: input, setup });
 
-  const asksNothing =
-    pick?.option.questions === 0 &&
-    (pick.purpose === "placement" || pick.option.written.length === 0);
+  const asksNothing = pick?.option.questions === 0 && pick.option.written.length === 0;
 
   if (!pick || asksNothing) {
     return { status: "invalidOption" };
@@ -69,7 +67,7 @@ export async function startAnytimeMock({
     pick,
     setup,
     userId,
-    writesCap: pick.purpose === "placement" ? null : writesCap,
+    writesCap,
   });
 
   if (result.status === "started") {

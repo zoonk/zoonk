@@ -43,7 +43,7 @@ export type FocusTestSubject = z.infer<typeof focusTestSubjectSchema>;
 
 const SITTING_KINDS = ["first", "continuation"] as const;
 
-export const SITTING_ENDS = ["ceiling", "settled", "noQuestionsReady"] as const;
+const SITTING_ENDS = ["ceiling", "settled", "noQuestionsReady"] as const;
 
 const focusTestSittingSchema = z
   .object({
@@ -162,9 +162,7 @@ const focusTestCheckpointSchema = z
   })
   .meta({ id: "FocusTestCheckpoint" });
 
-export type FocusTestCheckpoint = z.infer<typeof focusTestCheckpointSchema>;
-
-export const SESSION_QUESTIONS = ["off", "on", "paused", "skippedToday"] as const;
+const SESSION_QUESTIONS = ["off", "on", "paused", "skippedToday"] as const;
 
 const sessionQuestionsSchema = z
   .enum(SESSION_QUESTIONS)

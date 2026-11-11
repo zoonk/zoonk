@@ -19,7 +19,7 @@ export type SubjectProgress = TestSubject & {
   sittingAnswers: number;
 };
 
-export type SittingProgress = {
+type SittingProgress = {
   answered: number;
   id: string;
   kind: SittingKind;

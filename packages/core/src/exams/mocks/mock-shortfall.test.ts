@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { type MockFormat, ONE_PICK_MIX, getMockFormatMix } from "./mock-format-mix";
+import { type MockFormat, getMockFormatMix } from "./mock-format-mix";
 import { type MockCandidate, type MockPlan } from "./mock-plan";
 import { getMockQuestionsShortfall } from "./mock-shortfall";
 
@@ -222,14 +222,14 @@ describe(getMockQuestionsShortfall, () => {
     expect(
       getMockQuestionsShortfall({
         candidates,
-        mix: ONE_PICK_MIX,
+        mix: getMockFormatMix(null),
         option: { questions: 4 },
         plan,
         skills: [{ area: null, id: "skill" }],
         structure: null,
       }),
     ).toStrictEqual([
-      { format: ONE_PICK_MIX[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
+      { format: getMockFormatMix(null)[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
     ]);
   });
 
