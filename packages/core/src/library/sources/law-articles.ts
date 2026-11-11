@@ -1,9 +1,9 @@
 const LINE_START = String.raw`(?:^|[\n\f])[^\S\n\f]*`;
 const ORDINAL = String.raw`(?:\.?[º°ª]|o\b|er\b)?`;
-const SUFFIX = String.raw`(?:-[A-Z]{1,2}\b|[^\S\n]+(?:bis|ter|quater)\b)?`;
 const CJK_NUMERALS = "〇零一二三四五六七八九十百千";
 const CJK_SUFFIX = String.raw`[の之][\d${CJK_NUMERALS}]+`;
-const HINT_SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
+/** "4-A", "4a", "12 bis" and "32の二": one rule for headings and hints, so the two read alike. */
+const SUFFIX = String.raw`(?:-?[A-Za-z]{1,2}\b|[^\S\n]*(?:bis|ter|quater)\b|${CJK_SUFFIX})?`;
 const DIGITS = String.raw`\d+(?:[.-]\d+)*`;
 
 /**
@@ -12,13 +12,13 @@ const DIGITS = String.raw`\d+(?:[.-]\d+)*`;
  */
 const HEADING_FAMILIES = [
   String.raw`(?:Art\.|Artigo|Artículo|Articulo|Article|Articolo|Artikel)[^\S\n]*(?<number>${DIGITS})${ORDINAL}(?<suffix>${SUFFIX})\.?`,
-  String.raw`第(?<number>[\d${CJK_NUMERALS}]+)条(?<suffix>${CJK_SUFFIX})?`,
-  String.raw`(?:Section|SECTION|Sec\.|SEC\.)[^\S\n]*(?<number>${DIGITS})(?<suffix>[A-Za-z]?)\.?`,
-  String.raw`§[^\S\n]*(?<number>${DIGITS})(?<suffix>[a-z]?)\.?`,
+  String.raw`第(?<number>[\d${CJK_NUMERALS}]+)条(?<suffix>${SUFFIX})`,
+  String.raw`(?:Section|SECTION|Sec\.|SEC\.)[^\S\n]*(?<number>${DIGITS})(?<suffix>${SUFFIX})\.?`,
+  String.raw`§[^\S\n]*(?<number>${DIGITS})(?<suffix>${SUFFIX})\.?`,
 ].map((heading) => new RegExp(`${LINE_START}(?<heading>${heading})`, "gu"));
 
 const ARTICLE_NUMBER = new RegExp(
-  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)条?${ORDINAL}(?<suffix>${HINT_SUFFIX})`,
+  String.raw`(?<number>${DIGITS}|[${CJK_NUMERALS}]+)条?${ORDINAL}(?<suffix>${SUFFIX})`,
   "u",
 );
 

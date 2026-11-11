@@ -230,6 +230,8 @@ describe(toArticleNumber, () => {
         hints: ["12 bis", "12bis", "Artículo 12 bis"],
         text: "Artículo 12. A.\nArtículo 12 bis. B.",
       },
+      { hints: ["4a", "Article 4a", "4-A"], text: "Article 4 A.\nArticle 4a B.\nArticle 5 C." },
+      { hints: ["3a", "Artikel 3a"], text: "Artikel 3 A.\nArtikel 3a B.\nArtikel 4 C." },
       {
         hints: ["515-14", "Article 515-14"],
         text: "Article 515-13 A.\nArticle 515-14 B.\nArticle 516 C.",
