@@ -14,10 +14,10 @@ const LOWERCASE = /\p{Ll}/u;
 const PAGE_LINE = /[\n\f]/u;
 
 /**
- * A page's own notes ("Use this space for computations.", a running header) repeat on every page,
- * which a question's text and a table's rows don't.
+ * A page's own notes ("Use this space for computations.", a running header) repeat on page after
+ * page (8 to 16 times in real papers); an instruction a few questions share repeats less.
  */
-const PAGE_NOTE_REPEATS = 3;
+const PAGE_NOTE_REPEATS = 5;
 
 /**
  * Longer than the words the papers print (Portuguese ones stop near 18 letters), so in text that
@@ -27,10 +27,9 @@ const RUN_TOGETHER_LETTERS = 20;
 
 /**
  * The PDF reader drops the spaces between words in some papers (Enem's), leaving a quarter of their
- * letters in hundreds of runs that long; a paper read well has a few at most, whatever its language.
+ * letters in runs that long; a paper read well has almost none, whatever its language.
  */
 const LOST_SPACES_SHARE = 0.1;
-const LOST_SPACES_RUNS = 5;
 
 /** Spaces, line breaks, hyphens and quote marks vary with how the paper was read, not with its wording. */
 function toComparableText(text: string): string {
@@ -42,25 +41,33 @@ function toComparableText(text: string): string {
     .replaceAll(WHITESPACE, "");
 }
 
-function isPageNote(line: string, repeats: number): boolean {
-  return repeats >= PAGE_NOTE_REPEATS && LETTER.test(line) && !line.includes("|");
-}
-
-/** The paper without its page notes, so a quote can leave them out and nothing else. */
-function toComparablePaper(paperText: string): string {
-  const lines = paperText.split(PAGE_LINE).map((line) => toComparableText(line));
+function findPageNotes(lines: string[]): Set<string> {
   const repeats = Map.groupBy(lines, (line) => line);
 
-  return lines.filter((line) => !isPageNote(line, repeats.get(line)?.length ?? 0)).join("");
+  return new Set(
+    lines.filter(
+      (line) =>
+        (repeats.get(line)?.length ?? 0) >= PAGE_NOTE_REPEATS &&
+        LETTER.test(line) &&
+        !line.includes("|"),
+    ),
+  );
 }
 
-/** A table's `| --- |` row is the formatting it needs to show as one, so it isn't compared. */
-function toComparableQuote(text: string): string {
-  return text
-    .split("\n")
-    .map((line) => toComparableText(line))
-    .filter((line) => !TABLE_DELIMITER_ROW.test(line))
+function toComparableLines(text: string, separator: RegExp): string[] {
+  return text.split(separator).map((line) => toComparableText(line));
+}
+
+/**
+ * Page notes are left out of both sides, so a quote may keep or drop them and nothing else; a
+ * table's `| --- |` row is the formatting it needs to show as one, so it isn't compared.
+ */
+function isQuoted({ notes, paper, text }: { notes: Set<string>; paper: string; text: string }) {
+  const quote = toComparableLines(text, /\n/u)
+    .filter((line) => !notes.has(line) && !TABLE_DELIMITER_ROW.test(line))
     .join("");
+
+  return quote.length > 0 && paper.includes(quote);
 }
 
 function findLetterRuns(text: string): string[] {
@@ -81,19 +88,11 @@ function hasLostSpaces(paperText: string): boolean {
   const letters = countLetters(runs);
   const runTogether = runs.filter((run) => isRunTogether(run));
 
-  return (
-    runTogether.length >= LOST_SPACES_RUNS &&
-    countLetters(runTogether) >= LOST_SPACES_SHARE * letters
-  );
+  return letters > 0 && countLetters(runTogether) >= LOST_SPACES_SHARE * letters;
 }
 
 function findRunTogetherWords(text: string): string[] {
   return findLetterRuns(text).filter((run) => isRunTogether(run));
-}
-
-function isQuoted({ paper, text }: { paper: string; text: string }): boolean {
-  const quote = toComparableQuote(text);
-  return quote.length > 0 && paper.includes(quote);
 }
 
 function getQuotedParts(item: PastQuestion["item"]): { label: string; text: string }[] {
@@ -117,14 +116,16 @@ function findQuoteProblems({
   paperText: string;
   question: PastQuestion;
 }): string[] {
-  const paper = toComparablePaper(paperText);
+  const paperLines = toComparableLines(paperText, PAGE_LINE);
+  const notes = findPageNotes(paperLines);
+  const paper = paperLines.filter((line) => !notes.has(line)).join("");
   const lostSpaces = hasLostSpaces(paperText);
 
   return getQuotedParts(question.item).flatMap(({ label, text }) => {
     const runTogether = lostSpaces ? findRunTogetherWords(text) : [];
 
     return [
-      ...(isQuoted({ paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
+      ...(isQuoted({ notes, paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
       ...runTogether.map(
         (run) => `${label} runs words together as the paper's text does: "${run}".`,
       ),

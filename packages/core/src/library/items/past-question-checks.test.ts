@@ -175,7 +175,8 @@ Paraisso,resolveualteraraquantidadede bolinhas brancas na urnaB.`;
   });
 
   it("keeps a long word of a paper that kept its spaces", () => {
-    const paper = `QUESTÃO 136
+    const paper = `Lesen Sie den Text und beantworten Sie die Fragen. Für jede Frage gibt es nur eine richtige Antwort. Sie haben für diesen Teil der Prüfung neunzig Minuten Zeit. Schreiben Sie Ihre Antworten am Ende auf den Antwortbogen. Benutzen Sie dafür einen schwarzen oder blauen Stift. Wörterbücher und Telefone sind während der ganzen Prüfung nicht erlaubt.
+QUESTÃO 136
 Das Bundesausbildungsförderungsgesetz regelt die Förderung.
 Was regelt es?
 A Die Förderung.
@@ -230,8 +231,37 @@ E 札幌。`;
     ).toStrictEqual([]);
   });
 
+  it("refuses a support text that leaves out an instruction a few questions repeat", () => {
+    const rule = "Ignore the return trip and every journey made before the passenger boarded.";
+
+    const paper = [41, 42, 43]
+      .map(
+        (number) =>
+          `${number} A bus travels 120 km.\n${rule}\nIt takes 2 hours.\nWhat is its speed?`,
+      )
+      .join("\n");
+
+    const item = {
+      ...PRINTED_ITEM,
+      context: "A bus travels 120 km.\nIt takes 2 hours.",
+      question: "What is its speed?",
+    };
+
+    expect(
+      checkPastQuestion({
+        paperText: paper,
+        question: question({ citation: "Question 41", item, number: "41" }),
+        target: { ...TARGET, language: "en" },
+      }).problems.filter((problem) => problem.startsWith("The support text")),
+    ).toStrictEqual(["The support text isn't in the paper as printed."]);
+  });
+
   describe("a table the paper's text gives as rows of pipes", () => {
-    const TABLE_PAPER = `3 Which scenario represents an exponential relationship?
+    const TABLE_PAPER = `1 Which expression is equivalent to 2(x + 3)?
+Use this space for computations.
+2 Which point lies on the line y = 2x?
+Use this space for computations.
+3 Which scenario represents an exponential relationship?
 Use this space for computations.
 4 The geometry test scores for Andrea and Joe are shown in the table below.
 Use this space for computations.
@@ -272,6 +302,20 @@ Use this space for computations.`;
         checkPastQuestion({ paperText: TABLE_PAPER, question: tableQuestion(context), target })
           .problems,
       ).toStrictEqual(["The support text isn't in the paper as printed."]);
+    });
+
+    it("accepts a copy that keeps the page's note", () => {
+      const context = `The geometry test scores for Andrea and Joe are shown in the table below.
+Use this space for computations.
+| Andrea | Joe |
+| --- | --- |
+| 82 | 91 |
+| 87 | 78 |`;
+
+      expect(
+        checkPastQuestion({ paperText: TABLE_PAPER, question: tableQuestion(context), target })
+          .problems,
+      ).toStrictEqual([]);
     });
 
     it("refuses a table with a row left out", () => {
