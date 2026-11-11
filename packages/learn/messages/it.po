@@ -984,7 +984,6 @@ msgstr "Suoni"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/plan/plan-language.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -10763,6 +10762,12 @@ msgstr "Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle 
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Fonte: {source}"
+
+#: src/onboarding/understood/understood-row.tsx
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Paese"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"

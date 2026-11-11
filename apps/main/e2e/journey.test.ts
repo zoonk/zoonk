@@ -91,7 +91,7 @@ test.describe("Journey", () => {
 
       const country = page
         .getByRole("dialog", { name: "Adjust your plan" })
-        .getByLabel("Language", { exact: true });
+        .getByLabel("Country", { exact: true });
 
       await expect(country).toBeFocused();
       await country.selectOption("CA");

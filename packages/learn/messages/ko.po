@@ -984,7 +984,6 @@ msgstr "효과음"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/plan/plan-language.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -10763,6 +10762,12 @@ msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오�
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "출처: {source}"
+
+#: src/onboarding/understood/understood-row.tsx
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "국가"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"

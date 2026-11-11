@@ -984,7 +984,6 @@ msgstr "Sesler"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/plan/plan-language.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -10763,6 +10762,12 @@ msgstr "Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî ta
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Kaynak: {source}"
+
+#: src/onboarding/understood/understood-row.tsx
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Ülke"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
