@@ -72,6 +72,7 @@ model User {
   oauthRefreshTokens    OauthRefreshToken[]
   oauthAccessTokens     OauthAccessToken[]
   oauthConsents         OauthConsent[]
+  studyReminder         StudyReminder?
 
   @@unique([email])
   @@unique([username])
@@ -94,6 +95,7 @@ model Session {
   restoreKey           RestoreKey?
   oauthRefreshTokens   OauthRefreshToken[]
   oauthAccessTokens    OauthAccessToken[]
+  studyReminders       StudyReminder[]
 
   @@unique([token])
   @@index([userId])

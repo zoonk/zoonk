@@ -11,7 +11,7 @@ export function staffResponse<T extends object>(result: StaffResult<T>) {
     case "invalid":
       return errors.badRequest(result.message);
     case "notFound":
-      return errors.notFound();
+      return errors.notFound(result.message);
     case "timeout":
       return createErrorResponse({
         code: "QUERY_TIMEOUT",

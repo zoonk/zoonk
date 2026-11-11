@@ -303,7 +303,7 @@ internal fun StartActions(
 
                     is CourseContinue.Switch -> {
                         app.scope.switchThenOpenToday(navigator, onFailed = { app.snackbars.show(R.string.goal_switcher_failed) }) {
-                            app.goalSwitch.select(next.goalId, listOf(app.learnerSummary.summary, app.today.today), app.today::shows)
+                            app.switchGoal(next.goalId)
                         }
                     }
                 }

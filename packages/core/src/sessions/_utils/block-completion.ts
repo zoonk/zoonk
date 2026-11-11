@@ -21,6 +21,7 @@ type BlockResult = Pick<
   | "correct"
   | "finishedChapter"
   | "netScore"
+  | "reminderOffer"
   | "testOutOffer"
   | "topHyperdrive"
   | "total"

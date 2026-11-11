@@ -23,7 +23,7 @@ export function getStaffRecord(input: unknown) {
       );
 
       if (record === null) {
-        return { rows: 0, status: "notFound" };
+        return { message: `No ${model.name} with that id.`, rows: 0, status: "notFound" };
       }
 
       return { data: { record: serializeStaffValue(record) }, rows: 1 };

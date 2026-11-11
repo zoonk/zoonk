@@ -49,6 +49,12 @@ export function useSettingsPaletteItems(isLoggedIn: boolean) {
       menu: getMenu("appearance"),
     }),
     createNavigationPaletteItem({
+      id: "reminders",
+      keywords,
+      label: t("Reminders"),
+      menu: getMenu("reminders"),
+    }),
+    createNavigationPaletteItem({
       id: "language",
       keywords,
       label: t("Language"),

@@ -141,7 +141,15 @@ describe("staff record routes", () => {
 
           expect(responses.map((response) => response.status)).toStrictEqual([400, 400, 400]);
           const bodies: unknown[] = await Promise.all(responses.map((response) => response.json()));
-          expect(JSON.stringify(bodies)).toContain("Field is not readable. Valid fields:");
+
+          for (const body of bodies) {
+            expect(body).toMatchObject({
+              error: {
+                message: expect.stringContaining(`Field "${field}" is not readable. Valid fields:`),
+              },
+            });
+          }
+
           expect(JSON.stringify(bodies)).not.toContain("private-filter-value");
         }),
       ),

@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_number": "435450998434",
+    "project_id": "zoonk-app",
+    "storage_bucket": "zoonk-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435450998434:android:01d787f5fcbc2b716231fb",
+        "android_client_info": { "package_name": "com.zoonk" }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435450998434-cpovm87jietpcid5mata80i0jqqjbumg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [{ "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI" }],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435450998434-cpovm87jietpcid5mata80i0jqqjbumg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": { "bundle_id": "com.zoonk.dev" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435450998434:android:eca47232d8a4bdee6231fb",
+        "android_client_info": { "package_name": "com.zoonk.debug" }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435450998434-cpovm87jietpcid5mata80i0jqqjbumg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [{ "current_key": "AIzaSyCKUA_-2Q4IhRKFKkEkc0hvvcfbWopuqZI" }],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435450998434-cpovm87jietpcid5mata80i0jqqjbumg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "435450998434-jr43cdf8s72g9mkpqe8smh8dclqaqtq2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": { "bundle_id": "com.zoonk.dev" }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

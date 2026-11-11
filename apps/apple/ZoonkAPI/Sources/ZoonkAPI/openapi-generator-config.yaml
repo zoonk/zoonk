@@ -26,6 +26,7 @@ filter:
     - cancelStripeSubscription
     - checkLanguageConversationObjectives
     - claimCourseCertificate
+    - claimCurrentUserStudyReminderOffer
     - completeGoalPlacement
     - completeLanguageConversation
     - completePronunciationRound
@@ -125,6 +126,7 @@ filter:
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
+    - getCurrentUserStudyReminder
     - getCurrentUserSummary
     - getCurrentUserUsernameSuggestion
     - getCurrentUserWeeklyRecap
@@ -216,6 +218,7 @@ filter:
     - reviseGoalUnderstanding
     - saveMockAnswer
     - searchCatalog
+    - selectCurrentUserStudyReminderPhone
     - skipAlphabetIntro
     - startAnytimeMock
     - startChallenge
@@ -233,6 +236,7 @@ filter:
     - updateCurrentUser
     - updateCurrentUserLearningProfile
     - updateCurrentUserMemorySettings
+    - updateCurrentUserStudyReminder
     - updateGoal
     - updateLibraryLessonClock
     - updateMemoryFact

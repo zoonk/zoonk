@@ -57,6 +57,7 @@ import { reviewFlagPaths } from "./paths/review-flags";
 import { sessionPaths } from "./paths/sessions";
 import { skillOutlinePaths } from "./paths/skill-outlines";
 import { speechClipPaths } from "./paths/speech-clips";
+import { studyReminderPaths } from "./paths/study-reminder";
 import { studySessionPaths } from "./paths/study-sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
 import { todayPaths } from "./paths/today";
@@ -150,6 +151,7 @@ const paths = withInternalErrorResponses({
   ...mockSittingPaths,
   ...onboardingPaths,
   ...researchSourcePaths,
+  ...studyReminderPaths,
   ...studySessionPaths,
   ...todayPaths,
   ...warmUpPaths,

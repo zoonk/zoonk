@@ -87,6 +87,17 @@ class MainActivityTest {
     }
 
     @Test
+    fun aTappedReminderOpensToday() {
+        val controller = Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/start?goal=learn+piano")).setup()
+        rule.onNodeWithText("learn piano").assertIsDisplayed()
+
+        controller.newIntent(Intent().putExtra("type", "study_reminder").putExtra("goalId", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d11"))
+
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
+        rule.onNodeWithText("learn piano").assertDoesNotExist()
+    }
+
+    @Test
     fun aLinkTheAppHasNoPlaceForOpensToday() {
         Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/auth/apple?token=abc")).setup()
 

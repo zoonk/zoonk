@@ -12,6 +12,7 @@ import { type TestOutStart } from "../_components/test-out-start-link";
 import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
+import { type ReminderOfferActions } from "../reminders/reminder-offer";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
@@ -47,6 +48,7 @@ function SavedMoment({
   onStartTestOut,
   onStop,
   continueHref,
+  reminderActions,
   testedOut,
 }: {
   buddy?: LearnBuddy | null;
@@ -56,6 +58,7 @@ function SavedMoment({
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
   continueHref?: string | null;
+  reminderActions: ReminderOfferActions;
   testedOut: boolean;
 }) {
   return (
@@ -71,6 +74,7 @@ function SavedMoment({
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
+      reminderActions={reminderActions}
       testedOut={testedOut}
     />
   );
@@ -169,6 +173,7 @@ export function LessonMoment({
   onStartTestOut,
   onStop,
   continueHref,
+  reminderActions,
 }: {
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
@@ -177,6 +182,7 @@ export function LessonMoment({
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
   continueHref?: string | null;
+  reminderActions: ReminderOfferActions;
 }) {
   const t = useExtracted();
   const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
@@ -204,6 +210,7 @@ export function LessonMoment({
       onStartTestOut={onStartTestOut}
       onStop={onStop}
       continueHref={continueHref}
+      reminderActions={reminderActions}
       testedOut={completion.testedOut}
     />
   );

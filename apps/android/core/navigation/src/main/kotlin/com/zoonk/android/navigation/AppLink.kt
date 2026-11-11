@@ -322,6 +322,7 @@ object AppLink {
         when (page) {
             "appearance" -> AppRoute.Preferences
             "memory" -> AppRoute.Memory
+            "reminders" -> AppRoute.Reminders
             "about-you" -> AppRoute.AboutYou
             else -> null
         }
