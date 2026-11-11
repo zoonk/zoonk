@@ -16,6 +16,7 @@
   "focustest_end_no_questions": "b54bf7be44c8f2fbe1234570fcc52273468aa594305621cae915987521e7a92f",
   "focustest_end_settled": "cb19a5bc16b66cb34cd5f7adf8be1c27db10359e04acdcb0ef73063e5a7bb534",
   "focustest_evidence": "6460d3e8ef8048e7c307920c9caf3d16590647ad1a1edefe3ae6cc1281f97c11",
+  "focustest_focus_already_fits": "b590f755f63fb2c0db41814b97702a069002cdf3bfe8b025f7bdeb74db222238",
   "focustest_focus_current": "112de74c33c47331adf534e5e736d1f9299eb393a4cb9bbe7e5cc17cabb488fa",
   "focustest_focus_hand_picked": "b59fd9ad292719f5c874405d6efbd3570419628341bde2bb710a5b5c79d29f80",
   "focustest_focus_if_short": "07d7bbf182d47c83d2b106deb7204f4afa3f7c46803697ff9c4bc709be80e322",
@@ -46,22 +47,18 @@
   "focustest_proposal_undone": "a73afcd4807c178f40f981631a2b9f22bbedd53cb632a467090d23cec9f8a791",
   "focustest_question_number": "94b98b270889ba2813b51a974e5c7dac5b4d75b5893e4f18f46f34cd590b4409",
   "focustest_questions_left": "5036104e1563cabf490c4e1407c18af20a1244ba2031f1cb3260fcd23b0be7de",
-  "focustest_reason_answers": "f7b2fa5550a888af151bf1e1ae5bdbb4e8086aafff0527b584bc9fa08554a7b7",
-  "focustest_reason_listening": "a9f8776e8b42368ee134eefb6d26fe4d12aab93576832fcec548d662876d4d38",
+  "focustest_reason_answers": "59cefdcbcd6e9a0c5bfa3d44ea9f9e448d48c3dab8d0398726a759fa46055340",
   "focustest_reason_minimum_score": "5f26573b233f7b896ce84f9103a1081a8f92cec7bcee35baea9bd331c1687739",
   "focustest_reason_not_asked": "2f221d7662bdb53bfebea2ff4d2a77fcd05b9d81a68738b2dbaa66b05047bf24",
-  "focustest_reason_not_checked": "1c348659df457042e175e7a89d55f05522ef2879210a6cd1dd4706e373fadfa0",
-  "focustest_reason_speaking": "520056a00b6171f57aa6c35479314c59c388ca9fe7ea040ab400c68b92fcf57f",
+  "focustest_reason_not_checked": "ec8e19e70a49b4ff369c7e6b2164877be764cfacd69555ab58767e3cf171d891",
   "focustest_reason_weight": "07a3df722857ae4c75aa8e8e58410b59eccec0f3b2a65ece76dbd874f39fbc35",
-  "focustest_reason_written": "ffa4ed831eb2e46df8379408e4de636b6c6ca513aa6185bafbeb7fcb6d428769",
   "focustest_result_subjects": "4f190e9bd274762df4c9ac425812cff9f64cd84ca3e1e9edc7fbf20dab0454a0",
   "focustest_resume_title": "f336f19de782c54e4ce10f058603a52a3678c35a51fcf94e854c6e2f6249a3c6",
   "focustest_reveal_trade_off": "1260752f439c14937262ae12946a0a49fac7fa291cd7ad54fb3ba386d9e354b2",
   "focustest_schedule_focus": "98e83da0eeebe4b17b42f3d962350ecde1432e4f5d616d7def871438b811a0c7",
   "focustest_see_starting_plan": "bd29b259370fa59c5f6778fd4ea2b8e37ca15afda16e41bba976f0f0fe0d6326",
-  "focustest_session_questions_on": "43fd74917cac47528096b71835186e46564b72736f14135c08bf1f51ca245d7b",
+  "focustest_session_questions_on": "85b47f5439d35fcf8f1d40b62a626eb22693cf94830e84d6c95aad13a09ebd0e",
   "focustest_session_questions_paused": "bff07eba5b05fdde7c58fb9c396d7a7109484c19abd5d50f640c5d3060e6aa82",
-  "focustest_sessions_note": "bedf39f6d15824ea4a277ae007753ae7ba1ceccbae7b541ff1ba16782422acbe",
   "focustest_skip_for_now": "2f66588b56824ec2ed537eb46a1b1a27b0b8d66cda2f37314ba1f2eafb6be20a",
   "focustest_skip_note": "15aa1704095a99c11ba66db9285b071dcd445c51fcce1ef8957bbc74b1bfb21b",
   "focustest_speaking_not_checked": "78fcb150abe7ea2f61f1e6be8daa11100ab005bf03f349123a2da20322ded016",
@@ -157,14 +154,15 @@
     <string name="focustest_focus_if_short">すべてを学ぶ時間が足りない場合、学習計画ではこれらの科目に多くの時間を割きます。</string>
     <string name="focustest_focus_proposed">すべてを学ぶには時間が足りません。これらの科目に多くの時間を割く計画にできます。</string>
     <string name="focustest_focus_current">学習計画では、これらの科目に多くの時間を割きます。</string>
+    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
+    <string name="focustest_focus_already_fits">これらの科目の学習時間はすでに計画に含まれているので、追加で時間を割く必要はありません。</string>
     <string name="focustest_focus_hand_picked">学習計画では、自分で選んだ重点科目を引き続き優先します。こちらはテスト結果からの提案です。</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">今のところ、主に試験での配点が高い科目を優先しています。</string>
-    <!-- %1$s is the exam subject, such as "Administrative law". -->
-    <string name="focustest_reason_answers">回答から、%1$sを復習するとよさそうです。</string>
+    <string name="focustest_reason_answers">回答を見ると、この科目は復習したほうがよさそうです。</string>
     <string name="focustest_reason_minimum_score">このパートには最低スコアが設定されています。</string>
-    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_not_checked">この部分は配点が高いですが、この診断の対象外です。</string>
+    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
+    <string name="focustest_reason_not_checked">このパートは配点が高いですが、ここでは診断できません。</string>
     <string name="focustest_reason_not_asked">この科目は配点が高いです。今の理解度はまだ診断していません。</string>
     <string name="focustest_reason_weight">この科目は配点が高いです。</string>
     <string name="focustest_update_plan">学習計画を更新する</string>
@@ -173,6 +171,8 @@
     <string name="focustest_proposal_undone">変更を取り消しました。学習計画は元どおりです。</string>
     <string name="focustest_undo">元に戻す</string>
     <string name="focustest_change_focus">重点科目を変える</string>
+    <!-- “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”. -->
+    <string name="focustest_session_questions_on">次回以降の学習では、重点診断の問題を少し多めに出します。</string>
     <string name="focustest_continue_to_daily_time">1日の学習時間の設定に進む</string>
     <string name="focustest_done">達成</string>
     <!-- %1$s is a duration, such as "10 min". -->
@@ -201,7 +201,6 @@
     <plurals name="focustest_more_questions">
         <item quantity="other">あと最大%d問</item>
     </plurals>
-    <string name="focustest_session_questions_on">全科目の回答がそろうまで、学習中にテスト問題を少しずつ出題します。</string>
     <string name="focustest_session_questions_paused">学習中のテスト問題の出題を一時停止しています。</string>
     <string name="focustest_pause_questions">テスト問題の出題を一時停止する</string>
     <string name="focustest_ask_again">出題を再開する</string>

@@ -16,6 +16,7 @@
   "focustest_end_no_questions": "8226408c83d6d0b6766361fead16264766f749612630286089dfe45a20129c9c",
   "focustest_end_settled": "33b0d9875324f153c5d285cf59d5e0e425177eaca86fdb29eab1c82b75b8335f",
   "focustest_evidence": "bec147c34f3b64b7ac34db67a113ed1d8307b9b8a6df60d7daf7b21c4c87cf40",
+  "focustest_focus_already_fits": "7117d09ae4e0043d3211f900a16cda4e17cf0bbda7f90a492d80be3ca639b9c3",
   "focustest_focus_current": "f4feee08b94a974c4f938f4f2473e3c5138052e107ad30a9ca75cae3411a3471",
   "focustest_focus_hand_picked": "3561a5b30a44e6c8d25e919fa651666c20befb4970d999f7957b09c20e16de19",
   "focustest_focus_if_short": "7518f652300d5e4d8856917294b5b26fb01ef7184a30185f5280014fc17539e1",
@@ -46,22 +47,18 @@
   "focustest_proposal_undone": "aeb4a9de4e06a6428e1fee3d485a11c2fa511c1ef58c20895dc6bd1d7aa9ee69",
   "focustest_question_number": "81de4b331c785dd940dc08df886b97f9e91187a5ee113952bca639c41dac1ac4",
   "focustest_questions_left": "f93c7d2ed0e9a249426171373b01f2a61e35127aacf07c4b787852a030fe1b3a",
-  "focustest_reason_answers": "e6d10b82d2adaf357e6f43f7fe88b31c39c84ecd4be6a5f45fad781750ca0e6d",
-  "focustest_reason_listening": "21b8938023815182e0c25b2c943322abddce9857eca8f1a619d0aac4e90a768b",
+  "focustest_reason_answers": "32841e00ed38b93895ad92cfb732fbbb39ceba539575b89767f8cabc31f87e7c",
   "focustest_reason_minimum_score": "d131efe18948cba9e01f0669dcf9327dcb0dbf747a2d62c04b2f0493bf0e5a7a",
   "focustest_reason_not_asked": "dd41c4ba3f6be190a545073ae191dbf3813630ba89def06bd24be1d085c39b4e",
-  "focustest_reason_not_checked": "e491020fc5f8b1fe09a807d025e62603b5d1636d92a89af6bf09bf2d5cf1f536",
-  "focustest_reason_speaking": "c9f1ea606dcb03b5c62a6b9f338823f0ab30464a923db0e5d8a60e7ac0a4cc0f",
+  "focustest_reason_not_checked": "5b7be7d76d7d663c641cd9bedc5954814ef070ea22299c31c1c3522bff87a95a",
   "focustest_reason_weight": "b936c7f556026e22f6e79159d2352060e430b6beb27ae44a0fc4afee2e05d150",
-  "focustest_reason_written": "b8ae792a201ddbcb522ee11f3d75e78928c25b952024597a9b966147b8585e66",
   "focustest_result_subjects": "94791911b41a5ebbca720d239eb77648386db6813d20a97613d9826fb6d0855a",
   "focustest_resume_title": "5e0de0e7049aae1a3d6648ba88286f4e77d63873231ed934d406c280f23300a4",
   "focustest_reveal_trade_off": "df71a3f707f9fdc7f434266d1e1a0f0891ec4e94e9323757850622e9a21bf36f",
   "focustest_schedule_focus": "6e45ef12ed96bc7dc032cc13ba768d88653864ce7f6c9fac4cb428c2fbe7a04b",
   "focustest_see_starting_plan": "b8c85f146e43605d466862061d669ae6c84fe2d9210214f03f7993288fbeea2e",
-  "focustest_session_questions_on": "e0c8a2a29de2f2e3e5d7a7835a73ca5342dd8bf876d4119fa72d0b62fa60c42c",
+  "focustest_session_questions_on": "871ca4769aea05fc464f58805e1bb71cd157a5f5a883e1e9fcbd583f6de9d9ad",
   "focustest_session_questions_paused": "18b23574125cec0da0ab1814b7f76490d5b1b24ea2428df5bcbdf75e83f95e5c",
-  "focustest_sessions_note": "68726778230d8dd7b9d595eeea831f77947d9313baac41b46694af84c25bc471",
   "focustest_skip_for_now": "4007a0f6eac0efaab99e9e3f9b0f6dcf79a365af8dc7a98554bad080ae8458d8",
   "focustest_skip_note": "ac83484e4b22c65dc511e2435159c6f213d5c98aea546c86bacbf9b0c15e67b6",
   "focustest_speaking_not_checked": "4f2c7e165b0b778ecac40435e1200cf0c2f3d9b501e2aee0488917115dc38319",
@@ -165,14 +162,15 @@
     <string name="focustest_focus_if_short">Zamanın tüm konulara yetmezse planın bu branşlara daha fazla süre ayırır.</string>
     <string name="focustest_focus_proposed">Zamanın tüm konulara yetmiyor. Planın bu branşlara daha fazla süre ayırabilir.</string>
     <string name="focustest_focus_current">Planın bu branşlara daha fazla süre ayırıyor.</string>
+    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
+    <string name="focustest_focus_already_fits">Planında bunlar için zaten zaman var, bu yüzden ek süreye gerek yok.</string>
     <string name="focustest_focus_hand_picked">Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor. Testin önerisi bu.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">Şimdilik bu öneri, daha çok sınavında ağırlığı en yüksek olan alanlara dayanıyor.</string>
-    <!-- %1$s is the exam subject, such as "Administrative law". -->
-    <string name="focustest_reason_answers">Cevaplarına göre %1$s için tekrar yapman iyi olur.</string>
+    <string name="focustest_reason_answers">Cevaplarına göre bu branşı tekrar etmen iyi olur.</string>
     <string name="focustest_reason_minimum_score">Bu bölümde minimum puan şartı var.</string>
-    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_not_checked">Bu kısmın puana etkisi büyük; burada değerlendirilmiyor.</string>
+    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
+    <string name="focustest_reason_not_checked">Bu bölümün puana etkisi büyük; burada değerlendirilmiyor.</string>
     <string name="focustest_reason_not_asked">Bu branşın puana etkisi büyük. Başlangıç düzeyin henüz değerlendirilmedi.</string>
     <string name="focustest_reason_weight">Bu branşın puana etkisi büyük.</string>
     <string name="focustest_update_plan">Planımı güncelle</string>
@@ -181,6 +179,8 @@
     <string name="focustest_proposal_undone">Geri alındı. Planın önceki hâline döndü.</string>
     <string name="focustest_undo">Geri al</string>
     <string name="focustest_change_focus">Odağını değiştir</string>
+    <!-- “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”. -->
+    <string name="focustest_session_questions_on">Sonraki çalışmalarında birkaç test sorusu daha soracağız.</string>
     <string name="focustest_continue_to_daily_time">Günlük çalışma süresine geç</string>
     <string name="focustest_done">Tamamlandı</string>
     <!-- %1$s is a duration, such as "10 min". -->
@@ -213,7 +213,6 @@
         <item quantity="one">En fazla %d soru daha</item>
         <item quantity="other">En fazla %d soru daha</item>
     </plurals>
-    <string name="focustest_session_questions_on">Her branştan bir soru cevaplanana kadar çalışmalarında birkaç test sorusu sorulur.</string>
     <string name="focustest_session_questions_paused">Çalışmalarındaki test sorularına ara verildi.</string>
     <string name="focustest_pause_questions">Test sorularına ara ver</string>
     <string name="focustest_ask_again">Test sorularına devam et</string>

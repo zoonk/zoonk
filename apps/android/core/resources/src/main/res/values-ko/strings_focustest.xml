@@ -16,6 +16,7 @@
   "focustest_end_no_questions": "8f9672f5240b9705db95b41a804fb6f090c31772477cd83a8112c30e3fde552c",
   "focustest_end_settled": "9ef880a99fd35ac5e6ebd024a0232c187d47e697afb1eb7cb0d27851519c76b2",
   "focustest_evidence": "eeaa9b88f566936c66058f3f665ccbdb2eedb48155eeaeadd7497476f2f34dc1",
+  "focustest_focus_already_fits": "a5d7b08b81ad53d5bc75b6f08f5c9cf49c523a02682f4fe12a94687ac8fc053d",
   "focustest_focus_current": "351dfe1e5467cb46c36b770bf78f18fca46ce158d590830203da60f600612e78",
   "focustest_focus_hand_picked": "b217480ac75023d2091917a4ce15e6b250cffdf1ea5678f3bc947508bcbbc056",
   "focustest_focus_if_short": "53e0fd8922e65bc8877f3009891c51faaadd8c478fd8b721402a09ddbaa3833e",
@@ -46,22 +47,18 @@
   "focustest_proposal_undone": "e5c8103393cf54a9420b398dd3949e4bd5c2befe8ff7530028c33914ec529811",
   "focustest_question_number": "96636433dd29419fb0e1d9acfad4c4b8cbe808066327072231b34db193382401",
   "focustest_questions_left": "d0f976d9b8f2f3112bd95b559e01c4d46155ca650dba065d2956dc2c7483dbfb",
-  "focustest_reason_answers": "d7656354ae5199e268db990d4b3b4e56fdbbc577db13788edccec1b5be717b54",
-  "focustest_reason_listening": "b69a5c7415f5dc99f07b2adba18a48331912a36a712a8370c0815052c2da5797",
+  "focustest_reason_answers": "3333d88e401e592cfd775fa91bed33273261d638dae4c31c9b16e4f50079fdc3",
   "focustest_reason_minimum_score": "ab1008c8506f3fb18e8c62a0a635ab4e9b3e31c8bdeb0d2ee20510651ecf7505",
   "focustest_reason_not_asked": "e458be49f9061fc909ff77a69e0abf556a333571d6996bbe5944727450818bf9",
-  "focustest_reason_not_checked": "ea73e834fc74547bc3060d77383df8493de0a7b5d77c3b57d3aa5c82ef70c875",
-  "focustest_reason_speaking": "70ac9ade3d3bbf26a997266f71cd34eeb5d3cf7fefbc750d147401970c2b40f0",
+  "focustest_reason_not_checked": "9f685ff26e172ea53898c52ece6cd41fa333306ae7aa1c168daf92f521034be9",
   "focustest_reason_weight": "a83fc4eb70b206f161bcf23736efe660080429756bcba3325820fb7c0fd65ebf",
-  "focustest_reason_written": "573665eeb2e0a501ec234e02557a13d4118bab65729ed2145927b3036355c587",
   "focustest_result_subjects": "75a9fc715ab627bf5795c445e16489431cabef090c8e7ccc1458ebeea4a08520",
   "focustest_resume_title": "b282379bc0cc2dcaa76de733e1941880b7627cbd41afdc3674fca213a5584690",
   "focustest_reveal_trade_off": "85d05981570b1d659bd002731e1818dc23f7a3b9b44b157b13a39691850973e7",
   "focustest_schedule_focus": "eeab21a3344b3146454409f6b75d50b98b2f4193689bb02268ff72c9d1c425ea",
   "focustest_see_starting_plan": "c9094afbf11cac4795b33ccee1be045f2fb4006fa5418f867fadfaf9ea03acec",
-  "focustest_session_questions_on": "2e2030b8fda173ba702f0fec57170b48bfc2b5b4dfb9dcab75b7af81f4c6fd9f",
+  "focustest_session_questions_on": "bcf021140114b268965daaeb293f5d917aa0176f237af2970be5d42114138bfa",
   "focustest_session_questions_paused": "d116e3407b207fe005810330bef035852b551b68e805cc65261bdbd80c17fa24",
-  "focustest_sessions_note": "5234c465671e7b6cb63d93b9e826f7990c6fa8562f81fce4081c1d96ac397d86",
   "focustest_skip_for_now": "22eda82abbf6e5be9c1526386d0c5b7009dce7a10da764998d5ac1a605a8a5db",
   "focustest_skip_note": "78a74cbb501335879145dde71c4ef8106a97e0f9d68a5154e20d8e67c564e0d9",
   "focustest_speaking_not_checked": "c53299fd9859e10ce27aaf63f88edc71fad7fcef55d2450cf31aa68b554b79c7",
@@ -157,14 +154,15 @@
     <string name="focustest_focus_if_short">모든 내용을 공부하기에 시간이 부족하면 이 과목들에 학습 시간을 더 배정해요.</string>
     <string name="focustest_focus_proposed">모든 내용을 공부하기에는 시간이 부족해요. 이 과목들에 시간을 더 배정하도록 계획을 바꿀 수 있어요.</string>
     <string name="focustest_focus_current">이 과목들에 학습 시간을 더 배정해요.</string>
+    <!-- Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”). -->
+    <string name="focustest_focus_already_fits">이미 계획에 이 과목들을 공부할 시간이 잡혀 있어서 추가로 배정할 필요가 없어요.</string>
     <string name="focustest_focus_hand_picked">계획에는 직접 고른 집중 과목을 그대로 반영해요. 아래는 테스트에서 추천하는 과목이에요.</string>
     <!-- Said when few answers back the suggested focus. -->
     <string name="focustest_focus_importance">지금은 주로 시험에서 비중이 큰 부분에 맞춰져 있어요.</string>
-    <!-- %1$s is the exam subject, such as "Administrative law". -->
-    <string name="focustest_reason_answers">답변을 보면 %1$s 복습이 도움이 될 것 같아요.</string>
+    <string name="focustest_reason_answers">답안을 보니 이 과목을 복습하면 좋겠어요.</string>
     <string name="focustest_reason_minimum_score">이 파트에는 최소 점수 기준이 있어요.</string>
-    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
-    <string name="focustest_reason_not_checked">이 부분은 비중이 크지만 여기서는 확인하지 않아요.</string>
+    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it. -->
+    <string name="focustest_reason_not_checked">이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요.</string>
     <string name="focustest_reason_not_asked">이 과목은 시험에서 비중이 커요. 아직 어느 정도 아는지 확인하지 않았어요.</string>
     <string name="focustest_reason_weight">이 과목은 시험에서 비중이 커요.</string>
     <string name="focustest_update_plan">내 계획 바꾸기</string>
@@ -173,6 +171,8 @@
     <string name="focustest_proposal_undone">변경을 취소했어요. 계획이 원래대로 돌아갔어요.</string>
     <string name="focustest_undo">실행 취소</string>
     <string name="focustest_change_focus">집중 과목 바꾸기</string>
+    <!-- “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”. -->
+    <string name="focustest_session_questions_on">다음 학습에서는 진단 문제가 조금 더 나와요.</string>
     <string name="focustest_continue_to_daily_time">하루 학습 시간 설정하기</string>
     <string name="focustest_done">완료</string>
     <!-- %1$s is a duration, such as "10 min". -->
@@ -201,7 +201,6 @@
     <plurals name="focustest_more_questions">
         <item quantity="other">추가로 최대 %d문제</item>
     </plurals>
-    <string name="focustest_session_questions_on">모든 과목에서 한 문제씩 풀 때까지 학습 중에 진단 문제가 몇 개씩 나와요.</string>
     <string name="focustest_session_questions_paused">학습 중 진단 문제 출제가 일시 중지됐어요.</string>
     <string name="focustest_pause_questions">진단 문제 일시 중지하기</string>
     <string name="focustest_ask_again">진단 문제 다시 받기</string>
