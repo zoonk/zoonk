@@ -36,11 +36,15 @@ type TokenResponse = {
 };
 
 /** The CLI sends form bodies with no cookie and no Origin, as RFC 8628 and RFC 6749 describe. */
-function cliPost(path: string, fields: Record<string, string>): Promise<Response> {
+function cliPost(
+  path: string,
+  fields: Record<string, string>,
+  headers?: Record<string, string>,
+): Promise<Response> {
   return auth.handler(
     new Request(`${ORIGIN}${BETTER_AUTH_BASE_PATH}${path}`, {
       body: new URLSearchParams(fields),
-      headers: { "content-type": "application/x-www-form-urlencoded" },
+      headers: { "content-type": "application/x-www-form-urlencoded", ...headers },
       method: "POST",
     }),
   );
@@ -123,8 +127,9 @@ async function approve({ cookie, userCode }: { cookie: string; userCode: string 
   expect(approval.status).toBe(200);
 }
 
-async function logIn() {
-  const learner = await signUp();
+/** Each call is another machine's login; pass `account` to log the same person in again. */
+async function logIn(account?: Awaited<ReturnType<typeof signUp>>) {
+  const learner = account ?? (await signUp());
   const { device_code: deviceCode, user_code: userCode } = await requestDeviceCode();
   await approve({ cookie: learner.cookie, userCode });
 
@@ -134,12 +139,45 @@ async function logIn() {
   return { ...learner, tokens: (await response.json()) as TokenResponse };
 }
 
-function refresh(refreshToken: string) {
-  return cliPost("/oauth2/token", {
-    client_id: CLI_CLIENT_ID,
-    grant_type: "refresh_token",
-    refresh_token: refreshToken,
-  });
+function refresh(refreshToken: string, headers?: Record<string, string>) {
+  return cliPost(
+    "/oauth2/token",
+    { client_id: CLI_CLIENT_ID, grant_type: "refresh_token", refresh_token: refreshToken },
+    headers,
+  );
+}
+
+async function isAccessTokenActive(accessToken: string): Promise<boolean> {
+  return (await auth.api.verifyCliAccessToken({ body: { token: accessToken } })) !== null;
+}
+
+function base64url(value: unknown): string {
+  return Buffer.from(JSON.stringify(value)).toString("base64url");
+}
+
+/** An RFC 9449 proof for a fresh key, which asks the token endpoint to bind the new token to it. */
+async function dpopProof(): Promise<string> {
+  const keys = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, [
+    "sign",
+    "verify",
+  ]);
+
+  const jwk = await crypto.subtle.exportKey("jwk", keys.publicKey);
+
+  const signed = `${base64url({ alg: "ES256", jwk, typ: "dpop+jwt" })}.${base64url({
+    htm: "POST",
+    htu: `${ORIGIN}${BETTER_AUTH_BASE_PATH}/oauth2/token`,
+    iat: Math.floor(Date.now() / 1000),
+    jti: randomUUID(),
+  })}`;
+
+  const signature = await crypto.subtle.sign(
+    { hash: "SHA-256", name: "ECDSA" },
+    keys.privateKey,
+    Buffer.from(signed),
+  );
+
+  return `${signed}.${Buffer.from(signature).toString("base64url")}`;
 }
 
 describe("CLI login", () => {
@@ -236,6 +274,39 @@ describe("CLI login", () => {
     await expect(
       auth.api.verifyCliAccessToken({ body: { token: tokens.access_token } }),
     ).resolves.toBeNull();
+  });
+
+  it("ends every access token of a refreshed login when the CLI logs out, keeping the person's other logins", async () => {
+    const machine = await logIn();
+    const otherMachine = await logIn(machine);
+
+    const rotation = await refresh(machine.tokens.refresh_token);
+    const refreshed = (await rotation.json()) as TokenResponse;
+
+    const revoked = await cliPost("/oauth2/revoke", {
+      client_id: CLI_CLIENT_ID,
+      token: refreshed.refresh_token,
+      token_type_hint: "refresh_token",
+    });
+
+    expect(revoked.status).toBe(200);
+
+    await expect(isAccessTokenActive(machine.tokens.access_token)).resolves.toBe(false);
+    await expect(isAccessTokenActive(refreshed.access_token)).resolves.toBe(false);
+    await expect(isAccessTokenActive(otherMachine.tokens.access_token)).resolves.toBe(true);
+
+    const otherRefresh = await refresh(otherMachine.tokens.refresh_token);
+    expect(otherRefresh.status).toBe(200);
+  });
+
+  it("refuses an access token bound to a key, since staff routes check no proof of it", async () => {
+    const { tokens } = await logIn();
+
+    const response = await refresh(tokens.refresh_token, { dpop: await dpopProof() });
+    const bound = (await response.json()) as TokenResponse;
+
+    expect(bound.token_type).toBe("DPoP");
+    await expect(isAccessTokenActive(bound.access_token)).resolves.toBe(false);
   });
 
   it("keeps device authorization's session-minting token endpoint closed", async () => {

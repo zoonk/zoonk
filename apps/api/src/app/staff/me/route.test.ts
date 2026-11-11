@@ -4,13 +4,13 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
-import { getAdminAccess } from "../../../../../../packages/core/src/users/get-admin-access";
-import { GET as getMe } from "../../v1/me/route";
 import {
   cliTokenFixture,
   otherCliClientFixture,
-  sendStaffAuthorization,
-} from "../_test-utils/cli-tokens";
+} from "../../../../../../packages/auth/src/_test-utils/cli-tokens";
+import { getAdminAccess } from "../../../../../../packages/core/src/users/get-admin-access";
+import { GET as getMe } from "../../v1/me/route";
+import { sendStaffAuthorization } from "../_test-utils/staff-authorization";
 import { GET as getStaffMe } from "./route";
 
 function whoami(authorization?: string) {
@@ -92,13 +92,17 @@ describe("GET /staff/me", () => {
     expect([byBearer.status, byCookie.status]).toStrictEqual([401, 401]);
   });
 
-  it("refuses a learner's token", async () => {
+  it("refuses a learner's token with the message every staff route gives", async () => {
     const learner = await userFixture();
     const { accessToken } = await cliTokenFixture({ user: learner });
 
     const response = await whoami(`Bearer ${accessToken}`);
 
     expect(response.status).toBe(403);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { message: "This login does not have staff access." },
+    });
   });
 
   it("refuses an organization admin who isn't a platform admin", async () => {

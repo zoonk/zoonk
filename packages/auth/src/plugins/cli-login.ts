@@ -50,7 +50,9 @@ function cliAccessTokenPlugin() {
             throw error;
           }
 
-          if (!access?.active || typeof access.sub !== "string") {
+          // A key-bound (DPoP) token counts only with a proof of its key, which staff routes don't
+          // ask for, and the CLI never binds its tokens; the provider has no setting to refuse them.
+          if (!access?.active || typeof access.sub !== "string" || access.cnf !== undefined) {
             return ctx.json(null);
           }
 

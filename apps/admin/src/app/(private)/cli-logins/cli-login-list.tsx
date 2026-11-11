@@ -1,0 +1,53 @@
+import {
+  type AdminTableColumn,
+  AdminTableColumns,
+  AdminTableColumnsSkeleton,
+} from "@/components/admin-table-columns";
+import { listActiveCliLogins } from "@/data/cli-logins/list-active-cli-logins";
+import { formatDateTime } from "@/lib/format";
+import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import Link from "next/link";
+import { RevokeCliLoginForm } from "./revoke-cli-login-form";
+
+const COLUMNS: AdminTableColumn[] = [
+  { label: "Person" },
+  { label: "Client" },
+  { label: "Last renewed" },
+  { label: "Ends if unused" },
+  { align: "right", label: "" },
+];
+
+export async function CliLoginList() {
+  const logins = await listActiveCliLogins();
+
+  return (
+    <AdminTableColumns
+      columns={COLUMNS}
+      emptyLabel="No one is logged in to the CLI."
+      isEmpty={logins.length === 0}
+    >
+      {logins.map((login) => (
+        <TableRow key={login.id}>
+          <TableCell>
+            <Link className="font-medium hover:underline" href={`/users/${login.user.id}`} prefetch>
+              {login.user.name}
+            </Link>
+            <div className="text-muted-foreground text-xs">{login.user.email}</div>
+          </TableCell>
+          <TableCell className="text-muted-foreground">
+            {login.client.name ?? login.client.clientId}
+          </TableCell>
+          <TableCell className="text-muted-foreground">{formatDateTime(login.createdAt)}</TableCell>
+          <TableCell className="text-muted-foreground">{formatDateTime(login.expiresAt)}</TableCell>
+          <TableCell className="text-right">
+            <RevokeCliLoginForm loginId={login.id} />
+          </TableCell>
+        </TableRow>
+      ))}
+    </AdminTableColumns>
+  );
+}
+
+export function CliLoginListSkeleton() {
+  return <AdminTableColumnsSkeleton columns={COLUMNS} />;
+}

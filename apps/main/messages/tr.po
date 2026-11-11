@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -2476,6 +2477,117 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "Meydan okuma"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "Terminalindeki kodla aynı olduğunu kontrol et."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "Terminalindeki kod"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "Onaylarsan"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "CLI, üretim verilerini {email} olarak okur; örneğin hesapları, planları ve cevapları."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "Hiçbir şeyi değiştiremez."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "O bilgisayarda çıkış yapana ya da 30 gün boyunca kullanmayana kadar oturumu açık kalır."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Onayla"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "Reddet"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "Bu kodun süresi doldu. Yeni bir kod için {command} komutunu tekrar çalıştır."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "Bir sorun oluştu. Birazdan tekrar dene."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "DaD53k"
+msgid "Too many tries from this network. Wait 30 minutes, then try again."
+msgstr "Bu ağdan çok fazla deneme yapıldı. 30 dakika bekle, sonra tekrar dene."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "Bu kod zaten kullanıldı. Yeni bir kod için {command} komutunu tekrar çalıştır."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "Bu kodu bekleyen bir giriş yok. Terminalindeki kodla karşılaştır ya da {command} komutunu tekrar çalıştır."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Terminaline dön. CLI kullanıma hazır."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "Giriş yaptın"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "CLI'a erişim verilmedi. Bu sayfayı kapatabilirsin."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "Giriş reddedildi"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "{email} bir ekip hesabı olmadığı için CLI'a erişim verilmedi."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Bu giriş için bir Zoonk ekip hesabı gerekiyor"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "Yalnızca kendi başlattığın girişleri onayla. Bu bağlantıyı sana biri gönderdiyse reddet."
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Zoonk CLI'a giriş yap"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "Önce Zoonk ekip hesabınla giriş yap. Sonra onaylamak için buraya döneceksin."
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2632,11 +2744,6 @@ msgstr "Günde ne kadar zaman?"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "Şu anda başka bir hedefe başlayamazsın. Önce bir hedefini bitir ya da duraklat."
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"

@@ -10,6 +10,7 @@ msgstr ""
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/device/page.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
@@ -2476,6 +2477,117 @@ msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "Desafío"
 
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v_s6ET"
+msgid "Check that it matches the code in your terminal."
+msgstr "Comprueba que coincida con el código de tu terminal."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "BuQX_w"
+msgid "Code from your terminal"
+msgstr "Código de tu terminal"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "v6Rcfx"
+msgid "If you approve"
+msgstr "Si lo apruebas"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "7njD2Z"
+msgid "The CLI reads production data as {email}, such as accounts, plans and answers."
+msgstr "La CLI lee datos de producción como {email}, por ejemplo cuentas, planes y respuestas."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "d6AYf2"
+msgid "It can't change anything."
+msgstr "No puede cambiar nada."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Gp0v_r"
+msgid "It stays logged in on that computer until you log out there or leave it unused for 30 days."
+msgstr "La sesión sigue abierta en esa computadora hasta que la cierres ahí o pasen 30 días sin usarla."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Aprobar"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "htvX-Z"
+msgid "Deny"
+msgstr "Rechazar"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "R-mNZZ"
+msgid "This code has expired. Run {command} again for a new one."
+msgstr "Este código venció. Ejecuta {command} otra vez para obtener uno nuevo."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "No funcionó. Vuelve a intentarlo en un momento."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "DaD53k"
+msgid "Too many tries from this network. Wait 30 minutes, then try again."
+msgstr "Demasiados intentos desde esta red. Espera 30 minutos y vuelve a intentarlo."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "Wi5pqV"
+msgid "This code was already used. Run {command} again for a new one."
+msgstr "Este código ya se usó. Ejecuta {command} otra vez para obtener uno nuevo."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "t8Dpvt"
+msgid "No login is waiting for this code. Check it against your terminal, or run {command} again."
+msgstr "Ningún inicio de sesión espera este código. Compáralo con el de tu terminal o ejecuta {command} otra vez."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "4SuH6v"
+msgid "Go back to your terminal. The CLI is ready to use."
+msgstr "Vuelve a tu terminal. La CLI ya está lista para usarse."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "bz2dE8"
+msgid "You're logged in"
+msgstr "Iniciaste sesión"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "NHsIWj"
+msgid "The CLI got no access. You can close this page."
+msgstr "La CLI no recibió acceso. Puedes cerrar esta página."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "lsi4Oy"
+msgid "Login denied"
+msgstr "Inicio de sesión rechazado"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "tNO8Ji"
+msgid "The CLI got no access, because {email} isn't a staff account."
+msgstr "La CLI no recibió acceso, porque {email} no es una cuenta del equipo."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "kGLcEt"
+msgid "This login needs a Zoonk staff account"
+msgstr "Este inicio de sesión necesita una cuenta del equipo de Zoonk"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "LQk7dy"
+msgid "Only approve a login you started yourself. If someone sent you this link, deny it."
+msgstr "Aprueba solo un inicio de sesión que hayas comenzado tú. Si alguien te envió este enlace, recházalo."
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "xLjanC"
+msgid "Log in to the Zoonk CLI"
+msgstr "Inicia sesión en la CLI de Zoonk"
+
+#: src/app/[lang]/device/page.tsx
+msgctxt "cLTMYs"
+msgid "Log in with your Zoonk staff account first. You'll come back here to approve it."
+msgstr "Primero inicia sesión con tu cuenta del equipo de Zoonk. Luego volverás aquí para aprobarlo."
+
 #: src/app/[lang]/error.tsx
 #: src/components/errors/global-error-content.tsx
 #: src/components/public/not-found-message.tsx
@@ -2632,11 +2744,6 @@ msgstr "¿Cuánto tiempo al día?"
 msgctxt "W97xmd"
 msgid "You can't start another goal right now. Finish or pause one first."
 msgstr "No puedes crear otro objetivo en este momento. Primero completa o pausa uno."
-
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "No funcionó. Vuelve a intentarlo en un momento."
 
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
