@@ -295,6 +295,20 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(calls.createAll, 1)
   }
 
+  func testANewerReadOfTheListClearsTheCreateAllError() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failCreateAll(1)
+    await store.createAll(goalId: "goal")
+    XCTAssertEqual(store.createAllFailures["goal"], .unreachable)
+
+    await list.refresh()
+
+    XCTAssertNil(store.createAllFailures["goal"])
+  }
+
   func testSavesNoLongerAvailableShowWhenNoChapterIsLeft() async {
     let gone = SavedMindMap(
       available: false, chapterId: nil, kind: .chapter, targetId: "gone", title: "Gone")

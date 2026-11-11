@@ -7,7 +7,8 @@ import Observation
 final class MindMapsStore {
   private(set) var requesting: Set<String> = []
   private(set) var failures: [String: MindMapRequestFailure] = [:]
-  /// The read count when each failure appeared; a read started after it clears it.
+  /// The read count when each failure appeared, by map key or, for Create all, by goal; a read
+  /// started after it clears it.
   @ObservationIgnored private var failedAt: [String: Int] = [:]
   @ObservationIgnored private var reads = 0
 
@@ -55,7 +56,8 @@ final class MindMapsStore {
 
       let started = await self?.readStarted()
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
-      await self?.readCameThrough(started, keys: read.chapters.map { "\(goalId):\($0.chapterId)" })
+      await self?.readCameThrough(
+        started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
       return read
     }
 
@@ -179,7 +181,7 @@ final class MindMapsStore {
 
     creatingAll.insert(goalId)
     defer { creatingAll.remove(goalId) }
-    createAllFailures[goalId] = nil
+    failCreateAll(nil, goalId: goalId)
 
     let api = api
     let started = await cache.mutate { identity in
@@ -189,10 +191,10 @@ final class MindMapsStore {
     switch started {
     case .done:
       if await !Self.reread(lists[goalId]) {
-        createAllFailures[goalId] = .unreachable
+        failCreateAll(.unreachable, goalId: goalId)
       }
     case .failed:
-      createAllFailures[goalId] = .unreachable
+      failCreateAll(.unreachable, goalId: goalId)
     case .obsolete:
       break
     }
@@ -390,6 +392,11 @@ final class MindMapsStore {
     failedAt[key] = failure == nil ? nil : reads
   }
 
+  private func failCreateAll(_ failure: MindMapRequestFailure?, goalId: String) {
+    createAllFailures[goalId] = failure
+    failedAt[goalId] = failure == nil ? nil : reads
+  }
+
   private func readStarted() -> Int {
     reads += 1
     return reads
@@ -402,6 +409,7 @@ final class MindMapsStore {
 
     for key in keys where (failedAt[key] ?? started) < started {
       failures[key] = nil
+      createAllFailures[key] = nil
       failedAt[key] = nil
     }
   }
