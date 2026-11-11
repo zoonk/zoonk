@@ -285,15 +285,17 @@ export async function removeImageAsset({ assetId }: { assetId: string }): Promis
       skillIds: [...new Set(questions.map(({ skillId }) => skillId))],
     });
 
-    await tx.item.updateMany({ data: { retiredAt: new Date() }, where: { mediaAssetId: assetId } });
+    const removedAt = new Date();
+
+    await tx.item.updateMany({ data: { retiredAt: removedAt }, where: { mediaAssetId: assetId } });
 
     await tx.step.updateMany({
-      data: { updatedAt: new Date() },
+      data: { pictureRemovedAt: removedAt },
       where: { optionPictures: { some: { mediaAssetId: assetId } } },
     });
 
     await tx.step.updateMany({
-      data: { mediaAssetId: null, pictureAvailableAt: null },
+      data: { mediaAssetId: null, pictureAvailableAt: null, pictureRemovedAt: removedAt },
       where: { mediaAssetId: assetId },
     });
 
