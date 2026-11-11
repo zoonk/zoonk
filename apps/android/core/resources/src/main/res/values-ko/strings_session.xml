@@ -27,11 +27,19 @@
   "session_block_weekly_challenge": "428cb49bf066815db87d79f3619e1d330e4f1af38a6bcec36a07d5259ed923d1",
   "session_block_what_you_know": "436e680ef117da403ee6e9272e3078a4c684c4bb575811d24af768e667a00dec",
   "session_block_writing_practice": "4dba196e6fd4c6ea71a0d1046863fb742cc3425a7c158698b8fcf83d2ce61c0c",
+  "session_catch_up_to_go": "a7db382aeee3696b735945ceabd9c754e74f27e9ff81a072f3b23f8774877168",
+  "session_caught_up_today": "92d3da28a40bb676ac6287918f83936e7dd7e3b8ed41c852fc99a08dd45966ab",
+  "session_day_done": "a3e9aa6d51192381dca92372eefa913b4b43024e0eef2272783e3745dbdc3c42",
+  "session_day_done_caption": "61fd46a63f292e9661188c52846faa086759e20fba66a4b9c669259eec3dd34f",
+  "session_day_left": "9366a2b533af89a39c0e0be169e2e6473cf90e4fa08b385550398b3919a4503f",
+  "session_day_more_coming": "49989127bce44b7588063db9aebce60bd5e711991d8d63d728e3f5dfa4ec0ccb",
+  "session_day_open": "2fd46d048ad8b6b287cc19458f9066f7d532e2c639e5d32868d8160387fdb222",
   "session_energy_at": "dca9a24b19bc3109e3839ddeee99b7f37b3e2b290bd7b4df4788a715d44f13f7",
   "session_energy_detail": "5501eca9ed4d28c14be76ed4730f0deba072a4e9104ea0dc064901b084ebb2e7",
   "session_energy_glowing": "318914c13384d13bd06ba1022d933543480117abfce96ada609d21fdb15aaa90",
   "session_energy_glowing_brightest": "7f4bb76ad02c5ea1600bc961951a0d151eb2233a401f4d55b4bb857ddcda168b",
   "session_energy_max": "2989a6614b8b626ed9361defeab1a1000ea2f5c7d0f39bdd2ebcd9ead6a793c9",
+  "session_lessons_deferred": "2e9384f9309d1a11fdb57f78cdb3e6c423145aa787e22cc78248db13f21404ba",
   "session_level_up": "b11c966a1fdc28af53818eab0d694f37c1588a9fd51f2b125d779ef61060f9ba",
   "session_next_continue": "a5308726d6243d7d6f89b34ee3b7d858381eef6f42d2a9fe91bf4306cf5a2e5f",
   "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
@@ -42,6 +50,7 @@
   "session_next_stop_failed": "7fc4f563b2bcc965a405745f3d9c19f917a3e2a6006ac6a3f44719aaac24e1a8",
   "session_next_while_waiting": "de950ac6ae4cc7ae0fe8b154cd9c9efa80ad6e55acc4845e17b9b8eea6daf53f",
   "session_next_writing_note": "fb563baa8dfcfa12262c114035a5b50348a203e94ffa8eddbc9bba510bc3b681",
+  "session_no_catch_up_left": "857f93d74c490b92542ddc166293bbfed79ca3e33aeb207b04a88bdbe9abc038",
   "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
   "session_opening_very_slow": "db62f4bf88f9522ac8b876b8e0216011ec76fe72fedf55ecaf41a4fe72ee77e2",
   "session_review_intro_first_week": "2de7654d1f7efb1893eeb489203652a67ca9408984d43d73d4f1146d720ed3dd",
@@ -54,7 +63,6 @@
   "session_review_intro_title": "3493ccc3bbe7d31c91d15c5c5b8f57a63e3e06d4c93cdf6bd9650c8d9ee10da8",
   "session_review_intro_weakest": "f4b371c5ec018cc70ab75c6cdb12ee5f318ecbc518e87e09475c64df39fe03a0",
   "session_review_intro_weakest_title": "0ba791eaebf8346c3c8411ae46c69bbd7fdd89ad96872820635a77b223fe9dd9",
-  "session_summary_back_on": "12006d67abedff1315b90191483ca472da61f984982a6ecc069ae33c2829b986",
   "session_summary_brain_power": "89f7f72963b04922627746a0202c96a5f0726b72364869e0c3b9707063fac26d",
   "session_summary_buddy_happy": "fcdc5ef09af23f6add015dbe503c9c53cf7d69ee73ee531663ef016fbaac401d",
   "session_summary_create_account": "2d60c0b2f36b99f2dd856887cd3c9a741f3f24c12caf088a07368fa131045881",
@@ -166,7 +174,6 @@
     <!-- How many skills come back for review on later days. -->
     <string name="session_summary_to_review">복습 예정</string>
     <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
-    <string name="session_summary_back_on">%1$s에 복습</string>
     <string name="session_summary_brain_power">두뇌력</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
@@ -213,4 +220,36 @@
     <string name="session_next_while_waiting">기다리는 동안 %1$s</string>
     <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
     <string name="session_next_instead">대신 %1$s</string>
+    <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
+    <plurals name="session_day_done">
+        <item quantity="other">오늘 %1$s/%2$s 완료</item>
+    </plurals>
+    <!-- A finished block's line about today's session, past its midpoint. %1$s is how many of the day's blocks are left, shown larger. -->
+    <plurals name="session_day_left">
+        <item quantity="other">오늘 %1$s개 남음</item>
+    </plurals>
+    <!-- Under "3 left today": %1$s of the session's %2$s blocks are done. -->
+    <plurals name="session_day_done_caption">
+        <item quantity="other">%1$s/%2$s 완료</item>
+    </plurals>
+    <!-- A finished block's line about today's session while the day still holds time for lessons not on the list yet, so it has no total. %1$s is how many blocks are done, shown larger. -->
+    <plurals name="session_day_open">
+        <item quantity="other">오늘 %1$s개 완료</item>
+    </plurals>
+    <!-- Under "3 done today": more lessons are being written and join today's session on their own. -->
+    <string name="session_day_more_coming">학습을 이어 가면 더 추가돼요</string>
+    <!-- Lessons earlier days left that the learner did today, shown before "· 22 to go". %1$s is the count. -->
+    <plurals name="session_caught_up_today">
+        <item quantity="other">오늘 밀린 레슨 %1$s개 완료</item>
+    </plurals>
+    <!-- After "2 caught up today ·": %1$s lessons earlier days left are still to do. -->
+    <plurals name="session_catch_up_to_go">
+        <item quantity="other">%1$s개 남음</item>
+    </plurals>
+    <!-- At a finished block's end, once every lesson earlier days left is done. -->
+    <string name="session_no_catch_up_left">밀린 레슨을 모두 마쳤어요.</string>
+    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="session_lessons_deferred">
+        <item quantity="other">레슨 %1$s개를 다른 날로 옮겨 오늘 학습 시간을 %2$s에 맞췄어요.</item>
+    </plurals>
 </resources>

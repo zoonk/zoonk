@@ -6,7 +6,10 @@ import { toSetItem, writeItemSet } from "./write-item-set";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./write-item-set.prompt.md", () => ({ default: "# Set" }));
+
+vi.mock("./write-item-set.prompt.md", () => ({
+  default: "# Set{{#usedTitles}}\n- Another subject.{{/usedTitles}}",
+}));
 
 vi.mock("./item-rules", () => ({
   withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
@@ -51,6 +54,7 @@ describe(writeItemSet, () => {
       formats: ["trueFalse"],
       languageGoal: false,
       pictures: false,
+      usedSituations: false,
     });
 
     expect(userPrompt).toContain("QUESTION_COUNT: 5");
@@ -59,18 +63,29 @@ describe(writeItemSet, () => {
     expect(userPrompt).not.toMatch(/OPTION_COUNT|USED_TITLES/u);
   });
 
-  it("gives an exam's option count, and the titles the skills' sets already use", async () => {
+  it("gives an exam's option count, and the titles and situations the skills already use with their rules", async () => {
     const { userPrompt } = await writeItemSet({
       examFormat: { name: "ENEM", optionCount: 5, style: "ENEM style" },
       format: "multipleChoice",
       language: "pt",
       questionCount: 3,
-      skills: SKILLS,
+      skills: SKILLS.map((skill, index) =>
+        index === 0 ? { ...skill, usedSituations: ["Um bairro sem ônibus à noite."] } : skill,
+      ),
       usedTitles: ["A biblioteca de domingo", "O rio da cidade"],
     });
 
+    expect(withItemRules).toHaveBeenCalledWith(
+      "# Set\n- Another subject.",
+      expect.objectContaining({ usedSituations: true }),
+    );
+
     expect(userPrompt).toContain("OPTION_COUNT: 5");
     expect(userPrompt).toContain("USED_TITLES: A biblioteca de domingo | O rio da cidade");
+
+    expect(userPrompt).toContain(
+      "LEVEL: intermediate\n   USED_SITUATIONS:\n     - Um bairro sem ônibus à noite.\n2. SKILL: Main idea",
+    );
   });
 
   it("writes a language exam's set in its language and where it is spoken", async () => {

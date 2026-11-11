@@ -283,72 +283,72 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All four keyed answers match both independent calculations and the supplied official key: 138 C because 0.2 × 4/(16+w) ≤ 0.01 requires w ≥ 64; 143 B because 400 × 1.10 × 0.25/10 = 11; 167 A because 58 packages cost R$232 and 12/232 ≈ 5.17%; 180 C because December–January has the greatest average, 325 mm. No wrong-key cap applies.",
-          "score": 10,
+          "reasoning": "The only question has a wrong key, triggering the maximum score of 5. The correct answer is D: profit equals 0.96 × 5 × (200 + 100n) − 900 − 250n = 60 + 230n, so the minimum integer satisfying profit ≥ 800 is n = 4. The output instead marks B.",
+          "score": 2,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "Every included question belongs to Mathematics, matches its skill tag, and is answerable without missing visuals. No annulled question is included. However, suitable questions are omitted without explanation, notably 137, whose complete salary table is supplied, and 150, which directly tests percentages. The missing-eligible-question cap of 8 applies.",
-          "score": 8,
+          "reasoning": "Question 158 is a complete mathematics question involving percentages and needs no missing visual, so its inclusion is defensible. However, the output provides only one item and leaves numerous clearly eligible questions out without explanation, triggering the maximum score of 8 for unexplained omissions. The resulting coverage of the three requested skills is very limited.",
+          "score": 6,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Every option receives feedback, and most explanations identify useful calculation errors. However, every misconception label is in English, contrary to the Portuguese-language requirement, and learner-directed wording is inconsistent. Question 143's option D explanation falsely identifies 300 as the target list size. Its option C explanation largely restates that 130 is not 25% of 440 rather than diagnosing a mistake, triggering the maximum of 7 for restatement-style reasons. These combined weaknesses warrant 6.",
-          "score": 6,
+          "reasoning": "Every option has feedback, but most of it teaches an incorrect catch model, rejects the actual correct answer and reports incorrect profits. The explanations are in Portuguese, yet learner-directed wording is inconsistent and misconception labels are often too long. These are substantive instructional weaknesses, not merely a lack of detail.",
+          "score": 3,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "All citations identify Enem 2023, the second day, the booklet and the question number. None of these selected support texts has a source credit that was omitted. However, quoted material repeatedly preserves glued words, most severely in question 143 and also in questions 138, 167 and 180. The explicit maximum score of 5 therefore applies.",
-          "score": 5,
+          "reasoning": "The citation correctly names Enem 2023, the second day and question 158. The context and question preserve the source wording with restored spaces, and this question has no source credit line to retain. The only minor copying departure is omission of the final periods from the numerical options.",
+          "score": 8,
           "label": "Citation, credit and copy",
           "weight": 20
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "4 of 5 parts passed. Question 161: The support text isn't in the paper as printed. Question 161: The command isn't in the paper as printed.",
-          "score": 8.2,
+          "reasoning": "1 of 3 parts passed. Question 138: The support text isn't in the paper as printed. Question 137: The support text isn't in the paper as printed.",
+          "score": 4,
           "weight": 30
         }
       ],
-      "itemsScored": 4,
+      "itemsScored": 1,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1150,
-          "inputTokens": 28656,
-          "outputTokens": 1054,
-          "reasoningTokens": 220
+          "cacheWriteTokens": 1117,
+          "inputTokens": 26157,
+          "outputTokens": 1124,
+          "reasoningTokens": 298
         }
       },
       "keyFlaws": [
         {
-          "itemLocator": "questions[1].item (question 143)",
-          "keyedAnswer": "B — 11",
-          "kind": "factualError",
-          "workedAnswer": "The current waiting list is 400 × 1.10 = 440 names. Its target size is 440 × 0.75 = 330, requiring 110 additional places, or 11 rooms. The key is correct, but option D's feedback incorrectly states that the list should ultimately contain 300 names."
+          "itemLocator": "questions[2].item (question 158)",
+          "keyedAnswer": "B (2 helpers)",
+          "kind": "wrongKey",
+          "workedAnswer": "For n ≥ 1 helpers, daily catch is 300 + 100(n − 1) = 200 + 100n kg, not the sum of successive total catches. Profit is 0.96 × 5(200 + 100n) − 900 − 250n = 60 + 230n. Requiring at least R$800 gives n ≥ 740/230 ≈ 3.217. Therefore four helpers are necessary: three yield R$750 and four yield R$980. The correct option is D."
         }
       ],
       "steps": [
         {
-          "conclusion": "Copied text retains extensive glued words, including almost the entire context and question for 143, materially impairing readability and violating the explicit spacing requirement. All misconception labels are in English rather than Portuguese. Question 143's feedback for option D incorrectly says the final waiting list should contain 300 names; the target is 330.",
+          "conclusion": "Question 158 incorrectly keys B (2 helpers), contradicting both the calculation and the official key D (4 helpers). The explanation incorrectly adds successive total catches together. With n helpers, the catch is 200 + 100n kg and profit is 60 + 230n reais: 3 helpers yield R$750 and 4 yield R$980. This error also invalidates the option feedback. Only one question is supplied, with no reason for omitting eligible questions such as 137, 138, 143, 150, 161, 167, 168 and 180.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Only four questions are supplied despite additional eligible questions, including 137 and 150, being available without missing visual information. Some feedback does not address the learner as 'you', and question 143's explanation for option C mostly rejects the number without identifying a specific underlying mistake.",
+          "conclusion": "Some option explanations do not address the learner as 'você', and several misconception labels are lengthy descriptions rather than short labels. The copied numerical options also omit their original final periods.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Restore word spacing throughout, translate misconception labels into short neutral Portuguese phrases, correct the 300-name statement, and include more eligible questions. Make option feedback consistently learner-directed and explain identifiable calculation mistakes rather than merely contrasting an option with the correct result.",
+          "conclusion": "After correcting the solution, organize feedback around the catch, revenue and deductions for each proposed number of helpers. Explicitly comparing the profits for three and four helpers would make the minimum requirement easy for the learner to verify.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -387,28 +387,28 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Question 3 correctly identifies Dylan's monthly 5% growth as exponential. For question 14, 3 + 5 = 8 makes the selected rational-integer answer correct for the displayed text. However, it disagrees with the paper's irrational-answer key for the original radical expression. The requirement to preserve the paper's key therefore triggers the maximum score of 5.",
+          "reasoning": "Question 3 correctly identifies the monthly multiplier 1.05. Question 4 correctly compares means 85.75 and 82.5, with Joe having the larger standard deviation. Question 7 correctly gives (60 − 12)/(12 − 4) = 6. However, question 14 changes the paper's intended answer after losing the radicals. Its rational key fits the literal integer sum but does not match the paper's key, triggering the maximum score of 5.",
           "score": 5,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "Including question 14 directly violates its required exclusion and triggers the cap of 6. Questions 4 and 7 are also omitted without reason despite being explicitly required and usable: Andrea's mean is higher while Joe's standard deviation is higher, and the plant's average rate of change is (60 - 12)/(12 - 4) = 6. Only question 3 is correctly selected.",
-          "score": 4,
+          "reasoning": "All three eligible questions are included with the correct skill tags. Figure-dependent and other garbled questions are generally omitted. However, question 14 is explicitly required to be left out, with no question assigned to skill 4. Its inclusion triggers the maximum score of 6.",
+          "score": 6,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Every option has feedback, and wrong options receive specific, neutral misconception labels rather than generic labels. The explanations distinguish fixed amounts from percentages and rational from irrational numbers. However, the authored feedback generally does not address the learner as \"you,\" so it does not fully meet the language-and-address requirement.",
-          "score": 8,
+          "reasoning": "Every option receives substantive feedback, and the misconception labels generally identify specific mistakes. However, question 14 teaches the false claim that 8 cannot have a nonterminating decimal representation. Feedback also does not consistently address the learner as 'you,' and the explanation for 58 in question 7 omits the missing division by elapsed time.",
+          "score": 7,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "Both citations identify the Regents Examination in Algebra I, June 2025, Part I, and the correct question number. The included stems and options reproduce the supplied text with proper word spacing and without option numbers. No applicable source credit is omitted.",
+          "reasoning": "Every citation names the Regents Examination in Algebra I, June 2025, and the original question number. The quoted wording matches the supplied extraction, options omit their numbers and remain correctly associated, and both data tables include headers, separator lines, and separate rows. The computations note is omitted, and no glued words or missing support-text credits appear.",
           "score": 10,
           "label": "Citation, credit and copy",
           "weight": 20
@@ -416,42 +416,49 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "2 of 4 parts passed. Question 4: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table. Question 4: The support text isn't in the paper as printed. Question 7: Its words point at a table, but it shows none: write the table in Markdown in its text (a header row, a `---` row, one row per line), or don't refer to a table. Question 7: The support text isn't in the paper as printed.",
-          "score": 5.5,
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
-      "itemsScored": 2,
+      "itemsScored": 4,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1128,
-          "inputTokens": 7913,
-          "outputTokens": 926,
-          "reasoningTokens": 366
+          "cacheReadTokens": 1150,
+          "cacheWriteTokens": 0,
+          "inputTokens": 9120,
+          "outputTokens": 1136,
+          "reasoningTokens": 393
         }
       },
-      "keyFlaws": [],
+      "keyFlaws": [
+        {
+          "itemLocator": "questions[3].item (question 14)",
+          "keyedAnswer": "rational, since the sum can be expressed as an integer",
+          "kind": "twoDefensible",
+          "workedAnswer": "As displayed, 3 + 5 = 8, so the integer-based option is correct. But 8 also equals the nonterminating repeating decimal 7.999…, making the second option defensible as worded. Its feedback incorrectly denies that representation. The damaged source item should have been omitted."
+        }
+      ],
       "steps": [
         {
-          "conclusion": "Question 14 is included despite the explicit requirement to omit it because its square roots were lost. Its rational-answer key fits the damaged stem but does not preserve the paper's answer. Required questions 4 and 7 are missing, leaving skills 2 and 3 uncovered.",
+          "conclusion": "Question 14 must be excluded: its missing square roots change the problem, and the result substitutes a rational-answer key rather than preserving the paper's answer. Its feedback also falsely states that 8 cannot be expressed as a nonterminating decimal; 7.999… equals 8. Questions 3, 4, and 7 are correctly selected and keyed.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The feedback explains the mathematical distinctions and supplies specific misconception labels, but generally uses impersonal statements rather than addressing the learner as \"you,\" as required.",
+          "conclusion": "Much of the authored feedback explains the mathematics impersonally rather than consistently addressing the learner as 'you,' as requested.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "For question 7's answer 58, explain both mistakes: using the wrong endpoint rows and reporting a height difference without dividing by elapsed time.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
+        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Question 4 copies its scores as a table that shows as one (the header row, a --- line, then one row per line), without the page's \"Use this space for computations.\" note. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
         "id": "en-algebra-one-regents-june-2025-full-1",
         "userInput": {
           "count": 10,

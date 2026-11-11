@@ -1,8 +1,19 @@
 import "server-only";
 import { type GoalStatus, type TransactionClient, prisma } from "@zoonk/db";
+import { countActiveGoalsLeft } from "../../entitlements/_utils/active-goals-left";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
+
+export class ActiveGoalLimitError extends Error {
+  readonly limit: AllowanceLimit;
+
+  constructor(limit: AllowanceLimit) {
+    super("The learner's active goals are at their plan's limit.");
+    this.name = "ActiveGoalLimitError";
+    this.limit = limit;
+  }
+}
 
 export async function findActiveGoalLimit({
   db = prisma,
@@ -20,13 +31,9 @@ export async function findActiveGoalLimit({
     return null;
   }
 
-  const active = await db.goal.count({
-    where: { id: { not: goalId }, kind: { not: "explain" }, status: "active", userId },
-  });
+  const left = await countActiveGoalsLeft({ db, exceptGoalId: goalId, tier: viewer.tier, userId });
 
-  return active >= limit
-    ? { limit, period: "total", resource: "activeGoals", tier: viewer.tier }
-    : null;
+  return left === 0 ? { limit, period: "total", resource: "activeGoals", tier: viewer.tier } : null;
 }
 
 export async function moveActiveGoalAway({

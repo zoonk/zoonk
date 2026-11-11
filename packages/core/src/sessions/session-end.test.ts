@@ -19,6 +19,7 @@ import {
 } from "./_test-utils/session-goal";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 import { finishStudyBlock } from "./finish-study-block";
+import { getStudySession } from "./get-study-session";
 import { getStudySessionSummary } from "./get-study-session-summary";
 import { scoreLessonAnswers } from "./score-lesson-answers";
 import { startStudyBlock } from "./start-study-block";
@@ -207,6 +208,7 @@ describe("ending a session", () => {
         brainPower: 40,
         contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: today.session.id },
         endedAt: new Date(),
+        goalId: goal.id,
         seconds: 170,
         userId: user.id,
       }),
@@ -219,10 +221,7 @@ describe("ending a session", () => {
       sessionId: today.session.id,
     });
 
-    expect(finished).toMatchObject({
-      completion: { comesBackOn: null, sessionCompleted: true },
-      status: "ready",
-    });
+    expect(finished).toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
     const ended = await getStudySessionSummary({ input: {}, sessionId: today.session.id });
 
@@ -346,14 +345,14 @@ describe("ending a session", () => {
   it("keeps learning with the plan's next lessons after the day's session, as often as asked", async () => {
     const { lessons, session } = await setup();
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toStrictEqual({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toStrictEqual({
       reason: "sessionNotFinished",
       status: "unavailable",
     });
 
     await stopStudySession({ input: {}, sessionId: session.id });
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toStrictEqual({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toStrictEqual({
       reason: "sessionNotFinished",
       status: "unavailable",
     });
@@ -366,7 +365,7 @@ describe("ending a session", () => {
 
     await skipAll();
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toMatchObject({
       block: { extra: true, kind: "learn", lessonId: lessons[0]?.id, status: "pending" },
       status: "ready",
     });
@@ -384,17 +383,55 @@ describe("ending a session", () => {
 
     await skipAll();
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toMatchObject({
       block: { kind: "learn" },
       status: "ready",
     });
 
     await skipAll();
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toMatchObject({
       block: { kind: "learn" },
       status: "ready",
     });
+  });
+
+  it("offers no more time on a day that's over, and a tap from a screen left on it adds nothing", async () => {
+    const { session } = await setup();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { status: "skipped" },
+      where: { sessionId: session.id },
+    });
+
+    await prisma.studySession.update({
+      data: { endedAt: SESSION_NOW, startedAt: SESSION_NOW, status: "completed" },
+      where: { id: session.id },
+    });
+
+    vi.setSystemTime(SESSION_NOW.getTime() + DAY_MS);
+
+    const dayOver = { available: false, lessons: [], minutes: 10, reason: "dayOver" };
+
+    const [view, summary] = await Promise.all([
+      getStudySession({ input: {}, sessionId: session.id }),
+      getStudySessionSummary({ input: {}, sessionId: session.id }),
+    ]);
+
+    expect(view.status === "ready" && view.session.extraTime).toStrictEqual(dayOver);
+    expect(summary.status === "ready" && summary.summary.extraTime).toStrictEqual(dayOver);
+
+    await expect(addExtraStudyBlock({ input: {}, sessionId: session.id })).resolves.toStrictEqual({
+      reason: "dayOver",
+      status: "unavailable",
+    });
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({
+        include: { _count: { select: { blocks: true } } },
+        where: { id: session.id },
+      }),
+    ).resolves.toMatchObject({ _count: { blocks: session.blocks.length }, status: "completed" });
   });
 
   it("offers ten more minutes only when something is left to practice or learn", async () => {

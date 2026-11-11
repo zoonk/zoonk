@@ -9,6 +9,7 @@ import {
 } from "../learner/placement/placement-quick-format";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
+import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { toItemExam } from "./item-exam";
@@ -92,10 +93,15 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
       skills: skills
         .slice(0, SKILLS_PER_SET)
         .flatMap((skill) => rows.find((row) => row.id === skill.skillId) ?? [])
-        .map((row) => ({ ...row, exam, usedSituations: [] })),
+        .map((row) => ({ ...row, exam })),
       usedTitles,
     }))
     .filter((target) => target.skills.length >= 2);
+
+  const usedSituations = await loadUsedSituations({
+    examBlueprintId: blueprint.id,
+    skillIds: targets.flatMap((target) => target.skills.map((skill) => skill.id)),
+  });
 
   return Promise.all(
     targets.map(async (target) => {
@@ -106,7 +112,11 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
 
       return {
         ...target,
-        skills: target.skills.map((skill) => ({ ...skill, exam: { ...exam, pastQuestions } })),
+        skills: target.skills.map((skill) => ({
+          ...skill,
+          exam: { ...exam, pastQuestions },
+          usedSituations: usedSituations.get(skill.id) ?? [],
+        })),
       };
     }),
   );

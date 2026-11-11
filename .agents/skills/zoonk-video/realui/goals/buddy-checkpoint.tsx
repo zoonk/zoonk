@@ -113,7 +113,6 @@ function question(
     select: 1,
     set: null,
     skillId: `skill-${index}`,
-    timeMachine: null,
     visual: null,
   };
 }

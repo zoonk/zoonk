@@ -60,9 +60,11 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
  * `fallbackFocus`.
  */
 export function TodayNotice({
+  children,
   className,
   fallbackFocus,
 }: {
+  children?: React.ReactNode;
   className?: string;
   fallbackFocus: React.RefObject<HTMLElement | null>;
 }) {
@@ -74,11 +76,12 @@ export function TodayNotice({
 
   return (
     <div
-      className={cn("flex flex-col empty:hidden", className)}
+      className={cn("flex flex-col gap-3 empty:hidden", className)}
       data-slot="today-notice"
       ref={slot}
     >
       <NoticeOfKind kind={kind} />
+      {children}
     </div>
   );
 }

@@ -56,7 +56,6 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, other {레슨 {done, number}개 완료(전체 #개)}}"
 
 #: src/_components/chapter-mark.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "건너뜀"
@@ -153,6 +152,7 @@ msgstr "하루 학습 시간"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -550,6 +550,16 @@ msgstr "뒤로"
 msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
+
+#: src/_components/task-header.tsx
+msgctxt "1JgBls"
+msgid "Expand sidebar"
+msgstr "사이드바 펼치기"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -2384,7 +2394,6 @@ msgid "Chapter options"
 msgstr "챕터 옵션"
 
 #: src/chapter/chapter-header.tsx
-#: src/journey/journey-screen.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-navigation.tsx
@@ -2776,10 +2785,11 @@ msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "새 목표 시작하기"
 
+#. On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "Zt_vKl"
-msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
-msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 현재 목표를 메뉴에서 일시 중지하거나 Plus로 여러 목표를 함께 진행하세요."
+msgctxt "cTQ_Wv"
+msgid "Starting another goal right now comes with Plus. Until then, keep going with your current goals."
+msgstr "지금 목표를 하나 더 시작하려면 Plus가 필요해요. 그동안 진행 중인 목표를 이어 가세요."
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -4512,10 +4522,17 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "코스 완료"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/journey/goal-actions.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 일시 중지하면 이 목표를 다시 진행할 수 있고, Plus를 구독하면 여러 목표를 함께 진행할 수 있어요."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
+
+#: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "목표 이름 바꾸기"
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -4538,6 +4555,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "이어가기"
@@ -4558,11 +4576,13 @@ msgid "Archive"
 msgstr "보관하기"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "T4rFKd"
 msgid "Your {goal} goal is paused"
 msgstr "{goal} 목표가 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
+#: src/journey/journey-planless.tsx
 #: src/journey/pace-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
@@ -4712,12 +4732,6 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "계획 공유하기"
 
-#: src/journey/journey-menu.tsx
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kvT_KU"
-msgid "Rename goal"
-msgstr "목표 이름 바꾸기"
-
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4798,12 +4812,22 @@ msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "모의고사"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
+
+#: src/journey/journey-planless.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
+
+#: src/journey/journey-planless.tsx
 msgctxt "3X96t0"
 msgid "{goal} · Building your plan"
 msgstr "{goal} · 계획을 만들고 있어요"
 
-#: src/journey/journey-screen.tsx
+#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 계획이 완성되면 여기에서 바로 열려요."
@@ -6740,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "이렇게 들렸어요: “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "{date}에 다시 나와요."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "이 단어는 잘 익혔어요. 다시 나오지 않아요."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "억양이 달라도 계속할 수 있어요. 발음이 아직 다른 단어는 내일 다시 나와요."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "억양은 걸림돌이 되지 않아요."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7940,9 +7954,19 @@ msgid "Nothing to practice yet"
 msgstr "아직 연습할 문제가 없어요"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "나머지 문제는 더 오래 기억에 남도록 다른 날 다시 나와요."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "나머지 문제는 언제든 연습할 수 있어요."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -9328,10 +9352,11 @@ msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "Plus로 여러 목표를 동시에 진행"
 
+#. Shown on the screen for typing a new goal, before the learner types, when a free learner already follows as many goals as the free plan allows at once. Quick questions are short explanations that don't take one of those goals. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "KJXbLd"
-msgid "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime."
-msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 시작하려면 계획 화면의 메뉴에서 현재 목표를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
+msgctxt "tqq0xx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9576,6 +9601,12 @@ msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
 msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem {ENEM 합격하기} exani {EXANI-II 합격하기} kyotsu {Common Test 잘 보기} matura {matura 합격하기} maturita {maturità 합격하기} suneung {수능 잘 보기} yks {YKS 잘 보기} other {SAT 합격하기}}"
 
+#. Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.u1Pjvx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
+msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
+
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.qi0x0O"
@@ -9606,11 +9637,6 @@ msgstr "무료 요금제에서는 이번 달에 새 질문을 더 할 수 없어
 msgctxt "goalErrors.h018_j"
 msgid "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
 msgstr "무료 요금제에서는 이번 달에 새 목표를 더 시작할 수 없어요. 다음 달에 다시 시도해 보세요. 지금 계속하려면 Plus를 구독해 주세요."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.nMzPGK"
-msgid "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus."
-msgstr "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 이 목표를 시작하려면 계획 화면의 메뉴에서 현재 목표를 일시 중지하거나 Plus를 구독해 주세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.aFV0Wu"
@@ -10742,6 +10768,24 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "출처: {source}"
 
+#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "Hs12te"
+msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, other {더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.}}"
+
+#. Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "INXjEw"
+msgid "Available with a free account"
+msgstr "무료 계정으로 이용 가능"
+
+#. Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "uRiE4s"
+msgid "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, other {더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요.}}"
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10756,11 +10800,6 @@ msgstr "하루 학습 시간을 여러 목표에 나눠 써요. 나중에 모두
 msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "나중에 모두 바꿀 수 있어요."
-
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "aHZ7X8"
-msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, other {여러 목표를 동시에 진행하려면 Plus가 필요해요. 그전까지는 목표 목록에서 대기해요.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"
@@ -11500,6 +11539,7 @@ msgid "{days, plural, one {One day ahead} other {# days ahead}}"
 msgstr "{days, plural, other {계획보다 #일 빠름}}"
 
 #: src/plan/plan-status-label.tsx
+#: src/session/moment-today.tsx
 msgctxt "UKUhFr"
 msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
 msgstr "{lessons, plural, other {밀린 레슨 #개}}"
@@ -13348,12 +13388,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "레슨이 아직 저장되지 않았어요"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "{date}에 복습"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13366,6 +13400,50 @@ msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
 msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "진도를 저장하고 있어요…"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "mtboPF"
+msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
+msgstr "{left, plural, =0 {오늘 <number>#</number>개 남음} other {오늘 <number>#</number>개 남음}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "fIdc7D"
+msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>개 완료} other {오늘 <number>#</number>개 완료}}"
+
+#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
+#: src/session/moment-today.tsx
+msgctxt "TwfMN7"
+msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<number>#</number> of {total} done today} other {<number>#</number> of {total} done today}}"
+msgstr "{completed, plural, =0 {오늘 <number>#</number>/{total}개 완료} other {오늘 <number>#</number>/{total}개 완료}}"
+
+#: src/session/moment-today.tsx
+#: src/session/session-header.tsx
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
+
+#: src/session/moment-today.tsx
+msgctxt "Q9kz2-"
+msgid "More as you go"
+msgstr "학습을 이어 가면 더 추가돼요"
+
+#: src/session/moment-today.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
+
+#: src/session/moment-today.tsx
+msgctxt "OnqzIj"
+msgid "No lessons left to catch up."
+msgstr "밀린 레슨이 없어요."
+
+#: src/session/moment-today.tsx
+msgctxt "H0kmsQ"
+msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
+msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "Icwcge"
@@ -13509,11 +13587,6 @@ msgid "Saved to your mistakes"
 msgstr "오답 노트에 저장했어요"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "오답 노트에 저장했어요 · 내일 다시 나와요"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "미응답"
@@ -13549,31 +13622,6 @@ msgstr "순점수 {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "{date}에 봤던 문제예요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "{date}에 이어 이번에도 맞혔어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "{date}에 맞혔던 문제예요. 지금 복습하면 더 오래 기억할 수 있어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "{date}에는 “{answer}”라고 답했어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "{date}에 헷갈렸던 문제예요."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13673,11 +13721,6 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}} · 학습하면서 더 추가돼요"
 
 #: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
-
-#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-screen.tsx
@@ -13689,11 +13732,6 @@ msgstr "오늘의 학습"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "순점수 {net}"
-
-#: src/session/study-moment.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -13722,12 +13760,6 @@ msgstr "1분도 안 돼 끝냈어요"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} 만에 끝냈어요"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "{days}에 다시 복습해요"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -13904,9 +13936,15 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
-msgctxt "goalSwitcher.MIqzZd"
-msgid "Starts with Plus"
-msgstr "Plus로 시작 가능"
+msgctxt "goalSwitcher._G_fp6"
+msgid "Pause a goal or get Plus"
+msgstr "목표 일시 중지 또는 Plus 구독하기"
+
+#. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
+#: src/shell/goal-menu-row.tsx
+msgctxt "goalSwitcher.VX7VBg"
+msgid "Starts with a free account"
+msgstr "무료 계정으로 시작 가능"
 
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.zbkRbA"
@@ -13944,6 +13982,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "목표를 바꾸지 못했어요. 다시 시도해 보세요."
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.9_0KQP"
 msgid "We couldn't start this goal. Try again."
 msgstr "이 목표를 시작하지 못했어요. 다시 시도해 보세요."
@@ -13954,6 +13993,7 @@ msgid ", current goal. Switch goal"
 msgstr ", 현재 목표. 목표 바꾸기"
 
 #: src/shell/goal-switcher.tsx
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.OXDyuT"
 msgid "Your goals"
 msgstr "내 목표"
@@ -13987,6 +14027,31 @@ msgstr "{done, plural, =0 {오늘 완료한 미션은 #개예요 · 총 {total}�
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "학습 탭"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.tFFMkF"
+msgid "Pause"
+msgstr "일시 정지"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.aMAkj1"
+msgid "Make room for {goal}"
+msgstr "{goal} 목표를 위한 자리 만들기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. {goal} 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요."
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.rbrahO"
+msgid "Close"
+msgstr "닫기"
+
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus 구독하기"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
@@ -14782,6 +14847,18 @@ msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, other {#개 완료}}"
 
+#. Counts blocks of today's study session the learner skipped.
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, other {#개 건너뜀}}"
+
+#. Counts blocks of today's study session the learner finished and skipped.
+#: src/today/today-session-card.tsx
+msgctxt "DIDXQf"
+msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
+msgstr "{completed, plural, other {#개 완료}} · {skipped, plural, other {#개 건너뜀}}"
+
 #: src/today/today-session-card.tsx
 msgctxt "zdB-3c"
 msgid "{count, plural, one {+# more} other {+# more}}"
@@ -14876,16 +14953,6 @@ msgstr "{studied} 학습 / 계획 {planned}"
 msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time} 학습 예정"
-
-#: src/today/today-week.tsx
-msgctxt "sq7Fxi"
-msgid "{studied} of {planned} studied this week"
-msgstr "이번 주 {studied} 학습 (계획: {planned})"
-
-#: src/today/today-week.tsx
-msgctxt "AmPZix"
-msgid "{done, number} of {total, plural, one {# day} other {# days}}"
-msgstr "{done, number}일 학습 (총 {total, plural, other {#일}})"
 
 #. A lesson left from an earlier day.
 #: src/today/use-row-label.ts

@@ -47,7 +47,7 @@ async function ExamPlan() {
           {PHASES.map((phase, index) => (
             <DaySegment
               key={phase.id}
-              minutes={phase.weight}
+              weight={phase.weight}
               state={index === 0 ? "current" : "ahead"}
             />
           ))}

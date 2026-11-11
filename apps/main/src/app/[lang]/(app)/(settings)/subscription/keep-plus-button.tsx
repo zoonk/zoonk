@@ -31,16 +31,18 @@ export function KeepPlusButton() {
         {t("Changed your mind? Keep Plus, and it renews as before.")}
       </p>
 
-      <Button
-        busy={pending}
-        className="w-max"
-        icon={<Undo2Icon aria-hidden="true" />}
-        onClick={keep}
-        size="sm"
-        variant="outline"
-      >
-        {t("Keep Plus")}
-      </Button>
+      <form action={() => keep()} className="contents">
+        <Button
+          busy={pending}
+          className="w-max"
+          icon={<Undo2Icon aria-hidden="true" />}
+          size="sm"
+          type="submit"
+          variant="outline"
+        >
+          {t("Keep Plus")}
+        </Button>
+      </form>
 
       {result === "failed" && (
         <p className="text-destructive-text text-sm" role="alert">

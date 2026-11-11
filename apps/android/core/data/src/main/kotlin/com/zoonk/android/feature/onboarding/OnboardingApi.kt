@@ -29,6 +29,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
@@ -79,6 +80,8 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         id: String,
     ): OnboardingDraft
+
+    suspend fun resume(session: AuthenticatedSession): OnboardingResume
 
     suspend fun readAgain(
         session: AuthenticatedSession,
@@ -269,6 +272,8 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         id: String,
     ) = perform { api.clients(session).onboarding.getGoalUnderstanding(UUID.fromString(id)) }
+
+    override suspend fun resume(session: AuthenticatedSession) = perform { api.clients(session).onboarding.getOnboardingResume() }
 
     override suspend fun readAgain(
         session: AuthenticatedSession,

@@ -42,6 +42,36 @@ describe(evaluateUsage, () => {
     });
   });
 
+  it("names the goals a learner follows before the new goals they started, since pausing one is the remedy", () => {
+    expect(
+      evaluateUsage({
+        costMicros: 0,
+        counts: counts({ activeGoals: 3, day: 3, month: 3, total: 3 }),
+        generated: false,
+        kind: "goal",
+        now: NOW,
+        tier: "free",
+      }),
+    ).toStrictEqual({
+      limit: { limit: 3, period: "total", resource: "activeGoals", tier: "free" },
+      status: "limitReached",
+    });
+
+    expect(
+      evaluateUsage({
+        costMicros: 0,
+        counts: counts({ activeGoals: 2, day: 3, month: 3, total: 3 }),
+        generated: false,
+        kind: "goal",
+        now: NOW,
+        tier: "free",
+      }),
+    ).toStrictEqual({
+      limit: { limit: 3, period: "day", resource: "goal", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
   it("only slows fair use down for the time left since the last use", () => {
     const claim = {
       costMicros: 0,

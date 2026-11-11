@@ -478,7 +478,14 @@ final class TodayStore {
   }
 
   private func openExtraBlock(sessionID: String, token: String) async throws -> StudyBlockOpening {
-    guard let blockID = try await api.addExtraBlock(token: token, sessionID: sessionID).id else {
+    guard
+      let block = try await api.addExtraBlock(
+        token: token, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+    else {
+      return .today(.init(kind: .today))
+    }
+
+    guard let blockID = block.id else {
       throw DayChanged()
     }
 

@@ -15,6 +15,7 @@ final class OnboardingStore {
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private let clients: APIClientFactory
   @ObservationIgnored private let session: SessionStore
+  @ObservationIgnored private var drafts: [String: Resource<OnboardingDraft>] = [:]
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
   @ObservationIgnored private var revealDays: [String: Resource<PlanRevealRead>] = [:]
@@ -52,37 +53,55 @@ final class OnboardingStore {
     }
   }
 
-  func understand(goal: String) async throws -> OnboardingDraft {
+  /// The new draft's id, once its card has been read, so the card opens on it.
+  func understand(goal: String) async throws -> String {
     try await ensureSession()
-    let draft = try await cache.onboardingWrite { [api] identity in
+    let created = try await cache.onboardingWrite { [api] identity in
       try await api.understand(goal: goal, token: identity.bearerToken)
     }
 
     resume.invalidate()
-    return draft
+    await draft(id: created.id).load()
+    return created.id
   }
 
-  /// Reading starts nothing.
-  func understanding(id: String) async throws -> OnboardingDraft {
-    guard let token = session.authenticatedSession?.bearerToken else {
-      throw CancellationError()
+  /// A goal typed and not confirmed yet. Its room for goals changes when the learner's goals or
+  /// plan do, and with the account a guest signs up for. Reading it starts nothing.
+  func draft(id: String) -> Resource<OnboardingDraft> {
+    if let resource = drafts[id] {
+      return resource
     }
 
-    return try await api.understanding(id: id, token: token)
+    let resource: Resource<OnboardingDraft> = cache.resource(
+      audience: .signedIn, domains: [.goals, .userSubscription]
+    ) { [api] session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.understanding(id: id, token: session.bearerToken)
+    }
+
+    drafts[id] = resource
+    return resource
   }
 
-  func readAgain(id: String) async throws -> OnboardingDraft {
-    try await cache.onboardingWrite { [api] identity in
+  func readAgain(id: String) async throws {
+    let shown = draft(id: id).revision
+    let restarted = try await cache.onboardingWrite { [api] identity in
       try await api.readAgain(id: id, token: identity.bearerToken)
     }
+
+    show(restarted, since: shown)
   }
 
+  /// A save that fails may still have landed, so the card reads its draft again.
   func revise(
     draftID: String,
     field: UnderstoodField,
     goal: Int,
     value: String?
-  ) async throws -> OnboardingDraft {
+  ) async throws {
     var edit: [String: Any] = [
       "field": field.rawValue, "value": value.map { $0 as Any } ?? NSNull(),
     ]
@@ -95,8 +114,30 @@ final class OnboardingStore {
       Components.Schemas.OnboardingDraftEdit.self,
       from: JSONSerialization.data(withJSONObject: edit))
 
-    return try await cache.onboardingWrite { [api] identity in
-      try await api.revise(id: draftID, edit: draftEdit, token: identity.bearerToken)
+    let card = draft(id: draftID)
+    let shown = card.revision
+
+    do {
+      let revised = try await cache.onboardingWrite { [api] identity in
+        try await api.revise(id: draftID, edit: draftEdit, token: identity.bearerToken)
+      }
+
+      show(revised, since: shown)
+    } catch let failure as OnboardingError {
+      card.invalidate()
+      throw failure
+    }
+  }
+
+  /// The answer holds the learner's change, but a read that landed, or was owed, while the write ran
+  /// may have a newer room for goals, so the card then reads its draft again.
+  private func show(_ written: OnboardingDraft, since revision: Int) {
+    let card = draft(id: written.id)
+    let isOutdated = card.revision != revision || card.isInvalidated
+    card.update { _ in written }
+
+    if isOutdated {
+      card.invalidate()
     }
   }
 
@@ -169,10 +210,14 @@ final class OnboardingStore {
         timeZone: timeZone))
   }
 
-  func startWaitingGoal(_ goal: LearnerWaitingGoal) async throws -> String {
+  /// `pausing` pauses that goal in the same write; a start the server refuses pauses nothing.
+  func startWaitingGoal(_ goal: LearnerWaitingGoal, pausing pausedGoalID: String? = nil)
+    async throws -> String
+  {
     var input: Components.Schemas.GoalCreateInput = try PracticeJSON.recode(goal.input)
     input.timeZone = TimeZone.current.identifier
-    return try await create(input)
+    input.pauseGoalId = pausedGoalID
+    return try await create(input, alsoInvalidating: pausedGoalID == nil ? [] : [.learnerModel])
   }
 
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
@@ -463,8 +508,12 @@ final class OnboardingStore {
     onboarding(goalID: goalID).invalidate()
   }
 
-  private func create(_ input: Components.Schemas.GoalCreateInput) async throws -> String {
-    let response = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+  private func create(
+    _ input: Components.Schemas.GoalCreateInput, alsoInvalidating domains: Set<DataDomain> = []
+  ) async throws -> String {
+    let response = try await cache.onboardingWrite(
+      invalidating: domains.union([.goals, .learningProfile])
+    ) {
       [api] identity in
       try await api.createGoals(input, token: identity.bearerToken)
     }

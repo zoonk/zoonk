@@ -1,11 +1,10 @@
 import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
-import { prisma } from "@zoonk/db";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
 import { mockWrittenListeningSet } from "./_test-utils/written-listening-set";
-import { createListeningSet } from "./create-listening-set";
 import { listeningContentSchema } from "./listening-content";
+import { writeExamListeningSet } from "./write-exam-listening-set";
 
 const PART = {
   count: 2,
@@ -32,12 +31,12 @@ async function inputs() {
   };
 }
 
-describe(createListeningSet, () => {
-  it("writes the part's recording from the exam's words and stores it unvoiced, each question on its skill", async () => {
+describe(writeExamListeningSet, () => {
+  it("writes the part's recording from the exam's words, each question on its skill", async () => {
     const { provenance, set } = mockWrittenListeningSet();
     const input = await inputs();
 
-    const setId = await createListeningSet({ ...input, serviceTier: "flex" });
+    const written = await writeExamListeningSet({ ...input, serviceTier: "flex" });
 
     expect(writeListeningSet).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -53,20 +52,15 @@ describe(createListeningSet, () => {
       }),
     );
 
-    const stored = await prisma.itemSet.findUniqueOrThrow({
-      include: { items: { orderBy: { setPosition: "asc" } } },
-      where: { id: setId ?? "" },
-    });
-
-    expect(stored).toMatchObject({
+    expect(written).toMatchObject({
       examBlueprintId: input.exam.blueprintId,
       kind: "audio",
       language: "pt",
-      mediaAssetId: null,
-      runId: provenance.runId,
+      optionLanguage: "en",
+      provenance: { runId: provenance.runId },
     });
 
-    expect(listeningContentSchema.parse(stored.content)).toMatchObject({
+    expect(listeningContentSchema.parse(written?.content)).toMatchObject({
       plays: 1,
       script: { turns: set.turns },
       scriptLanguage: "en",
@@ -74,25 +68,22 @@ describe(createListeningSet, () => {
       title: "Booking a hall",
     });
 
-    expect(stored.items.map((item) => item.skillId)).toStrictEqual([
+    expect(written?.items.map((item) => item.skillId)).toStrictEqual([
       input.skills[1]?.skillId,
       input.skills[0]?.skillId,
     ]);
   });
 
-  it("stores nothing when the writer couldn't make the set clean", async () => {
-    const { provenance } = mockWrittenListeningSet({
-      problems: ["Question 2's evidence isn't in the script."],
-    });
+  it("returns nothing when the writer couldn't make the set clean", async () => {
+    mockWrittenListeningSet({ problems: ["Question 2's evidence isn't in the script."] });
 
-    await expect(createListeningSet(await inputs())).resolves.toBeNull();
-    await expect(prisma.itemSet.count({ where: { runId: provenance.runId } })).resolves.toBe(0);
+    await expect(writeExamListeningSet(await inputs())).resolves.toBeNull();
   });
 
   it("writes nothing for a part whose exam has no listening skills", async () => {
     const input = await inputs();
 
-    await expect(createListeningSet({ ...input, skills: [] })).resolves.toBeNull();
+    await expect(writeExamListeningSet({ ...input, skills: [] })).resolves.toBeNull();
     expect(writeListeningSet).not.toHaveBeenCalled();
   });
 });

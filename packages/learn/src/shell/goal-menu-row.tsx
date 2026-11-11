@@ -25,14 +25,25 @@ export type WaitingGoal = {
 export function WaitingOption({
   goal,
   isStarting,
+  onMakeRoom,
   onStart,
 }: {
   goal: WaitingGoal;
   isStarting: boolean;
+  /** Null for a guest, whose locked row goes to sign-up. */
+  onMakeRoom: (() => void) | null;
   onStart: (waitingGoalId: string) => void;
 }) {
   const t = useExtracted("goalSwitcher");
   const routes = useLearnRoutes();
+
+  const lockedLine = onMakeRoom
+    ? t("Pause a goal or get Plus")
+    : t({
+        description:
+          "Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.",
+        message: "Starts with a free account",
+      });
 
   const content = (
     <>
@@ -43,15 +54,23 @@ export function WaitingOption({
           <GoalCountryName goal={goal} />
         </span>
         <span className="text-muted-foreground font-mono text-[0.71875rem]">
-          {goal.locked ? t("Starts with Plus") : t("Ready to start")}
+          {goal.locked ? lockedLine : t("Ready to start")}
         </span>
       </span>
     </>
   );
 
+  if (goal.locked && onMakeRoom) {
+    return (
+      <DropdownMenuItem className={GOAL_ROW_CLASS} onClick={onMakeRoom}>
+        {content}
+      </DropdownMenuItem>
+    );
+  }
+
   if (goal.locked) {
     return (
-      <DropdownMenuItem className={GOAL_ROW_CLASS} render={<LearnLink href={routes.upgrade} />}>
+      <DropdownMenuItem className={GOAL_ROW_CLASS} render={<LearnLink href={routes.signUp} />}>
         {content}
       </DropdownMenuItem>
     );

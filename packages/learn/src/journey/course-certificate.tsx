@@ -57,9 +57,9 @@ function ClaimAction({
 
   return (
     <SuggestionAction
+      action={claim}
       busy={isPending}
       icon={<AwardIcon aria-hidden="true" />}
-      onClick={claim}
       variant={variant}
     >
       {t("Get your certificate")}

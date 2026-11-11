@@ -97,6 +97,7 @@ describe("blueprint inputs while its writer waits", () => {
             input: { dailyMinutes: 20, goals: [] },
             testedLanguage: null,
             userId: arrivingUser.id,
+            viewer: { isGuest: false, tier: "free", userId: arrivingUser.id },
           });
         } else {
           await linkGoalToExamBlueprint({ examBlueprintId: blueprint.id, goalId: arrivingId });

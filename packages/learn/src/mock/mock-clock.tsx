@@ -102,12 +102,17 @@ export function ClockTitle({
       <h1
         className={cn(
           "sr-only",
-          clockBeside && "lg:not-sr-only lg:text-sm lg:leading-5 lg:font-medium lg:text-balance",
+          clockBeside &&
+            "with-aside:not-sr-only with-aside:text-sm with-aside:leading-5 with-aside:font-medium with-aside:text-balance",
         )}
       >
         {title(runner.view)}
       </h1>
-      <SectionClock className={cn(clockBeside && "lg:hidden")} deadline={deadline} place="header" />
+      <SectionClock
+        className={cn(clockBeside && "with-aside:hidden")}
+        deadline={deadline}
+        place="header"
+      />
     </div>
   );
 }

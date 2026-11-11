@@ -4,9 +4,10 @@ import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { StepDots } from "../../_components/step-dots";
 import { StepsBackButton, focusStepTitle } from "../../_components/steps";
+import { useTaskAsideShown } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
@@ -34,35 +35,37 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const { summary } = useSessionSummary();
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(NO_STEP_LEFT);
-  const opened = useRef(false);
-  const exists = !stopped && hasRewardsBeyondBrainPower(summary);
+  const asideShown = useTaskAsideShown();
+  const exists = !stopped && !asideShown && hasRewardsBeyondBrainPower(summary);
+  const shown = exists && open;
 
   const close = () => {
     setLeft((steps) => ({ ...steps, rewards: true }));
     setOpen(false);
   };
 
-  useKeyboardCallback("ArrowLeft", () => (open ? close() : false), { mode: "none", screen: true });
+  useKeyboardCallback("ArrowLeft", () => (shown ? close() : false), { mode: "none", screen: true });
 
-  useEffect(() => {
-    if (opened.current || open) {
-      opened.current = true;
+  const last = useRef({ open, shown });
+
+  // Before `TaskFrame`'s effect sends lost focus to the action bar, and only when the learner moved
+  // or the focused step left: the sidebar's toggle keeps focus when it swaps the steps.
+  useLayoutEffect(() => {
+    const moved = last.current.open !== open;
+    const swapped = last.current.shown !== shown;
+    last.current = { open, shown };
+
+    if (moved || (swapped && isFocusLost(document.activeElement))) {
       focusStepTitle(stepRef.current);
     }
-  }, [open, stepRef]);
+  }, [open, shown, stepRef]);
 
   const show = () => {
     setLeft((steps) => ({ ...steps, done: true }));
     setOpen(true);
   };
 
-  return {
-    close,
-    exists,
-    open: exists && open,
-    revisited: exists && open ? left.rewards : left.done,
-    show,
-  };
+  return { close, exists, open: shown, revisited: shown ? left.rewards : left.done, show };
 }
 
 function SummaryButtons({
@@ -91,12 +94,12 @@ function SummaryButtons({
       {stopped && <KeepGoingButton className={sharedRow} keepGoing={keepGoing} />}
 
       {continuesToRewards && (
-        <TaskMainButton className={cn("lg:hidden", ownRow)} onClick={rewards.show}>
+        <TaskMainButton className={cn("with-aside:hidden", ownRow)} onClick={rewards.show}>
           {t("Continue")}
         </TaskMainButton>
       )}
 
-      <FinishLink className={cn(continuesToRewards && "max-lg:hidden", ownRow)} />
+      <FinishLink className={cn(continuesToRewards && "without-aside:hidden", ownRow)} />
     </TaskActions>
   );
 }
@@ -161,7 +164,7 @@ export function SummarySteps() {
         }
         headerTitle={
           rewards.exists ? (
-            <StepDots className="lg:hidden" current={rewards.open ? 1 : 0} total={2} />
+            <StepDots className="with-aside:hidden" current={rewards.open ? 1 : 0} total={2} />
           ) : null
         }
       >

@@ -517,6 +517,73 @@ describe(pickPlacementItemSkills, () => {
     );
   });
 
+  it("writes replacements for an exam's retired questions, which placement no longer asks", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 1,
+      structure: ENEM_STRUCTURE,
+    });
+
+    const [skillId = ""] = skillIds;
+
+    await Promise.all([
+      itemFixture({
+        content: choiceContent(5),
+        examBlueprintId: blueprint.id,
+        retiredAt: new Date(),
+        skillId,
+      }),
+      itemFixture({ content: choiceContent(5), examBlueprintId: blueprint.id, skillId }),
+      itemFixture({
+        content: TYPED_CONTENT,
+        examBlueprintId: blueprint.id,
+        format: "typed",
+        skillId,
+      }),
+    ]);
+
+    await expect(
+      pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds }),
+    ).resolves.toMatchObject({ skills: [{ id: skillId, needsTyped: false }] });
+  });
+
+  it("keeps an exam's new questions out of the cases its learners meet in the skill's general ones", async () => {
+    const [{ blueprint, goal, skillIds }, otherExam] = await Promise.all([
+      examGoalWithSkills({ count: 1, structure: ENEM_STRUCTURE }),
+      examBlueprintFixture(),
+    ]);
+
+    const [skillId = ""] = skillIds;
+    const generalCase = "Um tributo lançado em 2025 foi arrecadado em 2026.";
+    const examCase = "Marília avalia registros internos com controles fracos.";
+
+    await Promise.all([
+      itemFixture({ content: { ...choiceContent(5), context: generalCase }, skillId }),
+      itemFixture({
+        content: { ...choiceContent(5), context: examCase },
+        examBlueprintId: blueprint.id,
+        skillId,
+      }),
+      itemFixture({
+        content: { ...choiceContent(5), context: "Outra prova, outro caso." },
+        examBlueprintId: otherExam.id,
+        skillId,
+      }),
+      itemFixture({
+        content: { ...choiceContent(5), context: "Um caso já retirado." },
+        retiredAt: new Date(),
+        skillId,
+      }),
+    ]);
+
+    const picked = await pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds });
+
+    expect(picked.skills.map((skill) => skill.id)).toStrictEqual([skillId]);
+
+    expect(picked.skills[0]?.usedSituations.toSorted()).toStrictEqual(
+      [examCase, generalCase].toSorted(),
+    );
+  });
+
   it("writes the exam's five-option questions for a skill whose exam questions have four", async () => {
     const { blueprint, goal, skillIds } = await examGoalWithSkills({
       count: 2,
@@ -688,7 +755,7 @@ describe(pickPlacementItemSkills, () => {
     ]);
   });
 
-  it("keeps the situations of questions the learner answered, first, when only unanswered ones count", async () => {
+  it("keeps the situations of questions the learner answered, and every newer one, when only unanswered ones count", async () => {
     const { blueprint, goal, skillIds } = await examGoalWithSkills({
       count: 1,
       structure: ENEM_STRUCTURE,
@@ -730,8 +797,9 @@ describe(pickPlacementItemSkills, () => {
     });
 
     expect(picked.skills.map((skill) => skill.id)).toStrictEqual([skillId]);
-    expect(picked.skills[0]?.usedSituations[0]).toBe(placementCase);
-    expect(picked.skills[0]?.usedSituations).toHaveLength(8);
-    expect(picked.skills[0]?.usedSituations[1]).toBe(newer.at(-1));
+
+    expect(picked.skills[0]?.usedSituations.toSorted()).toStrictEqual(
+      [placementCase, ...newer].toSorted(),
+    );
   });
 });

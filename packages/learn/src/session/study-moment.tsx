@@ -4,7 +4,7 @@ import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/butto
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, CircleStopIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { MomentReadouts } from "../_components/moment-readouts";
@@ -22,6 +22,7 @@ import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { MomentHeader } from "./moment-header";
+import { MomentCatchUp, MomentToday } from "./moment-today";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -32,10 +33,6 @@ import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
- * next.
- */
 function MomentEarned({
   lessonSeconds = 0,
   moment,
@@ -44,30 +41,19 @@ function MomentEarned({
   moment: StudyMomentView;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
   const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
     studied,
-    moment.comesBackOn &&
-      t("Review on {date}", {
-        date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
-          day: "numeric",
-          month: "short",
-          timeZone: "UTC",
-        }),
-      }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
-    moment.deferredLessonsCount > 0 &&
-      t(
-        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
-        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
-      ),
   ];
 
-  return <MomentReadouts brainPower={brainPower} facts={facts} />;
+  return (
+    <MomentReadouts brainPower={brainPower} facts={facts}>
+      <MomentCatchUp catchUp={moment.dayProgress.catchUp} />
+    </MomentReadouts>
+  );
 }
 
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
@@ -77,7 +63,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
 
   return (
     <section
-      className={cn("flex flex-col gap-2", !subject && "lg:hidden")}
+      className={cn("flex flex-col gap-2", !subject && "with-aside:hidden")}
       data-slot="study-moment-next"
     >
       <PageSectionLabel>{t("Up next")}</PageSectionLabel>
@@ -219,6 +205,8 @@ export function StudyMoment({
           <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
         </MomentHeader>
 
+        <MomentToday moment={moment} rows={queue.rows} />
+
         <DayMoment
           buddy={buddy}
           ceremony={moment.ceremony}
@@ -265,7 +253,7 @@ export function StudyMoment({
 
   return (
     <SessionFrame aside={aside}>
-      <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
+      <SessionHeader exitHref={exitHref} />
       {content}
     </SessionFrame>
   );

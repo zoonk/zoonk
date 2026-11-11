@@ -19,12 +19,14 @@
   "mistakes_open_lesson": "be76a779afa7e01fc16d37f3f2d472a9ff5d5ce03b2e9b086a98df1f04f8afb2",
   "mistakes_other_questions": "d67369990b54a9180396e270b0ef4cacc6f4ae010e42468d9dcaa5c253f0c3d5",
   "mistakes_practice": "e980141c5058597c0d5f7990dc6b0c85de2b038ccfc41c7a95fce707cc11ab4a",
-  "mistakes_practice_comes_back": "57754298d3382238cdfe0b7f817bde98540e41595b97755932a076e8b37b8e82",
+  "mistakes_practice_comes_back": "7b38db2be14a5a6d05534e4da7064082001cb2216173fd2fdb6cb939e2ff1775",
   "mistakes_practice_end": "b70100d7a78983d06f2da01a42d58fafe8fa78891db2f6deaf1cde8c10bf4130",
   "mistakes_practice_fixed": "51b9bd33e05b33539c8410ecdd45cc5029d6e3fd3fa8e6e7217039904a3223b5",
+  "mistakes_practice_missed_and_unreached": "e8c3fbbbd1969040b63172aee813277079d3cd2ebeee28ec6ed2a779262e2427",
   "mistakes_practice_skill": "dc83246435f3d1f1c1c0cdeb47c841708b77a02c2f909279779e2d836430211a",
   "mistakes_practice_title": "7edc98e6a1adcbc053fbde105dd356df5c21839db2def8015edf0f102e8cf02b",
   "mistakes_practice_tomorrow": "5689f6fcb408e2306d3985277548b275f5c865538a6e43aeb9483d16d32ebbe6",
+  "mistakes_practice_unreached": "c714b1bbf23d5512139c53fe47683f383c34bbf85df4b69c6a3cbb1967e60698",
   "mistakes_ready": "7bec09a6bc457fe1eb7c366f2568451e41ad52b458f446a5bffe999b496f0b15",
   "mistakes_show_more": "fc63f46d3e98564355dc30ec1c2fa22a93bbbc7989d81534a03d07236e5b4f8e",
   "mistakes_tab_fixed": "8f87c4e75da4f27442a89a6d4e4d6d1a49cc716e5fed1bb49b082c4b9b0f47bb",
@@ -36,7 +38,9 @@
     <string name="mistakes_practice_title">間違えたところの練習</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">練習を終える。ここまでの回答は結果に反映されます。</string>
-    <string name="mistakes_practice_comes_back">残りの問題は、記憶に定着しやすいよう日をあけて出題されます。</string>
+    <string name="mistakes_practice_comes_back">間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。</string>
+    <string name="mistakes_practice_missed_and_unreached">間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。</string>
+    <string name="mistakes_practice_unreached">残りの問題は引き続き練習できます。</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="other">%d件の間違いを克服しました</item>
     </plurals>

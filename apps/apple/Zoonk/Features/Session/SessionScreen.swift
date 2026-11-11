@@ -91,12 +91,14 @@ private struct SessionContent: View {
     let session = store.session(id: sessionID)
     let playback = router.playback
     let stopped = playback.stoppedSessionID == sessionID
+    let endsSession =
+      playback.moment.map { $0.sessionId == sessionID && $0.sessionCompleted } ?? false
 
     Group {
       // One branch for Today's day and the session's own, so the read landing keeps this screen
       // and a Start already tapped on it.
       if let day = shownDay(session, moment: playback.moment) {
-        if stopped || day.nextBlock == nil {
+        if stopped || (day.nextBlock == nil && !endsSession) {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
         } else {
           NextStopView(
@@ -126,8 +128,14 @@ private struct SessionContent: View {
           }
 
           // The buddy acts once, on the next stop's screen.
-          DayMomentSections(result: moment.day)
-            .environment(\.celebrates, false)
+          Group {
+            Section {
+              DayProgressBlock(moment: moment)
+            }
+
+            DayMomentSections(result: moment.day)
+          }
+          .environment(\.celebrates, false)
 
           Section {
             ProgressView()
@@ -285,23 +293,28 @@ private struct NextStopView: View {
         MomentSummary(moment: moment, title: title(of: moment))
       }
 
+      Section {
+        DayProgressBlock(moment: moment)
+          .celebratesOnce(id: moment)
+      }
+
       DayMomentSections(result: moment.day)
 
       if let chapter = moment.finishedChapter {
         FinishedChapterSection(chapter: chapter)
       }
-    }
+    } else {
+      Section {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "\(day.sessionBar.completed) of \(day.sessionBar.total) done",
+            tableName: "Session", comment: "How far the day's session is"
+          )
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
 
-    Section {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
-          tableName: "Session", comment: "How far the day's session is"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-
-        MeterParts(parts: day.meterParts)
+          DaySegments(segments: day.daySegments.map(\.mark))
+        }
       }
     }
   }
@@ -350,34 +363,47 @@ private struct NextStopView: View {
   private func actions(isHeld: Bool) -> some View {
     Section {
       VStack(spacing: 12) {
-        if let alternative, isLessonWorkRunning || isLessonUnavailable {
-          mainButton(alternativeTitle(alternative), block: alternative)
-        } else if let next, !isLessonUnavailable, !isHeld {
-          mainButton(continueTitle, block: next)
-            .disabled(isLessonWorkRunning)
-            .accessibilityFocused($isStartFocused)
-        }
-
-        // Main's `canStop`: a day with nothing done has nothing to stop.
-        if let sessionID, day.blocks.contains(where: \.isFinished) {
-          BusyButton(isBusy: isStopping, icon: .stop) {
-            stop(sessionID: sessionID)
+        if moment?.sessionCompleted == true {
+          BusyButton(isBusy: false, icon: .forward) {
+            router.playback.seeSummary()
           } label: {
-            Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            Text(
+              "See today's summary", tableName: "Session",
+              comment: "Moves on from the block that completed today's session")
           }
-          .buttonStyle(.outline)
+          .buttonStyle(.mainAction)
           .controlSize(.large)
           .buttonSizing(.flexible)
-          .disabled(isOpening)
-        }
+        } else {
+          if let alternative, isLessonWorkRunning || isLessonUnavailable {
+            mainButton(alternativeTitle(alternative), block: alternative)
+          } else if let next, !isLessonUnavailable, !isHeld {
+            mainButton(continueTitle, block: next)
+              .disabled(isLessonWorkRunning)
+              .accessibilityFocused($isStartFocused)
+          }
 
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't open the next step. Try again.", table: "Session",
-              comment: "Opening or stopping failed")
-          )
-          .typeStyle(.note)
+          // Main's `canStop`: a day with nothing done has nothing to stop.
+          if let sessionID, day.blocks.contains(where: \.isFinished) {
+            BusyButton(isBusy: isStopping, icon: .stop) {
+              stop(sessionID: sessionID)
+            } label: {
+              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            }
+            .buttonStyle(.outline)
+            .controlSize(.large)
+            .buttonSizing(.flexible)
+            .disabled(isOpening)
+          }
+
+          if failed {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open the next step. Try again.", table: "Session",
+                comment: "Opening or stopping failed")
+            )
+            .typeStyle(.note)
+          }
         }
       }
     }
@@ -769,12 +795,9 @@ private struct MomentSummary: View {
         .foregroundStyle(.mutedForeground)
       }
 
-      if let date = moment.comesBackOn.flatMap(studyDate) {
-        Text(
-          "Review on \(date.formatted(.studyDay.month(.abbreviated).day()))", tableName: "Session",
-          comment: "When the block's lesson comes back"
-        )
-        .foregroundStyle(.mutedForeground)
+      if let catchUp = moment.dayProgress.catchUp {
+        CatchUpLine(catchUp: catchUp)
+          .padding(.top, 8)
       }
     }
   }

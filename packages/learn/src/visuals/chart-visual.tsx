@@ -6,16 +6,19 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useFormatNumber } from "../_utils/use-format-number";
+import { clampLabelCenter } from "./_utils/category-labels";
 import {
+  type ColumnLayout,
   HEIGHT,
   LABEL_GAP,
   LABEL_LINE_HEIGHT,
-  type Layout,
   PADDING,
   fitsLabel,
-  getChartHeight,
   getLayout,
 } from "./_utils/chart-layout";
+import { getTone } from "./_utils/series-tones";
+import { LABEL_FONT_SIZE, useTextScale } from "./_utils/use-text-scale";
+import { BarRows } from "./chart-bar-rows";
 
 const FALLBACK_WIDTH = 318;
 const GROUP_SHARE = 0.68;
@@ -24,17 +27,7 @@ const MIN_POINT_LABEL_BAND = 45;
 const LABEL_OFFSET = 16;
 const DOT_RADIUS = 3.5;
 
-const SERIES_TONES = [
-  { fill: "fill-viz-accent", stroke: "stroke-viz-accent", swatch: "bg-viz-accent" },
-  { fill: "fill-viz-secondary", stroke: "stroke-viz-secondary", swatch: "bg-viz-secondary" },
-  { fill: "fill-viz-highlight", stroke: "stroke-viz-highlight", swatch: "bg-viz-highlight" },
-] as const;
-
-function getTone(index: number) {
-  return SERIES_TONES[index % SERIES_TONES.length] ?? SERIES_TONES[0];
-}
-
-function Grid({ layout, width }: { layout: Layout; width: number }) {
+function Grid({ layout, width }: { layout: ColumnLayout; width: number }) {
   return layout.yTicks.map((tick) => {
     const y = layout.y.toPixel(tick.value);
 
@@ -61,30 +54,41 @@ function Grid({ layout, width }: { layout: Layout; width: number }) {
   });
 }
 
-function CategoryLabels({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
+function CategoryLabels({
+  layout,
+  visual,
+  width,
+}: {
+  layout: ColumnLayout;
+  visual: ChartVisual;
+  width: number;
+}) {
   const { lines, step } = layout.labels;
 
-  return visual.categories.map((category, index) =>
-    index % step === 0 ? (
+  return visual.categories.map((category, index) => {
+    const label = lines[index] ?? [category];
+    const x = clampLabelCenter({ lines: label, width, x: layout.center(index) });
+
+    return index % step === 0 ? (
       <text
         className="fill-muted-foreground"
         key={category}
         textAnchor="middle"
-        x={layout.center(index)}
+        x={x}
         y={HEIGHT - PADDING.bottom + LABEL_OFFSET}
       >
-        {(lines[index] ?? [category]).map((line, lineIndex) => (
+        {label.map((line, lineIndex) => (
           <tspan
             dy={lineIndex === 0 ? 0 : LABEL_LINE_HEIGHT}
             key={`${line}-${String(lineIndex)}`}
-            x={layout.center(index)}
+            x={x}
           >
             {line}
           </tspan>
         ))}
       </text>
-    ) : null,
-  );
+    ) : null;
+  });
 }
 
 function Bars({
@@ -92,7 +96,7 @@ function Bars({
   unit,
   visual,
 }: {
-  layout: Layout;
+  layout: ColumnLayout;
   unit: string | null;
   visual: ChartVisual;
 }) {
@@ -146,7 +150,7 @@ function Lines({
   unit,
   visual,
 }: {
-  layout: Layout;
+  layout: ColumnLayout;
   unit: string | null;
   visual: ChartVisual;
 }) {
@@ -255,16 +259,19 @@ export function ChartVisualView({
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const { ref, width: boxWidth } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const scale = useTextScale(ref);
+  const width = boxWidth / scale;
   const { numberUnit, valueLabel } = placeChartUnit(visual);
 
   const layout = getLayout({
     formatTick: (tick) => format(tick, { compact: true, unit: numberUnit ?? undefined }),
+    formatValue: (value) => format(value, { unit: numberUnit ?? undefined }),
     visual,
     width,
   });
 
-  const height = getChartHeight(layout);
+  const sideways = layout.orientation === "horizontal";
 
   return (
     <figure
@@ -279,29 +286,36 @@ export function ChartVisualView({
 
       <div className="flex flex-col gap-1">
         <p aria-hidden="true" className="text-muted-foreground text-xs">
-          {valueLabel}
+          {sideways ? visual.categoryLabel : valueLabel}
         </p>
 
-        <div className="w-full" ref={ref}>
+        <div className="w-full text-xs" ref={ref}>
           <svg
             aria-hidden="true"
-            className="block overflow-visible text-xs tabular-nums select-none"
-            height={height}
-            viewBox={`0 0 ${width} ${height}`}
-            width={width}
+            className="block overflow-visible tabular-nums select-none"
+            fontSize={LABEL_FONT_SIZE}
+            height={layout.height * scale}
+            viewBox={`0 0 ${width} ${layout.height}`}
+            width={boxWidth}
           >
-            <Grid layout={layout} width={width} />
-            {visual.chart === "bar" ? (
-              <Bars layout={layout} unit={numberUnit} visual={visual} />
+            {layout.orientation === "horizontal" ? (
+              <BarRows layout={layout} unit={numberUnit} visual={visual} width={width} />
             ) : (
-              <Lines layout={layout} unit={numberUnit} visual={visual} />
+              <>
+                <Grid layout={layout} width={width} />
+                {visual.chart === "bar" ? (
+                  <Bars layout={layout} unit={numberUnit} visual={visual} />
+                ) : (
+                  <Lines layout={layout} unit={numberUnit} visual={visual} />
+                )}
+                <CategoryLabels layout={layout} visual={visual} width={width} />
+              </>
             )}
-            <CategoryLabels layout={layout} visual={visual} />
           </svg>
         </div>
 
         <p aria-hidden="true" className="text-muted-foreground text-center text-xs">
-          {visual.categoryLabel}
+          {sideways ? valueLabel : visual.categoryLabel}
         </p>
       </div>
 

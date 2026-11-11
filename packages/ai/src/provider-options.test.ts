@@ -104,6 +104,83 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual(["anthropic/claude-haiku-5.5"]);
   });
 
+  it("names each provider's reasoning when a fallback reasons at its own level", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: [{ model: "anthropic/claude-sonnet-5.5", reasoning: "high" }],
+        model: "openai/gpt-6.1-terra",
+        reasoning: "low",
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      anthropic: { effort: "high" },
+      gateway: {
+        models: ["anthropic/claude-sonnet-5.5"],
+        order: ["openai", "azure", "google", "anthropic", "vertex"],
+      },
+      openai: { reasoningEffort: "low" },
+    });
+  });
+
+  it("leaves reasoning to the call when the models that can answer share it", () => {
+    const fallbackModels = [{ model: "anthropic/claude-sonnet-5.5", reasoning: "high" }] as const;
+
+    expect(
+      buildProviderOptions({
+        fallbackModels,
+        model: "openai/gpt-6.1-terra",
+        reasoning: "low",
+        useFallback: false,
+      }),
+    ).toStrictEqual({
+      gateway: { models: [], order: ["openai", "azure", "google", "anthropic", "vertex"] },
+    });
+
+    expect(
+      buildProviderOptions({
+        fallbackModels: [...fallbackModels, "openai/gpt-6-luna"],
+        model: "anthropic/claude-opus-5.5",
+        reasoning: "high",
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      gateway: {
+        models: ["anthropic/claude-sonnet-5.5", "openai/gpt-6-luna"],
+        order: ["anthropic", "vertex", "openai", "azure", "google"],
+      },
+    });
+  });
+
+  it("refuses a chain whose reasoning the gateway can't set per model", () => {
+    const sonnetAtHigh = { model: "anthropic/claude-sonnet-5.5", reasoning: "high" } as const;
+
+    expect(() =>
+      buildProviderOptions({
+        fallbackModels: [sonnetAtHigh],
+        model: "anthropic/claude-opus-5.5",
+        reasoning: "low",
+        useFallback: true,
+      }),
+    ).toThrow("anthropic");
+
+    expect(() =>
+      buildProviderOptions({
+        fallbackModels: [sonnetAtHigh],
+        model: "openai/gpt-6.1-terra",
+        useFallback: true,
+      }),
+    ).toThrow("openai/gpt-6.1-terra");
+
+    expect(() =>
+      buildProviderOptions({
+        fallbackModels: [sonnetAtHigh],
+        model: "google/gemini-3.8-flash",
+        reasoning: "low",
+        useFallback: true,
+      }),
+    ).toThrow("google/gemini-3.8-flash");
+  });
+
   it("keeps provider order when fallback routing has no fallback models", () => {
     expect(
       buildProviderOptions({ fallbackModels: [], model: "openai/gpt-6-sol", useFallback: true }),

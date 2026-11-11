@@ -170,12 +170,6 @@ struct LessonVerdictView: View {
         comment: "A missed question returns at the end of the lesson")
     }
 
-    if let reviewAt = result.nextReviewAt {
-      return LocalizedStringResource(
-        "Review on \(reviewAt.formatted(.dateTime.day().month(.abbreviated)))", table: "Player",
-        comment: "When the lesson's idea comes back for review")
-    }
-
     return nil
   }
 

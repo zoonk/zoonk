@@ -1,5 +1,9 @@
 import { getGoalLimitReason } from "@/lib/goals/goal-limit-reason";
-import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
+import {
+  getAllowanceCacheTag,
+  getGoalsCacheTag,
+  getOnboardingDraftsCacheTag,
+} from "@zoonk/core/cache-tags";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { getSession } from "@zoonk/core/users/session";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
@@ -23,7 +27,11 @@ export async function loadStartView(draftId: string | null) {
   const session = await getSession();
 
   if (session) {
-    cacheTag(getGoalsCacheTag(session.user.id), getAllowanceCacheTag(session.user.id));
+    cacheTag(
+      getGoalsCacheTag(session.user.id),
+      getAllowanceCacheTag(session.user.id),
+      getOnboardingDraftsCacheTag(session.user.id),
+    );
   }
 
   const [draft, goalLimit] = await Promise.all([loadDraft(draftId), findGoalStartLimit()]);

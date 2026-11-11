@@ -97,12 +97,12 @@ describe("practice once the plan's lessons are done", () => {
       prisma.studySessionBlock.updateMany({ data: { status: "completed" }, where: { sessionId } });
 
     await finishAll();
-    await addExtraStudyBlock({ sessionId });
+    await addExtraStudyBlock({ input: {}, sessionId });
     await finishAll();
-    await addExtraStudyBlock({ sessionId });
+    await addExtraStudyBlock({ input: {}, sessionId });
     await finishAll();
 
-    await expect(addExtraStudyBlock({ sessionId })).resolves.toMatchObject({
+    await expect(addExtraStudyBlock({ input: {}, sessionId })).resolves.toMatchObject({
       block: {
         estimatedMinutes: 9,
         extra: true,

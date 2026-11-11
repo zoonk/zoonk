@@ -7,19 +7,19 @@ import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
 
 enum class GoalLimitReason {
+    ActiveGoals,
     DailyExplanations,
     DailyGoals,
     Guest,
     GuestBlocked,
     MonthlyExplanations,
     MonthlyGoals,
-    OneActiveGoal,
     SignUpRequired,
     SlowDown,
     ;
 
     /** Lifted by Plus, not by waiting. */
-    val isPlusLimit get() = this == OneActiveGoal || this == MonthlyGoals
+    val isPlusLimit get() = this == ActiveGoals || this == MonthlyGoals
 
     val needsAccount get() = this == Guest || this == GuestBlocked || this == SignUpRequired
 }
@@ -64,7 +64,7 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
             val monthly = limit.period == "month"
             when {
                 limit.tier == "guest" -> GoalLimitReason.Guest
-                limit.resource == "activeGoals" -> GoalLimitReason.OneActiveGoal
+                limit.resource == "activeGoals" -> GoalLimitReason.ActiveGoals
                 limit.resource == "explanation" -> if (monthly) GoalLimitReason.MonthlyExplanations else GoalLimitReason.DailyExplanations
                 else -> if (monthly) GoalLimitReason.MonthlyGoals else GoalLimitReason.DailyGoals
             }
@@ -122,26 +122,26 @@ fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
             goal.monthlyLimit?.let { goal.usedThisMonth >= it } == true -> "month"
             else -> null
         }
-    val resource =
+    val limit =
         when {
-            period != null -> "goal"
-            activeGoals.limit?.let { activeGoals.used >= it } == true -> "activeGoals"
+            activeGoals.limit?.let { activeGoals.used >= it } == true -> UsageLimit("total", "activeGoals", tier.value)
+            period != null -> UsageLimit(period, "goal", tier.value)
             else -> return null
         }
-    return Refusal.Limit(UsageLimit(period ?: "total", resource, tier.value)).goalLimitReason()
+    return Refusal.Limit(limit).goalLimitReason()
 }
 
 @Composable
 fun goalLimitMessage(reason: GoalLimitReason): String =
     stringResource(
         when (reason) {
+            GoalLimitReason.ActiveGoals -> R.string.onboarding_limit_active_goals
             GoalLimitReason.DailyExplanations -> R.string.onboarding_limit_daily_explanations
             GoalLimitReason.DailyGoals -> R.string.onboarding_limit_daily_goals
             GoalLimitReason.Guest -> R.string.onboarding_limit_guest
             GoalLimitReason.GuestBlocked -> R.string.onboarding_limit_guest_blocked
             GoalLimitReason.MonthlyExplanations -> R.string.onboarding_limit_monthly_explanations
             GoalLimitReason.MonthlyGoals -> R.string.onboarding_limit_monthly_goals
-            GoalLimitReason.OneActiveGoal -> R.string.onboarding_limit_one_active_goal
             GoalLimitReason.SignUpRequired -> R.string.onboarding_limit_sign_up_required
             GoalLimitReason.SlowDown -> R.string.onboarding_limit_slow_down
         },

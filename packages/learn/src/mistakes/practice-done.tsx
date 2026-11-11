@@ -12,7 +12,7 @@ import { MomentAfterCeremony, type MomentCeremony } from "../session/moment-cere
 import { MomentHeader } from "../session/moment-header";
 import { PendingMoment } from "../session/pending-moment";
 import { TaskMainLink } from "../shell/task-frame";
-import { type MistakePracticeSummary } from "./mistake-practice-state";
+import { type MistakePracticeSummary, type PracticeEndNote } from "./mistake-practice-state";
 
 function BackBar({ backHref }: { backHref: string }) {
   const t = useExtracted();
@@ -70,10 +70,29 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
   );
 }
 
+function PracticeEndDetail({ note }: { note: PracticeEndNote | null }) {
+  const t = useExtracted();
+
+  if (note === "missed") {
+    return t("The ones you missed come back another day, when they stick better.");
+  }
+
+  if (note === "missedAndUnreached") {
+    return t("The ones you missed come back another day. The rest are still ready to practice.");
+  }
+
+  if (note === "unreached") {
+    return t("The rest are still ready to practice.");
+  }
+
+  return null;
+}
+
 export function PracticeDone({
   backHref,
   buddy,
   fixed,
+  note,
   reached,
   renderCeremony,
   summary,
@@ -81,21 +100,18 @@ export function PracticeDone({
   backHref: string;
   buddy?: LearnBuddy | null;
   fixed: number;
+  note: PracticeEndNote | null;
   reached: Reached;
   renderCeremony?: MomentCeremony;
   summary: MistakePracticeSummary | null;
 }) {
   const t = useExtracted();
   const ceremony = summary?.ceremony ?? null;
-  const comesBack = summary ? summary.correct < summary.total : fixed === 0;
 
   return (
     <MomentAfterCeremony moments={summary} render={renderCeremony}>
       <TaskBody>
-        <MomentHeader
-          detail={comesBack && t("The rest come back another day, when they stick better.")}
-          title={t("Practice done")}
-        >
+        <MomentHeader detail={note && <PracticeEndDetail note={note} />} title={t("Practice done")}>
           <PracticeEarned fixed={fixed} summary={summary} />
         </MomentHeader>
 

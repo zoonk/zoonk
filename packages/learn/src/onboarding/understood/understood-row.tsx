@@ -194,28 +194,28 @@ function ChoiceDates({
   }
 
   return (
-    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+    <form className="mt-1.5 flex flex-wrap items-center gap-2">
       {offered.map((date) => (
         <Button
           disabled={isSaving}
           focusableWhenDisabled
-          key={date}
-          onClick={() =>
+          formAction={() =>
             startSaving(async () => {
               setFailed(false);
               const { data: saved } = await safeAsync(() => onSave(date));
               setFailed(!saved);
             })
           }
+          key={date}
           size="sm"
-          type="button"
+          type="submit"
           variant="outline"
         >
           {formatDate(date, "short")}
         </Button>
       ))}
       {failed && <ChangeSaveError />}
-    </div>
+    </form>
   );
 }
 

@@ -4,30 +4,30 @@ import {
   type ExtractPastQuestionsParams,
   type PastQuestion,
 } from "@zoonk/ai/tasks/items/past-questions";
-import { checkItem } from "@zoonk/core/library/items/checks";
 import { checkPastQuestion } from "@zoonk/core/library/items/past-question-checks";
 import { PAST_QUESTIONS_SCORE_CATEGORIES } from "./score-categories";
 
 function checkQuestions(output: string, input: ExtractPastQuestionsParams): CodeCheckResult {
   const { questions } = JSON.parse(output) as { questions: PastQuestion[] };
 
-  const checked = questions.map((question, index) => ({
-    itemLocator: `questions[${index}].item (question ${question.number})`,
-    problems: [
-      ...checkItem({
-        expectedFormat: input.format,
-        item: question.item,
+  const checked = questions.map((written, index) => {
+    const { problems, question } = checkPastQuestion({
+      paperText: input.paper.text,
+      question: written,
+      target: {
+        format: input.format,
         language: input.language,
         optionCount: input.optionCount ?? null,
-      }),
-      ...checkPastQuestion({
-        paperText: input.paper.text,
-        question,
         skillCount: input.skills.length,
-      }),
-    ].map((problem) => `Question ${question.number}: ${problem}`),
-    question,
-  }));
+      },
+    });
+
+    return {
+      itemLocator: `questions[${index}].item (question ${question.number})`,
+      problems: problems.map((problem) => `Question ${question.number}: ${problem}`),
+      question,
+    };
+  });
 
   const passing = checked.filter((entry) => entry.problems.length === 0);
 

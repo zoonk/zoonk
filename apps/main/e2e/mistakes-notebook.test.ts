@@ -139,4 +139,39 @@ test.describe("Mistakes notebook", () => {
 
     await page.context().close();
   });
+
+  test("a mistake missed in practice waits for tomorrow, and the ones a stopped run never reached stay ready", async ({
+    browser,
+  }) => {
+    const { user } = await createMistakeLearner({ causes: ["trap", "guess"] });
+    const page = await openAs(browser, user);
+
+    await page.goto("/mistakes");
+    await page.getByRole("link", { name: /^Practice mistakes/u }).click();
+    await page.getByRole("radio", { name: "Wrong answer" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect(
+      page.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
+    ).toBeVisible();
+
+    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+
+    const done = page.getByRole("status").filter({ hasText: "Practice done" });
+
+    await expect(
+      done.getByText(
+        "The ones you missed come back another day. The rest are still ready to practice.",
+      ),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: /^Back(?! to)/u }).click();
+    await expect(page.getByText("1 ready to practice")).toBeVisible();
+    await expect(page.getByText("1 available tomorrow")).toBeVisible();
+
+    await page.getByRole("link", { name: /^Practice mistakes/u }).click();
+    await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();
+
+    await page.context().close();
+  });
 });

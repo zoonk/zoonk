@@ -30,6 +30,7 @@ import {
   type WaitingGoal,
   WaitingOption,
 } from "./goal-menu-row";
+import { MakeRoomSheet, type WaitingStart, useMakeRoom } from "./make-room-sheet";
 
 type SwitcherGoal = {
   dailyMinutes: number;
@@ -172,6 +173,7 @@ export function GoalSwitcher({
   explanationHref,
   exploreHref,
   goals,
+  hasAccount,
   newGoalHref,
   onSelect,
   onStartWaiting,
@@ -182,11 +184,13 @@ export function GoalSwitcher({
   explanationHref: string;
   exploreHref: string;
   goals: SwitcherGoal[];
+  /** An account's locked waiting goal offers to pause a goal for it; a guest's goes to sign-up. */
+  hasAccount: boolean;
   newGoalHref: string;
   /** Resolves to whether the goal is now the active one. */
   onSelect: (goalId: string) => Promise<boolean>;
-  /** Resolves to whether the waiting goal started. */
-  onStartWaiting: (waitingGoalId: string) => Promise<boolean>;
+  /** Resolves to whether the waiting goal started, after pausing `pauseGoalId` for it when given. */
+  onStartWaiting: (start: WaitingStart) => Promise<boolean>;
   placement?: SwitcherPlacement;
   waitingGoals: WaitingGoal[];
 }) {
@@ -197,6 +201,7 @@ export function GoalSwitcher({
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
   const [selectedId, setSelectedId] = useOptimistic(activeGoalId ?? followed[0]?.id ?? null);
+  const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
   const selected = followed.find((goal) => goal.id === selectedId) ?? followed[0];
 
   if (!selected && explanations.length === 0) {
@@ -220,91 +225,106 @@ export function GoalSwitcher({
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-busy={isPending}
-        className={TRIGGER_CLASS[placement]}
-        title={selected?.displayName}
-      >
-        {selected ? (
-          <GoalMark goal={selected} />
-        ) : (
-          <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
-        )}
-        <span className="min-w-0 flex-1 truncate text-left">
-          {selected?.displayName ?? t("Start a goal")}
-        </span>
-        {/* After the title, so the trigger's name starts with the words on screen. */}
-        {selected && <GoalCountryName goal={selected} />}
-        {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
-        <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-      </DropdownMenuTrigger>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          aria-busy={isPending}
+          className={TRIGGER_CLASS[placement]}
+          title={selected?.displayName}
+        >
+          {selected ? (
+            <GoalMark goal={selected} />
+          ) : (
+            <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
+          )}
+          <span className="min-w-0 flex-1 truncate text-left">
+            {selected?.displayName ?? t("Start a goal")}
+          </span>
+          {/* After the title, so the trigger's name starts with the words on screen. */}
+          {selected && <GoalCountryName goal={selected} />}
+          {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
+          <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
-        collisionPadding={16}
-        sideOffset={6}
-      >
-        {selected && (
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
+        <DropdownMenuContent
+          className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
+          collisionPadding={16}
+          sideOffset={6}
+        >
+          {selected && (
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
 
-            <DropdownMenuRadioGroup onValueChange={select} value={selected.id}>
-              {followed.map((goal) => (
-                <GoalOption goal={goal} key={goal.id} />
+              <DropdownMenuRadioGroup onValueChange={select} value={selected.id}>
+                {followed.map((goal) => (
+                  <GoalOption goal={goal} key={goal.id} />
+                ))}
+              </DropdownMenuRadioGroup>
+
+              {waitingGoals.map((goal) => (
+                <WaitingOption
+                  goal={goal}
+                  isStarting={isPending}
+                  key={goal.id}
+                  onMakeRoom={hasAccount ? () => room.open(goal) : null}
+                  onStart={(waitingGoalId) =>
+                    startTransition(async () => {
+                      const { data: started } = await safeAsync(() =>
+                        onStartWaiting({ waitingGoalId }),
+                      );
+
+                      if (!started) {
+                        showErrorToast(startFailed);
+                      }
+                    })
+                  }
+                />
               ))}
-            </DropdownMenuRadioGroup>
+            </DropdownMenuGroup>
+          )}
 
-            {waitingGoals.map((goal) => (
-              <WaitingOption
-                goal={goal}
-                isStarting={isPending}
-                key={goal.id}
-                onStart={(waitingGoalId) =>
-                  startTransition(async () => {
-                    const { data: started } = await safeAsync(() => onStartWaiting(waitingGoalId));
+          {explanations.length > 0 && (
+            <DropdownMenuGroup>
+              {selected && <DropdownMenuSeparator className="-mx-1.5" />}
+              <DropdownMenuLabel className={MENU_LABEL_CLASS}>
+                {t("Quick explanations")}
+              </DropdownMenuLabel>
 
-                    if (!started) {
-                      showErrorToast(startFailed);
-                    }
-                  })
-                }
-              />
-            ))}
-          </DropdownMenuGroup>
-        )}
+              {explanations.map((goal) => (
+                <ExplanationOption
+                  goal={goal}
+                  href={`${explanationHref}/${goal.id}`}
+                  key={goal.id}
+                />
+              ))}
+            </DropdownMenuGroup>
+          )}
 
-        {explanations.length > 0 && (
-          <DropdownMenuGroup>
-            {selected && <DropdownMenuSeparator className="-mx-1.5" />}
-            <DropdownMenuLabel className={MENU_LABEL_CLASS}>
-              {t("Quick explanations")}
-            </DropdownMenuLabel>
+          <DropdownMenuSeparator className="-mx-1.5" />
 
-            {explanations.map((goal) => (
-              <ExplanationOption goal={goal} href={`${explanationHref}/${goal.id}`} key={goal.id} />
-            ))}
-          </DropdownMenuGroup>
-        )}
+          <DropdownMenuItem
+            className={cn(MENU_ROW_CLASS, "pr-2")}
+            render={<LearnLink href={newGoalHref} />}
+          >
+            <PlusIcon aria-hidden="true" className="text-muted-foreground" />
+            {t("Start a new goal")}
+          </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="-mx-1.5" />
+          <DropdownMenuItem
+            className={cn(MENU_ROW_CLASS, "pr-2")}
+            render={<LearnLink href={exploreHref} />}
+          >
+            <LayoutGridIcon aria-hidden="true" className="text-muted-foreground" />
+            {t("Explore courses")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        <DropdownMenuItem
-          className={cn(MENU_ROW_CLASS, "pr-2")}
-          render={<LearnLink href={newGoalHref} />}
-        >
-          <PlusIcon aria-hidden="true" className="text-muted-foreground" />
-          {t("Start a new goal")}
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          className={cn(MENU_ROW_CLASS, "pr-2")}
-          render={<LearnLink href={exploreHref} />}
-        >
-          <LayoutGridIcon aria-hidden="true" className="text-muted-foreground" />
-          {t("Explore courses")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <MakeRoomSheet
+        goals={followed.filter((goal) => goal.status === "active")}
+        isStarting={isPending}
+        room={room}
+      />
+    </>
   );
 }

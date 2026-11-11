@@ -33,16 +33,18 @@ export function ExportDataButton() {
           description={t("Everything Zoonk keeps about you, as one file")}
           label={t("Download my data")}
         >
-          <Button
-            aria-label={t("Download my data")}
-            busy={isPending}
-            icon={<DownloadIcon aria-hidden="true" />}
-            onClick={download}
-            size="sm"
-            variant="outline"
-          >
-            {t("Download")}
-          </Button>
+          <form action={() => download()} className="contents">
+            <Button
+              aria-label={t("Download my data")}
+              busy={isPending}
+              icon={<DownloadIcon aria-hidden="true" />}
+              size="sm"
+              type="submit"
+              variant="outline"
+            >
+              {t("Download")}
+            </Button>
+          </form>
         </SettingRow>
       </ListGroup>
 

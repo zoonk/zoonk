@@ -20,6 +20,12 @@ export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
   const messages: Record<GoalLimitReason, string> = {
+    activeGoals: t({
+      description:
+        "Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
+      message:
+        "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
+    }),
     browserBlocked: t({
       description:
         "Shown when automated bot protection refuses to let this browser continue without an account.",
@@ -38,9 +44,6 @@ export function useGoalLimitMessage() {
     ),
     monthlyGoals: t(
       "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-    ),
-    oneActiveGoal: t(
-      "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
     ),
     signUpRequired: t("Create your free account to continue."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),

@@ -852,6 +852,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
     XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
     XCTAssertEqual(summary.block?.minutes.left, 20)
+    XCTAssertEqual(summary.block?.sessionBar, SessionBar(completed: 1, total: 3))
+    XCTAssertEqual(
+      summary.block?.dayProgress,
+      DayProgress(
+        catchUp: DayProgress.CatchUp(doneToday: 2, lessonsLeft: 5), lead: .done,
+        lessonsComing: false, percent: 33))
     XCTAssertEqual(summary.day?.missionMoment?.completed, [.somethingNew])
     XCTAssertEqual(summary.day?.missionMoment?.fullMeal.bonus, 50)
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
@@ -912,7 +918,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
           "answer": {"kind": "check", "optionId": "wrong"},
           "result": {"answerText": "Lyon", "checked": true, "correctAnswer": "Paris",
             "corrections": [], "expected": null, "feedback": "That's Lyon.", "isCorrect": false,
-            "keyPoints": null, "nextReviewAt": null, "savedMistake": false, "score": null,
+            "keyPoints": null, "savedMistake": false, "score": null,
             "spelling": null}}]
         """#
     )
@@ -1121,7 +1127,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
         #"""
         {"stepId":"\#($0)","isCorrect":true,"answeredAt":"2026-11-07T08:00:00.000Z","answer":null,
          "result":{"answerText":null,"checked":true,"correctAnswer":null,"corrections":[],
-         "expected":null,"feedback":null,"isCorrect":true,"keyPoints":null,"nextReviewAt":null,
+         "expected":null,"feedback":null,"isCorrect":true,"keyPoints":null,
          "savedMistake":false,"score":null,"spelling":null}}
         """#
       }.joined(separator: ",") + "]"
@@ -1384,7 +1390,7 @@ private actor HeldAnswersTransport: ClientTransport {
       return (
         HTTPResponse(status: .ok, headerFields: headerFields),
         HTTPBody(
-          #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": \#(input.answer.optionId == "right"), "keyPoints": null, "nextReviewAt": null, "savedMistake": false, "score": null, "spelling": null}"#
+          #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": \#(input.answer.optionId == "right"), "keyPoints": null, "savedMistake": false, "score": null, "spelling": null}"#
         )
       )
     case "createLibraryLessonCompletion":
@@ -1431,12 +1437,12 @@ private struct JSONTransport: ClientTransport {
 
 private let sessionLessonCompletion = #"""
   {"brainPower": 62, "ceremony": null, "certificates": [], "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
-   "isFirstCompletion": true, "nextReviewAt": null, "seconds": 120, "totalBrainPower": 400,
+   "isFirstCompletion": true, "seconds": 120, "totalBrainPower": 400,
    "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
-     "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
-     "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions": ["somethingNew"],
+     "ceremony": null, "certificates": [], "checkpoint": null,
+     "blocks":[],"dayProgress":{"catchUp":{"doneToday":2,"lessonsLeft":5},"lead":"done","lessonsComing":false,"percent":33},"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,
@@ -1573,7 +1579,7 @@ private actor OpeningStartTransport: ClientTransport {
     return (
       HTTPResponse(status: .ok, headerFields: headers),
       HTTPBody(
-        #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": true, "keyPoints": null, "nextReviewAt": null, "savedMistake": false, "score": null, "spelling": null}"#
+        #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": true, "keyPoints": null, "savedMistake": false, "score": null, "spelling": null}"#
       )
     )
   }

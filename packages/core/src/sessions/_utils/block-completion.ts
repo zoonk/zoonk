@@ -17,7 +17,6 @@ type BlockResult = Pick<
   | "brainPower"
   | "capsulesOpened"
   | "checkpoint"
-  | "comesBackOn"
   | "correct"
   | "finishedChapter"
   | "netScore"

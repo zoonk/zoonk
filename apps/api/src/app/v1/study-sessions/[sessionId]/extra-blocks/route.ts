@@ -1,19 +1,23 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studySessionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { readPathParams } from "@/lib/request-input";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
+import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
 async function createExtraBlock(
-  _request: Request,
+  request: NextRequest,
   context: RouteContext<"/v1/study-sessions/[sessionId]/extra-blocks">,
 ) {
-  const path = await readPathParams(context, studySessionPathParamsSchema);
+  const [body, path] = await Promise.all([
+    readBody(request, studySessionTimeZoneInputSchema),
+    readPathParams(context, studySessionPathParamsSchema),
+  ]);
 
-  const result = await addExtraStudyBlock({ sessionId: path.sessionId });
+  const result = await addExtraStudyBlock({ input: body, sessionId: path.sessionId });
 
   if (result.status !== "ready") {
     return studySessionError(result);

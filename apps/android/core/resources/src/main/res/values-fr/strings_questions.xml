@@ -45,7 +45,6 @@
   "questions_right": "4acd626fc55fb211811947bd768239dcff5276dc1b38cb8a2b3c31035683bca8",
   "questions_right_answer": "e32799071478125a7b4e167b0fab6b3e8d646b2fde629f8f1a3746c39138ba66",
   "questions_saved": "0f2ccaa15be860feada4e95afddb3515bedc8e7b4b55ea9207e6af3af247b90f",
-  "questions_saved_tomorrow": "6a7897076a23d551f2a3c648f8804dd0c38ce94aa2a096b12a2e1399df7d881f",
   "questions_set_place_audio": "0cb1e6c34d76db93e1971b026d5c75520f9fc08639c3155a1f35493268f94f03",
   "questions_set_place_case": "481bd1ae7faad6c7cb4b7b9db548e5f0f96931a091220aad85a8059d538a5325",
   "questions_set_place_chart": "b175089c78fff89c711985fdb15ae56a4a3771a3df16d0099a5d4a6d08d9d35b",
@@ -116,7 +115,6 @@
         <item quantity="other">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
     </plurals>
     <string name="questions_saved">Ajouté à ton carnet d’erreurs</string>
-    <string name="questions_saved_tomorrow">Ajouté à ton carnet d’erreurs · à revoir demain</string>
     <string name="questions_show_less">Afficher moins</string>
     <string name="questions_read_again">Tout relire</string>
     <string name="questions_set_place_audio">Question %1$d sur %2$d pour cet enregistrement</string>

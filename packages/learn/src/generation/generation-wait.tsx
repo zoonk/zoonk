@@ -223,11 +223,13 @@ export function GenerationFailureNotice({
         <NoticeCardTitle>{copy.title}</NoticeCardTitle>
         <NoticeCardDescription>{copy.description}</NoticeCardDescription>
         {retry && (
-          <NoticeCardActions>
-            <Button onClick={retry} size="sm">
-              {copy.action}
-            </Button>
-          </NoticeCardActions>
+          <form action={() => retry()} className="contents">
+            <NoticeCardActions>
+              <Button size="sm" type="submit">
+                {copy.action}
+              </Button>
+            </NoticeCardActions>
+          </form>
         )}
       </NoticeCardContent>
     </NoticeCard>

@@ -14736,7 +14736,7 @@
         }
       },
       "post": {
-        "description": "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free learners follow one active goal); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). The first new goal becomes the one the tabs show. Research starts for exam and learn goals.",
+        "description": "Creates one goal, or several that share the day's minutes (the first is the main goal and gets twice each other's share), each with an empty plan the planner fills. Each goal counts against the learner's plan (free accounts follow up to 3 active goals at once; guests start one); goals the plan allows are created even when a later one isn't, and 429 means none was (403 `SIGN_UP_REQUIRED` for a guest once the day's AI budget all guests share is spent). `pauseGoalId` makes room by pausing one of the learner's active goals in the same write, so a refused start pauses nothing. The first new goal becomes the one the tabs show. Research starts for exam and learn goals.",
         "operationId": "createGoals",
         "security": [
           {
@@ -24496,6 +24496,16 @@
             "description": "Study session ID"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudySessionTimeZone"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "The first block added, where the learner goes on",
@@ -24538,7 +24548,7 @@
             }
           },
           "409": {
-            "description": "Not available now; details.reason says why. Error code: EXTRA_TIME_UNAVAILABLE.",
+            "description": "Not available now; details.reason says why. `dayOver` means the session's day is over (a screen left open past midnight): go to Today, where the learner can add time to today. Error code: EXTRA_TIME_UNAVAILABLE.",
             "content": {
               "application/json": {
                 "schema": {
@@ -28678,6 +28688,12 @@
             "items": {
               "$ref": "#/components/schemas/GoalDraft"
             }
+          },
+          "pauseGoalId": {
+            "description": "An active goal of the learner's to pause in the same write that creates these goals, freeing a slot when their active goals are at their plan's limit. It's paused only when a goal is created, so a refused start pauses nothing; an id that isn't one of the learner's active goals pauses nothing",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "sourceIds": {
             "description": "Material the learner uploaded with the goal (`POST /v1/uploads`), linked to the main goal so its research and curriculum read it",
@@ -36551,31 +36567,6 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                "timeMachine": {
-                  "nullable": true,
-                  "description": "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-                  "type": "object",
-                  "properties": {
-                    "answer": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "answeredAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "isCorrect": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "answer",
-                    "answeredAt",
-                    "isCorrect"
-                  ],
-                  "additionalProperties": false
-                },
                 "unit": {
                   "nullable": true,
                   "description": "A math problem's unit, shown next to the answer field",
@@ -36628,7 +36619,6 @@
                 "select",
                 "set",
                 "skillId",
-                "timeMachine",
                 "unit",
                 "visual"
               ],
@@ -40978,13 +40968,6 @@
               "additionalProperties": false
             }
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the skill behind the screen comes back for review",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "savedMistake": {
             "type": "boolean",
             "description": "A wrong answer went to the mistakes notebook"
@@ -41010,7 +40993,6 @@
           "feedback",
           "isCorrect",
           "keyPoints",
-          "nextReviewAt",
           "savedMistake",
           "score",
           "spelling"
@@ -44956,13 +44938,6 @@
             "type": "boolean",
             "description": "The word was heard as expected"
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the word comes back; null once it's learned",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "transcript": {
             "type": "string",
             "description": "What we heard"
@@ -44971,7 +44946,6 @@
         "required": [
           "attemptId",
           "isCorrect",
-          "nextReviewAt",
           "transcript"
         ],
         "additionalProperties": false
@@ -45703,7 +45677,7 @@
             "items": {
               "$ref": "#/components/schemas/LearnerSummaryWaitingGoal"
             },
-            "description": "Goals typed together with the learner's goals that their plan didn't start (Free and guests follow one at a time), kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived"
+            "description": "Goals typed together with the learner's goals that their plan didn't start, kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived"
           }
         },
         "required": [
@@ -75144,13 +75118,6 @@
             "type": "boolean",
             "description": "False for a replay: it completes, but doesn't count as a new lesson learned"
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the lesson's skills come back for review, the earliest first",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "planReveal": {
             "nullable": true,
             "description": "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
@@ -75205,7 +75172,6 @@
           "finishedChapter",
           "incorrectCount",
           "isFirstCompletion",
-          "nextReviewAt",
           "planReveal",
           "seconds",
           "studyBlock",
@@ -75251,6 +75217,9 @@
               "$ref": "#/components/schemas/StudyBlock"
             },
             "description": "The authoritative queue after completion. A completion may shorten or extend its unstarted lesson tail to fit today's time."
+          },
+          "dayProgress": {
+            "$ref": "#/components/schemas/StudyDayProgress"
           },
           "deferredLessonsCount": {
             "type": "integer",
@@ -75405,13 +75374,6 @@
               "total"
             ],
             "additionalProperties": false
-          },
-          "comesBackOn": {
-            "nullable": true,
-            "description": "The learner-local day a lesson's capsule opens",
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "completedMissions": {
             "type": "array",
@@ -75617,6 +75579,7 @@
         "required": [
           "blockId",
           "blocks",
+          "dayProgress",
           "deferredLessonsCount",
           "finishedChapterId",
           "goalId",
@@ -75628,7 +75591,6 @@
           "ceremony",
           "certificates",
           "checkpoint",
-          "comesBackOn",
           "completedMissions",
           "correct",
           "finishedChapter",
@@ -76038,6 +76000,64 @@
           }
         ],
         "type": "object"
+      },
+      "StudyDayProgress": {
+        "type": "object",
+        "properties": {
+          "catchUp": {
+            "nullable": true,
+            "description": "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind), for a small line under the block's facts. Static: it holds what the completion read, so never count it down on the client. Null when nothing is carried, on a welcome-back session, once a free exam plan's first week is over, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
+            "type": "object",
+            "properties": {
+              "doneToday": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Carried lessons completed since the session's learner-local day began. A lesson the learner tested out of leaves `lessonsLeft` without counting here."
+              },
+              "lessonsLeft": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Carried lessons still to do: the number Today shows as lessons to catch up."
+              }
+            },
+            "required": [
+              "doneToday",
+              "lessonsLeft"
+            ],
+            "additionalProperties": false
+          },
+          "lead": {
+            "type": "string",
+            "enum": [
+              "done",
+              "left",
+              "open",
+              "complete"
+            ],
+            "description": "Which count leads the day's line: `done` shows `sessionBar.completed` of `sessionBar.total` while the blocks done are no more than the blocks left (the midpoint included); `left` shows the blocks left once past the midpoint, with the done count as its caption; `open` shows only the blocks done, because the day holds time for lessons not on the queue yet and has no honest total; `complete` once the session is complete."
+          },
+          "lessonsComing": {
+            "type": "boolean",
+            "description": "On `open`, whether the held lessons are being written now and join the queue on their own, so the line can say more are coming. False when they wait for the learner to ask for them, and outside `open`."
+          },
+          "percent": {
+            "nullable": true,
+            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Its meter draws one equal segment per counted block, so bar, count and percent agree.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "catchUp",
+          "lead",
+          "lessonsComing",
+          "percent"
+        ],
+        "additionalProperties": false,
+        "description": "Today's session progress for a block's end screen, decided in core so every client says the same thing."
       },
       "StudySessionMinutes": {
         "type": "object",
@@ -76844,13 +76864,6 @@
               "additionalProperties": false
             }
           },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the skill behind the screen comes back for review",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "savedMistake": {
             "type": "boolean",
             "description": "A wrong answer went to the mistakes notebook"
@@ -76881,14 +76894,13 @@
           "feedback",
           "isCorrect",
           "keyPoints",
-          "nextReviewAt",
           "savedMistake",
           "score",
           "spelling",
           "answerText"
         ],
         "additionalProperties": false,
-        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -83589,12 +83601,12 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+                "description": "Actual recorded study seconds for this goal this week, summed before rounding down to minutes"
               },
               "targetMinutes": {
                 "type": "number",
                 "minimum": 0,
-                "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "description": "This goal's weekly time budget, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
                 "example": 105
               }
             },
@@ -83603,7 +83615,7 @@
               "targetMinutes"
             ],
             "additionalProperties": false,
-            "description": "This week's study time against the learner's weekly budget, in the goal's week: the same numbers as Today's `week.time`"
+            "description": "This goal's study time this week against its weekly budget, in the goal's week"
           },
           "writtenPractice": {
             "nullable": true,
@@ -89912,9 +89924,9 @@
       "OnboardingDraft": {
         "type": "object",
         "properties": {
-          "activeGoalLimit": {
+          "activeGoalsLeft": {
             "nullable": true,
-            "description": "How many goals the learner's plan follows at once (1 on Free and for guests), null on Plus. The card's goals past it are Plus's: show them locked with the subscribe call to action and leave them out of POST /goals. They stay on the draft, so they unlock here once the learner has Plus",
+            "description": "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Show and send only this many of the card's first goals; the rest are Plus's, shown locked with the subscribe call to action, and stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, show the plan's limit instead of confirming. When `goalId` is set, open that goal's setup instead.",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -89964,7 +89976,7 @@
           }
         },
         "required": [
-          "activeGoalLimit",
+          "activeGoalsLeft",
           "generationId",
           "goalId",
           "id",
@@ -91305,7 +91317,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Past a free exam goal's free week, a day counts only what its saved or planned session holds, and a later day counts nothing. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91324,17 +91336,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -91351,41 +91363,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           }
         },
         "required": [
@@ -91454,9 +91443,10 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "description": "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
             "type": "string",
             "enum": [
+              "dayOver",
               "nothingToStudy",
               "plusRequired",
               "sessionNotFinished"
@@ -91673,7 +91663,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day; 0 on a day without study. Past a free exam goal's free week, a day counts only what its saved or planned session holds, and a later day counts nothing. Exact minutes may be fractional; format them as a human duration for display.",
                       "example": 15
                     },
                     "hitGoal": {
@@ -91692,17 +91682,17 @@
                         "rest",
                         "study"
                       ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
                     },
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
-                      "description": "Any study counts, partial days included"
+                      "description": "Any study of this goal counts, partial days included"
                     }
                   },
                   "required": [
@@ -91719,41 +91709,18 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
               "days",
-              "nextStudyDate",
-              "time"
+              "nextStudyDate"
             ],
             "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+            "description": "The session's goal's week, never another goal's: the week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
           },
           "blocks": {
             "type": "array",
@@ -95027,31 +94994,6 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                "timeMachine": {
-                  "nullable": true,
-                  "description": "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-                  "type": "object",
-                  "properties": {
-                    "answer": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "answeredAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "isCorrect": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "answer",
-                    "answeredAt",
-                    "isCorrect"
-                  ],
-                  "additionalProperties": false
-                },
                 "unit": {
                   "nullable": true,
                   "description": "A math problem's unit, shown next to the answer field",
@@ -95104,7 +95046,6 @@
                 "select",
                 "set",
                 "skillId",
-                "timeMachine",
                 "unit",
                 "visual"
               ],
@@ -97103,6 +97044,12 @@
             "items": {
               "$ref": "#/components/schemas/GoalDraftOutput"
             }
+          },
+          "pauseGoalId": {
+            "description": "An active goal of the learner's to pause in the same write that creates these goals, freeing a slot when their active goals are at their plan's limit. It's paused only when a goal is created, so a refused start pauses nothing; an id that isn't one of the learner's active goals pauses nothing",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "sourceIds": {
             "description": "Material the learner uploaded with the goal (`POST /v1/uploads`), linked to the main goal so its research and curriculum read it",

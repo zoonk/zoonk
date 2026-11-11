@@ -23,7 +23,7 @@ import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionPlanItem } from "./session-plan-item";
-import { type StudySessionView, toStudySessionView } from "./session-view";
+import { EMPTY_WEEK, type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 async function loadDayOutlines({
@@ -111,7 +111,9 @@ export async function loadStudySessionView({
 }): Promise<StudySessionView> {
   const [basics, week, blockViews] = await Promise.all([
     loadSessionBasics({ initialDay, session: storedSession }),
-    loadStudyWeek({ localDate: weekDate, userId }),
+    storedSession.goal
+      ? loadStudyWeek({ goal: storedSession.goal, localDate: weekDate })
+      : EMPTY_WEEK,
     loadSessionBlockViews({
       blueprint,
       readLessonStates,

@@ -390,8 +390,8 @@ private actor FakeQuestionBlockClient: QuestionBlockClient {
 }
 
 private let completionJSON = #"""
-  {"blockId":"block","brainPower":10,"capsulesOpened":0,"ceremony":null,"certificates":[],"checkpoint":null,"comesBackOn":null,
-   "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
+  {"blockId":"block","brainPower":10,"capsulesOpened":0,"ceremony":null,"certificates":[],"checkpoint":null,
+   "blocks":[],"dayProgress":{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33},"sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},"next":null,"completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
    "netScore":null,"nextBlockId":null,"reached":{"energy":null,"level":null},"sessionBar":{"completed":1,"total":3},
    "reminderOffer":null,"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":1,"total":1}
   """#

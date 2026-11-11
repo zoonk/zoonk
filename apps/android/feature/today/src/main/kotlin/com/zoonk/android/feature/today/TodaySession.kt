@@ -52,10 +52,12 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
+import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.feature.subscription.PlusMark
@@ -70,6 +72,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -78,6 +81,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
 import kotlinx.datetime.toJavaLocalDate
@@ -98,8 +102,8 @@ internal fun LazyListScope.todaySession(
 
     freshStartItem(model)
 
-    if (day.steps.isNotEmpty() && (day.steps.size >= 2 || day.heldMinutes > 0)) {
-        item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
+    if (drawsDayProgress(day.sessionBar.total, held = day.heldMinutes > 0)) {
+        item(key = "segments", contentType = "segments") { TodayDayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
     if (wide && (day.steps.isNotEmpty() || model.state == StudySession.State.WAITING)) {
@@ -192,7 +196,7 @@ private fun LazyListScope.sessionQueue(
     if (foldsDone) {
         item(key = "fold-done", contentType = "fold") {
             FoldRow(
-                label = pluralStringResource(R.plurals.today_done_count, queue.done.size, queue.done.size),
+                label = doneFoldLabel(queue.done),
                 done = true,
                 open = viewModel.doneOpen,
                 minutes = null,
@@ -517,13 +521,29 @@ private fun FoldRow(
     }
 }
 
+/** Skipped steps fold in with the done ones, so the row says which is which. */
 @Composable
-internal fun stepsDone(
-    done: Int,
-    total: Int,
-): String {
+private fun doneFoldLabel(done: List<DayStep>): String {
+    val skipped = done.count { it.status == StudyBlock.Status.SKIPPED }
+    val completed = done.size - skipped
+    val completedText = pluralStringResource(R.plurals.today_done_count, completed, completed)
+    val skippedText = pluralStringResource(R.plurals.today_skipped_count, skipped, skipped)
+
+    return when {
+        skipped == 0 -> completedText
+        completed == 0 -> skippedText
+        else -> completedText + FACT_SEPARATOR + skippedText
+    }
+}
+
+@Composable
+internal fun stepsDone(bar: SessionBar): String {
     val locale = currentLocale()
-    return stringResource(R.string.today_steps_done, formatNumber(done.toDouble(), locale), formatNumber(total.toDouble(), locale))
+    return stringResource(
+        R.string.today_steps_done,
+        formatNumber(bar.completed.toDouble(), locale),
+        formatNumber(bar.total.toDouble(), locale),
+    )
 }
 
 @Composable
@@ -532,16 +552,14 @@ private fun DayMeta(
     status: ActionStatus,
     modifier: Modifier,
 ) {
-    val done = model.day.steps.count(DayStep::isFinished)
-
     // While Continue waits or failed, its words take the line, as main's meta does.
     Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
-            if (model.day.steps.isNotEmpty()) {
+            if (model.day.sessionBar.total > 0) {
                 Text(
-                    text = stepsDone(done, model.day.steps.size),
+                    text = stepsDone(model.day.sessionBar),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.zoonkType.data,

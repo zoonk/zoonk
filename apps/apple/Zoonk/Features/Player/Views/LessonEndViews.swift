@@ -98,8 +98,14 @@ struct LessonCompletionView: View {
         onReport: { showsSaveReport = true })
     case .saved:
       if let summary = completion.summary {
-        readouts(summary)
-          .celebratesOnce(id: summary)
+        Group {
+          readouts(summary)
+
+          if let block = summary.block {
+            DayProgressBlock(moment: block)
+          }
+        }
+        .celebratesOnce(id: summary)
       }
     }
   }
@@ -328,23 +334,14 @@ struct LessonCompletionView: View {
         }
       }
 
-      let facts = [studied(summary.seconds), review(summary.nextReviewAt)].compactMap { $0 }
-
-      if !facts.isEmpty {
-        Text(facts.joinedFacts())
+      if let studied = studied(summary.seconds) {
+        Text(studied)
           .typeStyle(.note.monospacedDigit())
           .foregroundStyle(.mutedForeground)
       }
 
-      if let block = summary.block, block.deferredLessonsCount > 0 {
-        Text(
-          "\(block.deferredLessonsCount) lessons moved to another day to fit your \(studyDuration(minutes: block.minutes.dailyGoal)) today.",
-          tableName: "Player",
-          comment:
-            "After a lesson is saved: lessons moved to another day so today's work fits the learner's daily time. The second argument is a duration like '4 hr'."
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+      if let catchUp = summary.block?.dayProgress.catchUp {
+        CatchUpLine(catchUp: catchUp)
       }
     }
   }
@@ -356,15 +353,6 @@ struct LessonCompletionView: View {
       localized: "\(progressLearningTime(seconds)) studied",
       table: "Player",
       comment: "The study time this lesson counted; the argument is a duration like '4 min'")
-  }
-
-  private func review(_ reviewAt: Date?) -> String? {
-    reviewAt.map {
-      String(
-        localized: "Review on \($0.formatted(.dateTime.day().month(.abbreviated)))",
-        table: "Player",
-        comment: "When the lesson's idea comes back for review")
-    }
   }
 }
 

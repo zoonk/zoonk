@@ -15,7 +15,7 @@ type LearningEventOutcome = Pick<
 
 type FinishedLearningEvent = LedgerIdentity & LearningEventOutcome & { endedAt: Date };
 
-function getLedgerLocalTime({ date, timeZone }: { date: Date; timeZone: string }) {
+export function getLedgerLocalTime({ date, timeZone }: { date: Date; timeZone: string }) {
   const localDate = getDateInTimeZone({ date, timeZone });
   return { hour: getHourInTimeZone({ date, timeZone }), localDate, weekday: localDate.getUTCDay() };
 }

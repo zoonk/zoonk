@@ -11,7 +11,7 @@ import {
 import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { useFormatDuration } from "../_utils/time-format";
-import { getBlockKind } from "../session/block-kind";
+import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
 import { DaySegment, type DaySegmentState } from "./day-segments";
@@ -21,7 +21,7 @@ export const DAY_SEGMENT_SLOT = "today-day-segment";
 
 /** Its hit area reaches past the thin bar so a finger can land on it. */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 basis-0 cursor-pointer rounded-[3px] outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-[3px] outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();
@@ -49,10 +49,6 @@ function useSegmentFacts() {
       return t("Done");
     }
 
-    if (state === "skipped") {
-      return t("Skipped");
-    }
-
     if (state === "ahead") {
       return time;
     }
@@ -70,19 +66,16 @@ function SegmentPopover({
   children,
   focusable,
   label,
-  weight,
 }: {
   children: React.ReactNode;
   focusable: boolean;
   label: string;
-  weight: number;
 }) {
   return (
     <PopoverTrigger
       aria-label={label}
       className={TRIGGER_CLASS}
       data-slot={DAY_SEGMENT_SLOT}
-      style={{ flexGrow: Math.max(1, weight) }}
       tabIndex={focusable ? 0 : -1}
     >
       {children}
@@ -115,34 +108,19 @@ function SegmentContent({
   );
 }
 
-export function BlockSegment({
-  block,
-  focusable,
-  share,
-  state,
-}: {
-  block: DayStep;
-  focusable: boolean;
-  share: number;
-  state: DaySegmentState;
-}) {
+export function BlockSegment({ focusable, part }: { focusable: boolean; part: DayStepPart }) {
   const blockTitle = useBlockTitle();
   const kindNote = useKindNote();
   const segmentFacts = useSegmentFacts();
-  const kind = getBlockKind(block);
-  const title = blockTitle(block);
-  const facts = segmentFacts({ block, state });
+  const title = blockTitle(part.block);
+  const facts = segmentFacts({ block: part.block, state: part.state });
 
   return (
     <Popover>
-      <SegmentPopover
-        focusable={focusable}
-        label={`${title}: ${facts}`}
-        weight={block.estimatedMinutes}
-      >
-        <DaySegment kind={kind} minutes={block.estimatedMinutes} share={share} state={state} />
+      <SegmentPopover focusable={focusable} label={`${title}: ${facts}`}>
+        <DaySegment kind={part.kind} share={part.share} state={part.state} />
       </SegmentPopover>
-      <SegmentContent facts={facts} kind={kind} note={kindNote(kind)} title={title} />
+      <SegmentContent facts={facts} kind={part.kind} note={kindNote(part.kind)} title={title} />
     </Popover>
   );
 }
@@ -160,8 +138,8 @@ export function HeldSegment({ minutes }: { minutes: number }) {
 
   return (
     <Popover>
-      <SegmentPopover focusable={false} label={`${title}: ${time}`} weight={minutes}>
-        <DaySegment kind="lesson" minutes={minutes} state="ahead" />
+      <SegmentPopover focusable={false} label={`${title}: ${time}`}>
+        <DaySegment kind="lesson" state="ahead" />
       </SegmentPopover>
       <SegmentContent facts={time} kind="lesson" note={note} title={title} />
     </Popover>

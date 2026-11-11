@@ -163,7 +163,7 @@ internal fun GoalLimitNotice(
 ) {
     if (!reason.isPlusLimit) return
 
-    if (reason != GoalLimitReason.OneActiveGoal) {
+    if (reason != GoalLimitReason.ActiveGoals) {
         PlusNotice(onSeePlus = onSeePlus, modifier = modifier, description = goalLimitMessage(reason))
         return
     }
@@ -197,7 +197,7 @@ internal fun ColumnScope.GoalLimitWall(
             style = MaterialTheme.typography.bodyMedium,
         )
         Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_see_plus)) }
-        if (reason == GoalLimitReason.OneActiveGoal) {
+        if (reason == GoalLimitReason.ActiveGoals) {
             OutlinedButton(
                 onClick = onOpenPlan,
                 modifier = Modifier.fillMaxWidth(),

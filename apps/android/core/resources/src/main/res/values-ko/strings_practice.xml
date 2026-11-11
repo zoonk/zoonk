@@ -23,11 +23,6 @@
   "practice_progress": "ec4a6c86d92a50fe9723f08d798007031c4708aa73b8de760a1c9cc06d187b89",
   "practice_save_error": "ef24919fed92ca180d002b565fa932de3f76cdd927edf1a7c25e2ee4a0f7aa78",
   "practice_save_error_repeat": "1b912e22001918f2f308c8b8fbae2ec9aa65940cc8c451f2ce7864d935e99e36",
-  "practice_time_machine_answered": "a358cd5debb54729f27b75f9ed3e30867aeb2c9c4485868d25f0e9a038221dc9",
-  "practice_time_machine_right_again": "4c1e107ef9ce67ba8e258d716d41b53d594455656e3247f4ea2d6d3290ea72df",
-  "practice_time_machine_right_before": "bb78692e0d3f30313510b0f0928a8f5ce68637b1a50eb003c2ab2976aab6ba74",
-  "practice_time_machine_seen": "284893bde76a0d74884c1409ab7bd9b0f021f45e2c558b6f6d2a07a892f7a685",
-  "practice_time_machine_tripped": "937ef08340f819902d619fb9ce77eefb5097fa22122e5f8612a88dd25538bca9",
   "practice_try_again": "abb96c63f3a375c87ae792cbf0fa3c24501d2a9a52cc32fbfcb0eea6fca316bf",
   "practice_undo": "93d9b3087ddab858838ce6a74c93aee37bed4870503408dd8f97c91ed82666bc",
   "practice_undo_failed": "40832f0839175f6c2e39e5253c16ed74a3aa948125ecb6eeab5db560165bc430"
@@ -63,13 +58,6 @@
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
     <string name="practice_net_hint">하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요.</string>
-    <!-- %1$s is a day and month, like October 8. -->
-    <string name="practice_time_machine_seen">이 문제를 %1$s에 봤어요.</string>
-    <string name="practice_time_machine_right_again">%1$s에 이어 이번에도 맞혔어요.</string>
-    <string name="practice_time_machine_right_before">%1$s에 맞혔던 문제예요. 지금 복습하면 더 오래 기억할 수 있어요.</string>
-    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
-    <string name="practice_time_machine_answered">%1$s에 “%2$s”(이)라고 답했어요.</string>
-    <string name="practice_time_machine_tripped">%1$s에 헷갈렸던 문제예요.</string>
     <string name="practice_pause_text">몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될 때가 많아요. 오늘 한 공부는 모두 의미가 있어요.</string>
     <string name="practice_pause_stop">오늘 학습 마치기</string>
     <string name="practice_pause_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
