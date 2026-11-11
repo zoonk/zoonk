@@ -409,6 +409,41 @@ describe("the learner opens a study block", () => {
     await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
   });
 
+  it("a tap from a day that's over goes back to Today for a step left unstarted, and goes on with one under way", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-09-20T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const [pending, active] = await Promise.all([
+      studySessionBlockFixture({ kind: "review", position: 0, sessionId: session.id }),
+      studySessionBlockFixture({
+        kind: "practice",
+        position: 1,
+        sessionId: session.id,
+        status: "active",
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(tap(pending)).resolves.toStrictEqual({
+      opening: { kind: "today" },
+      status: "ready",
+    });
+
+    await expect(readBlock(pending)).resolves.toMatchObject({ status: "pending" });
+
+    await expect(tap(active)).resolves.toStrictEqual({
+      opening: { blockId: active.id, kind: "session", sessionId: session.id },
+      status: "ready",
+    });
+  });
+
   it("opens nothing for a signed-out visitor or another learner's block", async () => {
     const { session } = await learnerSession();
     const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
