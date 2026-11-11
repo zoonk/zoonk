@@ -56,6 +56,24 @@ describe(getPlanChangedSince, () => {
     ).resolves.toStrictEqual({ changed: false, status: "ready" });
   });
 
+  it("sees a Focus test control written on the goal after the read", async () => {
+    const { goal, readAt } = await setup();
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    afterRead(readAt);
+
+    await prisma.goal.update({
+      data: { details: { focusTest: { pausedAt: new Date().toISOString() } } },
+      where: { id: goal.id },
+    });
+
+    vi.useRealTimers();
+
+    await expect(
+      getPlanChangedSince({ goalId: goal.id, since: readAt, watch: "plan" }),
+    ).resolves.toStrictEqual({ changed: true, status: "ready" });
+  });
+
   it("sees a lesson in the plan written after the read", async () => {
     const { goal, planned, readAt } = await setup();
 
