@@ -177,10 +177,12 @@ private fun MenuItems(
         }
         waiting.forEach { goal ->
             val name = goal.displayName
+            val draft = goal.input.goals.firstOrNull()
             DropdownMenuItem(
                 text = {
                     Column {
-                        Text(name)
+                        val spoken = goalSpokenName(name, draft?.targetLanguage, draft?.targetRegion)
+                        Text(name, Modifier.semantics { contentDescription = spoken })
                         Text(
                             text =
                                 stringResource(
