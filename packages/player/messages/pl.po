@@ -348,6 +348,7 @@ msgstr "Nie udało się wczytać środowiska: {runtime}. Sprawdź połączenie i
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3393,6 +3394,7 @@ msgid "I don't know yet"
 msgstr "Jeszcze nie wiem"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Dalej"
@@ -3774,6 +3776,81 @@ msgstr "Wpisano <strong>{answer}</strong> w odpowiedzi na „<question></questio
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "Wybrano <strong>{answer}</strong> w odpowiedzi na „<question></question>”"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "Więcej opcji"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "Zacznij od pierwszej mapy"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "Otwórz rozdział"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "Otwórz lekcję"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "sIR8OK"
+msgid "Chapter {number, number}"
+msgstr "Rozdział {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "w0NNz1"
+msgid "Lesson {number, number}"
+msgstr "Lekcja {number, number}"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "Gotowe"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Mapy myśli"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "Nie ma tu jeszcze map do nauki."
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "Przejdź do poprzedniej mapy"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} z {total, number}"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Na obrazku były błędy, więc pokazujemy mapę myśli w formie tekstu."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Otwórz na pełnym ekranie"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "Nie udało nam się połączyć z serwerem. Sprawdź połączenie z internetem."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
+msgstr "Ta mapa nie jest już dostępna."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

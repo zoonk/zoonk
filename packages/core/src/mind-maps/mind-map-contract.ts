@@ -125,6 +125,12 @@ const lessonMapGroupSchema = z
         description:
           "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, locked ones included",
       }),
+    lessonIds: z
+      .array(uuidSchema())
+      .meta({
+        description:
+          "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were",
+      }),
     locked: z
       .int()
       .min(0)

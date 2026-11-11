@@ -10,7 +10,6 @@ import {
 import { type UsageLedger } from "../entitlements/_utils/usage-ledger";
 import { openUsageLedgerInWrite } from "../entitlements/bundle-claims";
 import { type RefusedUsage } from "../entitlements/contract";
-import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
@@ -18,6 +17,7 @@ import {
   type ChapterMapAdmission,
   admitChapterMap,
   lockMindMapRows,
+  oweMindMapLaunches,
 } from "./_utils/admit-chapter-map";
 import { chapterMapClaims, sortBulkChapters, toAllowanceStop } from "./_utils/bulk-chapters";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
@@ -102,27 +102,6 @@ async function admitInOrder(
   return done.admitted;
 }
 
-/** In the admitting write, so a map is owed only if its claim commits. */
-function oweLaunches(
-  transaction: TransactionClient,
-  {
-    chapterIds,
-    launch,
-    userId,
-  }: { chapterIds: readonly string[]; launch: MindMapLaunch; userId: string },
-) {
-  const goalId = launch.analytics.goalId;
-
-  return oweFollowUps({
-    db: transaction,
-    followUps: chapterIds.map((chapterId) => ({
-      input: { chapterId, goalId, launch },
-      kind: "makeChapterMindMap" as const,
-    })),
-    userId,
-  });
-}
-
 async function admitAll({
   chapterIds,
   launch,
@@ -157,7 +136,7 @@ async function admitAll({
         return unchanged(result);
       }
 
-      await oweLaunches(transaction, {
+      await oweMindMapLaunches(transaction, {
         chapterIds: result.accepted,
         launch,
         userId: viewer.userId,

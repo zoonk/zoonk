@@ -20,6 +20,7 @@
   "limit_mind_maps_free_month": "be08d83a38702e38c9b5614b06844b8a3258c20304311e3a905fd158a8b37a60",
   "limit_mind_maps_guest": "30a0d924aac2056f65cc802228769023e668e22bee4690eeaf87c38b83f7d40f",
   "limit_mind_maps_plus": "ea5647892a39dbe76dbdd4e620acdcd50e177bf26cac48b2fb4bc82baa9bedef",
+  "limit_mind_maps_plus_month": "46ba759b92a25fae65d51fddc768a2648b30811c6a2727ae3d44581e08954f8e",
   "limit_outlines_free_day": "15787c6f8b3500979e7fe422cee1d47b85e202a14c191d2f72db8c1e8da22726",
   "limit_outlines_free_month": "259aecd2e43113b8dc3decfdc2ecf9170a1596754d5a9a3f6fabe0bf6853549c",
   "limit_outlines_guest": "246af2b330af523ae9418e3c18871bc45a48ea72122472de0aa4bc4f52358ca6",
@@ -45,6 +46,7 @@
     <string name="limit_lessons_free_day">今日の新しいレッスンはここまでです。明日また受けられます。Plusに登録すると、今すぐ続けられます。</string>
     <string name="limit_mind_maps_guest">アカウントなしで作れるマインドマップはここまでです。無料アカウントを作成すると、もっと作れます。</string>
     <string name="limit_mind_maps_plus">今日作れるマインドマップはここまでです。明日また作れます。</string>
+    <string name="limit_mind_maps_plus_month">今月のマインドマップの作成上限に達しました。来月また作成できます。</string>
     <string name="limit_mind_maps_free_month">今月作れるマインドマップはここまでです。来月また作れます。Plusに登録すると、今すぐ続けられます。</string>
     <string name="limit_mind_maps_free_day">今日作れるマインドマップはここまでです。明日また作れます。Plusに登録すると、今すぐ続けられます。</string>
     <string name="limit_outlines_guest">アカウントなしで事前に見られるトピックはここまでです。無料アカウントを作成すると、もっと見られます。</string>

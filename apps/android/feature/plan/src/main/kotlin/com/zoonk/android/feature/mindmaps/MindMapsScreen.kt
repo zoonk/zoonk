@@ -1,9 +1,12 @@
 package com.zoonk.android.feature.mindmaps
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,32 +15,47 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -45,8 +63,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.limitMessage
-import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -57,8 +73,11 @@ import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun MindMapsScreen(
@@ -94,23 +113,26 @@ internal fun MindMapsContent(
         is LoadState.Loaded -> {
             val maps = host.maps(goalId)
             val requests by maps.requests.collectAsStateWithLifecycle()
+            val saves by maps.saves.collectAsStateWithLifecycle()
+            val createAll by maps.createAll.collectAsStateWithLifecycle()
             val makeable = shown.value.chapters.any { it.status == GoalMindMap.Status.AVAILABLE }
+
+            FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
                     mindMaps = shown.value,
-                    requests = requests,
-                    cap = if (makeable) host.cap() else null,
-                    plus = host.plus(),
+                    state = MindMapsState(requests, saves, createAll, if (makeable) host.cap() else null, host.plus(), host.tier()),
                     actions =
                         MindMapsActions(
                             back = back,
                             keepStudying = { navigator.select(AppTab.Today) },
                             create = maps::create,
+                            createAll = maps::createAll,
+                            save = maps::save,
                             navigate = navigator::open,
                         ),
                     subject = subject,
-                    follow = { chapterId, mapShown -> FollowWhileOnItsWay(maps, chapterId, mapShown) },
                 )
             }
         }
@@ -135,132 +157,153 @@ internal fun MindMapsContent(
     }
 }
 
+/**
+ * One follower for the whole page while maps are on their way: the list again every 5 seconds while
+ * one is drawn, every 15 while only lessons are written, only while the screen is started.
+ */
+@Composable
+private fun FollowListWhileOnItsWay(
+    resource: Resource<GoalMindMaps>,
+    chapters: List<GoalMindMap>,
+    requests: Map<UUID, MindMapLocal>,
+) {
+    val every = listCadence(chapters, requests.values.any { it.pending }) ?: return
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(resource, lifecycle, every) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                delay(every)
+                resource.refresh()
+            }
+        }
+    }
+}
+
+/** How often the list asks again: drawing takes half a minute, writing lessons minutes; null when nothing is on its way. */
+internal fun listCadence(
+    chapters: List<GoalMindMap>,
+    pending: Boolean,
+): Duration? =
+    when {
+        pending || chapters.any { it.status == GoalMindMap.Status.DRAWING } -> 5.seconds
+        chapters.any { it.status == GoalMindMap.Status.WRITING_LESSONS } -> 15.seconds
+        else -> null
+    }
+
+/** What the page shows besides the list: taps on their way, the plan's cap on new maps, and the learner's plan. */
+internal data class MindMapsState(
+    val requests: Map<UUID, MindMapLocal> = emptyMap(),
+    val saves: Map<MindMapTarget, Boolean> = emptyMap(),
+    val createAll: CreateAll? = null,
+    val cap: Limit? = null,
+    val plus: Boolean = false,
+    val tier: LimitTier = LimitTier.Free,
+)
+
 internal data class MindMapsActions(
     val back: () -> Unit,
     val keepStudying: () -> Unit,
     val create: (UUID) -> Unit,
     val navigate: (AppRoute) -> Unit,
-)
+    val createAll: () -> Unit = {},
+    val save: (target: MindMapTarget, chapterId: UUID?, saved: Boolean) -> Unit = { _, _, _ -> },
+) {
+    fun study(
+        tab: StudyTab,
+        place: MapPlace? = null,
+    ) = navigate(AppRoute.MindMapStudy(tab.key, place?.start))
+}
 
 /**
- * Main's Mind maps page: a row for every chapter of the plan that can have a map, by subject in
- * the plan's order. It opens at [subject]'s group the first time, as main's `#key` does; a return
- * keeps where it was.
+ * Main's Mind maps page: the goal, Study, and three tabs (chapters' maps, lessons' maps and the saved
+ * ones), each a bounded index of the maps that exist; the chapters whose maps aren't made yet end the
+ * Chapters tab. It opens at the tab the server picks, and at [subject]'s chapters the first time, as
+ * main's `#key` does.
  */
 @Composable
 internal fun MindMapsPage(
     mindMaps: GoalMindMaps,
-    requests: Map<UUID, MindMapLocal>,
-    cap: Limit?,
-    plus: Boolean,
+    state: MindMapsState,
     actions: MindMapsActions,
     subject: String? = null,
-    follow: @Composable (UUID, MindMapShown) -> Unit = { _, _ -> },
+    initialTab: StudyTab? = null,
+    notMadeShown: Boolean = false,
 ) {
+    var picked by rememberSaveable { mutableStateOf(initialTab?.key) }
+    val tab = StudyTab.of(picked) ?: mindMaps.firstTab.tab
+    var opened by rememberSaveable { mutableStateOf(listOfNotNull(subject)) }
+    var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown) }
+    val decks = StudyTab.entries.associateWith { mindMaps.deck(it).size }
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = if (subject != null && tab == StudyTab.Chapters) 2 else 0)
     val title = stringResource(R.string.navigation_mind_maps)
-    val groups = groupBySubject(mindMaps.chapters)
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = groups.listIndexOf(subject) ?: 0)
-    val drawn = mindMaps.chapters.count { it.status == GoalMindMap.Status.READY }
+
+    val tabActions =
+        TabActions(
+            page = actions,
+            state = state,
+            toggleSubject = { key -> opened = if (key in opened) opened - key else opened + key },
+            showAll = { showAll = showAll + tab.key },
+            toggleNotMade = { notMadeOpen = !notMadeOpen },
+        )
 
     PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                    item(key = "hero", contentType = "hero") { MindMapsHero(mindMaps, drawn, cap, plus, actions.navigate) }
-
-                    if (groups.isEmpty()) {
-                        item(key = "empty", contentType = "empty") { MindMapsEmpty(actions, Modifier.padding(top = 24.dp)) }
+                    item(key = "hero", contentType = "hero") {
+                        MindMapsHeader(mindMaps, study = { actions.study(tab) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
                     }
+                    stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
 
-                    groups.forEach { group -> mapGroup(group, requests, cap, plus, actions, follow) }
+                    val shown = IndexState(opened.toSet(), tab.key in showAll)
+                    when (tab) {
+                        StudyTab.Chapters -> chaptersTab(mindMaps, shown, notMadeOpen, tabActions)
+                        StudyTab.Lessons -> lessonsTab(mindMaps, shown, tabActions)
+                        StudyTab.Saved -> savedTab(mindMaps, shown, tabActions)
+                    }
                 }
             }
         }
     }
 }
 
-private fun LazyListScope.mapGroup(
-    group: MindMapGroup,
-    requests: Map<UUID, MindMapLocal>,
-    cap: Limit?,
-    plus: Boolean,
-    actions: MindMapsActions,
-    follow: @Composable (UUID, MindMapShown) -> Unit,
+internal data class IndexState(
+    val opened: Set<String>,
+    val showAll: Boolean,
+)
+
+internal class TabActions(
+    val page: MindMapsActions,
+    val state: MindMapsState,
+    val toggleSubject: (String) -> Unit,
+    val showAll: () -> Unit,
+    val toggleNotMade: () -> Unit,
 ) {
-    group.name?.let { name ->
-        item(key = "group-${group.key}", contentType = "group") {
-            SectionHeader(
-                name,
-                Modifier.padding(top = 24.dp, bottom = 8.dp),
-                detail = pluralStringResource(R.plurals.mindmaps_chapter_count, group.maps.size, group.maps.size),
-            )
-        }
-    }
-    itemsIndexed(group.maps, key = { _, map -> map.chapterId }, contentType = { _, _ -> "map" }) { index, map ->
-        val local = requests[map.chapterId]
-        val shown = shownMindMap(map.status.shown, local)
-        follow(map.chapterId, shown)
-        Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            if (index > 0) HorizontalDivider()
-            MindMapRow(
-                map = map.facts,
-                place = MindMapPlace.Library,
-                shown = shown,
-                local = local,
-                cap = cap.takeIf { shown == MindMapShown.Available },
-                plus = plus,
-                actions = MindMapRowActions({ actions.create(map.chapterId) }, actions.navigate),
-            )
-        }
-    }
+    fun saved(
+        target: MindMapTarget,
+        server: Boolean,
+    ) = state.saves[target] ?: server
 }
 
-/** Where [subject]'s title sits in the list: after the hero, each group is its title and then its maps. */
-internal fun List<MindMapGroup>.listIndexOf(subject: String?): Int? {
-    var index = 1
-    for (group in this) {
-        if (group.key == subject && group.name != null) return index
-        index += (if (group.name != null) 1 else 0) + group.maps.size
-    }
-    return null
-}
-
-/**
- * The goal over the title, how many maps are drawn, what maps are (and, while a row has lessons to
- * write, what making its map does, for the learner's [plus] or free plan), then once each: why rows
- * are locked for Plus, and the plan's cap.
- */
+/** The goal over the title, then Study, which opens the tab's maps where this device stopped; and why rows are locked for Plus. */
 @Composable
-private fun MindMapsHero(
+private fun MindMapsHeader(
     mindMaps: GoalMindMaps,
-    drawn: Int,
-    cap: Limit?,
-    plus: Boolean,
+    study: (() -> Unit)?,
     navigate: (AppRoute) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Eyebrow(mindMaps.goal.displayName)
-        Text(
-            stringResource(R.string.navigation_mind_maps),
-            Modifier.pageTitle(),
-            style = MaterialTheme.typography.headlineMedium,
-        )
-        if (mindMaps.chapters.isNotEmpty()) {
-            Text(
-                pluralStringResource(R.plurals.mindmaps_count, drawn, formatNumber(drawn.toDouble(), currentLocale())),
-                Modifier.padding(top = 4.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.data,
-            )
+        Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        if (study != null) {
+            Button(
+                onClick = study,
+                modifier = Modifier.padding(top = 12.dp),
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) { Text(stringResource(R.string.mindmaps_study)) }
         }
-        Text(
-            stringResource(mindMaps.intro(plus)),
-            Modifier.padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        val locked = mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }
-        if (locked) {
+        if (mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }) {
             PlusNotice(
                 onSeePlus = { navigate(AppRoute.Subscription) },
                 modifier = Modifier.padding(top = 12.dp),
@@ -268,44 +311,139 @@ private fun MindMapsHero(
                 description = stringResource(R.string.subscription_free_week_over_description),
             )
         }
-        when {
-            cap == null -> {}
+    }
+}
 
-            // The Plus notice above already has the page's one See Plus.
-            locked && !cap.needsAccount -> {
-                Text(
-                    limitMessage(cap, LimitSubject.MindMaps),
-                    Modifier.padding(top = 12.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-
-            else -> {
-                MindMapLimit(cap, LimitSubject.MindMaps, navigate, Modifier.padding(top = 12.dp))
-            }
+/** Material's tabs, each with how many maps Study would open there. */
+@Composable
+private fun MindMapsTabs(
+    tab: StudyTab,
+    decks: Map<StudyTab, Int>,
+    onPick: (StudyTab) -> Unit,
+) {
+    PrimaryTabRow(
+        selectedTabIndex = tab.ordinal,
+        modifier = Modifier.bleed(LIST_ITEM_INSET).fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
+        StudyTab.entries.forEach { each ->
+            val label = stringResource(each.label)
+            val count = decks.getValue(each)
+            val number = formatNumber(count.toDouble(), currentLocale())
+            val spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number)
+            Tab(
+                selected = each == tab,
+                onClick = { onPick(each) },
+                text = {
+                    Row(Modifier.clearAndSetSemantics { contentDescription = spoken }, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(number, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+                    }
+                },
+                selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
 
-/** The intro, saying once what writing a chapter's lessons first means while a row reads "Lessons not written yet". */
-private fun GoalMindMaps.intro(plus: Boolean): Int =
-    when {
-        chapters.none { it.status == GoalMindMap.Status.AVAILABLE && it.lessonsToWrite > 0 } -> R.string.mindmaps_intro
-        plus -> R.string.mindmaps_intro_lessons_first_plus
-        else -> R.string.mindmaps_intro_lessons_first_free
+private val StudyTab.label: Int
+    get() =
+        when (this) {
+            StudyTab.Chapters -> R.string.mindmaps_tab_chapters
+            StudyTab.Lessons -> R.string.mindmaps_tab_lessons
+            StudyTab.Saved -> R.string.mindmaps_tab_saved
+        }
+
+/** A tab's index: subjects' titles (folding once it's long), its rows, and Show all. */
+internal fun <T> LazyListScope.index(
+    tab: StudyTab,
+    entries: List<IndexEntry<T>>,
+    actions: TabActions,
+    rowKey: (T) -> String,
+    row: @Composable (T, divided: Boolean) -> Unit,
+) {
+    itemsIndexed(
+        entries,
+        key = { _, entry ->
+            when (entry) {
+                is IndexEntry.Subject -> "${tab.key}-subject-${entry.key}"
+                is IndexEntry.Row -> "${tab.key}-${rowKey(entry.row)}"
+                is IndexEntry.ShowAll -> "${tab.key}-all"
+            }
+        },
+        contentType = { _, entry -> entry::class.simpleName },
+    ) { index, entry ->
+        when (entry) {
+            is IndexEntry.Subject -> SubjectTitle(entry, actions.toggleSubject)
+            is IndexEntry.Row -> row(entry.row, index > 0 && entries[index - 1] is IndexEntry.Row)
+            is IndexEntry.ShowAll -> ShowAll(entry.count, actions.showAll)
+        }
     }
+}
 
 @Composable
-private fun MindMapsEmpty(
-    actions: MindMapsActions,
-    modifier: Modifier = Modifier,
+private fun SubjectTitle(
+    subject: IndexEntry.Subject,
+    toggle: (String) -> Unit,
+) {
+    val count = pluralStringResource(R.plurals.mindmaps_chapter_count, subject.count, subject.count)
+    val open = subject.open
+    if (open == null) {
+        SectionHeader(subject.name, Modifier.padding(top = 24.dp, bottom = 8.dp), detail = count)
+    } else {
+        ListRow(
+            headline = { Text(subject.name, style = MaterialTheme.zoonkType.sectionTitle) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 8.dp),
+            onClick = { toggle(subject.key) },
+            expanded = open,
+            meta = { Text(count) },
+        )
+    }
+}
+
+@Composable
+private fun ShowAll(
+    count: Int,
+    onClick: () -> Unit,
+) {
+    ListRow(
+        headline = { Text(stringResource(R.string.mindmaps_show_all, formatNumber(count.toDouble(), currentLocale()))) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 4.dp),
+        onClick = onClick,
+        expanded = false,
+    )
+}
+
+/** A row's hairline above it, under the row before it. */
+@Composable
+internal fun Divided(
+    divided: Boolean,
+    content: @Composable () -> Unit,
+) {
+    Column(Modifier.bleed(LIST_ITEM_INSET).background(MaterialTheme.colorScheme.surface)) {
+        if (divided) HorizontalDivider()
+        content()
+    }
+}
+
+@Composable
+internal fun TabEmpty(
+    icon: Int,
+    title: Int,
+    description: Int,
+    action: (@Composable () -> Unit)? = null,
 ) {
     EmptyState(
-        icon = R.drawable.ic_lan,
-        title = stringResource(R.string.mindmaps_empty_title),
-        description = stringResource(R.string.mindmaps_empty_description),
-        modifier = modifier,
-        action = { OutlinedButton(onClick = actions.keepStudying) { Text(stringResource(R.string.mindmaps_keep_studying)) } },
+        icon = icon,
+        title = stringResource(title),
+        description = stringResource(description),
+        modifier = Modifier.padding(top = 24.dp),
+        action = action,
     )
+}
+
+@Composable
+internal fun KeepStudying(onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick) { Text(stringResource(R.string.mindmaps_keep_studying)) }
 }

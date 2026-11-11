@@ -188,26 +188,21 @@ test.describe("Mind maps API", () => {
       }),
     ).resolves.toStrictEqual(listed({ current: "available", finished: "available" }));
 
-    const writing = await apiContext.post(`${currentPath}/generations`);
-
-    const writingBody = await readBody({
-      response: writing,
-      schema: mindMapGenerationSchema,
-      status: ACCEPTED,
-    });
-
-    expect(writingBody).toStrictEqual({
-      generationId: expect.any(String),
-      status: "writingLessons",
-    });
-
-    expect(writing.headers().location).toBe(`/v1/generations/${writingBody.generationId}`);
-
-    const drawing = await apiContext.post(`${finishedPath}/generations`);
+    await expect(
+      readBody({
+        response: await apiContext.post(`${currentPath}/generations`),
+        schema: mindMapGenerationSchema,
+        status: ACCEPTED,
+      }),
+    ).resolves.toStrictEqual({ generationId: null, status: "writingLessons" });
 
     await expect(
-      readBody({ response: drawing, schema: mindMapGenerationSchema, status: ACCEPTED }),
-    ).resolves.toStrictEqual({ generationId: expect.any(String), status: "drawing" });
+      readBody({
+        response: await apiContext.post(`${finishedPath}/generations`),
+        schema: mindMapGenerationSchema,
+        status: ACCEPTED,
+      }),
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
 
     await expect(
       readBody({
@@ -310,7 +305,9 @@ test.describe("Mind maps API", () => {
         schema: goalMindMapsSchema,
       }),
     ).resolves.toMatchObject({
-      lessonGroups: [{ chapterId: finished.id, count: 1, locked: 0 }],
+      lessonGroups: [
+        { chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id], locked: 0 },
+      ],
       saved: [
         {
           available: true,

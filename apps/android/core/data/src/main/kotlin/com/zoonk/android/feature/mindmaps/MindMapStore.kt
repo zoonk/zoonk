@@ -18,11 +18,16 @@ import com.zoonk.android.data.withBearer
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.api.models.ChapterLessonMaps
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
+import com.zoonk.api.models.GoalMindMapGenerations
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapGeneration
+import com.zoonk.api.models.SaveMindMap
+import com.zoonk.api.models.SavedMindMapKind
+import com.zoonk.api.models.SavedMindMapState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
@@ -63,6 +68,23 @@ interface MindMapApi {
         session: AuthenticatedSession,
         url: String,
     ): ByteArray
+
+    suspend fun lessonMaps(
+        session: AuthenticatedSession,
+        key: ChapterKey,
+    ): ChapterLessonMaps
+
+    suspend fun save(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        target: MindMapTarget,
+        saved: Boolean,
+    ): SavedMindMapState
+
+    suspend fun createAll(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): GoalMindMapGenerations
 }
 
 class LiveMindMapApi(
@@ -89,6 +111,23 @@ class LiveMindMapApi(
         key: ChapterKey,
     ) = perform { api.clients(session).learner.getChapterMindMapStatus(key.goalId, key.chapterId) }.status
 
+    override suspend fun lessonMaps(
+        session: AuthenticatedSession,
+        key: ChapterKey,
+    ) = perform { api.clients(session).learner.listChapterLessonMaps(key.goalId, key.chapterId) }
+
+    override suspend fun save(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        target: MindMapTarget,
+        saved: Boolean,
+    ) = perform { api.clients(session).learner.saveMindMap(goalId, SaveMindMap(target.kind, saved, target.id)) }
+
+    override suspend fun createAll(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).learner.createGoalMindMapGenerations(goalId) }
+
     override suspend fun picture(
         session: AuthenticatedSession,
         url: String,
@@ -107,6 +146,12 @@ class LiveMindMapApi(
         }
     }
 }
+
+/** A map a learner can save: a chapter's, or one of its lessons'. */
+data class MindMapTarget(
+    val kind: SavedMindMapKind,
+    val id: UUID,
+)
 
 sealed interface MindMapCreated {
     /** Started, joined, already drawn, locked for Plus or without a map: the reads, read again, say which. */
@@ -140,6 +185,60 @@ class MindMapStore(
     val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key ->
             session?.let { read(key.goalId, { listOf(key.chapterId) }) { api.chapter(it, key) } }
+        }
+
+    /** A chapter's lesson maps, read when a deck or a row reaches them. */
+    val lessonMaps: KeyedResources<ChapterKey, ChapterLessonMaps> =
+        cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.lessonMaps(it, key) } }
+
+    /**
+     * Saves [target] or removes it, as [saved] says. Every read of it kept shows the answer at once;
+     * the goal's Saved list, whose order the server decides, reads again.
+     */
+    suspend fun save(
+        goalId: UUID,
+        target: MindMapTarget,
+        chapterId: UUID?,
+        saved: Boolean,
+    ): MutationResult<SavedMindMapState> {
+        val result = cache.mutate(invalidating = setOf(DataDomain.SavedMindMaps)) { api.save(it, goalId, target, saved) }
+        if (result is MutationResult.Done) showSaved(goalId, target, chapterId, result.value.saved)
+        return result
+    }
+
+    private fun showSaved(
+        goalId: UUID,
+        target: MindMapTarget,
+        chapterId: UUID?,
+        saved: Boolean,
+    ) {
+        when (target.kind) {
+            SavedMindMapKind.CHAPTER -> {
+                list[goalId].update { maps ->
+                    maps.copy(chapters = maps.chapters.map { if (it.chapterId == target.id) it.copy(saved = saved) else it })
+                }
+                chapter[ChapterKey(goalId, target.id)].update { it.copy(saved = saved) }
+            }
+
+            SavedMindMapKind.LESSON -> {
+                chapterId?.let { id ->
+                    lessonMaps[ChapterKey(goalId, id)].update { maps ->
+                        maps.copy(lessons = maps.lessons.map { if (it.lessonId == target.id) it.copy(saved = saved) else it })
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Starts every chapter map the goal's offer counts: a model call, so only from a learner's tap.
+     * The list, read again, says what came of it; null when the session changed meanwhile.
+     */
+    suspend fun createAll(goalId: UUID): Boolean? =
+        when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
+            is MutationResult.Done -> list[goalId].reread()
+            is MutationResult.Failed -> false
+            MutationResult.Obsolete -> null
         }
 
     /** The number of the last read started: what a screen notes now gives way to any read started later. */
@@ -251,7 +350,7 @@ class MindMapStore(
 
     private companion object {
         // Buying Plus unlocks the chapters past the free week.
-        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription)
+        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription, DataDomain.SavedMindMaps)
         const val UNPROCESSABLE = 422
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
     }

@@ -20,6 +20,7 @@
   "limit_mind_maps_free_month": "24194f460709be6408ea65c17b36194e70edd2de06fc48d3f35b3f90d27baba3",
   "limit_mind_maps_guest": "7ffa8b9a123a408c1b0dce783c5bdb5ac865f8e39cb69a68446ce509bdc71052",
   "limit_mind_maps_plus": "a5153c1fb84e431ef276337cef823fee0f09c76013bdb9ddf1c56a09043ccbb0",
+  "limit_mind_maps_plus_month": "16a20fb2a499ab3f5e82aba04003fd7e51206a7d4e2860092d465eb543791037",
   "limit_outlines_free_day": "77c080feb8e573c95bd4b396224decb79457a869d4f037a3561d83373ffe93e3",
   "limit_outlines_free_month": "9136de11cebe8623b1de8fc4f32645230b4f7e0f436b42c281e3ee71c865fa51",
   "limit_outlines_guest": "107b4158e72da7d2da2aa7656485d029a4a91187ea0ae2a231213f26e3b27287",
@@ -45,6 +46,7 @@
     <string name="limit_lessons_free_day">Das waren alle neuen Lektionen für heute. Morgen sind wieder neue verfügbar. Mit Plus kannst du jetzt weiterlernen.</string>
     <string name="limit_mind_maps_guest">Du hast die Mindmap erstellt, die du ohne Konto ausprobieren kannst. Erstell ein kostenloses Konto, um weitere zu erstellen.</string>
     <string name="limit_mind_maps_plus">Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen.</string>
+    <string name="limit_mind_maps_plus_month">Du hast dein Limit für neue Mindmaps diesen Monat erreicht. Nächsten Monat kannst du weitere erstellen.</string>
     <string name="limit_mind_maps_free_month">Das waren alle neuen Mindmaps für diesen Monat. Nächsten Monat kannst du weitere erstellen. Mit Plus kannst du jetzt weitermachen.</string>
     <string name="limit_mind_maps_free_day">Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen. Mit Plus kannst du jetzt weitermachen.</string>
     <string name="limit_outlines_guest">Du hast dir das Thema angesehen, das du ohne Konto vorab ansehen kannst. Erstelle ein kostenloses Konto, um weitere anzusehen.</string>

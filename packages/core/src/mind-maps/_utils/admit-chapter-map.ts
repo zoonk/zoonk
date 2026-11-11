@@ -3,6 +3,8 @@ import { type TransactionClient } from "@zoonk/db";
 import { type UsageLedger } from "../../entitlements/_utils/usage-ledger";
 import { claimBundleInWrite } from "../../entitlements/bundle-claims";
 import { type RefusedUsage, isRefusedUsage } from "../../entitlements/contract";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { type MindMapLaunch } from "../request-chapter-mind-map";
 import { chapterMapClaims } from "./bulk-chapters";
 import { type MindMapRow, getMindMapStatus } from "./mind-map-view";
 
@@ -100,4 +102,25 @@ export async function admitChapterMap(
   });
 
   return { admission: { status: "claimed" }, ledger: claim.ledger };
+}
+
+/** In the admitting write, so a map is owed only if its claim commits, and its run starts from it. */
+export function oweMindMapLaunches(
+  transaction: TransactionClient,
+  {
+    chapterIds,
+    launch,
+    userId,
+  }: { chapterIds: readonly string[]; launch: MindMapLaunch; userId: string },
+) {
+  const goalId = launch.analytics.goalId;
+
+  return oweFollowUps({
+    db: transaction,
+    followUps: chapterIds.map((chapterId) => ({
+      input: { chapterId, goalId, launch },
+      kind: "makeChapterMindMap" as const,
+    })),
+    userId,
+  });
 }

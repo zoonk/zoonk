@@ -2,6 +2,7 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,17 +52,29 @@ fun Modifier.busyClickable(
     return clickable(enabled = enabled || held, onClickLabel = onClickLabel, role = Role.Button) { if (!held) onClick() }.busy(held)
 }
 
-/** [busyClickable] for a row that draws its own [indication] from [interactionSource], such as inside its highlight. */
+/**
+ * [busyClickable] for a row that draws its own [indication] from [interactionSource], such as inside its
+ * highlight; [onLongClick] opens what the row offers besides its tap, such as a menu.
+ */
 fun Modifier.busyClickable(
     busy: Boolean,
     interactionSource: MutableInteractionSource?,
     indication: Indication?,
     enabled: Boolean = true,
     focusableWhenDisabled: Boolean = false,
+    onLongClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit,
 ): Modifier {
     val held = held(busy, enabled, focusableWhenDisabled)
-    return clickable(interactionSource, indication, enabled = enabled || held, role = Role.Button) { if (!held) onClick() }.busy(held)
+    return combinedClickable(
+        interactionSource,
+        indication,
+        enabled = enabled || held,
+        role = Role.Button,
+        onLongClickLabel = onLongClickLabel,
+        onLongClick = onLongClick?.let { { if (!held) it() } },
+    ) { if (!held) onClick() }.busy(held)
 }
 
 /**

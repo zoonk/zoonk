@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
@@ -84,10 +89,15 @@ internal val ChapterMindMap.facts get() = MapFacts(chapterId, title, position, s
 
 internal val GoalMindMap.facts get() = MapFacts(chapterId, title, position, status.shown, lessonsToWrite, image)
 
-/** [navigate] opens the viewer, sign-up and Plus. */
+/**
+ * [navigate] opens sign-up, Plus and, unless [open] says otherwise, the viewer; [toggleSave] saves a
+ * ready map from the row's long-press menu.
+ */
 internal data class MindMapRowActions(
     val create: () -> Unit,
     val navigate: (AppRoute) -> Unit,
+    val open: (() -> Unit)? = null,
+    val toggleSave: (() -> Unit)? = null,
 )
 
 /** The chapter page's map row, under its header; nothing for a chapter that can't have a map. */
@@ -193,6 +203,7 @@ internal fun MindMapRow(
     plus: Boolean,
     actions: MindMapRowActions,
     modifier: Modifier = Modifier,
+    saved: Boolean = false,
 ) {
     val title = map.rowTitle(place, shown)
     val status = map.statusLine(place, shown, plus)
@@ -200,7 +211,9 @@ internal fun MindMapRow(
     val refused = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
     val notice = refused ?: cap?.takeIf { place != MindMapPlace.Library }
     val library = place == MindMapPlace.Library
-    val open = { actions.navigate(AppRoute.MindMap(map.chapterId.toString())) }
+    val open = actions.open ?: { actions.navigate(AppRoute.MindMap(map.chapterId.toString())) }
+    val toggleSave = actions.toggleSave?.takeIf { shown == MindMapShown.Ready }
+    var menu by remember { mutableStateOf(false) }
     val rowClick =
         when (shown) {
             MindMapShown.PlusRequired -> ({ actions.navigate(AppRoute.Subscription) })
@@ -209,15 +222,25 @@ internal fun MindMapRow(
         }
 
     Column(modifier) {
-        ListRow(
-            headline = { Text(title) },
-            modifier = if (place == MindMapPlace.Library) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            onClick = rowClick,
-            leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
-            supporting = supporting?.let { { Text(it) } },
-            meta = if (shown == MindMapShown.PlusRequired && !library) ({ PlusMark() }) else null,
-            trailing = rowAction(map, place, shown, local, cap, open, actions),
-        )
+        Box {
+            ListRow(
+                headline = { Text(title) },
+                modifier = if (place == MindMapPlace.Library) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                onClick = rowClick,
+                onLongClickLabel = toggleSave?.let { stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save) },
+                onLongClick = toggleSave?.let { { menu = true } },
+                leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
+                supporting = supporting?.let { { Text(it) } },
+                meta =
+                    when {
+                        shown == MindMapShown.PlusRequired && !library -> ({ PlusMark() })
+                        saved -> ({ SavedMark() })
+                        else -> null
+                    },
+                trailing = rowAction(map, place, shown, local, cap, open, actions),
+            )
+            if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
+        }
 
         if (notice != null) {
             MindMapLimit(
@@ -367,7 +390,7 @@ private fun RowButton(
 
 /** The map's thumbnail, or a dashed slot holding its mark, a spinner while it's on its way, or a lock while it's Plus-only. */
 @Composable
-private fun MapMark(
+internal fun MapMark(
     thumbnail: String?,
     shown: MindMapShown,
 ) {
@@ -423,3 +446,39 @@ private val MARK_CORNER = ZoonkRadius.md
 
 /** A list row's gap between its mark and its words, for the words under it to line up with. */
 private val MARK_GAP = 12.dp
+
+/** A saved map's bookmark at its row's end, in the words' color. */
+@Composable
+internal fun SavedMark() {
+    Icon(
+        painterResource(R.drawable.ic_bookmark_filled),
+        contentDescription = stringResource(R.string.mindmaps_saved_state),
+        Modifier.size(16.dp),
+        tint = MaterialTheme.colorScheme.onSurface,
+    )
+}
+
+/** A row's long-press menu: Save, or Remove from saved. */
+@Composable
+internal fun SaveMenu(
+    expanded: Boolean,
+    saved: Boolean,
+    onDismiss: () -> Unit,
+    onToggle: () -> Unit,
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        DropdownMenuItem(
+            text = { Text(stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save)) },
+            leadingIcon = {
+                Icon(
+                    painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onDismiss()
+                onToggle()
+            },
+        )
+    }
+}

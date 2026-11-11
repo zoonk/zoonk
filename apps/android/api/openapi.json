@@ -18134,6 +18134,102 @@
         }
       }
     },
+    "/goals/{goalId}/chapters/{chapterId}/lesson-maps": {
+      "get": {
+        "description": "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, with its ideas and their icons as the lesson player draws them, whether the learner saved it, and whether a free exam plan past its first week keeps it for Plus (`locked`, with no `map`). Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
+        "operationId": "listChapterLessonMaps",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List a chapter's lesson maps",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "path",
+            "name": "chapterId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Library chapter ID in the goal's plan"
+            },
+            "required": true,
+            "description": "Library chapter ID in the goal's plan"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The chapter's lesson maps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChapterLessonMaps"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/chapters/{chapterId}/mind-map": {
       "get": {
         "description": "A chapter's mind map: its main concepts as an outline (a title, the central idea, 3 to 6 numbered branches with an explanation and points, an optional comparison and a summary line, in the chapter's language) and the picture drawn from it, square, with a small copy for lists, with the map's status for its row. Any chapter of the goal's scope can have one, finished or not, outside a language's units: the plan's chapters, and for a goal that follows a course every chapter of that course. Maps are shared by every learner of the chapter. A picture whose text failed its word-by-word check twice is left out: the outline is the map. `saved` says whether the learner saved it. A chapter outside the scope isn't found.",
@@ -18385,102 +18481,6 @@
         }
       }
     },
-    "/goals/{goalId}/chapters/{chapterId}/lesson-maps": {
-      "get": {
-        "description": "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, with its ideas and their icons as the lesson player draws them, whether the learner saved it, and whether a free exam plan past its first week keeps it for Plus (`locked`, with no `map`). Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
-        "operationId": "listChapterLessonMaps",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "List a chapter's lesson maps",
-        "tags": [
-          "Learner"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          },
-          {
-            "in": "path",
-            "name": "chapterId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Library chapter ID in the goal's plan"
-            },
-            "required": true,
-            "description": "Library chapter ID in the goal's plan"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The chapter's lesson maps",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChapterLessonMaps"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/goals/{goalId}/chapters/{chapterId}/mind-map/status": {
       "get": {
         "description": "The live status of a chapter's mind map, for a row that waits on it: `writingLessons` or `drawing` while it's on its way, including right after the learner finished the chapter and before its run starts. Checks the same ownership and chapter visibility as the full map read. Never starts generation or returns the outline and picture.",
@@ -18579,7 +18579,7 @@
     },
     "/goals/{goalId}/mind-maps": {
       "get": {
-        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, `failed` or `plusRequired`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: how many lesson maps each chapter has (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
+        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, `failed` or `plusRequired`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
         "operationId": "listGoalMindMaps",
         "security": [
           {
@@ -86534,6 +86534,94 @@
         ],
         "additionalProperties": false
       },
+      "ChapterLessonMaps": {
+        "type": "object",
+        "properties": {
+          "chapter": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "position": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991,
+                "description": "As `ChapterMindMap.position`"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "position",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LessonMindMap"
+            },
+            "description": "Every lesson of the chapter with a written map, studied or not, in chapter order"
+          }
+        },
+        "required": [
+          "chapter",
+          "lessons"
+        ],
+        "additionalProperties": false
+      },
+      "LessonMindMap": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "A free exam plan past its first week keeps this lesson, and so its map, for Plus"
+          },
+          "map": {
+            "nullable": true,
+            "description": "Null while `locked`",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonMap"
+              }
+            ]
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "The lesson's number in its chapter"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved this map to study again"
+          },
+          "title": {
+            "type": "string",
+            "description": "The lesson's title"
+          }
+        },
+        "required": [
+          "lessonId",
+          "locked",
+          "map",
+          "position",
+          "saved",
+          "title"
+        ],
+        "additionalProperties": false
+      },
       "ChapterMindMap": {
         "type": "object",
         "properties": {
@@ -86756,94 +86844,6 @@
         "required": [
           "generationId",
           "status"
-        ],
-        "additionalProperties": false
-      },
-      "ChapterLessonMaps": {
-        "type": "object",
-        "properties": {
-          "chapter": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "position": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991,
-                "description": "As `ChapterMindMap.position`"
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "position",
-              "title"
-            ],
-            "additionalProperties": false
-          },
-          "lessons": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LessonMindMap"
-            },
-            "description": "Every lesson of the chapter with a written map, studied or not, in chapter order"
-          }
-        },
-        "required": [
-          "chapter",
-          "lessons"
-        ],
-        "additionalProperties": false
-      },
-      "LessonMindMap": {
-        "type": "object",
-        "properties": {
-          "lessonId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "locked": {
-            "type": "boolean",
-            "description": "A free exam plan past its first week keeps this lesson, and so its map, for Plus"
-          },
-          "map": {
-            "nullable": true,
-            "description": "Null while `locked`",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LessonMap"
-              }
-            ]
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991,
-            "description": "The lesson's number in its chapter"
-          },
-          "saved": {
-            "type": "boolean",
-            "description": "The learner saved this map to study again"
-          },
-          "title": {
-            "type": "string",
-            "description": "The lesson's title"
-          }
-        },
-        "required": [
-          "lessonId",
-          "locked",
-          "map",
-          "position",
-          "saved",
-          "title"
         ],
         "additionalProperties": false
       },
@@ -87129,6 +87129,15 @@
             "maximum": 9007199254740991,
             "description": "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, locked ones included"
           },
+          "lessonIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were"
+          },
           "locked": {
             "type": "integer",
             "minimum": 0,
@@ -87139,6 +87148,7 @@
         "required": [
           "chapterId",
           "count",
+          "lessonIds",
           "locked"
         ],
         "additionalProperties": false

@@ -146,7 +146,7 @@ describe("a request that read the map as available, then waited at its claim", (
 
     const result = await askHeldBack({
       meanwhile: async () => {
-        await expect(requestChapterMindMapFor(first)).resolves.toMatchObject({ status: "start" });
+        await expect(requestChapterMindMapFor(first)).resolves.toMatchObject({ status: "drawing" });
       },
       waiting,
     });
@@ -161,7 +161,7 @@ describe("a request that read the map as available, then waited at its claim", (
 
     const result = await askHeldBack({
       meanwhile: async () => {
-        await expect(requestChapterMindMapFor(first)).resolves.toMatchObject({ status: "start" });
+        await expect(requestChapterMindMapFor(first)).resolves.toMatchObject({ status: "drawing" });
 
         await prisma.chapterMindMap.update({
           data: { status: "completed", structure: STRUCTURE },
@@ -185,7 +185,7 @@ describe("a request that read the map as available, then waited at its claim", (
 });
 
 describe("two learners asking for the same new map at once", () => {
-  it("charges only the learner whose request starts it; the other joins for free", async () => {
+  it("charges and owes the run only to the learner whose request starts it; the other joins for free", async () => {
     const [chapter, lesson] = await Promise.all([libraryChapterFixture(), libraryLessonFixture()]);
 
     await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 });
@@ -197,15 +197,21 @@ describe("two learners asking for the same new map at once", () => {
 
     const results = await askTogether(asks);
 
-    expect(results.map((result) => result.status).toSorted()).toStrictEqual([
-      "start",
+    expect(results.map((result) => result.status)).toStrictEqual([
+      "writingLessons",
       "writingLessons",
     ]);
 
     const charged = await Promise.all(
-      asks.map(({ userId }) => prisma.usageRecord.count({ where: { userId } })),
+      asks.map(async ({ userId }) => ({
+        claims: await prisma.usageRecord.count({ where: { userId } }),
+        owed: await prisma.followUp.count({ where: { userId } }),
+      })),
     );
 
-    expect(charged).toStrictEqual(results.map((result) => (result.status === "start" ? 2 : 0)));
+    expect(charged.toSorted((a, b) => a.claims - b.claims)).toStrictEqual([
+      { claims: 0, owed: 0 },
+      { claims: 2, owed: 1 },
+    ]);
   });
 });

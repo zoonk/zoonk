@@ -86,15 +86,15 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "makeChapterMindMap": {
       const { chapterId, goalId, launch } = followUp.input;
 
-      // A map the owing write already admitted starts as admitted; asking again would join the
-      // running row it marked and start nothing.
-      const making = launch
-        ? toChapterMindMapInput({ chapterId, launch })
-        : await requestOwedMindMapStep({ chapterId, goalId, userId });
-
-      if (making) {
-        await startOnce(chapterMindMapWorkflow, [making], getChapterMindMapToken(making.chapterId));
-      }
+      // Only a map's admission owes its launch, so an owed map without one asks first, and the
+      // launch it owes starts on the next pass.
+      await (launch
+        ? startOnce(
+            chapterMindMapWorkflow,
+            [toChapterMindMapInput({ chapterId, launch })],
+            getChapterMindMapToken(chapterId),
+          )
+        : requestOwedMindMapStep({ chapterId, goalId, userId }));
 
       return;
     }

@@ -43,6 +43,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.api.models.AllowanceItem
@@ -267,20 +268,25 @@ internal fun FollowWhileOnItsWay(
 
 /**
  * What a screen's mind maps need from the app: the store, the session it shows (for its pictures
- * and the polls), the plan's cap on new maps (read only where a map could still be made) and whether
- * the learner is on Plus, whose rows say a chapter's lessons get written first without counting.
+ * and the polls), the plan's cap on new maps (read only where a map could still be made), the
+ * learner's plan (on Plus, rows say a chapter's lessons get written first without counting), and
+ * where a failed save says so.
  */
 internal class MindMapsHost(
     val store: MindMapStore,
     val session: AuthenticatedSession,
     val pictures: PrivatePictures,
     val cap: @Composable () -> Limit?,
-    val plus: @Composable () -> Boolean,
+    val tier: @Composable () -> LimitTier,
     private val currentSession: () -> AuthenticatedSession?,
+    private val saveFailed: () -> Unit = {},
 ) {
     @Composable
+    fun plus(): Boolean = tier() == LimitTier.Plus
+
+    @Composable
     fun maps(goalId: UUID): MindMapViewModel =
-        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession) }
+        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession, saveFailed) }
 }
 
 @Composable
@@ -294,10 +300,15 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
             val allowance by app.subscriptions.allowance.collectShown()
             allowance.value?.reachedCap(AllowanceItem.Kind.MIND_MAP)
         },
-        plus = {
+        tier = {
             val summary by app.learnerSummary.summary.collectShown()
-            summary.value?.tier == LearnerSummary.Tier.PLUS
+            when (summary.value?.tier) {
+                LearnerSummary.Tier.PLUS -> LimitTier.Plus
+                LearnerSummary.Tier.GUEST -> LimitTier.Guest
+                else -> LimitTier.Free
+            }
         },
         currentSession = { app.sessions.current },
+        saveFailed = { app.snackbars.show(R.string.mindmaps_save_map_failed) },
     )
 }

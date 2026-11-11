@@ -270,6 +270,17 @@ sealed interface AppRoute : NavKey {
         val chapterId: String,
     ) : AppRoute
 
+    /**
+     * A tab's maps one at a time, full screen: [tab] is `chapters`, `lessons` or `saved`, and [start]
+     * the map to open at (a chapter's id, then a lesson's after a slash), or none for where this
+     * device stopped.
+     */
+    @Serializable
+    data class MindMapStudy(
+        val tab: String,
+        val start: String? = null,
+    ) : AppRoute
+
     @Serializable
     data class Pronunciation(
         val goalId: String? = null,
@@ -393,7 +404,7 @@ val AppRoute.presentation: Presentation
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook, is AppRoute.Lesson,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.TestOut,
             is AppRoute.FocusTest, is AppRoute.Challenge, is AppRoute.Checkpoint, is AppRoute.Essay,
-            is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.Pronunciation,
+            is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.MindMapStudy, is AppRoute.Pronunciation,
             is AppRoute.Conversation, is AppRoute.Explain, is AppRoute.PlanLink, AppRoute.Login,
             -> Presentation.Task
 
@@ -404,7 +415,7 @@ val AppRoute.requirement: Requirement
     get() =
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
-            AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap,
+            AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap, is AppRoute.MindMapStudy,
             AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 

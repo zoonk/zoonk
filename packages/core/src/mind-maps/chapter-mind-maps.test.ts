@@ -16,6 +16,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
+import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { drawTestImage } from "../library/media/_test-utils/image-mocks";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
@@ -212,12 +213,7 @@ describe("chapter mind maps", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
-    ).resolves.toMatchObject({
-      analytics: { distinctId: user.id, goalId: goal.id },
-      forExam: false,
-      lessonIds: [],
-      status: "start",
-    });
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
 
     await expect(
       prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } }),
@@ -234,6 +230,29 @@ describe("chapter mind maps", () => {
     await expect(
       prisma.usageRecord.findMany({ select: { targetId: true }, where: { userId: user.id } }),
     ).resolves.toStrictEqual([{ targetId: finished }]);
+  });
+
+  it("owes the run of a map it admits in the admitting write, so a run that never starts stays owed", async () => {
+    const { finished, goal, user } = await finishedChapter();
+
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+
+    await expect(
+      prisma.followUp.findMany({ select: { input: true, kind: true }, where: { userId: user.id } }),
+    ).resolves.toMatchObject([
+      {
+        input: {
+          chapterId: finished,
+          goalId: goal.id,
+          launch: {
+            analytics: { distinctId: user.id, goalId: goal.id },
+            forExam: false,
+            lessonIds: [],
+          },
+        },
+        kind: "makeChapterMindMap",
+      },
+    ]);
   });
 
   it("dates a new map's row with the instants the app's own writes store, whatever the database's time zone", async () => {
@@ -297,13 +316,17 @@ describe("chapter mind maps", () => {
       where: { id: writing },
     });
 
-    const started = await requestChapterMindMap({ chapterId: current, goalId: goal.id });
+    await expect(
+      requestChapterMindMap({ chapterId: current, goalId: goal.id }),
+    ).resolves.toStrictEqual({ generationId: null, status: "writingLessons" });
 
-    expect(started).toMatchObject({ forExam: false, status: "start" });
+    const [owed] = await listFollowUps(user.id);
 
-    expect(started.status === "start" && started.lessonIds.toSorted(byId)).toStrictEqual(
-      [writing, unstarted].toSorted(byId),
-    );
+    expect(owed).toMatchObject({ input: { launch: { forExam: false } } });
+
+    expect(
+      owed?.kind === "makeChapterMindMap" && owed.input.launch?.lessonIds.toSorted(byId),
+    ).toStrictEqual([writing, unstarted].toSorted(byId));
 
     const claimed = await prisma.usageRecord.findMany({
       select: { generated: true, kind: true, targetId: true },
@@ -377,14 +400,25 @@ describe("chapter mind maps", () => {
 
     await expect(requestChapterMindMapFor(owed)).resolves.toMatchObject({ status: "refused" });
     await expect(prisma.chapterMindMap.count({ where: { chapterId: finished } })).resolves.toBe(0);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
 
     await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
 
-    await expect(requestChapterMindMapFor(owed)).resolves.toMatchObject({
-      analytics: { distinctId: user.id, goalId: goal.id, platform: null },
-      lessonIds: [],
-      status: "start",
+    await expect(requestChapterMindMapFor(owed)).resolves.toStrictEqual({
+      generationId: null,
+      status: "drawing",
     });
+
+    await expect(listFollowUps(user.id)).resolves.toMatchObject([
+      {
+        input: {
+          launch: {
+            analytics: { distinctId: user.id, goalId: goal.id, platform: null },
+            lessonIds: [],
+          },
+        },
+      },
+    ]);
 
     await expect(requestChapterMindMapFor(owed)).resolves.toStrictEqual({
       generationId: null,
@@ -563,9 +597,11 @@ describe("chapter mind maps", () => {
   });
 
   it("lets the learner ask again after a run failed or stopped", async () => {
-    const { finished, goal } = await finishedChapter();
+    const { finished, goal, user } = await finishedChapter();
+    const started = { generationId: null, status: "drawing" };
 
     await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
     await failChapterMindMap({ chapterId: finished, runId: "another-run" });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
@@ -574,7 +610,9 @@ describe("chapter mind maps", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
-    ).resolves.toMatchObject({ status: "start" });
+    ).resolves.toStrictEqual(started);
+
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
 
     await prisma.chapterMindMap.update({
       data: { updatedAt: new Date(Date.now() - 11 * 60 * 1000) },
@@ -587,6 +625,8 @@ describe("chapter mind maps", () => {
 
     await expect(
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
-    ).resolves.toMatchObject({ status: "start" });
+    ).resolves.toStrictEqual(started);
+
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 });
