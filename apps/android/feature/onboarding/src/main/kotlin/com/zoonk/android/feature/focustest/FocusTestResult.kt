@@ -66,7 +66,11 @@ internal class ProposalControls(
 internal fun ProposalControls?.waitsOn(test: FocusTest): Boolean =
     this != null &&
         answer == null &&
-        test.checkpoint?.focus?.takeIf { it.state == FocusTestFocus.State.PROPOSED }?.proposal?.canApply == true
+        test.checkpoint
+            ?.focus
+            ?.takeIf { it.state == FocusTestFocus.State.PROPOSED }
+            ?.proposal
+            ?.canApply == true
 
 internal fun displayName(
     name: String,
