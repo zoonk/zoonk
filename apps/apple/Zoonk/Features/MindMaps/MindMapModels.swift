@@ -153,6 +153,11 @@ struct GoalMindMaps: Decodable, Equatable, Sendable {
   /// Open ones first in syllabus order, then the ones that can no longer open.
   let saved: [SavedMindMap]
 
+  /// A save that can no longer open still shows, so the learner can remove it.
+  var isEmpty: Bool {
+    chapters.isEmpty && saved.isEmpty
+  }
+
   func chapter(_ id: String) -> ChapterMindMap? {
     chapters.first { $0.chapterId == id }
   }

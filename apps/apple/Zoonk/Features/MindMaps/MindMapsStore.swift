@@ -47,7 +47,7 @@ final class MindMapsStore {
     let api = api
     let list: Resource<GoalMindMaps> = cache.resource(
       audience: .signedIn, domains: [.goals, .userProgress, .userSubscription],
-      isEmpty: \.chapters.isEmpty
+      isEmpty: \.isEmpty
     ) { [weak self] session in
       guard let session else {
         return nil

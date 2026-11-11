@@ -295,6 +295,19 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(calls.createAll, 1)
   }
 
+  func testSavesNoLongerAvailableShowWhenNoChapterIsLeft() async {
+    let gone = SavedMindMap(
+      available: false, chapterId: nil, kind: .chapter, targetId: "gone", title: "Gone")
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.answerLists(chapters: [], saved: [gone])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+
+    await list.load()
+
+    XCTAssertEqual(list.value?.saved, [gone])
+  }
+
   func testTheListIsFollowedUntilNothingIsOnItsWay() async throws {
     let api = MindMapsAPIStub(server: .drawing, statuses: [.success(.ready)])
     let store = makeStore(api: api)
@@ -361,6 +374,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private var holdsNextSave = false
   private var heldSave: CheckedContinuation<Void, Never>?
   private var createAllFailures = 0
+  private var answered: (chapters: [ChapterMindMap], saved: [SavedMindMap])?
 
   init(
     server: ChapterMindMap.Status, statuses: [Result<ChapterMindMap.Status, APIError>],
@@ -400,6 +414,10 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     saveFailures = count
   }
 
+  func answerLists(chapters: [ChapterMindMap], saved: [SavedMindMap]) {
+    answered = (chapters, saved)
+  }
+
   func failCreateAll(_ count: Int) {
     createAllFailures = count
   }
@@ -429,15 +447,16 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     }
 
     return GoalMindMaps(
-      chapters: [chapter],
+      chapters: answered?.chapters ?? [chapter],
       createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
       firstTab: .chapters, lessonGroups: [],
-      saved: saved
-        ? [
-          SavedMindMap(
-            available: true, chapterId: "chapter", kind: .chapter, targetId: "chapter",
-            title: "Chapter")
-        ] : [])
+      saved: answered?.saved
+        ?? (saved
+          ? [
+            SavedMindMap(
+              available: true, chapterId: "chapter", kind: .chapter, targetId: "chapter",
+              title: "Chapter")
+          ] : []))
   }
 
   func lessonMaps(token: String, goalId: String, chapterId: String) async throws
