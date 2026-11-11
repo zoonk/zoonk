@@ -1,8 +1,6 @@
 import "server-only";
 import { PlanItemKind, PlanItemStatus, type TransactionClient } from "@zoonk/db";
 import { z } from "zod";
-import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
-import { isSameFocus } from "../../learner/placement/focus-test-summary";
 import {
   type DaySessionSnapshot,
   captureDaySession,
@@ -47,7 +45,6 @@ const planSnapshotSchema = z.object({
   sourceSkillIds: z.array(z.string()),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
   summary: planSummarySchema.nullable(),
-  testFocus: z.array(z.string()).nullable().default(null),
   todaySession: daySessionSnapshotSchema.nullable(),
 });
 
@@ -60,7 +57,6 @@ export type PlanSnapshot = {
   sourceSkillIds: string[];
   state: PlanState;
   summary: PlanSummary | null;
-  testFocus: string[] | null;
   todaySession: DaySessionSnapshot | null;
 };
 
@@ -71,8 +67,6 @@ function toPlanSnapshot({
   context: PlanContext;
   todaySession: DaySessionSnapshot | null;
 }) {
-  const focus = readFocusTestRecord(context.goal)?.focus;
-
   return {
     coveredShare: context.plan.coveredShare,
     estimateHours: context.plan.estimateHours,
@@ -96,7 +90,6 @@ function toPlanSnapshot({
     sourceSkillIds: context.plan.sourceSkillIds,
     state: context.state,
     summary: planSummarySchema.safeParse(context.plan.summary).data ?? null,
-    testFocus: focus && isSameFocus(focus, context.state.settings.focusAreas) ? focus : null,
     todaySession,
   };
 }

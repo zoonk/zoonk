@@ -220,7 +220,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
     expect(readFocusTestRecord(replaced)?.focus).toBeNull();
   });
 
-  it("restores the test's focus ownership when the learner undoes their own replacement", async () => {
+  it("leaves cleared ownership alone when the learner undoes their own replacement", async () => {
     const { goal } = await shortPlanExamGoalFixture({ goal: SHOWN });
     const focus = await sit(goal.id, 1);
 
@@ -240,7 +240,8 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
 
     const restored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
-    expect(readFocusTestRecord(restored)?.focus).toStrictEqual(["Direito", "Português"]);
+    expect(readFocusTestRecord(restored)?.focus).toBeNull();
+    await expect(read(goal.id)).resolves.toStrictEqual({ changes: ["applied"], focus: "current" });
   });
 
   it.each(["declined", "undone"] as const)(

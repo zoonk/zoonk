@@ -38,7 +38,7 @@ const recordSchema = z.object({
   dismissedAt: z.iso.datetime().nullable().default(null),
   /**
    * The test's current focus, set with the daily time or an applied proposal. Cleared when the
-   * plan stops following it; Undo restores the prior ownership with its focus.
+   * plan stops following it; Undo of a test proposal restores its prior focus.
    */
   focus: z.array(z.string()).nullable().default(null),
   pausedAt: z.iso.datetime().nullable().default(null),

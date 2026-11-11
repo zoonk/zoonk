@@ -110,9 +110,9 @@ export async function undoChange({
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
 
-    if (context.goal.kind === "exam") {
+    if (parsePlanChangePayload(change.payload).source === FOCUS_TEST_SOURCE) {
       await keepTestFocus({
-        areas: snapshot.testFocus,
+        areas: snapshot.state.settings.focusAreas,
         goalId: context.goal.id,
         tx,
         userId: context.goal.userId,
