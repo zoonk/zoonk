@@ -124,8 +124,8 @@ const ACCENTLESS_ENDINGS: Readonly<Record<string, RegExp>> = {
 };
 
 /**
- * Real words of a practiced language that look like another's accentless ones, in the case they're
- * written in: Italian "voce" passes, but Portuguese "Voce" opening a sentence is still "Você".
+ * Real words of a practiced language that look like another's accentless ones: while a learner
+ * practices Italian, "voce" (or "Voce" opening a correction) can't tell a stripped "você" apart.
  */
 const WORDS_ELSEWHERE: Readonly<Record<string, ReadonlySet<string>>> = { it: new Set(["voce"]) };
 
@@ -179,8 +179,11 @@ function findInputScripts(input: string): string[] {
 
 const WORD = /[\p{L}\p{M}]+/gu;
 
-/** One or two Greek letters are math or science symbols ("π", "Δθ"); a longer run is a Greek word. */
-const GREEK_SYMBOL = /(?<!\p{scx=Grek})\p{scx=Grek}{1,2}(?!\p{scx=Grek})/gu;
+/**
+ * A Greek letter alone, or after a capital one, is a math or science symbol ("π", "Δθ"); other runs
+ * are Greek words ("με").
+ */
+const GREEK_SYMBOL = /(?<!\p{scx=Grek})[Α-Ω]?\p{scx=Grek}(?!\p{scx=Grek})/gu;
 
 /** A key, slug, enum or URL ("comunicacao", "regra-de-tres"): ids and codes, not prose. */
 const IDENTIFIER = /^(?:https?:\/\/\S+|[a-z\d]+(?:[-_./][a-z\d]+)*)$/u;
@@ -243,7 +246,7 @@ function isAccentless({
   const words = ACCENTLESS_WORDS[language];
   const ending = ACCENTLESS_ENDINGS[language];
 
-  const elsewhere = otherLanguages.some((other) => WORDS_ELSEWHERE[other]?.has(word));
+  const elsewhere = otherLanguages.some((other) => WORDS_ELSEWHERE[other]?.has(lower));
 
   return !elsewhere && Boolean(words?.has(lower) || ending?.test(lower));
 }

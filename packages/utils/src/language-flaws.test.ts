@@ -81,9 +81,10 @@ describe(findLanguageFlaws, () => {
   });
 
   it("finds a Greek word, though a Greek letter alone is a symbol", () => {
-    const value = "Você respondeu com φυσικά naturalidade, e ω = Δθ/Δt ficou pequeno.";
+    const value = "Você respondeu με φυσικά naturalidade, e ω = Δθ/Δt ficou pequeno.";
 
     expect(findLanguageFlaws({ input: "", language: "pt", value })).toStrictEqual([
+      expect.stringContaining('"με"'),
       expect.stringContaining('"φυσικά"'),
     ]);
   });
@@ -117,12 +118,12 @@ describe(findLanguageFlaws, () => {
 
     expect(
       findLanguageFlaws({
-        input: "LEARNER_ANSWER: Buongiorno!",
+        input: "LEARNER_ANSWER: Vose alta.",
         language: "pt",
         otherLanguages: ["it"],
-        value: { feedback: "Voce cumprimentou corretamente." },
+        value: { feedback: "Troque o s por c.", spelling: "Voce alta." },
       }),
-    ).toStrictEqual([expect.stringContaining('"Voce"')]);
+    ).toStrictEqual([]);
 
     expect(
       findLanguageFlaws({
