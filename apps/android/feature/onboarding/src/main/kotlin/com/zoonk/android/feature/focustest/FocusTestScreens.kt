@@ -229,23 +229,24 @@ internal fun ColumnScope.FocusTestCheckpoint(
         FocusTestResult(test, proposal)
         OnboardingActions {
             FinishFailed(failed)
-            Button(
-                busy = pressed == Pressed.Main,
-                onClick = onDone,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed != Pressed.Other,
-            ) {
-                Text(
-                    stringResource(
-                        if (host ==
-                            FocusTestHost.Onboarding
-                        ) {
-                            R.string.focustest_continue_to_daily_time
-                        } else {
-                            R.string.focustest_done
-                        },
-                    ),
+            val done =
+                stringResource(
+                    if (host == FocusTestHost.Onboarding) R.string.focustest_continue_to_daily_time else R.string.focustest_done,
                 )
+            if (proposal.waitsOn(test)) {
+                OutlinedButton(
+                    busy = pressed == Pressed.Main,
+                    onClick = onDone,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = pressed != Pressed.Other,
+                ) { Text(done) }
+            } else {
+                Button(
+                    busy = pressed == Pressed.Main,
+                    onClick = onDone,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = pressed != Pressed.Other,
+                ) { Text(done) }
             }
             next?.let {
                 OutlinedButton(

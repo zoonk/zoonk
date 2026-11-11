@@ -62,6 +62,12 @@ internal class ProposalControls(
     val onChangeFocus: () -> Unit,
 )
 
+/** A proposal the learner can still apply, whose "Update my plan" is then the screen's one filled button. */
+internal fun ProposalControls?.waitsOn(test: FocusTest): Boolean =
+    this != null &&
+        answer == null &&
+        test.checkpoint?.focus?.takeIf { it.state == FocusTestFocus.State.PROPOSED }?.proposal?.canApply == true
+
 internal fun displayName(
     name: String,
     shortName: String?,
