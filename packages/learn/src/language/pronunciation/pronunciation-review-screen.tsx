@@ -62,9 +62,7 @@ function RoundResult({
   return (
     <>
       <MomentHeader
-        detail={t(
-          "An accent never blocks you. Words that still sound different come back tomorrow.",
-        )}
+        detail={t("An accent never blocks you.")}
         title={result ? t("Practice done") : t("Nothing said this time")}
       >
         {result && (

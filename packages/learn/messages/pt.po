@@ -6705,9 +6705,9 @@ msgid "We heard “{heard}”"
 msgstr "A gente ouviu “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Ter sotaque nunca impede seu progresso. Palavras que ainda soam diferentes voltam amanhã."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Seu sotaque nunca é uma barreira."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"

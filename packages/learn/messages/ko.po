@@ -6705,9 +6705,9 @@ msgid "We heard “{heard}”"
 msgstr "이렇게 들렸어요: “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "억양이 달라도 계속할 수 있어요. 발음이 아직 다른 단어는 내일 다시 나와요."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "억양은 걸림돌이 되지 않아요."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
