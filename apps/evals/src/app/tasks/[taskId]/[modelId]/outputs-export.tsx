@@ -68,7 +68,7 @@ export function OutputsExport({
       variant="outline"
     >
       <DownloadIcon />
-      Export Outputs
+      Export outputs
     </Button>
   );
 }

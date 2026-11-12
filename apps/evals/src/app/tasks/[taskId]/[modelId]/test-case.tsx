@@ -38,7 +38,7 @@ function formatValue(value: unknown): string {
 function UserInputSection({ userInput }: { userInput: Record<string, unknown> }) {
   return (
     <div>
-      <p className="text-muted-foreground text-sm">User Input</p>
+      <p className="text-muted-foreground text-sm">Input</p>
 
       <div className="flex flex-col gap-1">
         {Object.entries(userInput).map(([key, value]) => {
@@ -61,15 +61,6 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
   );
 }
 
-function ScoreSection({ score }: { score: number }) {
-  return (
-    <div>
-      <p className="text-muted-foreground text-sm">Score</p>
-      <p className="font-medium">{score.toFixed(2)}</p>
-    </div>
-  );
-}
-
 function TokensSection({
   inputTokens,
   outputTokens,
@@ -80,12 +71,12 @@ function TokensSection({
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div>
-        <p className="text-muted-foreground text-sm">Input Tokens</p>
+        <p className="text-muted-foreground text-sm">Input tokens</p>
         <p className="font-medium">{inputTokens}</p>
       </div>
 
       <div>
-        <p className="text-muted-foreground text-sm">Output Tokens</p>
+        <p className="text-muted-foreground text-sm">Output tokens</p>
         <p className="font-medium">{outputTokens}</p>
       </div>
     </div>
@@ -122,7 +113,7 @@ function OutputSection({ output }: { output: string }) {
 function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
   return (
     <div>
-      <p className="text-muted-foreground mb-2 text-sm">Evaluation Steps</p>
+      <p className="text-muted-foreground mb-2 text-sm">Evaluation steps</p>
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
           <div className="rounded-lg border p-3" key={step.kind}>
@@ -143,7 +134,7 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
 
   return (
     <div>
-      <p className="text-muted-foreground mb-2 text-sm">Category Scores</p>
+      <p className="text-muted-foreground mb-2 text-sm">Category scores</p>
       <div className="grid gap-2 md:grid-cols-2">
         {categoryScores.map((category) => (
           <div className="rounded-lg border p-3" key={category.categoryId}>
@@ -176,8 +167,6 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
       <AccordionContent className="flex flex-col gap-4 pt-4">
         <UserInputSection userInput={result.testCase.userInput} />
 
-        <ScoreSection score={score} />
-
         <TokensSection inputTokens={result.inputTokens} outputTokens={result.outputTokens} />
 
         <OutputSection output={result.output} />
@@ -198,7 +187,7 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
   return (
     <AccordionItem id={`case-${output.testCaseId}`} value={`output-test-case-${index}`}>
       <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">{testCaseTitle}: Unscored</span>
+        <span className="text-base font-medium">{testCaseTitle}: Not scored</span>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-4 pt-4">

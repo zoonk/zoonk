@@ -23,7 +23,7 @@ function DeleteModelDataFooter() {
     <AlertDialogFooter>
       <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
       <AlertDialogAction busy={pending} type="submit" variant="destructive">
-        Delete Data
+        Delete
       </AlertDialogAction>
     </AlertDialogFooter>
   );
@@ -44,15 +44,15 @@ export function DeleteModelDataDialog({
         render={<Button disabled={disabled} type="button" variant="destructive" />}
       >
         <Trash2Icon />
-        Delete Outputs &amp; Results
+        Delete
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete outputs and results?</AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently deletes every generated output and evaluation result for this model.
-            You will need to generate and evaluate it again.
+            Every output and result of this model on this task is deleted for good. To score it
+            again, you generate and evaluate from the start.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -5,6 +5,7 @@ import {
   ModelPageBreadcrumb,
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
+import { ModelStatusBadge } from "@/components/model-status-badge";
 import { getTaskResults } from "@/lib/eval-runner";
 import { aggregateEvalResults } from "@/lib/eval-summary";
 import { getModelById, getModelDisplayName } from "@/lib/models";
@@ -18,7 +19,6 @@ import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
-  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerHeaderSkeleton,
@@ -74,15 +74,15 @@ async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
 }
 
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
-  const { task } = await getTaskModelRouteFromParams(params);
+  const { model, modelId, task, taskId } = await getTaskModelRouteFromParams(params);
 
   return (
     <ContainerHeader>
       <ContainerHeaderGroup>
-        <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>
-          Generate outputs and run evaluations for this task
-        </ContainerDescription>
+        <ContainerTitle>
+          {getModelDisplayName(model)} on {task.name}
+        </ContainerTitle>
+        <ModelStatusBadge modelId={modelId} taskId={taskId} />
       </ContainerHeaderGroup>
     </ContainerHeader>
   );
@@ -148,10 +148,16 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
 }
 
 async function TaskModelResults({ params }: TaskModelRouteProps) {
-  const { generatedOutputs, results } = await getTaskModelContentFromParams(params);
+  const { generatedOutputs, outputStatus, results } = await getTaskModelContentFromParams(params);
 
   if (results && generatedOutputs) {
-    return <EvalResults outputs={generatedOutputs} results={results} />;
+    return (
+      <EvalResults
+        outputs={generatedOutputs}
+        results={results}
+        totalRuns={outputStatus.totalOutputs}
+      />
+    );
   }
 
   return null;
