@@ -8,9 +8,9 @@ export const RADII: readonly ShapeRule[] = [
   {
     className: "rounded-sm",
     name: "Inner",
-    use: "What sits inside a control: a keycap, a checkbox, a goal mark, a link's focus ring.",
+    use: "Chips and what sits inside a control: a keycap, a checkbox, a goal mark, a link's focus ring.",
   },
-  { className: "rounded-md", name: "Chip", use: "Chips, the subject label, small buttons." },
+  { className: "rounded-md", name: "Small button", use: "Buttons of 30px and under, tabs." },
   { className: "rounded-lg", name: "Button", use: "Buttons, inputs and a highlighted row." },
   {
     className: "rounded-xl",
@@ -20,7 +20,7 @@ export const RADII: readonly ShapeRule[] = [
   {
     className: "rounded-2xl",
     name: "Sheet",
-    use: "The question sheet on a public page, a dialog.",
+    use: "Sheets and dialogs, the question sheet on a public page.",
   },
 ];
 

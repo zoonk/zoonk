@@ -21,7 +21,7 @@ export function SubjectLabel({
   return (
     <span
       className={cn(
-        "bg-subject-tint text-subject-text inline-flex h-5.5 w-fit shrink-0 items-center rounded-md px-2 text-xs leading-none font-[550]",
+        "bg-subject-tint text-subject-text inline-flex h-5.5 w-fit shrink-0 items-center rounded-sm px-2 text-xs leading-none font-[550]",
         className,
       )}
       data-slot="subject-label"

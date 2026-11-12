@@ -123,7 +123,7 @@ Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px o
 
 ### H1. One radius per role
 
-A corner's radius is its role's token from `RADII` (`apps/playground/src/design-system/shape.ts`), never a literal: cells and small marks `rounded-xs` (2px), meters `rounded-meter` (3px), what sits inside a control (a keycap, a checkbox, a goal mark) `rounded-sm` (6px), small buttons and chips `rounded-md` (8px), buttons, inputs and a highlighted row `rounded-lg` (10px), every container (answer options, tiles, panels, cards, menus) `rounded-xl` (14px), sheets and dialogs `rounded-2xl` (18px), full for avatars, dots, rings and a switch.
+A corner's radius is its role's token from `RADII` (`apps/playground/src/design-system/shape.ts`), never a literal: cells and small marks `rounded-xs` (2px), meters `rounded-meter` (3px), chips and what sits inside a control (a keycap, a checkbox, a goal mark) `rounded-sm` (6px), small buttons and tabs `rounded-md` (8px), buttons, inputs and a highlighted row `rounded-lg` (10px), every container (answer options, tiles, panels, cards, menus) `rounded-xl` (14px), sheets and dialogs `rounded-2xl` (18px), full for avatars, dots, rings and a switch.
 
 - **Check.** Boxes with the same job on one screen have the same corners; every radius is a token's value.
 - **Usual break.** `rounded-[0.625rem]`; two kinds of container 2px apart.
